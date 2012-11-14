@@ -1,0 +1,150 @@
+<html> 
+  <head>
+    <script src="demo.js" type="text/javascript"></script>
+    <script src="branding.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="demo.css" />
+  </head> 
+
+
+  <body> 
+    <!--Insert branding-->
+    <canvas id="banner"></canvas>
+    <div id="buttonspacer" style='display:inline;'>
+      <canvas height=5px width=20px></canvas>
+    </div>
+    <form action="VTdashboard.html" style='display:inline;'>
+      <input type="submit" value="Dashboard">
+    </form>
+    <button type="button" >Trigger</button>
+    <button type="button" >Monitoring</button>
+    <button type="button" >ELog</button>
+    <!--Whitespace-->
+    <div id="blank" height=50px>
+      <canvas height=50px></canvas>
+    </div>
+
+    <script type="text/JavaScript">
+      Banner('banner', "Voltage & Temperature Detailed");
+    </script>   
+  
+    <!--Make a bank of meters-->
+    <div id='wrapperBlock'>
+      <canvas id="leftSidebar"></canvas>
+      
+      <div class="meterBank">
+        <canvas id="meterBKG" width=800px height=200px></canvas>
+        <div class="meter" id="V000"> </div>
+        <div class="meter" id="V001"> </div>
+        <div class="meter" id="V002"> </div>
+        <div class="meter" id="V003"> </div>
+        <div class="meter" id="V004"> </div>
+        <div class="meter" id="V005"> </div>
+        <div class="meter" id="V006"> </div>
+        <div class="meter" id="V007"> </div>
+        <div class="meter" id="V008"> </div>
+        <div class="meter" id="V009"> </div>
+        <div class="meter" id="V010"> </div>
+        <div class="meter" id="V011"> </div>
+        <div class="meter" id="V012"> </div>
+        <div class="meter" id="V013"> </div>
+        <div class="meter" id="V014"> </div>
+        <div class="meter" id="V015"> </div>
+        <div class="meter" id="V016"> </div>
+        <div class="meter" id="V017"> </div>
+        <div class="meter" id="V018"> </div>
+        <div class="meter" id="V019"> </div>
+        <div class="meter" id="V020"> </div>
+        <div class="meter" id="V021"> </div>
+        <div class="meter" id="V022"> </div>
+        <div class="meter" id="V023"> </div>
+        <div class="meter" id="V024"> </div>
+        <div class="meter" id="V025"> </div>
+        <div class="meter" id="V026"> </div>
+        <div class="meter" id="V027"> </div>
+        <div class="meter" id="V028"> </div>
+        <div class="meter" id="V029"> </div>
+      </div>
+
+      <div class="meterBank">
+        <canvas id="meterBKG2" width=800px height=200px></canvas>
+        <div class="meter" id="T000"> </div>
+        <div class="meter" id="T001"> </div>
+        <div class="meter" id="T002"> </div>
+        <div class="meter" id="T003"> </div>
+        <div class="meter" id="T004"> </div>
+        <div class="meter" id="T005"> </div>
+        <div class="meter" id="T006"> </div>
+        <div class="meter" id="T007"> </div>
+        <div class="meter" id="T008"> </div>
+        <div class="meter" id="T009"> </div>
+        <div class="meter" id="T010"> </div>
+        <div class="meter" id="T011"> </div>
+        <div class="meter" id="T012"> </div>
+        <div class="meter" id="T013"> </div>
+        <div class="meter" id="T014"> </div>
+        <div class="meter" id="T015"> </div>
+        <div class="meter" id="T016"> </div>
+        <div class="meter" id="T017"> </div>
+        <div class="meter" id="T018"> </div>
+        <div class="meter" id="T019"> </div>
+        <div class="meter" id="T020"> </div>
+        <div class="meter" id="T021"> </div>
+        <div class="meter" id="T022"> </div>
+        <div class="meter" id="T023"> </div>
+        <div class="meter" id="T024"> </div>
+        <div class="meter" id="T025"> </div>
+        <div class="meter" id="T026"> </div>
+        <div class="meter" id="T027"> </div>
+        <div class="meter" id="T028"> </div>
+        <div class="meter" id="T029"> </div>
+      </div>
+
+      <div class="meterBank">
+        <canvas id="meterBKG3" width=800px height=200px></canvas>
+        <div class="meter" id="N000"> </div>
+        <div class="meter" id="N001"> </div>
+        <div class="meter" id="N002"> </div>
+        <div class="meter" id="N003"> </div>
+        <div class="meter" id="N004"> </div>
+        <div class="meter" id="N005"> </div>
+        <div class="meter" id="N006"> </div>
+        <div class="meter" id="N007"> </div>
+        <div class="meter" id="N008"> </div>
+        <div class="meter" id="N009"> </div>
+        <div class="meter" id="N010"> </div>
+        <div class="meter" id="N011"> </div>
+        <div class="meter" id="N012"> </div>
+        <div class="meter" id="N013"> </div>
+        <div class="meter" id="N014"> </div>
+        <div class="meter" id="N015"> </div>
+        <div class="meter" id="N016"> </div>
+        <div class="meter" id="N017"> </div>
+        <div class="meter" id="N018"> </div>
+        <div class="meter" id="N019"> </div>
+        <div class="meter" id="N020"> </div>
+        <div class="meter" id="N021"> </div>
+        <div class="meter" id="N022"> </div>
+        <div class="meter" id="N023"> </div>
+        <div class="meter" id="N024"> </div>
+        <div class="meter" id="N025"> </div>
+        <div class="meter" id="N026"> </div>
+        <div class="meter" id="N027"> </div>
+        <div class="meter" id="N028"> </div>
+        <div class="meter" id="N029"> </div>
+      </div>
+
+      <!--Draw meter decorations-->
+      <script type="text/JavaScript">
+        MeterDecorator('meterBKG', 'North Meter Bank');
+        MeterDecorator('meterBKG2', 'Central Meter Bank');
+        MeterDecorator('meterBKG3', 'South Meter Bank');
+      </script>  
+
+      <!--Start updating meters-->
+      <script type="text/JavaScript">
+        var meterArray = ["V000", "V001","V002", "V003","V004", "V005","V006", "V007","V008", "V009","V010", "V011","V012", "V013","V014", "V015","V016", "V017","V018", "V019","V020", "V021","V022", "V023","V024", "V025","V026", "V027","V028", "V029", "T000", "T001","T002", "T003","T004", "T005","T006", "T007","T008", "T009","T010", "T011","T012", "T013","T014", "T015","T016", "T017","T018", "T019","T020", "T021","T022", "T023","T024", "T025","T026", "T027","T028", "T029", "N000", "N001","N002", "N003","N004", "N005","N006", "N007","N008", "N009","N010", "N011","N012", "N013","N014", "N015","N016", "N017","N018", "N019","N020", "N021","N022", "N023","N024", "N025","N026", "N027","N028", "N029"];
+        Initialize(meterArray);
+      </script>  
+    </div>
+  </body> 
+</html>

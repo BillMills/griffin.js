@@ -1,0 +1,26 @@
+div.meterBank{
+	height: 200px;
+	width: 800px;
+	margin-left: auto;
+	margin-right: auto;
+	position: relative;
+}
+
+.meterBank canvas {
+	position: absolute;
+	top:0;
+	left:-50;
+	z-index:1;
+}
+
+div#wrapperBlock{
+	margin-left: auto;
+	margin-right: auto;
+	position:relative;
+	top: 10%; 
+}
+
+canvas#leftSidebar{
+	position:absolute;
+	left:1%;
+}
