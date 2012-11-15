@@ -140,6 +140,7 @@ function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, dat
             context.fillStyle = "rgba(0,0,0,opacity)";
             context.fillText(title+" Alarms", leftTitle, headTitle);
         }
+
     } 
 
     if(side==='right'){
