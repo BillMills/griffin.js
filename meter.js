@@ -51,7 +51,7 @@ function MeterDecorator(canv, div, title, nMetersPerBank) {
     context.fillText(title, 300, 175);
 }
 
-function Initialize(meterID, cssID, sidebar, side){
+function Initialize(callMyself, meterID, cssID, sidebar, side){
     var i, newRule;
 
     for(i=0; i<meterID.length; i++){
@@ -60,45 +60,44 @@ function Initialize(meterID, cssID, sidebar, side){
     }
 
     //bit of a fudge for now, TODO: clean up initialization animation        
-    setTimeout(function(){MeterUpdate(meterID, cssID, sidebar, side)},500);
+    setTimeout(function(){MeterUpdate(callMyself, meterID, cssID, sidebar, side)},500);
 
 }
 
-function MeterUpdate(meterID, cssID, sidebar, side) {
+function MeterUpdate(callMyself, meterID, cssID, sidebar, side) {
 
-    var i = 0;
-    var threshold = 65;
-    var rawData = []; rawData[0] = [];
-    var newHeight = 0;
-    var newColor = "#FFFFFF";
-    var newRule = "";
+    if(!document.webkitHidden && !document.mozHidden){
+      var i = 0;
+      var threshold = 65;
+      var rawData = []; rawData[0] = [];
+      var newHeight = 0;
+      var newColor = "#FFFFFF";
+      var newRule = "";
 
-    for(i=0; i<meterID.length; i++){
-      //pull whatever values out of ODB:
-      rawData[0][i] = Math.random()*100;
-      newHeight = rawData[0][i];
-      //don't let the meter completely disappear:
-      if(newHeight < 2) {
-          newHeight = 2;
+      for(i=0; i<meterID.length; i++){
+        //pull whatever values out of ODB:
+        rawData[0][i] = Math.random()*100;
+        newHeight = rawData[0][i];
+        //don't let the meter completely disappear:
+        if(newHeight < 2) {
+            newHeight = 2;
+        }
+        //meter turns red if it is over threshold, stays green otherwise:
+        newColor = "#00FF00";
+        if(newHeight>threshold){
+            newColor = "#FF0000";
+        }
+
+        //delete old style rules, parse new rule, and insert new rule into css:
+        document.styleSheets[cssID].deleteRule(i);
+        newRule = "div.meter#"+meterID[i]+"{transition: height 0.5s, bottom 0.5s, background 0.5s;-moz-transition: height 0.5s, bottom 0.5s, background 0.5s;-webkit-transition: height 0.5s, bottom 0.5s, background 0.5s;height:"+newHeight+"px;width: 20px;background:"+newColor+";position:relative;bottom:"+(newHeight-100)+"px;margin-left:5px;float:left;}";
+        document.styleSheets[cssID].insertRule(newRule,i);
       }
-      //meter turns red if it is over threshold, stays green otherwise:
-      newColor = "#00FF00";
-      if(newHeight>threshold){
-          newColor = "#FF0000";
-      }
 
-
-
-      //delete old style rules, parse new rule, and insert new rule into css:
-      document.styleSheets[cssID].deleteRule(i);
-      newRule = "div.meter#"+meterID[i]+"{transition: height 0.5s, bottom 0.5s, background 0.5s;-moz-transition: height 0.5s, bottom 0.5s, background 0.5s;-webkit-transition: height 0.5s, bottom 0.5s, background 0.5s;height:"+newHeight+"px;width: 20px;background:"+newColor+";position:relative;bottom:"+(newHeight-100)+"px;margin-left:5px;float:left;}";
-      document.styleSheets[cssID].insertRule(newRule,i);
+      AlarmSidebar('Voltage', sidebar, side, 1, 'wrapperBlock', 600, rawData, 'mV', 1, meterID.length, 65, callMyself);
     }
-
-    AlarmSidebar('Voltage', sidebar, side, 1, 'wrapperBlock', 600, rawData, 'mV', 1, meterID.length, 65, 0);
-
     //recurse:
-    setTimeout(function(){MeterUpdate(meterID, cssID, sidebar, side)},3000);
+    setTimeout(function(){MeterUpdate(1, meterID, cssID, sidebar, side)},3000);
 
 }
 
