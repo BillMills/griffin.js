@@ -4,13 +4,17 @@
 function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, data, rows, cols, cellSide, unit){
 	  var canvas = document.getElementById(targetCanvas);
 
-    //hack to update reported value at waffle refresh if user just leaves the mouse sitting there without moving: 
-    var toolTipContent = 'Channel '+window.griffinToolTipY+', '+window.griffinToolTipX+': <br/>'+Math.round(data[window.griffinToolTipY][window.griffinToolTipX]*1000)/1000 + ' ' + unit;
-    document.getElementById('TipText').innerHTML = toolTipContent;    
-
+    //hack to update reported value at waffle refresh if user just leaves the mouse sitting there without moving:
+    var oldX = Math.floor( (window.griffinToolTipX - document.getElementById(parentDiv).offsetLeft - document.getElementById(targetCanvas).offsetLeft) / cellSide);
+    var oldY = Math.floor( (window.griffinToolTipY - document.getElementById(parentDiv).offsetTop - document.getElementById(targetCanvas).offsetTop) / cellSide);
+    if(oldX > -1 && oldX < cols && oldY>-1 && oldY<rows){
+        var toolTipContent = 'Channel '+oldY+', '+oldX+': <br/>'+Math.round(data[oldY][oldX]*1000)/1000 + ' ' + unit;
+        document.getElementById('TipText').innerHTML = toolTipContent;    
+    }
+    //alert(oldX+', '+oldY)
 		newCoords = canvas.onmousemove = function(event){
   			//get pointers:
-	      var ttDiv = document.getElementById(targetDiv);
+	    var ttDiv = document.getElementById(targetDiv);
         var ttContainer = document.getElementById(containerDiv);
        	var canvas = document.getElementById(targetCanvas);
         var context = canvas.getContext('2d');
@@ -47,8 +51,8 @@ function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, data, rows, c
 	      if(chx<cols && chy<rows) ttDiv.style.display = 'block';
         else ttDiv.style.display = 'none';
 
-        window.griffinToolTipX = chx;
-        window.griffinToolTipY = chy;
+        window.griffinToolTipX = event.pageX;
+        window.griffinToolTipY = event.pageY;
       
     }
 
