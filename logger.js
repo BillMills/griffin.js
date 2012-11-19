@@ -29,6 +29,9 @@ function ScrollPlot(cvas1, cvas2, iter, frame, initialY, slope){
     var x0 = marginSize*marginScaleY+axisLineWidth;
     var y0 = canvas1.height - marginSize - axisLineWidth;
 
+    //right-hand boundary:
+    var RHB = canvas1.width-70;
+
     //turn initialY into canvas coords:
     var yCoord = y0-(initialY+3)/(3+3)*(y0-marginSize);
     //and similarly for the slope:
@@ -36,7 +39,7 @@ function ScrollPlot(cvas1, cvas2, iter, frame, initialY, slope){
 
     if(iter){
 
-	    context1.drawImage(canvas2, x0+1, 0, canvas1.width - x0-1, y0, x0,0,canvas1.width - x0 - 1, y0);
+	    context1.drawImage(canvas2, x0+1, 0, RHB - x0-1, y0, x0,0,RHB - x0 - 1, y0);
 	    canvas1.style.zIndex=1;
 	    canvas2.style.zIndex=0;
 	    context2.fillStyle = 'rgba(255,255,255,1)';
@@ -44,13 +47,13 @@ function ScrollPlot(cvas1, cvas2, iter, frame, initialY, slope){
 
 	    context2.beginPath();
 	    context2.lineWidth = 2;
-	    context2.moveTo(canvas1.width-(frame+1),yCoord);
-	    context2.lineTo(canvas1.width,-(frame+1)*s+yCoord);
+	    context2.moveTo(RHB-(frame+1),yCoord);
+	    context2.lineTo(RHB,-(frame+1)*s+yCoord);
 	    context2.stroke();
 
 	} else{
 
-	    context2.drawImage(canvas1, x0+1, 0, canvas2.width - x0-1, y0, x0-1,0,canvas2.width - x0 - 1, y0);
+	    context2.drawImage(canvas1, x0+1, 0, RHB - x0-1, y0, x0-1,0,RHB - x0 - 1, y0);
 	    canvas2.style.zIndex=1;
 	    canvas1.style.zIndex=0;
 	    context1.fillStyle = 'rgba(255,255,255,1)';
@@ -58,8 +61,8 @@ function ScrollPlot(cvas1, cvas2, iter, frame, initialY, slope){
 
 	    context1.beginPath();
 	    context1.lineWidth = 2;
-	    context1.moveTo(canvas1.width-(frame+1), yCoord);
-	    context1.lineTo(canvas1.width,-(frame+1)*s+yCoord);
+	    context1.moveTo(RHB-(frame+1), yCoord);
+	    context1.lineTo(RHB,-(frame+1)*s+yCoord);
 	    context1.stroke();
 
 	}
@@ -176,25 +179,3 @@ function LoggerFrame(cvas, xmin, xmax, ymin, ymax, xtitle, ytitle, title) {
 
  }
 
-
-
-
-
-
-function dummy1(){
-	var canvas = document.getElementById('c1');
-    var context = canvas.getContext('2d');
-
-    context.fillRect(100,100,100,100);
-}
-
-function dummy2(){
-	var canvas1 = document.getElementById('c1');
-    var context1 = canvas1.getContext('2d');
-
-	var canvas2 = document.getElementById('c2');
-    var context2 = canvas2.getContext('2d');
-
-    context2.drawImage(canvas1, 0,0,150,300,0,0,150,300);
-
-}
