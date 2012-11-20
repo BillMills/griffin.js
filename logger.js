@@ -1,30 +1,89 @@
-function Sample(cvas1, cvas2, initialY){
+//populate the striptool with recent data upon initialization
+function populate(cvas, data, xMin, xMax, yMin, yMax, x0, y0, marginSize, RHB){
+    var i, j; 
+    var lineSegment;
+    var initialY;
+    var iter;
+
+    var canvas = [];
+    canvas[0] = document.getElementById(cvas[0]);
+    canvas[1] = document.getElementById(cvas[1]);
+    var context = [];
+    context[0] = canvas[0].getContext('2d');
+    context[1] = canvas[1].getContext('2d');
+
+    //number of samples on screen at once:
+    var nSamples = 10;
+
+    //width of one sample:
+    var sampleWidth = (RHB - x0) / nSamples;
+
+    //take the last nSamples+1 entries in the data vector:
+    var lastData = data.slice(data.length-nSamples-1);
+
+    var step = 10;
+    var iter = 0;
+
+    //draw line:
+    for(i=1; i<nSamples+1; i++){
+
+        initialY = lastData[i-1];
+        for(j=0; j<sampleWidth/step; j++){
+            
+            lineSegment = pixelMap(xMin, xMax, yMin, yMax, x0, y0, marginSize, RHB, initialY, lastData[i] - lastData[i-1]);
+            //alert(initialY+', '+lineSegment[0])
+            //scroll the canvas over a step:
+            scrollStep(context[iter], context[Math.abs(iter-1)], canvas[iter], canvas[Math.abs(iter-1)], x0, y0, step, RHB);
+
+            //redraw the axes:
+            LoggerFrame(cvas[iter], xMin, xMax, yMin, yMax, marginSize, 'arbitrary x unit', 'arbitrary y unit', 'striptool');
+
+            //draw a line segment from the current position of the logger line, to the edge of the plot:
+            drawLine(context[Math.abs(iter-1)], RHB, step, lineSegment);
+
+            initialY += (lastData[i] - lastData[i-1]) / (sampleWidth/step)
+
+            if(iter) iter = 0;
+            else iter = 1;
+
+        }
+
+    }
+
+}
+
+//sample and log a value every interval
+function Sample(cvas, initialY){
 
     if(!document.webkitHidden && !document.mozHidden){
     	var pullSlope = Math.random() - 0.5;
 
-	    var scrollIt = new ScrollPlot(cvas1, cvas2, 0, 0, initialY, pullSlope);
+	    var scrollIt = new ScrollPlot(cvas, 0, 0, initialY, pullSlope, 2);
 
     	initialY += pullSlope;
     }
 
-	setTimeout(function(){Sample(cvas1, cvas2, initialY)},3000);
+	setTimeout(function(){Sample(cvas, initialY)},3000);
 
 }
 
-function ScrollPlot(cvas1, cvas2, iter, frame, initialY, slope){
-	var canvas1 = document.getElementById(cvas1);
-    var context1 = canvas1.getContext('2d');
-	var canvas2 = document.getElementById(cvas2);
-    var context2 = canvas2.getContext('2d');
+function ScrollPlot(cvas, iter, frame, initialY, slope, duration){
+    //fetch canvases and contexts:
+    var canvas = [];
+    canvas[0] = document.getElementById(cvas[0]);
+    canvas[1] = document.getElementById(cvas[1]);
+    var context = [];
+    context[0] = canvas[0].getContext('2d');
+    context[1] = canvas[1].getContext('2d');
 
+    //define physical parameter range:
     var yMin = -0.5;
     var yMax = 0.5;
     var xMin = 0;
     var xMax = 10;
 
-    var FPS = 20;
-    var duration = 2; //in seconds;
+    //define animation parameters:
+    var FPS =25;
     var nFrames = FPS*duration;
 
     //number of samples on screen at once:
@@ -37,29 +96,59 @@ function ScrollPlot(cvas1, cvas2, iter, frame, initialY, slope){
     //roundoff errors at each frame cause the line segments to not line up with the tickmarks
     //nicely).
     var scale = 0;
-    while((canvas1.width - scale*nSamples*nFrames) > 0) scale++;
+    while((canvas[0].width - scale*nSamples*nFrames) > 0) scale++;
     scale--;
 
-    //same as in LoggerFrame:
-    var marginSize = (canvas1.width - scale*nSamples*nFrames)*0.4  //70;
+    //axis parameters, same as in LoggerFrame:
+    var marginSize = (canvas[0].width - scale*nSamples*nFrames)*0.4;
     var marginScaleY = 1.5;
     var axisLineWidth = 2;
 
     //plot origin:
     var x0 = marginSize*marginScaleY+axisLineWidth;
-    var y0 = canvas1.height - marginSize - axisLineWidth;
+    var y0 = canvas[0].height - marginSize - axisLineWidth;
 
     //right-hand boundary:
-    var RHB = canvas1.width-marginSize;
+    var RHB = canvas[0].width-marginSize;
 
     //width of one sample:
     var sampleWidth = (RHB - x0) / nSamples;
 
+    //how far to scroll in each frame of animation:
+    var step = Math.round(sampleWidth / nFrames);
+
+    //map the physical line onto the cnavas coordinates
+    var lineSegment = pixelMap(xMin, xMax, yMin, yMax, x0, y0, marginSize, RHB, initialY, slope);
+
+    //drawing steps:
+    //scroll the canvas over a step:
+    scrollStep(context[iter], context[Math.abs(iter-1)], canvas[iter], canvas[Math.abs(iter-1)], x0, y0, step, RHB);
+
+    //redraw the axes:
+    LoggerFrame(cvas[iter], xMin, xMax, yMin, yMax, marginSize, 'arbitrary x unit', 'arbitrary y unit', 'striptool');
+
+    //draw a line segment from the current position of the logger line, to the edge of the plot:
+    drawLine(context[Math.abs(iter-1)], RHB, step, lineSegment);
+
+    //swap canvases each frame:
+	if(iter) iter = 0;
+	else iter = 1;
+
+    //call next frame:
+	frame++;
+	if(frame<nFrames){
+	    setTimeout(function(){ScrollPlot(cvas,iter, frame, initialY+slope/nFrames, slope, duration)},1000/FPS);
+	}
+}
+
+//parse physical info into pixel coords, returns array [yCoord, s, lineColor]
+function pixelMap(xMin, xMax, yMin, yMax, x0, y0, marginSize, RHB, initialY, slope){
     //turn initialY into canvas coords:
-    var yCoord = (yMax - initialY)/(yMax-yMin)*(y0-marginSize)              
+    var yCoord = marginSize + (yMax - initialY)/(yMax-yMin)*(y0-marginSize)              
     //and similarly for the slope:
     var s = slope*(y0-marginSize)/(yMax-yMin)*(xMax-xMin)/(RHB-x0);
 
+    //line turns red and gets clipped if it's out of bounds:
     var lineColor = 'black';    
     if(yCoord < marginSize){
         s = 0;
@@ -69,57 +158,32 @@ function ScrollPlot(cvas1, cvas2, iter, frame, initialY, slope){
         s = 0;
         yCoord = y0-1;
         lineColor = 'red';
-    }
+    }    
 
-    //how far to scroll in each frame of animation:
-    var step = Math.round(sampleWidth / nFrames);
-
-    if(iter){
-
-        context1.drawImage(canvas2, x0+step, 0, RHB-x0-step, y0, x0, 0, RHB-x0-step, y0);
-	    canvas1.style.zIndex=1;
-	    canvas2.style.zIndex=0;
-	    context2.fillStyle = 'rgba(255,255,255,1)';
-        context2.fillRect(0,0,canvas1.width, canvas1.height);
-
-        LoggerFrame(cvas2, xMin, xMax, yMin, yMax, marginSize, 'arbitrary x unit', 'arbitrary y unit', 'striptool');
-
-	    context2.beginPath();
-	    context2.lineWidth = 1;
-        context2.strokeStyle = lineColor;
-	    context2.moveTo(RHB-step,yCoord);
-	    context2.lineTo(RHB,-step*s+yCoord);
-	    context2.stroke();
-
-	} else{
-
-	    context2.drawImage(canvas1, x0+step, 0, RHB-x0-step, y0, x0, 0, RHB-x0-step, y0);
-	    canvas2.style.zIndex=1;
-	    canvas1.style.zIndex=0;
-	    context1.fillStyle = 'rgba(255,255,255,1)';
-        context1.fillRect(0,0,canvas1.width, canvas1.height);
-
-        LoggerFrame(cvas1, xMin, xMax, yMin, yMax, marginSize, 'arbitrary x unit', 'arbitrary y unit', 'striptool');
-
-	    context1.beginPath();
-	    context1.lineWidth = 1;
-        context1.strokeStyle = lineColor;
-	    context1.moveTo(RHB-step, yCoord);
-	    context1.lineTo(RHB,-step*s+yCoord);
-	    context1.stroke();
-
-	}
-
-	if(iter) iter = 0;
-	else iter = 1;
-
-	frame++;
-	if(frame<nFrames){
-	    setTimeout(function(){ScrollPlot(cvas1,cvas2,iter, frame, initialY+slope/nFrames, slope)},1000/30);
-	}
+    return [yCoord, s, lineColor];
 }
 
+//canvas scroller:
+function scrollStep(contextTop, contextBottom, canvasTop, canvasBottom, x0, y0, step, RHB){
+        //scroll the canvas over a step:
+        contextTop.drawImage(canvasBottom, x0+step, 0, RHB-x0-step, y0, x0, 0, RHB-x0-step, y0);
+        //flip the z-order of the canvases:
+        canvasTop.style.zIndex=1;
+        canvasBottom.style.zIndex=0;
+        //white out the old canvas:
+        contextBottom.fillStyle = 'rgba(255,255,255,1)';
+        contextBottom.fillRect(0,0,canvasBottom.width, canvasBottom.height);
+    
+}
 
+function drawLine(context, RHB, step, lineSegment){
+        context.beginPath();
+        context.lineWidth = 1;
+        context.strokeStyle = lineSegment[2];
+        context.moveTo(RHB-step, lineSegment[0]);
+        context.lineTo(RHB,-step*lineSegment[1] + lineSegment[0] );
+        context.stroke();    
+}
 
 
 function LoggerFrame(cvas, xmin, xmax, ymin, ymax, marginSize, xtitle, ytitle, title) {
