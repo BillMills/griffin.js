@@ -1,10 +1,12 @@
 function Sample(cvas1, cvas2, initialY){
 
-	var pullSlope = Math.random() - 0.5;
+    if(!document.webkitHidden && !document.mozHidden){
+    	var pullSlope = Math.random() - 0.5;
 
-	var scrollIt = new ScrollPlot(cvas1, cvas2, 0, 0, initialY, pullSlope);
+	    var scrollIt = new ScrollPlot(cvas1, cvas2, 0, 0, initialY, pullSlope);
 
-	initialY += pullSlope;
+    	initialY += pullSlope;
+    }
 
 	setTimeout(function(){Sample(cvas1, cvas2, initialY)},3000);
 
@@ -16,8 +18,8 @@ function ScrollPlot(cvas1, cvas2, iter, frame, initialY, slope){
 	var canvas2 = document.getElementById(cvas2);
     var context2 = canvas2.getContext('2d');
 
-    var yMin = -5;
-    var yMax = 5;
+    var yMin = -0.5;
+    var yMax = 0.5;
     var xMin = 0;
     var xMax = 10;
 
@@ -27,8 +29,6 @@ function ScrollPlot(cvas1, cvas2, iter, frame, initialY, slope){
 
     //number of samples on screen at once:
     var nSamples = 10;
-    //time between samples (seconds):
-    var period = 3;
 
     //seek optimal parameter to autoadjust plot size for smooth animation & maximum size:
     //(this is a solution to the problem that a measurement must be represented with a 
@@ -58,7 +58,18 @@ function ScrollPlot(cvas1, cvas2, iter, frame, initialY, slope){
     //turn initialY into canvas coords:
     var yCoord = (yMax - initialY)/(yMax-yMin)*(y0-marginSize)              
     //and similarly for the slope:
-    var s = slope*(y0-marginSize)/(yMax-yMin)*(xMax-xMin)/(RHB-x0);             
+    var s = slope*(y0-marginSize)/(yMax-yMin)*(xMax-xMin)/(RHB-x0);
+
+    var lineColor = 'black';    
+    if(yCoord < marginSize){
+        s = 0;
+        yCoord = marginSize;
+        lineColor = 'red';
+    } else if(yCoord > y0){
+        s = 0;
+        yCoord = y0-1;
+        lineColor = 'red';
+    }
 
     //how far to scroll in each frame of animation:
     var step = Math.round(sampleWidth / nFrames);
@@ -74,7 +85,8 @@ function ScrollPlot(cvas1, cvas2, iter, frame, initialY, slope){
         LoggerFrame(cvas2, xMin, xMax, yMin, yMax, marginSize, 'arbitrary x unit', 'arbitrary y unit', 'striptool');
 
 	    context2.beginPath();
-	    context2.lineWidth = 2;
+	    context2.lineWidth = 1;
+        context2.strokeStyle = lineColor;
 	    context2.moveTo(RHB-step,yCoord);
 	    context2.lineTo(RHB,-step*s+yCoord);
 	    context2.stroke();
@@ -90,7 +102,8 @@ function ScrollPlot(cvas1, cvas2, iter, frame, initialY, slope){
         LoggerFrame(cvas1, xMin, xMax, yMin, yMax, marginSize, 'arbitrary x unit', 'arbitrary y unit', 'striptool');
 
 	    context1.beginPath();
-	    context1.lineWidth = 2;
+	    context1.lineWidth = 1;
+        context1.strokeStyle = lineColor;
 	    context1.moveTo(RHB-step, yCoord);
 	    context1.lineTo(RHB,-step*s+yCoord);
 	    context1.stroke();
