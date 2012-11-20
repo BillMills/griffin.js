@@ -16,12 +16,32 @@ function ScrollPlot(cvas1, cvas2, iter, frame, initialY, slope){
 	var canvas2 = document.getElementById(cvas2);
     var context2 = canvas2.getContext('2d');
 
-    var FPS = 30;
+    var yMin = -5;
+    var yMax = 5;
+    var xMin = 0;
+    var xMax = 10;
+
+    var FPS = 20;
     var duration = 2; //in seconds;
     var nFrames = FPS*duration;
 
+    //number of samples on screen at once:
+    var nSamples = 10;
+    //time between samples (seconds):
+    var period = 3;
+
+    //seek optimal parameter to autoadjust plot size for smooth animation & maximum size:
+    //(this is a solution to the problem that a measurement must be represented with a 
+    //line segment which has a width in pixels = integer multiple of the number of
+    //frames of animation used to scroll it one step back on the striptool; if not, 
+    //roundoff errors at each frame cause the line segments to not line up with the tickmarks
+    //nicely).
+    var scale = 0;
+    while((canvas1.width - scale*nSamples*nFrames) > 0) scale++;
+    scale--;
+
     //same as in LoggerFrame:
-    var marginSize = 70;
+    var marginSize = (canvas1.width - scale*nSamples*nFrames)*0.4  //70;
     var marginScaleY = 1.5;
     var axisLineWidth = 2;
 
@@ -30,39 +50,49 @@ function ScrollPlot(cvas1, cvas2, iter, frame, initialY, slope){
     var y0 = canvas1.height - marginSize - axisLineWidth;
 
     //right-hand boundary:
-    var RHB = canvas1.width-70;
+    var RHB = canvas1.width-marginSize;
+
+    //width of one sample:
+    var sampleWidth = (RHB - x0) / nSamples;
 
     //turn initialY into canvas coords:
-    var yCoord = y0-(initialY+3)/(3+3)*(y0-marginSize);
+    var yCoord = (yMax - initialY)/(yMax-yMin)*(y0-marginSize)              
     //and similarly for the slope:
-    var s = slope/(3+3)*(y0-marginSize)/nFrames
+    var s = slope*(y0-marginSize)/(yMax-yMin)*(xMax-xMin)/(RHB-x0);             
+
+    //how far to scroll in each frame of animation:
+    var step = Math.round(sampleWidth / nFrames);
 
     if(iter){
 
-	    context1.drawImage(canvas2, x0+1, 0, RHB - x0-1, y0, x0,0,RHB - x0 - 1, y0);
+        context1.drawImage(canvas2, x0+step, 0, RHB-x0-step, y0, x0, 0, RHB-x0-step, y0);
 	    canvas1.style.zIndex=1;
 	    canvas2.style.zIndex=0;
 	    context2.fillStyle = 'rgba(255,255,255,1)';
-	    context2.fillRect(x0,0,canvas1.width- marginSize *marginScaleY, y0);
+        context2.fillRect(0,0,canvas1.width, canvas1.height);
+
+        LoggerFrame(cvas2, xMin, xMax, yMin, yMax, marginSize, 'arbitrary x unit', 'arbitrary y unit', 'striptool');
 
 	    context2.beginPath();
 	    context2.lineWidth = 2;
-	    context2.moveTo(RHB-(frame+1),yCoord);
-	    context2.lineTo(RHB,-(frame+1)*s+yCoord);
+	    context2.moveTo(RHB-step,yCoord);
+	    context2.lineTo(RHB,-step*s+yCoord);
 	    context2.stroke();
 
 	} else{
 
-	    context2.drawImage(canvas1, x0+1, 0, RHB - x0-1, y0, x0-1,0,RHB - x0 - 1, y0);
+	    context2.drawImage(canvas1, x0+step, 0, RHB-x0-step, y0, x0, 0, RHB-x0-step, y0);
 	    canvas2.style.zIndex=1;
 	    canvas1.style.zIndex=0;
 	    context1.fillStyle = 'rgba(255,255,255,1)';
-	    context1.fillRect(x0,0,canvas2.width - marginSize* marginScaleY, y0);
+        context1.fillRect(0,0,canvas1.width, canvas1.height);
+
+        LoggerFrame(cvas1, xMin, xMax, yMin, yMax, marginSize, 'arbitrary x unit', 'arbitrary y unit', 'striptool');
 
 	    context1.beginPath();
 	    context1.lineWidth = 2;
-	    context1.moveTo(RHB-(frame+1), yCoord);
-	    context1.lineTo(RHB,-(frame+1)*s+yCoord);
+	    context1.moveTo(RHB-step, yCoord);
+	    context1.lineTo(RHB,-step*s+yCoord);
 	    context1.stroke();
 
 	}
@@ -72,25 +102,25 @@ function ScrollPlot(cvas1, cvas2, iter, frame, initialY, slope){
 
 	frame++;
 	if(frame<nFrames){
-	    setTimeout(function(){ScrollPlot(cvas1,cvas2,iter, frame, initialY, slope)},1000/30);
+	    setTimeout(function(){ScrollPlot(cvas1,cvas2,iter, frame, initialY+slope/nFrames, slope)},1000/30);
 	}
 }
 
 
 
 
-function LoggerFrame(cvas, xmin, xmax, ymin, ymax, xtitle, ytitle, title) {
+function LoggerFrame(cvas, xmin, xmax, ymin, ymax, marginSize, xtitle, ytitle, title) {
 
 	var canvas = document.getElementById(cvas);
     var context = canvas.getContext('2d');
 
     
-    var marginSize = 70;
+    //var marginSize = 70;
     var marginScaleY = 1.5;
     var bigTick = 10;
     var smallTick = 5;
     var majorX = 3;
-    var minorX = 9;
+    var minorX = 4;
     var xDecimal = 0;
     var majorY = 3;
     var minorY = 9;
@@ -123,6 +153,7 @@ function LoggerFrame(cvas, xmin, xmax, ymin, ymax, xtitle, ytitle, title) {
     //x-axis tick marks
     majorTickSpacingX = (canvas.width - (1 + marginScaleY) * marginSize) / (majorX - 1);
     minorTickSpacingX = majorTickSpacingX / (minorX + 1);
+
     for (i = 0; i < majorX; i++) {
         context.moveTo(marginScaleY * marginSize + i * majorTickSpacingX, canvas.height - marginSize);
         context.lineTo(marginScaleY * marginSize + i * majorTickSpacingX, canvas.height - marginSize + bigTick);
