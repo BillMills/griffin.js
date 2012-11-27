@@ -12,7 +12,7 @@ cols: number of columns (meters per bank) for monitoring waffles (meter bank set
 alarm: alarm threshold value.
 callMyself: initialize to 0, indicates whether AlarmSidebar was called by something else, or by its internal recursion.
 */
-function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, data, unit, rows, cols, alarm, callMyself){
+function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, data, unit, rows, cols, alarm, rowTitles, colTitles, callMyself){
 
     //fetch canvas:
     var canvas = document.getElementById(sidebar);
@@ -107,7 +107,8 @@ function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, dat
 
         for(i=0; i<nAlarms; i++){
             if(dataSet[i][2]>alarm){
-                context.fillText(i+1+'.  Channel '+dataSet[i][0]+', '+dataSet[i][1]+': ', leftMargin, textTop+lineHeight*i*3);
+                //context.fillText(i+1+'.  Channel '+dataSet[i][0]+', '+dataSet[i][1]+': ', leftMargin, textTop+lineHeight*i*3);
+                context.fillText(i+1+'.  '+rowTitles[0]+' '+rowTitles[dataSet[i][0]+1]+', '+colTitles[0]+' '+colTitles[dataSet[i][1]+1]+': ', leftMargin, textTop+lineHeight*i*3);
                 context.fillText('     '+Math.round(dataSet[i][2]*1000)/1000+' '+unit, leftMargin, textTop+lineHeight*(i*3+1));        
             }
         }
@@ -135,6 +136,7 @@ function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, dat
         }
 
         //Make sidebar title:
+        
         if(!callMyself){
             context.font="20px Times New Roman";
             context.fillStyle = "rgba(0,0,0,opacity)";
@@ -150,7 +152,8 @@ function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, dat
 
         for(i=0; i<nAlarms; i++){
             if(dataSet[i][2]>alarm){
-                context.fillText(i+1+'.  Channel '+dataSet[i][0]+', '+dataSet[i][1]+': ', rightMargin, textTop+lineHeight*i*3);
+                //context.fillText(i+1+'.  Channel '+dataSet[i][0]+', '+dataSet[i][1]+': ', rightMargin, textTop+lineHeight*i*3);
+                context.fillText(i+1+'.  '+rowTitles[0]+' '+rowTitles[dataSet[i][0]+1]+', '+colTitles[0]+' '+colTitles[dataSet[i][1]+1]+': ', rightMargin, textTop+lineHeight*i*3);
                 context.fillText('     '+Math.round(dataSet[i][2]*1000)/1000+' '+unit, rightMargin, textTop+lineHeight*(i*3+1));        
             }
         }
@@ -189,7 +192,7 @@ function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, dat
 
     if(frame < nFrames){
         frame++;
-        setTimeout(function(){AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, data, unit, rows, cols, alarm, callMyself)},duration/FPS);
+        setTimeout(function(){AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, data, unit, rows, cols, alarm, rowTitles, colTitles, callMyself)},duration/FPS);
     }
 
 }

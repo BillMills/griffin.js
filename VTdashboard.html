@@ -67,11 +67,15 @@
       window.griffinToolTipX = 0;
       window.griffinToolTipY = 0;
 
+      //cell labels; first entry decribes cell type (channel, card, crate, rack etc)
+      var rowTitles = ['Card', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'];
+      var colTitles = ['Ch.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'];
+
       //Voltage Waffle:
-      Waffle(0,20,20, 'TestWaffle', 0.999, 1, startData, "Voltage", "leftSidebar", "left", "TT", "TTcontainer", "waffleplate", 'mV');
+      Waffle(0,20,20, 'TestWaffle', 0.999, 1, startData, "Voltage", "leftSidebar", "left", "TT", "TTcontainer", "waffleplate", 'mV', rowTitles, colTitles);
 
       //Temperature Waffle:
-      Waffle(0,20,20, 'TestWaffle2', 0.8, 1, startData, "Temperature", "rightSidebar", "right", "TT", "TTcontainer", "waffleplate", 'K');
+      Waffle(0,20,20, 'TestWaffle2', 0.8, 1, startData, "Temperature", "rightSidebar", "right", "TT", "TTcontainer", "waffleplate", 'K', rowTitles, colTitles);
 
     </script> 
   
