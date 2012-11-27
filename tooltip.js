@@ -5,7 +5,7 @@
 //TODO: text boldness glitch on top row?
 
 function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, data, rows, cols, cellSide, unit, rowTitles, colTitles){
-	  var canvas = document.getElementById(targetCanvas);
+	var canvas = document.getElementById(targetCanvas);
 
     //hack to update reported value at waffle refresh if user just leaves the mouse sitting there without moving:
     var oldX = Math.floor( (window.griffinToolTipX - document.getElementById(parentDiv).offsetLeft - document.getElementById(targetCanvas).offsetLeft) / cellSide);
@@ -15,9 +15,9 @@ function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, data, rows, c
         var toolTipContent =  rowTitles[0]+' '+rowTitles[oldY+1]+'<br/>'+colTitles[0]+' '+colTitles[oldX+1]+'<br/>'+Math.round(data[oldY][oldX]*1000)/1000 + ' ' + unit;
         document.getElementById('TipText').innerHTML = toolTipContent;    
     }
-    //alert(oldX+', '+oldY)
-		newCoords = canvas.onmousemove = function(event){
-  			//get pointers:
+    
+	canvas.onmousemove = function(event){
+  		//get pointers:
 	    var ttDiv = document.getElementById(targetDiv);
         var ttContainer = document.getElementById(containerDiv);
        	var canvas = document.getElementById(targetCanvas);
@@ -28,7 +28,7 @@ function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, data, rows, c
         ttDiv.style.display = 'none';
 
        	//get mouse coords:
-	      var x = event.pageX - ttContainer.offsetLeft;	
+	    var x = event.pageX - ttContainer.offsetLeft;	
         var y = event.pageY - ttContainer.offsetTop;
 
         //approximate box size:
@@ -47,18 +47,17 @@ function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, data, rows, c
        	//make the tool tip say something:
         //var toolTipContent = 'Channel '+chy+', '+chx+': <br/>'+Math.round(data[chy][chx]*1000)/1000 + ' ' + unit;
         var toolTipContent =  rowTitles[0]+' '+rowTitles[chy+1]+'<br/>'+colTitles[0]+' '+colTitles[chx+1]+'<br/>'+Math.round(data[chy][chx]*1000)/1000 + ' ' + unit;
-	      document.getElementById('TipText').innerHTML = toolTipContent;
+	    document.getElementById('TipText').innerHTML = toolTipContent;
 
         //update the size of the tool tip to fit the text:
         $(ttDiv).width(1.1*context.measureText('Channel '+chy+', '+chx+':').width)
 
-	      //make the tool tip appear iff it's on the waffle:
-	      if(chx<cols && chy<rows) ttDiv.style.display = 'block';
+	    //make the tool tip appear iff it's on the waffle:
+	    if(chx<cols && chy<rows) ttDiv.style.display = 'block';
         else ttDiv.style.display = 'none';
 
         window.griffinToolTipX = event.pageX;
-        window.griffinToolTipY = event.pageY;
-      
+        window.griffinToolTipY = event.pageY;  
     }
 
     //turn the tool tip off if it's outside the canvas:
