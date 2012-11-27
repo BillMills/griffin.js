@@ -1,14 +1,18 @@
 //function to generate a tool tip over a canvas targetCanvas wrapped in a parentDiv.  The tool 
 //tip consists of a div targetDiv with absolute positioning containing <p id="TipText"></p>, wrapped
 //in a containerDiv with relative positioning.  TODO: enforce div properties?
-function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, data, rows, cols, cellSide, unit){
+
+//TODO: text boldness glitch on top row?
+
+function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, data, rows, cols, cellSide, unit, rowTitles, colTitles){
 	  var canvas = document.getElementById(targetCanvas);
 
     //hack to update reported value at waffle refresh if user just leaves the mouse sitting there without moving:
     var oldX = Math.floor( (window.griffinToolTipX - document.getElementById(parentDiv).offsetLeft - document.getElementById(targetCanvas).offsetLeft) / cellSide);
     var oldY = Math.floor( (window.griffinToolTipY - document.getElementById(parentDiv).offsetTop - document.getElementById(targetCanvas).offsetTop) / cellSide);
     if(oldX > -1 && oldX < cols && oldY>-1 && oldY<rows){
-        var toolTipContent = 'Channel '+oldY+', '+oldX+': <br/>'+Math.round(data[oldY][oldX]*1000)/1000 + ' ' + unit;
+        //var toolTipContent = 'Channel '+oldY+', '+oldX+': <br/>'+Math.round(data[oldY][oldX]*1000)/1000 + ' ' + unit;
+        var toolTipContent =  rowTitles[0]+' '+rowTitles[oldY+1]+'<br/>'+colTitles[0]+' '+colTitles[oldX+1]+'<br/>'+Math.round(data[oldY][oldX]*1000)/1000 + ' ' + unit;
         document.getElementById('TipText').innerHTML = toolTipContent;    
     }
     //alert(oldX+', '+oldY)
@@ -29,10 +33,10 @@ function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, data, rows, c
 
         //approximate box size:
         var boxX = 100;
-        var boxY = 40;
+        var boxY = 60;
 
         //make the tool tip follow the mouse:
-	      ttDiv.style.top = y-boxY-5;
+	    ttDiv.style.top = y-boxY-5;
         ttDiv.style.left = x-boxX-5;
 
         //form coordinate system chx, chy with origin at the upper left corner of the div, and 
@@ -41,7 +45,8 @@ function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, data, rows, c
        	var chy = Math.floor( (event.pageY - superDiv.offsetTop - canvas.offsetTop) / cellSide);
 
        	//make the tool tip say something:
-        var toolTipContent = 'Channel '+chy+', '+chx+': <br/>'+Math.round(data[chy][chx]*1000)/1000 + ' ' + unit;
+        //var toolTipContent = 'Channel '+chy+', '+chx+': <br/>'+Math.round(data[chy][chx]*1000)/1000 + ' ' + unit;
+        var toolTipContent =  rowTitles[0]+' '+rowTitles[chy+1]+'<br/>'+colTitles[0]+' '+colTitles[chx+1]+'<br/>'+Math.round(data[chy][chx]*1000)/1000 + ' ' + unit;
 	      document.getElementById('TipText').innerHTML = toolTipContent;
 
         //update the size of the tool tip to fit the text:

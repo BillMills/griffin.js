@@ -84,7 +84,7 @@ function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, startData, title,
 
         DrawWaffle(cvas, startColor, endColor, 1, title, rows, cols, totalWidth, totalHeight, cellSide);
         AlarmSidebar(title, sidebar, side, 1, wrapperDiv, waffleHeight, endData, unit, rows, cols, alarm, rowTitles, colTitles, callMyself);
-        Tooltip(cvas, wrapperDiv, tooltip, TTcontainer, endData, rows, cols, cellSide, unit);
+        Tooltip(cvas, wrapperDiv, tooltip, TTcontainer, endData, rows, cols, cellSide, unit, rowTitles, colTitles);
     }
 
     //repeat every update interval:
