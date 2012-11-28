@@ -22,9 +22,6 @@ function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, dat
     var parentWidth = $('#'+wrapperDiv).width();
     var parentHeight = $('#'+wrapperDiv).height();
 
-    //text opacity:
-    var opacity = 0.6;
-
     //define sidebar dimensions:
     var width = parentWidth*0.2;
     var height = parentHeight;
@@ -39,6 +36,13 @@ function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, dat
     var FPS = 30;
     var duration = 2; //in seconds
     var nFrames = FPS*duration;
+
+    //final text opacity:
+    var opacity = 0.6;
+    //text opacity at this frame:
+    var alphaB = opacity*frame/nFrames
+    //whiteout opacity:
+    var alphaW = (1-opacity)*alphaB / (1-alphaB) / opacity;
 
     //separator line inset
     var inset = 0.1*width;
@@ -64,7 +68,7 @@ function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, dat
     var nAlarms = 5;
 
     //fade out last panel:
-    context.fillStyle = "rgba(255,255,255,"+opacity*frame/nFrames+")"
+    context.fillStyle = "rgba(255,255,255,"+alphaW+")"
     context.fillRect(inset*1.1,.15*height+10,width-3*inset,height);
 
     //draw separator line
@@ -103,7 +107,7 @@ function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, dat
     if(side==='left'){
         //generate sidebar content:
         context.font="18px Times New Roman";
-        context.fillStyle = "rgba(0,0,0,"+opacity*frame/nFrames+")";
+        context.fillStyle = "rgba(0,0,0,"+alphaB+")";
 
         for(i=0; i<nAlarms; i++){
             if(dataSet[i][2]>=alarm){
@@ -115,7 +119,8 @@ function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, dat
 
         //if no alarms, display an all-clear icon:
         if(dataSet[0][2] < alarm){
-            context.strokeStyle = "rgba(0,0,0,"+opacity*frame/nFrames+")";
+            
+            context.strokeStyle = "rgba(0,0,0,"+alphaB+")";
             context.lineWidth = 5;
             context.beginPath();
             context.arc(width/2 - inset+1,headTitle+70+1, 50, 0, 2*Math.PI);
@@ -124,7 +129,7 @@ function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, dat
             context.lineTo(width/2 - inset-17+10+30+1,headTitle+72+10-30+1);
             context.stroke();
 
-            context.strokeStyle = "rgba(0,255,0,"+opacity*frame/nFrames+")";
+            context.strokeStyle = "rgba(0,255,0,"+alphaB+")";
             context.lineWidth = 5;
             context.beginPath();
             context.arc(width/2 - inset,headTitle+70, 50, 0, 2*Math.PI);
@@ -133,6 +138,7 @@ function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, dat
             context.lineTo(width/2 - inset-17+10+30,headTitle+72+10-30);
             context.stroke();
             context.fillText('All Okay', width/2 - context.measureText('All Okay').width/2 - inset, headTitle+150)
+            
         }
 
         //Make sidebar title:
@@ -148,7 +154,7 @@ function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, dat
     if(side==='right'){
         //generate sidebar content:
         context.font="18px Times New Roman";
-        context.fillStyle = "rgba(0,0,0,"+opacity*frame/nFrames+")";
+        context.fillStyle = "rgba(0,0,0,"+alphaB+")";
 
         for(i=0; i<nAlarms; i++){
             if(dataSet[i][2]>=alarm){
