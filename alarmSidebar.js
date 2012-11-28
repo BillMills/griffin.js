@@ -106,7 +106,7 @@ function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, dat
         context.fillStyle = "rgba(0,0,0,"+opacity*frame/nFrames+")";
 
         for(i=0; i<nAlarms; i++){
-            if(dataSet[i][2]>alarm){
+            if(dataSet[i][2]>=alarm){
                 //context.fillText(i+1+'.  Channel '+dataSet[i][0]+', '+dataSet[i][1]+': ', leftMargin, textTop+lineHeight*i*3);
                 context.fillText(i+1+'.  '+rowTitles[0]+' '+rowTitles[dataSet[i][0]+1]+', '+colTitles[0]+' '+colTitles[dataSet[i][1]+1]+': ', leftMargin, textTop+lineHeight*i*3);
                 context.fillText('     '+Math.round(dataSet[i][2]*1000)/1000+' '+unit, leftMargin, textTop+lineHeight*(i*3+1));        
@@ -151,7 +151,7 @@ function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, dat
         context.fillStyle = "rgba(0,0,0,"+opacity*frame/nFrames+")";
 
         for(i=0; i<nAlarms; i++){
-            if(dataSet[i][2]>alarm){
+            if(dataSet[i][2]>=alarm){
                 //context.fillText(i+1+'.  Channel '+dataSet[i][0]+', '+dataSet[i][1]+': ', rightMargin, textTop+lineHeight*i*3);
                 context.fillText(i+1+'.  '+rowTitles[0]+' '+rowTitles[dataSet[i][0]+1]+', '+colTitles[0]+' '+colTitles[dataSet[i][1]+1]+': ', rightMargin, textTop+lineHeight*i*3);
                 context.fillText('     '+Math.round(dataSet[i][2]*1000)/1000+' '+unit, rightMargin, textTop+lineHeight*(i*3+1));        
