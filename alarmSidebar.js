@@ -12,7 +12,31 @@ cols: number of columns (meters per bank) for monitoring waffles (meter bank set
 alarm: alarm threshold value.
 callMyself: initialize to 0, indicates whether AlarmSidebar was called by something else, or by its internal recursion.
 */
-function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, data, unit, rows, cols, alarm, rowTitles, colTitles, callMyself){
+function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, data, unit, rows, cols, alarm, rowTitles, colTitles, callMyself, flag){
+
+    //abort if nothing to update:
+    if(flag===0) return;
+
+    //number of alarms to report:
+    var nAlarms = 5;
+
+    //find the worst channels:
+    function sortFunction(a,b){
+        if (a[2] > b[2]) return -1;
+        if (a[2] < b[2]) return 1;
+        else return 0;
+    }
+
+    var dataSet = [];
+    for(i=0; i<rows; i++){
+        for(j=0; j<cols; j++) {
+            dataSet[i*cols+j] = [];
+            dataSet[i*cols+j][0] = i;
+            dataSet[i*cols+j][1] = j;
+            dataSet[i*cols+j][2] = data[i][j];
+        }
+    }
+    dataSet.sort(sortFunction);
 
     //fetch canvas:
     var canvas = document.getElementById(sidebar);
@@ -64,9 +88,6 @@ function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, dat
     //top of body text:
     var textTop = headTitle + 2*lineHeight;//0.19*height;
 
-    //number of alarms to report:
-    var nAlarms = 5;
-
     //fade out last panel:
     context.fillStyle = "rgba(255,255,255,"+alphaW+")"
     context.fillRect(inset*1.1,.15*height+10,width-3*inset,height);
@@ -85,24 +106,6 @@ function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, dat
         
         context.stroke();
     }
-
-    //find the worst channels:
-    function sortFunction(a,b){
-        if (a[2] > b[2]) return -1;
-        if (a[2] < b[2]) return 1;
-        else return 0;
-    }
-
-    var dataSet = [];
-    for(i=0; i<rows; i++){
-        for(j=0; j<cols; j++) {
-            dataSet[i*cols+j] = [];
-            dataSet[i*cols+j][0] = i;
-            dataSet[i*cols+j][1] = j;
-            dataSet[i*cols+j][2] = data[i][j];
-        }
-    }
-    dataSet.sort(sortFunction);
 
     if(side==='left'){
         //generate sidebar content:
@@ -201,5 +204,6 @@ function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, dat
         setTimeout(function(){AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, data, unit, rows, cols, alarm, rowTitles, colTitles, callMyself)},duration/FPS);
     }
 
+    return;
 }
 

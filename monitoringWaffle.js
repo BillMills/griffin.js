@@ -32,6 +32,20 @@ function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, startData, title,
     	   }
         }
 
+        //abort flag for sidebar if data hasn't changed or if it's changed but is all still below alarm level:
+        var flag = 0;
+        if(startData){
+            var flag = 0;
+            for(i=0; i<rows; i++){
+                for(j=0; j<cols; j++){
+                    if( (endData[i][j]<alarm && startData[i][j]<alarm) || (endData[i][j] === startData[i][j]) ) flag = flag*1;
+                    else flag = 1;
+                }
+            }
+        } else{
+            flag = 1;
+        }
+        
         //check if startData is an array; if not, make a dummy array to start from:
         if( Object.prototype.toString.call( startData ) !== '[object Array]' ) {
             startData = [];
@@ -110,8 +124,9 @@ function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, startData, title,
         }
 
         DrawWaffle(cvas, startColor, endColor, 1, title, rows, cols, totalWidth, totalHeight, cellSide);
-        AlarmSidebar(title, sidebar, side, 1, wrapperDiv, waffleHeight, endData, unit, rows, cols, alarm, rowTitles, colTitles, callMyself);
+        AlarmSidebar(title, sidebar, side, 1, wrapperDiv, waffleHeight, endData, unit, rows, cols, alarm, rowTitles, colTitles, callMyself, flag);
         Tooltip(cvas, wrapperDiv, tooltip, TTcontainer, endData, rows, cols, cellSide, unit, rowTitles, colTitles);
+        
     }
 
     //repeat every update interval:
