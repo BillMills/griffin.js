@@ -60,8 +60,6 @@ p#TipText{
 
 div#InputLayer{
 	position: absolute;
-	/*top: 0px;
-	left: 0px;*/
 	display: none;
 	background: rgba(0,0,0,0.7);
 	color: #FFFFFF

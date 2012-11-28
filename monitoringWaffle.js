@@ -93,14 +93,18 @@ function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, startData, title,
             var chx = Math.floor( (event.pageX - superDiv.offsetLeft - canvas.offsetLeft) / cellSide);
             var chy = Math.floor( (event.pageY - superDiv.offsetTop - canvas.offsetTop) / cellSide);
 
+            //set text in dialog box:
             var fieldTextContent = 'Demand '+title+' ['+unit+'] '+' for '+rowTitles[0]+' '+chy+', '+colTitles[0]+' '+chx;
             document.getElementById('FieldText').innerHTML = fieldTextContent;
 
+            //position dialog box in the middle, above the waffles:
             $(inputDiv).css('left', screen.availWidth/2 - context.measureText(fieldTextContent).width / 2)
-            $(inputDiv).css('top', 200);
+            $(inputDiv).css('top', screen.availHeight*0.175);
 
+            //only actually display if the click was on the waffle and not the rest of the canvas:
             if(chx < cols && chy < rows){
-                inputDiv.style.display = 'block';
+                //inputDiv.style.display = 'block';
+                divFade(inputDiv, 'in', 0);
             }
 
         }
