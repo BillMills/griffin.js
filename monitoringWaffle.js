@@ -1,4 +1,4 @@
-function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, startData, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles){
+function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, startData, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer){
 
     if(!document.webkitHidden && !document.mozHidden){
     	var i, j;
@@ -81,6 +81,29 @@ function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, startData, title,
     	    }
         }
 
+        //make waffles clickable to set a variable for a channel:
+        var canvas = document.getElementById(cvas);
+        var context = canvas.getContext('2d');
+        canvas.onclick = function(event){
+
+            var superDiv = document.getElementById(wrapperDiv);
+            var inputDiv = document.getElementById(InputLayer);
+            //form coordinate system chx, chy with origin at the upper left corner of the div, and 
+            //bin as the waffle binning: 
+            var chx = Math.floor( (event.pageX - superDiv.offsetLeft - canvas.offsetLeft) / cellSide);
+            var chy = Math.floor( (event.pageY - superDiv.offsetTop - canvas.offsetTop) / cellSide);
+
+            var fieldTextContent = 'Demand '+title+' ['+unit+'] '+' for '+rowTitles[0]+' '+chy+', '+colTitles[0]+' '+chx;
+            document.getElementById('FieldText').innerHTML = fieldTextContent;
+
+            $(inputDiv).css('left', screen.availWidth/2 - context.measureText(fieldTextContent).width / 2)
+            $(inputDiv).css('top', 200);
+
+            if(chx < cols && chy < rows){
+                inputDiv.style.display = 'block';
+            }
+
+        }
 
         DrawWaffle(cvas, startColor, endColor, 1, title, rows, cols, totalWidth, totalHeight, cellSide);
         AlarmSidebar(title, sidebar, side, 1, wrapperDiv, waffleHeight, endData, unit, rows, cols, alarm, rowTitles, colTitles, callMyself);
@@ -88,7 +111,7 @@ function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, startData, title,
     }
 
     //repeat every update interval:
-    setTimeout(function(){Waffle(1, rows, cols, cvas, alarm, scaleMax, endData, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles)},3000);
+    setTimeout(function(){Waffle(1, rows, cols, cvas, alarm, scaleMax, endData, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer)},3000);
 
 }
 

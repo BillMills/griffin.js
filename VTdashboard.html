@@ -9,6 +9,7 @@
     <script src="monitoringWaffle.js" type="text/javascript"></script>
     <script src="tooltip.js" type="text/javascript"></script>
     <script src="alarmSidebar.js" type="text/javascript"></script>
+    <script src="formHandler.js" type="text/javascript"></script>
 
     <!--  same idea for the css: -->
     <link rel="stylesheet" type="text/css" href="TestCSS!" />
@@ -49,6 +50,16 @@
       </div>
     </div>
 
+    <!--Input Layer-->
+    <div id='InputLayer'>
+      <p id='FieldText'>Filler Text Here:</p>
+      <form id='setValues'>
+        <input type="text" id="demandval" name='textbox'>
+        <input type="submit" value="Submit" onclick="javascript:updateParameter()">
+        <input type="button" value="Cancel" onclick="javascript:abortUpdate('InputLayer')">
+      </form>
+    </div>
+
     <script type="text/JavaScript">
 
       //Insert branding
@@ -61,7 +72,7 @@
       $('#waffleplate').width(screen.availWidth)
       $('#waffleplate').height(screen.availHeight*0.9)
 
-      //tool tip will throw it's last known x and y positions up to global scope, so that
+      //tool tip will throw its last known x and y positions up to global scope, so that
       //when the waffle refreshes, the tool tip can update without a mousemove event.
       //TODO: fix this without globals
       window.griffinToolTipX = 0;
@@ -72,10 +83,10 @@
       var colTitles = ['Ch.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'];
 
       //Voltage Waffle:
-      Waffle(0,20,20, 'TestWaffle', 0.999, 1, startData, "Voltage", "leftSidebar", "left", "TT", "TTcontainer", "waffleplate", 'mV', rowTitles, colTitles);
+      Waffle(0,20,20, 'TestWaffle', 0.999, 1, startData, "Voltage", "leftSidebar", "left", "TT", "TTcontainer", "waffleplate", 'mV', rowTitles, colTitles, "InputLayer");
 
       //Temperature Waffle:
-      Waffle(0,20,20, 'TestWaffle2', 0.8, 1, startData, "Temperature", "rightSidebar", "right", "TT", "TTcontainer", "waffleplate", 'K', rowTitles, colTitles);
+      Waffle(0,20,20, 'TestWaffle2', 0.8, 1, startData, "Temperature", "rightSidebar", "right", "TT", "TTcontainer", "waffleplate", 'K', rowTitles, colTitles, "InputLayer");
 
     </script> 
   

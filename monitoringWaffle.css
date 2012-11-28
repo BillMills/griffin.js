@@ -57,3 +57,23 @@ p#TipText{
 	left: 5px;
 	top: -15px;
 }
+
+div#InputLayer{
+	position: absolute;
+	/*top: 0px;
+	left: 0px;*/
+	display: none;
+	background: rgba(0,0,0,0.7);
+	color: #FFFFFF
+}
+
+p#FieldText{
+	margin-bottom: 0px;
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+input#demandval{
+	position: relative;
+	margin-left: 10px;
+}
