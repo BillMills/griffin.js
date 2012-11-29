@@ -223,13 +223,17 @@ function DrawWaffleLabels(cvas, title, rows, cols, cellSide){
     var canvas = document.getElementById(cvas);
     var context = canvas.getContext('2d');
 
-    context.font="30px Times New Roman";
+    //Tie title font size to plot size:
+    var titleFontSize = Math.min(30, context.canvas.width*0.08);
+    //make title:
+    context.font=titleFontSize+"px Times New Roman";
     context.fillStyle = 'black';
     context.globalAlpha = 0.6;
     context.fillText(title, cols*cellSide/2 - context.measureText(title).width/2, rows*cellSide+70);
 
-    //channel labels; TODO: user define and dynamic font size
-    context.font="16px Times New Roman";
+    //channel labels:
+    var labelFontSize = Math.min(16, cellSide);
+    context.font=labelFontSize+"px Times New Roman";
     for(i=0; i<rows; i++){
         context.fillText(i, cellSide*cols+10, i*cellSide + cellSide/2 +8 );
     }
@@ -238,7 +242,7 @@ function DrawWaffleLabels(cvas, title, rows, cols, cellSide){
         context.translate(j*cellSide + cellSide/2, rows*cellSide+10);
         context.rotate(-Math.PI/2);
         context.textAlign = "right";
-        context.fillText(j, 0,8);   //8 = half the font size
+        context.fillText(j, 0,labelFontSize/2);
         context.restore();
     }
 }
