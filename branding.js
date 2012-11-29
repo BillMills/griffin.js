@@ -8,8 +8,8 @@ function Banner(canvas) {
     var context = canvas.getContext('2d');
 
     //resize canvas
-    context.canvas.width = screen.availWidth-10;
-    context.canvas.height = screen.availHeight*0.1;
+    context.canvas.width = window.innerWidth-10;
+    context.canvas.height = window.innerHeight*0.1;
 
     //style canvas
     context.fillStyle = 'black';
@@ -21,7 +21,7 @@ function Banner(canvas) {
 	context.moveTo(5,0);
 	context.lineTo(5,context.canvas.height*0.7);         //5,70
 	context.arcTo(5,context.canvas.height*0.9,25,context.canvas.height*0.9,20);
-	context.lineTo(screen.availWidth-50,context.canvas.height*0.9);
+	context.lineTo(window.innerWidth-50,context.canvas.height*0.9);
 	context.stroke();
 
     //insert logo

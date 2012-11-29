@@ -112,8 +112,8 @@ function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, startData, title,
             document.getElementById('FieldText').innerHTML = fieldTextContent;
 
             //position dialog box in the middle, above the waffles:
-            $(inputDiv).css('left', screen.availWidth/2 - context.measureText(fieldTextContent).width / 2)
-            $(inputDiv).css('top', screen.availHeight*0.175);
+            $(inputDiv).css('left', window.innerWidth/2 - context.measureText(fieldTextContent).width / 2)
+            $(inputDiv).css('top', window.innerHeight*0.175);
 
             //only actually display if the click was on the waffle and not the rest of the canvas:
             if(chx < cols && chy < rows){
