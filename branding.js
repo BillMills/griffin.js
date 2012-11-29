@@ -19,7 +19,7 @@ function Banner(canvas) {
     //draw border
 	context.beginPath();
 	context.moveTo(5,0);
-	context.lineTo(5,context.canvas.height*0.7);         //5,70
+	context.lineTo(5,context.canvas.height*0.7);
 	context.arcTo(5,context.canvas.height*0.9,25,context.canvas.height*0.9,20);
 	context.lineTo(window.innerWidth-50,context.canvas.height*0.9);
 	context.stroke();
@@ -32,6 +32,6 @@ function Banner(canvas) {
     imageObj.src = 'logo.gif';
 
     //write title
-    context.font='72px Times New Roman';
-    context.fillText('GRIFFIN', 100, 65);
+    context.font= context.canvas.height*0.75+'px Times New Roman';
+    context.fillText('GRIFFIN', context.canvas.height*0.7*.9/.8+20, 0.65*context.canvas.height);
 }
