@@ -26,7 +26,6 @@ function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, dat
         if (a[2] < b[2]) return 1;
         else return 0;
     }
-
     var dataSet = [];
     for(i=0; i<rows; i++){
         for(j=0; j<cols; j++) {
@@ -65,7 +64,9 @@ function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, dat
     var opacity = 0.6;
     //text opacity at this frame:
     var alphaB = opacity*frame/nFrames
-    //whiteout opacity:
+    //whiteout opacity: (designed so something fading into itself looks static, 
+    //for white background / old black drawing of alpha=opacity / new whiteout 
+    //layer with alphaW / new black layer with alphaB; works best for black on white.)
     var alphaW = (1-opacity)*alphaB / (1-alphaB) / opacity;
 
     //separator line inset

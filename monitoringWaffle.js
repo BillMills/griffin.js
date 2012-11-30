@@ -111,8 +111,8 @@ function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, startData, title,
             var fieldTextContent = 'Demand '+title+' ['+unit+'] '+' for '+rowTitles[0]+' '+chy+', '+colTitles[0]+' '+chx;
             document.getElementById('FieldText').innerHTML = fieldTextContent;
 
-            //position dialog box in the middle, above the waffles:
-            $(inputDiv).css('left', window.innerWidth/2 - context.measureText(fieldTextContent).width / 2)
+            //position dialog box in the middle, above the waffles; recall rendering width is at least 1200px
+            $(inputDiv).css('left', Math.max(1200, window.innerWidth)/2 - context.measureText(fieldTextContent).width / 2);
             $(inputDiv).css('top', window.innerHeight*0.175);
 
             //only actually display if the click was on the waffle and not the rest of the canvas:
@@ -127,6 +127,10 @@ function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, startData, title,
         AlarmSidebar(title, sidebar, side, 1, wrapperDiv, waffleHeight, endData, unit, rows, cols, alarm, rowTitles, colTitles, callMyself, flag);
         Tooltip(cvas, wrapperDiv, tooltip, TTcontainer, endData, rows, cols, cellSide, unit, rowTitles, colTitles);
         
+    } else {
+        //make sure endData is defined for the next call to Waffle; keep the same one so the first transition after focus returns is smooth.        
+        var endData = startData;
+
     }
 
     //repeat every update interval:
