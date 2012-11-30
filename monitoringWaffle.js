@@ -1,4 +1,4 @@
-function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, startData, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer){
+function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, startData, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix){
 
     if(!document.webkitHidden && !document.mozHidden){
     	var i, j;
@@ -125,7 +125,7 @@ function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, startData, title,
 
         DrawWaffle(cvas, startColor, endColor, 1, title, rows, cols, totalWidth, totalHeight, cellSide);
         AlarmSidebar(title, sidebar, side, 1, wrapperDiv, waffleHeight, endData, unit, rows, cols, alarm, rowTitles, colTitles, callMyself, flag);
-        Tooltip(cvas, wrapperDiv, tooltip, TTcontainer, endData, rows, cols, cellSide, unit, rowTitles, colTitles);
+        Tooltip(cvas, wrapperDiv, tooltip, TTcontainer, rows, cols, cellSide, rowTitles, colTitles, prefix, postfix, endData);
         
     } else {
         //make sure endData is defined for the next call to Waffle; keep the same one so the first transition after focus returns is smooth.        
@@ -134,7 +134,7 @@ function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, startData, title,
     }
 
     //repeat every update interval:
-    setTimeout(function(){Waffle(1, rows, cols, cvas, alarm, scaleMax, endData, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer)},3000);
+    setTimeout(function(){Waffle(1, rows, cols, cvas, alarm, scaleMax, endData, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix)},3000);
 
 }
 

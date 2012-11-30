@@ -4,15 +4,23 @@
 
 //TODO: text boldness glitch on top row?
 
-function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, data, rows, cols, cellSide, unit, rowTitles, colTitles){
+function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, rows, cols, cellSide, rowTitles, colTitles, prefix, postfix, data){
 	var canvas = document.getElementById(targetCanvas);
+    var i;
+    var ttArgs = arguments.length;
+    var args = Array.prototype.slice.call(arguments);
 
     //hack to update reported value at waffle refresh if user just leaves the mouse sitting there without moving:
     var oldX = Math.floor( (window.griffinToolTipX - document.getElementById(parentDiv).offsetLeft - document.getElementById(targetCanvas).offsetLeft) / cellSide);
     var oldY = Math.floor( (window.griffinToolTipY - document.getElementById(parentDiv).offsetTop - document.getElementById(targetCanvas).offsetTop) / cellSide);
     if(oldX > -1 && oldX < cols && oldY>-1 && oldY<rows){
-        //var toolTipContent = 'Channel '+oldY+', '+oldX+': <br/>'+Math.round(data[oldY][oldX]*1000)/1000 + ' ' + unit;
-        var toolTipContent =  rowTitles[0]+' '+rowTitles[oldY+1]+'<br/>'+colTitles[0]+' '+colTitles[oldX+1]+'<br/>'+Math.round(data[oldY][oldX]*1000)/1000 + ' ' + unit;
+        var toolTipContent =  rowTitles[0]+' '+rowTitles[oldY+1]+'<br/>'+colTitles[0]+' '+colTitles[oldX+1]
+        for(i=11; i<ttArgs; i++){
+            toolTipContent += '<br/>'+prefix[i-11];
+            if(prefix[i-11] !== '') toolTipContent += ' ';
+            toolTipContent += Math.round( args[i][oldY][oldX]*1000)/1000 + ' ' + postfix[i-11];
+        }
+
         document.getElementById('TipText').innerHTML = toolTipContent;    
     }
     
@@ -24,6 +32,9 @@ function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, data, rows, c
         var context = canvas.getContext('2d');
        	var superDiv = document.getElementById(parentDiv);
 
+        //need this to match paragraph text for measuring purposes:
+        context.font = '12px Times New Roman'
+
         //force the tooltip off - patches persistency problem when moving down off the waffle.  TODO: understand persistency problem.
         ttDiv.style.display = 'none';
 
@@ -33,7 +44,7 @@ function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, data, rows, c
 
         //approximate box size:
         var boxX = 100;
-        var boxY = 60;
+        var boxY = 40 + 20*(ttArgs-11);
 
         //make the tool tip follow the mouse:
 	    ttDiv.style.top = y-boxY-5;
@@ -44,13 +55,29 @@ function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, data, rows, c
         var chx = Math.floor( (event.pageX - superDiv.offsetLeft - canvas.offsetLeft) / cellSide);
        	var chy = Math.floor( (event.pageY - superDiv.offsetTop - canvas.offsetTop) / cellSide);
 
-       	//make the tool tip say something:
-        //var toolTipContent = 'Channel '+chy+', '+chx+': <br/>'+Math.round(data[chy][chx]*1000)/1000 + ' ' + unit;
-        var toolTipContent =  rowTitles[0]+' '+rowTitles[chy+1]+'<br/>'+colTitles[0]+' '+colTitles[chx+1]+'<br/>'+Math.round(data[chy][chx]*1000)/1000 + ' ' + unit;
+       	//make the tool tip say something, keeping track of which line is longest:
+        var toolTipContent = '';
+        var nextLine
+        var longestLine = 0;
+        nextLine = rowTitles[0]+' '+rowTitles[chy+1];
+        longestLine = Math.max(longestLine, context.measureText(nextLine).width)
+        toolTipContent += nextLine;
+        nextLine = '<br/>'+colTitles[0]+' '+colTitles[chx+1];
+        longestLine = Math.max(longestLine, context.measureText(nextLine).width)
+        toolTipContent += nextLine;
+
+        for(i=11; i<ttArgs; i++){
+            nextLine = '<br/>'+prefix[i-11];
+            if(prefix[i-11] !== '') nextLine += ' ';
+            nextLine += Math.round( args[i][chy][chx]*1000)/1000 + ' ' + postfix[i-11];
+            longestLine = Math.max(longestLine, context.measureText(nextLine).width);
+            toolTipContent += nextLine;
+        }
 	    document.getElementById('TipText').innerHTML = toolTipContent;
 
         //update the size of the tool tip to fit the text:
-        $(ttDiv).width(1.1*context.measureText('Channel '+chy+', '+chx+':').width)
+        $(ttDiv).width(1.15*longestLine);
+        $(ttDiv).height(boxY);
 
 	    //make the tool tip appear iff it's on the waffle:
 	    if(chx<cols && chy<rows) ttDiv.style.display = 'block';
