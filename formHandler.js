@@ -3,9 +3,16 @@
 function updateParameter(InputLayer){
     
     var oForm = document.getElementById('setValues');
-    var oText = oForm.elements[0];
+    var oText = oForm.elements[2];
     var textVal = oText.value;
-    alert(textVal)
+
+    //some dummy behavior, replace the rest of this function with more exciting things
+    var onoff;
+    if(document.getElementById('onButton').checked == true) onoff = 'on'
+    else onoff = 'off'
+
+    alert(onoff+textVal)
+
 }
 
 //dismiss the form without doing anything else:
@@ -23,7 +30,7 @@ function divFade(targetDiv, direction, frame){
 	var nFrames = FPS*duration;
 	var alpha;
 
-	if(frame < nFrames){
+	if(frame <= nFrames){
 		if(direction === 'in'){
 			alpha = 0.7*frame/nFrames;
 			$(targetDiv).css('background', 'rgba(0,0,0,'+alpha+')');

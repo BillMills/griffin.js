@@ -49,10 +49,14 @@
 
     <!--Input Layer-->
     <div id='InputLayer'>
-      <p id='FieldText'>Filler Text Here:</p>
+      <p id='inputTitle'>sintitulo</p>
       <form id='setValues'>
-        <input type="text" id="demandval" name='textbox'>
-        <input type="submit" value="Submit" onclick="javascript:updateParameter()">
+        <input type='radio' id='offButton' name='HVswitch' value='off' style='margin-left:10px; margin-bottom:10px'>Off
+        <input type='radio' id='onButton' name='HVswitch' value='on' style='margin-left:10px; margin-bottom:10px'>On
+        <p id='FieldText'>Filler Text</p>
+        <input type="text" id="demandval" name='textbox' value='default'>
+        <p style='margin:0'></p>
+        <input type="submit" value="Submit" style='margin-left:10px' onclick="javascript:updateParameter()">
         <input type="button" value="Cancel" onclick="javascript:abortUpdate('InputLayer')">
       </form>
     </div>

@@ -108,12 +108,22 @@ function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, startData, title,
             var chy = Math.floor( (event.pageY - superDiv.offsetTop - canvas.offsetTop) / cellSide);
 
             //set text in dialog box:
-            var fieldTextContent = 'Demand '+title+' ['+unit+'] '+' for '+rowTitles[0]+' '+chy+', '+colTitles[0]+' '+chx;
+            var inputTitle = 'Parameters for '+rowTitles[0]+' '+chy+', '+colTitles[0]+' '+chx;
+            document.getElementById('inputTitle').innerHTML = inputTitle;
+            var fieldTextContent = 'Demand '+title+' ['+unit+'] ';
             document.getElementById('FieldText').innerHTML = fieldTextContent;
 
+            //set defaults
+            if (endData[chy][chx] > 0.5) document.getElementById('onButton').checked = true;
+            else document.getElementById('offButton').checked = true;
+            document.getElementById('demandval').value = Math.round(endData[chy][chx]*10000)/10000;
+
             //position dialog box in the middle, above the waffles; recall rendering width is at least 1200px
-            $(inputDiv).css('left', Math.max(1200, window.innerWidth)/2 - context.measureText(fieldTextContent).width / 2);
-            $(inputDiv).css('top', window.innerHeight*0.175);
+            //$(inputDiv).css('left', Math.max(1200, window.innerWidth)/2 - context.measureText(fieldTextContent).width / 2);
+            //$(inputDiv).css('top', window.innerHeight*0.175);
+            //position opposite the tool tip:
+            $(inputDiv).css('left', event.pageX);
+            $(inputDiv).css('top', event.pageY);
 
             //only actually display if the click was on the waffle and not the rest of the canvas:
             if(chx < cols && chy < rows){
