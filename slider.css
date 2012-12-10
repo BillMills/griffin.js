@@ -1,0 +1,36 @@
+div#slider{
+	position:relative; 
+	top: 500px;
+	left: 500px;
+	width: 270px;
+	height: 36px;
+}
+
+canvas#sliderBKG{
+	display: inline;
+	position:absolute;
+}
+div#sliderKnob{
+	display: inline;
+	position:relative; 
+	left: 10px;
+	width: 24px;
+	height: 36px;
+}
+
+canvas#knobStyle{
+	display: inline;
+	position:absolute;
+}
+
+p#sliderText{
+	display: inline;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	color: Grey;
+}
+
+canvas#downStep{
+	display: inline;
+	background-color: Black;
+}
