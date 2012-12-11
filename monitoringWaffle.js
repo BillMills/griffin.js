@@ -158,7 +158,7 @@ function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, startData, oldMas
     } else {
         //make sure endData is defined for the next call to Waffle; keep the same one so the first transition after focus returns is smooth.        
         var endData = startData;
-
+        var channelMask = oldMask;
     }
 
     //repeat every update interval:
