@@ -1,4 +1,4 @@
-function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, startData, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix){
+function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, startData, oldMask, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix){
 
     if(!document.webkitHidden && !document.mozHidden){
     	var i, j;
@@ -81,6 +81,13 @@ function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, startData, title,
     			    if(A>1) {A = 1;}
             		startColor[i][j] = [R,G,B,A];
     	        }
+                if(oldMask[i][j] == 0){
+                    R = 0;
+                    G = 0;
+                    B = 0;
+                    A = 0.3;
+                    startColor[i][j] = [R,G,B,A]
+                }
 
         	    //end values:
     		    if(endData[i][j] < alarm && endData[i][j]>=0.1){  //green for on and under alarm
@@ -155,7 +162,7 @@ function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, startData, title,
     }
 
     //repeat every update interval:
-    setTimeout(function(){Waffle(1, rows, cols, cvas, alarm, scaleMax, endData, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix)},3000);
+    setTimeout(function(){Waffle(1, rows, cols, cvas, alarm, scaleMax, endData, channelMask, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix)},3000);
 
 }
 
