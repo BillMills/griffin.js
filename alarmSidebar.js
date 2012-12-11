@@ -5,14 +5,16 @@ side: 'left' or 'right', to format spacing and gutters nicely.
 frame: initialize to 1, counts frames as animation proceeds. 
 wrapperDiv: ID string of the div the sidebar is wrapped in.
 waffleHeight: height in px of the center content (for drawing nice gutter lines).
-data: a 2D array constructed as data[meter bank][meter], which contains the value of the meter at that position.
+data: a 2D array constructed as data[row][column], which contains the value of the meter at that position.
 unit: string indicating the units the measurement is made in.
 rows: number of rows (meter banks) for monitoring waffles (meter bank sets).
 cols: number of columns (meters per bank) for monitoring waffles (meter bank sets).
 alarm: alarm threshold value.
 callMyself: initialize to 0, indicates whether AlarmSidebar was called by something else, or by its internal recursion.
 */
-function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, data, unit, rows, cols, alarm, rowTitles, colTitles, callMyself, flag){
+function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, data, channelMask, unit, rows, cols, alarm, rowTitles, colTitles, callMyself, flag){
+
+    var i, j, n;
 
     //abort if nothing to update:
     if(flag===0) return;
@@ -27,15 +29,22 @@ function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, dat
         else return 0;
     }
     var dataSet = [];
+    n = 0;
     for(i=0; i<rows; i++){
         for(j=0; j<cols; j++) {
-            dataSet[i*cols+j] = [];
-            dataSet[i*cols+j][0] = i;
-            dataSet[i*cols+j][1] = j;
-            dataSet[i*cols+j][2] = data[i][j];
+            if(channelMask[i][j] === 1){
+                dataSet[n] = [];
+                dataSet[n][0] = i;
+                dataSet[n][1] = j;
+                dataSet[n][2] = data[i][j];
+                n++;                
+            }
         }
     }
     dataSet.sort(sortFunction);
+
+    //don't let nAlarms overshoot length of dataset:
+    nAlarms = Math.min(nAlarms, dataSet.length);
 
     //fetch canvas:
     var canvas = document.getElementById(sidebar);
@@ -202,7 +211,7 @@ function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, dat
 
     if(frame < nFrames){
         frame++;
-        setTimeout(function(){AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, data, unit, rows, cols, alarm, rowTitles, colTitles, callMyself)},duration/FPS);
+        setTimeout(function(){AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, data, channelMask, unit, rows, cols, alarm, rowTitles, colTitles, callMyself)},duration/FPS);
     }
 
     return;

@@ -20,17 +20,22 @@ function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, startData, title,
         var endData = [];
         var startColor = [];
         var endColor = [];
+        var channelMask = [];
         for(i=0; i<rows; i++){
         	endData[i] = [];
-    	   startColor[i] = [];
+    	    startColor[i] = [];
         	endColor[i] = [];
+            channelMask[i] = [];
         }
-        //populate new data:
+        //populate new data and construct channel mask:
         for(i=0; i<rows; i++){
     	   for(j=0; j<cols; j++){
     		  endData[i][j] = Math.random();
+              if (endData[i][j] < 0.1) channelMask[i][j] = 0;
+              else channelMask[i][j] = 1;
     	   }
         }
+
 
         //abort flag for sidebar if data hasn't changed or if it's changed but is all still below alarm level:
         var flag = 0;
@@ -62,7 +67,7 @@ function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, startData, title,
         for(i=0; i<rows; i++){
         	for(j=0; j<cols; j++){
     	      	//start values:
-    	   	   if(startData[i][j] < alarm){
+    	        if(startData[i][j] < alarm){
     		    	R = 0;
     		      	G = 255;
     		      	B = 0;
@@ -75,16 +80,22 @@ function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, startData, title,
     			    A = (startData[i][j] - alarm) / (scaleMax - alarm)*0.7 + 0.3;  //enforce minimum 0.3 to make it clearly red
     			    if(A>1) {A = 1;}
             		startColor[i][j] = [R,G,B,A];
-    	       }
+    	        }
 
-        	   //end values:
-    		   if(endData[i][j] < alarm){
-    		       R = 0;
-    			   G = 255;
-    			   B = 0;
-    			   A = 0.3;
-    			   endColor[i][j] = [R,G,B,A];
-    		    } else {
+        	    //end values:
+    		    if(endData[i][j] < alarm && endData[i][j]>=0.1){  //green for on and under alarm
+    		        R = 0;
+    			    G = 255;
+    			    B = 0;
+    			    A = 0.3;
+    			    endColor[i][j] = [R,G,B,A];
+    		    } else if(endData[i][j] < 0.1) {  //grey for off
+                    R = 0;
+                    G = 0;
+                    B = 0;
+                    A = 0.3;
+                    endColor[i][j] = [R,G,B,A];
+                } else {  //red for alarm trip
     			    R = 255;
     			    G = 0;
     			    B = 0;
@@ -134,7 +145,7 @@ function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, startData, title,
         }
 
         DrawWaffle(cvas, startColor, endColor, 1, title, rows, cols, totalWidth, totalHeight, cellSide);
-        AlarmSidebar(title, sidebar, side, 1, wrapperDiv, waffleHeight, endData, unit, rows, cols, alarm, rowTitles, colTitles, callMyself, flag);
+        AlarmSidebar(title, sidebar, side, 1, wrapperDiv, waffleHeight, endData, channelMask, unit, rows, cols, alarm, rowTitles, colTitles, callMyself, flag);
         Tooltip(cvas, wrapperDiv, tooltip, TTcontainer, rows, cols, cellSide, rowTitles, colTitles, prefix, postfix, endData);
         
     } else {
@@ -259,4 +270,9 @@ function DrawWaffleLabels(cvas, title, rows, cols, cellSide){
         context.fillText(j, 0,labelFontSize/2);
         context.restore();
     }
+}
+
+//function to tell if channel i, j is active:
+function isChannelOn(i,j){
+    return 1;
 }
