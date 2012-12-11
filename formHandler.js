@@ -11,14 +11,15 @@ function updateParameter(InputLayer){
     if(document.getElementById('onButton').checked == true) onoff = 'on'
     else onoff = 'off'
 
-    alert(onoff+textVal)
+    alert(onoff+' '+textVal);    
+
+	divFade(document.getElementById(InputLayer), 'out', 0);
 
 }
 
 //dismiss the form without doing anything else:
 function abortUpdate(InputLayer){
 	var inputDiv = document.getElementById(InputLayer);
-	//inputDiv.style.display = 'none';
 	divFade(inputDiv, 'out', 0);
 }
 
