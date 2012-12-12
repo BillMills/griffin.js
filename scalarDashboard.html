@@ -41,12 +41,13 @@
         <h2 id='inputTitle' align='left'>sintitulo</h2>
 
         <form id='setValues'>
-          <input type='radio' id='offButton' name='HVswitch' value='off' style='margin-left:10px; margin-bottom:20px'>Off
-          <input type='radio' id='onButton' name='HVswitch' value='on' style='margin-left:10px; margin-bottom:20px'>On
-          <p id='FieldText'>Filler Text</p>
-          <input type="text" id="demandval" name='textbox' value='default' style='margin-bottom:20px'>
-          <p style='margin:0'></p>
-          <input type="button" value="Submit" style='margin-left:10px' onclick="javascript:updateParameter('InputLayer', 'single')">
+          <input type='radio' id='offButton' name='HVswitch' value='off' style='margin-left:10px; margin-bottom:10px'>Off
+          <input type='radio' id='onButton' name='HVswitch' value='on' style='margin-left:10px; margin-bottom:10px'>On
+
+          <p id='FieldText'>Demand Voltage [mV]</p>
+          <input type="text" id="demandval" name='textbox' value='default' style='margin-bottom:10px'>
+          
+          <br><input type="button" value="Submit" style='margin-left:10px' onclick="javascript:updateParameter('InputLayer', 'single')">
           <input type="button" value="Cancel" onclick="javascript:abortUpdate('InputLayer', 'single')">
         </form>
 
@@ -54,10 +55,9 @@
 
         <form id='changeChannel'>
           <h4 style='margin-left:10px'>Change Channel:</h4>
-          <input type="text" id="newRow" name='newRow' value='Channel' style='margin-bottom:10px; margin-left:10px'>
-          <input type="text" id="newCol" name='newCol' value='Card' style='margin-bottom:10px'>
-          <p style='margin:0'></p>
-          <input type="button" value="Go To Channel" style='margin-left:10px' id='getChannelButton'>       
+          <p style='display:inline; margin-left:10px'>Channel</p><input type="text" id="newRow" name='newRow' style='margin-bottom:10px; margin-left:5px;'>
+          <p style='display:inline; margin-left:10px'><br>Card</p><input type="text" id="newCol" name='newCol' style='margin-bottom:10px; margin-left:5px;'>
+          <br><input type="button" value="Go To Channel" style='margin-left:10px' id='getChannelButton'>       
         </form>
 
       </div>
@@ -88,8 +88,14 @@
 
       //set up wrapper div dimensions; minimum rendering width = 1200px:
       var renderWidth = Math.max(1200, window.innerWidth);
-      $('#waffleplate').width(renderWidth)
-      $('#waffleplate').height(window.innerHeight*0.9)
+      $('#waffleplate').width(renderWidth);
+      $('#waffleplate').height(window.innerHeight*0.9);
+
+      //Waffle onclick event will throw x and y positions up to these globals, so that
+      //updateParameter() can use them to determine which channel to update.  TODO: fix
+      //without globals.
+      window.griffinDialogX;
+      window.griffinDialogY;
 
       //tool tip will throw its last known x and y positions up to global scope, so that
       //when the waffle refreshes, the tool tip can update without a mousemove event.

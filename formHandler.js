@@ -1,20 +1,50 @@
 
-//collect the form input and do something with it:
+//collect the form input and do something with it.  Expect form 'setValues', which
+//begins with a pair of radio buttons for channel on off, then has an arbitrary 
+//no. of text fields for inputting whatever else.
+
 function updateParameter(InputLayer, mode){
-    
-    var oForm = document.getElementById('setValues');
-    var oText = oForm.elements[2];
-    var textVal = oText.value;
+
+	var i;
+	var userInputs = [];
+
+    //loop over all elements in the form except the first two (on/off) and last two (submit / cancel)
+	for(i=2; i<document.getElementById('setValues').elements.length - 2; i++){
+		userInputs[i-2] = getInput('setValues', i);
+	}
+
+
+
+    //insert calls to getInput as needed per experiment:
+    //var fieldValue = getInput('setValues', 2);
+
+    //determine where this cell falls in MIDAS vector:
+    var MIDASindex = getMIDASindex(window.griffinDialogY, window.griffinDialogX);
 
     //some dummy behavior, replace the rest of this function with more exciting things
     var onoff;
     if(document.getElementById('onButton').checked == true) onoff = 'on'
     else onoff = 'off'
 
-    alert(onoff+' '+textVal);    
+    alert(onoff+' '+userInputs[0]);    
 
-	divFade(document.getElementById(InputLayer), 'out', mode, 0);
+	if(mode != 'single'){
+		divFade(document.getElementById(InputLayer), 'out', mode, 0);
+	}
 
+}
+
+//map the active grid cooridnates onto MIDAS's channel numbering:
+function getMIDASindex(row, col){
+	//do something
+	return 0;
+}
+
+//extract information from the field at position <fieldIndex> from a form with id = <formID>
+function getInput(formId, fieldIndex){
+    var oForm = document.getElementById(formId);
+    var oText = oForm.elements[fieldIndex];
+    return oText.value;
 }
 
 //dismiss the form without doing anything else:
@@ -53,7 +83,13 @@ function divFade(targetDiv, direction, mode, frame){
 
 }
 
+//plugs a new cell into the input interface; used for both onclicks on the waffles, and on button submits 
+//in the sidepanel view.
 function channelSelect(wrapperDiv, InputLayer, chx, chy, rowTitles, colTitles, title, unit, endData, mode, rows, cols, event){
+
+    //Throw up to global so the setter remembers where we're pointing.  TODO: refactor without globals?
+    window.griffinDialogX = chx;
+    window.griffinDialogY = chy;
 	
     var superDiv = document.getElementById(wrapperDiv);
     var inputDiv = document.getElementById(InputLayer);
@@ -61,8 +97,6 @@ function channelSelect(wrapperDiv, InputLayer, chx, chy, rowTitles, colTitles, t
     //set text in dialog box:
     var inputTitle = 'Parameters for '+rowTitles[0]+' '+chy+', '+colTitles[0]+' '+chx;
     document.getElementById('inputTitle').innerHTML = inputTitle;
-    var fieldTextContent = 'Demand '+title+' ['+unit+'] ';
-    document.getElementById('FieldText').innerHTML = fieldTextContent;
 
     //set defaults
     if (endData[chy][chx] > 0.1) document.getElementById('onButton').checked = true;
@@ -86,14 +120,11 @@ function channelSelect(wrapperDiv, InputLayer, chx, chy, rowTitles, colTitles, t
     }
 }
 
+//point interface at new channel indicated by user in the 'changeChannel' form.
 function gotoNewChannel(wrapperDiv, InputLayer, rowTitles, colTitles, title, unit, endData, mode, rows, cols){
-    var chanForm = document.getElementById('changeChannel');
-    var yText = chanForm.elements[0];
-    var xText = chanForm.elements[1];
-    var xVal = xText.value;
-    var yVal = yText.value;
 
-    xText.value = 'Card';
-    yText.value = 'Channel';
+	xVal = getInput('changeChannel', 1);
+	yVal = getInput('changeChannel', 0);
+
     channelSelect(wrapperDiv, InputLayer, xVal, yVal, rowTitles, colTitles, title, unit, endData, mode, rows, cols);
 }
