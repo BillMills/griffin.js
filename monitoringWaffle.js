@@ -1,11 +1,15 @@
-function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, startData, oldMask, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix){
+function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, startData, oldMask, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix){
 
     if(!document.webkitHidden && !document.mozHidden){
     	var i, j;
 	    var R, G, B, A;
 
         //determine dimesions of canvas:
-        var totalWidth = Math.round(0.24*$('#'+wrapperDiv).width());
+        if(mode == 'double'){
+            var totalWidth = Math.round(0.24*$('#'+wrapperDiv).width());
+        } else if(mode == 'single') {
+            var totalWidth = Math.round(0.5*$('#'+wrapperDiv).width());
+        }
         var totalHeight = totalWidth*rows/cols + 100;
 
         //waffle dimensions; leave gutters for labels & title
@@ -125,32 +129,10 @@ function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, startData, oldMas
             var chx = Math.floor( (event.pageX - superDiv.offsetLeft - canvas.offsetLeft) / cellSide);
             var chy = Math.floor( (event.pageY - superDiv.offsetTop - canvas.offsetTop) / cellSide);
 
-            //set text in dialog box:
-            var inputTitle = 'Parameters for '+rowTitles[0]+' '+chy+', '+colTitles[0]+' '+chx;
-            document.getElementById('inputTitle').innerHTML = inputTitle;
-            var fieldTextContent = 'Demand '+title+' ['+unit+'] ';
-            document.getElementById('FieldText').innerHTML = fieldTextContent;
-
-            //set defaults
-            if (endData[chy][chx] > 0.5) document.getElementById('onButton').checked = true;
-            else document.getElementById('offButton').checked = true;
-            document.getElementById('demandval').value = Math.round(endData[chy][chx]*10000)/10000;
-
-            //position dialog box in the middle, above the waffles; recall rendering width is at least 1200px
-            //$(inputDiv).css('left', Math.max(1200, window.innerWidth)/2 - context.measureText(fieldTextContent).width / 2);
-            //$(inputDiv).css('top', window.innerHeight*0.175);
-            //position opposite the tool tip:
-            $(inputDiv).css('left', event.pageX);
-            $(inputDiv).css('top', event.pageY);
-
-            //only actually display if the click was on the waffle and not the rest of the canvas:
-            if(chx < cols && chy < rows){
-                //inputDiv.style.display = 'block';
-                divFade(inputDiv, 'in', 0);
-            }
+            channelSelect(wrapperDiv, InputLayer, chx, chy, rowTitles, colTitles, title, unit, endData, mode, rows, cols, event);
 
         }
-
+        
         DrawWaffle(cvas, startColor, endColor, 1, title, rows, cols, totalWidth, totalHeight, cellSide);
         AlarmSidebar(title, sidebar, side, 1, wrapperDiv, waffleHeight, endData, channelMask, unit, rows, cols, alarm, rowTitles, colTitles, callMyself, flag);
         Tooltip(cvas, wrapperDiv, tooltip, TTcontainer, rows, cols, cellSide, rowTitles, colTitles, prefix, postfix, endData);
@@ -162,7 +144,7 @@ function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, startData, oldMas
     }
 
     //repeat every update interval:
-    setTimeout(function(){Waffle(1, rows, cols, cvas, alarm, scaleMax, endData, channelMask, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix)},3000);
+    setTimeout(function(){Waffle(1, rows, cols, cvas, mode, alarm, scaleMax, endData, channelMask, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix)},3000);
 
 }
 

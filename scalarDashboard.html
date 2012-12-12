@@ -12,7 +12,7 @@
     <!--  same idea for the css: -->
     <link rel="stylesheet" type="text/css" href="TestCSS!" />
     <link rel="stylesheet" type="text/css" href="demo.css" />
-    <link rel="stylesheet" type="text/css" href="monitoringWaffle.css" />
+    <link rel="stylesheet" type="text/css" href="scalarDashboard.css" />
   </head> 
 
 
@@ -36,8 +36,32 @@
     <div id="waffleplate">
       <canvas id="leftSidebar"></canvas>
       <canvas id="TestWaffle"></canvas>
-      <canvas id="TestWaffle2"></canvas>
-      <canvas id="rightSidebar"></canvas>
+
+      <div align='left' id='InputLayer'>
+        <h2 id='inputTitle' align='left'>sintitulo</h2>
+
+        <form id='setValues'>
+          <input type='radio' id='offButton' name='HVswitch' value='off' style='margin-left:10px; margin-bottom:20px'>Off
+          <input type='radio' id='onButton' name='HVswitch' value='on' style='margin-left:10px; margin-bottom:20px'>On
+          <p id='FieldText'>Filler Text</p>
+          <input type="text" id="demandval" name='textbox' value='default' style='margin-bottom:20px'>
+          <p style='margin:0'></p>
+          <input type="button" value="Submit" style='margin-left:10px' onclick="javascript:updateParameter('InputLayer', 'single')">
+          <input type="button" value="Cancel" onclick="javascript:abortUpdate('InputLayer', 'single')">
+        </form>
+
+        <canvas align='center' id='inputSpacer' height=5px width=200px></canvas>
+
+        <form id='changeChannel'>
+          <h4 style='margin-left:10px'>Change Channel:</h4>
+          <input type="text" id="newRow" name='newRow' value='Channel' style='margin-bottom:10px; margin-left:10px'>
+          <input type="text" id="newCol" name='newCol' value='Card' style='margin-bottom:10px'>
+          <p style='margin:0'></p>
+          <input type="button" value="Go To Channel" style='margin-left:10px' onclick="javascript:gotoNewChannel()">       
+        </form>
+
+      </div>
+
     </div>
 
     <!--Tool tip layer-->
@@ -47,24 +71,10 @@
       </div>
     </div>
 
-    <!--Input Layer-->
-    <div id='InputLayer'>
-      <p id='inputTitle'>sintitulo</p>
-      <form id='setValues'>
-        <input type='radio' id='offButton' name='HVswitch' value='off' style='margin-left:10px; margin-bottom:10px'>Off
-        <input type='radio' id='onButton' name='HVswitch' value='on' style='margin-left:10px; margin-bottom:10px'>On
-        <p id='FieldText'>Filler Text</p>
-        <input type="text" id="demandval" name='textbox' value='default'>
-        <p style='margin:0'></p>
-        <input type="button" value="Submit" style='margin-left:10px' onclick="javascript:updateParameter('InputLayer', 'double')">
-        <input type="button" value="Cancel" onclick="javascript:abortUpdate('InputLayer', 'double')">
-      </form>
-    </div>
-
     <script type="text/JavaScript">
 
       //Insert branding & navigation
-      Banner('banner', 'youAreHere', 'navBar', 'Voltage & Temperature Dashboard');
+      Banner('banner', 'youAreHere', 'navBar', 'Scalar Dashboard');
 
       //value-free dummy variable to initialize Waffle with:
       var startData;
@@ -88,14 +98,19 @@
       window.griffinToolTipY = 0;
 
       //cell labels; first entry decribes cell type (channel, card, crate, rack etc)
-      var rowTitles = ['Card', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'];
-      var colTitles = ['Ch.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'];
+      var rowTitles = ['Ch.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'];
+      var colTitles = ['Card', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'];
+
+      //style the input layer a bit:
+      var ILcanvas = document.getElementById('inputSpacer');
+      var ILcontext = ILcanvas.getContext('2d');
+      ILcontext.beginPath();
+      ILcontext.moveTo(0,0);
+      ILcontext.lineTo(200,0);
+      ILcontext.stroke();
 
       //Voltage Waffle:
-      Waffle(0,20,20, 'TestWaffle', 'double', .999, 1, startData, initialMask, "Voltage", "leftSidebar", "left", "TT", "TTcontainer", "waffleplate", 'mV', rowTitles, colTitles, "InputLayer", [''], ['mV']);
-
-      //Temperature Waffle:
-      Waffle(0,20,20, 'TestWaffle2', 'double', 0.8, 1, startData, initialMask, "Temperature", "rightSidebar", "right", "TT", "TTcontainer", "waffleplate", 'K', rowTitles, colTitles, "InputLayer", [''], ['K']);
+      Waffle(0,12,20, 'TestWaffle', 'single', .999, 1, startData, initialMask, "Voltage", "leftSidebar", "left", "TT", "TTcontainer", "waffleplate", 'mV', rowTitles, colTitles, "InputLayer", [''], ['mV']);
 
     </script> 
   
