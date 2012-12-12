@@ -132,6 +132,14 @@ function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, startData, 
             channelSelect(wrapperDiv, InputLayer, chx, chy, rowTitles, colTitles, title, unit, endData, mode, rows, cols, event);
 
         }
+        //single waffle mode must also allow a channel to be targeted via the input interface; bind the 
+        //fetch button behavior here:
+        if(mode == 'single'){
+            var getChannel = document.getElementById('getChannelButton');
+            getChannel.onclick = function(event){
+                gotoNewChannel(wrapperDiv, InputLayer, rowTitles, colTitles, title, unit, endData, mode, rows, cols)
+            }
+        }
         
         DrawWaffle(cvas, startColor, endColor, 1, title, rows, cols, totalWidth, totalHeight, cellSide);
         AlarmSidebar(title, sidebar, side, 1, wrapperDiv, waffleHeight, endData, channelMask, unit, rows, cols, alarm, rowTitles, colTitles, callMyself, flag);

@@ -57,7 +57,7 @@
           <input type="text" id="newRow" name='newRow' value='Channel' style='margin-bottom:10px; margin-left:10px'>
           <input type="text" id="newCol" name='newCol' value='Card' style='margin-bottom:10px'>
           <p style='margin:0'></p>
-          <input type="button" value="Go To Channel" style='margin-left:10px' onclick="javascript:gotoNewChannel()">       
+          <input type="button" value="Go To Channel" style='margin-left:10px' id='getChannelButton'>       
         </form>
 
       </div>
@@ -76,7 +76,7 @@
       //Insert branding & navigation
       Banner('banner', 'youAreHere', 'navBar', 'Scalar Dashboard');
 
-      //value-free dummy variable to initialize Waffle with:
+      //value-free dummy variable to initialize Waffle with:  TODO: eliminate
       var startData;
       var initialMask = [];
       for(var i = 0; i<20; i++){
@@ -94,6 +94,7 @@
       //tool tip will throw its last known x and y positions up to global scope, so that
       //when the waffle refreshes, the tool tip can update without a mousemove event.
       //TODO: fix this without globals
+      //TODO: merge similar pattern from Horus
       window.griffinToolTipX = 0;
       window.griffinToolTipY = 0;
 
@@ -101,7 +102,7 @@
       var rowTitles = ['Ch.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'];
       var colTitles = ['Card', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'];
 
-      //style the input layer a bit:
+      //style the input layer a bit:  TODO: factor out?
       var ILcanvas = document.getElementById('inputSpacer');
       var ILcontext = ILcanvas.getContext('2d');
       ILcontext.beginPath();
@@ -110,7 +111,7 @@
       ILcontext.stroke();
 
       //Voltage Waffle:
-      Waffle(0,12,20, 'TestWaffle', 'single', .999, 1, startData, initialMask, "Voltage", "leftSidebar", "left", "TT", "TTcontainer", "waffleplate", 'mV', rowTitles, colTitles, "InputLayer", [''], ['mV']);
+      Waffle(0,12,20, 'TestWaffle', 'single', .999, 1, startData, initialMask, "Crate 01", "leftSidebar", "left", "TT", "TTcontainer", "waffleplate", 'mV', rowTitles, colTitles, "InputLayer", [''], ['mV']);
 
     </script> 
   
