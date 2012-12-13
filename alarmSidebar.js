@@ -132,33 +132,13 @@ function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, dat
 
         //if no alarms, display an all-clear icon:
         if(dataSet[0][2] < alarm){
-            
-            context.strokeStyle = "rgba(0,0,0,"+alphaB+")";
-            context.lineWidth = 5;
-            context.beginPath();
-            context.arc(width/2 - inset+1,headTitle+70+1, 50, 0, 2*Math.PI);
-            context.moveTo(width/2 - inset-17+1,headTitle+72+1);
-            context.lineTo(width/2 - inset-17+10+1,headTitle+72+10+1);
-            context.lineTo(width/2 - inset-17+10+30+1,headTitle+72+10-30+1);
-            context.stroke();
-
-            context.strokeStyle = "rgba(0,255,0,"+alphaB+")";
-            context.lineWidth = 5;
-            context.beginPath();
-            context.arc(width/2 - inset,headTitle+70, 50, 0, 2*Math.PI);
-            context.moveTo(width/2 - inset-17,headTitle+72);
-            context.lineTo(width/2 - inset-17+10,headTitle+72+10);
-            context.lineTo(width/2 - inset-17+10+30,headTitle+72+10-30);
-            context.stroke();
-            context.fillText('All Okay', width/2 - context.measureText('All Okay').width/2 - inset, headTitle+150)
-            
+            drawAllClear(side, inset, context, alphaB, headTitle, width)
         }
 
         //Make sidebar title:
-        
         if(!callMyself){
             context.font="20px Times New Roman";
-            context.fillStyle = "rgba(0,0,0,opacity)";
+            context.fillStyle = "rgba(0,0,0,"+opacity+")";
             context.fillText(title+" Alarms", leftTitle, headTitle);
         }
 
@@ -179,30 +159,13 @@ function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, dat
 
         //if no alarms, display an all-clear icon:
         if(dataSet[0][2] < alarm){
-            context.strokeStyle = "rgba(0,0,0,"+opacity*frame/nFrames+")";
-            context.lineWidth = 5;
-            context.beginPath();
-            context.arc(width/2 +1,headTitle+70+1, 50, 0, 2*Math.PI);
-            context.moveTo(width/2 -17+1,headTitle+72+1);
-            context.lineTo(width/2 -17+10+1,headTitle+72+10+1);
-            context.lineTo(width/2 -17+10+30+1,headTitle+72+10-30+1);
-            context.stroke();
-
-            context.strokeStyle = "rgba(0,255,0,"+opacity*frame/nFrames+")";
-            context.lineWidth = 5;
-            context.beginPath();
-            context.arc(width/2 ,headTitle+70, 50, 0, 2*Math.PI);
-            context.moveTo(width/2 -17,headTitle+72);
-            context.lineTo(width/2 -17+10,headTitle+72+10);
-            context.lineTo(width/2 -17+10+30,headTitle+72+10-30);
-            context.stroke();
-            context.fillText('All Okay', width/2 - context.measureText('All Okay').width/2, headTitle+150)
+            drawAllClear(side, inset, context, alphaB, headTitle, width)
         }
 
         //Make sidebar title:
         if(!callMyself){
             context.font="20px Times New Roman";
-            context.fillStyle = "rgba(0,0,0,opacity)";
+            context.fillStyle = "rgba(0,0,0,"+opacity+")";
             context.fillText(title+" Alarms", rightTitle, headTitle);
         }
 
@@ -215,6 +178,67 @@ function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, dat
     }
 
     return;
+}
+
+function drawAllClear(side, inset, context, alphaB, headTitle, width){
+
+            var align;
+            if(side=='left') align = inset;
+            else align = 0;
+
+            context.strokeStyle = "rgba(0,0,0,"+alphaB+")";
+            context.lineWidth = 5;
+            context.beginPath();
+            context.arc(width/2 - align+1,headTitle+70+1, 50, 0, 2*Math.PI);
+            context.moveTo(width/2 - align-17+1,headTitle+72+1);
+            context.lineTo(width/2 - align-17+10+1,headTitle+72+10+1);
+            context.lineTo(width/2 - align-17+10+30+1,headTitle+72+10-30+1);
+            context.stroke();
+
+            context.strokeStyle = "rgba(0,255,0,"+alphaB+")";
+            context.lineWidth = 5;
+            context.beginPath();
+            context.arc(width/2 - align,headTitle+70, 50, 0, 2*Math.PI);
+            context.moveTo(width/2 - align-17,headTitle+72);
+            context.lineTo(width/2 - align-17+10,headTitle+72+10);
+            context.lineTo(width/2 - align-17+10+30,headTitle+72+10-30);
+            context.stroke();
+            context.fillText('All Okay', width/2 - context.measureText('All Okay').width/2 - align, headTitle+150)
+}
+
+function drawAlarm(side, inset, context, alphaB, headTitle, width){
+
+            var align;
+            if(side=='left') align = inset;
+            else align = 0;
+
+            var x0 = 100;
+            var y0 = 200;
+            var L = 100;
+
+            context.font="60px Times New Roman";
+
+            context.strokeStyle = "rgba(0,0,0,"+alphaB+")";
+            context.fillStyle = "rgba(0,0,0,"+alphaB+")";
+            context.lineWidth = 5;
+            context.beginPath();
+            context.moveTo(x0 - L/2+1, y0+L/2*Math.tan(Math.PI/6)+1);
+            context.lineTo(x0+1, y0 - L/2/Math.cos(Math.PI/6)+1);
+            context.lineTo(x0 + L/2+1, y0 + L/2*Math.tan(Math.PI/6)+1);
+            context.lineTo(x0 - L/2+1, y0+L/2*Math.tan(Math.PI/6)+1);
+            context.fillText('!', x0-10+1, y0+1+10);
+            context.stroke();
+
+            context.strokeStyle = "rgba(255,0,0,"+alphaB+")";
+            context.fillStyle = "rgba(255,0,0,"+alphaB+")";
+            context.lineWidth = 5;
+            context.beginPath();
+            context.moveTo(x0 - L/2, y0+L/2*Math.tan(Math.PI/6));
+            context.lineTo(x0, y0 - L/2/Math.cos(Math.PI/6));
+            context.lineTo(x0 + L/2, y0 + L/2*Math.tan(Math.PI/6));
+            context.lineTo(x0 - L/2, y0+L/2*Math.tan(Math.PI/6));
+            context.fillText('!', x0-10, y0+10);
+            context.stroke();
 }
 
 function decorateInputSidebar(sidebar, side, wrapperDiv, waffleHeight){
