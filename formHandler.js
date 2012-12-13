@@ -8,15 +8,10 @@ function updateParameter(InputLayer, mode){
 	var i;
 	var userInputs = [];
 
-    //loop over all elements in the form except the first two (on/off) and last two (submit / cancel)
+    //loop over all elements in the form except the first two (off/on) and last two (submit / cancel)
 	for(i=2; i<document.getElementById('setValues').elements.length - 2; i++){
 		userInputs[i-2] = getInput('setValues', i);
 	}
-
-
-
-    //insert calls to getInput as needed per experiment:
-    //var fieldValue = getInput('setValues', 2);
 
     //determine where this cell falls in MIDAS vector:
     var MIDASindex = getMIDASindex(window.griffinDialogY, window.griffinDialogX);
@@ -110,12 +105,10 @@ function channelSelect(wrapperDiv, InputLayer, chx, chy, rowTitles, colTitles, t
         $(inputDiv).css('top', event.pageY);
     } else if(mode == 'single'){
         $(inputDiv).css('right', '3%');
-        //$(inputDiv).css('top', 10%);
     }
 
     //only actually display if the click was on the waffle and not the rest of the canvas:
     if(chx < cols && chy < rows){
-        //inputDiv.style.display = 'block';
         divFade(inputDiv, 'in', mode, 0);
     }
 }

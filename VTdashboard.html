@@ -66,15 +66,8 @@
       //Insert branding & navigation
       Banner('banner', 'youAreHere', 'navBar', 'Voltage & Temperature Dashboard');
 
-      //value-free dummy variable to initialize Waffle with:
-      var startData;
-      var initialMask = [];
-      for(var i = 0; i<20; i++){
-        initialMask[i] = []
-        for(var j = 0; j<20; j++){
-          initialMask[i][j] = 1;
-        }
-      }
+      //value-free dummy variables to initialize Waffle with:
+      var startData, initialMask;
 
       //set up wrapper div dimensions; minimum rendering width = 1200px:
       var renderWidth = Math.max(1200, window.innerWidth);
@@ -98,10 +91,10 @@
       var colTitles = ['Ch.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'];
 
       //Voltage Waffle:
-      Waffle(0,20,20, 'TestWaffle', 'double', .999, 1, startData, initialMask, "Voltage", "leftSidebar", "left", "TT", "TTcontainer", "waffleplate", 'mV', rowTitles, colTitles, "InputLayer", [''], ['mV']);
+      Waffle(0,20,20, 'TestWaffle', 'double', .999, 1, startData, initialMask, "Voltage", ['leftSidebar'], ['left'], "TT", "TTcontainer", "waffleplate", 'mV', rowTitles, colTitles, "InputLayer", [''], ['mV']);
 
       //Temperature Waffle:
-      Waffle(0,20,20, 'TestWaffle2', 'double', 0.8, 1, startData, initialMask, "Temperature", "rightSidebar", "right", "TT", "TTcontainer", "waffleplate", 'K', rowTitles, colTitles, "InputLayer", [''], ['K']);
+      Waffle(0,20,20, 'TestWaffle2', 'double', 0.8, 1, startData, initialMask, "Temperature", ['rightSidebar'], ['right'], "TT", "TTcontainer", "waffleplate", 'K', rowTitles, colTitles, "InputLayer", [''], ['K']);
 
     </script> 
   

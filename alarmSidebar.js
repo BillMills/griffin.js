@@ -108,10 +108,10 @@ function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, dat
         context.beginPath();
         if(side === "left"){
             context.moveTo(width-inset,10);
-            context.lineTo(width-inset,waffleHeight*1.5);
+            context.lineTo(width-inset,waffleHeight*1.3);
         } else if(side === "right"){
             context.moveTo(inset,10);
-            context.lineTo(inset,waffleHeight*1.5);
+            context.lineTo(inset,waffleHeight*1.3);
         }
         
         context.stroke();
@@ -215,5 +215,42 @@ function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, dat
     }
 
     return;
+}
+
+function decorateInputSidebar(sidebar, side, wrapperDiv, waffleHeight){
+
+    //fetch canvas:
+    var canvas = document.getElementById(sidebar);
+    var context = canvas.getContext('2d');
+
+    //get container div dimensions:
+    var parentWidth = $('#'+wrapperDiv).width();
+    var parentHeight = $('#'+wrapperDiv).height();
+
+    //define sidebar dimensions:
+    var width = parentWidth*0.2;
+    var height = parentHeight;
+
+    //set sidebar dimensions:
+    canvas.width = width;
+    canvas.height = height;
+
+    //separator line inset
+    var inset = 0.1*width;
+
+    //draw separator line
+    context.strokeStyle = "rgba(0,0,0,0.2)"
+    context.beginPath();
+    if(side === "left"){
+        context.moveTo(width-inset,10);
+        context.lineTo(width-inset,waffleHeight*1.3);
+    } else if(side === "right"){
+        context.moveTo(inset,10);
+        context.lineTo(inset,waffleHeight*1.3);
+    }
+        
+    context.stroke();
+    
+
 }
 

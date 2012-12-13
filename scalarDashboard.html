@@ -38,26 +38,36 @@
       <canvas id="TestWaffle"></canvas>
 
       <div align='left' id='InputLayer'>
-        <h2 id='inputTitle' align='left'>sintitulo</h2>
+        <canvas id='rightSidebar'></canvas>
+        <h2 id='inputTitle' align='left' style='margin-left:50px'>sintitulo</h2>
 
         <form id='setValues'>
-          <input type='radio' id='offButton' name='HVswitch' value='off' style='margin-left:10px; margin-bottom:10px'>Off
+          <input type='radio' id='offButton' name='HVswitch' value='off' style='margin-left:60px; margin-bottom:10px'>Off
           <input type='radio' id='onButton' name='HVswitch' value='on' style='margin-left:10px; margin-bottom:10px'>On
 
-          <p id='FieldText'>Demand Voltage [mV]</p>
-          <input type="text" id="demandval" name='textbox' value='default' style='margin-bottom:10px'>
-          
-          <br><input type="button" value="Submit" style='margin-left:10px' onclick="javascript:updateParameter('InputLayer', 'single')">
+          <p id='FieldText' style='margin-left:60px'>Demand Voltage [mV]</p>
+          <input type="text" id="demandval" name='textbox' value='default' style='margin-bottom:10px; margin-left:60px'>
+
+          <br><input type="button" value="Submit" style='margin-left:60px' onclick="javascript:updateParameter('InputLayer', 'single')">
           <input type="button" value="Cancel" onclick="javascript:abortUpdate('InputLayer', 'single')">
         </form>
 
-        <canvas align='center' id='inputSpacer' height=5px width=200px></canvas>
+        <canvas id='inputSpacer' height=5px width=200px style='margin-left:60px'></canvas>
+        <script type="text/JavaScript">
+          //style the input layer a bit:  TODO: factor out?
+          var ILcanvas = document.getElementById('inputSpacer');
+          var ILcontext = ILcanvas.getContext('2d');
+          ILcontext.beginPath();
+          ILcontext.moveTo(0,0);
+          ILcontext.lineTo(200,0);
+          ILcontext.stroke();
+        </script>
 
         <form id='changeChannel'>
-          <h4 style='margin-left:10px'>Change Channel:</h4>
-          <p style='display:inline; margin-left:10px'>Channel</p><input type="text" id="newRow" name='newRow' style='margin-bottom:10px; margin-left:5px;'>
-          <p style='display:inline; margin-left:10px'><br>Card</p><input type="text" id="newCol" name='newCol' style='margin-bottom:10px; margin-left:5px;'>
-          <br><input type="button" value="Go To Channel" style='margin-left:10px' id='getChannelButton'>       
+          <h4 style='margin-left:60px'>Change Channel:</h4>
+          <p style='display:inline; margin-left:60px'>Channel</p><input type="text" id="newRow" name='newRow' style='margin-bottom:10px; margin-left:5px;'>
+          <p style='display:inline; margin-left:60px'><br>Card</p><input type="text" id="newCol" name='newCol' style='margin-bottom:10px; margin-left:5px;'>
+          <br><input type="button" value="Go To Channel" style='margin-left:60px' id='getChannelButton'>       
         </form>
 
       </div>
@@ -76,15 +86,8 @@
       //Insert branding & navigation
       Banner('banner', 'youAreHere', 'navBar', 'Scalar Dashboard');
 
-      //value-free dummy variable to initialize Waffle with:  TODO: eliminate
-      var startData;
-      var initialMask = [];
-      for(var i = 0; i<20; i++){
-        initialMask[i] = []
-        for(var j = 0; j<20; j++){
-          initialMask[i][j] = 1;
-        }
-      }
+      //value-free dummy variables to initialize Waffle with:  TODO: eliminate
+      var startData, initialMask;
 
       //set up wrapper div dimensions; minimum rendering width = 1200px:
       var renderWidth = Math.max(1200, window.innerWidth);
@@ -100,7 +103,6 @@
       //tool tip will throw its last known x and y positions up to global scope, so that
       //when the waffle refreshes, the tool tip can update without a mousemove event.
       //TODO: fix this without globals
-      //TODO: merge similar pattern from Horus
       window.griffinToolTipX = 0;
       window.griffinToolTipY = 0;
 
@@ -108,16 +110,8 @@
       var rowTitles = ['Ch.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'];
       var colTitles = ['Card', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'];
 
-      //style the input layer a bit:  TODO: factor out?
-      var ILcanvas = document.getElementById('inputSpacer');
-      var ILcontext = ILcanvas.getContext('2d');
-      ILcontext.beginPath();
-      ILcontext.moveTo(0,0);
-      ILcontext.lineTo(200,0);
-      ILcontext.stroke();
-
       //Voltage Waffle:
-      Waffle(0,12,20, 'TestWaffle', 'single', .999, 1, startData, initialMask, "Crate 01", "leftSidebar", "left", "TT", "TTcontainer", "waffleplate", 'mV', rowTitles, colTitles, "InputLayer", [''], ['mV']);
+      Waffle(0,12,20, 'TestWaffle', 'single', .999, 1, startData, initialMask, "Crate 01", ['leftSidebar', 'rightSidebar'], ['left', 'right'], "TT", "TTcontainer", "waffleplate", 'mV', rowTitles, colTitles, "InputLayer", [''], ['mV']);
 
     </script> 
   

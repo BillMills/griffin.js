@@ -65,6 +65,16 @@ function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, startData, 
               }
             }
         }
+        //same exercise for oldMask:
+        if( Object.prototype.toString.call( oldMask ) !== '[object Array]' ) {
+            oldMask = [];
+            for(i=0; i<rows; i++){
+              oldMask[i] = []
+              for(j=0; j<cols; j++){
+                oldMask[i][j] = 1;
+              }
+            }
+        }
 
         //determine per cell color info for start and finish.
         //Color info is packed as four numbers: red, green, blue, alpha
@@ -124,6 +134,7 @@ function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, startData, 
 
             var superDiv = document.getElementById(wrapperDiv);
             var inputDiv = document.getElementById(InputLayer);
+
             //form coordinate system chx, chy with origin at the upper left corner of the div, and 
             //bin as the waffle binning: 
             var chx = Math.floor( (event.pageX - superDiv.offsetLeft - canvas.offsetLeft) / cellSide);
@@ -139,10 +150,16 @@ function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, startData, 
             getChannel.onclick = function(event){
                 gotoNewChannel(wrapperDiv, InputLayer, rowTitles, colTitles, title, unit, endData, mode, rows, cols)
             }
+
+            //also, draw the input sidebar for 0,0 on first call:
+            if(!callMyself){
+                channelSelect(wrapperDiv, InputLayer, 0, 0, rowTitles, colTitles, title, unit, endData, mode, rows, cols);
+            }
         }
         
         DrawWaffle(cvas, startColor, endColor, 1, title, rows, cols, totalWidth, totalHeight, cellSide);
-        AlarmSidebar(title, sidebar, side, 1, wrapperDiv, waffleHeight, endData, channelMask, unit, rows, cols, alarm, rowTitles, colTitles, callMyself, flag);
+        AlarmSidebar(title, sidebar[0], side[0], 1, wrapperDiv, waffleHeight, endData, channelMask, unit, rows, cols, alarm, rowTitles, colTitles, callMyself, flag);
+        if(mode == 'single') decorateInputSidebar(sidebar[1], side[1], wrapperDiv, waffleHeight);
         Tooltip(cvas, wrapperDiv, tooltip, TTcontainer, rows, cols, cellSide, rowTitles, colTitles, prefix, postfix, endData);
         
     } else {
