@@ -3,6 +3,7 @@ function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, startData, 
     if(!document.webkitHidden && !document.mozHidden){
     	var i, j;
 	    var R, G, B, A;
+        var ODBindex;
 
         //determine dimesions of canvas:
         if(mode == 'double'){
@@ -20,23 +21,44 @@ function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, startData, 
         var cellSide = waffleWidth / cols;
 
         //set up arrays:
+        //ODB info:
+        var demandVoltage = [];
+        var reportVoltage = [];
+        var reportCurrent = [];
+        var channelMask = [];
+        //computed values:
         var endData = [];
         var startColor = [];
         var endColor = [];
 
-        var channelMask = [];
         for(i=0; i<rows; i++){
+            demandVoltage[i] = [];
+            reportVoltage[i] = [];
+            reportCurrent[i] = [];
+            channelMask[i] = [];
         	endData[i] = [];
     	    startColor[i] = [];
         	endColor[i] = [];
-            channelMask[i] = [];
         }
-        //populate new data and construct channel mask:
+        //populate new data:
         for(i=0; i<rows; i++){
-    	   for(j=0; j<cols; j++){
-    		  endData[i][j] = Math.random();
-              if (endData[i][j] < 0.1) channelMask[i][j] = 0;
-              else channelMask[i][j] = 1;
+    	    for(j=0; j<cols; j++){
+                /*commented out for offline demo
+                ODBindex = getMIDASindex(rows, cols);
+                demandVoltage[i][j] = ODBGet(ODBkeys[0]+'['+ODBindex+']');
+                reportVoltage[i][j] = ODBGet(ODBkeys[1]+'['+ODBindex+']');
+                reportCurrent[i][j] = ODBGet(ODBkeys[2]+'['+ODBindex+']');
+                channelMask[i][j] = ODBGet(ODBkeys[3]+'['+ODBindex+']');
+                */
+                //fake data for offline demo
+                demandVoltage[i][j] = Math.random();
+                reportVoltage[i][j] = Math.random();
+                reportCurrent[i][j] = Math.random();
+                channelMask[i][j] = Math.random();
+                if (channelMask[i][j] < 0.1) channelMask[i][j] = 0;
+                else channelMask[i][j] = 1;
+
+                endData[i][j] = Math.abs(demandVoltage[i][j] - reportVoltage[i][j]);
     	   }
         }
 
@@ -284,6 +306,12 @@ function DrawWaffleLabels(cvas, title, rows, cols, cellSide){
         context.fillText(j, 0,labelFontSize/2);
         context.restore();
     }
+}
+
+//map the active grid cooridnates onto MIDAS's channel numbering:
+function getMIDASindex(row, col){
+    //do something
+    return 0;
 }
 
 //function to tell if channel i, j is active:

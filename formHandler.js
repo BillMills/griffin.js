@@ -29,12 +29,6 @@ function updateParameter(InputLayer, mode){
 
 }
 
-//map the active grid cooridnates onto MIDAS's channel numbering:
-function getMIDASindex(row, col){
-	//do something
-	return 0;
-}
-
 //extract information from the field at position <fieldIndex> from a form with id = <formID>
 function getInput(formId, fieldIndex){
     var oForm = document.getElementById(formId);
