@@ -1,7 +1,7 @@
-function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, startData, oldMask, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs){
+function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, prevAlarmStatus, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs){
 
     if(!document.webkitHidden && !document.mozHidden){
-    	var i, j;
+    	var i, j, n;
 	    var R, G, B, A;
         var ODBindex;
 
@@ -25,21 +25,24 @@ function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, startData, 
         var demandVoltage = [];
         var reportVoltage = [];
         var reportCurrent = [];
+        var reportTemperature = [];
         var channelMask = [];
         //computed values:
         var endData = [];
         var startColor = [];
         var endColor = [];
-
+        //second dimension:
         for(i=0; i<rows; i++){
             demandVoltage[i] = [];
             reportVoltage[i] = [];
             reportCurrent[i] = [];
+            reportTemperature[i] = [];
             channelMask[i] = [];
         	endData[i] = [];
     	    startColor[i] = [];
         	endColor[i] = [];
         }
+
         //populate new data:
         for(i=0; i<rows; i++){
     	    for(j=0; j<cols; j++){
@@ -48,12 +51,14 @@ function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, startData, 
                 demandVoltage[i][j] = ODBGet(ODBkeys[0]+'['+ODBindex+']');
                 reportVoltage[i][j] = ODBGet(ODBkeys[1]+'['+ODBindex+']');
                 reportCurrent[i][j] = ODBGet(ODBkeys[2]+'['+ODBindex+']');
+                reportTemperature[i][j] = ODBGet(ODBkeys[3]+'['+ODBindex+']');
                 channelMask[i][j] = ODBGet(ODBkeys[3]+'['+ODBindex+']');
                 */
                 //fake data for offline demo
                 demandVoltage[i][j] = Math.random();
                 reportVoltage[i][j] = Math.random();
                 reportCurrent[i][j] = Math.random();
+                reportTemperature[i][j] = Math.random();
                 channelMask[i][j] = Math.random();
                 if (channelMask[i][j] < 0.1) channelMask[i][j] = 0;
                 else channelMask[i][j] = 1;
@@ -62,39 +67,43 @@ function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, startData, 
     	   }
         }
 
-
-        //abort flag for sidebar if data hasn't changed or if it's changed but is all still below alarm level:
-        var flag = 0;
-        if(startData){
-            var flag = 0;
+        //check if prevAlarmStatus is an array; if not, make a dummy array to start from:
+        if( Object.prototype.toString.call( prevAlarmStatus ) !== '[object Array]' ) {
+            prevAlarmStatus = [];
             for(i=0; i<rows; i++){
-                for(j=0; j<cols; j++){
-                    if( (endData[i][j]<alarm && startData[i][j]<alarm) || (endData[i][j] === startData[i][j]) ) flag = flag*1;
-                    else flag = 1;
+              prevAlarmStatus[i] = []
+              for(j=0; j<cols; j++){
+                prevAlarmStatus[i][j] = [];
+                for(n=0; n<alarm.length; n++){
+                    prevAlarmStatus[i][j][n] = 0;
                 }
-            }
-        } else{
-            flag = 1;
-        }
-        
-        //check if startData is an array; if not, make a dummy array to start from:
-        if( Object.prototype.toString.call( startData ) !== '[object Array]' ) {
-            startData = [];
-            for(i=0; i<rows; i++){
-              startData[i] = []
-              for(j=0; j<cols; j++){
-                startData[i][j] = 0;
               }
             }
         }
-        //same exercise for oldMask:
-        if( Object.prototype.toString.call( oldMask ) !== '[object Array]' ) {
-            oldMask = [];
-            for(i=0; i<rows; i++){
-              oldMask[i] = []
-              for(j=0; j<cols; j++){
-                oldMask[i][j] = 1;
-              }
+
+        //determine alarm status for each cell, recorded as [i][j][voltage alarm, current alarm, temperature alarm]
+        //alarmStatus == 0 indicates all clear, 0 < alarmStatus <= 1 indicates alarm intensity, alarmStatus = -1 indicates channel off.
+        var alarmStatus = [];
+        for(i=0; i<rows; i++){
+            alarmStatus[i] = [];
+
+            for(j=0; j<cols; j++){
+                alarmStatus[i][j] = [];
+
+                if(endData[i][j] < alarm[0])  alarmStatus[i][j][0] = 0;
+                else  alarmStatus[i][j][0] = Math.min( (endData[i][j] - alarm[0]) / scaleMax[0], 1);
+
+                if(reportCurrent[i][j] < alarm[1])  alarmStatus[i][j][1] = 0;
+                else  alarmStatus[i][j][1] = Math.min( (reportCurrent[i][j] - alarm[1]) / scaleMax[1], 1);
+
+                if(reportTemperature[i][j] < alarm[2])  alarmStatus[i][j][2] = 0;
+                else  alarmStatus[i][j][2] = Math.min( (reportTemperature[i][j] - alarm[2]) / scaleMax[2], 1);
+
+                if(channelMask[i][j] == 0){
+                    alarmStatus[i][j][0] = -1;
+                    alarmStatus[i][j][1] = -1;
+                    alarmStatus[i][j][2] = -1;
+                }
             }
         }
 
@@ -103,50 +112,59 @@ function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, startData, 
         for(i=0; i<rows; i++){
         	for(j=0; j<cols; j++){
     	      	//start values:
-    	        if(startData[i][j] < alarm){
+    	        if(prevAlarmStatus[i][j][0] == 0 && prevAlarmStatus[i][j][1] == 0 && prevAlarmStatus[i][j][2] == 0){
     		    	R = 0;
     		      	G = 255;
     		      	B = 0;
     		      	A = 0.3;
-    		      	startColor[i][j] = [R,G,B,A];
-    		    } else {
+                } else if(prevAlarmStatus[i][j][0] == -1){
+                    R = 0;
+                    G = 0;
+                    B = 0;
+                    A = 0.3;
+                } else {
     			    R = 255;
     			    G = 0;
     			    B = 0;
-    			    A = (startData[i][j] - alarm) / (scaleMax - alarm)*0.7 + 0.3;  //enforce minimum 0.3 to make it clearly red
+    			    A = Math.max(prevAlarmStatus[i][j][0], prevAlarmStatus[i][j][1], prevAlarmStatus[i][j][2])*0.7 + 0.3;  //enforce minimum 0.3 to make it clearly red
     			    if(A>1) {A = 1;}
-            		startColor[i][j] = [R,G,B,A];
     	        }
-                if(oldMask[i][j] == 0){
-                    R = 0;
-                    G = 0;
-                    B = 0;
-                    A = 0.3;
-                    startColor[i][j] = [R,G,B,A]
-                }
+                startColor[i][j] = [R,G,B,A];
 
-        	    //end values:
-    		    if(endData[i][j] < alarm && endData[i][j]>=0.1){  //green for on and under alarm
-    		        R = 0;
-    			    G = 255;
-    			    B = 0;
-    			    A = 0.3;
-    			    endColor[i][j] = [R,G,B,A];
-    		    } else if(endData[i][j] < 0.1) {  //grey for off
+                //end values:
+                if(alarmStatus[i][j][0] == 0 && alarmStatus[i][j][1] == 0 && alarmStatus[i][j][2] == 0){
+                    R = 0;
+                    G = 255;
+                    B = 0;
+                    A = 0.3;
+                } else if(alarmStatus[i][j][0] == -1){
                     R = 0;
                     G = 0;
                     B = 0;
                     A = 0.3;
-                    endColor[i][j] = [R,G,B,A];
-                } else {  //red for alarm trip
-    			    R = 255;
-    			    G = 0;
-    			    B = 0;
-    			    A = (endData[i][j] - alarm) / (scaleMax - alarm)*0.7 + 0.3;  //enforce minimum 0.3 to make it clearly red
-    			    if(A>1) {A = 1;}
-        			endColor[i][j] = [R,G,B,A];
-        		}
+                } else {
+                    R = 255;
+                    G = 0;
+                    B = 0;
+                    A = Math.max(alarmStatus[i][j][0], alarmStatus[i][j][1], alarmStatus[i][j][2])*0.7 + 0.3;  //enforce minimum 0.3 to make it clearly red
+                    if(A>1) {A = 1;}
+                }
+                endColor[i][j] = [R,G,B,A];
     	    }
+        }
+
+        //abort flag for sidebar if data hasn't changed or if it's changed but is all still below alarm level:
+        var flag = 0;
+        if(prevAlarmStatus){
+            for(i=0; i<rows; i++){
+                for(j=0; j<cols; j++){
+                    for(n=0; n<alarmStatus[i][j].length; n++){
+                        if(prevAlarmStatus[i][j][n] != alarmStatus[i][j][n]) flag = 1;
+                    }
+                }
+            }
+        } else{
+            flag = 1;
         }
 
         //make waffles clickable to set a variable for a channel:
@@ -186,12 +204,11 @@ function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, startData, 
 
     } else {
         //make sure endData is defined for the next call to Waffle; keep the same one so the first transition after focus returns is smooth.        
-        var endData = startData;
-        var channelMask = oldMask;
+        var alarmStatus = prevAlarmStatus;
     }
 
     //repeat every update interval:
-    setTimeout(function(){Waffle(1, rows, cols, cvas, mode, alarm, scaleMax, endData, channelMask, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs)},3000);
+    setTimeout(function(){Waffle(1, rows, cols, cvas, mode, alarm, scaleMax, alarmStatus, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs)},10000);
 
 }
 

@@ -106,7 +106,7 @@
       Banner('banner', 'youAreHere', 'navBar', 'Scalar Dashboard');
 
       //value-free dummy variables to initialize Waffle with:  TODO: eliminate
-      var startData, initialMask;
+      var alarmStatus;
 
       //set up wrapper div dimensions; minimum rendering width = 1200px:
       var renderWidth = Math.max(1200, window.innerWidth);
@@ -128,10 +128,10 @@
       //cell labels; first entry decribes cell type (channel, card, crate, rack etc)
       var rowTitles = ['Ch.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'];
       var colTitles = ['Card', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'];
-      var ODBkeys = ['/Location/Of/demandVoltage', '/Location/Of/reportVoltage', '/Location/Of/reportCurrent', '/Location/Of/ChannelOnOffState'];
+      var ODBkeys = ['/Location/Of/demandVoltage', '/Location/Of/reportVoltage', '/Location/Of/reportCurrent', '/Location/Of/reportTemperature', '/Location/Of/ChannelOnOffState'];
 
       //Voltage Waffle:
-      Waffle(0,12,20, 'TestWaffle', 'single', .999, 1, startData, initialMask, "Crate 01", ['leftSidebar', 'rightSidebar'], ['left', 'right'], "TT", "TTcontainer", "waffleplate", 'mV', rowTitles, colTitles, "InputLayer", [''], ['mV'], ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT']);
+      Waffle(0,12,20, 'TestWaffle', 'single', [0.99,0.99,0.99], [1,1,1], alarmStatus, "Crate 01", ['leftSidebar', 'rightSidebar'], ['left', 'right'], "TT", "TTcontainer", "waffleplate", 'mV', rowTitles, colTitles, "InputLayer", [''], ['mV'], ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT']);
 
 
       //new alarm reporting test:
