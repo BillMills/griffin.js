@@ -12,7 +12,7 @@ cols: number of columns (meters per bank) for monitoring waffles (meter bank set
 alarm: alarm threshold value.
 callMyself: initialize to 0, indicates whether AlarmSidebar was called by something else, or by its internal recursion.
 */
-function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, data, channelMask, unit, rows, cols, alarm, rowTitles, colTitles, callMyself, flag){
+function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, data, channelMask, unit, rows, cols, alarm, rowTitles, colTitles, callMyself, flag, alarmPanelDivIDs, alarmPanelCanvIDs){
 
     var i, j, n;
 
@@ -102,8 +102,9 @@ function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, dat
     context.fillStyle = "rgba(255,255,255,"+alphaW+")"
     context.fillRect(inset*1.1,.15*height+10,width-3*inset,height);
 
-    //draw separator line
+    //draw separator line & scale sidebar
     if(!callMyself){
+        //separator line:
         context.strokeStyle = "rgba(0,0,0,0.2)"
         context.beginPath();
         if(side === "left"){
@@ -115,7 +116,15 @@ function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, dat
         }
         
         context.stroke();
+
+        //scale:
+        for(i=0; i<alarmPanelDivIDs.length; i++){
+            $( document.getElementById(alarmPanelDivIDs[i]) ).css('width', 0.8*width);
+            $( document.getElementById(alarmPanelCanvIDs[i]) ).css('width', 0.8*width);
+        }
     }
+
+
 /*
     if(side==='left'){
         //generate sidebar content:
@@ -206,48 +215,11 @@ function drawAllClear(side, inset, context, alphaB, headTitle, width){
             context.fillText('All Okay', width/2 - context.measureText('All Okay').width/2 - align, headTitle+150)
 }
 
-/*
-function drawAlarm(side, inset, context, alphaB, headTitle, width){
-
-            var align;
-            if(side=='left') align = inset;
-            else align = 0;
-
-            var x0 = 100;
-            var y0 = 200;
-            var L = 100;
-
-            context.font="60px Times New Roman";
-
-            context.strokeStyle = "rgba(0,0,0,"+alphaB+")";
-            context.fillStyle = "rgba(0,0,0,"+alphaB+")";
-            context.lineWidth = 5;
-            context.beginPath();
-            context.moveTo(x0 - L/2+1, y0+L/2*Math.tan(Math.PI/6)+1);
-            context.lineTo(x0+1, y0 - L/2/Math.cos(Math.PI/6)+1);
-            context.lineTo(x0 + L/2+1, y0 + L/2*Math.tan(Math.PI/6)+1);
-            context.closePath();
-            context.fillText('!', x0-10+1, y0+1+10);
-            context.stroke();
-
-            context.strokeStyle = "rgba(255,0,0,"+alphaB+")";
-            context.fillStyle = "rgba(255,0,0,"+alphaB+")";
-            context.lineWidth = 5;
-            context.beginPath();
-            context.moveTo(x0 - L/2, y0+L/2*Math.tan(Math.PI/6));
-            context.lineTo(x0, y0 - L/2/Math.cos(Math.PI/6));
-            context.lineTo(x0 + L/2, y0 + L/2*Math.tan(Math.PI/6));
-            context.closePath();
-            context.fillText('!', x0-10, y0+10);
-            context.stroke();
-}
-*/
-
 function drawAlarm(canvasID, alphaB, headTitle, x0, y0, L, title){
             var canvas = document.getElementById(canvasID);
             var context = canvas.getContext('2d');
 
-            context.font="60px Times New Roman";
+            context.font=(L*0.6)+"px Times New Roman";
 
             context.strokeStyle = "rgba(0,0,0,"+alphaB+")";
             context.fillStyle = "rgba(0,0,0,"+alphaB+")";
@@ -272,7 +244,7 @@ function drawAlarm(canvasID, alphaB, headTitle, x0, y0, L, title){
             context.stroke();
 
             context.fillStyle = 'rgba(0,0,0,1)';
-            context.font='24px Times New Roman';
+            context.font=(L*0.24)+'px Times New Roman';
             //context.fillText(title, 1.6*x0+1, canvas.height*0.5+1);
             context.fillText(title, 0.5*canvas.width - context.measureText(title).width/2+1, canvas.height*0.5+1);
 

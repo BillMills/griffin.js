@@ -1,4 +1,4 @@
-function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, startData, oldMask, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix){
+function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, startData, oldMask, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs){
 
     if(!document.webkitHidden && !document.mozHidden){
     	var i, j;
@@ -19,11 +19,11 @@ function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, startData, 
         //cell dimensions controlled by width, since width more visually important here:
         var cellSide = waffleWidth / cols;
 
-        //for now, data is just random on [0,1]; TODO: provide ODB values later.
         //set up arrays:
         var endData = [];
         var startColor = [];
         var endColor = [];
+
         var channelMask = [];
         for(i=0; i<rows; i++){
         	endData[i] = [];
@@ -158,10 +158,10 @@ function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, startData, 
         }
         
         DrawWaffle(cvas, startColor, endColor, 1, title, rows, cols, totalWidth, totalHeight, cellSide);
-        AlarmSidebar(title, sidebar[0], side[0], 1, wrapperDiv, waffleHeight, endData, channelMask, unit, rows, cols, alarm, rowTitles, colTitles, callMyself, flag);
+        AlarmSidebar(title, sidebar[0], side[0], 1, wrapperDiv, waffleHeight, endData, channelMask, unit, rows, cols, alarm, rowTitles, colTitles, callMyself, flag, alarmPanelDivIDs, alarmPanelCanvIDs);
         if(mode == 'single') decorateInputSidebar(sidebar[1], side[1], wrapperDiv, waffleHeight);
         Tooltip(cvas, wrapperDiv, tooltip, TTcontainer, rows, cols, cellSide, rowTitles, colTitles, prefix, postfix, endData);
-        
+
     } else {
         //make sure endData is defined for the next call to Waffle; keep the same one so the first transition after focus returns is smooth.        
         var endData = startData;
@@ -169,7 +169,7 @@ function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, startData, 
     }
 
     //repeat every update interval:
-    setTimeout(function(){Waffle(1, rows, cols, cvas, mode, alarm, scaleMax, endData, channelMask, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix)},3000);
+    setTimeout(function(){Waffle(1, rows, cols, cvas, mode, alarm, scaleMax, endData, channelMask, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs)},3000);
 
 }
 
