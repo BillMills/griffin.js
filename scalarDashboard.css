@@ -29,6 +29,7 @@ canvas#TestWaffle{
 canvas#rightSidebar{
 	position: absolute;
 	right:1%;
+	z-index: -10000;
 }
 
 div#TTcontainer{
@@ -78,4 +79,62 @@ input#demandval{
 	position: relative;
 	margin-left: 10px;
 	margin-bottom: 10px;
+}
+
+div.alarmDiv{
+
+	background: rgba(0,0,0,0.7);
+	width: 300px;
+	height: 150px;
+	position: absolute;
+	top: 0px;
+	left: 10px;
+ 	margin-bottom: 10px;
+	border-style:ridge;
+    border-width:5px;
+    border-color:red;
+	transition:height 1s, top 1s, background 1s, z-index 1s;
+	-moz-transition:height 1s, top 1s, background 1s, z-index 1s;
+	-webkit-transition:height 1s, top 1s, background 1s, z-index 1s;
+}
+
+div#voltAlarm
+{
+overflow: hidden;
+top:0px;
+}
+
+div#currentAlarm
+{
+overflow: hidden;
+top:170px;
+}
+
+div#tempAlarm
+{
+overflow: hidden;
+top:340px;
+}
+
+div#voltAlarm:hover
+{
+height:500px;
+background: rgba(0,0,0,1);
+z-index: 10000;
+}
+
+div#currentAlarm:hover
+{
+height:500px;
+top: 0px;
+background: rgba(0,0,0,1);
+z-index: 10000;
+}
+
+div#tempAlarm:hover
+{
+height:500px;
+top:0px;
+background: rgba(0,0,0,1);
+z-index: 10000;
 }
