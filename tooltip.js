@@ -55,36 +55,39 @@ function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, rows, cols, c
         var chx = Math.floor( (event.pageX - superDiv.offsetLeft - canvas.offsetLeft) / cellSide);
        	var chy = Math.floor( (event.pageY - superDiv.offsetTop - canvas.offsetTop) / cellSide);
 
-       	//make the tool tip say something, keeping track of which line is longest:
-        var toolTipContent = '';
-        var nextLine
-        var longestLine = 0;
-        nextLine = rowTitles[0]+' '+rowTitles[chy+1];
-        longestLine = Math.max(longestLine, context.measureText(nextLine).width)
-        toolTipContent += nextLine;
-        nextLine = '<br/>'+colTitles[0]+' '+colTitles[chx+1];
-        longestLine = Math.max(longestLine, context.measureText(nextLine).width)
-        toolTipContent += nextLine;
 
-        for(i=11; i<ttArgs; i++){
-            nextLine = '<br/>'+prefix[i-11];
-            if(prefix[i-11] !== '') nextLine += ' ';
-            nextLine += Math.round( args[i][chy][chx]*1000)/1000 + ' ' + postfix[i-11];
-            longestLine = Math.max(longestLine, context.measureText(nextLine).width);
+        //only continue if the cursor is actually on the waffle:
+        if(chx<cols && chy<rows){
+           	//make the tool tip say something, keeping track of which line is longest:
+            var toolTipContent = '';
+            var nextLine
+            var longestLine = 0;
+            nextLine = rowTitles[0]+' '+rowTitles[chy+1];
+            longestLine = Math.max(longestLine, context.measureText(nextLine).width)
             toolTipContent += nextLine;
+            nextLine = '<br/>'+colTitles[0]+' '+colTitles[chx+1];
+            longestLine = Math.max(longestLine, context.measureText(nextLine).width)
+            toolTipContent += nextLine;
+
+            for(i=11; i<ttArgs; i++){
+                nextLine = '<br/>'+prefix[i-11];
+                if(prefix[i-11] !== '') nextLine += ' ';
+                nextLine += Math.round( args[i][chy][chx]*1000)/1000 + ' ' + postfix[i-11];
+                longestLine = Math.max(longestLine, context.measureText(nextLine).width);
+                toolTipContent += nextLine;
+            }
+    	    document.getElementById('TipText').innerHTML = toolTipContent;
+
+            //update the size of the tool tip to fit the text:
+            $(ttDiv).width(1.15*longestLine);
+            $(ttDiv).height(boxY);
+
+	        //make the tool tip appear:
+	        ttDiv.style.display = 'block';
+
+            window.griffinToolTipX = event.pageX;
+            window.griffinToolTipY = event.pageY;
         }
-	    document.getElementById('TipText').innerHTML = toolTipContent;
-
-        //update the size of the tool tip to fit the text:
-        $(ttDiv).width(1.15*longestLine);
-        $(ttDiv).height(boxY);
-
-	    //make the tool tip appear iff it's on the waffle:
-	    if(chx<cols && chy<rows) ttDiv.style.display = 'block';
-        else ttDiv.style.display = 'none';
-
-        window.griffinToolTipX = event.pageX;
-        window.griffinToolTipY = event.pageY;  
     }
 
     //turn the tool tip off if it's outside the canvas:
