@@ -152,7 +152,7 @@ function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, prevAlarmSt
                 endColor[i][j] = [R,G,B,A];
     	    }
         }
-
+/*
         //abort flag for sidebar if data hasn't changed or if it's changed but is all still below alarm level:
         var flag = 0;
         if(prevAlarmStatus){
@@ -166,7 +166,7 @@ function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, prevAlarmSt
         } else{
             flag = 1;
         }
-
+*/
         //make waffles clickable to set a variable for a channel:
         var canvas = document.getElementById(cvas);
         var context = canvas.getContext('2d');
@@ -198,7 +198,7 @@ function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, prevAlarmSt
         }
         
         DrawWaffle(cvas, startColor, endColor, 1, title, rows, cols, totalWidth, totalHeight, cellSide);
-        AlarmSidebar(title, sidebar[0], side[0], 1, wrapperDiv, waffleHeight, endData, channelMask, unit, rows, cols, alarm, rowTitles, colTitles, callMyself, flag, alarmPanelDivIDs, alarmPanelCanvIDs);
+        AlarmSidebar(title, sidebar[0], side[0], 1, wrapperDiv, waffleHeight, prevAlarmStatus, alarmStatus, unit, rows, cols, alarm, rowTitles, colTitles, callMyself, alarmPanelDivIDs, alarmPanelCanvIDs);
         if(mode == 'single') decorateInputSidebar(sidebar[1], side[1], wrapperDiv, waffleHeight);
         Tooltip(cvas, wrapperDiv, tooltip, TTcontainer, rows, cols, cellSide, rowTitles, colTitles, prefix, postfix, endData);
 
@@ -208,7 +208,7 @@ function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, prevAlarmSt
     }
 
     //repeat every update interval:
-    setTimeout(function(){Waffle(1, rows, cols, cvas, mode, alarm, scaleMax, alarmStatus, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs)},10000);
+    setTimeout(function(){Waffle(1, rows, cols, cvas, mode, alarm, scaleMax, alarmStatus, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs)},3000);
 
 }
 
@@ -334,4 +334,20 @@ function getMIDASindex(row, col){
 //function to tell if channel i, j is active:
 function isChannelOn(i,j){
     return 1;
+}
+
+function partial(func /*, 0..n args */) {
+  var args = Array.prototype.slice.call(arguments, 1);
+  return function() {
+    var allArguments = args.concat(Array.prototype.slice.call(arguments));
+    return func.apply(this, allArguments);
+  };
+}
+
+function curry (fn) {
+    var slice = Array.prototype.slice,
+        args = slice.apply(arguments, [1]);
+    return function () {
+        fn.apply(null, args.concat(slice.apply(arguments)));
+    };
 }

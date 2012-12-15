@@ -91,7 +91,7 @@ div.alarmDiv{
  	margin-bottom: 10px;
 	border-style:ridge;
     border-width:5px;
-    border-color:red;
+    border-color:black;
 	transition:height 1s, top 1s, background 1s, z-index 1s;
 	-moz-transition:height 1s, top 1s, background 1s, z-index 1s;
 	-webkit-transition:height 1s, top 1s, background 1s, z-index 1s;
