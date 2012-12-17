@@ -198,7 +198,7 @@ function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, prevAlarmSt
         }
         
         DrawWaffle(cvas, startColor, endColor, 1, title, rows, cols, totalWidth, totalHeight, cellSide);
-        AlarmSidebar(title, sidebar[0], side[0], 1, wrapperDiv, waffleHeight, prevAlarmStatus, alarmStatus, unit, rows, cols, alarm, rowTitles, colTitles, callMyself, alarmPanelDivIDs, alarmPanelCanvIDs);
+        AlarmSidebar(sidebar[0], side[0], wrapperDiv, waffleHeight, prevAlarmStatus, alarmStatus, rows, cols, rowTitles, colTitles, callMyself, alarmPanelDivIDs, alarmPanelCanvIDs, demandVoltage, reportVoltage, reportCurrent, reportTemperature, alarm, ['V', 'mA', 'C']);
         if(mode == 'single') decorateInputSidebar(sidebar[1], side[1], wrapperDiv, waffleHeight);
         Tooltip(cvas, wrapperDiv, tooltip, TTcontainer, rows, cols, cellSide, rowTitles, colTitles, prefix, postfix, endData);
 
@@ -208,7 +208,7 @@ function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, prevAlarmSt
     }
 
     //repeat every update interval:
-    setTimeout(function(){Waffle(1, rows, cols, cvas, mode, alarm, scaleMax, alarmStatus, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs)},3000);
+    setTimeout(function(){Waffle(1, rows, cols, cvas, mode, alarm, scaleMax, alarmStatus, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs)},300000);
 
 }
 

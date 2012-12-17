@@ -117,14 +117,14 @@ top:340px;
 
 div#voltAlarm:hover
 {
-height:500px;
+height:600px;
 background: rgba(0,0,0,1);
 z-index: 10000;
 }
 
 div#currentAlarm:hover
 {
-height:500px;
+height:600px;
 top: 0px;
 background: rgba(0,0,0,1);
 z-index: 10000;
@@ -132,7 +132,7 @@ z-index: 10000;
 
 div#tempAlarm:hover
 {
-height:500px;
+height:600px;
 top:0px;
 background: rgba(0,0,0,1);
 z-index: 10000;

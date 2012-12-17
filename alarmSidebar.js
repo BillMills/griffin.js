@@ -1,18 +1,4 @@
-/*
-title:  "<title> Alarms" will head the sidebar.
-sidebar: canvas ID to put the sidebar in.
-side: 'left' or 'right', to format spacing and gutters nicely.
-frame: initialize to 1, counts frames as animation proceeds. 
-wrapperDiv: ID string of the div the sidebar is wrapped in.
-waffleHeight: height in px of the center content (for drawing nice gutter lines).
-data: a 2D array constructed as data[row][column], which contains the value of the meter at that position.
-unit: string indicating the units the measurement is made in.
-rows: number of rows (meter banks) for monitoring waffles (meter bank sets).
-cols: number of columns (meters per bank) for monitoring waffles (meter bank sets).
-alarm: alarm threshold value.
-callMyself: initialize to 0, indicates whether AlarmSidebar was called by something else, or by its internal recursion.
-*/
-function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, prevAlarmStatus, alarmStatus, unit, rows, cols, alarm, rowTitles, colTitles, callMyself, alarmPanelDivIDs, alarmPanelCanvIDs){
+function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, alarmStatus, rows, cols, rowTitles, colTitles, callMyself, alarmPanelDivIDs, alarmPanelCanvIDs, demandVoltage, reportVoltage, reportCurrent, reportTemperature, alarm, units){
 
     var i, j, n;
 
@@ -20,32 +6,8 @@ function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, pre
     //if(flag===0) return;
 
     //number of alarms to report:
-    //var nAlarms = 5;
-/*
-    //find the worst channels:
-    function sortFunction(a,b){
-        if (a[2] > b[2]) return -1;
-        if (a[2] < b[2]) return 1;
-        else return 0;
-    }
-    var dataSet = [];
-    n = 0;
-    for(i=0; i<rows; i++){
-        for(j=0; j<cols; j++) {
-            if(channelMask[i][j] === 1){
-                dataSet[n] = [];
-                dataSet[n][0] = i;
-                dataSet[n][1] = j;
-                dataSet[n][2] = data[i][j];
-                n++;                
-            }
-        }
-    }
-    dataSet.sort(sortFunction);
+    var nAlarms = 5;
 
-    //don't let nAlarms overshoot length of dataset:
-    nAlarms = Math.min(nAlarms, dataSet.length);
-*/
     //fetch canvas:
     var canvas = document.getElementById(sidebar);
     var context = canvas.getContext('2d');
@@ -64,43 +26,8 @@ function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, pre
        canvas.height = height;
     }
 
-    //define animation parameters
-    //var FPS = 30;
-    //var duration = 2; //in seconds
-    //var nFrames = FPS*duration;
-
-    //final text opacity:
-    //var opacity = 0.6;
-    //text opacity at this frame:
-    //var alphaB = opacity*frame/nFrames
-    //whiteout opacity: (designed so something fading into itself looks static, 
-    //for white background / old black drawing of alpha=opacity / new whiteout 
-    //layer with alphaW / new black layer with alphaB; works best for black on white.)
-    //var alphaW = (1-opacity)*alphaB / (1-alphaB) / opacity;
-
     //separator line inset
     var inset = 0.1*width;
-
-    //title margin
-    //context.font="20px Times New Roman";
-    //var leftTitle = width/2 - context.measureText(title+' Alarms').width/2 - inset;
-    //var rightTitle = width/2 - context.measureText(title+' Alarms').width/2;
-    //title header
-    //var headTitle = 0.15*height
-
-    //margins of body text:
-    //var leftMargin = 1.2*leftTitle;//width*0.2; 
-    //var rightMargin = 1.2*rightTitle;//width*0.15 + inset;
-
-    //body text line height:
-    //var lineHeight = 20;
-
-    //top of body text:
-    //var textTop = headTitle + 2*lineHeight;//0.19*height;
-
-    //fade out last panel:
-    //context.fillStyle = "rgba(255,255,255,"+alphaW+")"
-    //context.fillRect(inset*1.1,.15*height+10,width-3*inset,height);
 
     //draw separator line & scale sidebar
     if(!callMyself){
@@ -124,70 +51,6 @@ function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, pre
         }
     }
 
-
-/*
-    if(side==='left'){
-        //generate sidebar content:
-        context.font="18px Times New Roman";
-        context.fillStyle = "rgba(0,0,0,"+alphaB+")";
-
-        for(i=0; i<nAlarms; i++){
-            if(dataSet[i][2]>=alarm){
-                //context.fillText(i+1+'.  Channel '+dataSet[i][0]+', '+dataSet[i][1]+': ', leftMargin, textTop+lineHeight*i*3);
-                context.fillText(i+1+'.  '+rowTitles[0]+' '+rowTitles[dataSet[i][0]+1]+', '+colTitles[0]+' '+colTitles[dataSet[i][1]+1]+': ', leftMargin, textTop+lineHeight*i*3);
-                context.fillText('     '+Math.round(dataSet[i][2]*1000)/1000+' '+unit, leftMargin, textTop+lineHeight*(i*3+1));        
-            }
-        }
-
-        //if no alarms, display an all-clear icon:
-        if(dataSet[0][2] < alarm){
-            drawAllClear(side, inset, context, alphaB, headTitle, width)
-        }
-
-        //Make sidebar title:
-        if(!callMyself){
-            context.font="20px Times New Roman";
-            context.fillStyle = "rgba(0,0,0,"+opacity+")";
-            context.fillText(title+" Alarms", leftTitle, headTitle);
-        }
-
-    } 
-
-    if(side==='right'){
-        //generate sidebar content:
-        context.font="18px Times New Roman";
-        context.fillStyle = "rgba(0,0,0,"+alphaB+")";
-
-        for(i=0; i<nAlarms; i++){
-            if(dataSet[i][2]>=alarm){
-                //context.fillText(i+1+'.  Channel '+dataSet[i][0]+', '+dataSet[i][1]+': ', rightMargin, textTop+lineHeight*i*3);
-                context.fillText(i+1+'.  '+rowTitles[0]+' '+rowTitles[dataSet[i][0]+1]+', '+colTitles[0]+' '+colTitles[dataSet[i][1]+1]+': ', rightMargin, textTop+lineHeight*i*3);
-                context.fillText('     '+Math.round(dataSet[i][2]*1000)/1000+' '+unit, rightMargin, textTop+lineHeight*(i*3+1));        
-            }
-        }
-
-        //if no alarms, display an all-clear icon:
-        if(dataSet[0][2] < alarm){
-            drawAllClear(side, inset, context, alphaB, headTitle, width)
-        }
-
-        //Make sidebar title:
-        if(!callMyself){
-            context.font="20px Times New Roman";
-            context.fillStyle = "rgba(0,0,0,"+opacity+")";
-            context.fillText(title+" Alarms", rightTitle, headTitle);
-        }
-
-    }
-
-
-    if(frame < nFrames){
-        frame++;
-        setTimeout(function(){AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, data, channelMask, unit, rows, cols, alarm, rowTitles, colTitles, callMyself)},duration/FPS);
-    }
-*/
-
-
     //draw the appropriate status summary badge in each window:
     var isAlarm, oldAlarm;
     var alarmTitles = ['Voltage Alarms', 'Current Alarms', 'Temperature Alarms'];
@@ -207,20 +70,85 @@ function AlarmSidebar(title, sidebar, side, frame, wrapperDiv, waffleHeight, pre
         if(oldAlarm != isAlarm || !callMyself){
 
             if(isAlarm == 1){
-                //drawAlarm(70, 90, 100, alarmTitles[n], alarmPanelCanvIDs[n], 1);
                 fadeSwapCanvas(alarmPanelCanvIDs[n], allClear, alarmTrip, 0);
             }
             else{
-                //fadeSwapCanvas(alarmPanelCanvIDs[n], drawAlarm, drawAllClear, 0);
                 fadeSwapCanvas(alarmPanelCanvIDs[n], alarmTrip, allClear, 0);
             }
         }
 
     }
 
+    //Populate each alarm panel with the appropriate info:
+    //Define sort functions:
+    function sortAlarms(a, b){
+        if (a[2] > b[2]) return -1;
+        if (a[2] < b[2]) return 1;
+        else return 0;
+    }
+    var voltageAlarmArray = [];
+    var currentAlarmArray = [];
+    var temperatureAlarmArray = [];
+    n = 0;  
+    for(i=0; i<rows; i++){
+        for(j=0; j<cols; j++) {
+            voltageAlarmArray[n] = [];  currentAlarmArray[n] = [];  temperatureAlarmArray[n] = [];
+            voltageAlarmArray[n][0] = i;  currentAlarmArray[n][0] = i;  temperatureAlarmArray[n][0] = i;
+            voltageAlarmArray[n][1] = j;  currentAlarmArray[n][1] = j;  temperatureAlarmArray[n][1] = j;
+            voltageAlarmArray[n][2] = alarmStatus[i][j][0];
+            currentAlarmArray[n][2] = alarmStatus[i][j][1];
+            temperatureAlarmArray[n][2] = alarmStatus[i][j][2];
+            n++;                
+        }
+    }  
+    voltageAlarmArray.sort(sortAlarms);
+    currentAlarmArray.sort(sortAlarms);
+    temperatureAlarmArray.sort(sortAlarms);
+
+    //report Voltage alarms
+    n = 0;
+    var alarmString = '';
+    while(n<nAlarms && voltageAlarmArray[n][2]>0){
+        alarmString += rowTitles[0] + ' ' + voltageAlarmArray[n][0] + ', ' + colTitles[0] + ' ' + voltageAlarmArray[n][1] + '<br>Demand Voltage: ' + demandVoltage[voltageAlarmArray[n][0]][voltageAlarmArray[n][1]].toFixed(3) + ' ' + units[0] + '<br>Reported Voltage: ' + reportVoltage[voltageAlarmArray[n][0]][voltageAlarmArray[n][1]].toFixed(3) + ' ' + units[0] + '<br><br>';
+        n++;
+    }
+    if(alarmString == ''){
+        alarmString = 'All Clear';
+    }
+    document.getElementById('voltageText').innerHTML = alarmString;
+
+    //report Current alarms
+    n = 0;
+    alarmString = '';
+    while(n<nAlarms && currentAlarmArray[n][2]>0){
+        if(n == 0) alarmString = 'Current Alarm Threshold: ' + alarm[1] + ' ' + units[1] + '<br><br>'
+        alarmString += rowTitles[0] + ' ' + currentAlarmArray[n][0] + ', ' + colTitles[0] + ' ' + currentAlarmArray[n][1] + '<br>Reported Current: ' + reportCurrent[currentAlarmArray[n][0]][currentAlarmArray[n][1]].toFixed(3) + ' ' + units[1] + '<br><br>';
+        n++;
+    }
+    if(alarmString == ''){
+        alarmString = 'All Clear';
+    }
+    document.getElementById('currentText').innerHTML = alarmString;
+
+    //report Temperature alarms
+    n = 0;
+    alarmString = '';
+    while(n<nAlarms && temperatureAlarmArray[n][2]>0){
+        if(n == 0) alarmString = 'Temperature Alarm Threshold: ' + alarm[2] + ' ' + units[2] + '<br><br>'
+        alarmString += rowTitles[0] + ' ' + temperatureAlarmArray[n][0] + ', ' + colTitles[0] + ' ' + temperatureAlarmArray[n][1] + '<br>Reported Temperature: ' + reportTemperature[temperatureAlarmArray[n][0]][temperatureAlarmArray[n][1]].toFixed(3) + ' ' + units[2] + '<br><br>';
+        n++;
+    }
+    if(alarmString == ''){
+        alarmString = 'All Clear';
+    }
+    document.getElementById('temperatureText').innerHTML = alarmString;
 
     return;
 }
+
+
+
+
 
 function drawAllClear(x0, y0, radius, title, canvasID, alphaB){
             var canvas = document.getElementById(canvasID);

@@ -37,17 +37,17 @@
 
         <div class='alarmDiv' id='voltAlarm'>
           <canvas id='alarmIconV', style='position:absolute; height:150px'></canvas>
-          <p style='color:white; margin:10px; position:relative; top:150px'>Swag whatever 8-bit, cliche lo-fi synth sriracha banksy wolf. Fixie skateboard tattooed helvetica DIY bushwick. Etsy semiotics ennui, bicycle rights selvage carles american apparel scenester narwhal ethnic fanny pack. Ethical direct trade kale chips keytar ennui, marfa leggings butcher beard stumptown put a bird on it fap messenger bag. Keffiyeh marfa brooklyn, quinoa leggings trust fund wolf gluten-free. Four loko farm-to-table mustache tumblr shoreditch, stumptown pickled. Narwhal blog fingerstache letterpress sartorial, godard odd future DIY farm-to-table semiotics four loko.</p>
+          <p id='voltageText', style='color:white; margin-left:50px; position:relative; top:150px'>Swag whatever 8-bit, cliche lo-fi synth sriracha banksy wolf. Fixie skateboard tattooed helvetica DIY bushwick. Etsy semiotics ennui, bicycle rights selvage carles american apparel scenester narwhal ethnic fanny pack. Ethical direct trade kale chips keytar ennui, marfa leggings butcher beard stumptown put a bird on it fap messenger bag. Keffiyeh marfa brooklyn, quinoa leggings trust fund wolf gluten-free. Four loko farm-to-table mustache tumblr shoreditch, stumptown pickled. Narwhal blog fingerstache letterpress sartorial, godard odd future DIY farm-to-table semiotics four loko.</p>
         </div>
 
         <div class='alarmDiv' id='currentAlarm'>
           <canvas id='alarmIconI', style='position:absolute; height:150px'></canvas>
-          <p style='color:white; margin:10px; position:relative; top:150px'>Magna tattooed sint ut occaecat locavore. Aesthetic voluptate gluten-free est. Wayfarers master cleanse VHS eiusmod minim brunch. Portland DIY eiusmod shoreditch veniam delectus. Narwhal exercitation assumenda excepteur, dolore nisi fap raw denim bushwick nulla dreamcatcher VHS aute sapiente. Whatever eiusmod synth, brunch ethnic banh mi fugiat non DIY flexitarian ea bespoke. Mollit gentrify VHS, truffaut cupidatat Austin stumptown fanny pack polaroid readymade echo park food truck deserunt gluten-free.</p>
+          <p id='currentText', style='color:white; margin-left:50px; position:relative; top:150px'>Magna tattooed sint ut occaecat locavore. Aesthetic voluptate gluten-free est. Wayfarers master cleanse VHS eiusmod minim brunch. Portland DIY eiusmod shoreditch veniam delectus. Narwhal exercitation assumenda excepteur, dolore nisi fap raw denim bushwick nulla dreamcatcher VHS aute sapiente. Whatever eiusmod synth, brunch ethnic banh mi fugiat non DIY flexitarian ea bespoke. Mollit gentrify VHS, truffaut cupidatat Austin stumptown fanny pack polaroid readymade echo park food truck deserunt gluten-free.</p>
         </div>
 
         <div class='alarmDiv' id='tempAlarm'>
           <canvas id='alarmIconT', style='position:absolute; height:150px'></canvas>
-          <p style='color:white; margin:10px; position:relative; top:150px'>Trust fund fugiat est assumenda authentic before they sold out. Cupidatat trust fund echo park beard dolore skateboard, polaroid bicycle rights brunch kogi incididunt wolf ethical. Tattooed dolore brooklyn, magna mollit keffiyeh sartorial scenester esse eiusmod incididunt biodiesel adipisicing. Sartorial tattooed iphone tofu. Vegan art party 8-bit street art organic, you probably haven't heard of them brooklyn. Pop-up vegan sapiente VHS vice quinoa. Commodo echo park whatever culpa.</p>
+          <p id='temperatureText', style='color:white; margin-left:50px; position:relative; top:150px'>Trust fund fugiat est assumenda authentic before they sold out. Cupidatat trust fund echo park beard dolore skateboard, polaroid bicycle rights brunch kogi incididunt wolf ethical. Tattooed dolore brooklyn, magna mollit keffiyeh sartorial scenester esse eiusmod incididunt biodiesel adipisicing. Sartorial tattooed iphone tofu. Vegan art party 8-bit street art organic, you probably haven't heard of them brooklyn. Pop-up vegan sapiente VHS vice quinoa. Commodo echo park whatever culpa.</p>
         </div>
       </div>
 
@@ -131,13 +131,8 @@
       var ODBkeys = ['/Location/Of/demandVoltage', '/Location/Of/reportVoltage', '/Location/Of/reportCurrent', '/Location/Of/reportTemperature', '/Location/Of/ChannelOnOffState'];
 
       //Voltage Waffle:
-      Waffle(0,12,20, 'TestWaffle', 'single', [0.99,0.99,0.99], [1,1,1], alarmStatus, "Crate 01", ['leftSidebar', 'rightSidebar'], ['left', 'right'], "TT", "TTcontainer", "waffleplate", 'mV', rowTitles, colTitles, "InputLayer", [''], ['mV'], ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT']);
+      Waffle(0,12,20, 'TestWaffle', 'single', [0.8,0.999,0.999], [1,1,1], alarmStatus, "Crate 01", ['leftSidebar', 'rightSidebar'], ['left', 'right'], "TT", "TTcontainer", "waffleplate", 'mV', rowTitles, colTitles, "InputLayer", [''], ['mV'], ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT']);
 
-
-      //new alarm reporting test:
-      drawAlarm('alarmIconV', 1, 'title', 70, 90, 100, 'Voltage Alarms');
-      drawAlarm('alarmIconI', 1, 'title', 70, 90, 100, 'Current Alarms');
-      drawAlarm('alarmIconT', 1, 'title', 70, 90, 100, 'Temperature Alarms');
 
     </script> 
   
