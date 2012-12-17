@@ -22,8 +22,12 @@ canvas#leftSidebar{
 canvas#TestWaffle{
 	position: absolute;
 	left:24%;
-	top: 10%;
-	
+}
+
+div#mainframeLinks{
+	position: absolute;
+	left: 24%;
+	margin-bottom: 10px;
 }
 
 canvas#rightSidebar{

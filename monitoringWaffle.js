@@ -1,4 +1,4 @@
-function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, prevAlarmStatus, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs){
+function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, prevAlarmStatus, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs, headerDiv){
 
     if(!document.webkitHidden && !document.mozHidden){
     	var i, j, n;
@@ -197,7 +197,7 @@ function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, prevAlarmSt
             }
         }
         
-        DrawWaffle(cvas, startColor, endColor, 1, title, rows, cols, totalWidth, totalHeight, cellSide);
+        DrawWaffle(cvas, headerDiv, startColor, endColor, 1, title, rows, cols, totalWidth, totalHeight, cellSide);
         AlarmSidebar(sidebar[0], side[0], wrapperDiv, waffleHeight, prevAlarmStatus, alarmStatus, rows, cols, rowTitles, colTitles, callMyself, alarmPanelDivIDs, alarmPanelCanvIDs, demandVoltage, reportVoltage, reportCurrent, reportTemperature, alarm, ['V', 'mA', 'C']);
         if(mode == 'single') decorateInputSidebar(sidebar[1], side[1], wrapperDiv, waffleHeight);
         Tooltip(cvas, wrapperDiv, tooltip, TTcontainer, rows, cols, cellSide, rowTitles, colTitles, prefix, postfix, endData);
@@ -208,11 +208,11 @@ function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, prevAlarmSt
     }
 
     //repeat every update interval:
-    setTimeout(function(){Waffle(1, rows, cols, cvas, mode, alarm, scaleMax, alarmStatus, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs)},300000);
+    setTimeout(function(){Waffle(1, rows, cols, cvas, mode, alarm, scaleMax, alarmStatus, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs, headerDiv)},10000);
 
 }
 
-function DrawWaffle(cvas, startColor, endColor, frame, title, rows, cols, totalWidth, totalHeight, cellSide){
+function DrawWaffle(cvas, headerDiv, startColor, endColor, frame, title, rows, cols, totalWidth, totalHeight, cellSide){
 
 	var FPS = 30;
 	var duration = 0.5;
@@ -231,6 +231,8 @@ function DrawWaffle(cvas, startColor, endColor, frame, title, rows, cols, totalW
     //adjust canvas to fit:
     $('#'+cvas).attr('width', totalWidth);
     $('#'+cvas).attr('height', totalHeight);
+    var headerHeight = $('#'+headerDiv).height() + 10;
+    $(document.getElementById(cvas)).css('top', headerHeight);
 
     context.globalAlpha = 1;
 
@@ -256,7 +258,7 @@ function DrawWaffle(cvas, startColor, endColor, frame, title, rows, cols, totalW
 
     if(frame < nFrames){
     	frame++;
-    	setTimeout(function(){DrawWaffle(cvas, startColor, endColor, frame, title, rows, cols, totalWidth, totalHeight, cellSide)},duration/FPS);
+    	setTimeout(function(){DrawWaffle(cvas, headerDiv, startColor, endColor, frame, title, rows, cols, totalWidth, totalHeight, cellSide)},duration/FPS);
     }
 
 }

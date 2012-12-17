@@ -121,7 +121,7 @@ function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, 
     n = 0;
     alarmString = '';
     while(n<nAlarms && currentAlarmArray[n][2]>0){
-        if(n == 0) alarmString = 'Current Alarm Threshold: ' + alarm[1] + ' ' + units[1] + '<br><br>'
+        if(n == 0) alarmString = 'Alarm Threshold: ' + alarm[1] + ' ' + units[1] + '<br><br>'
         alarmString += rowTitles[0] + ' ' + currentAlarmArray[n][0] + ', ' + colTitles[0] + ' ' + currentAlarmArray[n][1] + '<br>Reported Current: ' + reportCurrent[currentAlarmArray[n][0]][currentAlarmArray[n][1]].toFixed(3) + ' ' + units[1] + '<br><br>';
         n++;
     }
@@ -134,7 +134,7 @@ function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, 
     n = 0;
     alarmString = '';
     while(n<nAlarms && temperatureAlarmArray[n][2]>0){
-        if(n == 0) alarmString = 'Temperature Alarm Threshold: ' + alarm[2] + ' ' + units[2] + '<br><br>'
+        if(n == 0) alarmString = 'Alarm Threshold: ' + alarm[2] + ' ' + units[2] + '<br><br>'
         alarmString += rowTitles[0] + ' ' + temperatureAlarmArray[n][0] + ', ' + colTitles[0] + ' ' + temperatureAlarmArray[n][1] + '<br>Reported Temperature: ' + reportTemperature[temperatureAlarmArray[n][0]][temperatureAlarmArray[n][1]].toFixed(3) + ' ' + units[2] + '<br><br>';
         n++;
     }
@@ -164,15 +164,7 @@ function drawAllClear(x0, y0, radius, title, canvasID, alphaB){
             context.lineTo(x0-17+10+1, y0 +2+10+1);
             context.lineTo(x0-17+10+30+1, y0 +2+10-30+1);
             context.stroke();
-/*
-            context.beginPath();
-            context.moveTo(2+1,2+1);
-            context.lineTo(canvas.width-2+1, 2+1);
-            context.lineTo(canvas.width-2+1, canvas.height-2+1);
-            context.lineTo(2+1, canvas.height-2+1);
-            context.closePath();
-            context.stroke();
-*/
+
             context.strokeStyle = "rgba(0,255,0,"+alphaB+")";
             context.lineWidth = 5;
             context.beginPath();
@@ -181,15 +173,7 @@ function drawAllClear(x0, y0, radius, title, canvasID, alphaB){
             context.lineTo(x0-17+10, y0 +2+10);
             context.lineTo(x0-17+10+30, y0 +2+10-30);
             context.stroke();
-/*
-            context.beginPath();
-            context.moveTo(2,2);
-            context.lineTo(canvas.width-2, 2);
-            context.lineTo(canvas.width-2, canvas.height-2);
-            context.lineTo(2, canvas.height-2);
-            context.closePath();
-            context.stroke();
-*/
+
             context.fillStyle = 'rgba(0,0,0,1)';
             context.font=(2*radius*0.24)+'px Times New Roman';
             context.fillText(title, 0.5*canvas.width - context.measureText(title).width/2+1, canvas.height*0.5+1);
@@ -215,15 +199,7 @@ function drawAlarm(x0, y0, L, title, canvasID, alphaB){
             context.closePath();
             context.fillText('!', x0-10+1, y0+1+10);
             context.stroke();
-/*
-            context.beginPath();
-            context.moveTo(2+1,2+1);
-            context.lineTo(canvas.width-2+1, 2+1);
-            context.lineTo(canvas.width-2+1, canvas.height-2+1);
-            context.lineTo(2+1, canvas.height-2+1);
-            context.closePath();
-            context.stroke();
-*/
+
             context.strokeStyle = "rgba(255,0,0,"+alphaB+")";
             context.fillStyle = "rgba(255,0,0,"+alphaB+")";
             context.lineWidth = 5;
@@ -234,15 +210,7 @@ function drawAlarm(x0, y0, L, title, canvasID, alphaB){
             context.closePath();
             context.fillText('!', x0-10, y0+10);
             context.stroke();
-/*
-            context.beginPath();
-            context.moveTo(2,2);
-            context.lineTo(canvas.width-2, 2);
-            context.lineTo(canvas.width-2, canvas.height-2);
-            context.lineTo(2, canvas.height-2);
-            context.closePath();
-            context.stroke();
-*/
+
             context.fillStyle = 'rgba(0,0,0,1)';
             context.font=(L*0.24)+'px Times New Roman';
             context.fillText(title, 0.5*canvas.width - context.measureText(title).width/2+1, canvas.height*0.5+1);
