@@ -180,7 +180,9 @@ function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, prevAlarmSt
             var chx = Math.floor( (event.pageX - superDiv.offsetLeft - canvas.offsetLeft) / cellSide);
             var chy = Math.floor( (event.pageY - superDiv.offsetTop - canvas.offsetTop) / cellSide);
 
-            channelSelect(wrapperDiv, InputLayer, chx, chy, rowTitles, colTitles, title, unit, endData, mode, rows, cols, event);
+            if(chx<cols && chy<rows){
+                channelSelect(wrapperDiv, InputLayer, chx, chy, rowTitles, colTitles, title, unit, endData, mode, rows, cols, event);
+            }
 
         }
         //single waffle mode must also allow a channel to be targeted via the input interface; bind the 

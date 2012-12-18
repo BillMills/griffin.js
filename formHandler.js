@@ -113,5 +113,7 @@ function gotoNewChannel(wrapperDiv, InputLayer, rowTitles, colTitles, title, uni
 	xVal = getInput('changeChannel', 1);
 	yVal = getInput('changeChannel', 0);
 
-    channelSelect(wrapperDiv, InputLayer, xVal, yVal, rowTitles, colTitles, title, unit, endData, mode, rows, cols);
+    if(xVal<cols && yVal<rows){
+        channelSelect(wrapperDiv, InputLayer, xVal, yVal, rowTitles, colTitles, title, unit, endData, mode, rows, cols);
+    }
 }
