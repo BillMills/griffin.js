@@ -1,4 +1,4 @@
-function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, prevAlarmStatus, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs, headerDiv){
+function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, prevAlarmStatus, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs, headerDiv, moduleDivisions, moduleLabels){
 
     if(!document.webkitHidden && !document.mozHidden){
     	var i, j, n;
@@ -197,7 +197,7 @@ function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, prevAlarmSt
             }
         }
         
-        DrawWaffle(cvas, headerDiv, startColor, endColor, 1, title, rows, cols, totalWidth, totalHeight, cellSide);
+        DrawWaffle(cvas, headerDiv, startColor, endColor, 1, title, rows, cols, totalWidth, totalHeight, cellSide, moduleDivisions, moduleLabels);
         AlarmSidebar(sidebar[0], side[0], wrapperDiv, waffleHeight, prevAlarmStatus, alarmStatus, rows, cols, rowTitles, colTitles, callMyself, alarmPanelDivIDs, alarmPanelCanvIDs, demandVoltage, reportVoltage, reportCurrent, reportTemperature, alarm, ['V', 'mA', 'C']);
         if(mode == 'single') decorateInputSidebar(sidebar[1], side[1], wrapperDiv, waffleHeight);
         Tooltip(cvas, wrapperDiv, tooltip, TTcontainer, rows, cols, cellSide, rowTitles, colTitles, prefix, postfix, endData);
@@ -208,11 +208,11 @@ function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, prevAlarmSt
     }
 
     //repeat every update interval:
-    setTimeout(function(){Waffle(1, rows, cols, cvas, mode, alarm, scaleMax, alarmStatus, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs, headerDiv)},10000);
+    setTimeout(function(){Waffle(1, rows, cols, cvas, mode, alarm, scaleMax, alarmStatus, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs, headerDiv, moduleDivisions, moduleLabels)},10000);
 
 }
 
-function DrawWaffle(cvas, headerDiv, startColor, endColor, frame, title, rows, cols, totalWidth, totalHeight, cellSide){
+function DrawWaffle(cvas, headerDiv, startColor, endColor, frame, title, rows, cols, totalWidth, totalHeight, cellSide, moduleDivisions, moduleLabels){
 
 	var FPS = 30;
 	var duration = 0.5;
@@ -253,22 +253,27 @@ function DrawWaffle(cvas, headerDiv, startColor, endColor, frame, title, rows, c
     	}
     }
 
-    var gridLines = new DrawWaffleDecorations(cvas, rows, cols, cellSide);
-    var waffleLabels = new DrawWaffleLabels(cvas, title, rows, cols, cellSide);
+    DrawWaffleDecorations(cvas, rows, cols, cellSide, moduleDivisions);
+    DrawWaffleLabels(cvas, title, rows, cols, cellSide, moduleDivisions, moduleLabels);
 
     if(frame < nFrames){
     	frame++;
-    	setTimeout(function(){DrawWaffle(cvas, headerDiv, startColor, endColor, frame, title, rows, cols, totalWidth, totalHeight, cellSide)},duration/FPS);
+    	setTimeout(function(){DrawWaffle(cvas, headerDiv, startColor, endColor, frame, title, rows, cols, totalWidth, totalHeight, cellSide, moduleDivisions, moduleLabels)},duration/FPS);
     }
 
 }
 
-function DrawWaffleDecorations(cvas, rows, cols, cellSide){
+function DrawWaffleDecorations(cvas, rows, cols, cellSide, moduleDivisions){
     //fetch canvas:
     var canvas = document.getElementById(cvas);
     var context = canvas.getContext('2d');
 
     var i, j;
+
+    var modDivCopy = [];
+    for(i=1; i < moduleDivisions.length; i++){
+        modDivCopy[i-1] = moduleDivisions[i];
+    }
 
     //style lines:
     context.fillStyle = 'rgba(0,0,0,1)';
@@ -281,27 +286,38 @@ function DrawWaffleDecorations(cvas, rows, cols, cellSide){
 	context.lineTo(cellSide*cols,cellSide*rows);
 	context.lineTo(cellSide*cols,0);
 	context.lineTo(0,0);
+    context.stroke();
 
     //draw inner lines:
 	for(i=1; i<rows; i++){
+        context.beginPath();
+        context.lineWidth = 1;
 		context.moveTo(0,i*cellSide);
-		context.lineTo(cellSide*cols,i*cellSide);		
+		context.lineTo(cellSide*cols,i*cellSide);
+        context.stroke();		
 	}
     for(j=1; j<cols; j++){
+        context.beginPath();
+        if(j==modDivCopy[0]){
+            context.lineWidth = 3;
+            modDivCopy.shift();
+        }
+        else context.lineWidth = 1;
         context.moveTo(j*cellSide,0);
         context.lineTo(j*cellSide,cellSide*rows);
+        context.stroke();
     }
-
-    context.stroke();
 
 }
 
-function DrawWaffleLabels(cvas, title, rows, cols, cellSide){
+function DrawWaffleLabels(cvas, title, rows, cols, cellSide, moduleDivisions, moduleLabels){
     var i, j;
+    var moduleWidth, modRotation, modAlign, modHeight;
 
     //fetch canvas:
     var canvas = document.getElementById(cvas);
     var context = canvas.getContext('2d');
+
 
     //Tie title font size to plot size:
     var titleFontSize = Math.min(30, context.canvas.width*0.08);
@@ -309,7 +325,7 @@ function DrawWaffleLabels(cvas, title, rows, cols, cellSide){
     context.font=titleFontSize+"px Times New Roman";
     context.fillStyle = 'black';
     context.globalAlpha = 0.6;
-    context.fillText(title, cols*cellSide/2 - context.measureText(title).width/2, rows*cellSide+70);
+    //context.fillText(title, cols*cellSide/2 - context.measureText(title).width/2, rows*cellSide+70);
 
     //channel labels:
     var labelFontSize = Math.min(16, cellSide);
@@ -325,6 +341,28 @@ function DrawWaffleLabels(cvas, title, rows, cols, cellSide){
         context.fillText(j, 0,labelFontSize/2);
         context.restore();
     }
+
+    //module labels:
+    for(j=1; j<moduleDivisions.length; j++){
+        var moduleWidth = moduleDivisions[j] - moduleDivisions[j-1];
+
+        if(moduleWidth*cellSide < context.measureText(moduleLabels[j-1]).width){
+            modRotation = -Math.PI/2.5;
+            modAlign = 'right';
+            modHeight = 0;
+        } else {
+            modRotation = 0;
+            modAlign = 'center';
+            modHeight = labelFontSize;
+        }
+        context.save();
+        context.translate(( moduleWidth/2 + moduleDivisions[j-1])*cellSide, rows*cellSide+10+2*labelFontSize + modHeight);
+        context.rotate(modRotation);
+        context.textAlign = modAlign;
+        context.fillText(moduleLabels[j-1], 0,labelFontSize/2);
+        context.restore();
+    }
+
 }
 
 //map the active grid cooridnates onto MIDAS's channel numbering:
