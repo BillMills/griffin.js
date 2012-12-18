@@ -1,4 +1,4 @@
-function Slider(sliderDiv, sliderCanv, knobDiv, knobCanv) {
+function Slider(sliderDiv, sliderCanv, knobDiv, knobCanv, sliderText, execute) {
 	//set up slider size:
 	/*
 	$('#'+sliderDiv).width(260);
@@ -81,12 +81,12 @@ function Slider(sliderDiv, sliderCanv, knobDiv, knobCanv) {
 	    	if(sliderTo < 10) sliderTo = 10;
 	    	if(sliderTo > 230) sliderTo = 230;
 
-	    	scale = Math.round(sliderTo / 220 * 100) - 5;  //TODO: what's with the offset?
-	    	document.getElementById('sliderText').innerHTML = '<br>'+scale+'%';
+	    	scale = Math.round((sliderTo-10) / 220 * 100);
+	    	document.getElementById(sliderText).innerHTML = '<br>'+scale+'%';
 
 		   	$(knobContainer).css('left', sliderTo);
 
-		   	partial(demo, scale/100)();
+		   	partial(execute, scale/100)();
 		}
     }
 
@@ -95,25 +95,33 @@ function Slider(sliderDiv, sliderCanv, knobDiv, knobCanv) {
         	var sliderTo = parseFloat($(knobContainer).css('left')) + 1;
         	if(sliderTo > 230) sliderTo = 230;
         	$(knobContainer).css('left', sliderTo);   
-            scale = Math.round(sliderTo / 220 * 100) - 5;  //TODO: what's with the offset?
-	    	document.getElementById('sliderText').innerHTML = '<br>'+scale+'%';
-	    	partial(demo, scale/100)();
+            scale = Math.round((sliderTo-10) / 220 * 100);
+	    	document.getElementById(sliderText).innerHTML = '<br>'+scale+'%';
+	    	partial(execute, scale/100)();
 
         }
         else if(event.keyCode == 37) {
         	var sliderTo = parseFloat($(knobContainer).css('left')) - 1;
         	if(sliderTo < 10) sliderTo = 10;
         	$(knobContainer).css('left', sliderTo);
-            scale = Math.round(sliderTo / 220 * 100) - 5;  //TODO: what's with the offset?
-	    	document.getElementById('sliderText').innerHTML = '<br>'+scale+'%'; 
-	    	partial(demo, scale/100)();
+            scale = Math.round((sliderTo-10) / 220 * 100);
+	    	document.getElementById(sliderText).innerHTML = '<br>'+scale+'%'; 
+	    	partial(execute, scale/100)();
         }
 	}
     //end button response----------------------------------------
 
 }
 
-
+function jumpSlider(position, knobDiv, sliderText){
+    var knobContainer = document.getElementById(knobDiv);
+            var sliderTo = position*220;
+            //if(sliderTo > 230) sliderTo = 230;
+            //if(sliderTo < 10) sliderTo = 10;
+            $(knobContainer).css('left', sliderTo+10);   
+            scale = Math.round( (sliderTo) / 220 * 100);
+            document.getElementById(sliderText).innerHTML = '<br>'+scale+'%';
+}
 
 
 function partial(func /*, 0..n args */) {

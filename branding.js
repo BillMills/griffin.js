@@ -7,8 +7,8 @@ function Banner(canvas, location, navbar, title) {
     var canvas = document.getElementById(canvas);
     var context = canvas.getContext('2d');
 
-    //Choose rendering width: use 1200px or the actual width, whichever is larger:
-    var renderWidth = Math.max(1200, window.innerWidth);
+    //Choose rendering width: use 1800px or the actual width, whichever is larger:
+    var renderWidth = Math.max(1800, window.innerWidth);
 
     //resize canvas
     context.canvas.width = renderWidth-10;

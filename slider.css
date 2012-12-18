@@ -1,9 +1,9 @@
 div#slider{
-	position:relative; 
-	top: 500px;
-	left: 500px;
+	position:absolute; 
 	width: 270px;
 	height: 36px;
+	margin-top: 5px;
+	display: inline;
 }
 
 canvas#sliderBKG{
@@ -12,7 +12,7 @@ canvas#sliderBKG{
 }
 div#sliderKnob{
 	display: inline;
-	position:relative; 
+	position:absolute; 
 	left: 10px;
 	width: 24px;
 	height: 36px;

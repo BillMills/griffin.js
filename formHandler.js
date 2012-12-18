@@ -91,6 +91,7 @@ function channelSelect(wrapperDiv, InputLayer, chx, chy, rowTitles, colTitles, t
     if (endData[chy][chx] > 0.1) document.getElementById('onButton').checked = true;
     else document.getElementById('offButton').checked = true;
     document.getElementById('demandval').value = Math.round(endData[chy][chx]*10000)/10000;
+    jumpSlider(Math.round(endData[chy][chx]*10000)/10000, 'sliderKnob', 'sliderText');
 
     //for single waffle, use a sidebar for a fixed input menu; for dual waffle+alarm configuration,
     //input field must follow mouse and overlay.
@@ -116,4 +117,8 @@ function gotoNewChannel(wrapperDiv, InputLayer, rowTitles, colTitles, title, uni
     if(xVal<cols && yVal<rows){
         channelSelect(wrapperDiv, InputLayer, xVal, yVal, rowTitles, colTitles, title, unit, endData, mode, rows, cols);
     }
+}
+
+function slideVoltage(sliderVal){
+    document.getElementById('demandval').value = sliderVal;
 }

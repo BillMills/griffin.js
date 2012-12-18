@@ -16,10 +16,10 @@
       </div>
     </div>
 
-    <canvas id='demo'></canvas>
+    <canvas id='demo' style='position:relative; left:300px;'></canvas>
 
     <script type="text/JavaScript">
-      Slider('slider', 'sliderBKG', 'sliderKnob', 'knobStyle');
+      Slider('slider', 'sliderBKG', 'sliderKnob', 'knobStyle', 'sliderText', demo);
 
       var canvas = document.getElementById('demo');
       var context = canvas.getContext('2d');
