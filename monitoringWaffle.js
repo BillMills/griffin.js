@@ -1,4 +1,4 @@
-function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, prevAlarmStatus, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs, headerDiv, moduleDivisions, moduleLabels){
+function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, prevAlarmStatus, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs, headerDiv, moduleDivisions, moduleLabels){
 
     if(!document.webkitHidden && !document.mozHidden){
     	var i, j, n;
@@ -6,11 +6,8 @@ function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, prevAlarmSt
         var ODBindex;
 
         //determine dimesions of canvas:
-        if(mode == 'double'){
-            var totalWidth = Math.round(0.24*$('#'+wrapperDiv).width());
-        } else if(mode == 'single') {
-            var totalWidth = Math.round(0.5*$('#'+wrapperDiv).width());
-        }
+        var totalWidth = Math.round(0.5*$('#'+wrapperDiv).width());
+        
         var totalHeight = totalWidth*rows/cols + 100;
 
         //waffle dimensions; leave gutters for labels & title
@@ -181,27 +178,26 @@ function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, prevAlarmSt
             var chy = Math.floor( (event.pageY - superDiv.offsetTop - canvas.offsetTop) / cellSide);
 
             if(chx<cols && chy<rows){
-                channelSelect(wrapperDiv, InputLayer, chx, chy, rowTitles, colTitles, title, unit, endData, mode, rows, cols, event);
+                channelSelect(wrapperDiv, InputLayer, chx, chy, rowTitles, colTitles, title, unit, endData, rows, cols, event);
             }
 
         }
-        //single waffle mode must also allow a channel to be targeted via the input interface; bind the 
-        //fetch button behavior here:
-        if(mode == 'single'){
-            var getChannel = document.getElementById('getChannelButton');
-            getChannel.onclick = function(event){
-                gotoNewChannel(wrapperDiv, InputLayer, rowTitles, colTitles, title, unit, endData, mode, rows, cols)
-            }
-
-            //also, draw the input sidebar for 0,0 on first call:
-            if(!callMyself){
-                channelSelect(wrapperDiv, InputLayer, 0, 0, rowTitles, colTitles, title, unit, endData, mode, rows, cols);
-            }
+        //bind the fetch button behavior here:
+        
+        var getChannel = document.getElementById('getChannelButton');
+        getChannel.onclick = function(event){
+            gotoNewChannel(wrapperDiv, InputLayer, rowTitles, colTitles, title, unit, endData, rows, cols)
         }
+
+        //also, draw the input sidebar for 0,0 on first call:
+        if(!callMyself){
+            channelSelect(wrapperDiv, InputLayer, 0, 0, rowTitles, colTitles, title, unit, endData, rows, cols);
+        }
+        
         
         DrawWaffle(cvas, headerDiv, startColor, endColor, 1, title, rows, cols, totalWidth, totalHeight, cellSide, moduleDivisions, moduleLabels);
         AlarmSidebar(sidebar[0], side[0], wrapperDiv, waffleHeight, prevAlarmStatus, alarmStatus, rows, cols, rowTitles, colTitles, callMyself, alarmPanelDivIDs, alarmPanelCanvIDs, demandVoltage, reportVoltage, reportCurrent, reportTemperature, alarm, ['V', 'mA', 'C']);
-        if(mode == 'single') decorateInputSidebar(sidebar[1], side[1], wrapperDiv, waffleHeight);
+        decorateInputSidebar(sidebar[1], side[1], wrapperDiv, waffleHeight);
         Tooltip(cvas, wrapperDiv, tooltip, TTcontainer, rows, cols, cellSide, rowTitles, colTitles, prefix, postfix, endData);
 
     } else {
@@ -210,7 +206,7 @@ function Waffle(callMyself, rows, cols, cvas, mode, alarm, scaleMax, prevAlarmSt
     }
 
     //repeat every update interval:
-    setTimeout(function(){Waffle(1, rows, cols, cvas, mode, alarm, scaleMax, alarmStatus, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs, headerDiv, moduleDivisions, moduleLabels)},10000);
+    setTimeout(function(){Waffle(1, rows, cols, cvas, alarm, scaleMax, alarmStatus, title, sidebar, side, tooltip, TTcontainer, wrapperDiv, unit, rowTitles, colTitles, InputLayer, prefix, postfix, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs, headerDiv, moduleDivisions, moduleLabels)},10000);
 
 }
 
