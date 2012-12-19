@@ -8,18 +8,20 @@
 
   <body> 
 
-    <div id='slider'>
-      <canvas id='sliderBKG' width=260 height=24></canvas>
-      <div id='sliderKnob'>
-        <canvas id='knobStyle' width=24 height=16> </canvas>
-        <p id='sliderText'><br>0%</p>
+    <div class='slider' id='voltageSlider'>
+      <canvas class='sliderBKG' id='voltageSliderBKG' width=260 height=24></canvas>
+      <div class='sliderKnob' id='voltageSliderKnob'>
+        <canvas class='knobStyle' id='voltageKnobStyle' width=24 height=16> </canvas>
+        <p class='sliderText' id='voltageSliderText'><br>0%</p>
       </div>
     </div>
 
     <canvas id='demo' style='position:relative; left:300px;'></canvas>
 
     <script type="text/JavaScript">
-      Slider('slider', 'sliderBKG', 'sliderKnob', 'knobStyle', 'sliderText', demo);
+      Slider('voltageSlider', 'voltageSliderBKG', 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', demo);
+
+      jumpSlider(0.47, 'voltageSliderKnob', 'voltageSliderText')
 
       var canvas = document.getElementById('demo');
       var context = canvas.getContext('2d');

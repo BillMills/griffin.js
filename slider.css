@@ -1,4 +1,4 @@
-div#slider{
+div.slider{
 	position:absolute; 
 	width: 270px;
 	height: 36px;
@@ -6,11 +6,11 @@ div#slider{
 	display: inline;
 }
 
-canvas#sliderBKG{
+canvas.sliderBKG{
 	display: inline;
 	position:absolute;
 }
-div#sliderKnob{
+div.sliderKnob{
 	display: inline;
 	position:absolute; 
 	left: 10px;
@@ -18,12 +18,12 @@ div#sliderKnob{
 	height: 36px;
 }
 
-canvas#knobStyle{
+canvas.knobStyle{
 	display: inline;
 	position:absolute;
 }
 
-p#sliderText{
+p.sliderText{
 	display: inline;
 	margin-top: 0px;
 	margin-bottom: 0px;

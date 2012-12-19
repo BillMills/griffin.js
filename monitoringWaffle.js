@@ -22,6 +22,7 @@ function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, prevAlarmStatus, 
         var demandVoltage = [];
         var reportVoltage = [];
         var reportCurrent = [];
+        var demandVramp = [];
         var reportTemperature = [];
         var channelMask = [];
         //computed values:
@@ -33,6 +34,7 @@ function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, prevAlarmStatus, 
             demandVoltage[i] = [];
             reportVoltage[i] = [];
             reportCurrent[i] = [];
+            demandVramp[i] = [];
             reportTemperature[i] = [];
             channelMask[i] = [];
         	endData[i] = [];
@@ -48,13 +50,15 @@ function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, prevAlarmStatus, 
                 demandVoltage[i][j] = ODBGet(ODBkeys[0]+'['+ODBindex+']');
                 reportVoltage[i][j] = ODBGet(ODBkeys[1]+'['+ODBindex+']');
                 reportCurrent[i][j] = ODBGet(ODBkeys[2]+'['+ODBindex+']');
-                reportTemperature[i][j] = ODBGet(ODBkeys[3]+'['+ODBindex+']');
-                channelMask[i][j] = ODBGet(ODBkeys[3]+'['+ODBindex+']');
+                demandVramp[i][j] = ODBGet(ODBkeys[3]+'['+ODBindex+']');
+                reportTemperature[i][j] = ODBGet(ODBkeys[4]+'['+ODBindex+']');
+                channelMask[i][j] = ODBGet(ODBkeys[5]+'['+ODBindex+']');
                 */
                 //fake data for offline demo
                 demandVoltage[i][j] = Math.random();
                 reportVoltage[i][j] = Math.random();
                 reportCurrent[i][j] = Math.random();
+                demandVramp[i][j] = Math.random();
                 reportTemperature[i][j] = Math.random();
                 channelMask[i][j] = Math.random();
                 if (channelMask[i][j] < 0.1) channelMask[i][j] = 0;
@@ -178,7 +182,7 @@ function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, prevAlarmStatus, 
             var chy = Math.floor( (event.pageY - superDiv.offsetTop - canvas.offsetTop) / cellSide);
 
             if(chx<cols && chy<rows){
-                channelSelect(wrapperDiv, InputLayer, chx, chy, rowTitles, colTitles, title, unit, endData, rows, cols, event);
+                channelSelect(wrapperDiv, InputLayer, chx, chy, rowTitles, colTitles, title, unit, channelMask, demandVoltage, demandVramp, rows, cols, event);
             }
 
         }
@@ -186,12 +190,12 @@ function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, prevAlarmStatus, 
         
         var getChannel = document.getElementById('getChannelButton');
         getChannel.onclick = function(event){
-            gotoNewChannel(wrapperDiv, InputLayer, rowTitles, colTitles, title, unit, endData, rows, cols)
+            gotoNewChannel(wrapperDiv, InputLayer, rowTitles, colTitles, title, unit, channelMask, demandVoltage, demandVramp, rows, cols)
         }
 
         //also, draw the input sidebar for 0,0 on first call:
         if(!callMyself){
-            channelSelect(wrapperDiv, InputLayer, 0, 0, rowTitles, colTitles, title, unit, endData, rows, cols);
+            channelSelect(wrapperDiv, InputLayer, 0, 0, rowTitles, colTitles, title, unit, channelMask, demandVoltage, demandVramp, rows, cols);
         }
         
         

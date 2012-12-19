@@ -75,12 +75,22 @@
           <input type='radio' id='onButton' name='HVswitch' value='on' style='margin-left:10px; margin-bottom:10px'>On
 
           <p id='FieldText' style='margin-left:60px'>Demand Voltage [mV]</p>
-          <input type="text" id="demandval" name='textbox' value='default' style='margin-bottom:30px; margin-top: 5px; margin-left:60px' size='6'>
-          <div id='slider'>
-            <canvas id='sliderBKG' width=260 height=24></canvas>
-            <div id='sliderKnob'>
-              <canvas id='knobStyle' width=24 height=16> </canvas>
-              <p id='sliderText'><br>0%</p>
+          <input type="text" id="demandVoltage" name='textbox' value='default' style='margin-bottom:30px; margin-top: 5px; margin-left:60px' size='6' onblur='javascript:fieldVoltage()'>
+          <div class='slider' id='voltageSlider'>
+            <canvas class='sliderBKG' id='voltageSliderBKG' width=260 height=24></canvas>
+            <div class='sliderKnob' id='voltageSliderKnob'>
+              <canvas class='knobStyle' id='voltageKnobStyle' width=24 height=16> </canvas>
+              <p class='sliderText' id='voltageSliderText'><br>0%</p>
+            </div>
+          </div>
+
+          <p id='RampText' style='margin:0px; margin-left:60px'>Voltage Ramp Speed [mV/s]</p>
+          <input type="text" id="demandRampSpeed" name='textbox' value='default' style='margin-bottom:30px; margin-top: 5px; margin-left:60px' size='6' onblur='javascript:fieldRamp()'>
+          <div class='slider' id='rampSlider'>
+            <canvas class='sliderBKG' id='rampSliderBKG' width=260 height=24></canvas>
+            <div class='sliderKnob' id='rampSliderKnob'>
+              <canvas class='knobStyle' id='rampKnobStyle' width=24 height=16> </canvas>
+              <p class='sliderText' id='rampSliderText'><br>0%</p>
             </div>
           </div>
 
@@ -100,9 +110,9 @@
         </script>
 
         <form id='changeChannel'>
-          <h4 style='margin-left:60px'>Change Channel:</h4>
-          <p style='display:inline; margin-left:60px'>Channel</p><input type="text" id="newRow" name='newRow' style='margin-bottom:10px; margin-left:5px;'>
-          <p style='display:inline; margin-left:60px'><br>Card</p><input type="text" id="newCol" name='newCol' style='margin-bottom:10px; margin-left:5px;'>
+          <h4 style='margin-left:60px; margin-bottom:10px;'>Change Channel:</h4>
+          <p style='display:inline; margin-left:60px'>Card</p><input type="text" id="newCol" name='newCol' style='margin-bottom:10px; margin-left:5px; display:inline;' size='6'>
+          <p style='display:inline; margin-left:10px'>Channel</p><input type="text" id="newRow" name='newRow' style='margin-bottom:10px; margin-left:5px; display:inline;' size='6'>
           <br><input type="button" value="Go To Channel" style='margin-left:60px' id='getChannelButton'>       
         </form>
 
@@ -132,7 +142,8 @@
       $('#waffleplate').height(window.innerHeight*0.9);
 
       //insert sliders
-      Slider('slider', 'sliderBKG', 'sliderKnob', 'knobStyle', 'sliderText', slideVoltage);
+      Slider('voltageSlider', 'voltageSliderBKG', 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', slideVoltage);
+      Slider('rampSlider', 'rampSliderBKG', 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', slideRamp);
 
       //Waffle onclick event will throw x and y positions up to these globals, so that
       //updateParameter() can use them to determine which channel to update.  TODO: fix
@@ -149,7 +160,7 @@
       //cell labels; first entry decribes cell type (channel, card, crate, rack etc)
       var rowTitles = ['Ch.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'];
       var colTitles = ['Card', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'];
-      var ODBkeys = ['/Location/Of/demandVoltage', '/Location/Of/reportVoltage', '/Location/Of/reportCurrent', '/Location/Of/reportTemperature', '/Location/Of/ChannelOnOffState'];
+      var ODBkeys = ['/Location/Of/demandVoltage', '/Location/Of/reportVoltage', '/Location/Of/reportCurrent', '/Location/Of/VoltageRampSpeed', '/Location/Of/reportTemperature', '/Location/Of/ChannelOnOffState'];
 
       var moduleDivisions = [0,1,2,6,10,11,12,16,20];
       var moduleLabels = ['Module 0', 'Module 1', 'Module 2', 'Module 3', 'Module 4', 'Module 5', 'Module 6', 'Module 7'];

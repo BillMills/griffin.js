@@ -51,7 +51,7 @@ function Slider(sliderDiv, sliderCanv, knobDiv, knobCanv, sliderText, execute) {
     var active = 0;
 	var sliderContainer = document.getElementById(sliderDiv);
     var knobContainer = document.getElementById(knobDiv);
-    var sliderWasAt = 0;
+    var sliderWasAt = 0; //parseFloat($(knobContainer).css('left'));
     var cursorWasAt = 0;
     var dragX = 0;
     var sliderTo = 0;
@@ -61,15 +61,21 @@ function Slider(sliderDiv, sliderCanv, knobDiv, knobCanv, sliderText, execute) {
     $(knobContainer).css('outline', '0px none transparent');    
 
     canvas.onmousedown = function(event){
+        sliderWasAt = parseFloat($(knobContainer).css('left'));
     	knobContainer.tabIndex = '1';
     	knobContainer.focus();
     	active = 1;
     	cursorWasAt = event.pageX;
     }
 
-    document.onmouseup = function(event){
+    sliderContainer.onmouseup = function(event){
     	active = 0;
     	sliderWasAt = sliderWasAt + dragX;
+    }
+
+    sliderContainer.onmouseout = function(event){
+        active = 0;
+        sliderWasAt = sliderWasAt + dragX;
     }
 
     sliderContainer.onmousemove = function(event){
@@ -82,6 +88,7 @@ function Slider(sliderDiv, sliderCanv, knobDiv, knobCanv, sliderText, execute) {
 	    	if(sliderTo > 230) sliderTo = 230;
 
 	    	scale = Math.round((sliderTo-10) / 220 * 100);
+
 	    	document.getElementById(sliderText).innerHTML = '<br>'+scale+'%';
 
 		   	$(knobContainer).css('left', sliderTo);
@@ -115,12 +122,10 @@ function Slider(sliderDiv, sliderCanv, knobDiv, knobCanv, sliderText, execute) {
 
 function jumpSlider(position, knobDiv, sliderText){
     var knobContainer = document.getElementById(knobDiv);
-            var sliderTo = position*220;
-            //if(sliderTo > 230) sliderTo = 230;
-            //if(sliderTo < 10) sliderTo = 10;
-            $(knobContainer).css('left', sliderTo+10);   
-            scale = Math.round( (sliderTo) / 220 * 100);
-            document.getElementById(sliderText).innerHTML = '<br>'+scale+'%';
+    var sliderTo = position*220;
+    $(knobContainer).css('left', sliderTo+10);   
+    scale = Math.round( (sliderTo) / 220 * 100);
+    document.getElementById(sliderText).innerHTML = '<br>'+scale+'%';
 }
 
 

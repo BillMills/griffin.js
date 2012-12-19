@@ -68,7 +68,7 @@ function divFade(targetDiv, direction, frame){
 
 //plugs a new cell into the input interface; used for both onclicks on the waffles, and on button submits 
 //in the sidepanel view.
-function channelSelect(wrapperDiv, InputLayer, chx, chy, rowTitles, colTitles, title, unit, endData, rows, cols, event){
+function channelSelect(wrapperDiv, InputLayer, chx, chy, rowTitles, colTitles, title, unit, channelMask, demandVolt, demandVoltRamp, rows, cols, event){
 
     //Throw up to global so the setter remembers where we're pointing.  TODO: refactor without globals?
     window.griffinDialogX = chx;
@@ -78,17 +78,19 @@ function channelSelect(wrapperDiv, InputLayer, chx, chy, rowTitles, colTitles, t
     var inputDiv = document.getElementById(InputLayer);
 
     //set text in dialog box:
-    var inputTitle = 'Parameters for '+rowTitles[0]+' '+chy+', '+colTitles[0]+' '+chx;
+    var inputTitle = 'Parameters for '+colTitles[0]+' '+chx+', '+rowTitles[0]+' '+chy;
     document.getElementById('inputTitle').innerHTML = inputTitle;
 
     //set defaults
-    if (endData[chy][chx] > 0.1) document.getElementById('onButton').checked = true;
+    if (channelMask[chy][chx] == 1) document.getElementById('onButton').checked = true;
     else document.getElementById('offButton').checked = true;
-    document.getElementById('demandval').value = Math.round(endData[chy][chx]*10000)/10000;
-    jumpSlider(Math.round(endData[chy][chx]*10000)/10000, 'sliderKnob', 'sliderText');
 
-    //for single waffle, use a sidebar for a fixed input menu; for dual waffle+alarm configuration,
-    //input field must follow mouse and overlay.
+    document.getElementById('demandVoltage').value = Math.round(demandVolt[chy][chx]*10000)/10000;
+    jumpSlider(Math.round(demandVolt[chy][chx]*10000)/10000, 'voltageSliderKnob', 'voltageSliderText');
+    document.getElementById('demandRampSpeed').value = Math.round(demandVoltRamp[chy][chx]*10000)/10000;
+    jumpSlider(Math.round(demandVoltRamp[chy][chx]*10000)/10000, 'rampSliderKnob', 'rampSliderText');
+
+    //input sidebar:
     $(inputDiv).css('right', '3%');
 
     //only actually display if the click was on the waffle and not the rest of the canvas:
@@ -98,16 +100,57 @@ function channelSelect(wrapperDiv, InputLayer, chx, chy, rowTitles, colTitles, t
 }
 
 //point interface at new channel indicated by user in the 'changeChannel' form.
-function gotoNewChannel(wrapperDiv, InputLayer, rowTitles, colTitles, title, unit, endData, rows, cols){
+function gotoNewChannel(wrapperDiv, InputLayer, rowTitles, colTitles, title, unit, channelMask, demandVolt, demandVoltRamp, rows, cols){
 
-	xVal = getInput('changeChannel', 1);
-	yVal = getInput('changeChannel', 0);
+	xVal = getInput('changeChannel', 0);
+	yVal = getInput('changeChannel', 1);
 
     if(xVal<cols && yVal<rows){
-        channelSelect(wrapperDiv, InputLayer, xVal, yVal, rowTitles, colTitles, title, unit, endData, rows, cols);
+        channelSelect(wrapperDiv, InputLayer, xVal, yVal, rowTitles, colTitles, title, unit, channelMask, demandVolt, demandVoltRamp, rows, cols);
     }
 }
 
+//tie the slider value to the field value for demand voltage:
 function slideVoltage(sliderVal){
-    document.getElementById('demandval').value = sliderVal;
+    var max = 1;
+    var min = 0;
+    document.getElementById('demandVoltage').value = sliderVal*(max-min)+min;
+}
+
+//...and the opposite, too: make the slider catch up to a value typed into the corresponding field:
+function fieldVoltage(){
+    var max = 1;
+    var min = 0;
+    var fieldEntry = document.getElementById('demandVoltage').value;
+    jumpSlider(fieldEntry, 'voltageSliderKnob', 'voltageSliderText');
+    if(fieldEntry < min) {
+        jumpSlider(min, 'voltageSliderKnob', 'voltageSliderText');
+        document.getElementById('demandVoltage').value = min;
+    } else if(fieldEntry > max){
+        jumpSlider(max, 'voltageSliderKnob', 'voltageSliderText');
+        document.getElementById('demandVoltage').value = max;
+    }
+}
+
+//tie the slider value to the field value for demand ramp speed:
+function slideRamp(sliderVal){
+    var max = 1;
+    var min = 0;
+    document.getElementById('demandRampSpeed').value = sliderVal*(max-min)+min;
+}
+
+
+//...and the opposite, too: make the slider catch up to a value typed into the corresponding field:
+function fieldRamp(){
+    var max = 1;
+    var min = 0;
+    var fieldEntry = document.getElementById('demandRampSpeed').value;
+    jumpSlider(fieldEntry, 'rampSliderKnob', 'rampSliderText');
+    if(fieldEntry < min) {
+        jumpSlider(min, 'rampSliderKnob', 'rampSliderText');
+        document.getElementById('demandRampSpeed').value = min;
+    } else if(fieldEntry > max){
+        jumpSlider(max, 'rampSliderKnob', 'rampSliderText');
+        document.getElementById('demandRampSpeed').value = max;
+    }
 }
