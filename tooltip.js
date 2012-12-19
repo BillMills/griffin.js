@@ -14,7 +14,7 @@ function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, rows, cols, c
     var oldX = Math.floor( (window.griffinToolTipX - document.getElementById(parentDiv).offsetLeft - document.getElementById(targetCanvas).offsetLeft) / cellSide);
     var oldY = Math.floor( (window.griffinToolTipY - document.getElementById(parentDiv).offsetTop - document.getElementById(targetCanvas).offsetTop) / cellSide);
     if(oldX > -1 && oldX < cols && oldY>-1 && oldY<rows){
-        var toolTipContent =  rowTitles[0]+' '+rowTitles[oldY+1]+'<br/>'+colTitles[0]+' '+colTitles[oldX+1]
+        var toolTipContent =  colTitles[0]+' '+colTitles[oldX+1]+', '+rowTitles[0]+' '+rowTitles[oldY+1]
         for(i=11; i<ttArgs; i++){
             toolTipContent += '<br/>'+prefix[i-11];
             if(prefix[i-11] !== '') toolTipContent += ' ';
@@ -44,7 +44,7 @@ function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, rows, cols, c
 
         //approximate box size:
         var boxX = 100;
-        var boxY = 40 + 20*(ttArgs-11);
+        var boxY = 20 + 20*(ttArgs-11);
 
         //make the tool tip follow the mouse:
 	    ttDiv.style.top = y-boxY-5;
@@ -62,10 +62,10 @@ function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, rows, cols, c
             var toolTipContent = '';
             var nextLine
             var longestLine = 0;
-            nextLine = rowTitles[0]+' '+rowTitles[chy+1];
+            nextLine = colTitles[0]+' '+colTitles[chx+1];
             longestLine = Math.max(longestLine, context.measureText(nextLine).width)
             toolTipContent += nextLine;
-            nextLine = '<br/>'+colTitles[0]+' '+colTitles[chx+1];
+            nextLine = ', '+rowTitles[0]+' '+rowTitles[chy+1];
             longestLine = Math.max(longestLine, context.measureText(nextLine).width)
             toolTipContent += nextLine;
 
@@ -79,7 +79,7 @@ function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, rows, cols, c
     	    document.getElementById('TipText').innerHTML = toolTipContent;
 
             //update the size of the tool tip to fit the text:
-            $(ttDiv).width(1.15*longestLine);
+            $(ttDiv).width(1.2*longestLine);
             $(ttDiv).height(boxY);
 
 	        //make the tool tip appear:

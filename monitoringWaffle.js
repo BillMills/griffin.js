@@ -202,7 +202,7 @@ function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, prevAlarmStatus, 
         DrawWaffle(cvas, headerDiv, startColor, endColor, 1, title, rows, cols, totalWidth, totalHeight, cellSide, moduleDivisions, moduleLabels);
         AlarmSidebar(sidebar[0], side[0], wrapperDiv, waffleHeight, prevAlarmStatus, alarmStatus, rows, cols, rowTitles, colTitles, callMyself, alarmPanelDivIDs, alarmPanelCanvIDs, demandVoltage, reportVoltage, reportCurrent, reportTemperature, alarm, ['V', 'mA', 'C']);
         decorateInputSidebar(sidebar[1], side[1], wrapperDiv, waffleHeight);
-        Tooltip(cvas, wrapperDiv, tooltip, TTcontainer, rows, cols, cellSide, rowTitles, colTitles, prefix, postfix, endData);
+        Tooltip(cvas, wrapperDiv, tooltip, TTcontainer, rows, cols, cellSide, rowTitles, colTitles, prefix, postfix, demandVoltage, reportVoltage, reportCurrent, demandVramp);
 
     } else {
         //make sure endData is defined for the next call to Waffle; keep the same one so the first transition after focus returns is smooth.        
