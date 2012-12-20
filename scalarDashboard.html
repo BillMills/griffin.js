@@ -4,6 +4,7 @@
     <link href='http://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet' type='text/css'>
 
     <script src="zepto.min.js" type="text/javascript"></script>
+    <script src="utilities.js" type="text/javascript"></script>
     <script src="branding.js" type="text/javascript"></script>
     <script src="monitoringWaffle.js" type="text/javascript"></script>
     <script src="tooltip.js" type="text/javascript"></script>
@@ -68,14 +69,21 @@
       <!--Input Layer//////////////////////////////////////////////////////-->
       <div align='left' id='InputLayer'>
         <canvas id='rightSidebar'></canvas>
+
+        <!--title-->
         <h2 id='inputTitle' align='left' style='margin-left:50px'>sintitulo</h2>
 
+        <!--Form for channel reporting and input-->
         <form id='setValues'>
+          <!--Channel on off:-->
           <input type='radio' id='offButton' name='HVswitch' value='off' style='margin-left:60px; margin-bottom:10px'>Off
           <input type='radio' id='onButton' name='HVswitch' value='on' style='margin-left:10px; margin-bottom:10px'>On
 
+          <!--Demand voltage input field-->
           <p id='FieldText' style='margin-left:60px'>Demand Voltage [mV]</p>
-          <input type="text" id="demandVoltage" name='textbox' value='default' style='margin-bottom:30px; margin-top: 5px; margin-left:60px' size='6' onblur='javascript:fieldVoltage()'>
+          <input type="text" id="demandVoltage" name='textbox' value='default' style='margin-bottom:10px; margin-top: 5px; margin-left:60px' size='6' onblur='javascript:fieldVoltage()'>
+
+          <!--Slider for demand voltage-->
           <div class='slider' id='voltageSlider'>
             <canvas class='sliderBKG' id='voltageSliderBKG' width=260 height=24></canvas>
             <div class='sliderKnob' id='voltageSliderKnob'>
@@ -84,8 +92,14 @@
             </div>
           </div>
 
+          <!--voltage fill meter-->
+          <br><canvas id='voltageMeter' style='margin-left:60px;'></canvas>          
+
+          <!--voltage ramp speed input field-->
           <p id='RampText' style='margin:0px; margin-left:60px'>Voltage Ramp Speed [mV/s]</p>
           <input type="text" id="demandRampSpeed" name='textbox' value='default' style='margin-bottom:30px; margin-top: 5px; margin-left:60px' size='6' onblur='javascript:fieldRamp()'>
+
+          <!--Slider for voltage ramp speed-->
           <div class='slider' id='rampSlider'>
             <canvas class='sliderBKG' id='rampSliderBKG' width=260 height=24></canvas>
             <div class='sliderKnob' id='rampSliderKnob'>
@@ -94,8 +108,9 @@
             </div>
           </div>
 
+          <!--Submit updates to channel settings-->
           <br><input type="button" value="Submit" style='margin-left:60px' onclick="javascript:updateParameter('InputLayer', 'single')">
-          <input type="button" value="Cancel" onclick="javascript:abortUpdate('InputLayer', 'single')">
+          <!--input type="button" value="Cancel" onclick="javascript:abortUpdate('InputLayer', 'single')"-->
         </form>
 
         <canvas id='inputSpacer' height=5px width=200px style='margin-left:60px'></canvas>
@@ -109,6 +124,7 @@
           ILcontext.stroke();
         </script>
 
+        <!--Form for channel selecting-->
         <form id='changeChannel'>
           <h4 style='margin-left:60px; margin-bottom:10px;'>Change Channel:</h4>
           <p style='display:inline; margin-left:60px'>Card</p><input type="text" id="newCol" name='newCol' style='margin-bottom:10px; margin-left:5px; display:inline;' size='6' value='0'>
@@ -162,8 +178,12 @@
       var colTitles = ['Card', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'];
       var ODBkeys = ['/Location/Of/demandVoltage', '/Location/Of/reportVoltage', '/Location/Of/reportCurrent', '/Location/Of/VoltageRampSpeed', '/Location/Of/reportTemperature', '/Location/Of/ChannelOnOffState'];
 
+      //module edges and names:
       var moduleDivisions = [0,1,2,6,10,11,12,16,20];
       var moduleLabels = ['Module 0', 'Module 1', 'Module 2', 'Module 3', 'Module 4', 'Module 5', 'Module 6', 'Module 7'];
+
+      //declare objects:
+      var meter = new FillMeter('voltageMeter', 300);
 
       //Voltage Waffle:
       Waffle(0,12,20, 'TestWaffle', [0.8,0.999,0.999], [1,1,1], alarmStatus, "Mainframe 1", ['leftSidebar', 'rightSidebar'], ['left', 'right'], "TT", "TTcontainer", "waffleplate", 'mV', rowTitles, colTitles, "InputLayer", ['Demand Voltage: ', 'Reported Voltage: ', 'Reported Current: ', 'Voltage Ramp Speed: '], ['mV', 'mV', 'mA', 'mV / s'], ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleDivisions, moduleLabels);

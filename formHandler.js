@@ -97,13 +97,16 @@ function channelSelect(wrapperDiv, InputLayer, chx, chy, rowTitles, colTitles, t
     if(chx < cols && chy < rows){
         divFade(inputDiv, 'in', 0);
     }
+
+    //var meter = new FillMeter('voltageMeter', $('#'+InputLayer).width() - 60);
+    meter.update(Math.round(demandVolt[chy][chx]*10000)/10000);
 }
 
 //point interface at new channel indicated by user in the 'changeChannel' form.
-function gotoNewChannel(wrapperDiv, InputLayer, rowTitles, colTitles, title, unit, channelMask, demandVolt, demandVoltRamp, rows, cols){
+function gotoNewChannel(wrapperDiv, InputLayer, rowTitles, colTitles, title, unit, channelMask, demandVolt, demandVoltRamp, rows, cols, callMyself){
 
-	xVal = getInput('changeChannel', 0);
-	yVal = getInput('changeChannel', 1);
+	var xVal = getInput('changeChannel', 0);
+	var yVal = getInput('changeChannel', 1);
 
     if(xVal<cols && yVal<rows){
         channelSelect(wrapperDiv, InputLayer, xVal, yVal, rowTitles, colTitles, title, unit, channelMask, demandVolt, demandVoltRamp, rows, cols);
@@ -154,3 +157,41 @@ function fieldRamp(){
         document.getElementById('demandRampSpeed').value = max;
     }
 }
+
+function decorateInputSidebar(sidebar, side, wrapperDiv, waffleHeight){
+
+    //fetch canvas:
+    var canvas = document.getElementById(sidebar);
+    var context = canvas.getContext('2d');
+
+    //get container div dimensions:
+    var parentWidth = $('#'+wrapperDiv).width();
+    var parentHeight = $('#'+wrapperDiv).height();
+
+    //define sidebar dimensions:
+    var width = parentWidth*0.2;
+    var height = parentHeight;
+
+    //set sidebar dimensions:
+    canvas.width = width;
+    canvas.height = height;
+
+    //separator line inset
+    var inset = 0.1*width;
+
+    //draw separator line
+    context.strokeStyle = "rgba(0,0,0,0.2)"
+    context.beginPath();
+    if(side === "left"){
+        context.moveTo(width-inset,10);
+        context.lineTo(width-inset,waffleHeight*1.3);
+    } else if(side === "right"){
+        context.moveTo(inset,10);
+        context.lineTo(inset,waffleHeight*1.3);
+    }
+        
+    context.stroke();
+    
+}
+
+
