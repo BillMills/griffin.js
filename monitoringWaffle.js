@@ -190,7 +190,7 @@ function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, prevAlarmStatus, 
         
         var getChannel = document.getElementById('getChannelButton');
         getChannel.onclick = function(event){
-            gotoNewChannel(wrapperDiv, InputLayer, rowTitles, colTitles, title, unit, channelMask, demandVoltage, demandVramp, rows, cols)
+            gotoNewChannel(wrapperDiv, InputLayer, rowTitles, colTitles, title, unit, channelMask, demandVoltage, demandVramp, rows, cols);
         }
 
         //also, draw the input sidebar for 0,0 on first call:
@@ -203,6 +203,7 @@ function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, prevAlarmStatus, 
         AlarmSidebar(sidebar[0], side[0], wrapperDiv, waffleHeight, prevAlarmStatus, alarmStatus, rows, cols, rowTitles, colTitles, callMyself, alarmPanelDivIDs, alarmPanelCanvIDs, demandVoltage, reportVoltage, reportCurrent, reportTemperature, alarm, ['V', 'mA', 'C']);
         decorateInputSidebar(sidebar[1], side[1], wrapperDiv, waffleHeight);
         Tooltip(cvas, wrapperDiv, tooltip, TTcontainer, rows, cols, cellSide, rowTitles, colTitles, prefix, postfix, demandVoltage, reportVoltage, reportCurrent, demandVramp);
+        gotoNewChannel(wrapperDiv, InputLayer, rowTitles, colTitles, title, unit, channelMask, demandVoltage, demandVramp, rows, cols);
 
     } else {
         //make sure endData is defined for the next call to Waffle; keep the same one so the first transition after focus returns is smooth.        

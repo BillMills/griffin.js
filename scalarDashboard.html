@@ -111,8 +111,8 @@
 
         <form id='changeChannel'>
           <h4 style='margin-left:60px; margin-bottom:10px;'>Change Channel:</h4>
-          <p style='display:inline; margin-left:60px'>Card</p><input type="text" id="newCol" name='newCol' style='margin-bottom:10px; margin-left:5px; display:inline;' size='6'>
-          <p style='display:inline; margin-left:10px'>Channel</p><input type="text" id="newRow" name='newRow' style='margin-bottom:10px; margin-left:5px; display:inline;' size='6'>
+          <p style='display:inline; margin-left:60px'>Card</p><input type="text" id="newCol" name='newCol' style='margin-bottom:10px; margin-left:5px; display:inline;' size='6' value='0'>
+          <p style='display:inline; margin-left:10px'>Channel</p><input type="text" id="newRow" name='newRow' style='margin-bottom:10px; margin-left:5px; display:inline;' size='6' value='0'>
           <br><input type="button" value="Go To Channel" style='margin-left:60px' id='getChannelButton'>       
         </form>
 
@@ -167,7 +167,7 @@
 
       //Voltage Waffle:
       Waffle(0,12,20, 'TestWaffle', [0.8,0.999,0.999], [1,1,1], alarmStatus, "Mainframe 1", ['leftSidebar', 'rightSidebar'], ['left', 'right'], "TT", "TTcontainer", "waffleplate", 'mV', rowTitles, colTitles, "InputLayer", ['Demand Voltage: ', 'Reported Voltage: ', 'Reported Current: ', 'Voltage Ramp Speed: '], ['mV', 'mV', 'mA', 'mV / s'], ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleDivisions, moduleLabels);
-      
+
   </script> 
   
   </body>
