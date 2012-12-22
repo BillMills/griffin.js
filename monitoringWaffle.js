@@ -17,6 +17,10 @@ function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, prevAlarmStatus, 
         //cell dimensions controlled by width, since width more visually important here:
         var cellSide = waffleWidth / cols;
 
+        //style card nav buttons
+        var newRule = "button.cardNav{width:"+0.9*cellSide+"px; margin-right:"+0.05*cellSide+"px; margin-left:"+0.05*cellSide+"px; float:left;}";
+        document.styleSheets[0].insertRule(newRule,0);
+
         //set up arrays:
         //ODB info:
         var demandVoltage = [];
@@ -183,6 +187,7 @@ function Waffle(callMyself, rows, cols, cvas, alarm, scaleMax, prevAlarmStatus, 
 
             if(chx<cols && chy<rows){
                 channelSelect(wrapperDiv, InputLayer, chx, chy, rowTitles, colTitles, title, unit, channelMask, demandVoltage, demandVramp, rows, cols, event);
+                
             }
 
         }
@@ -311,6 +316,9 @@ function DrawWaffleDecorations(cvas, rows, cols, cellSide, moduleDivisions){
         context.stroke();
     }
 
+    //style card link buttons:
+
+
 }
 
 function DrawWaffleLabels(cvas, title, rows, cols, cellSide, moduleDivisions, moduleLabels){
@@ -325,14 +333,14 @@ function DrawWaffleLabels(cvas, title, rows, cols, cellSide, moduleDivisions, mo
     //Tie title font size to plot size:
     var titleFontSize = Math.min(30, context.canvas.width*0.08);
     //make title:
-    context.font=titleFontSize+"px Times New Roman";
+    context.font=titleFontSize+"px 'Raleway'";
     context.fillStyle = 'black';
     context.globalAlpha = 0.6;
     //context.fillText(title, cols*cellSide/2 - context.measureText(title).width/2, rows*cellSide+70);
 
     //channel labels:
     var labelFontSize = Math.min(16, cellSide);
-    context.font=labelFontSize+"px Times New Roman";
+    context.font=labelFontSize+"px Raleway";
     for(i=0; i<rows; i++){
         context.fillText(i, cellSide*cols+10, i*cellSide + cellSide/2 +8 );
     }
@@ -350,7 +358,7 @@ function DrawWaffleLabels(cvas, title, rows, cols, cellSide, moduleDivisions, mo
         var moduleWidth = moduleDivisions[j] - moduleDivisions[j-1];
 
         if(moduleWidth*cellSide < context.measureText(moduleLabels[j-1]).width){
-            modRotation = -Math.PI/2.5;
+            modRotation = -Math.PI/2.4;
             modAlign = 'right';
             modHeight = 0;
         } else {

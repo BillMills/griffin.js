@@ -14,7 +14,7 @@ div.sliderKnob{
 	display: inline;
 	position:absolute; 
 	left: 10px;
-	width: 24px;
+	width: 100px;
 	height: 36px;
 }
 
@@ -27,7 +27,8 @@ p.sliderText{
 	display: inline;
 	margin-top: 0px;
 	margin-bottom: 0px;
-	color: Grey;
+	color: rgba(255,255,255,0.9);
+	position:relative;
 }
 
 canvas#downStep{

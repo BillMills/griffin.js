@@ -14,7 +14,7 @@ function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, rows, cols, c
     var oldX = Math.floor( (window.griffinToolTipX - document.getElementById(parentDiv).offsetLeft - document.getElementById(targetCanvas).offsetLeft) / cellSide);
     var oldY = Math.floor( (window.griffinToolTipY - document.getElementById(parentDiv).offsetTop - document.getElementById(targetCanvas).offsetTop) / cellSide);
     if(oldX > -1 && oldX < cols && oldY>-1 && oldY<rows){
-        var toolTipContent =  colTitles[0]+' '+colTitles[oldX+1]+', '+rowTitles[0]+' '+rowTitles[oldY+1]
+        var toolTipContent =  '<br>'+colTitles[0]+' '+colTitles[oldX+1]+', '+rowTitles[0]+' '+rowTitles[oldY+1]+'<br>'
         for(i=11; i<ttArgs; i++){
             toolTipContent += '<br/>'+prefix[i-11];
             if(prefix[i-11] !== '') toolTipContent += ' ';
@@ -32,9 +32,6 @@ function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, rows, cols, c
         var context = canvas.getContext('2d');
        	var superDiv = document.getElementById(parentDiv);
 
-        //need this to match paragraph text for measuring purposes:
-        context.font = '12px Times New Roman'
-
         //force the tooltip off - patches persistency problem when moving down off the waffle.  TODO: understand persistency problem.
         ttDiv.style.display = 'none';
 
@@ -44,7 +41,7 @@ function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, rows, cols, c
 
         //approximate box size:
         var boxX = 100;
-        var boxY = 20 + 20*(ttArgs-11);
+        var boxY = 20 + 20*(ttArgs-11) + 60;
 
         //make the tool tip follow the mouse:
 	    ttDiv.style.top = y-boxY-5;
@@ -59,13 +56,10 @@ function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, rows, cols, c
         //only continue if the cursor is actually on the waffle:
         if(chx<cols && chy<rows){
            	//make the tool tip say something, keeping track of which line is longest:
-            var toolTipContent = '';
+            var toolTipContent = '<br>';
             var nextLine
             var longestLine = 0;
-            nextLine = colTitles[0]+' '+colTitles[chx+1];
-            longestLine = Math.max(longestLine, context.measureText(nextLine).width)
-            toolTipContent += nextLine;
-            nextLine = ', '+rowTitles[0]+' '+rowTitles[chy+1];
+            nextLine = colTitles[0]+' '+colTitles[chx+1]+', '+rowTitles[0]+' '+rowTitles[chy+1]+'<br>';
             longestLine = Math.max(longestLine, context.measureText(nextLine).width)
             toolTipContent += nextLine;
 
@@ -78,8 +72,9 @@ function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, rows, cols, c
             }
     	    document.getElementById('TipText').innerHTML = toolTipContent;
 
+
             //update the size of the tool tip to fit the text:
-            $(ttDiv).width(1.2*longestLine);
+            $(ttDiv).width(1*longestLine);
             $(ttDiv).height(boxY);
 
 	        //make the tool tip appear:
@@ -95,5 +90,26 @@ function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, rows, cols, c
         var ttDiv = document.getElementById(targetDiv);
         ttDiv.style.display = 'none';
     }
+
+}
+
+function drawTextDivider(x0, y0, length, cvas){
+        var canvas = document.getElementById(cvas);
+        var context = canvas.getContext('2d');
+
+        context.strokeStyle = 'rgba(255,255,255,0.9)'
+
+        context.beginPath();
+        context.moveTo(x0-length/2, y0);
+        context.lineTo(x0-0.05*length/2, y0);
+        context.moveTo(x0+0.05*length/2, y0);
+        context.lineTo(x0+length/2, y0);
+        context.moveTo(x0-0.02*length/2-5, y0+5);
+        context.lineTo(x0-0.02*length/2+5, y0-5);
+        context.moveTo(x0+0.02*length/2-5, y0+5);
+        context.lineTo(x0+0.02*length/2+5, y0-5);
+        context.stroke();
+
+
 
 }

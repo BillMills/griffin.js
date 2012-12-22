@@ -31,6 +31,7 @@ function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, 
 
     //draw separator line & scale sidebar
     if(!callMyself){
+        /*
         //separator line:
         context.strokeStyle = "rgba(0,0,0,0.2)"
         context.beginPath();
@@ -43,7 +44,7 @@ function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, 
         }
         
         context.stroke();
-
+        */
         //scale:
         for(i=0; i<alarmPanelDivIDs.length; i++){
             $( document.getElementById(alarmPanelDivIDs[i]) ).css('width', 0.8*width);
@@ -122,7 +123,7 @@ function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, 
     alarmString = '';
     while(n<nAlarms && currentAlarmArray[n][2]>0){
         if(n == 0) alarmString = 'Alarm Threshold: ' + alarm[1] + ' ' + units[1] + '<br><br>'
-        alarmString += colTitles[0] + ' ' + currentAlarmArray[n][1] + ', ' + rowTitles[0] + ' ' + currentAlarmArray[n][0] + '<br>Reported Current: ' + reportCurrent[currentAlarmArray[n][0]][currentAlarmArray[n][1]].toFixed(3) + ' ' + units[1] + '<br><br>';
+        alarmString += colTitles[0] + ' ' + currentAlarmArray[n][1] + ', ' + rowTitles[0] + ' ' + currentAlarmArray[n][0] + '<br>Current: ' + reportCurrent[currentAlarmArray[n][0]][currentAlarmArray[n][1]].toFixed(3) + ' ' + units[1] + '<br><br>';
         n++;
     }
     if(alarmString == ''){
@@ -135,7 +136,7 @@ function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, 
     alarmString = '';
     while(n<nAlarms && temperatureAlarmArray[n][2]>0){
         if(n == 0) alarmString = 'Alarm Threshold: ' + alarm[2] + ' ' + units[2] + '<br><br>'
-        alarmString += colTitles[0] + ' ' + temperatureAlarmArray[n][1] + ', ' + rowTitles[0] + ' ' + temperatureAlarmArray[n][0] + '<br>Reported Temperature: ' + reportTemperature[temperatureAlarmArray[n][0]][temperatureAlarmArray[n][1]].toFixed(3) + ' ' + units[2] + '<br><br>';
+        alarmString += colTitles[0] + ' ' + temperatureAlarmArray[n][1] + ', ' + rowTitles[0] + ' ' + temperatureAlarmArray[n][0] + '<br>Temperature: ' + reportTemperature[temperatureAlarmArray[n][0]][temperatureAlarmArray[n][1]].toFixed(3) + ' ' + units[2] + '<br><br>';
         n++;
     }
     if(alarmString == ''){
@@ -154,7 +155,7 @@ function drawAllClear(x0, y0, radius, title, canvasID, alphaB){
             var canvas = document.getElementById(canvasID);
             var context = canvas.getContext('2d');
 
-            context.font=(radius*0.6)+"px Times New Roman";    
+            //context.font=(radius*0.6)+"px 'Orbitron'";    
 
             context.strokeStyle = "rgba(0,0,0,"+alphaB+")";
             context.lineWidth = 5;
@@ -175,7 +176,7 @@ function drawAllClear(x0, y0, radius, title, canvasID, alphaB){
             context.stroke();
 
             context.fillStyle = 'rgba(0,0,0,1)';
-            context.font=(2*radius*0.24)+'px Times New Roman';
+            context.font=(2*radius*0.24)+'px Raleway';
             context.fillText(title, 0.5*canvas.width - context.measureText(title).width/2+1, canvas.height*0.5+1);
 
             context.fillStyle = 'rgba(255,255,255,1)';
@@ -212,7 +213,7 @@ function drawAlarm(x0, y0, L, title, canvasID, alphaB){
             context.stroke();
 
             context.fillStyle = 'rgba(0,0,0,1)';
-            context.font=(L*0.24)+'px Times New Roman';
+            context.font=(L*0.24)+'px Raleway';
             context.fillText(title, 0.5*canvas.width - context.measureText(title).width/2+1, canvas.height*0.5+1);
 
             context.fillStyle = 'rgba(255,255,255,1)';

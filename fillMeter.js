@@ -1,8 +1,12 @@
 //meter that fills to show the level of a scalar, with decorations.
-function FillMeter(cvas, width){
+function FillMeter(cvas, width, min, max, unit){
 
     this.oldFillLevel = 0;
     this.fillLevel = 0;
+    this.min = min;
+    this.max = max;
+    this.width = width;
+    this.unit = unit;
 
     //fetch canvas:
     this.canvas = document.getElementById(cvas);
@@ -13,12 +17,12 @@ function FillMeter(cvas, width){
     this.canvas.height = 0.15*width;
 
     //center of left end semicircle:
-    this.leftX0 = width*0.4;
+    this.leftX0 = width*0.1;
     this.leftY0 = this.canvas.height / 2;
     //meter half-thickness:
     this.radius = 5;
     //center of right end semicircle:
-    this.rightX0 = width*0.9;
+    this.rightX0 = width*0.8;
     this.rightY0 = this.canvas.height / 2;
     //boundary of fill line:
     this.fillTo = this.fillLevel*(this.rightX0 - this.leftX0) + this.leftX0;
@@ -79,6 +83,13 @@ function FillMeter(cvas, width){
         this.context.arc(fillLimit, this.rightY0, this.radius, 3*Math.PI/2, Math.PI/2);
         this.context.closePath();
         this.context.fill();    
+
+        //quote value above fill position:
+        this.context.clearRect(0,0, this.rightX0+this.width, this.rightY0-this.radius);
+        this.context.fillStyle = 'rgba(255,255,255,0.9)';
+        this.context.font = "20px Raleway"; 
+        fillString = (frameFill*(this.max-this.min)+this.min).toFixed(0)+' '+this.unit;
+        this.context.fillText(fillString, fillLimit - this.context.measureText(fillString).width/2, this.leftY0-1.7*this.radius);
     };
 
     //wrapper for transition from old state to new state via this.animate:

@@ -32,6 +32,13 @@ function getInput(formId, fieldIndex){
     return oText.value;
 }
 
+//set values in fields:
+function setInput(formId, fieldIndex, setval){
+    var oForm = document.getElementById(formId);
+    var oText = oForm.elements[fieldIndex];
+    oText.value = setval;
+}
+
 //dismiss the form without doing anything else:
 function abortUpdate(InputLayer){
 	var inputDiv = document.getElementById(InputLayer);
@@ -78,27 +85,29 @@ function channelSelect(wrapperDiv, InputLayer, chx, chy, rowTitles, colTitles, t
     var inputDiv = document.getElementById(InputLayer);
 
     //set text in dialog box:
-    var inputTitle = 'Parameters for '+colTitles[0]+' '+chx+', '+rowTitles[0]+' '+chy;
+    var inputTitle = 'Parameters for <br>'+colTitles[0]+' '+chx+', '+rowTitles[0]+' '+chy;
     document.getElementById('inputTitle').innerHTML = inputTitle;
 
     //set defaults
     if (channelMask[chy][chx] == 1) document.getElementById('onButton').checked = true;
     else document.getElementById('offButton').checked = true;
 
-    document.getElementById('demandVoltage').value = Math.round(demandVolt[chy][chx]*10000)/10000;
-    jumpSlider(Math.round(demandVolt[chy][chx]*10000)/10000, 'voltageSliderKnob', 'voltageSliderText');
-    document.getElementById('demandRampSpeed').value = Math.round(demandVoltRamp[chy][chx]*10000)/10000;
-    jumpSlider(Math.round(demandVoltRamp[chy][chx]*10000)/10000, 'rampSliderKnob', 'rampSliderText');
+    document.getElementById('demandVoltage').value = Math.round(demandVolt[chy][chx]*2000); //*2000 transform just for demo purposes
+    jumpSlider(Math.round(demandVolt[chy][chx]*10000)/10000, 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', 0, 2000, 'mV');
+    document.getElementById('demandRampSpeed').value = Math.round(demandVoltRamp[chy][chx]*2000);
+    jumpSlider(Math.round(demandVoltRamp[chy][chx]*10000)/10000, 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', 0, 2000, 'mV/s');
 
     //input sidebar:
-    $(inputDiv).css('right', '3%');
+    //$(inputDiv).css('right', '3%');
 
     //only actually display if the click was on the waffle and not the rest of the canvas:
     if(chx < cols && chy < rows){
         divFade(inputDiv, 'in', 0);
+        setInput('changeChannel',0,chx);
+        setInput('changeChannel',1,chy);
     }
 
-    //var meter = new FillMeter('voltageMeter', $('#'+InputLayer).width() - 60);
+    //dummy for now just to illustrate fill meters:
     meter.update(Math.round(demandVolt[chy][chx]*10000)/10000);
 }
 
@@ -115,45 +124,45 @@ function gotoNewChannel(wrapperDiv, InputLayer, rowTitles, colTitles, title, uni
 
 //tie the slider value to the field value for demand voltage:
 function slideVoltage(sliderVal){
-    var max = 1;
+    var max = 2000;
     var min = 0;
-    document.getElementById('demandVoltage').value = sliderVal*(max-min)+min;
+    document.getElementById('demandVoltage').value = (sliderVal*(max-min)+min).toFixed();
 }
 
 //...and the opposite, too: make the slider catch up to a value typed into the corresponding field:
 function fieldVoltage(){
-    var max = 1;
+    var max = 2000;
     var min = 0;
-    var fieldEntry = document.getElementById('demandVoltage').value;
-    jumpSlider(fieldEntry, 'voltageSliderKnob', 'voltageSliderText');
+    var fieldEntry = (document.getElementById('demandVoltage').value-min)/(max-min);
+    jumpSlider(fieldEntry, 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', 0, 2000, 'mV');
     if(fieldEntry < min) {
-        jumpSlider(min, 'voltageSliderKnob', 'voltageSliderText');
+        jumpSlider(min, 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', 0, 2000, 'mV');
         document.getElementById('demandVoltage').value = min;
     } else if(fieldEntry > max){
-        jumpSlider(max, 'voltageSliderKnob', 'voltageSliderText');
+        jumpSlider(max, 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', 0, 2000, 'mV');
         document.getElementById('demandVoltage').value = max;
     }
 }
 
 //tie the slider value to the field value for demand ramp speed:
 function slideRamp(sliderVal){
-    var max = 1;
+    var max = 2000;
     var min = 0;
-    document.getElementById('demandRampSpeed').value = sliderVal*(max-min)+min;
+    document.getElementById('demandRampSpeed').value = (sliderVal*(max-min)+min).toFixed();
 }
 
 
 //...and the opposite, too: make the slider catch up to a value typed into the corresponding field:
 function fieldRamp(){
-    var max = 1;
+    var max = 2000;
     var min = 0;
-    var fieldEntry = document.getElementById('demandRampSpeed').value;
-    jumpSlider(fieldEntry, 'rampSliderKnob', 'rampSliderText');
+    var fieldEntry = (document.getElementById('demandRampSpeed').value-min)/(max-min);
+    jumpSlider(fieldEntry, 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', 0, 2000, 'mV/s');
     if(fieldEntry < min) {
-        jumpSlider(min, 'rampSliderKnob', 'rampSliderText');
+        jumpSlider(min, 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', 0, 2000, 'mV/s');
         document.getElementById('demandRampSpeed').value = min;
     } else if(fieldEntry > max){
-        jumpSlider(max, 'rampSliderKnob', 'rampSliderText');
+        jumpSlider(max, 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', 0, 2000, 'mV/s');
         document.getElementById('demandRampSpeed').value = max;
     }
 }
@@ -178,7 +187,7 @@ function decorateInputSidebar(sidebar, side, wrapperDiv, waffleHeight){
 
     //separator line inset
     var inset = 0.1*width;
-
+/*
     //draw separator line
     context.strokeStyle = "rgba(0,0,0,0.2)"
     context.beginPath();
@@ -191,7 +200,7 @@ function decorateInputSidebar(sidebar, side, wrapperDiv, waffleHeight){
     }
         
     context.stroke();
-    
+*/  
 }
 
 

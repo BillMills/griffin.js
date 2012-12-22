@@ -49,6 +49,7 @@ div#TT{
 	width:100px;
 	height:60px;
 	color:#FFFFFF;
+	text-align: center
 }
 
 p#TipText{
@@ -59,11 +60,16 @@ p#TipText{
 
 div#InputLayer{
 	position: absolute;
-	display: none;
-	background: rgba(0,0,0,0.7);
-	color: rgba(0,0,0,0.6);
+	/*display: none;*/
+	background-color: rgba(0,0,0,0.7) !important;
+	color: rgba(255,255,255,0.9);
 	width: 20%;
 	height: 80%;
+	border-style:ridge; 
+	border-width:5px; 
+	border-color:black;
+
+	right:3%;
 }
 
 p#FieldText{
@@ -141,3 +147,12 @@ top:0px;
 background: rgba(0,0,0,1);
 z-index: 10000;
 }
+
+/*
+button.cardNav{
+	
+	padding:0px;
+	margin:0px;
+	border:0px;
+}
+*/
