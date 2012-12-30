@@ -2,8 +2,6 @@
 //tip consists of a div targetDiv with absolute positioning containing <p id="TipText"></p>, wrapped
 //in a containerDiv with relative positioning.  TODO: enforce div properties?
 
-//TODO: text boldness glitch on top row?
-
 function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, rows, cols, cellSide, rowTitles, colTitles, prefix, postfix, data){
 	var canvas = document.getElementById(targetCanvas);
     var i;
@@ -77,8 +75,9 @@ function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, rows, cols, c
             $(ttDiv).width(1*longestLine);
             $(ttDiv).height(boxY);
 
-	        //make the tool tip appear:
-	        ttDiv.style.display = 'block';
+	        //make the tool tip appear iff the waffle is showing:
+            if(window.onDisplay == 'TestWaffle')
+    	        ttDiv.style.display = 'block';
 
             window.griffinToolTipX = event.pageX;
             window.griffinToolTipY = event.pageY;
