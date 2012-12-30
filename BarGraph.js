@@ -1,4 +1,4 @@
-function BarGraph(cvas, nBars, title, barTitles, scaleMin, scaleMax, masterWaffle){
+function BarGraph(cvas, nBars, title, yAxisTitle, barTitles, scaleMin, scaleMax, masterWaffle){
 
 	//bar chart levels:
 	this.oldLevels = [];
@@ -16,6 +16,9 @@ function BarGraph(cvas, nBars, title, barTitles, scaleMin, scaleMax, masterWaffl
 
 	//chart title:
 	this.title = title;
+
+	//y-axis title:
+	this.yAxisTitle = yAxisTitle;
 
     //fetch canvas:
     this.canvas = document.getElementById(cvas);
@@ -143,6 +146,14 @@ function BarGraph(cvas, nBars, title, barTitles, scaleMin, scaleMax, masterWaffl
 			this.context.stroke();
 			this.context.fillText( ((this.scaleMax-this.scaleMin)/(this.yAxisTicks-1)*i).toFixed(1),  this.width*0.1 - 10 - 20, this.height - this.bottomMargin - i*(this.height - this.topMargin - this.bottomMargin)/(this.yAxisTicks-1) + 5);
 		}
+
+		//draw y-axis title:
+		this.context.font=0.4*this.barWidth+"px 'Raleway'";
+		this.context.save();
+		this.context.translate(this.width*0.05, this.topMargin + this.context.measureText(this.yAxisTitle).width);
+		this.context.rotate(-Math.PI/2);
+		this.context.fillText(this.yAxisTitle, 0, 0);
+		this.context.restore();
 
 		//draw chart title:
 		this.context.font=0.7*this.barWidth+"px 'Raleway'";
