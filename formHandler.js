@@ -113,7 +113,6 @@ function channelSelect(wrapperDiv, InputLayer, chx, chy, rowTitles, colTitles, t
 
 //point interface at new channel indicated by user in the 'changeChannel' form.
 function gotoNewChannel(wrapperDiv, InputLayer, rowTitles, colTitles, title, unit, channelMask, demandVolt, demandVoltRamp, rows, cols, callMyself){
-
 	var xVal = getInput('changeChannel', 0);
 	var yVal = getInput('changeChannel', 1);
 
@@ -133,13 +132,15 @@ function slideVoltage(sliderVal){
 function fieldVoltage(){
     var max = 2000;
     var min = 0;
-    var fieldEntry = (document.getElementById('demandVoltage').value-min)/(max-min);
+    var inputValue = document.getElementById('demandVoltage').value;
+    var fieldEntry = (inputValue-min)/(max-min);
+
     jumpSlider(fieldEntry, 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', 0, 2000, 'mV');
-    if(fieldEntry < min) {
-        jumpSlider(min, 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', 0, 2000, 'mV');
+    if(inputValue < min) {
+        jumpSlider(0, 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', 0, 2000, 'mV');
         document.getElementById('demandVoltage').value = min;
-    } else if(fieldEntry > max){
-        jumpSlider(max, 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', 0, 2000, 'mV');
+    } else if(inputValue > max){
+        jumpSlider(1, 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', 0, 2000, 'mV');
         document.getElementById('demandVoltage').value = max;
     }
 }
@@ -156,13 +157,15 @@ function slideRamp(sliderVal){
 function fieldRamp(){
     var max = 2000;
     var min = 0;
-    var fieldEntry = (document.getElementById('demandRampSpeed').value-min)/(max-min);
+    var inputValue = document.getElementById('demandRampSpeed').value;
+    var fieldEntry = (inputValue-min)/(max-min);
+
     jumpSlider(fieldEntry, 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', 0, 2000, 'mV/s');
     if(fieldEntry < min) {
-        jumpSlider(min, 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', 0, 2000, 'mV/s');
+        jumpSlider(0, 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', 0, 2000, 'mV/s');
         document.getElementById('demandRampSpeed').value = min;
     } else if(fieldEntry > max){
-        jumpSlider(max, 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', 0, 2000, 'mV/s');
+        jumpSlider(1, 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', 0, 2000, 'mV/s');
         document.getElementById('demandRampSpeed').value = max;
     }
 }

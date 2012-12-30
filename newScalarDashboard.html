@@ -1,0 +1,257 @@
+<html> 
+  <head>
+
+    <link href='http://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+
+    <script src="zepto.min.js" type="text/javascript"></script>
+    <script src="utilities.js" type="text/javascript"></script>
+    <script src="branding.js" type="text/javascript"></script>
+    <script src="Waffle.js" type="text/javascript"></script>
+    <script src="tooltip.js" type="text/javascript"></script>
+    <script src="alarmSidebar.js" type="text/javascript"></script>
+    <script src="formHandler.js" type="text/javascript"></script>
+    <script src="slider.js" type="text/javascript"></script>
+    <script src="fillMeter.js" type="text/javascript"></script>
+    <script src="BarGraph.js" type="text/javascript"></script>
+    <script src="masterControl.js" type="text/javascript"></script>
+
+    <link rel="stylesheet" type="text/css" href="scalarDashboard.css" />
+    <link rel="stylesheet" type="text/css" href="slider.css" />
+  </head> 
+
+
+  <body style="font-family: 'Raleway', sans-serif;"> 
+
+    <!--Branding///////////////////////////////////////////////////////////-->
+    <canvas id="banner"></canvas>
+
+    <!--Buttons////////////////////////////////////////////////////////////-->
+    <div id="navBar">
+      <form action="demo.html" style='display:inline; position:relative; left:1%;'>
+        <input type="submit" value="Dashboard">
+      </form>
+      <button type="button" style='position:relative; left:1%;'>Trigger</button>
+      <button type="button" style='position:relative; left:1%;'>Monitoring</button>
+      <button type="button" style='position:relative; left:1%;'>ELog</button>
+      <p id="youAreHere" style='display: inline; color:rgba(0,0,0,0.2); font-size:24px; position:absolute; margin:0'></p>
+    </div>
+
+    <!--Waffleboard////////////////////////////////////////////////////////-->
+
+    <div id="waffleplate">
+
+      <!--Alarm Layer//////////////////////////////////////////////////////-->
+      <div id='alarmLayer' style='float:left'>
+        <canvas id="leftSidebar"></canvas>
+
+        <div class='alarmDiv' id='voltAlarm'>
+          <canvas id='alarmIconV', style='position:absolute; height:150px'></canvas>
+          <p id='voltageText', style='color:white; margin-left:50px; margin-right:30px; position:relative; top:150px'></p>
+        </div>
+
+        <div class='alarmDiv' id='currentAlarm'>
+          <canvas id='alarmIconI', style='position:absolute; height:150px'></canvas>
+          <p id='currentText', style='color:white; margin-left:50px; margin-right:30px; position:relative; top:150px'></p>
+        </div>
+
+        <div class='alarmDiv' id='tempAlarm'>
+          <canvas id='alarmIconT', style='position:absolute; height:150px'></canvas>
+          <p id='temperatureText', style='color:white; margin-left:50px; margin-right:30px; position:relative; top:150px'></p>
+        </div>
+      </div>
+
+      <!---Waffles/////////////////////////////////////////////////////////-->
+      <div id="mainframeLinks">
+        <h1  style='display: inline; opacity: 0.3; font-family: "Orbitron", sans-serif; font-size: 275%; vertical-align:-20px;'>GRIFFIN HV Mainframe 1</h1>
+        <br><button type="button" style='display: inline;'>Mainframe 1</button>
+        <button type="button" style='display: inline;'>Mainframe 2</button>
+        <button type="button" style='display: inline;'>Mainframe 3</button>
+
+        <br><button class='cardNav' type="button" style='display: inline;'>Card 0</button>
+        <button class='cardNav' type="button" style='display: inline;'>Card 1</button>
+        <button class='cardNav' type="button" style='display: inline;'>Card 2</button>
+        <button class='cardNav' type="button" style='display: inline;'>Card 3</button>
+        <button class='cardNav' type="button" style='display: inline;'>Card 4</button>
+        <button class='cardNav' type="button" style='display: inline;'>Card 5</button>
+        <button class='cardNav' type="button" style='display: inline;'>Card 6</button>
+        <button class='cardNav' type="button" style='display: inline;'>Card 7</button>
+        <button class='cardNav' type="button" style='display: inline;'>Card 8</button>
+        <button class='cardNav' type="button" style='display: inline;'>Card 9</button>
+        <button class='cardNav' type="button" style='display: inline;'>Card 10</button>
+        <button class='cardNav' type="button" style='display: inline;'>Card 11</button>
+        <button class='cardNav' type="button" style='display: inline;'>Card 12</button>
+        <button class='cardNav' type="button" style='display: inline;'>Card 13</button>
+        <button class='cardNav' type="button" style='display: inline;'>Card 14</button>
+        <button class='cardNav' type="button" style='display: inline;'>Card 15</button>
+        <button class='cardNav' type="button" style='display: inline;'>Card 16</button>
+        <button class='cardNav' type="button" style='display: inline;'>Card 17</button>
+        <button class='cardNav' type="button" style='display: inline;'>Card 18</button>
+        <button class='cardNav' type="button" style='display: inline;'>Card 19</button>
+      </div>
+      <canvas id="TestWaffle"></canvas>
+
+      <!--Input Layer//////////////////////////////////////////////////////-->
+      <div align='left' id='InputLayer'>
+
+        <canvas id='rightSidebar'></canvas>
+
+        <!--title-->
+        <h2 id='inputTitle' align='left' style='margin-left:30px; font-family: "Orbitron", sans-serif;'>sintitulo</h2>
+
+        <!--Form for channel reporting and input-->
+        <form id='setValues'>
+          <!--Channel on off:-->
+          <input type='radio' id='offButton' name='HVswitch' value='off' style='margin-left:30px; margin-bottom:10px'>Off
+          <input type='radio' id='onButton' name='HVswitch' value='on' style='margin-left:10px; margin-bottom:10px'>On
+
+          <!--voltage fill meter-->
+          <p style='margin-left:30px; margin-bottom:0px;'>Reported Voltage [mV]</p>
+          <br><canvas id='voltageMeter' style='margin-left:30px;'></canvas>
+
+          <!--Demand voltage input field-->
+          <p id='FieldText' style='margin-left:30px'>Demand Voltage [mV]</p>
+          <input type="text" id="demandVoltage" name='textbox' value='default' style='margin-bottom:10px; margin-top: 5px; margin-left:30px' size='6' onblur='javascript:fieldVoltage()'>
+
+          <!--Slider for demand voltage-->
+          <div class='slider' id='voltageSlider'>
+            <canvas class='sliderBKG' id='voltageSliderBKG' width=260 height=24></canvas>
+            <div class='sliderKnob' id='voltageSliderKnob'>
+              <canvas class='knobStyle' id='voltageKnobStyle' width=24 height=16> </canvas>
+              <p class='sliderText' id='voltageSliderText'><br>0%</p>
+            </div>
+          </div>
+
+          
+          <!--Slider dummy-->
+          <!--p id='dummyText' style='margin-left:60px;'>Dr. Herp Derpington, Esq.</p>
+          <input id="demandDummy" type="text" style='margin-left:60px;' >
+          <div id='dummySlider'>
+            <canvas id='dummySliderBKG'></canvas>
+            <div id='dummySliderKnob'>
+              <canvas id='dummyKnobStyle'> </canvas>
+              <p id='dummySliderText' style='margin:0px;'><br>mew?</p>
+            </div>
+          </div-->
+
+          <!--voltage ramp speed input field-->
+          <p id='RampText' style='margin:0px; margin-left:30px; margin-top:20px'>Voltage Ramp Speed [mV/s]</p>
+          <input type="text" id="demandRampSpeed" name='textbox' value='default' style='margin-bottom:30px; margin-top: 5px; margin-left:30px' size='6' onblur='javascript:fieldRamp()'>
+
+          <!--Slider for voltage ramp speed-->
+          <div class='slider' id='rampSlider'>
+            <canvas class='sliderBKG' id='rampSliderBKG' width=260 height=24></canvas>
+            <div class='sliderKnob' id='rampSliderKnob'>
+              <canvas class='knobStyle' id='rampKnobStyle' width=24 height=16> </canvas>
+              <p class='sliderText' id='rampSliderText'><br>0%</p>
+            </div>
+          </div>
+
+          <!--Submit updates to channel settings-->
+          <br><input type="button" value="Submit" style='margin-left:30px' onclick="javascript:updateParameter('InputLayer', 'single')">
+          <!--input type="button" value="Cancel" onclick="javascript:abortUpdate('InputLayer', 'single')"-->
+        </form>
+
+        <canvas id='inputSpacer' height=5px width=200px style='margin-left:30px'></canvas>
+        <script type="text/JavaScript">
+          //style the input layer a bit:  TODO: factor out?
+          var ILcanvas = document.getElementById('inputSpacer');
+          var ILcontext = ILcanvas.getContext('2d');
+          ILcontext.strokeStyle = 'rgba(255,255,255,0.9)'
+          ILcontext.beginPath();
+          ILcontext.moveTo(0,0);
+          ILcontext.lineTo(200,0);
+          ILcontext.stroke();
+        </script>
+
+        <!--Form for channel selecting-->
+        <form id='changeChannel'>
+          <h4 style='margin-left:30px; margin-bottom:10px;'>Change Channel:</h4>
+          <p style='display:inline; margin-left:30px'>Card</p><input type="text" id="newCol" name='newCol' style='margin-bottom:10px; margin-left:5px; display:inline;' size='6' value='0'>
+          <p style='display:inline; margin-left:10px'>Channel</p><input type="text" id="newRow" name='newRow' style='margin-bottom:10px; margin-left:5px; display:inline;' size='6' value='0'>
+          <br><input type="button" value="Go To Channel" style='margin-left:30px' id='getChannelButton'>       
+        </form>
+
+      </div>
+
+      <canvas id='barDummy' width=800 height=400 style='position:relative; top:1000px; border:ridge;'></canvas>
+
+    </div>
+  <!--End Waffleboard////////////////////////////////////////////////////-->
+
+  <!--Tool tip layer/////////////////////////////////////////////////////-->
+  <div id="TTcontainer">
+    <div id="TT">
+      <p id="TipText"></p>
+    </div>
+  </div>
+
+  <script type="text/JavaScript">
+
+      //Insert branding & navigation
+      Banner('banner', 'youAreHere', 'navBar', 'GRIFFIN HV Mainframe 1');
+
+      //value-free dummy variables to initialize Waffle with:  TODO: eliminate
+      var alarmStatus;
+
+      //set up wrapper div dimensions; minimum rendering width = 1200px:
+      var renderWidth = Math.max(1800, window.innerWidth);
+      $('#waffleplate').width(renderWidth);
+      $('#waffleplate').height(window.innerHeight*0.9);
+
+      //insert sliders
+      slider('voltageSlider', 'voltageSliderBKG', 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', slideVoltage, 0, 2000, 'mV');
+      slider('rampSlider', 'rampSliderBKG', 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', slideRamp, 0, 2000, 'mV/s');
+
+      //Waffle onclick event will throw x and y positions up to these globals, so that
+      //updateParameter() can use them to determine which channel to update.  TODO: fix
+      //without globals.
+      window.griffinDialogX;
+      window.griffinDialogY;
+
+      //tool tip will throw its last known x and y positions up to global scope, so that
+      //when the waffle refreshes, the tool tip can update without a mousemove event.
+      //TODO: fix this without globals
+      window.griffinToolTipX = 0;
+      window.griffinToolTipY = 0;
+
+      //cell labels; first entry decribes cell type (channel, card, crate, rack etc)
+      var rowTitles = ['Ch.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'];
+      var colTitles = ['Card', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'];
+      var ODBkeys = ['/Location/Of/demandVoltage', '/Location/Of/reportVoltage', '/Location/Of/reportCurrent', '/Location/Of/VoltageRampSpeed', '/Location/Of/reportTemperature', '/Location/Of/ChannelOnOffState'];
+
+      //module edges and names:
+      var moduleDivisions = [0,1,2,6,10,11,12,16,20];
+      var moduleLabels = ['Module 0', 'Module 1', 'Module 2', 'Module 3', 'Module 4', 'Module 5', 'Module 6', 'Module 7'];
+
+      //declare objects:
+      var meter = new FillMeter('voltageMeter', 300, 0,1500, 'mV');
+      //var dummySlider = new Slider('dummyText', 'demandDummy', 'dummySlider', 'dummySliderBKG', 'dummySliderKnob', 'dummyKnobStyle', 'dummySliderText');
+      var waffle = new Waffle(12,20, 'TestWaffle', [0.8,0.999,0.999], [1,1,1], ['leftSidebar', 'rightSidebar'], "TT", "TTcontainer", "waffleplate", rowTitles, colTitles, "InputLayer", ['Demand Voltage: ', 'Reported Voltage: ', 'Reported Current: ', 'Voltage Ramp Speed: '], ['mV', 'mV', 'mA', 'mV / s'], ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleDivisions, moduleLabels);
+      var barTest = new BarGraph('barDummy', 12, ['000', '111', '222', '333', '444', '555', '666', '777', '888', '999', 'AAA', 'BBB'], 0, 1);
+
+      //set up arrays:
+      var demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask;
+      demandVoltage = [];
+      reportVoltage = [];
+      reportCurrent = [];
+      demandVramp = [];
+      reportTemperature = [];
+      channelMask = [];
+      for(i=0; i<12; i++){
+        demandVoltage[i] = [];
+        reportVoltage[i] = [];
+        reportCurrent[i] = [];
+        demandVramp[i] = [];
+        reportTemperature[i] = [];
+        channelMask[i] = [];
+      }
+
+      //start looping:
+      masterLoop(12, 20, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask, waffle, barTest, 0);
+
+  </script> 
+  
+  </body>
+ 
+</html>

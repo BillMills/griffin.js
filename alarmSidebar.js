@@ -76,7 +76,7 @@ function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, 
             else{
                 fadeSwapCanvas(alarmPanelCanvIDs[n], alarmTrip, allClear, 0);
             }
-        }
+        } 
 
     }
 
