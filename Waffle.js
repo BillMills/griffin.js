@@ -30,6 +30,8 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
         this.headerDiv = headerDiv;                 //div ID of waffle header
         this.moduleDivisions = moduleDivisions;     //array containing card numbers that divide modules
         this.moduleLabels = moduleLabels;           //array containing module labels
+        this.chx = 0;                               //x channel of input sidebar focus
+        this.chy = 0;                               //y channel of input sidebar focus
 
         //determine dimesions of canvas:
         this.totalWidth = Math.round(0.5*$('#'+this.wrapperDiv).width());
@@ -38,6 +40,9 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
         //waffle dimensions; leave gutters for labels & title
         this.waffleWidth = this.totalWidth - 60;
         this.waffleHeight = this.totalHeight - 120;
+
+        //header size:
+        this.headerHeight = $('#'+this.headerDiv).height() + 10;
 
         //cell dimensions controlled by width, since width more visually important here:
         this.cellSide = this.waffleWidth / this.cols;
@@ -214,8 +219,8 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
             //adjust canvas to fit:
             $('#'+this.cvas).attr('width', this.totalWidth);
             $('#'+this.cvas).attr('height', this.totalHeight);
-            var headerHeight = $('#'+this.headerDiv).height() + 10;
-            $(document.getElementById(this.cvas)).css('top', headerHeight);
+            //var headerHeight = $('#'+this.headerDiv).height() + 10;
+            $(document.getElementById(this.cvas)).css('top', this.headerHeight);
 
             //whiteout old canvas:
             this.context.globalAlpha = 1;
@@ -340,7 +345,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
             //update peripherals:
             AlarmSidebar(this.sidebar[0], this.side[0], this.wrapperDiv, this.waffleHeight, this.prevAlarmStatus, this.alarmStatus, this.rows, this.cols, this.rowTitles, this.colTitles, callMyself, this.alarmPanelDivIDs, this.alarmPanelCanvIDs, demandVoltage, reportVoltage, reportCurrent, reportTemperature, this.alarm, ['V', 'mA', 'C']);
             decorateInputSidebar(this.sidebar[1], this.side[1], this.wrapperDiv, this.waffleHeight);
-            channelSelect(this.wrapperDiv, this.InputLayer, 0, 0, this.rowTitles, this.colTitles, 'Depricated', 'ZZZ', this.channelMask, this.demandVoltage, this.demandVramp, this.rows, this.cols);
+            channelSelect(this.wrapperDiv, this.InputLayer, this.chx, this.chy, this.rowTitles, this.colTitles, 'Depricated', 'ZZZ', this.channelMask, this.demandVoltage, this.demandVramp, this.rows, this.cols);
             Tooltip(this.cvas, this.wrapperDiv, this.tooltip, this.TTcontainer, this.rows, this.cols, this.cellSide, this.rowTitles, this.colTitles, this.prefix, this.postfix, this.demandVoltage, this.reportVoltage, this.reportCurrent, this.demandVramp);
 
             //animate:
@@ -352,7 +357,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
 
 //define behavior of the change channel button:
 function changeChannelButton(obj){
-    gotoNewChannel(obj.wrapperDiv, obj.InputLayer, obj.rowTitles, obj.colTitles, 'depricated', 'YYY', obj.channelMask, obj.demandVoltage, obj.demandVramp, obj.rows, obj.cols, 1);
+    gotoNewChannel(obj);
 }
 
 //define the onclick behavior of the waffle:
@@ -365,6 +370,9 @@ function clickWaffle(event, obj){
             //bin as the waffle binning: 
             var chx = Math.floor( (event.pageX - superDiv.offsetLeft - obj.canvas.offsetLeft) / obj.cellSide);
             var chy = Math.floor( (event.pageY - superDiv.offsetTop - obj.canvas.offsetTop) / obj.cellSide);
+
+            obj.chx = chx;
+            obj.chy = chy;
 
             if(chx<obj.cols && chy<obj.rows){
                 channelSelect(obj.wrapperDiv, obj.InputLayer, chx, chy, obj.rowTitles, obj.colTitles, 'DEPRICATED', 'XXX', obj.channelMask, obj.demandVoltage, obj.demandVramp, obj.rows, obj.cols, event);

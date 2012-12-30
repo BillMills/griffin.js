@@ -112,12 +112,15 @@ function channelSelect(wrapperDiv, InputLayer, chx, chy, rowTitles, colTitles, t
 }
 
 //point interface at new channel indicated by user in the 'changeChannel' form.
-function gotoNewChannel(wrapperDiv, InputLayer, rowTitles, colTitles, title, unit, channelMask, demandVolt, demandVoltRamp, rows, cols, callMyself){
+function gotoNewChannel(waffle){
 	var xVal = getInput('changeChannel', 0);
 	var yVal = getInput('changeChannel', 1);
 
-    if(xVal<cols && yVal<rows){
-        channelSelect(wrapperDiv, InputLayer, xVal, yVal, rowTitles, colTitles, title, unit, channelMask, demandVolt, demandVoltRamp, rows, cols);
+    waffle.chx = xVal;
+    waffle.chy = yVal;
+
+    if(xVal<waffle.cols && yVal<waffle.rows){
+        channelSelect(waffle.wrapperDiv, waffle.InputLayer, xVal, yVal, waffle.rowTitles, waffle.colTitles, 'depricated', 'XYZ', waffle.channelMask, waffle.demandVolt, waffle.demandVoltRamp, waffle.rows, waffle.cols);
     }
 }
 
