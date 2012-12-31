@@ -53,7 +53,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
         this.nFrames = this.FPS*this.duration;
 
         //style card nav buttons
-        this.newRule = "button.cardNav{width:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; float:left;}";
+        this.newRule = "button.cardNav{width:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; float:left; background: -webkit-gradient(linear, left top, left bottom, from(#DDDDDD), to(#FFFFFF)); background: -moz-linear-gradient(top,  #DDDDDD,  #FFFFFF); -webkit-border-radius: 5; -moz-border-radius: 5; border-radius: 5;}";
         document.styleSheets[0].insertRule(this.newRule,0);
 
         //set up arrays:

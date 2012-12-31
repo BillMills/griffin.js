@@ -29,12 +29,12 @@
 
     <!--Buttons////////////////////////////////////////////////////////////-->
     <div id="navBar">
-      <form action="demo.html" style='display:inline; position:relative; left:1%;'>
+      <!--form action="demo.html" style='display:inline; position:relative; left:1%;'>
         <input type="submit" value="Dashboard">
       </form>
       <button type="button" style='position:relative; left:1%;'>Trigger</button>
       <button type="button" style='position:relative; left:1%;'>Monitoring</button>
-      <button type="button" style='position:relative; left:1%;'>ELog</button>
+      <button type="button" style='position:relative; left:1%;'>ELog</button-->
       <p id="youAreHere" style='display: inline; color:rgba(0,0,0,0.2); font-size:24px; position:absolute; margin:0'></p>
     </div>
 
@@ -65,11 +65,11 @@
       <!---Waffles/////////////////////////////////////////////////////////-->
       <div id="mainframeLinks">
         <h1  style='display: inline; opacity: 0.3; font-family: "Orbitron", sans-serif; font-size: 275%; vertical-align:-20px;'>GRIFFIN HV Mainframe 1</h1>
-        <br><button type="button" style='display: inline;' onclick="javascript:swapFade('TestWaffle')">Mainframe 1</button>
-        <button type="button" style='display: inline;'>Mainframe 2</button>
-        <button type="button" style='display: inline;'>Mainframe 3</button>
+        <br><button id='Main1' class='MFlink' type="button" style='background:-webkit-gradient(linear, left top, left bottom, from(#999999), to(#DDDDDD))' onclick="javascript:swapFade('TestWaffle', 'Main1')">Mainframe 1</button>
+        <button id='Main2' class='MFlink' type="button">Mainframe 2</button>
+        <button id='Main3' class='MFlink' type="button">Mainframe 3</button>
 
-        <br><button class='cardNav' type="button" style='display: inline;' onclick="javascript:swapFade('barDummy')">Card 0</button>
+        <br><button id='card0' class='cardNav' type="button" style='display: inline; margin-bottom:5px;' onclick="javascript:swapFade('barDummy', 'card0')">Card 0</button>
         <button class='cardNav' type="button" style='display: inline;'>Card 1</button>
         <button class='cardNav' type="button" style='display: inline;'>Card 2</button>
         <button class='cardNav' type="button" style='display: inline;'>Card 3</button>
@@ -251,6 +251,8 @@
 
       //which canvas is on top?
       window.onDisplay = 'TestWaffle';
+      //which was the last nav button pushed?
+      window.lastTrip = 'Main1';
 
       //start looping:
       masterLoop(12, 20, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask, waffle, barTest, 0);
