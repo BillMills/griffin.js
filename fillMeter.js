@@ -7,6 +7,7 @@ function FillMeter(cvas, width, min, max, unit){
     this.max = max;
     this.width = width;
     this.unit = unit;
+    this.xPos = 0;  //left margin of value label
 
     //fetch canvas:
     this.canvas = document.getElementById(cvas);
@@ -58,7 +59,7 @@ function FillMeter(cvas, width, min, max, unit){
 
     //draw a meter at frame <frame> when transitioning between this.oldFillLevel and this.fillLevel:
     this.draw = function(frame){
-
+    
         //fill level for this frame:
         var frameFill = this.oldFillLevel + (this.fillLevel - this.oldFillLevel) * frame / this.nFrames;
 
@@ -89,7 +90,14 @@ function FillMeter(cvas, width, min, max, unit){
         this.context.fillStyle = 'rgba(255,255,255,0.9)';
         this.context.font = "20px Raleway"; 
         fillString = (frameFill*(this.max-this.min)+this.min).toFixed(3)+' '+this.unit;
-        this.context.fillText(fillString, fillLimit - this.context.measureText(fillString).width/2, this.leftY0-1.7*this.radius);
+        this.xPos = fillLimit - this.context.measureText(fillString).width/2;
+        if(this.xPos < this.leftX0) {
+            this.xPos = this.leftX0
+        }
+        if(this.xPos + this.context.measureText(fillString).width > this.rightX0){
+            this.xPos = this.rightX0 - this.context.measureText(fillString).width;
+        }
+        this.context.fillText(fillString, this.xPos, this.leftY0-1.7*this.radius);
     };
 
     //wrapper for transition from old state to new state via this.animate:
