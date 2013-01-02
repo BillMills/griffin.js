@@ -193,8 +193,8 @@
       $('#waffleplate').height(window.innerHeight*0.9);
 
       //insert sliders
-      slider('voltageSlider', 'voltageSliderBKG', 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', slideVoltage, 0, 2000, 'mV');
-      slider('rampSlider', 'rampSliderBKG', 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', slideRamp, 0, 2000, 'mV/s');
+      slider('voltageSlider', 'voltageSliderBKG', 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', slideVoltage, 0, 1, 'mV');
+      slider('rampSlider', 'rampSliderBKG', 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', slideRamp, 0, 1, 'mV/s');
 
       //Waffle onclick event will throw x and y positions up to these globals, so that
       //updateParameter() can use them to determine which channel to update.  TODO: fix
@@ -233,7 +233,7 @@
       var moduleLabels = ['Module 0', 'Module 1', 'Module 2', 'Module 3', 'Module 4', 'Module 5', 'Module 6', 'Module 7'];
 
       //declare objects:
-      var meter = new FillMeter('voltageMeter', 300, 0,1500, 'mV');
+      var meter = new FillMeter('voltageMeter', 300, 0,1, 'mV');
       var waffle = new Waffle(12,20, 'TestWaffle', [0.8,0.999,0.999], [1,1,1], ['leftSidebar', 'rightSidebar'], "TT", "TTcontainer", "waffleplate", rowTitles, colTitles, "InputLayer", ['Demand Voltage: ', 'Reported Voltage: ', 'Reported Current: ', 'Voltage Ramp Speed: '], ['mV', 'mV', 'mA', 'mV / s'], ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleDivisions, moduleLabels);
       var barTest = new BarGraph('barDummy', 12, 'Module 0', 'Reported Voltage [mV]', ['000', '111', '222', '333', '444', '555', '666', '777', '888', '999', 'AAA', 'BBB'], 0, 1, waffle);
 

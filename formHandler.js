@@ -74,40 +74,40 @@ function divFade(targetDiv, direction, frame){
 
 //plugs a new cell into the input interface; used for both onclicks on the waffles, and on button submits 
 //in the sidepanel view.
-function channelSelect(wrapperDiv, InputLayer, chx, chy, rowTitles, colTitles, title, unit, channelMask, demandVolt, demandVoltRamp, rows, cols, event){
+function channelSelect(waffle){
 
     //Throw up to global so the setter remembers where we're pointing.  TODO: refactor without globals?
-    window.griffinDialogX = chx;
-    window.griffinDialogY = chy;
+    window.griffinDialogX = waffle.chx;
+    window.griffinDialogY = waffle.chy;
 	
-    var superDiv = document.getElementById(wrapperDiv);
-    var inputDiv = document.getElementById(InputLayer);
+    var superDiv = document.getElementById(waffle.wrapperDiv);
+    var inputDiv = document.getElementById(waffle.InputLayer);
 
     //set text in dialog box:
-    var inputTitle = 'Parameters for <br>'+colTitles[0]+' '+chx+', '+rowTitles[0]+' '+chy;
+    var inputTitle = 'Parameters for <br>'+waffle.colTitles[0]+' '+waffle.chx+', '+waffle.rowTitles[0]+' '+waffle.chy;
     document.getElementById('inputTitle').innerHTML = inputTitle;
 
     //set defaults
-    if (channelMask[chy][chx] == 1) document.getElementById('onButton').checked = true;
+    if (waffle.channelMask[waffle.chy][waffle.chx] == 1) document.getElementById('onButton').checked = true;
     else document.getElementById('offButton').checked = true;
 
-    document.getElementById('demandVoltage').value = Math.round(demandVolt[chy][chx]*2000); //*2000 transform just for demo purposes
-    jumpSlider(Math.round(demandVolt[chy][chx]*10000)/10000, 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', 0, 2000, 'mV');
-    document.getElementById('demandRampSpeed').value = Math.round(demandVoltRamp[chy][chx]*2000);
-    jumpSlider(Math.round(demandVoltRamp[chy][chx]*10000)/10000, 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', 0, 2000, 'mV/s');
+    document.getElementById('demandVoltage').value = Math.round(waffle.demandVoltage[waffle.chy][waffle.chx]*1000)/1000;
+    jumpSlider(Math.round(waffle.demandVoltage[waffle.chy][waffle.chx]*10000)/10000, 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', 0, 1, 'mV');
+    document.getElementById('demandRampSpeed').value = Math.round(waffle.demandVramp[waffle.chy][waffle.chx]*1000)/1000;
+    jumpSlider(Math.round(waffle.demandVramp[waffle.chy][waffle.chx]*10000)/10000, 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', 0, 1, 'mV/s');
 
     //input sidebar:
     //$(inputDiv).css('right', '3%');
 
     //only actually display if the click was on the waffle and not the rest of the canvas:
-    if(chx < cols && chy < rows){
+    if(waffle.chx < waffle.cols && waffle.chy < waffle.rows){
         divFade(inputDiv, 'in', 0);
-        setInput('changeChannel',0,chx);
-        setInput('changeChannel',1,chy);
+        setInput('changeChannel',0,waffle.chx);
+        setInput('changeChannel',1,waffle.chy);
     }
 
     //dummy for now just to illustrate fill meters:
-    meter.update(Math.round(demandVolt[chy][chx]*10000)/10000);
+    meter.update(Math.round(waffle.reportVoltage[waffle.chy][waffle.chx]*10000)/10000);
 }
 
 //point interface at new channel indicated by user in the 'changeChannel' form.
@@ -119,55 +119,55 @@ function gotoNewChannel(event, waffle){
     waffle.chy = yVal;
 
     if(xVal<waffle.cols && yVal<waffle.rows){
-        channelSelect(waffle.wrapperDiv, waffle.InputLayer, xVal, yVal, waffle.rowTitles, waffle.colTitles, 'depricated', 'XYZ', waffle.channelMask, waffle.demandVoltage, waffle.demandVramp, waffle.rows, waffle.cols, event);
+        channelSelect(waffle);
     }
 }
 
 //tie the slider value to the field value for demand voltage:
 function slideVoltage(sliderVal){
-    var max = 2000;
+    var max = 1;
     var min = 0;
-    document.getElementById('demandVoltage').value = (sliderVal*(max-min)+min).toFixed();
+    document.getElementById('demandVoltage').value = (sliderVal*(max-min)+min).toFixed(3);
 }
 
 //...and the opposite, too: make the slider catch up to a value typed into the corresponding field:
 function fieldVoltage(){
-    var max = 2000;
+    var max = 1;
     var min = 0;
     var inputValue = document.getElementById('demandVoltage').value;
     var fieldEntry = (inputValue-min)/(max-min);
 
-    jumpSlider(fieldEntry, 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', 0, 2000, 'mV');
+    jumpSlider(fieldEntry, 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', 0, 1, 'mV');
     if(inputValue < min) {
-        jumpSlider(0, 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', 0, 2000, 'mV');
+        jumpSlider(0, 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', 0, 1, 'mV');
         document.getElementById('demandVoltage').value = min;
     } else if(inputValue > max){
-        jumpSlider(1, 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', 0, 2000, 'mV');
+        jumpSlider(1, 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', 0, 1, 'mV');
         document.getElementById('demandVoltage').value = max;
     }
 }
 
 //tie the slider value to the field value for demand ramp speed:
 function slideRamp(sliderVal){
-    var max = 2000;
+    var max = 1;
     var min = 0;
-    document.getElementById('demandRampSpeed').value = (sliderVal*(max-min)+min).toFixed();
+    document.getElementById('demandRampSpeed').value = (sliderVal*(max-min)+min).toFixed(3);
 }
 
 
 //...and the opposite, too: make the slider catch up to a value typed into the corresponding field:
 function fieldRamp(){
-    var max = 2000;
+    var max = 1;
     var min = 0;
     var inputValue = document.getElementById('demandRampSpeed').value;
     var fieldEntry = (inputValue-min)/(max-min);
 
-    jumpSlider(fieldEntry, 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', 0, 2000, 'mV/s');
+    jumpSlider(fieldEntry, 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', 0, 1, 'mV/s');
     if(fieldEntry < min) {
-        jumpSlider(0, 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', 0, 2000, 'mV/s');
+        jumpSlider(0, 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', 0, 1, 'mV/s');
         document.getElementById('demandRampSpeed').value = min;
     } else if(fieldEntry > max){
-        jumpSlider(1, 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', 0, 2000, 'mV/s');
+        jumpSlider(1, 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', 0, 1, 'mV/s');
         document.getElementById('demandRampSpeed').value = max;
     }
 }

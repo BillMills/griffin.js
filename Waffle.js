@@ -110,7 +110,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
         document.getElementById('getChannelButton').onclick = function(event){changeChannelButton(event, that)};
 
         //also, draw the input sidebar for 0,0 on first call:
-        channelSelect(this.wrapperDiv, this.InputLayer, 0, 0, this.rowTitles, this.colTitles, 'Depricated', 'ZZZ', this.channelMask, this.demandVoltage, this.demandVramp, this.rows, this.cols);
+        channelSelect(that);
 
         //que up new data:
         this.populate = function(demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask){
@@ -346,7 +346,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
             //update peripherals:
             AlarmSidebar(this.sidebar[0], this.side[0], this.wrapperDiv, this.waffleHeight, this.prevAlarmStatus, this.alarmStatus, this.rows, this.cols, this.rowTitles, this.colTitles, callMyself, this.alarmPanelDivIDs, this.alarmPanelCanvIDs, demandVoltage, reportVoltage, reportCurrent, reportTemperature, this.alarm, ['V', 'mA', 'C']);
             decorateInputSidebar(this.sidebar[1], this.side[1], this.wrapperDiv, this.waffleHeight);
-            channelSelect(this.wrapperDiv, this.InputLayer, this.chx, this.chy, this.rowTitles, this.colTitles, 'Depricated', 'ZZZ', this.channelMask, this.demandVoltage, this.demandVramp, this.rows, this.cols);
+            channelSelect(that);
             Tooltip(this.cvas, this.wrapperDiv, this.tooltip, this.TTcontainer, this.rows, this.cols, this.cellSide, this.rowTitles, this.colTitles, this.prefix, this.postfix, this.demandVoltage, this.reportVoltage, this.reportCurrent, this.demandVramp);
 
             //animate:
@@ -376,7 +376,7 @@ function clickWaffle(event, obj){
             obj.chy = chy;
 
             if(chx<obj.cols && chy<obj.rows){
-                channelSelect(obj.wrapperDiv, obj.InputLayer, chx, chy, obj.rowTitles, obj.colTitles, 'DEPRICATED', 'XXX', obj.channelMask, obj.demandVoltage, obj.demandVramp, obj.rows, obj.cols, event);
+                channelSelect(obj);
             }
 
 }

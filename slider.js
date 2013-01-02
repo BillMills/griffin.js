@@ -166,7 +166,7 @@ function slider(sliderDiv, sliderCanv, knobDiv, knobCanv, sliderText, execute, m
             scale = (sliderTo-10) / 220*100;
 
             //estabish slider label content
-            sliderString = (scale/100*(max-min) + min).toFixed(0) +' '+unit;
+            sliderString = (scale/100*(max-min) + min).toFixed(3) +' '+unit;
 
             //center label under knob, but don't let it fall off the end of the slider.
             $('#'+sliderText).css('left',(-1*contextKnob.measureText(sliderString).width/2) );
@@ -194,7 +194,7 @@ function slider(sliderDiv, sliderCanv, knobDiv, knobCanv, sliderText, execute, m
             scale = (sliderTo-10) / 220 * 100;
 
             //estabish slider label content
-            sliderString = (scale/100*(max-min) + min).toFixed(0) +' '+unit;
+            sliderString = (scale/100*(max-min) + min).toFixed(3) +' '+unit;
 
             //center label under knob, but don't let it fall off the end of the slider.
             $('#'+sliderText).css('left',(-1*contextKnob.measureText(sliderString).width/2) );
@@ -251,7 +251,7 @@ function jumpSlider(position, knobDiv, knobCanv, sliderText, min, max, unit){
     //estabish slider label content
     //var sliderString = (scale/100*(max-min) + min).toFixed(0) +' '+unit;
 
-    var sliderString = (position*(max-min)+min).toFixed(0)+' '+unit;
+    var sliderString = (position*(max-min)+min).toFixed(3)+' '+unit;
 
     //center label under knob, but don't let it fall off the end of the slider.
     $('#'+sliderText).css('left',(-1*contextKnob.measureText(sliderString).width/2) );

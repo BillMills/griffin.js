@@ -88,7 +88,7 @@ function FillMeter(cvas, width, min, max, unit){
         this.context.clearRect(0,0, this.rightX0+this.width, this.rightY0-this.radius);
         this.context.fillStyle = 'rgba(255,255,255,0.9)';
         this.context.font = "20px Raleway"; 
-        fillString = (frameFill*(this.max-this.min)+this.min).toFixed(0)+' '+this.unit;
+        fillString = (frameFill*(this.max-this.min)+this.min).toFixed(3)+' '+this.unit;
         this.context.fillText(fillString, fillLimit - this.context.measureText(fillString).width/2, this.leftY0-1.7*this.radius);
     };
 
