@@ -1,5 +1,15 @@
 //migrating to OO slider implementation.  TODO: finish!
-function Slider(titleID, inputBoxID, sliderContainerID, sliderBackgroundID, sliderKnobID, sliderCanvID, sliderTextID){
+function Slider(titleID, inputBoxID, sliderContainerID, sliderBackgroundID, sliderKnobID, sliderCanvID, sliderTextID, min, max, unit, execute){
+
+    //slider limits:
+    this.min = min;
+    this.max = max;
+
+    //value unit:
+    this.unit = unit;
+
+    //function to execute after moving slider:
+    this.execute = execute;
 
     //pointers by ID:
     this.inputBox = document.getElementById(inputBoxID);
@@ -29,17 +39,14 @@ function Slider(titleID, inputBoxID, sliderContainerID, sliderBackgroundID, slid
     $(this.sliderCanv).css('display', 'inline');
     $(this.sliderCanv).css('position', 'absolute');
     $(this.sliderText).css('display', 'inline');
-    $(this.sliderText).css('color', 'Grey');
+    //$(this.sliderText).css('color', 'Grey');
 
     //draw the slider canvases:
     this.sliderContext = this.sliderBackground.getContext('2d');
     this.knobContext = this.sliderCanv.getContext('2d');
 
-    //this.sliderContext.fillRect(0,0,100,100);
-
-
-
     //knob rail:
+    this.sliderContext.strokeStyle = 'rgba(255,255,255,0.7)'
     this.sliderContext.lineWidth = 1;
     this.sliderContext.beginPath();
     this.sliderContext.moveTo(20, 8);
@@ -48,8 +55,6 @@ function Slider(titleID, inputBoxID, sliderContainerID, sliderBackgroundID, slid
 
     //knob surface:
     this.knobContext.fillStyle = 'rgba(255,255,255,1)';
-    this.knobContext.fillRect(0,0,20,16);
-
     this.knobContext.lineWidth = 1;
     this.knobContext.beginPath();
     this.knobContext.moveTo(0,4);
@@ -60,8 +65,121 @@ function Slider(titleID, inputBoxID, sliderContainerID, sliderBackgroundID, slid
     this.knobContext.lineTo(20,4);
     this.knobContext.arcTo(20,0,16,0,4);
     this.knobContext.lineTo(4,0);
-    this.knobContext.arcTo(0,0,0,4,4)
+    this.knobContext.arcTo(0,0,0,4,4);
+    this.knobContext.fill();
     this.knobContext.stroke();
+
+    //establish slider response:
+    this.active = 0;
+    this.sliderWasAt = 0;
+    this.cursorWasAt = 0;
+    this.dragX = 0;
+    this.sliderTo = 0;
+    this.scale = 0;
+    this.sliderString;  
+
+    //turn off slider focus glow:
+    $(this.sliderKnob).css('outline', '0px none transparent');
+
+    var that = this;
+
+    this.sliderCanv.onmousedown = function(event){
+        that.sliderWasAt = parseFloat($(that.sliderKnob).css('left'));
+        that.sliderKnob.tabIndex = '1';
+        that.sliderKnob.focus();
+        that.active = 1;
+        that.cursorWasAt = event.pageX;
+    }
+
+    this.sliderContainer.onmouseup = function(event){
+        that.active = 0;
+        that.sliderWasAt = that.sliderWasAt + that.dragX;
+    }
+
+    this.sliderContainer.onmouseout = function(event){
+        that.active = 0;
+        that.sliderWasAt = that.sliderWasAt + that.dragX;
+    }
+
+    this.sliderContainer.onmousemove = function(event){
+        if(that.active){
+
+            that.dragX = event.pageX - that.cursorWasAt;
+            that.sliderTo = that.sliderWasAt + that.dragX;
+            //keep slider in range:
+            if(that.sliderTo < 10) that.sliderTo = 10;
+            if(that.sliderTo > 230) that.sliderTo = 230;
+
+            //scale = Math.round((sliderTo-10) / 220*100);
+            that.scale = (that.sliderTo-10) / 220*100;
+
+            //estabish slider label content
+            that.sliderString = (that.scale/100*(that.max-that.min) + that.min).toFixed(3) +' '+that.unit;
+
+            //center label under knob, but don't let it fall off the end of the slider.
+            $('#'+sliderTextID).css('left',(-1*that.knobContext.measureText(that.sliderString).width/2) );
+            if(that.knobContext.measureText(that.sliderString).width/2+that.sliderTo+12 > 230){
+                $('#'+sliderTextID).css('left', -2*that.knobContext.measureText(that.sliderString).width/2 - that.sliderTo -12 + 230 );
+            }
+            if(that.sliderTo - that.knobContext.measureText(that.sliderString).width/2 -12 < 10){
+                $('#'+sliderTextID).css('left', 10 + 12 - that.sliderTo );
+            }
+
+            that.sliderText.innerHTML = '<br>'+that.sliderString;
+
+            $(that.sliderKnob).css('left', that.sliderTo);
+
+            partial(that.execute, that.scale/100)();
+        }
+    }
+
+    this.sliderKnob.onkeydown = function(event){
+        if(event.keyCode == 39) {
+            that.sliderTo = parseFloat($(that.sliderKnob).css('left')) + 1;
+            if(that.sliderTo > 230) that.sliderTo = 230;
+            $(that.sliderKnob).css('left', that.sliderTo);   
+            that.scale = (that.sliderTo-10) / 220 * 100;
+
+            //estabish slider label content
+            that.sliderString = (that.scale/100*(that.max-that.min) + that.min).toFixed(3) +' '+that.unit;
+
+            //center label under knob, but don't let it fall off the end of the slider.
+            $('#'+sliderTextID).css('left',(-1*that.knobContext.measureText(that.sliderString).width/2) );
+            if(that.knobContext.measureText(that.sliderString).width/2+that.sliderTo+12 > 230){
+                $('#'+sliderTextID).css('left', -2*that.knobContext.measureText(that.sliderString).width/2 - that.sliderTo-12 + 230 );
+            }
+            if(that.sliderTo - that.knobContext.measureText(that.sliderString).width/2 - 12 < 10){
+                $('#'+sliderTextID).css('left', 10 + 12 -that.sliderTo );
+            }
+
+            that.sliderText.innerHTML = '<br>'+that.sliderString;
+            
+            partial(that.execute, that.scale/100)();
+
+        }
+        else if(event.keyCode == 37) {
+            that.sliderTo = parseFloat($(that.sliderKnob).css('left')) - 1;
+            if(that.sliderTo < 10) that.sliderTo = 10;
+            $(that.sliderKnob).css('left', that.sliderTo);
+            that.scale = (that.sliderTo-10) / 220 * 100;
+
+            //estabish slider label content
+            that.sliderString = (that.scale/100*(that.max-that.min) + that.min).toFixed(3) +' '+that.unit;
+
+            //center label under knob, but don't let it fall off the end of the slider.
+            $('#'+sliderTextID).css('left',(-1*that.knobContext.measureText(that.sliderString).width/2) );
+            if(that.knobContext.measureText(that.sliderString).width/2+that.sliderTo+12 > 230){
+                $('#'+sliderTextID).css('left', -2*that.knobContext.measureText(that.sliderString).width/2 - that.sliderTo-12 + 230 );
+            }
+            if(that.sliderTo - that.knobContext.measureText(that.sliderString).width/2 - 12 < 10){
+                $('#'+sliderTextID).css('left', 10 + 12 -that.sliderTo );
+            }
+
+            that.sliderText.innerHTML = '<br>'+that.sliderString;
+
+            partial(that.execute, that.scale/100)();
+        }
+    }
 
 }
 
@@ -218,7 +336,7 @@ function slider(sliderDiv, sliderCanv, knobDiv, knobCanv, sliderText, execute, m
             scale = (sliderTo-10) / 220 * 100;
 
             //estabish slider label content
-            sliderString = (scale/100*(max-min) + min).toFixed(0) +' '+unit;
+            sliderString = (scale/100*(max-min) + min).toFixed(3) +' '+unit;
 
             //center label under knob, but don't let it fall off the end of the slider.
             $('#'+sliderText).css('left',(-1*contextKnob.measureText(sliderString).width/2) );
