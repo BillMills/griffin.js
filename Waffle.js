@@ -6,6 +6,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
         //pointer voodoo:
         var that = this;
 
+        //member data:
         this.rows = rows;                           //number of rows in the waffle
         this.cols = cols;                           //numver of columns in the waffle
         this.cvas = cvas;                           //canvas ID to draw the waffle on
@@ -106,7 +107,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
         this.canvas.onclick = function(event){clickWaffle(event, that)};
 
         //make the get channel button do its job:
-        document.getElementById('getChannelButton').onclick = function(){changeChannelButton(that)};
+        document.getElementById('getChannelButton').onclick = function(event){changeChannelButton(event, that)};
 
         //also, draw the input sidebar for 0,0 on first call:
         channelSelect(this.wrapperDiv, this.InputLayer, 0, 0, this.rowTitles, this.colTitles, 'Depricated', 'ZZZ', this.channelMask, this.demandVoltage, this.demandVramp, this.rows, this.cols);
@@ -356,8 +357,8 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
 }
 
 //define behavior of the change channel button:
-function changeChannelButton(obj){
-    gotoNewChannel(obj);
+function changeChannelButton(event, obj){
+    gotoNewChannel(event, obj);
 }
 
 //define the onclick behavior of the waffle:

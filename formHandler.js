@@ -1,4 +1,3 @@
-
 //collect the form input and do something with it.  Expect form 'setValues', which
 //begins with a pair of radio buttons for channel on off, then has an arbitrary 
 //no. of text fields for inputting whatever else.
@@ -112,15 +111,15 @@ function channelSelect(wrapperDiv, InputLayer, chx, chy, rowTitles, colTitles, t
 }
 
 //point interface at new channel indicated by user in the 'changeChannel' form.
-function gotoNewChannel(waffle){
-	var xVal = getInput('changeChannel', 0);
-	var yVal = getInput('changeChannel', 1);
+function gotoNewChannel(event, waffle){
+	var xVal = parseInt(getInput('changeChannel', 0));
+	var yVal = parseInt(getInput('changeChannel', 1));
 
     waffle.chx = xVal;
     waffle.chy = yVal;
 
     if(xVal<waffle.cols && yVal<waffle.rows){
-        channelSelect(waffle.wrapperDiv, waffle.InputLayer, xVal, yVal, waffle.rowTitles, waffle.colTitles, 'depricated', 'XYZ', waffle.channelMask, waffle.demandVolt, waffle.demandVoltRamp, waffle.rows, waffle.cols);
+        channelSelect(waffle.wrapperDiv, waffle.InputLayer, xVal, yVal, waffle.rowTitles, waffle.colTitles, 'depricated', 'XYZ', waffle.channelMask, waffle.demandVoltage, waffle.demandVramp, waffle.rows, waffle.cols, event);
     }
 }
 
