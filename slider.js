@@ -11,6 +11,15 @@ function Slider(titleID, inputBoxID, sliderContainerID, sliderBackgroundID, slid
     //function to execute after moving slider:
     this.execute = execute;
 
+    //IDs:
+    this.titleID = titleID;
+    this.inputBoxID = inputBoxID;
+    this.sliderContainerID = sliderContainerID;
+    this.sliderBackgroundID = sliderBackgroundID;
+    this.sliderKnobID = sliderKnobID;
+    this.sliderCanvID = sliderCanvID;
+    this.sliderTextID = sliderTextID;
+
     //pointers by ID:
     this.inputBox = document.getElementById(inputBoxID);
     this.sliderContainer = document.getElementById(sliderContainerID);
@@ -180,6 +189,43 @@ function Slider(titleID, inputBoxID, sliderContainerID, sliderBackgroundID, slid
             partial(that.execute, that.scale/100)();
         }
     }
+
+    this.inputBox.onblur = function(event){
+        var inputValue = that.inputBox.value;
+        var fieldEntry = (inputValue-that.min)/(that.max-that.min);
+
+        //jumpSlider(fieldEntry, that.sliderKnobID, that.sliderCanvID, that.sliderTextID, that.min, that.max, that.unit);
+        that.jump(fieldEntry);
+        if(inputValue < that.min) {
+            that.jump(0);
+            that.inputBox.value = that.min;
+        } else if(inputValue > that.max){
+            that.jump(1);
+            that.inputBox.value = that.max;
+        }
+    }
+
+    this.jump = function(position){
+        this.sliderTo = position*220;
+        $(this.sliderKnob).css('left', this.sliderTo+10);   
+        this.scale = (this.sliderTo) / 220 * 100;
+
+        //estabish slider label content
+        this.sliderString = (position*(this.max-this.min)+this.min).toFixed(3)+' '+this.unit;
+
+        //center label under knob, but don't let it fall off the end of the slider.
+        $('#'+this.sliderTextID).css('left',(-1*this.knobContext.measureText(this.sliderString).width/2) );
+        if(this.knobContext.measureText(this.sliderString).width/2+this.sliderTo+10+12 > 230){
+            $('#'+this.sliderTextID).css('left', -2*this.knobContext.measureText(this.sliderString).width/2 - this.sliderTo -10-12 + 230 );
+        }
+        if(this.sliderTo+10 - this.knobContext.measureText(this.sliderString).width/2 -12 < 10){
+            $('#'+this.sliderTextID).css('left', 10+12-this.sliderTo-10 );
+        }
+
+        this.sliderText.innerHTML = '<br>'+this.sliderString;
+
+        partial(that.execute, that.scale/100)();        
+    };
 
 }
 

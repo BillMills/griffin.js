@@ -91,10 +91,13 @@ function channelSelect(waffle){
     if (waffle.channelMask[waffle.chy][waffle.chx] == 1) document.getElementById('onButton').checked = true;
     else document.getElementById('offButton').checked = true;
 
+    //manage sliders
     document.getElementById('demandVoltage').value = Math.round(waffle.demandVoltage[waffle.chy][waffle.chx]*1000)/1000;
     jumpSlider(Math.round(waffle.demandVoltage[waffle.chy][waffle.chx]*10000)/10000, 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', 0, 1, 'mV');
     document.getElementById('demandRampSpeed').value = Math.round(waffle.demandVramp[waffle.chy][waffle.chx]*1000)/1000;
     jumpSlider(Math.round(waffle.demandVramp[waffle.chy][waffle.chx]*10000)/10000, 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', 0, 1, 'mV/s');
+    //new OO slider test:
+    waffle.testSlider.jump(Math.round(waffle.demandVoltage[waffle.chy][waffle.chx]*10000)/10000);
 
     //input sidebar:
     //$(inputDiv).css('right', '3%');
@@ -172,6 +175,13 @@ function fieldRamp(){
     }
 }
 
+//tie the slider value to the field value for test slider:
+function slideTest(sliderVal){
+    var max = 1;
+    var min = 0;
+    document.getElementById('testInput').value = (sliderVal*(max-min)+min).toFixed(3);
+}
+
 function decorateInputSidebar(sidebar, side, wrapperDiv, waffleHeight){
 
     //fetch canvas:
@@ -192,20 +202,7 @@ function decorateInputSidebar(sidebar, side, wrapperDiv, waffleHeight){
 
     //separator line inset
     var inset = 0.1*width;
-/*
-    //draw separator line
-    context.strokeStyle = "rgba(0,0,0,0.2)"
-    context.beginPath();
-    if(side === "left"){
-        context.moveTo(width-inset,10);
-        context.lineTo(width-inset,waffleHeight*1.3);
-    } else if(side === "right"){
-        context.moveTo(inset,10);
-        context.lineTo(inset,waffleHeight*1.3);
-    }
-        
-    context.stroke();
-*/  
+  
 }
 
 

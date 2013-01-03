@@ -1,4 +1,4 @@
-function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer, wrapperDiv, rowTitles, colTitles, InputLayer, prefix, postfix, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs, headerDiv, moduleDivisions, moduleLabels){
+function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer, wrapperDiv, rowTitles, colTitles, InputLayer, prefix, postfix, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs, headerDiv, moduleDivisions, moduleLabels, testSlider){
 
         //if(!document.webkitHidden && !document.mozHidden){
     	var i, j, n;
@@ -33,6 +33,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
         this.moduleLabels = moduleLabels;           //array containing module labels
         this.chx = 0;                               //x channel of input sidebar focus
         this.chy = 0;                               //y channel of input sidebar focus
+        this.testSlider = testSlider;               //test slider associated with this waffle
 
         //determine dimesions of canvas:
         this.totalWidth = Math.round(0.5*$('#'+this.wrapperDiv).width());

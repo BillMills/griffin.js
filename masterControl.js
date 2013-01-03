@@ -4,7 +4,7 @@ function masterLoop(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportCur
     	waffle.update(demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask, callMyself);
     	barchart.update([ reportVoltage[0][0], reportVoltage[1][0], reportVoltage[2][0], reportVoltage[3][0], reportVoltage[4][0], reportVoltage[5][0], reportVoltage[6][0], reportVoltage[7][0], reportVoltage[8][0], reportVoltage[9][0], reportVoltage[10][0], reportVoltage[11][0] ]);
     }
-    setTimeout(function(){masterLoop(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask, waffle, barchart, 1)}, 3000);
+    setTimeout(function(){masterLoop(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask, waffle, barchart, 1)}, 60000);
 }
 
 //populate rows by cols arrays with the appropriate information:

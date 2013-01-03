@@ -165,9 +165,18 @@
           <br><input type="button" value="Go To Channel" style='margin-left:30px; margin-top:10px;' id='getChannelButton'>       
         </form>
 
-      </div>
+          <p id='TestText' style='margin:0px; margin-left:30px; margin-top:20px'>Test Slider [mV/s]</p>
+          <input type="text" id="testInput" name='textbox' value='default' style='margin-bottom:30px; margin-top: 5px; margin-left:30px' size='6' onblur=''>
+          <!--OO Slider test-->
+          <div class='slider' id='testSlider'>
+            <canvas class='sliderBKG' id='testSliderBKG' width=260 height=24></canvas>
+            <div class='sliderKnob' id='testSliderKnob'>
+              <canvas class='knobStyle' id='testKnobStyle' width=24 height=16> </canvas>
+              <p class='sliderText' id='testSliderText'><br>0%</p>
+            </div>
+          </div>
 
-      
+      </div>
 
     </div>
   <!--End Waffleboard////////////////////////////////////////////////////-->
@@ -234,8 +243,10 @@
 
       //declare objects:
       var meter = new FillMeter('voltageMeter', 300, 0,1, 'mV');
-      var waffle = new Waffle(12,20, 'TestWaffle', [0.8,0.999,0.999], [1,1,1], ['leftSidebar', 'rightSidebar'], "TT", "TTcontainer", "waffleplate", rowTitles, colTitles, "InputLayer", ['Demand Voltage: ', 'Reported Voltage: ', 'Reported Current: ', 'Voltage Ramp Speed: '], ['mV', 'mV', 'mA', 'mV / s'], ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleDivisions, moduleLabels);
+      var sliderTest = new Slider('TestText', 'testInput', 'testSlider', 'testSliderBKG', 'testSliderKnob', 'testKnobStyle', 'testSliderText', 0, 1, 'mV', slideTest);
+      var waffle = new Waffle(12,20, 'TestWaffle', [0.8,0.999,0.999], [1,1,1], ['leftSidebar', 'rightSidebar'], "TT", "TTcontainer", "waffleplate", rowTitles, colTitles, "InputLayer", ['Demand Voltage: ', 'Reported Voltage: ', 'Reported Current: ', 'Voltage Ramp Speed: '], ['mV', 'mV', 'mA', 'mV / s'], ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleDivisions, moduleLabels, sliderTest);
       var barTest = new BarGraph('barDummy', 12, 'Module 0', 'Reported Voltage [mV]', ['000', '111', '222', '333', '444', '555', '666', '777', '888', '999', 'AAA', 'BBB'], 0, 1, waffle);
+      
 
       //set up arrays:
       var demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask;
