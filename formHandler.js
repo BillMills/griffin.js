@@ -92,12 +92,8 @@ function channelSelect(waffle){
     else document.getElementById('offButton').checked = true;
 
     //manage sliders
-    document.getElementById('demandVoltage').value = Math.round(waffle.demandVoltage[waffle.chy][waffle.chx]*1000)/1000;
-    jumpSlider(Math.round(waffle.demandVoltage[waffle.chy][waffle.chx]*10000)/10000, 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', 0, 1, 'mV');
-    document.getElementById('demandRampSpeed').value = Math.round(waffle.demandVramp[waffle.chy][waffle.chx]*1000)/1000;
-    jumpSlider(Math.round(waffle.demandVramp[waffle.chy][waffle.chx]*10000)/10000, 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', 0, 1, 'mV/s');
-    //new OO slider test:
-    waffle.testSlider.update(Math.round(waffle.demandVoltage[waffle.chy][waffle.chx]*10000)/10000);
+    waffle.voltageSlider.update(Math.round(waffle.demandVoltage[waffle.chy][waffle.chx]*10000)/10000);
+    waffle.rampSlider.update(Math.round(waffle.demandVramp[waffle.chy][waffle.chx]*10000)/10000);
 
     //input sidebar:
     //$(inputDiv).css('right', '3%');
