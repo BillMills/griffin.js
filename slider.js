@@ -20,6 +20,16 @@ function Slider(titleID, inputBoxID, sliderContainerID, sliderBackgroundID, slid
     //rightmost limit of knob's left edge:
     this.rightKnob = this.rightRail - 10;
 
+    //previous physical value:
+    this.oldValue = 0;
+    //current value:
+    this.newValue = 0;
+
+    //animation parameters:
+    this.duration = 0.4; //seconds
+    this.FPS = 30;
+    this.nFrames = this.duration*this.FPS;
+
     //IDs:
     this.titleID = titleID;
     this.inputBoxID = inputBoxID;
@@ -198,20 +208,10 @@ function Slider(titleID, inputBoxID, sliderContainerID, sliderBackgroundID, slid
     }
 
     this.inputBox.onblur = function(event){
-        var inputValue = that.inputBox.value;
-        var fieldEntry = (inputValue-that.min)/(that.max-that.min);
-
-        //jumpSlider(fieldEntry, that.sliderKnobID, that.sliderCanvID, that.sliderTextID, that.min, that.max, that.unit);
-        that.jump(fieldEntry);
-        if(inputValue < that.min) {
-            that.jump(0);
-            that.inputBox.value = that.min;
-        } else if(inputValue > that.max){
-            that.jump(1);
-            that.inputBox.value = that.max;
-        }
+        that.update(parseFloat(that.inputBox.value));
     }
 
+    //move the slider discontinuously to a new <position>:
     this.jump = function(position){
         this.sliderTo = position*this.length;
         $(this.sliderKnob).css('left', this.sliderTo+this.leftKnob);   
@@ -232,6 +232,33 @@ function Slider(titleID, inputBoxID, sliderContainerID, sliderBackgroundID, slid
         this.sliderText.innerHTML = '<br>'+this.sliderString;
 
         this.inputBox.value = (this.scale/100*(this.max-this.min)+this.min).toFixed(3);        
+    };
+
+    //top function for handling slider updates from everything other than the slider knob:
+    this.update = function(inputValue){
+
+        //keep value inbounds:
+        var newValue = inputValue;
+        if(newValue > this.max) newValue = this.max;
+        if(newValue < this.min) newValue = this.min;
+
+        //set up member variables for animation:
+        this.oldValue = this.newValue;
+        this.newValue = newValue;
+
+        //animate:
+        animate(this, 0);
+    };
+
+    //draw function used by animate():
+    this.draw = function(frame){
+        //this frame is this far between the start and end values...
+        var position = (this.newValue - this.oldValue)*frame/this.nFrames + this.oldValue;
+        //...which corresponds to this far along the slider:
+        var sliderPosition = (position-this.min)/(this.max-this.min);
+
+        this.jump(sliderPosition);
+
     };
 
 }

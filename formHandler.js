@@ -97,7 +97,7 @@ function channelSelect(waffle){
     document.getElementById('demandRampSpeed').value = Math.round(waffle.demandVramp[waffle.chy][waffle.chx]*1000)/1000;
     jumpSlider(Math.round(waffle.demandVramp[waffle.chy][waffle.chx]*10000)/10000, 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', 0, 1, 'mV/s');
     //new OO slider test:
-    waffle.testSlider.jump(Math.round(waffle.demandVoltage[waffle.chy][waffle.chx]*10000)/10000);
+    waffle.testSlider.update(Math.round(waffle.demandVoltage[waffle.chy][waffle.chx]*10000)/10000);
 
     //input sidebar:
     //$(inputDiv).css('right', '3%');
