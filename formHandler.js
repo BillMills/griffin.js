@@ -126,6 +126,7 @@ function gotoNewChannel(event, waffle){
     }
 }
 
+//DEPRICATED
 //tie the slider value to the field value for demand voltage:
 function slideVoltage(sliderVal){
     var max = 1;
@@ -150,6 +151,7 @@ function fieldVoltage(){
     }
 }
 
+//DEPRICATED
 //tie the slider value to the field value for demand ramp speed:
 function slideRamp(sliderVal){
     var max = 1;
@@ -175,6 +177,7 @@ function fieldRamp(){
     }
 }
 
+//DEPRICATED
 //tie the slider value to the field value for test slider:
 function slideTest(sliderVal){
     var max = 1;
