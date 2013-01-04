@@ -27,7 +27,6 @@ canvas#TestWaffle{
 div#mainframeLinks{
 	position: absolute;
 	left: 24%;
-	margin-bottom: 10px;
 }
 
 canvas#rightSidebar{

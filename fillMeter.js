@@ -15,7 +15,7 @@ function FillMeter(cvas, width, min, max, unit){
 
     //set canvas dimensions
     this.canvas.width = width;
-    this.canvas.height = 0.15*width;
+    this.canvas.height = 45;//0.15*width;
 
     //center of left end semicircle:
     this.leftX0 = width*0.1;

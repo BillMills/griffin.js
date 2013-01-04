@@ -44,9 +44,6 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
         this.waffleWidth = this.totalWidth - 60;
         this.waffleHeight = this.totalHeight - 120;
 
-        //header size:
-        this.headerHeight = $('#'+this.headerDiv).height() + 10;
-
         //cell dimensions controlled by width, since width more visually important here:
         this.cellSide = this.waffleWidth / this.cols;
 
@@ -56,8 +53,13 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
         this.nFrames = this.FPS*this.duration;
 
         //style card nav buttons
-        this.newRule = "button.cardNav{width:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; float:left; background: -webkit-gradient(linear, left top, left bottom, from(#DDDDDD), to(#FFFFFF)); background: -moz-linear-gradient(top,  #DDDDDD,  #FFFFFF); -webkit-border-radius: 5; -moz-border-radius: 5; border-radius: 5;}";
+        this.newRule = "button.cardNav{width:"+0.9*this.cellSide+"px; height:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; float:left; background: -webkit-gradient(linear, left top, left bottom, from(#DDDDDD), to(#FFFFFF)); background: -moz-linear-gradient(top,  #DDDDDD,  #FFFFFF); -webkit-border-radius: 5; -moz-border-radius: 5; border-radius: 5; font-size:"+this.cellSide/4+"px;}";
         document.styleSheets[0].insertRule(this.newRule,0);
+
+        //header size:
+        this.headerHeight = $('#'+this.headerDiv).height();
+        //make the vertical spacing between the waffle and nav header nice:
+        $('#'+this.cvas).css('top', (this.headerHeight+this.cellSide/5)+'px !important;' );
 
         //set up arrays:
         //ODB info:
@@ -320,7 +322,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
                 var moduleWidth = this.moduleDivisions[j] - this.moduleDivisions[j-1];
 
                 if(moduleWidth*this.cellSide < this.context.measureText(this.moduleLabels[j-1]).width){
-                    modRotation = -Math.PI/2.4;
+                    modRotation = -Math.PI/2;  //2.4
                     modAlign = 'right';
                     modHeight = 0;
                 } else {
@@ -347,7 +349,6 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
 
             //update peripherals:
             AlarmSidebar(this.sidebar[0], this.side[0], this.wrapperDiv, this.waffleHeight, this.prevAlarmStatus, this.alarmStatus, this.rows, this.cols, this.rowTitles, this.colTitles, callMyself, this.alarmPanelDivIDs, this.alarmPanelCanvIDs, demandVoltage, reportVoltage, reportCurrent, reportTemperature, this.alarm, ['V', 'mA', 'C']);
-            decorateInputSidebar(this.sidebar[1], this.side[1], this.wrapperDiv, this.waffleHeight);
             channelSelect(that);
             Tooltip(this.cvas, this.wrapperDiv, this.tooltip, this.TTcontainer, this.rows, this.cols, this.cellSide, this.rowTitles, this.colTitles, this.prefix, this.postfix, this.demandVoltage, this.reportVoltage, this.reportCurrent, this.demandVramp);
 

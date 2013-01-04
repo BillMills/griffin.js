@@ -49,6 +49,8 @@ function Slider(titleID, inputBoxID, sliderContainerID, sliderBackgroundID, slid
     this.sliderKnob = document.getElementById(sliderKnobID);
     this.sliderCanv = document.getElementById(sliderCanvID);
     this.sliderText = document.getElementById(sliderTextID);
+
+    $(this.sliderContainer).css('left', $(this.inputBox).width() + 25 );
 /*
     //configure slider div and canvas css:
     $(this.inputBox).attr('size', '6');
@@ -151,12 +153,13 @@ function Slider(titleID, inputBoxID, sliderContainerID, sliderBackgroundID, slid
             that.sliderString =  that.newValue.toFixed(that.dec)+' '+that.unit;
 
             //center label under knob, but don't let it fall off the end of the slider.
-            $('#'+sliderTextID).css('left',(-1*that.knobContext.measureText(that.sliderString).width/2) );
-            if(that.knobContext.measureText(that.sliderString).width/2+that.sliderTo+12 > that.rightKnob){
-                $('#'+sliderTextID).css('left', -2*that.knobContext.measureText(that.sliderString).width/2 - that.sliderTo -12 + that.rightKnob );
+            var stringWidth = that.knobContext.measureText(that.sliderString).width*1.2
+            $('#'+sliderTextID).css('left',(-1*stringWidth/2 -10) );
+            if(stringWidth/2+that.sliderTo+0+10 > that.rightRail){
+                $('#'+sliderTextID).css('left', that.rightKnob - stringWidth - that.sliderTo - 10);
             }
-            if(that.sliderTo - that.knobContext.measureText(that.sliderString).width/2 -12 < that.leftKnob){
-                $('#'+sliderTextID).css('left', that.leftKnob + 12 - that.sliderTo );
+            if(that.sliderTo - stringWidth/2 -0-10 < that.leftRail){
+                $('#'+sliderTextID).css('left', that.leftKnob + 0+10 - that.sliderTo );
             }
 
             that.sliderText.innerHTML = '<br>'+that.sliderString;
@@ -190,12 +193,13 @@ function Slider(titleID, inputBoxID, sliderContainerID, sliderBackgroundID, slid
         this.sliderString = (position*(this.max-this.min)+this.min).toFixed(this.dec)+' '+this.unit;
 
         //center label under knob, but don't let it fall off the end of the slider.
-        $('#'+this.sliderTextID).css('left',(-1*this.knobContext.measureText(this.sliderString).width/2) );
-        if(this.knobContext.measureText(this.sliderString).width/2+this.sliderTo+this.leftKnob+12 > this.rightKnob){
-            $('#'+this.sliderTextID).css('left', -2*this.knobContext.measureText(this.sliderString).width/2 - this.sliderTo -this.leftKnob-12 + this.rightKnob );
+        var stringWidth = this.knobContext.measureText(this.sliderString).width*1.2;
+        $('#'+this.sliderTextID).css('left',(-1*stringWidth/2 - 10) );
+        if(stringWidth/2+this.sliderTo+this.leftKnob+0 +10 > this.rightKnob){
+            $('#'+this.sliderTextID).css('left', -1*stringWidth - this.sliderTo -this.leftKnob-0 -10 + this.rightKnob );
         }
-        if(this.sliderTo+this.leftKnob - this.knobContext.measureText(this.sliderString).width/2 -12 < this.leftKnob){
-            $('#'+this.sliderTextID).css('left', this.leftKnob+12-this.sliderTo-this.leftKnob );
+        if(this.sliderTo+this.leftKnob - stringWidth/2 -0 -10 < this.leftKnob){
+            $('#'+this.sliderTextID).css('left', this.leftKnob+0+10-this.sliderTo-this.leftKnob );
         }
 
         this.sliderText.innerHTML = '<br>'+this.sliderString;

@@ -99,21 +99,21 @@
         <canvas id='rightSidebar'></canvas>
 
         <!--title-->
-        <h2 id='inputTitle' align='left' style='margin-left:30px; font-family: "Orbitron", sans-serif;'>sintitulo</h2>
+        <h2 id='inputTitle' align='left' style='margin-left:10%; font-family: "Orbitron", sans-serif;'>sintitulo</h2>
 
         <!--Form for channel reporting and input-->
         <form id='setValues'>
           <!--Channel on off:-->
-          <input type='radio' id='offButton' name='HVswitch' value='off' style='margin-left:30px; margin-bottom:10px'>Off
+          <input type='radio' id='offButton' name='HVswitch' value='off' style='margin-left:10%; margin-bottom:10px'>Off
           <input type='radio' id='onButton' name='HVswitch' value='on' style='margin-left:10px; margin-bottom:10px'>On
 
           <!--voltage fill meter-->
-          <p style='margin-left:30px; margin-bottom:0px;'>Reported Voltage [mV]</p>
-          <br><canvas id='voltageMeter' style='margin-left:30px;'></canvas>
+          <p style='margin-left:10%; margin-bottom:0px;'>Reported Voltage [mV]</p>
+          <br><canvas id='voltageMeter' style='margin-left:10%;'></canvas>
 
           <!--Demand voltage input field-->
-          <p id='FieldText' style='margin-left:30px'>Demand Voltage [mV]</p>
-          <input type="text" id="demandVoltage" name='textbox' value='default' style='margin-bottom:10px; margin-top: 5px; margin-left:30px' size='6' onblur='javascript:fieldVoltage()'>
+          <p id='FieldText' style='margin-left:10%'>Demand Voltage [mV]</p>
+          <input type="text" id="demandVoltage" name='textbox' value='default' style='margin-bottom:10px; margin-top: 5px; margin-left:10%' size='6'>
 
           <!--Slider for demand voltage-->
           <div class='slider' id='voltageSlider'>
@@ -125,8 +125,8 @@
           </div>
 
           <!--voltage ramp speed input field-->
-          <p id='RampText' style='margin:0px; margin-left:30px; margin-top:20px'>Voltage Ramp Speed [mV/s]</p>
-          <input type="text" id="demandRampSpeed" name='textbox' value='default' style='margin-bottom:30px; margin-top: 5px; margin-left:30px' size='6' onblur='javascript:fieldRamp()'>
+          <p id='RampText' style='margin:0px; margin-left:10%; margin-top:20px'>Voltage Ramp Speed [mV/s]</p>
+          <input type="text" id="demandRampSpeed" name='textbox' value='default' style='margin-bottom:30px; margin-top: 5px; margin-left:10%' size='6'>
 
           <!--Slider for voltage ramp speed-->
           <div class='slider' id='rampSlider'>
@@ -138,10 +138,10 @@
           </div>
 
           <!--Submit updates to channel settings-->
-          <br><input type="button" value="Submit" style='margin-left:30px' onclick="javascript:updateParameter('InputLayer', 'single')">
+          <br><input type="button" value="Submit" style='margin-left:10%' onclick="javascript:updateParameter('InputLayer', 'single')">
         </form>
 
-        <canvas id='inputSpacer' height=5px width=200px style='margin-left:30px'></canvas>
+        <canvas id='inputSpacer' height=5px width=200px style='margin-left:10%'></canvas>
         <script type="text/JavaScript">
           //style the input layer a bit:  TODO: factor out?
           var ILcanvas = document.getElementById('inputSpacer');
@@ -155,14 +155,14 @@
 
         <!--Form for channel selecting-->
         <form id='changeChannel'>
-          <h4 style='margin-left:30px; margin-bottom:10px;'>Change Channel:</h4>
-          <p style='display:inline; margin-left:30px'>Card</p>
+          <h4 style='margin-left:10%; margin-bottom:10px;'>Change Channel:</h4>
+          <p style='display:inline; margin-left:10%'>Card</p>
           <!--input type="text" id="newCol" name='newCol' style='margin-bottom:10px; margin-left:5px; display:inline;' size='6' value='0'-->
           <select id=CardList> </select>
           <p style='display:inline; margin-left:10px'>Channel</p>
           <!--input type="text" id="newRow" name='newRow' style='margin-bottom:10px; margin-left:5px; display:inline;' size='6' value='0'-->
           <select id=ChannelList> </select>
-          <br><input type="button" value="Go To Channel" style='margin-left:30px; margin-top:10px;' id='getChannelButton'>       
+          <br><input type="button" value="Go To Channel" style='margin-left:10%; margin-top:10px;' id='getChannelButton'>       
         </form>
 
       </div>
@@ -185,14 +185,10 @@
       //value-free dummy variables to initialize Waffle with:  TODO: eliminate
       var alarmStatus;
 
-      //set up wrapper div dimensions; minimum rendering width = 1200px:
-      var renderWidth = Math.max(1800, window.innerWidth);
+      //set up wrapper div dimensions; minimum rendering width = 1440px:
+      var renderWidth = Math.max(1440, window.innerWidth);
       $('#waffleplate').width(renderWidth);
       $('#waffleplate').height(window.innerHeight*0.9);
-
-      //insert sliders
-      //slider('voltageSlider', 'voltageSliderBKG', 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', slideVoltage, 0, 1, 'mV');
-      slider('rampSlider', 'rampSliderBKG', 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', slideRamp, 0, 1, 'mV/s');
 
       //Waffle onclick event will throw x and y positions up to these globals, so that
       //updateParameter() can use them to determine which channel to update.  TODO: fix
@@ -231,10 +227,14 @@
       var moduleLabels = ['Module 0', 'Module 1', 'Module 2', 'Module 3', 'Module 4', 'Module 5', 'Module 6', 'Module 7'];
 
       //declare objects:
-      var meter = new FillMeter('voltageMeter', 300, 0,1, 'mV');
-      var sliderVoltage = new Slider('volageSliderText', 'demandVoltage', 'voltageSlider', 'voltageSliderBKG', 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', 0, 1, 'mV', 0);
-      var sliderRamp = new Slider('rampSliderText', 'demandRampSpeed', 'rampSlider', 'rampSliderBKG', 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', 0, 1, 'mV/s', 0);
-      var waffle = new Waffle(12,20, 'TestWaffle', [0.8,0.999,0.999], [1,1,1], ['leftSidebar', 'rightSidebar'], "TT", "TTcontainer", "waffleplate", rowTitles, colTitles, "InputLayer", ['Demand Voltage: ', 'Reported Voltage: ', 'Reported Current: ', 'Voltage Ramp Speed: '], ['mV', 'mV', 'mA', 'mV / s'], ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleDivisions, moduleLabels, sliderVoltage, sliderRamp);
+      var sliderWidth = 0.6*parseFloat($(document.getElementById('InputLayer')).width());
+      var sliderVoltage = new Slider('volageSliderText', 'demandVoltage', 'voltageSlider', 'voltageSliderBKG', 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', 0, 1, 3, 'mV', sliderWidth );
+      var sliderRamp = new Slider('rampSliderText', 'demandRampSpeed', 'rampSlider', 'rampSliderBKG', 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', 0, 1, 3, 'mV/s',  sliderWidth);
+
+      var meter = new FillMeter('voltageMeter', 1.5*sliderWidth, 0,1, 'mV');
+
+      var waffle = new Waffle(12,20, 'TestWaffle', [0.8,0.999,0.999], [1,1,1], ['leftSidebar', 'rightSidebar'], "TT", "TTcontainer", "waffleplate", rowTitles, colTitles, "InputLayer", ['Demand Voltage: ', 'Reported Voltage: ', 'Reported Current: ', 'Voltage Ramp Speed: '], ['mV', 'mV', 'mA', 'mV/s'], ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleDivisions, moduleLabels, sliderVoltage, sliderRamp);
+
       var barTest = new BarGraph('barDummy', 12, 'Module 0', 'Reported Voltage [mV]', ['000', '111', '222', '333', '444', '555', '666', '777', '888', '999', 'AAA', 'BBB'], 0, 1, waffle);
       
 
