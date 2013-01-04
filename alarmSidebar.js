@@ -2,9 +2,6 @@ function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, 
 
     var i, j, n;
 
-    //abort if nothing to update:
-    //if(flag===0) return;
-
     //number of alarms to report:
     var nAlarms = 5;
 
@@ -31,24 +28,10 @@ function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, 
 
     //draw separator line & scale sidebar
     if(!callMyself){
-        /*
-        //separator line:
-        context.strokeStyle = "rgba(0,0,0,0.2)"
-        context.beginPath();
-        if(side === "left"){
-            context.moveTo(width-inset,10);
-            context.lineTo(width-inset,waffleHeight*1.3);
-        } else if(side === "right"){
-            context.moveTo(inset,10);
-            context.lineTo(inset,waffleHeight*1.3);
-        }
-        
-        context.stroke();
-        */
         //scale:
         for(i=0; i<alarmPanelDivIDs.length; i++){
             $( document.getElementById(alarmPanelDivIDs[i]) ).css('width', 0.8*width);
-            $( document.getElementById(alarmPanelCanvIDs[i]) ).css('width', 0.8*width);
+            //$( document.getElementById(alarmPanelCanvIDs[i]) ).css('width', 0.8*width);
         }
     }
 
@@ -106,6 +89,9 @@ function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, 
     currentAlarmArray.sort(sortAlarms);
     temperatureAlarmArray.sort(sortAlarms);
 
+    //alarm reporting font size:
+    var alarmTextSize = $('#voltageText').width()*0.08;
+
     //report Voltage alarms
     n = 0;
     var alarmString = '';
@@ -116,6 +102,7 @@ function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, 
     if(alarmString == ''){
         alarmString = 'All Clear';
     }
+    $('#voltageText').css('font-size', alarmTextSize);
     document.getElementById('voltageText').innerHTML = alarmString;
 
     //report Current alarms
@@ -129,6 +116,7 @@ function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, 
     if(alarmString == ''){
         alarmString = 'All Clear';
     }
+    $('#currentText').css('font-size', alarmTextSize);
     document.getElementById('currentText').innerHTML = alarmString;
 
     //report Temperature alarms
@@ -142,20 +130,17 @@ function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, 
     if(alarmString == ''){
         alarmString = 'All Clear';
     }
+    $('#temperatureText').css('font-size', alarmTextSize);
     document.getElementById('temperatureText').innerHTML = alarmString;
 
     return;
 }
 
-
-
-
-
 function drawAllClear(x0, y0, radius, title, canvasID, alphaB){
             var canvas = document.getElementById(canvasID);
             var context = canvas.getContext('2d');
 
-            //context.font=(radius*0.6)+"px 'Orbitron'";    
+            context.font=(radius*0.6)+"px 'Orbitron'";    
 
             context.strokeStyle = "rgba(0,0,0,"+alphaB+")";
             context.lineWidth = 5;
@@ -176,7 +161,8 @@ function drawAllClear(x0, y0, radius, title, canvasID, alphaB){
             context.stroke();
 
             context.fillStyle = 'rgba(0,0,0,1)';
-            context.font=(2*radius*0.24)+'px Raleway';
+            //context.font=(2*radius*0.24)+'px Raleway';
+            context.font=($('#'+canvasID).width()*0.052)+'px Raleway';
             context.fillText(title, 0.5*canvas.width - context.measureText(title).width/2+1, canvas.height*0.5+1);
 
             context.fillStyle = 'rgba(255,255,255,1)';
@@ -188,7 +174,7 @@ function drawAlarm(x0, y0, L, title, canvasID, alphaB){
             var canvas = document.getElementById(canvasID);
             var context = canvas.getContext('2d');
 
-            context.font=(L*0.6)+"px Times New Roman";
+            context.font=(L*0.6)+"px TImes New Roman";
 
             context.strokeStyle = "rgba(0,0,0,"+alphaB+")";
             context.fillStyle = "rgba(0,0,0,"+alphaB+")";
@@ -213,7 +199,8 @@ function drawAlarm(x0, y0, L, title, canvasID, alphaB){
             context.stroke();
 
             context.fillStyle = 'rgba(0,0,0,1)';
-            context.font=(L*0.24)+'px Raleway';
+            //context.font=(L*0.24)+'px Raleway';
+            context.font=($('#'+canvasID).width()*0.052)+'px Raleway';
             context.fillText(title, 0.5*canvas.width - context.measureText(title).width/2+1, canvas.height*0.5+1);
 
             context.fillStyle = 'rgba(255,255,255,1)';
@@ -247,3 +234,17 @@ function fadeSwapCanvas(cvasID, drawOldCanvas, drawNewCanvas, frame){
     
 }
 
+//funciton to define the onclick behavior of the alarm sidebar panels:
+function alarmTransition(panelID, hiddenTop){
+    if($('#'+panelID).css('z-index') == 10000){
+        $('#'+panelID).css('height', 150);
+        $('#'+panelID).css('background', 'rgba(0,0,0,0.7)');
+        $('#'+panelID).css('z-index', 1);
+        $('#'+panelID).css('top', hiddenTop+'px !important;');
+    } else{
+        $('#'+panelID).css('height', 600);
+        $('#'+panelID).css('background', 'rgba(0,0,0,1)');
+        $('#'+panelID).css('z-index', 10000);
+        $('#'+panelID).css('top', '0px !important;');
+    }
+}

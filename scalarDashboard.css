@@ -123,8 +123,8 @@ div#tempAlarm
 overflow: hidden;
 top:340px;
 }
-
-div#voltAlarm:hover
+/*
+div#voltAlarm:active
 {
 height:600px;
 background: rgba(0,0,0,1);
@@ -146,7 +146,7 @@ top:0px;
 background: rgba(0,0,0,1);
 z-index: 10000;
 }
-
+*/
 /*
 button.cardNav{
 	

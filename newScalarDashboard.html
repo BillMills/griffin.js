@@ -46,17 +46,17 @@
       <div id='alarmLayer' style='float:left'>
         <canvas id="leftSidebar"></canvas>
 
-        <div class='alarmDiv' id='voltAlarm'>
+        <div class='alarmDiv' id='voltAlarm' onclick="javascript:alarmTransition('voltAlarm', 0)">
           <canvas id='alarmIconV', style='position:absolute; height:150px'></canvas>
           <p id='voltageText', style='color:white; margin-left:50px; margin-right:30px; position:relative; top:150px'></p>
         </div>
 
-        <div class='alarmDiv' id='currentAlarm'>
+        <div class='alarmDiv' id='currentAlarm' onclick="javascript:alarmTransition('currentAlarm', 170)">
           <canvas id='alarmIconI', style='position:absolute; height:150px'></canvas>
           <p id='currentText', style='color:white; margin-left:50px; margin-right:30px; position:relative; top:150px'></p>
         </div>
 
-        <div class='alarmDiv' id='tempAlarm'>
+        <div class='alarmDiv' id='tempAlarm' onclick="javascript:alarmTransition('tempAlarm', 340)">
           <canvas id='alarmIconT', style='position:absolute; height:150px'></canvas>
           <p id='temperatureText', style='color:white; margin-left:50px; margin-right:30px; position:relative; top:150px'></p>
         </div>
