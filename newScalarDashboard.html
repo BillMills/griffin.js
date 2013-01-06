@@ -62,7 +62,7 @@
         </div>
       </div>
 
-      <!---Waffles/////////////////////////////////////////////////////////-->
+      <!---Waffle/////////////////////////////////////////////////////////-->
       <div id="mainframeLinks">
         <h1  style='display: inline; opacity: 0.3; font-family: "Orbitron", sans-serif; font-size: 275%; vertical-align:-20px;'>GRIFFIN HV Mainframe 1</h1>
         <br><button id='Main1' class='MFlink' type="button" style='background:-webkit-gradient(linear, left top, left bottom, from(#999999), to(#DDDDDD))' onclick="javascript:swapFade('TestWaffle', 'Main1')">Mainframe 1</button>
@@ -179,11 +179,10 @@
 
   <script type="text/JavaScript">
 
+      var i,j;
+
       //Insert branding & navigation
       Banner('banner', 'youAreHere', 'navBar', 'GRIFFIN HV Mainframe 1');
-
-      //value-free dummy variables to initialize Waffle with:  TODO: eliminate
-      var alarmStatus;
 
       //set up wrapper div dimensions; minimum rendering width = 1440px:
       var renderWidth = Math.max(1440, window.innerWidth);
@@ -246,6 +245,7 @@
       demandVramp = [];
       reportTemperature = [];
       channelMask = [];
+      alarmStatus = [];
       for(i=0; i<12; i++){
         demandVoltage[i] = [];
         reportVoltage[i] = [];
@@ -253,7 +253,12 @@
         demandVramp[i] = [];
         reportTemperature[i] = [];
         channelMask[i] = [];
+        alarmStatus[i] = [];
+        for(j=0;j<20;j++){
+          alarmStatus[i][j] = [];
+        }
       }
+
 
       //which canvas is on top?
       window.onDisplay = 'TestWaffle';
@@ -261,7 +266,7 @@
       window.lastTrip = 'Main1';
 
       //start looping:
-      masterLoop(12, 20, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask, waffle, barTest, 0);
+      masterLoop(12, 20, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask, alarmStatus, [0.8,0.999,0.999], [1,1,1], waffle, barTest, 0);
 
   </script> 
   

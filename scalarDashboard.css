@@ -108,23 +108,23 @@ div.alarmDiv{
 
 div#voltAlarm
 {
-overflow: hidden;
-top:0px;
+	overflow: hidden;
+	top:0px;
 }
 
 div#currentAlarm
 {
-overflow: hidden;
-top:170px;
+	overflow: hidden;
+	top:170px;
 }
 
 div#tempAlarm
 {
-overflow: hidden;
-top:340px;
+	overflow: hidden;
+	top:340px;
 }
 /*
-div#voltAlarm:active
+div#voltAlarm:hover
 {
 height:600px;
 background: rgba(0,0,0,1);

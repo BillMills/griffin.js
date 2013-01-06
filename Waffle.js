@@ -53,7 +53,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
         this.nFrames = this.FPS*this.duration;
 
         //style card nav buttons
-        this.newRule = "button.cardNav{width:"+0.9*this.cellSide+"px; height:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; float:left; background: -webkit-gradient(linear, left top, left bottom, from(#DDDDDD), to(#FFFFFF)); background: -moz-linear-gradient(top,  #DDDDDD,  #FFFFFF); -webkit-border-radius: 5; -moz-border-radius: 5; border-radius: 5; font-size:"+this.cellSide/4+"px;}";
+        this.newRule = "button.cardNav{width:"+0.9*this.cellSide+"px; height:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; float:left; background: -webkit-gradient(linear, left top, left bottom, from(#DDDDDD), to(#FFFFFF)); background: -moz-linear-gradient(top,  #DDDDDD,  #FFFFFF); -webkit-border-radius: 5; -moz-border-radius: 5; border-radius: 5; font-size:"+this.cellSide/4+"px; padding:0px}";
         document.styleSheets[0].insertRule(this.newRule,0);
 
         //header size:
@@ -103,7 +103,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
         }
 
         //do an initial populate of the waffle:
-        fetchNewData(this.rows, this.cols, this.ODBkeys, this.demandVoltage, this.reportVoltage, this.reportCurrent, this.demandVramp, this.reportTemperature, this.channelMask);
+        fetchNewData(this.rows, this.cols, this.ODBkeys, this.demandVoltage, this.reportVoltage, this.reportCurrent, this.demandVramp, this.reportTemperature, this.channelMask, this.alarmStatus, this.alarm, this.scaleMax);
 
         //make waffles clickable to set a variable for a channel:
         this.canvas = document.getElementById(this.cvas);
@@ -137,6 +137,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
         
         //determine alarm status for each cell, recorded as [i][j][voltage alarm, current alarm, temperature alarm]
         //alarmStatus == 0 indicates all clear, 0 < alarmStatus <= 1 indicates alarm intensity, alarmStatus = -1 indicates channel off.
+        //TODO: this has been factored into fetchNewData for the sake of the meter view, remove from here.
         this.alarmUpdate = function(){
             for(var i=0; i<this.rows; i++){
                 for(var j=0; j<this.cols; j++){
