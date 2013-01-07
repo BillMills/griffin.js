@@ -45,21 +45,18 @@ function fetchNewData(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportC
 
             //determine alarm status for each cell, recorded as [i][j][voltage alarm, current alarm, temperature alarm]
             //alarmStatus == 0 indicates all clear, 0 < alarmStatus <= 1 indicates alarm intensity, alarmStatus = -1 indicates channel off,
-            //alarmStatus = -2 indicates channel ramping
+            //and alarmStatus == -2 for the voltage alarm indicates voltage ramping.
             if(testParameter < alarmTripLevel[0])  alarmStatus[i][j][0] = 0;
             else  alarmStatus[i][j][0] = Math.min( (testParameter - alarmTripLevel[0]) / scaleMax[0], 1);
+            if(rampStatus[i][j] == 1){
+                alarmStatus[i][j][0] = -2;
+            }
 
             if(reportCurrent[i][j] < alarmTripLevel[1])  alarmStatus[i][j][1] = 0;
             else  alarmStatus[i][j][1] = Math.min( (reportCurrent[i][j] - alarmTripLevel[1]) / scaleMax[1], 1);
 
             if(reportTemperature[i][j] < alarmTripLevel[2])  alarmStatus[i][j][2] = 0;
             else  alarmStatus[i][j][2] = Math.min( (reportTemperature[i][j] - alarmTripLevel[2]) / scaleMax[2], 1);
-
-            if(rampStatus[i][j] == 1){
-                alarmStatus[i][j][0] = -2;
-                alarmStatus[i][j][1] = -2;
-                alarmStatus[i][j][2] = -2;
-            }
 
             if(channelMask[i][j] == 0){
                 alarmStatus[i][j][0] = -1;

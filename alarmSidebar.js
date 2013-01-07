@@ -108,7 +108,7 @@ function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, 
     //report Current alarms
     n = 0;
     alarmString = '';
-    while(n<nAlarms && currentAlarmArray[n][2]>0){
+    while(n<nAlarms && (currentAlarmArray[n][2]>0 || currentAlarmArray[n][2]==-2) ){
         if(n == 0) alarmString = 'Alarm Threshold: ' + alarm[1] + ' ' + units[1] + '<br><br>'
         alarmString += colTitles[0] + ' ' + currentAlarmArray[n][1] + ', ' + rowTitles[0] + ' ' + currentAlarmArray[n][0] + '<br>Current: ' + reportCurrent[currentAlarmArray[n][0]][currentAlarmArray[n][1]].toFixed(3) + ' ' + units[1] + '<br><br>';
         n++;
@@ -122,7 +122,7 @@ function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, 
     //report Temperature alarms
     n = 0;
     alarmString = '';
-    while(n<nAlarms && temperatureAlarmArray[n][2]>0){
+    while(n<nAlarms && (temperatureAlarmArray[n][2]>0 || temperatureAlarmArray[n][2]==-2) ){
         if(n == 0) alarmString = 'Alarm Threshold: ' + alarm[2] + ' ' + units[2] + '<br><br>'
         alarmString += colTitles[0] + ' ' + temperatureAlarmArray[n][1] + ', ' + rowTitles[0] + ' ' + temperatureAlarmArray[n][0] + '<br>Temperature: ' + reportTemperature[temperatureAlarmArray[n][0]][temperatureAlarmArray[n][1]].toFixed(3) + ' ' + units[2] + '<br><br>';
         n++;
