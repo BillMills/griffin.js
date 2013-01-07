@@ -1,7 +1,7 @@
 function masterLoop(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask, alarmStatus, alarmTripLevel, scaleMax, waffle, barchart, callMyself){
 	if(!document.webkitHidden && !document.mozHidden){
     	fetchNewData(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask, alarmStatus, alarmTripLevel, scaleMax);
-    	waffle.update(demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask, callMyself);
+    	waffle.update(demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, alarmStatus, channelMask, callMyself);
     	barchart.update([ reportVoltage[0][0], reportVoltage[1][0], reportVoltage[2][0], reportVoltage[3][0], reportVoltage[4][0], reportVoltage[5][0], reportVoltage[6][0], reportVoltage[7][0], reportVoltage[8][0], reportVoltage[9][0], reportVoltage[10][0], reportVoltage[11][0] ], [alarmStatus[0][0], alarmStatus[1][0], alarmStatus[2][0], alarmStatus[3][0], alarmStatus[4][0], alarmStatus[5][0], alarmStatus[6][0], alarmStatus[7][0], alarmStatus[8][0], alarmStatus[9][0], alarmStatus[10][0], alarmStatus[11][0] ] );
     }
     setTimeout(function(){masterLoop(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask, alarmStatus, alarmTripLevel, scaleMax, waffle, barchart, 1)}, 5000);
@@ -38,7 +38,8 @@ function fetchNewData(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportC
             //construct the parameter to be tested against the voltage alarm:
             testParameter = Math.abs(demandVoltage[i][j] - reportVoltage[i][j]); 
 
-            //determine alarms status
+            //determine alarm status for each cell, recorded as [i][j][voltage alarm, current alarm, temperature alarm]
+            //alarmStatus == 0 indicates all clear, 0 < alarmStatus <= 1 indicates alarm intensity, alarmStatus = -1 indicates channel off.
             if(testParameter < alarmTripLevel[0])  alarmStatus[i][j][0] = 0;
             else  alarmStatus[i][j][0] = Math.min( (testParameter - alarmTripLevel[0]) / scaleMax[0], 1);
 

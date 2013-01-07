@@ -85,6 +85,7 @@ function BarGraph(cvas, nBars, title, yAxisTitle, barTitles, scaleMin, scaleMax,
 			barHeight = this.oldLevels[i]*this.barMax + (this.levels[i] - this.oldLevels[i])*this.barMax*frame/this.nFrames;
 			barTop = this.height - this.bottomMargin - barHeight;
 			this.context.fillRect(leftEdge, barTop, this.barWidth, barHeight);
+			this.context.strokeRect(leftEdge, barTop, this.barWidth, barHeight);
 			leftEdge += 1.05*this.barWidth;
 		}
 
@@ -188,7 +189,7 @@ function BarGraph(cvas, nBars, title, yAxisTitle, barTitles, scaleMin, scaleMax,
 		var R, G, B, A;
 
 		if(this.oldAlarms[index][0] == 0 && this.oldAlarms[index][1] == 0 && this.oldAlarms[index][2] == 0){
-			this.oldColor = [0,255,0,1];
+			this.oldColor = [0,255,0,0.3];
 		} else if(this.oldAlarms[index][0] == -1){
 			this.oldColor = [0,0,0,0.3];
 		} else {
@@ -196,7 +197,7 @@ function BarGraph(cvas, nBars, title, yAxisTitle, barTitles, scaleMin, scaleMax,
 		}
 
 		if(this.alarms[index][0] == 0 && this.alarms[index][1] == 0 && this.alarms[index][2] == 0){
-			this.color = [0,255,0,1];
+			this.color = [0,255,0,0.3];
 		} else if(this.alarms[index][0] == -1){
 			this.color = [0,0,0,0.3];
 		} else {
