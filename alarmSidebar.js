@@ -31,7 +31,7 @@ function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, 
         //scale:
         for(i=0; i<alarmPanelDivIDs.length; i++){
             $( document.getElementById(alarmPanelDivIDs[i]) ).css('width', 0.8*width);
-            //$( document.getElementById(alarmPanelCanvIDs[i]) ).css('width', 0.8*width);
+            document.getElementById(alarmPanelCanvIDs[i]).width  = 0.8*width;
         }
     }
 
@@ -162,11 +162,11 @@ function drawAllClear(x0, y0, radius, title, canvasID, alphaB){
 
             context.fillStyle = 'rgba(0,0,0,1)';
             //context.font=(2*radius*0.24)+'px Raleway';
-            context.font=($('#'+canvasID).width()*0.052)+'px Raleway';
-            context.fillText(title, 0.5*canvas.width - context.measureText(title).width/2+1, canvas.height*0.5+1);
+            context.font=($('#'+canvasID).width()*0.07)+'px Raleway';
+            context.fillText(title, 0.9*canvas.width - context.measureText(title).width+1, canvas.height*0.5+1);
 
             context.fillStyle = 'rgba(255,255,255,1)';
-            context.fillText(title, 0.5*canvas.width - context.measureText(title).width/2, canvas.height*0.5);
+            context.fillText(title, 0.9*canvas.width - context.measureText(title).width, canvas.height*0.5);
             
 }
 
@@ -200,11 +200,11 @@ function drawAlarm(x0, y0, L, title, canvasID, alphaB){
 
             context.fillStyle = 'rgba(0,0,0,1)';
             //context.font=(L*0.24)+'px Raleway';
-            context.font=($('#'+canvasID).width()*0.052)+'px Raleway';
-            context.fillText(title, 0.5*canvas.width - context.measureText(title).width/2+1, canvas.height*0.5+1);
+            context.font=($('#'+canvasID).width()*0.07)+'px Raleway';
+            context.fillText(title, 0.9*canvas.width - context.measureText(title).width+1, canvas.height*0.5+1);
 
             context.fillStyle = 'rgba(255,255,255,1)';
-            context.fillText(title, 0.5*canvas.width - context.measureText(title).width/2, canvas.height*0.5);
+            context.fillText(title, 0.9*canvas.width - context.measureText(title).width, canvas.height*0.5);
 }
 
 //draw old and new canvases accept exactly two arguments: the canvas ID to draw on, and the opacity to draw the picture at.
