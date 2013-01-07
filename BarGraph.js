@@ -192,6 +192,8 @@ function BarGraph(cvas, nBars, title, yAxisTitle, barTitles, scaleMin, scaleMax,
 			this.oldColor = [0,255,0,0.3];
 		} else if(this.oldAlarms[index][0] == -1){
 			this.oldColor = [0,0,0,0.3];
+		} else if(this.oldAlarms[index][0] == -2){
+			this.oldColor = [255,255,0,0.3];
 		} else {
 			this.oldColor = [255,0,0, Math.max(this.oldAlarms[index][0], this.oldAlarms[index][1], this.oldAlarms[index][2])*0.7 + 0.3];
 		}
@@ -200,6 +202,8 @@ function BarGraph(cvas, nBars, title, yAxisTitle, barTitles, scaleMin, scaleMax,
 			this.color = [0,255,0,0.3];
 		} else if(this.alarms[index][0] == -1){
 			this.color = [0,0,0,0.3];
+		} else if(this.alarms[index][0] == -2){
+			this.color = [255,255,0,0.3];
 		} else {
 			this.color = [255,0,0, Math.max(this.alarms[index][0], this.alarms[index][1], this.alarms[index][2])*0.7 + 0.3];
 		}

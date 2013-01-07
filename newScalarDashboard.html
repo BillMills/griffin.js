@@ -238,7 +238,7 @@
       
 
       //set up arrays:
-      var demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask;
+      var demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask, alarmStatus, rampStatus;
       demandVoltage = [];
       reportVoltage = [];
       reportCurrent = [];
@@ -246,6 +246,7 @@
       reportTemperature = [];
       channelMask = [];
       alarmStatus = [];
+      rampStatus = [];
       for(i=0; i<12; i++){
         demandVoltage[i] = [];
         reportVoltage[i] = [];
@@ -254,6 +255,7 @@
         reportTemperature[i] = [];
         channelMask[i] = [];
         alarmStatus[i] = [];
+        rampStatus[i] = [];
         for(j=0;j<20;j++){
           alarmStatus[i][j] = [];
         }
@@ -266,7 +268,7 @@
       window.lastTrip = 'Main1';
 
       //start looping:
-      masterLoop(12, 20, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask, alarmStatus, [0.8,0.999,0.999], [1,1,1], waffle, barTest, 0);
+      masterLoop(12, 20, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask, alarmStatus, rampStatus, [0.8,0.999,0.999], [1,1,1], waffle, barTest, 0);
 
   </script> 
   

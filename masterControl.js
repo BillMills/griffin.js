@@ -1,14 +1,14 @@
-function masterLoop(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask, alarmStatus, alarmTripLevel, scaleMax, waffle, barchart, callMyself){
+function masterLoop(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask, alarmStatus, rampStatus, alarmTripLevel, scaleMax, waffle, barchart, callMyself){
 	if(!document.webkitHidden && !document.mozHidden){
-    	fetchNewData(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask, alarmStatus, alarmTripLevel, scaleMax);
-    	waffle.update(demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, alarmStatus, channelMask, callMyself);
+    	fetchNewData(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask, alarmStatus, rampStatus, alarmTripLevel, scaleMax);
+    	waffle.update(demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, alarmStatus, channelMask, rampStatus, callMyself);
     	barchart.update([ reportVoltage[0][0], reportVoltage[1][0], reportVoltage[2][0], reportVoltage[3][0], reportVoltage[4][0], reportVoltage[5][0], reportVoltage[6][0], reportVoltage[7][0], reportVoltage[8][0], reportVoltage[9][0], reportVoltage[10][0], reportVoltage[11][0] ], [alarmStatus[0][0], alarmStatus[1][0], alarmStatus[2][0], alarmStatus[3][0], alarmStatus[4][0], alarmStatus[5][0], alarmStatus[6][0], alarmStatus[7][0], alarmStatus[8][0], alarmStatus[9][0], alarmStatus[10][0], alarmStatus[11][0] ] );
     }
-    setTimeout(function(){masterLoop(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask, alarmStatus, alarmTripLevel, scaleMax, waffle, barchart, 1)}, 5000);
+    setTimeout(function(){masterLoop(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask, alarmStatus, rampStatus, alarmTripLevel, scaleMax, waffle, barchart, 1)}, 5000);
 }
 
 //populate rows by cols arrays with the appropriate information:
-function fetchNewData(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask, alarmStatus, alarmTripLevel, scaleMax){
+function fetchNewData(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask, alarmStatus, rampStatus, alarmTripLevel, scaleMax){
 
     var testParameter;
 
@@ -23,6 +23,8 @@ function fetchNewData(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportC
             demandVramp[i][j] = ODBGet(ODBkeys[3]+'['+ODBindex+']');
             reportTemperature[i][j] = ODBGet(ODBkeys[4]+'['+ODBindex+']');
             channelMask[i][j] = ODBGet(ODBkeys[5]+'['+ODBindex+']');
+            rampStatus[i][j] = ODBGet(ODBkeys[6]+'['+ODBindex+']');
+            //insert some logic here to interpret whatever came out of ODB into rampStatus as 1 for ramping and 0 for not ramping.
             */
 
             //fake data for offline demo
@@ -34,12 +36,16 @@ function fetchNewData(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportC
             channelMask[i][j] = Math.random();
             if (channelMask[i][j] < 0.1) channelMask[i][j] = 0;
             else channelMask[i][j] = 1;
+            rampStatus[i][j] = Math.random();
+            if(rampStatus[i][j] < 0.1) rampStatus[i][j] = 1;
+            else rampStatus[i][j] = 0;
 
             //construct the parameter to be tested against the voltage alarm:
             testParameter = Math.abs(demandVoltage[i][j] - reportVoltage[i][j]); 
 
             //determine alarm status for each cell, recorded as [i][j][voltage alarm, current alarm, temperature alarm]
-            //alarmStatus == 0 indicates all clear, 0 < alarmStatus <= 1 indicates alarm intensity, alarmStatus = -1 indicates channel off.
+            //alarmStatus == 0 indicates all clear, 0 < alarmStatus <= 1 indicates alarm intensity, alarmStatus = -1 indicates channel off,
+            //alarmStatus = -2 indicates channel ramping
             if(testParameter < alarmTripLevel[0])  alarmStatus[i][j][0] = 0;
             else  alarmStatus[i][j][0] = Math.min( (testParameter - alarmTripLevel[0]) / scaleMax[0], 1);
 
@@ -48,6 +54,12 @@ function fetchNewData(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportC
 
             if(reportTemperature[i][j] < alarmTripLevel[2])  alarmStatus[i][j][2] = 0;
             else  alarmStatus[i][j][2] = Math.min( (reportTemperature[i][j] - alarmTripLevel[2]) / scaleMax[2], 1);
+
+            if(rampStatus[i][j] == 1){
+                alarmStatus[i][j][0] = -2;
+                alarmStatus[i][j][1] = -2;
+                alarmStatus[i][j][2] = -2;
+            }
 
             if(channelMask[i][j] == 0){
                 alarmStatus[i][j][0] = -1;

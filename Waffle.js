@@ -69,6 +69,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
         this.demandVramp = [];
         this.reportTemperature = [];
         this.channelMask = [];
+        this.rampStatus = [];
         //computed values:
         this.startColor = [];
         this.endColor = [];
@@ -80,6 +81,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
             this.demandVramp[i] = [];
             this.reportTemperature[i] = [];
             this.channelMask[i] = [];
+            this.rampStatus[i] = [];
     	    this.startColor[i] = [];
         	this.endColor[i] = [];
         }
@@ -101,7 +103,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
         }
 
         //do an initial populate of the waffle:
-        fetchNewData(this.rows, this.cols, this.ODBkeys, this.demandVoltage, this.reportVoltage, this.reportCurrent, this.demandVramp, this.reportTemperature, this.channelMask, this.alarmStatus, this.alarm, this.scaleMax);
+        fetchNewData(this.rows, this.cols, this.ODBkeys, this.demandVoltage, this.reportVoltage, this.reportCurrent, this.demandVramp, this.reportTemperature, this.channelMask, this.alarmStatus, this.rampStatus, this.alarm, this.scaleMax);
 
         //make waffles clickable to set a variable for a channel:
         this.canvas = document.getElementById(this.cvas);
@@ -115,7 +117,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
         channelSelect(that);
 
         //que up new data:
-        this.populate = function(demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask){
+        this.populate = function(demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask, alarmStatus, rampStatus){
             //populate new data:
             for(var i=0; i<this.rows; i++){
                 for(var j=0; j<this.cols; j++){
@@ -126,17 +128,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
                     this.demandVramp[i][j] = demandVramp[i][j];
                     this.reportTemperature[i][j] = reportTemperature[i][j];
                     this.channelMask[i][j] = channelMask[i][j];
-                }
-            }
-
-        };
-        
-        //determine alarm status for each cell, recorded as [i][j][voltage alarm, current alarm, temperature alarm]
-        //alarmStatus == 0 indicates all clear, 0 < alarmStatus <= 1 indicates alarm intensity, alarmStatus = -1 indicates channel off.
-        //TODO: this has been factored into fetchNewData for the sake of the meter view, remove from here.
-        this.alarmUpdate = function(alarmStatus){
-            for(var i=0; i<this.rows; i++){
-                for(var j=0; j<this.cols; j++){
+                    this.rampStatus[i][j] = rampStatus[i][j];
 
                     this.prevAlarmStatus[i][j][0] = this.alarmStatus[i][j][0];
                     this.prevAlarmStatus[i][j][1] = this.alarmStatus[i][j][1];
@@ -145,11 +137,11 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
                     this.alarmStatus[i][j][0] = alarmStatus[i][j][0];
                     this.alarmStatus[i][j][1] = alarmStatus[i][j][1];
                     this.alarmStatus[i][j][2] = alarmStatus[i][j][2];
-
                 }
             }
-        };
 
+        };
+        
         //determine per cell color info for start and finish.
         //Color info is packed as four numbers: red, green, blue, alpha
         this.cellColorUpdate = function(){
@@ -165,6 +157,11 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
                     } else if(this.prevAlarmStatus[i][j][0] == -1){
                         R = 0;
                         G = 0;
+                        B = 0;
+                        A = 0.3;
+                    } else if(this.prevAlarmStatus[i][j][0] == -2){
+                        R = 255;
+                        G = 255;
                         B = 0;
                         A = 0.3;
                     } else {
@@ -187,6 +184,11 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
                         G = 0;
                         B = 0;
                         A = 0.3;
+                    } else if(this.alarmStatus[i][j][0] == -2){
+                        R = 255; 
+                        G = 255;
+                        B = 0;
+                        A =0.3;
                     } else {
                         R = 255;
                         G = 0;
@@ -327,11 +329,10 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
         };        
 
         //wrapper for transition from old state to new state via this.animate:
-        this.update = function(demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, alarmStatus, channelMask, callMyself){
+        this.update = function(demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, alarmStatus, channelMask, rampStatus, callMyself){
 
             //update all parameters to prepare for animation transition:
-            this.populate(demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask);
-            this.alarmUpdate(alarmStatus);
+            this.populate(demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask, alarmStatus, rampStatus);
             this.cellColorUpdate();
 
             //update peripherals:
