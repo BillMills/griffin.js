@@ -34,7 +34,7 @@ function BarGraph(cvas, nBars, title, yAxisTitle, barTitles, scaleMin, scaleMax,
 
     //canvas dimensions:
     this.width = masterWaffle.totalWidth;
-    this.height = masterWaffle.totalHeight;
+    this.height = masterWaffle.waffleHeight;
     this.headerHeight = masterWaffle.headerHeight;
     $('#'+cvas).attr('width', this.width);
     $('#'+cvas).attr('height', this.height);

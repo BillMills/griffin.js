@@ -38,14 +38,26 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
 
         //determine dimesions of canvas:
         this.totalWidth = Math.round(0.5*$('#'+this.wrapperDiv).width());
-        this.totalHeight = this.totalWidth*this.rows/this.cols + 100;
+        this.totalHeight = this.totalWidth*this.rows/this.cols;  //base height
 
         //waffle dimensions; leave gutters for labels & title
         this.waffleWidth = this.totalWidth - 60;
-        this.waffleHeight = this.totalHeight - 120;
+        this.waffleHeight = this.totalHeight;
 
         //cell dimensions controlled by width, since width more visually important here:
         this.cellSide = this.waffleWidth / this.cols;
+
+        //adjust height to accommodate card and module labels:
+        this.canvas = document.getElementById(this.cvas);
+        this.context = this.canvas.getContext('2d');
+        this.context.font = Math.min(16, this.cellSide)+'px Raleway';
+        this.longestColTitle = 0;
+        this.longestModuleLabel = 0;
+        for(i = 1; i<this.colTitles.length; i++){
+            this.longestColTitle = Math.max(this.longestColTitle, this.context.measureText(this.colTitles[i]).width);
+            this.longestModuleLabel = Math.max(this.longestModuleLabel, this.context.measureText(this.moduleLabels[i]).width);
+        }
+        this.totalHeight += this.longestColTitle + this.longestModuleLabel + 50;
 
         //establish animation parameters:
         this.FPS = 30;
@@ -106,8 +118,6 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
         fetchNewData(this.rows, this.cols, this.ODBkeys, this.demandVoltage, this.reportVoltage, this.reportCurrent, this.demandVramp, this.reportTemperature, this.channelMask, this.alarmStatus, this.rampStatus, this.alarm, this.scaleMax);
 
         //make waffles clickable to set a variable for a channel:
-        this.canvas = document.getElementById(this.cvas);
-        this.context = this.canvas.getContext('2d');
         this.canvas.onclick = function(event){clickWaffle(event, that)};
 
         //make the get channel button do its job:
@@ -149,21 +159,25 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
             for(var i=0; i<this.rows; i++){
             	for(var j=0; j<this.cols; j++){
     	         	//start values:
-    	            if(this.prevAlarmStatus[i][j][0] == 0 && this.prevAlarmStatus[i][j][1] == 0 && this.prevAlarmStatus[i][j][2] == 0){
+                    //show green on all clear:
+    	            if( this.prevAlarmStatus[i][j][0] == 0 && this.prevAlarmStatus[i][j][1] == 0 && this.prevAlarmStatus[i][j][2] == 0){
                         R = 0;
                         G = 255;
                         B = 0;
                         A = 0.3;
+                    //else show grey if the channel is off:
                     } else if(this.prevAlarmStatus[i][j][0] == -1){
                         R = 0;
                         G = 0;
                         B = 0;
                         A = 0.3;
-                    } else if(this.prevAlarmStatus[i][j][0] == -2){
+                    //else show yellow if channel is ramping & no temperature or current alarms:
+                    } else if(this.prevAlarmStatus[i][j][0] == -2 && this.prevAlarmStatus[i][j][1] == 0 && this.prevAlarmStatus[i][j][2] == 0){
                         R = 255;
                         G = 255;
                         B = 0;
                         A = 0.3;
+                    //else show red for alarm:
                     } else {
                         R = 255;
                         G = 0;
@@ -184,7 +198,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
                         G = 0;
                         B = 0;
                         A = 0.3;
-                    } else if(this.alarmStatus[i][j][0] == -2){
+                    } else if(this.alarmStatus[i][j][0] == -2 && this.alarmStatus[i][j][1] == 0 && this.alarmStatus[i][j][2] == 0){
                         R = 255; 
                         G = 255;
                         B = 0;
@@ -277,7 +291,11 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
                 }
                 else this.context.lineWidth = 1;
                 this.context.moveTo(j*this.cellSide,0);
-                this.context.lineTo(j*this.cellSide,this.cellSide*this.rows);
+                if(this.context.lineWidth == 1){
+                    this.context.lineTo(j*this.cellSide,this.cellSide*this.rows);
+                } else {
+                    this.context.lineTo(j*this.cellSide,this.cellSide*this.rows + this.longestColTitle + this.longestModuleLabel + 25);
+                }
                 this.context.stroke();
             }
 
@@ -302,7 +320,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
                 this.context.translate(j*this.cellSide + this.cellSide/2, this.rows*this.cellSide+10);
                 this.context.rotate(-Math.PI/2);
                 this.context.textAlign = "right";
-                this.context.fillText(j, 0,labelFontSize/2);
+                this.context.fillText(this.colTitles[j+1], 0,labelFontSize/2);
                 this.context.restore();
             }
 
@@ -320,7 +338,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
                     modHeight = labelFontSize;
                 }
                 this.context.save();
-                this.context.translate(( moduleWidth/2 + this.moduleDivisions[j-1])*this.cellSide, this.rows*this.cellSide+10+2*labelFontSize + modHeight);
+                this.context.translate(( moduleWidth/2 + this.moduleDivisions[j-1])*this.cellSide, this.rows*this.cellSide + modHeight + this.longestColTitle + this.longestModuleLabel/2 + 10);
                 this.context.rotate(modRotation);
                 this.context.textAlign = modAlign;
                 this.context.fillText(this.moduleLabels[j-1], 0,labelFontSize/2);
