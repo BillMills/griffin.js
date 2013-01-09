@@ -84,7 +84,7 @@ function channelSelect(waffle){
     var inputDiv = document.getElementById(waffle.InputLayer);
 
     //set text in dialog box:
-    var inputTitle = 'Parameters for <br>'+waffle.colTitles[0]+' '+waffle.chx+', '+waffle.rowTitles[0]+' '+waffle.chy;
+    var inputTitle = 'Parameters for <br>'+waffle.colTitles[0]+' '+waffle.colTitles[waffle.chx+1]+', '+waffle.rowTitles[0]+' '+waffle.rowTitles[waffle.chy+1];
     document.getElementById('inputTitle').innerHTML = inputTitle;
 
     //set defaults
@@ -101,7 +101,8 @@ function channelSelect(waffle){
     //only actually display if the click was on the waffle and not the rest of the canvas:
     if(waffle.chx < waffle.cols && waffle.chy < waffle.rows){
         divFade(inputDiv, 'in', 0);
-        setInput('changeChannel',0,waffle.chx);
+
+        setInput('changeChannel',0,waffle.colTitles[waffle.chx+1]);
         setInput('changeChannel',1,waffle.chy);
     }
 
@@ -111,7 +112,14 @@ function channelSelect(waffle){
 
 //point interface at new channel indicated by user in the 'changeChannel' form.
 function gotoNewChannel(event, waffle){
-	var xVal = parseInt(getInput('changeChannel', 0));
+    var xName = getInput('changeChannel', 0);
+
+    //have to map column titles onto index
+    var xVal;
+    for(var i=1; i<waffle.cols; i++){
+        if(waffle.colTitles[i] == xName) xVal = i - 1;
+    }
+
 	var yVal = parseInt(getInput('changeChannel', 1));
 
     waffle.chx = xVal;
@@ -121,87 +129,3 @@ function gotoNewChannel(event, waffle){
         channelSelect(waffle);
     }
 }
-
-//DEPRICATED
-//tie the slider value to the field value for demand voltage:
-function slideVoltage(sliderVal){
-    var max = 1;
-    var min = 0;
-    document.getElementById('demandVoltage').value = (sliderVal*(max-min)+min).toFixed(3);
-}
-
-//...and the opposite, too: make the slider catch up to a value typed into the corresponding field:
-function fieldVoltage(){
-    var max = 1;
-    var min = 0;
-    var inputValue = document.getElementById('demandVoltage').value;
-    var fieldEntry = (inputValue-min)/(max-min);
-
-    jumpSlider(fieldEntry, 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', 0, 1, 'mV');
-    if(inputValue < min) {
-        jumpSlider(0, 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', 0, 1, 'mV');
-        document.getElementById('demandVoltage').value = min;
-    } else if(inputValue > max){
-        jumpSlider(1, 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', 0, 1, 'mV');
-        document.getElementById('demandVoltage').value = max;
-    }
-}
-
-//DEPRICATED
-//tie the slider value to the field value for demand ramp speed:
-function slideRamp(sliderVal){
-    var max = 1;
-    var min = 0;
-    document.getElementById('demandRampSpeed').value = (sliderVal*(max-min)+min).toFixed(3);
-}
-
-
-//...and the opposite, too: make the slider catch up to a value typed into the corresponding field:
-function fieldRamp(){
-    var max = 1;
-    var min = 0;
-    var inputValue = document.getElementById('demandRampSpeed').value;
-    var fieldEntry = (inputValue-min)/(max-min);
-
-    jumpSlider(fieldEntry, 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', 0, 1, 'mV/s');
-    if(fieldEntry < min) {
-        jumpSlider(0, 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', 0, 1, 'mV/s');
-        document.getElementById('demandRampSpeed').value = min;
-    } else if(fieldEntry > max){
-        jumpSlider(1, 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', 0, 1, 'mV/s');
-        document.getElementById('demandRampSpeed').value = max;
-    }
-}
-
-//DEPRICATED
-//tie the slider value to the field value for test slider:
-function slideTest(sliderVal){
-    var max = 1;
-    var min = 0;
-    document.getElementById('testInput').value = (sliderVal*(max-min)+min).toFixed(3);
-}
-
-function decorateInputSidebar(sidebar, side, wrapperDiv, waffleHeight){
-
-    //fetch canvas:
-    var canvas = document.getElementById(sidebar);
-    var context = canvas.getContext('2d');
-
-    //get container div dimensions:
-    var parentWidth = $('#'+wrapperDiv).width();
-    var parentHeight = $('#'+wrapperDiv).height();
-
-    //define sidebar dimensions:
-    var width = parentWidth*0.2;
-    var height = parentHeight;
-
-    //set sidebar dimensions:
-    canvas.width = width;
-    canvas.height = height;
-
-    //separator line inset
-    var inset = 0.1*width;
-  
-}
-
-

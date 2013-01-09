@@ -158,10 +158,10 @@
           <h4 style='margin-left:10%; margin-bottom:10px;'>Change Channel:</h4>
           <p style='display:inline; margin-left:10%'>Card</p>
           <!--input type="text" id="newCol" name='newCol' style='margin-bottom:10px; margin-left:5px; display:inline;' size='6' value='0'-->
-          <select id=CardList> </select>
+          <select id='CardList' style='width:50px;'> </select>
           <p style='display:inline; margin-left:10px'>Channel</p>
           <!--input type="text" id="newRow" name='newRow' style='margin-bottom:10px; margin-left:5px; display:inline;' size='6' value='0'-->
-          <select id=ChannelList> </select>
+          <select id='ChannelList' style='width:50px;'> </select>
           <br><input type="button" value="Go To Channel" style='margin-left:10%; margin-top:10px;' id='getChannelButton'>       
         </form>
 
@@ -204,7 +204,7 @@
       //cell labels; first entry decribes cell type (channel, card, crate, rack etc)
       var rowTitles = ['Ch.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
       //var colTitles = ['Card', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'];
-      var colTitles = ['Card', '0-0x000000', '1-0x000000', '2-0x000000', '2-0x000001', '2-0x000002', '2-0x000003', '3-0x000000', '3-0x000001', '3-0x000002', '3-0x000003', '4-0x000000', '5-0x000000', '6-0x000000', '6-0x000001', '6-0x000002', '6-0x000003', '7-0x000000', '7-0x000001', '7-0x000002', '7-0x000003'];
+      var colTitles = ['Card', '0-0x0000', '1-0x0000', '2-0x0000', '2-0x0001', '2-0x0002', '2-0x0003', '3-0x0000', '3-0x0001', '3-0x0002', '3-0x0003', '4-0x0000', '5-0x0000', '6-0x0000', '6-0x0001', '6-0x0002', '6-0x0003', '7-0x0000', '7-0x0001', '7-0x0002', '7-0x0003'];
  
       //set up channel navigation dropdowns:
       var option = []; 

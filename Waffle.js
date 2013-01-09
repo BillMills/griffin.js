@@ -384,7 +384,7 @@ function clickWaffle(event, obj){
             obj.chx = chx;
             obj.chy = chy;
 
-            if(chx<obj.cols && chy<obj.rows){
+            if(chx<obj.cols && chy<obj.rows && window.onDisplay == obj.cvas){
                 channelSelect(obj);
             }
 
