@@ -1,3 +1,4 @@
+//TODO: clean up by passing in waffle object?
 function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, alarmStatus, rows, cols, rowTitles, colTitles, callMyself, alarmPanelDivIDs, alarmPanelCanvIDs, demandVoltage, reportVoltage, reportCurrent, reportTemperature, alarm, units){
 
     var i, j, n;
@@ -96,7 +97,7 @@ function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, 
     n = 0;
     var alarmString = '';
     while(n<nAlarms && voltageAlarmArray[n][2]>0){
-        alarmString += colTitles[0] + ' ' + voltageAlarmArray[n][1] + ', ' + rowTitles[0] + ' ' + voltageAlarmArray[n][0] + '<br>Demand Voltage: ' + demandVoltage[voltageAlarmArray[n][0]][voltageAlarmArray[n][1]].toFixed(3) + ' ' + units[0] + '<br>Reported Voltage: ' + reportVoltage[voltageAlarmArray[n][0]][voltageAlarmArray[n][1]].toFixed(3) + ' ' + units[0] + '<br><br>';
+        alarmString += colTitles[0] + ' ' + colTitles[voltageAlarmArray[n][1]+1] + ', ' + rowTitles[0] + ' ' + rowTitles[voltageAlarmArray[n][0]+1] + '<br>Demand Voltage: ' + demandVoltage[voltageAlarmArray[n][0]][voltageAlarmArray[n][1]].toFixed(3) + ' ' + units[0] + '<br>Reported Voltage: ' + reportVoltage[voltageAlarmArray[n][0]][voltageAlarmArray[n][1]].toFixed(3) + ' ' + units[0] + '<br><br>';
         n++;
     }
     if(alarmString == ''){
@@ -110,7 +111,7 @@ function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, 
     alarmString = '';
     while(n<nAlarms && (currentAlarmArray[n][2]>0 || currentAlarmArray[n][2]==-2) ){
         if(n == 0) alarmString = 'Alarm Threshold: ' + alarm[1] + ' ' + units[1] + '<br><br>'
-        alarmString += colTitles[0] + ' ' + currentAlarmArray[n][1] + ', ' + rowTitles[0] + ' ' + currentAlarmArray[n][0] + '<br>Current: ' + reportCurrent[currentAlarmArray[n][0]][currentAlarmArray[n][1]].toFixed(3) + ' ' + units[1] + '<br><br>';
+        alarmString += colTitles[0] + ' ' + colTitles[currentAlarmArray[n][1]+1] + ', ' + rowTitles[0] + ' ' + rowTitles[currentAlarmArray[n][0]+1] + '<br>Current: ' + reportCurrent[currentAlarmArray[n][0]][currentAlarmArray[n][1]].toFixed(3) + ' ' + units[1] + '<br><br>';
         n++;
     }
     if(alarmString == ''){
@@ -124,7 +125,7 @@ function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, 
     alarmString = '';
     while(n<nAlarms && (temperatureAlarmArray[n][2]>0 || temperatureAlarmArray[n][2]==-2) ){
         if(n == 0) alarmString = 'Alarm Threshold: ' + alarm[2] + ' ' + units[2] + '<br><br>'
-        alarmString += colTitles[0] + ' ' + temperatureAlarmArray[n][1] + ', ' + rowTitles[0] + ' ' + temperatureAlarmArray[n][0] + '<br>Temperature: ' + reportTemperature[temperatureAlarmArray[n][0]][temperatureAlarmArray[n][1]].toFixed(3) + ' ' + units[2] + '<br><br>';
+        alarmString += colTitles[0] + ' ' + colTitles[temperatureAlarmArray[n][1]+1] + ', ' + rowTitles[0] + ' ' + rowTitles[temperatureAlarmArray[n][0]+1] + '<br>Temperature: ' + reportTemperature[temperatureAlarmArray[n][0]][temperatureAlarmArray[n][1]].toFixed(3) + ' ' + units[2] + '<br><br>';
         n++;
     }
     if(alarmString == ''){
