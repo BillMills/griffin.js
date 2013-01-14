@@ -53,7 +53,7 @@ function FillMeter(cvas, width, min, max, unit){
     //change the fill level and related parameters
     this.setNewFillLevel = function(newLevel){
         this.oldFillLevel = this.fillLevel;
-        this.fillLevel = newLevel;
+        this.fillLevel = this.fillLevel = (newLevel - this.min) / (this.max - this.min);
         this.fillTo = newLevel*(this.rightX0 - this.leftX0) + this.leftX0;
     };
 

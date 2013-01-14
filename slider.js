@@ -180,7 +180,25 @@ function Slider(titleID, inputBoxID, sliderContainerID, sliderBackgroundID, slid
     }
 
     this.inputBox.onblur = function(event){
-        that.update(parseFloat(that.inputBox.value));
+         
+        //note: need to skip animation here (ie can't just use update) since when clicking 'submit'
+        //an intermediate value might be grabbed and sent to HW as the knob scrolls and drags the text
+        //with it.  TODO: scroll knob without changing text box.
+        
+        //keep things in bounds:
+        var newSliderVal = that.inputBox.value;
+        if(newSliderVal > that.max) newSliderVal = that.max;
+        if(newSliderVal < that.min) newSliderVal = that.min;
+        
+        //keep the animation parameters updated:
+        that.oldValue = that.newValue;
+        that.newValue = newSliderVal;  
+        
+        //find the fraction of the way along the rail the knob should jump to:
+        var sliderPosition = (newSliderVal-that.min)/(that.max-that.min);
+        
+        that.jump(parseFloat(sliderPosition));
+        
     }
 
     //move the slider discontinuously to a new <position>:

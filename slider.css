@@ -1,9 +1,10 @@
 div.slider{
-	position:absolute; 
+	position: absolute; 
 	width: 270px;
 	height: 36px;
 	margin-top: 5px;
 	display: inline;
+	margin-left: 10px;
 }
 
 canvas.sliderBKG{

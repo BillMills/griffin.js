@@ -7,8 +7,8 @@ function updateParameter(InputLayer){
 	var i;
 	var userInputs = [];
 
-    //loop over all elements in the form except the first two (off/on) and last two (submit / cancel)
-	for(i=2; i<document.getElementById('setValues').elements.length - 2; i++){
+    //loop over all elements in the form except the first two (off/on) and last one (submit)
+	for(i=2; i<document.getElementById('setValues').elements.length - 1; i++){
 		userInputs[i-2] = getInput('setValues', i);
 	}
 
@@ -87,14 +87,20 @@ function channelSelect(waffle){
     var inputTitle = 'Parameters for <br>'+waffle.colTitles[0]+' '+waffle.colTitles[waffle.chx+1]+', '+waffle.rowTitles[0]+' '+waffle.rowTitles[waffle.chy+1];
     document.getElementById('inputTitle').innerHTML = inputTitle;
 
-    //set defaults
-    if (waffle.channelMask[waffle.chy][waffle.chx] == 1) document.getElementById('onButton').checked = true;
-    else document.getElementById('offButton').checked = true;
+    if(window.refreshInput){
+        //set defaults
+        if (waffle.channelMask[waffle.chy][waffle.chx] == 1) document.getElementById('onButton').checked = true;
+        else document.getElementById('offButton').checked = true;
 
-    //manage sliders
-    waffle.voltageSlider.update(Math.round(waffle.demandVoltage[waffle.chy][waffle.chx]*10000)/10000);
-    waffle.rampSlider.update(Math.round(waffle.demandVramp[waffle.chy][waffle.chx]*10000)/10000);
+        //manage sliders
+        waffle.voltageSlider.update(Math.round(waffle.demandVoltage[waffle.chy][waffle.chx]*10000)/10000);
+        waffle.rampSlider.update(Math.round(waffle.demandVramp[waffle.chy][waffle.chx]*10000)/10000);
+        window.refreshInput = 0;
 
+        setInput('changeChannel',0,waffle.colTitles[waffle.chx+1]);
+        setInput('changeChannel',1,waffle.chy);
+    }
+    
     //input sidebar:
     //$(inputDiv).css('right', '3%');
 
@@ -102,8 +108,6 @@ function channelSelect(waffle){
     if(waffle.chx < waffle.cols && waffle.chy < waffle.rows){
         divFade(inputDiv, 'in', 0);
 
-        setInput('changeChannel',0,waffle.colTitles[waffle.chx+1]);
-        setInput('changeChannel',1,waffle.chy);
     }
 
     //dummy for now just to illustrate fill meters:

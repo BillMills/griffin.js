@@ -162,12 +162,14 @@ function BarGraph(cvas, nBars, title, yAxisTitle, barTitles, scaleMin, scaleMax,
 		}
 
 		//draw y-axis ticks and labels:
+		var yLabel;
 		for(i=0; i<this.yAxisTicks; i++){
 			this.context.beginPath();
 			this.context.moveTo(this.width*0.1, this.height - this.bottomMargin - i*(this.height - this.topMargin - this.bottomMargin)/(this.yAxisTicks-1) );
 			this.context.lineTo(this.width*0.1 - 10, this.height - this.bottomMargin - i*(this.height - this.topMargin - this.bottomMargin)/(this.yAxisTicks-1) );
 			this.context.stroke();
-			this.context.fillText( ((this.scaleMax-this.scaleMin)/(this.yAxisTicks-1)*i).toFixed(1),  this.width*0.1 - 10 - 20, this.height - this.bottomMargin - i*(this.height - this.topMargin - this.bottomMargin)/(this.yAxisTicks-1) + 5);
+			yLabel = ((this.scaleMax-this.scaleMin)/(this.yAxisTicks-1)*i).toFixed(1);
+			this.context.fillText( yLabel,  this.width*0.1 - this.context.measureText(yLabel).width - 10, this.height - this.bottomMargin - i*(this.height - this.topMargin - this.bottomMargin)/(this.yAxisTicks-1) + 5);
 		}
 
 		//draw y-axis title:

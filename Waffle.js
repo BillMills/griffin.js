@@ -367,11 +367,14 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
 
 //define behavior of the change channel button:
 function changeChannelButton(event, obj){
+    window.refreshInput = 1;
     gotoNewChannel(event, obj);
 }
 
 //define the onclick behavior of the waffle:
 function clickWaffle(event, obj){
+
+            window.refreshInput = 1;
 
             var superDiv = document.getElementById(obj.wrapperDiv);
             var inputDiv = document.getElementById(obj.InputLayer);
