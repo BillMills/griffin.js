@@ -9,10 +9,11 @@ function Banner(canvas, location, navbar, title) {
 
     //Choose rendering width: use 1440px or the actual width, whichever is larger:
     var renderWidth = Math.max(1440, window.innerWidth);
+    var renderHeight = Math.max(900, window.innerHeight)
 
     //resize canvas
     context.canvas.width = renderWidth-10;
-    context.canvas.height = window.innerHeight*0.1;
+    context.canvas.height = renderHeight*0.1;//window.innerHeight*0.1;
 
     //style canvas
     context.fillStyle = 'black';
