@@ -76,6 +76,8 @@ function divFade(targetDiv, direction, frame){
 //in the sidepanel view.
 function channelSelect(waffle){
 
+    var inputTitle
+
     //Throw up to global so the setter remembers where we're pointing.  TODO: refactor without globals?
     window.griffinDialogX = waffle.chx;
     window.griffinDialogY = waffle.chy;
@@ -84,25 +86,32 @@ function channelSelect(waffle){
     var inputDiv = document.getElementById(waffle.InputLayer);
 
     //set text in dialog box:
-    var inputTitle = 'Parameters for <br>'+waffle.colTitles[0]+' '+waffle.colTitles[waffle.chx+1]+', '+waffle.rowTitles[0]+' '+waffle.rowTitles[waffle.chy+1];
+    if(waffle.chy != 0) inputTitle = 'Parameters for <br>'+waffle.moduleLabels[primaryBin(waffle.moduleSizes, waffle.chx)]+', '+waffle.rowTitles[0]+' '+channelMap(waffle.chx, waffle.chy, waffle.moduleSizes, waffle.rows);
+    else inputTitle = 'Parameters for <br>'+waffle.moduleLabels[primaryBin(waffle.moduleSizes, waffle.chx)]+' Primary';
     document.getElementById('inputTitle').innerHTML = inputTitle;
+
+    var xIndex;
+    if(waffle.chy == 0) xIndex = primaryBin(waffle.moduleSizes, waffle.chx);
+    else xIndex = waffle.chx;
 
     if(window.refreshInput){
         //set defaults
-        if (waffle.channelMask[waffle.chy][waffle.chx] == 1) document.getElementById('onButton').checked = true;
+        if (waffle.channelMask[waffle.chy][xIndex] == 1) document.getElementById('onButton').checked = true;
         else document.getElementById('offButton').checked = true;
 
         //manage sliders
-        waffle.voltageSlider.update(Math.round(waffle.demandVoltage[waffle.chy][waffle.chx]*10000)/10000);
-        waffle.rampSlider.update(Math.round(waffle.demandVramp[waffle.chy][waffle.chx]*10000)/10000);
+        waffle.voltageSlider.update(Math.round(waffle.demandVoltage[waffle.chy][xIndex]*10000)/10000);
+        waffle.rampSlider.update(Math.round(waffle.demandVramp[waffle.chy][xIndex]*10000)/10000);
         window.refreshInput = 0;
 
-        setInput('changeChannel',0,waffle.colTitles[waffle.chx+1]);
-        setInput('changeChannel',1,waffle.chy);
+        //set the module
+        setInput('changeChannel',0,waffle.moduleLabels[primaryBin(waffle.moduleSizes, waffle.chx)]);
+        //update channel number list
+        reconfigureChannelList(waffle.moduleLabels, waffle.moduleSizes, 'ChannelList');
+        //set the channel number
+        setInput('changeChannel',1,channelMap(waffle.chx, waffle.chy, waffle.moduleSizes, waffle.rows));
+        if(waffle.chy==0) setInput('changeChannel',1,'Primary');
     }
-    
-    //input sidebar:
-    //$(inputDiv).css('right', '3%');
 
     //only actually display if the click was on the waffle and not the rest of the canvas:
     if(waffle.chx < waffle.cols && waffle.chy < waffle.rows){
@@ -111,7 +120,7 @@ function channelSelect(waffle){
     }
 
     //dummy for now just to illustrate fill meters:
-    meter.update(Math.round(waffle.reportVoltage[waffle.chy][waffle.chx]*10000)/10000);
+    meter.update(Math.round(waffle.reportVoltage[waffle.chy][xIndex]*10000)/10000);
 }
 
 //point interface at new channel indicated by user in the 'changeChannel' form.

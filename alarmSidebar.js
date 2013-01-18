@@ -1,5 +1,5 @@
 //TODO: clean up by passing in waffle object?
-function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, alarmStatus, rows, cols, rowTitles, colTitles, callMyself, alarmPanelDivIDs, alarmPanelCanvIDs, demandVoltage, reportVoltage, reportCurrent, reportTemperature, alarm, units){
+function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, alarmStatus, rows, cols, rowTitles, colTitles, callMyself, alarmPanelDivIDs, alarmPanelCanvIDs, demandVoltage, reportVoltage, reportCurrent, reportTemperature, alarm, units, moduleLabels, moduleSizes){
 
     var i, j, n;
 
@@ -42,7 +42,7 @@ function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, 
     for(n=0; n<alarmStatus[0][0].length; n++){
         isAlarm = 0;
         oldAlarm = 0;
-        for(i=0; i<rows; i++){
+        for(i=1; i<rows; i++){
             for(j=0; j<cols; j++){
                 if(alarmStatus[i][j][n] > 0) isAlarm = 1;
                 if(prevAlarmStatus[i][j][n] > 0) oldAlarm = 1;
@@ -75,8 +75,11 @@ function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, 
     var currentAlarmArray = [];
     var temperatureAlarmArray = [];
     n = 0;  
-    for(i=0; i<rows; i++){
-        for(j=0; j<cols; j++) {
+    for(i=1; i<rows; i++){
+        var columns;
+        if(i==0) columns = moduleLabels.length;
+        else columns = cols;
+        for(j=0; j<columns; j++) {
             voltageAlarmArray[n] = [];  currentAlarmArray[n] = [];  temperatureAlarmArray[n] = [];
             voltageAlarmArray[n][0] = i;  currentAlarmArray[n][0] = i;  temperatureAlarmArray[n][0] = i;
             voltageAlarmArray[n][1] = j;  currentAlarmArray[n][1] = j;  temperatureAlarmArray[n][1] = j;
@@ -97,7 +100,7 @@ function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, 
     n = 0;
     var alarmString = '';
     while(n<nAlarms && voltageAlarmArray[n][2]>0){
-        alarmString += colTitles[0] + ' ' + colTitles[voltageAlarmArray[n][1]+1] + ', ' + rowTitles[0] + ' ' + rowTitles[voltageAlarmArray[n][0]+1] + '<br>Demand Voltage: ' + demandVoltage[voltageAlarmArray[n][0]][voltageAlarmArray[n][1]].toFixed(3) + ' ' + units[0] + '<br>Reported Voltage: ' + reportVoltage[voltageAlarmArray[n][0]][voltageAlarmArray[n][1]].toFixed(3) + ' ' + units[0] + '<br><br>';
+        alarmString += moduleLabels[ primaryBin(moduleSizes, voltageAlarmArray[n][1]) ] + ', ' + rowTitles[0] + ' ' + channelMap(voltageAlarmArray[n][1], voltageAlarmArray[n][0], moduleSizes, rows) + '<br>Demand Voltage: ' + demandVoltage[voltageAlarmArray[n][0]][voltageAlarmArray[n][1]].toFixed(3) + ' ' + units[0] + '<br>Reported Voltage: ' + reportVoltage[voltageAlarmArray[n][0]][voltageAlarmArray[n][1]].toFixed(3) + ' ' + units[0] + '<br><br>';
         n++;
     }
     if(alarmString == ''){
@@ -111,7 +114,7 @@ function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, 
     alarmString = '';
     while(n<nAlarms && (currentAlarmArray[n][2]>0 || currentAlarmArray[n][2]==-2) ){
         if(n == 0) alarmString = 'Alarm Threshold: ' + alarm[1] + ' ' + units[1] + '<br><br>'
-        alarmString += colTitles[0] + ' ' + colTitles[currentAlarmArray[n][1]+1] + ', ' + rowTitles[0] + ' ' + rowTitles[currentAlarmArray[n][0]+1] + '<br>Current: ' + reportCurrent[currentAlarmArray[n][0]][currentAlarmArray[n][1]].toFixed(3) + ' ' + units[1] + '<br><br>';
+        alarmString += moduleLabels[ primaryBin(moduleSizes, currentAlarmArray[n][1]) ] + ', ' + rowTitles[0] + ' ' + channelMap(currentAlarmArray[n][1], currentAlarmArray[n][0], moduleSizes, rows) + '<br>Current: ' + reportCurrent[currentAlarmArray[n][0]][currentAlarmArray[n][1]].toFixed(3) + ' ' + units[1] + '<br><br>';
         n++;
     }
     if(alarmString == ''){
@@ -125,7 +128,7 @@ function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, 
     alarmString = '';
     while(n<nAlarms && (temperatureAlarmArray[n][2]>0 || temperatureAlarmArray[n][2]==-2) ){
         if(n == 0) alarmString = 'Alarm Threshold: ' + alarm[2] + ' ' + units[2] + '<br><br>'
-        alarmString += colTitles[0] + ' ' + colTitles[temperatureAlarmArray[n][1]+1] + ', ' + rowTitles[0] + ' ' + rowTitles[temperatureAlarmArray[n][0]+1] + '<br>Temperature: ' + reportTemperature[temperatureAlarmArray[n][0]][temperatureAlarmArray[n][1]].toFixed(3) + ' ' + units[2] + '<br><br>';
+        alarmString += moduleLabels[ primaryBin(moduleSizes, temperatureAlarmArray[n][1]) ] + ', ' + rowTitles[0] + ' ' + channelMap(temperatureAlarmArray[n][1], temperatureAlarmArray[n][0], moduleSizes, rows) + '<br>Temperature: ' + reportTemperature[temperatureAlarmArray[n][0]][temperatureAlarmArray[n][1]].toFixed(3) + ' ' + units[2] + '<br><br>';
         n++;
     }
     if(alarmString == ''){

@@ -70,25 +70,13 @@
         <button id='Main3' class='MFlink' type="button">Mainframe 3</button>
 
         <br><button id='card0' class='cardNav' type="button" style='display: inline; margin-bottom:5px;' onclick="javascript:swapFade('barDummy', 'card0')">Card<br>0</button>
-        <button class='cardNav' type="button" style='display: inline;'>Card<br>1</button>
-        <button class='cardNav' type="button" style='display: inline;'>Card<br>2</button>
-        <button class='cardNav' type="button" style='display: inline;'>Card<br>3</button>
-        <button class='cardNav' type="button" style='display: inline;'>Card<br>4</button>
-        <button class='cardNav' type="button" style='display: inline;'>Card<br>5</button>
-        <button class='cardNav' type="button" style='display: inline;'>Card<br>6</button>
-        <button class='cardNav' type="button" style='display: inline;'>Card<br>7</button>
-        <button class='cardNav' type="button" style='display: inline;'>Card<br>8</button>
-        <button class='cardNav' type="button" style='display: inline;'>Card<br>9</button>
-        <button class='cardNav' type="button" style='display: inline;'>Card<br>10</button>
-        <button class='cardNav' type="button" style='display: inline;'>Card<br>11</button>
-        <button class='cardNav' type="button" style='display: inline;'>Card<br>12</button>
-        <button class='cardNav' type="button" style='display: inline;'>Card<br>13</button>
-        <button class='cardNav' type="button" style='display: inline;'>Card<br>14</button>
-        <button class='cardNav' type="button" style='display: inline;'>Card<br>15</button>
-        <button class='cardNav' type="button" style='display: inline;'>Card<br>16</button>
-        <button class='cardNav' type="button" style='display: inline;'>Card<br>17</button>
-        <button class='cardNav' type="button" style='display: inline;'>Card<br>18</button>
-        <button class='cardNav' type="button" style='display: inline;'>Card<br>19</button>
+        <button id='card1' class='cardNav' type="button" style='display: inline;'>Card<br>1</button>
+        <button id='card2' class='cardNav' type="button" style='display: inline;'>Card 2</button>
+        <button id='card3' class='cardNav' type="button" style='display: inline;'>Card 3</button>
+        <button id='card4' class='cardNav' type="button" style='display: inline;'>Card<br>4</button>
+        <button id='card5' class='cardNav' type="button" style='display: inline;'>Card<br>5</button>
+        <button id='card6' class='cardNav' type="button" style='display: inline;'>Card 6</button>
+        <button id='card7' class='cardNav' type="button" style='display: inline;'>Card 7</button>
       </div>
       <canvas id="TestWaffle"></canvas>
       <canvas id='barDummy' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
@@ -158,10 +146,10 @@
           <h4 style='margin-left:10%; margin-bottom:10px;'>Change Channel:</h4>
           <p style='display:inline; margin-left:10%'>Card</p>
           <!--input type="text" id="newCol" name='newCol' style='margin-bottom:10px; margin-left:5px; display:inline;' size='6' value='0'-->
-          <select id='CardList' style='width:50px;'> </select>
+          <select id='CardList' style='width:80px;'> </select>
           <p style='display:inline; margin-left:10px'>Channel</p>
           <!--input type="text" id="newRow" name='newRow' style='margin-bottom:10px; margin-left:5px; display:inline;' size='6' value='0'-->
-          <select id='ChannelList' style='width:50px;'> </select>
+          <select id='ChannelList' style='width:75px;'> </select>
           <br><input type="button" value="Go To Channel" style='margin-left:10%; margin-top:10px;' id='getChannelButton'>       
         </form>
 
@@ -183,20 +171,25 @@
       //---------------------------------------------------------------------------------------------------
       //cell labels; first entry decribes cell type (channel, card, crate, rack etc)
       var rowTitles = ['Ch.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
+      //TODO: depricate individual column titles?
       //var colTitles = ['Card', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'];
       var colTitles = ['Card', '0-0x0000', '1-0x0000', '2-0x0000', '2-0x0001', '2-0x0002', '2-0x0003', '3-0x0000', '3-0x0001', '3-0x0002', '3-0x0003', '4-0x0000', '5-0x0000', '6-0x0000', '6-0x0001', '6-0x0002', '6-0x0003', '7-0x0000', '7-0x0001', '7-0x0002', '7-0x0003'];
 
       var ODBkeys = ['/Location/Of/Device/Varibles', '/Location/Of/Device/Settings', 'Demand Voltage Key', 'Measured Voltage Key', 'Measured Current Key', 'Voltage Ramp Up Key', 'Temperature Key', 'ChState Key', 'ChStatus Key'];
 
       //module edges and names:
-      var moduleDivisions = [0,1,2,6,10,11,12,16,20];
-      var moduleLabels = ['Module 0', 'Module 1', 'Module 2', 'Module 3', 'Module 4', 'Module 5', 'Module 6', 'Module 7'];
+      var moduleSizes = [1,1,4,4,1,1,4,4];
+      var moduleLabels = ['Card 0', 'Card 1', 'Card 2', 'Card 3', 'Card 4', 'Card 5', 'Card 6', 'Card 7'];
 
       //alarm thresholds [voltage, current, temperature]:
       var alarmThresholds = [0.8,0.999,0.999];
 
       //scale maxima [voltage, current, temperature]:
-      var scaleMaxima = [1,1,1];      
+      var scaleMaxima = [1,1,1];
+
+      //rows & columns:
+      var rows = 12;
+      var columns = 20;
       //---------------End Experiment-specific parameters--------------------------------------------------
       //---------------------------------------------------------------------------------------------------
 
@@ -224,20 +217,10 @@
       window.griffinToolTipX = 0;
       window.griffinToolTipY = 0;
  
+ 
       //set up channel navigation dropdowns:
-      var option = []; 
-      var rowDD = document.getElementById('ChannelList');
-      for(i=1; i<rowTitles.length; i++){
-        option[i] = document.createElement('option');
-        option[i].text = rowTitles[i];
-        rowDD.add(option[i], null);
-      }
-      var colDD = document.getElementById('CardList');
-      for(i=1; i<colTitles.length; i++){
-        option[i] = document.createElement('option');
-        option[i].text = colTitles[i];
-        colDD.add(option[i], null);
-      }
+      configureDropdowns('ChannelList', 'CardList', moduleLabels);
+      document.getElementById('CardList').onblur = function(event){reconfigureChannelList(moduleLabels, moduleSizes, 'ChannelList')};
 
       //declare objects:
       var sliderWidth = parseFloat($(document.getElementById('InputLayer')).width()) - 150;
@@ -246,7 +229,7 @@
 
       var meter = new FillMeter('voltageMeter', 1.5*sliderWidth, 0,1, 'mV');
 
-      var waffle = new Waffle(12,20, 'TestWaffle', alarmThresholds, scaleMaxima, ['leftSidebar', 'rightSidebar'], "TT", "TTcontainer", "waffleplate", rowTitles, colTitles, "InputLayer", ['Demand Voltage: ', 'Reported Voltage: ', 'Reported Current: ', 'Voltage Ramp Speed: '], ['mV', 'mV', 'mA', 'mV/s'], ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleDivisions, moduleLabels, sliderVoltage, sliderRamp);
+      var waffle = new Waffle(rows,columns, 'TestWaffle', alarmThresholds, scaleMaxima, ['leftSidebar', 'rightSidebar'], "TT", "TTcontainer", "waffleplate", rowTitles, colTitles, "InputLayer", ['Demand Voltage: ', 'Reported Voltage: ', 'Reported Current: ', 'Voltage Ramp Speed: '], ['mV', 'mV', 'mA', 'mV/s'], ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleSizes, moduleLabels, sliderVoltage, sliderRamp);
 
       var barTest = new BarGraph('barDummy', 12, 'Module 0', 'Reported Voltage [mV]', ['000', '111', '222', '333', '444', '555', '666', '777', '888', '999', 'AAA', 'BBB'], 0, 1, waffle);
       
@@ -261,7 +244,7 @@
       channelMask = [];
       alarmStatus = [];
       rampStatus = [];
-      for(i=0; i<12; i++){
+      for(i=0; i<rows+1; i++){
         demandVoltage[i] = [];
         reportVoltage[i] = [];
         reportCurrent[i] = [];
@@ -270,7 +253,7 @@
         channelMask[i] = [];
         alarmStatus[i] = [];
         rampStatus[i] = [];
-        for(j=0;j<20;j++){
+        for(j=0;j<columns;j++){
           alarmStatus[i][j] = [];
         }
       }
@@ -284,7 +267,7 @@
       window.refreshInput = 1;
 
       //start looping:
-      masterLoop(12, 20, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask, alarmStatus, rampStatus, alarmThresholds, scaleMaxima, waffle, barTest, 0);
+      masterLoop(rows+1, columns, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask, alarmStatus, rampStatus, alarmThresholds, scaleMaxima, waffle, barTest, 0);
 
   </script> 
   

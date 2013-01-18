@@ -1,13 +1,13 @@
-function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer, wrapperDiv, rowTitles, colTitles, InputLayer, prefix, postfix, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs, headerDiv, moduleDivisions, moduleLabels, voltageSlider, rampSlider){
+function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer, wrapperDiv, rowTitles, colTitles, InputLayer, prefix, postfix, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs, headerDiv, moduleSizes, moduleLabels, voltageSlider, rampSlider){
 
         //if(!document.webkitHidden && !document.mozHidden){
-    	var i, j, n;
+    	var i, j, n, columns;
 
         //pointer voodoo:
         var that = this;
 
         //member data:
-        this.rows = rows;                           //number of rows in the waffle
+        this.rows = rows + 1;                       //number of rows in the waffle; +1 for primary row
         this.cols = cols;                           //numver of columns in the waffle
         this.cvas = cvas;                           //canvas ID to draw the waffle on
         this.alarm = alarm;                         //array of alarm thresholds: [voltage, current, temperature]
@@ -29,7 +29,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
         this.alarmPanelDivIDs = alarmPanelDivIDs;   //array containing IDs of alarm panel divs
         this.alarmPanelCanvIDs = alarmPanelCanvIDs; //array containing IDs of alarm panel canvases
         this.headerDiv = headerDiv;                 //div ID of waffle header
-        this.moduleDivisions = moduleDivisions;     //array containing card numbers that divide modules
+        this.moduleSizes = moduleSizes;             //array containing sizes of modules in groups of 12 channels
         this.moduleLabels = moduleLabels;           //array containing module labels
         this.chx = 0;                               //x channel of input sidebar focus
         this.chy = 0;                               //y channel of input sidebar focus
@@ -65,13 +65,19 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
         this.nFrames = this.FPS*this.duration;
 
         //style card nav buttons
-        this.newRule = "button.cardNav{width:"+0.9*this.cellSide+"px; height:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; float:left; background: -webkit-gradient(linear, left top, left bottom, from(#DDDDDD), to(#FFFFFF)); background: -moz-linear-gradient(top,  #DDDDDD,  #FFFFFF); -webkit-border-radius: 5; -moz-border-radius: 5; border-radius: 5; font-size:"+this.cellSide/4+"px; padding:0px}";
-        document.styleSheets[0].insertRule(this.newRule,0);
+        var newRule;
+        for(i=0; i<moduleLabels.length; i++){
+            var buttonWidth;
+            buttonWidth = moduleSizes[i]*0.9*this.cellSide + (moduleSizes[i]-1)*0.1*this.cellSide;
+            newRule = "button#card"+i+"{width:"+buttonWidth+"px; height:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; margin-top:"+0.05*this.cellSide+"px; float:left; background: -webkit-gradient(linear, left top, left bottom, from(#DDDDDD), to(#FFFFFF)); background: -moz-linear-gradient(top,  #DDDDDD,  #FFFFFF); -webkit-border-radius: 5; -moz-border-radius: 5; border-radius: 5; font-size:"+this.cellSide/4+"px; padding:0px}";
+            document.styleSheets[0].insertRule(newRule,0);
+        }
+
 
         //header size:
         this.headerHeight = $('#'+this.headerDiv).height();
         //make the vertical spacing between the waffle and nav header nice:
-        $('#'+this.cvas).css('top', (this.headerHeight+this.cellSide/5)+'px !important;' );
+        $('#'+this.cvas).css('top', (this.headerHeight)+'px !important;' );
 
         //set up arrays:
         //ODB info:
@@ -104,7 +110,10 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
         for(i=0; i<this.rows; i++){
             this.alarmStatus[i] = [];
             this.prevAlarmStatus[i] = [];
-            for(j=0; j<this.cols; j++){
+            //primary row spans multi-columns:
+            if(i==0) columns = this.moduleSizes.length;
+            else columns = this.cols;
+            for(j=0; j<columns; j++){
                 this.alarmStatus[i][j] = [];
                 this.prevAlarmStatus[i][j] = [];
                 for(var n=0; n<this.alarm.length; n++){
@@ -128,9 +137,15 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
 
         //que up new data:
         this.populate = function(demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask, alarmStatus, rampStatus){
+
+            var columns, i, j;
+
             //populate new data:
-            for(var i=0; i<this.rows; i++){
-                for(var j=0; j<this.cols; j++){
+            for(i=0; i<this.rows; i++){
+                //primary row spans multi-columns:
+                if(i==0) columns = this.moduleSizes.length;
+                else columns = this.cols;
+                for(j=0; j<columns; j++){
 
                     this.demandVoltage[i][j] = demandVoltage[i][j];
                     this.reportVoltage[i][j] = reportVoltage[i][j];
@@ -157,7 +172,10 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
         this.cellColorUpdate = function(){
             var R, G, B, A;
             for(var i=0; i<this.rows; i++){
-            	for(var j=0; j<this.cols; j++){
+                //primary row spans multi-columns:
+                if(i==0) columns = this.moduleSizes.length;
+                else columns = this.cols;
+            	for(var j=0; j<columns; j++){
     	         	//start values:
                     //show green on all clear:
     	            if( this.prevAlarmStatus[i][j][0] == 0 && this.prevAlarmStatus[i][j][1] == 0 && this.prevAlarmStatus[i][j][2] == 0){
@@ -221,7 +239,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
             var i, j;
             var R, G, B, A;
             var color;
-
+            var columns;
             var cornerX, cornerY;
 
             //adjust canvas to fit:
@@ -236,16 +254,30 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
             this.context.fillRect(0,0,this.totalWidth,this.totalHeight);
 
             for(i=0; i<this.rows; i++){
-                for(j=0; j<this.cols; j++){
+                //primary row spans multi-columns:
+                if(i==0) columns = this.moduleSizes.length;
+                else columns = this.cols;
+                for(var j=0; j<columns; j++){
                     R = this.startColor[i][j][0] + (this.endColor[i][j][0] - this.startColor[i][j][0])*frame/this.nFrames;
                     G = this.startColor[i][j][1] + (this.endColor[i][j][1] - this.startColor[i][j][1])*frame/this.nFrames;
                     B = this.startColor[i][j][2] + (this.endColor[i][j][2] - this.startColor[i][j][2])*frame/this.nFrames;
                     A = this.startColor[i][j][3] + (this.endColor[i][j][3] - this.startColor[i][j][3])*frame/this.nFrames;
                     color = "rgba("+R+","+G+","+B+","+A+")";
                     this.context.fillStyle = color;
-                    cornerX = j*this.cellSide;
-                    cornerY = i*this.cellSide;           
-                    this.context.fillRect(cornerX, cornerY,this.cellSide,this.cellSide);
+                    cornerY = i*this.cellSide;
+                    //primary row has different size bins than the rest:
+                    if(i != 0){
+                        cornerX = j*this.cellSide;
+                        this.context.fillRect(cornerX, cornerY,this.cellSide,this.cellSide);
+                    }
+                    else{
+                        cornerX = 0;
+                        for(var sum=0; sum<j; sum++){
+                            cornerX = cornerX + this.moduleSizes[sum]
+                        }
+                        cornerX = cornerX*this.cellSide;
+                        this.context.fillRect(cornerX, cornerY,this.cellSide*this.moduleSizes[j],this.cellSide);
+                    }
                 }
             }
 
@@ -257,10 +289,11 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
 
             var i, j;
 
-            var modDivCopy = [];
-            for(i=1; i < this.moduleDivisions.length; i++){
-                modDivCopy[i-1] = this.moduleDivisions[i];
+            var modDivCopy = [0];
+            for(i=0; i < this.moduleSizes.length; i++){
+                modDivCopy[i+1] = modDivCopy[i] + this.moduleSizes[i];
             }
+            modDivCopy.shift();
 
             //style lines:
             this.context.fillStyle = 'rgba(0,0,0,1)';
@@ -278,7 +311,8 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
             //draw inner lines:
             for(i=1; i<this.rows; i++){
                 this.context.beginPath();
-                this.context.lineWidth = 1;
+                if(i==1) this.context.lineWidth = 3;
+                else this.context.lineWidth = 1;
                 this.context.moveTo(0,i*this.cellSide);
                 this.context.lineTo(this.cellSide*this.cols,i*this.cellSide);
                 this.context.stroke();       
@@ -290,11 +324,13 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
                     modDivCopy.shift();
                 }
                 else this.context.lineWidth = 1;
-                this.context.moveTo(j*this.cellSide,0);
                 if(this.context.lineWidth == 1){
+                    this.context.moveTo(j*this.cellSide,this.cellSide);
                     this.context.lineTo(j*this.cellSide,this.cellSide*this.rows);
                 } else {
-                    this.context.lineTo(j*this.cellSide,this.cellSide*this.rows + this.longestColTitle + this.longestModuleLabel + 25);
+                    this.context.moveTo(j*this.cellSide,0);
+                    //this.context.lineTo(j*this.cellSide,this.cellSide*this.rows + this.longestColTitle + this.longestModuleLabel + 25);
+                    this.context.lineTo(j*this.cellSide,this.cellSide*this.rows);
                 }
                 this.context.stroke();
             }
@@ -312,9 +348,11 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
             //channel labels:
             var labelFontSize = Math.min(16, this.cellSide);
             this.context.font=labelFontSize+"px Raleway";
-            for(i=0; i<this.rows; i++){
-                this.context.fillText(i, this.cellSide*this.cols+10, i*this.cellSide + this.cellSide/2 +8 );
+            this.context.fillText('Prim', this.cellSide*this.cols+10, this.cellSide/2 +8 );
+            for(i=1; i<this.rows; i++){
+                this.context.fillText(i-1, this.cellSide*this.cols+10, i*this.cellSide + this.cellSide/2 +8 );
             }
+            /* depricate individual column labels in favor of module only?
             for(j=0; j<this.cols; j++){
                 this.context.save();
                 this.context.translate(j*this.cellSide + this.cellSide/2, this.rows*this.cellSide+10);
@@ -323,22 +361,30 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
                 this.context.fillText(this.colTitles[j+1], 0,labelFontSize/2);
                 this.context.restore();
             }
-
+            */
             //module labels:
-            for(j=1; j<this.moduleDivisions.length; j++){
-                var moduleWidth = this.moduleDivisions[j] - this.moduleDivisions[j-1];
+            var moduleDivisions = [0];
+            var vertOffset;
+            for(i=0; i < this.moduleSizes.length; i++){
+                moduleDivisions[i+1] = moduleDivisions[i] + this.moduleSizes[i];
+            }
+            for(j=1; j<moduleDivisions.length; j++){
+                var moduleWidth = moduleDivisions[j] - moduleDivisions[j-1];
 
                 if(moduleWidth*this.cellSide < this.context.measureText(this.moduleLabels[j-1]).width){
                     modRotation = -Math.PI/2;  //2.4
                     modAlign = 'right';
                     modHeight = 0;
+                    vertOffset = 15;
                 } else {
                     modRotation = 0;
                     modAlign = 'center';
                     modHeight = labelFontSize;
+                    vertOffset = 25;
                 }
                 this.context.save();
-                this.context.translate(( moduleWidth/2 + this.moduleDivisions[j-1])*this.cellSide, this.rows*this.cellSide + modHeight + this.longestColTitle + this.longestModuleLabel/2 + 10);
+                //this.context.translate(( moduleWidth/2 + moduleDivisions[j-1])*this.cellSide, this.rows*this.cellSide + modHeight + this.longestColTitle + this.longestModuleLabel/2 + 10);
+                this.context.translate(( moduleWidth/2 + moduleDivisions[j-1])*this.cellSide, this.rows*this.cellSide+vertOffset);
                 this.context.rotate(modRotation);
                 this.context.textAlign = modAlign;
                 this.context.fillText(this.moduleLabels[j-1], 0,labelFontSize/2);
@@ -354,9 +400,9 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
             this.cellColorUpdate();
 
             //update peripherals:
-            AlarmSidebar(this.sidebar[0], this.side[0], this.wrapperDiv, this.waffleHeight, this.prevAlarmStatus, this.alarmStatus, this.rows, this.cols, this.rowTitles, this.colTitles, callMyself, this.alarmPanelDivIDs, this.alarmPanelCanvIDs, demandVoltage, reportVoltage, reportCurrent, reportTemperature, this.alarm, ['V', 'mA', 'C']);
+            AlarmSidebar(this.sidebar[0], this.side[0], this.wrapperDiv, this.waffleHeight, this.prevAlarmStatus, this.alarmStatus, this.rows, this.cols, this.rowTitles, this.colTitles, callMyself, this.alarmPanelDivIDs, this.alarmPanelCanvIDs, demandVoltage, reportVoltage, reportCurrent, reportTemperature, this.alarm, ['V', 'mA', 'C'], this.moduleLabels, this.moduleSizes);
             channelSelect(that);
-            Tooltip(this.cvas, this.wrapperDiv, this.tooltip, this.TTcontainer, this.rows, this.cols, this.cellSide, this.rowTitles, this.colTitles, this.prefix, this.postfix, this.demandVoltage, this.reportVoltage, this.reportCurrent, this.demandVramp);
+            Tooltip(this.cvas, this.wrapperDiv, this.tooltip, this.TTcontainer, this.rows, this.cols, this.cellSide, this.rowTitles, this.colTitles, this.prefix, this.postfix, that, this.demandVoltage, this.reportVoltage, this.reportCurrent, this.demandVramp);
 
             //animate:
             animate(this, 0);
@@ -384,6 +430,9 @@ function clickWaffle(event, obj){
             var chx = Math.floor( (event.pageX - superDiv.offsetLeft - obj.canvas.offsetLeft) / obj.cellSide);
             var chy = Math.floor( (event.pageY - superDiv.offsetTop - obj.canvas.offsetTop) / obj.cellSide);
 
+            //horizontal binning changes in first row since primaries can span multiple columns:
+            //if(chy == 0) chx = primaryBin(obj.moduleSizes, chx);
+
             obj.chx = chx;
             obj.chy = chy;
 
@@ -399,7 +448,94 @@ function getMIDASindex(row, col){
     return 0;
 }
 
-//function to tell if channel i, j is active:
-function isChannelOn(i,j){
-    return 1;
+//map the channel-sized bins in the primary row into the appropriate primary groups:
+function primaryBin(moduleSizes, chx){
+    var primary = 0;
+    var i = 0;
+    while(chx>=0){
+        chx = chx - moduleSizes[i];
+        i++;
+    }
+    return i-1;
+}
+
+//map the bin coordinates chx and chy onto a channel number:
+function channelMap(chx, chy, moduleSizes, rows){
+    var primary = primaryBin(moduleSizes, chx);
+    if (moduleSizes[primary] == 1) return chy - 1;
+    else{
+        var channelNo = (rows-1)*chx + chy-1;
+        for(var i=0; i<primary; i++){
+            channelNo -= (rows-1)*moduleSizes[i];
+        }
+        return channelNo;
+    }
+}
+
+//set up channel navigation dropdowns and modify on the fly:
+function configureDropdowns(ChannelListDD, CardListDD, moduleLabels){
+
+    var i;
+    var option = [];
+
+    //establish card list
+    var colDD = document.getElementById(CardListDD);
+    for(i=0; i<moduleLabels.length; i++){
+        option[i] = document.createElement('option');
+        option[i].text = moduleLabels[i];
+        colDD.add(option[i], null);
+    }
+
+    //establish channel list
+    var rowDD = document.getElementById(ChannelListDD);
+    option[0] = document.createElement('option');
+    option[0].text = 'Primary';
+    rowDD.add(option[0],null);
+    for(i=1; i<13; i++){
+        option[i] = document.createElement('option');
+        option[i].text = i;
+        rowDD.add(option[i], null);
+    }
+
+}
+
+//reconfigure channel drop down to respond to changes in module:
+function reconfigureChannelList(moduleLabels, moduleSizes, ChannelListDD){
+
+    var i, index, nChan;
+
+    //fetch whatever's in the card dropdown:
+    var cardName = getInput('changeChannel', 0);
+
+    //...and channel dropdown:
+    var channelNumber = getInput('changeChannel', 1);
+
+    //translate cardName into an index:
+    for(i=0; i<moduleLabels.length; i++){
+        if(cardName == moduleLabels[i]) index = i;
+    }
+
+    //decide how many channels should be in the channel dropdown:
+    if(moduleSizes[index] == 4) nChan = 48;
+    else nChan = 12;
+
+    //establish channel list
+    var option = [];
+    var rowDD = document.getElementById(ChannelListDD);
+    for(i=0; i<49; i++){
+        rowDD.remove(0);
+    }
+    option[0] = document.createElement('option');
+    option[0].text = 'Primary';
+    rowDD.add(option[0], null);
+    for(i=1; i<nChan+1; i++){
+        option[i] = document.createElement('option');
+        option[i].text = i-1;
+        rowDD.add(option[i], null);
+    }
+
+    //keep the channel number in the same place if possible:
+    if(channelNumber >= nChan) setInput('changeChannel',1,0);
+    else setInput('changeChannel',1,channelNumber);
+
 }
