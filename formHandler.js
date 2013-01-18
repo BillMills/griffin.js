@@ -125,20 +125,24 @@ function channelSelect(waffle){
 
 //point interface at new channel indicated by user in the 'changeChannel' form.
 function gotoNewChannel(event, waffle){
-    var xName = getInput('changeChannel', 0);
+    var i;
+ 
+    //determine y bin:
+    var yVal = getInput('changeChannel', 1);
+    if(yVal != 'Primary') yVal = parseInt(yVal);
+    if (yVal == 'Primary') waffle.chy = 0;
+    else waffle.chy = yVal%(waffle.rows-1)+1;
 
+    //determine x bin:
+    var xName = getInput('changeChannel', 0);
     //have to map column titles onto index
     var xVal;
-    for(var i=1; i<waffle.cols; i++){
-        if(waffle.colTitles[i] == xName) xVal = i - 1;
+    for(var i=0; i<waffle.moduleLabels.length; i++){
+        if(waffle.moduleLabels[i] == xName) xVal = i;
     }
+    waffle.chx = 0;
+    for(i=0; i<xVal; i++) waffle.chx += waffle.moduleSizes[i];
+    if(yVal != 'Primary') waffle.chx += Math.floor(yVal/(waffle.rows-1));
 
-	var yVal = parseInt(getInput('changeChannel', 1));
-
-    waffle.chx = xVal;
-    waffle.chy = yVal;
-
-    if(xVal<waffle.cols && yVal<waffle.rows){
-        channelSelect(waffle);
-    }
+    channelSelect(waffle);
 }
