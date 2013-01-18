@@ -110,6 +110,7 @@ function channelSelect(waffle){
             document.getElementById('currentReport').innerHTML = 'Current: --';
 
         //manage sliders
+        waffle.voltageSlider.max = waffle.voltLimit[waffle.chy][xIndex];
         waffle.voltageSlider.update(Math.round(waffle.demandVoltage[waffle.chy][xIndex]*10000)/10000);
         waffle.rampSlider.update(Math.round(waffle.demandVrampUp[waffle.chy][xIndex]*10000)/10000);
         waffle.rampDownSlider.update(Math.round(waffle.demandVrampDown[waffle.chy][xIndex]*10000)/10000);

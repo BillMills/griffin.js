@@ -1,14 +1,14 @@
-function masterLoop(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, alarmTripLevel, scaleMax, waffle, barchart, callMyself){
+function masterLoop(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmTripLevel, scaleMax, waffle, barchart, callMyself){
 	if(!document.webkitHidden && !document.mozHidden){
-    	fetchNewData(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, alarmTripLevel, scaleMax);
-    	waffle.update(demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, alarmStatus, channelMask, rampStatus, callMyself);
+    	fetchNewData(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmTripLevel, scaleMax);
+    	waffle.update(demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, alarmStatus, channelMask, rampStatus, voltLimit, callMyself);
     	barchart.update([ reportVoltage[1][0], reportVoltage[2][0], reportVoltage[3][0], reportVoltage[4][0], reportVoltage[5][0], reportVoltage[6][0], reportVoltage[7][0], reportVoltage[8][0], reportVoltage[9][0], reportVoltage[10][0], reportVoltage[11][0], reportVoltage[12][0] ], [alarmStatus[1][0], alarmStatus[2][0], alarmStatus[3][0], alarmStatus[4][0], alarmStatus[5][0], alarmStatus[6][0], alarmStatus[7][0], alarmStatus[8][0], alarmStatus[9][0], alarmStatus[10][0], alarmStatus[11][0], alarmStatus[12][0] ] );
     }
-    setTimeout(function(){masterLoop(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, alarmTripLevel, scaleMax, waffle, barchart, 1)}, 60000);
+    setTimeout(function(){masterLoop(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmTripLevel, scaleMax, waffle, barchart, 1)}, 60000);
 }
 
 //populate rows by cols arrays with the appropriate information:
-function fetchNewData(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, alarmTripLevel, scaleMax){
+function fetchNewData(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmTripLevel, scaleMax){
 
     var testParameter, i, j, ODBindex, columns;
 /*
@@ -24,6 +24,7 @@ function fetchNewData(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportC
     var measTemperature = ODBExtractRecord(variablesRecord, ODBkeys[7]);
     var repoChState     = ODBExtractRecord(settingsRecord,  ODBkeys[8]);
     var repoChStatus    = ODBExtractRecord(variablesRecord, ODBkeys[9]);
+    var voltageLimit    = ODBExtractRecord(settingsRecord,  ODBkeys[10]);
 */          
     for(i=0; i<rows; i++){
         //primary row spans multi-columns:
@@ -40,6 +41,7 @@ function fetchNewData(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportC
             reportTemperature[i][j] = measTemperature[ODBindex];
             channelMask[i][j]       = repoChState[ODBindex];
             rampStatus[i][j]        = repoChStatus[ODBindex];
+            voltLimit[i][j]         = voltageLimit[ODBindex];
             */
             //fake data for offline demo
             demandVoltage[i][j] = Math.random();
@@ -52,6 +54,7 @@ function fetchNewData(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportC
             if (channelMask[i][j] < 0.1) channelMask[i][j] = 0;
             else channelMask[i][j] = 1;
             rampStatus[i][j] = Math.floor(10*Math.random());
+            voltLimit[i][j] = 1+Math.random();
         }
     }
 

@@ -193,7 +193,7 @@
       //var colTitles = ['Card', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'];
       var colTitles = ['Card', '0-0x0000', '1-0x0000', '2-0x0000', '2-0x0001', '2-0x0002', '2-0x0003', '3-0x0000', '3-0x0001', '3-0x0002', '3-0x0003', '4-0x0000', '5-0x0000', '6-0x0000', '6-0x0001', '6-0x0002', '6-0x0003', '7-0x0000', '7-0x0001', '7-0x0002', '7-0x0003'];
 
-      var ODBkeys = ['/Location/Of/Device/Varibles', '/Location/Of/Device/Settings', 'Demand Voltage Key', 'Measured Voltage Key', 'Measured Current Key', 'Voltage Ramp Up Key', 'Voltage Ramp Down Key', 'Temperature Key', 'ChState Key', 'ChStatus Key'];
+      var ODBkeys = ['/Location/Of/Device/Varibles', '/Location/Of/Device/Settings', 'Demand Voltage Key', 'Measured Voltage Key', 'Measured Current Key', 'Voltage Ramp Up Key', 'Voltage Ramp Down Key', 'Temperature Key', 'ChState Key', 'ChStatus Key', 'Voltage Limit Key'];
 
       //module edges and names:
       var moduleSizes = [1,1,4,4,1,1,4,4];
@@ -259,7 +259,7 @@
       
 
       //set up arrays:
-      var demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask, alarmStatus, rampStatus;
+      var demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit;
       demandVoltage = [];
       reportVoltage = [];
       reportCurrent = [];
@@ -269,6 +269,7 @@
       channelMask = [];
       alarmStatus = [];
       rampStatus = [];
+      voltLimit = [];
       for(i=0; i<rows+1; i++){
         demandVoltage[i] = [];
         reportVoltage[i] = [];
@@ -279,6 +280,7 @@
         channelMask[i] = [];
         alarmStatus[i] = [];
         rampStatus[i] = [];
+        voltLimit[i] = [];
         for(j=0;j<columns;j++){
           alarmStatus[i][j] = [];
         }
@@ -293,7 +295,7 @@
       window.refreshInput = 1;
 
       //start looping:
-      masterLoop(rows+1, columns, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, alarmThresholds, scaleMaxima, waffle, barTest, 0);
+      masterLoop(rows+1, columns, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmThresholds, scaleMaxima, waffle, barTest, 0);
 
   </script> 
   
