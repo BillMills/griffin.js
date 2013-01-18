@@ -104,7 +104,10 @@ function channelSelect(waffle){
         //report temperature:
         document.getElementById('temperatureReport').innerHTML = 'Temperature: '+Math.round(waffle.reportTemperature[waffle.chy][xIndex]*100)/100+' C';
         //report current:
-        document.getElementById('currentReport').innerHTML = 'Current: '+Math.round(waffle.reportCurrent[waffle.chy][xIndex]*100)/100+' mA';
+        if(waffle.chy == 0 || waffle.moduleSizes[primaryBin(waffle.moduleSizes, waffle.chx)]==1)
+            document.getElementById('currentReport').innerHTML = 'Current: '+Math.round(waffle.reportCurrent[waffle.chy][xIndex]*100)/100+' mA';
+        else
+            document.getElementById('currentReport').innerHTML = 'Current: --';
 
         //manage sliders
         waffle.voltageSlider.update(Math.round(waffle.demandVoltage[waffle.chy][xIndex]*10000)/10000);
