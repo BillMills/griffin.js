@@ -4,19 +4,30 @@
 
 function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, rows, cols, cellSide, rowTitles, colTitles, prefix, postfix, obj, data){
 	var canvas = document.getElementById(targetCanvas);
-    var i;
+    var i, cardIndex;
     var ttArgs = arguments.length;
     var args = Array.prototype.slice.call(arguments);
 
     //hack to update reported value at waffle refresh if user just leaves the mouse sitting there without moving:
     var oldX = Math.floor( (window.griffinToolTipX - document.getElementById(parentDiv).offsetLeft - document.getElementById(targetCanvas).offsetLeft) / cellSide);
     var oldY = Math.floor( (window.griffinToolTipY - document.getElementById(parentDiv).offsetTop - document.getElementById(targetCanvas).offsetTop) / cellSide);
+    //only do this if we're still on the waffle
     if(oldX > -1 && oldX < cols && oldY>-1 && oldY<rows){
-        var toolTipContent =  '<br>'+colTitles[0]+' '+colTitles[oldX+1]+', '+rowTitles[0]+' '+rowTitles[oldY]+'<br>'
-        for(i=12; i<ttArgs; i++){
-            toolTipContent += '<br/>'+prefix[i-12];
-            if(prefix[i-12] !== '') toolTipContent += ' ';
-            toolTipContent += Math.round( args[i][oldY][oldX]*1000)/1000 + ' ' + postfix[i-12];
+        //primary row is special
+        //decide where we are horizontally
+        cardIndex = primaryBin(obj.moduleSizes, oldX);
+        if(oldY != 0){
+            //define tt title
+            var toolTipContent =  '<br>'+obj.moduleLabels[cardIndex]+', '+rowTitles[0]+' '+channelMap(oldX, oldY, obj.moduleSizes, rows)+'<br>';
+            //define tt content
+            for(i=12; i<ttArgs; i++){
+                toolTipContent += '<br/>'+prefix[i-12];
+                if(prefix[i-12] !== '') toolTipContent += ' ';
+                toolTipContent += Math.round( args[i][oldY][oldX]*1000)/1000 + ' ' + postfix[i-12];
+            }
+        } else {
+                var toolTipContent = '<br>';
+                toolTipContent += obj.moduleLabels[cardIndex]+' Primary <br>';
         }
 
         document.getElementById('TipText').innerHTML = toolTipContent;    
