@@ -99,6 +99,9 @@ function channelSelect(waffle){
         if (waffle.channelMask[waffle.chy][xIndex] == 1) document.getElementById('onButton').checked = true;
         else document.getElementById('offButton').checked = true;
 
+        //report status word:
+        document.getElementById('status').innerHTML = 'Status: '+parseStatusWord(waffle.rampStatus[waffle.chy][xIndex]);
+
         //manage sliders
         waffle.voltageSlider.update(Math.round(waffle.demandVoltage[waffle.chy][xIndex]*10000)/10000);
         waffle.rampSlider.update(Math.round(waffle.demandVrampUp[waffle.chy][xIndex]*10000)/10000);
@@ -146,3 +149,17 @@ function gotoNewChannel(event, waffle){
 
     channelSelect(waffle);
 }
+
+function parseStatusWord(statusCode){
+
+    if(statusCode == 0) return 'Off';
+    else if(statusCode == 1) return 'On';
+    else if(statusCode == 3) return 'Ramping Up';
+    else if(statusCode == 5) return 'Ramping Down';
+    else if(statusCode == 256) return 'Internal Trip';
+    else return 'Unknown Error';
+}
+
+
+
+
