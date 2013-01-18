@@ -32,7 +32,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
         this.moduleSizes = moduleSizes;             //array containing sizes of modules in groups of 12 channels
         this.moduleLabels = moduleLabels;           //array containing module labels
         this.chx = 0;                               //x channel of input sidebar focus
-        this.chy = 0;                               //y channel of input sidebar focus
+        this.chy = 1;                               //y channel of input sidebar focus
         this.voltageSlider = voltageSlider;         //demand voltage slider associated with this waffle
         this.rampSlider = rampSlider;               //voltage ramp speed slider associated with this waffle
 
@@ -203,6 +203,13 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
                         A = Math.max(this.prevAlarmStatus[i][j][0], this.prevAlarmStatus[i][j][1], this.prevAlarmStatus[i][j][2])*0.7 + 0.3;  //enforce minimum 0.3 to make it clearly red
                         if(A>1) {A = 1;}
     	            }
+                    //12-channel cards don't have primary channels, show black:
+                    if(i==0 && this.moduleSizes[j] == 1){
+                        R = 0;
+                        G = 0;
+                        B = 0;
+                        A = 0.8;
+                    }
                     this.startColor[i][j] = [R,G,B,A];
 
                     //end values:
@@ -227,6 +234,12 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
                         B = 0;
                         A = Math.max(this.alarmStatus[i][j][0], this.alarmStatus[i][j][1], this.alarmStatus[i][j][2])*0.7 + 0.3;  //enforce minimum 0.3 to make it clearly red
                         if(A>1) {A = 1;}
+                    }
+                    if(i==0 && this.moduleSizes[j] == 1){
+                        R = 0;
+                        G = 0;
+                        B = 0;
+                        A = 0.8;
                     }
                     this.endColor[i][j] = [R,G,B,A];
     	       }
@@ -430,13 +443,14 @@ function clickWaffle(event, obj){
             var chx = Math.floor( (event.pageX - superDiv.offsetLeft - obj.canvas.offsetLeft) / obj.cellSide);
             var chy = Math.floor( (event.pageY - superDiv.offsetTop - obj.canvas.offsetTop) / obj.cellSide);
 
-            //horizontal binning changes in first row since primaries can span multiple columns:
-            //if(chy == 0) chx = primaryBin(obj.moduleSizes, chx);
+            //are we on the primary of a card that doesn't have a primary?
+            var suppressClick = 0;
+            var cardIndex = primaryBin(obj.moduleSizes, chx);
+            if(chy==0 && obj.moduleSizes[cardIndex] == 1) suppressClick = 1;
 
-            obj.chx = chx;
-            obj.chy = chy;
-
-            if(chx<obj.cols && chy<obj.rows && window.onDisplay == obj.cvas){
+            if(chx<obj.cols && chy<obj.rows && window.onDisplay == obj.cvas && suppressClick==0){
+                obj.chx = chx;
+                obj.chy = chy;
                 channelSelect(obj);
             }
 
@@ -488,10 +502,7 @@ function configureDropdowns(ChannelListDD, CardListDD, moduleLabels){
 
     //establish channel list
     var rowDD = document.getElementById(ChannelListDD);
-    option[0] = document.createElement('option');
-    option[0].text = 'Primary';
-    rowDD.add(option[0],null);
-    for(i=1; i<13; i++){
+    for(i=0; i<12; i++){
         option[i] = document.createElement('option');
         option[i].text = i;
         rowDD.add(option[i], null);
@@ -525,17 +536,22 @@ function reconfigureChannelList(moduleLabels, moduleSizes, ChannelListDD){
     for(i=0; i<49; i++){
         rowDD.remove(0);
     }
-    option[0] = document.createElement('option');
-    option[0].text = 'Primary';
-    rowDD.add(option[0], null);
-    for(i=1; i<nChan+1; i++){
+    var startIndex = 0;
+    if(nChan == 48){
+        option[0] = document.createElement('option');
+        option[0].text = 'Primary';
+        rowDD.add(option[0], null);
+        startIndex++;
+    }
+    for(i=startIndex; i<nChan+startIndex; i++){
         option[i] = document.createElement('option');
-        option[i].text = i-1;
+        option[i].text = i-startIndex;
         rowDD.add(option[i], null);
     }
 
     //keep the channel number in the same place if possible:
-    if(channelNumber >= nChan) setInput('changeChannel',1,0);
+    if(channelNumber == 'Primary' && nChan==12) setInput('changeChannel',1,0); 
+    else if(channelNumber >= nChan) setInput('changeChannel',1,0);
     else setInput('changeChannel',1,channelNumber);
 
 }
