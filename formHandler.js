@@ -101,7 +101,7 @@ function channelSelect(waffle){
 
         //manage sliders
         waffle.voltageSlider.update(Math.round(waffle.demandVoltage[waffle.chy][xIndex]*10000)/10000);
-        waffle.rampSlider.update(Math.round(waffle.demandVramp[waffle.chy][xIndex]*10000)/10000);
+        waffle.rampSlider.update(Math.round(waffle.demandVrampUp[waffle.chy][xIndex]*10000)/10000);
         window.refreshInput = 0;
 
         //set the module

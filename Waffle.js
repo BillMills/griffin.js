@@ -84,7 +84,8 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
         this.demandVoltage = [];
         this.reportVoltage = [];
         this.reportCurrent = [];
-        this.demandVramp = [];
+        this.demandVrampUp = [];
+        this.demandVrampDown = [];
         this.reportTemperature = [];
         this.channelMask = [];
         this.rampStatus = [];
@@ -96,7 +97,8 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
             this.demandVoltage[i] = [];
             this.reportVoltage[i] = [];
             this.reportCurrent[i] = [];
-            this.demandVramp[i] = [];
+            this.demandVrampUp[i] = [];
+            this.demandVrampDown[i] = [];
             this.reportTemperature[i] = [];
             this.channelMask[i] = [];
             this.rampStatus[i] = [];
@@ -124,7 +126,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
         }
 
         //do an initial populate of the waffle:
-        fetchNewData(this.rows, this.cols, this.ODBkeys, this.demandVoltage, this.reportVoltage, this.reportCurrent, this.demandVramp, this.reportTemperature, this.channelMask, this.alarmStatus, this.rampStatus, this.alarm, this.scaleMax);
+        fetchNewData(this.rows, this.cols, this.ODBkeys, this.demandVoltage, this.reportVoltage, this.reportCurrent, this.demandVrampUp, this.demandVrampDown, this.reportTemperature, this.channelMask, this.alarmStatus, this.rampStatus, this.alarm, this.scaleMax);
 
         //make waffles clickable to set a variable for a channel:
         this.canvas.onclick = function(event){clickWaffle(event, that)};
@@ -136,7 +138,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
         channelSelect(that);
 
         //que up new data:
-        this.populate = function(demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask, alarmStatus, rampStatus){
+        this.populate = function(demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus){
 
             var columns, i, j;
 
@@ -150,7 +152,8 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
                     this.demandVoltage[i][j] = demandVoltage[i][j];
                     this.reportVoltage[i][j] = reportVoltage[i][j];
                     this.reportCurrent[i][j] = reportCurrent[i][j];
-                    this.demandVramp[i][j] = demandVramp[i][j];
+                    this.demandVrampUp[i][j] = demandVrampUp[i][j];
+                    this.demandVrampDown[i][j] = demandVrampDown[i][j];
                     this.reportTemperature[i][j] = reportTemperature[i][j];
                     this.channelMask[i][j] = channelMask[i][j];
                     this.rampStatus[i][j] = rampStatus[i][j];
@@ -406,16 +409,16 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
         };        
 
         //wrapper for transition from old state to new state via this.animate:
-        this.update = function(demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, alarmStatus, channelMask, rampStatus, callMyself){
+        this.update = function(demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, alarmStatus, channelMask, rampStatus, callMyself){
 
             //update all parameters to prepare for animation transition:
-            this.populate(demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask, alarmStatus, rampStatus);
+            this.populate(demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus);
             this.cellColorUpdate();
 
             //update peripherals:
             AlarmSidebar(this.sidebar[0], this.side[0], this.wrapperDiv, this.waffleHeight, this.prevAlarmStatus, this.alarmStatus, this.rows, this.cols, this.rowTitles, this.colTitles, callMyself, this.alarmPanelDivIDs, this.alarmPanelCanvIDs, demandVoltage, reportVoltage, reportCurrent, reportTemperature, this.alarm, ['V', 'mA', 'C'], this.moduleLabels, this.moduleSizes);
             channelSelect(that);
-            Tooltip(this.cvas, this.wrapperDiv, this.tooltip, this.TTcontainer, this.rows, this.cols, this.cellSide, this.rowTitles, this.colTitles, this.prefix, this.postfix, that, this.demandVoltage, this.reportVoltage, this.reportCurrent, this.demandVramp);
+            Tooltip(this.cvas, this.wrapperDiv, this.tooltip, this.TTcontainer, this.rows, this.cols, this.cellSide, this.rowTitles, this.colTitles, this.prefix, this.postfix, that, this.demandVoltage, this.reportVoltage, this.reportCurrent, this.demandVrampUp, this.demandVrampDown, this.reportTemperature, this.rampStatus);
 
             //animate:
             animate(this, 0);

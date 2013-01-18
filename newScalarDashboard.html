@@ -175,7 +175,7 @@
       //var colTitles = ['Card', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'];
       var colTitles = ['Card', '0-0x0000', '1-0x0000', '2-0x0000', '2-0x0001', '2-0x0002', '2-0x0003', '3-0x0000', '3-0x0001', '3-0x0002', '3-0x0003', '4-0x0000', '5-0x0000', '6-0x0000', '6-0x0001', '6-0x0002', '6-0x0003', '7-0x0000', '7-0x0001', '7-0x0002', '7-0x0003'];
 
-      var ODBkeys = ['/Location/Of/Device/Varibles', '/Location/Of/Device/Settings', 'Demand Voltage Key', 'Measured Voltage Key', 'Measured Current Key', 'Voltage Ramp Up Key', 'Temperature Key', 'ChState Key', 'ChStatus Key'];
+      var ODBkeys = ['/Location/Of/Device/Varibles', '/Location/Of/Device/Settings', 'Demand Voltage Key', 'Measured Voltage Key', 'Measured Current Key', 'Voltage Ramp Up Key', 'Voltage Ramp Down Key', 'Temperature Key', 'ChState Key', 'ChStatus Key'];
 
       //module edges and names:
       var moduleSizes = [1,1,4,4,1,1,4,4];
@@ -190,6 +190,11 @@
       //rows & columns:
       var rows = 12;
       var columns = 20;
+
+      //tooltip info prefixes & postfixes:
+      var prefix = ['Demand Voltage: ', 'Reported Voltage: ', 'Reported Current: ', 'Voltage Ramp Up Speed: ', 'Voltage Ramp Down Speed', 'Temperature: ', 'Status: '];
+      var postfix = ['mV', 'mV', 'mA', 'mV/s', 'mV/s', 'C', ''];
+
       //---------------End Experiment-specific parameters--------------------------------------------------
       //---------------------------------------------------------------------------------------------------
 
@@ -229,7 +234,7 @@
 
       var meter = new FillMeter('voltageMeter', 1.5*sliderWidth, 0,1, 'mV');
 
-      var waffle = new Waffle(rows,columns, 'TestWaffle', alarmThresholds, scaleMaxima, ['leftSidebar', 'rightSidebar'], "TT", "TTcontainer", "waffleplate", rowTitles, colTitles, "InputLayer", ['Demand Voltage: ', 'Reported Voltage: ', 'Reported Current: ', 'Voltage Ramp Speed: '], ['mV', 'mV', 'mA', 'mV/s'], ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleSizes, moduleLabels, sliderVoltage, sliderRamp);
+      var waffle = new Waffle(rows,columns, 'TestWaffle', alarmThresholds, scaleMaxima, ['leftSidebar', 'rightSidebar'], "TT", "TTcontainer", "waffleplate", rowTitles, colTitles, "InputLayer", prefix, postfix, ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleSizes, moduleLabels, sliderVoltage, sliderRamp);
 
       var barTest = new BarGraph('barDummy', 12, 'Module 0', 'Reported Voltage [mV]', ['000', '111', '222', '333', '444', '555', '666', '777', '888', '999', 'AAA', 'BBB'], 0, 1, waffle);
       
@@ -239,7 +244,8 @@
       demandVoltage = [];
       reportVoltage = [];
       reportCurrent = [];
-      demandVramp = [];
+      demandVrampUp = [];
+      demandVrampDown = [];
       reportTemperature = [];
       channelMask = [];
       alarmStatus = [];
@@ -248,7 +254,8 @@
         demandVoltage[i] = [];
         reportVoltage[i] = [];
         reportCurrent[i] = [];
-        demandVramp[i] = [];
+        demandVrampUp[i] = [];
+        demandVrampDown[i] = [];
         reportTemperature[i] = [];
         channelMask[i] = [];
         alarmStatus[i] = [];
@@ -267,7 +274,7 @@
       window.refreshInput = 1;
 
       //start looping:
-      masterLoop(rows+1, columns, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVramp, reportTemperature, channelMask, alarmStatus, rampStatus, alarmThresholds, scaleMaxima, waffle, barTest, 0);
+      masterLoop(rows+1, columns, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, alarmThresholds, scaleMaxima, waffle, barTest, 0);
 
   </script> 
   

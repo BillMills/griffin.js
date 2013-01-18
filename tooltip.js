@@ -16,20 +16,16 @@ function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, rows, cols, c
         //primary row is special
         //decide where we are horizontally
         cardIndex = primaryBin(obj.moduleSizes, oldX);
-        if(oldY != 0){
-            //define tt title
-            var toolTipContent =  '<br>'+obj.moduleLabels[cardIndex]+', '+rowTitles[0]+' '+channelMap(oldX, oldY, obj.moduleSizes, rows)+'<br>';
-            //define tt content
-            for(i=12; i<ttArgs; i++){
-                toolTipContent += '<br/>'+prefix[i-12];
-                if(prefix[i-12] !== '') toolTipContent += ' ';
-                toolTipContent += Math.round( args[i][oldY][oldX]*1000)/1000 + ' ' + postfix[i-12];
-            }
-        } else {
-                var toolTipContent = '<br>';
-                toolTipContent += obj.moduleLabels[cardIndex]+' Primary <br>';
+        //define tt title
+        if(oldY != 0) var toolTipContent =  '<br>'+obj.moduleLabels[cardIndex]+', '+rowTitles[0]+' '+channelMap(oldX, oldY, obj.moduleSizes, rows)+'<br>';
+        else var toolTipContent = '<br>'+obj.moduleLabels[cardIndex]+' Primary <br>'; 
+        //define tt content
+        for(i=12; i<ttArgs; i++){
+            toolTipContent += '<br/>'+prefix[i-12];
+            if(prefix[i-12] !== '') toolTipContent += ' ';
+            if(oldY!=0)toolTipContent += Math.round( args[i][oldY][oldX]*1000)/1000 + ' ' + postfix[i-12];
+            else toolTipContent += Math.round( args[i][oldY][cardIndex]*1000)/1000 + ' ' + postfix[i-12];
         }
-
         document.getElementById('TipText').innerHTML = toolTipContent;    
     }
     
@@ -71,45 +67,30 @@ function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, rows, cols, c
 
         //only continue if the cursor is actually on the waffle and not on the primary of a card that doesn't have a primary:
         if(chx<cols && chy<rows && suppressTT==0){
-            if(chy != 0){
-           	    //make the tool tip say something, keeping track of which line is longest:
-                var toolTipContent = '<br>';
-                var nextLine
-                var longestLine = 0;
-                nextLine = obj.moduleLabels[cardIndex]+', '+rowTitles[0]+' '+channelMap(chx, chy, obj.moduleSizes, rows)+'<br>';  //+1 to get past title, -1 to accomodate primary row
-                longestLine = Math.max(longestLine, context.measureText(nextLine).width)
+           	//make the tool tip say something, keeping track of which line is longest:
+            var toolTipContent = '<br>';
+            var nextLine
+            var longestLine = 0;
+            if(chy != 0) nextLine = obj.moduleLabels[cardIndex]+', '+rowTitles[0]+' '+channelMap(chx, chy, obj.moduleSizes, rows)+'<br>';  //+1 to get past title, -1 to accomodate primary row
+            else nextLine = obj.moduleLabels[cardIndex]+' Primary <br>';
+            longestLine = Math.max(longestLine, context.measureText(nextLine).width)
+            toolTipContent += nextLine;
+
+            for(i=12; i<ttArgs; i++){
+                nextLine = '<br/>'+prefix[i-12];
+                if(prefix[i-12] !== '') nextLine += ' ';
+                nextLine += Math.round( args[i][chy][chx]*1000)/1000 + ' ' + postfix[i-12];
+                longestLine = Math.max(longestLine, context.measureText(nextLine).width);
                 toolTipContent += nextLine;
-
-                for(i=12; i<ttArgs; i++){
-                    nextLine = '<br/>'+prefix[i-12];
-                    if(prefix[i-12] !== '') nextLine += ' ';
-                    nextLine += Math.round( args[i][chy][chx]*1000)/1000 + ' ' + postfix[i-12];
-                    longestLine = Math.max(longestLine, context.measureText(nextLine).width);
-                    toolTipContent += nextLine;
-                }
-
-    	        document.getElementById('TipText').innerHTML = toolTipContent;
-                //update the size of the tool tip to fit the text:
-                $(ttDiv).width(1*longestLine);
-                $(ttDiv).height(boxY);
-
-            } else {
-                var toolTipContent = '<br>';
-                var nextLine
-                var longestLine = 0;
-                nextLine = obj.moduleLabels[cardIndex]+' Primary <br>';
-                longestLine = Math.max(longestLine, context.measureText(nextLine).width)
-                toolTipContent += nextLine;                
-
-                document.getElementById('TipText').innerHTML = toolTipContent;
-                //update the size of the tool tip to fit the text:
-                $(ttDiv).width(1*longestLine);
-                $(ttDiv).height(boxY);
             }
 
+    	    document.getElementById('TipText').innerHTML = toolTipContent;
+            //update the size of the tool tip to fit the text:
+            $(ttDiv).width(1*longestLine);
+            $(ttDiv).height(boxY);
+
 	        //make the tool tip appear iff the waffle is showing:
-            if(window.onDisplay == 'TestWaffle')
-    	        ttDiv.style.display = 'block';
+            if(window.onDisplay == 'TestWaffle') ttDiv.style.display = 'block';
 
             window.griffinToolTipX = event.pageX;
             window.griffinToolTipY = event.pageY;
