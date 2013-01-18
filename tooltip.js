@@ -79,7 +79,15 @@ function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, rows, cols, c
             for(i=12; i<ttArgs; i++){
                 nextLine = '<br/>'+prefix[i-12];
                 if(prefix[i-12] !== '') nextLine += ' ';
-                nextLine += Math.round( args[i][chy][chx]*1000)/1000 + ' ' + postfix[i-12];
+                //do some special things in some cases:
+                if(prefix[i-12] == 'Status: '){                        //parse the status code
+                    nextLine += parseStatusWord(args[i][chy][chx]);
+                } else if(prefix[i-12] == 'Reported Current: '){       //only report current when it makes sense
+                    if(obj.moduleSizes[cardIndex]==4 && chy!=0) nextLine += '--';
+                    else nextLine += Math.round( args[i][chy][chx]*1000)/1000 + ' ' + postfix[i-12];
+                } else {
+                    nextLine += Math.round( args[i][chy][chx]*1000)/1000 + ' ' + postfix[i-12];
+                }
                 longestLine = Math.max(longestLine, context.measureText(nextLine).width);
                 toolTipContent += nextLine;
             }
