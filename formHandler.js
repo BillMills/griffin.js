@@ -101,10 +101,15 @@ function channelSelect(waffle){
 
         //report status word:
         document.getElementById('status').innerHTML = 'Status: '+parseStatusWord(waffle.rampStatus[waffle.chy][xIndex]);
+        //report temperature:
+        document.getElementById('temperatureReport').innerHTML = 'Temperature: '+Math.round(waffle.reportTemperature[waffle.chy][xIndex]*100)/100+' C';
+        //report current:
+        document.getElementById('currentReport').innerHTML = 'Current: '+Math.round(waffle.reportCurrent[waffle.chy][xIndex]*100)/100+' mA';
 
         //manage sliders
         waffle.voltageSlider.update(Math.round(waffle.demandVoltage[waffle.chy][xIndex]*10000)/10000);
         waffle.rampSlider.update(Math.round(waffle.demandVrampUp[waffle.chy][xIndex]*10000)/10000);
+        waffle.rampDownSlider.update(Math.round(waffle.demandVrampDown[waffle.chy][xIndex]*10000)/10000);
         window.refreshInput = 0;
 
         //set the module

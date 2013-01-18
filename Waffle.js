@@ -1,4 +1,4 @@
-function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer, wrapperDiv, rowTitles, colTitles, InputLayer, prefix, postfix, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs, headerDiv, moduleSizes, moduleLabels, voltageSlider, rampSlider){
+function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer, wrapperDiv, rowTitles, colTitles, InputLayer, prefix, postfix, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs, headerDiv, moduleSizes, moduleLabels, voltageSlider, rampSlider, rampDownSlider){
 
         //if(!document.webkitHidden && !document.mozHidden){
     	var i, j, n, columns;
@@ -34,7 +34,8 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
         this.chx = 0;                               //x channel of input sidebar focus
         this.chy = 1;                               //y channel of input sidebar focus
         this.voltageSlider = voltageSlider;         //demand voltage slider associated with this waffle
-        this.rampSlider = rampSlider;               //voltage ramp speed slider associated with this waffle
+        this.rampSlider = rampSlider;               //voltage ramp up speed slider associated with this waffle
+        this.rampDownSlider = rampDownSlider;       //voltage ramp down speed slider associated with this waffle
 
         //determine dimesions of canvas:
         this.totalWidth = Math.round(0.5*$('#'+this.wrapperDiv).width());

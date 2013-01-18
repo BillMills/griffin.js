@@ -91,10 +91,14 @@
 
         <!--Form for channel reporting and input-->
         <form id='setValues'>
-          <!--Channel on off:-->
+          <!--Channel on off & status:-->
           <input type='radio' id='offButton' name='HVswitch' value='off' style='margin-left:10%; margin-bottom:10px'>Off
           <input type='radio' id='onButton' name='HVswitch' value='on' style='margin-left:10px; margin-bottom:10px'>On
-          <p id='status' style='display:inline; margin-left:5%;'>Status:</p>
+
+          <!--status, temperature & current:-->
+          <p id='status' style='margin-left:10%;'>Status:</p>
+          <p id='temperatureReport' style='display:inline; margin-left:10%;'>Temperature: </p>
+          <p id='currentReport' style='margin-left:10%;'>Current: </p>
 
           <!--voltage fill meter-->
           <p style='margin-left:10%; margin-bottom:0px;'>Reported Voltage [mV]</p>
@@ -113,16 +117,29 @@
             </div>
           </div>
 
-          <!--voltage ramp speed input field-->
-          <p id='RampText' style='margin:0px; margin-left:10%; margin-top:20px'>Voltage Ramp Speed [mV/s]</p>
-          <input type="text" id="demandRampSpeed" name='textbox' value='default' style='margin-bottom:30px; margin-top: 5px; margin-left:10%' size='6'>
+          <!--voltage ramp up speed input field-->
+          <p id='RampText' style='margin:0px; margin-left:10%; margin-top:20px'>Voltage Ramp Up Speed [mV/s]</p>
+          <input type="text" id="demandRampSpeed" name='textbox' value='default' style='margin-bottom:10px; margin-top: 5px; margin-left:10%' size='6'>
 
-          <!--Slider for voltage ramp speed-->
+          <!--Slider for voltage ramp up speed-->
           <div class='slider' id='rampSlider'>
             <canvas class='sliderBKG' id='rampSliderBKG' width=260 height=24></canvas>
             <div class='sliderKnob' id='rampSliderKnob'>
               <canvas class='knobStyle' id='rampKnobStyle' width=24 height=16> </canvas>
               <p class='sliderText' id='rampSliderText'><br>0%</p>
+            </div>
+          </div>
+
+          <!--voltage ramp down speed input field-->
+          <p id='RampTextDown' style='margin:0px; margin-left:10%; margin-top:20px'>Voltage Ramp Down Speed [mV/s]</p>
+          <input type="text" id="demandRampDownSpeed" name='textbox' value='default' style='margin-bottom:30px; margin-top: 5px; margin-left:10%' size='6'>
+
+          <!--Slider for voltage ramp down speed-->
+          <div class='slider' id='rampDownSlider'>
+            <canvas class='sliderBKG' id='rampDownSliderBKG' width=260 height=24></canvas>
+            <div class='sliderKnob' id='rampDownSliderKnob'>
+              <canvas class='knobStyle' id='rampDownKnobStyle' width=24 height=16> </canvas>
+              <p class='sliderText' id='rampDownSliderText'><br>0%</p>
             </div>
           </div>
 
@@ -232,10 +249,11 @@
       var sliderWidth = parseFloat($(document.getElementById('InputLayer')).width()) - 150;
       var sliderVoltage = new Slider('volageSliderText', 'demandVoltage', 'voltageSlider', 'voltageSliderBKG', 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', 0, 1, 3, 'mV', sliderWidth );
       var sliderRamp = new Slider('rampSliderText', 'demandRampSpeed', 'rampSlider', 'rampSliderBKG', 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', 0, 1, 3, 'mV/s',  sliderWidth);
+      var sliderRampDown = new Slider('rampDownSliderText', 'demandRampDownSpeed', 'rampDownSlider', 'rampDownSliderBKG', 'rampDownSliderKnob', 'rampDownKnobStyle', 'rampDownSliderText', 0, 1, 3, 'mV/s',  sliderWidth);
 
       var meter = new FillMeter('voltageMeter', 1.5*sliderWidth, 0,1, 'mV');
 
-      var waffle = new Waffle(rows,columns, 'TestWaffle', alarmThresholds, scaleMaxima, ['leftSidebar', 'rightSidebar'], "TT", "TTcontainer", "waffleplate", rowTitles, colTitles, "InputLayer", prefix, postfix, ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleSizes, moduleLabels, sliderVoltage, sliderRamp);
+      var waffle = new Waffle(rows,columns, 'TestWaffle', alarmThresholds, scaleMaxima, ['leftSidebar', 'rightSidebar'], "TT", "TTcontainer", "waffleplate", rowTitles, colTitles, "InputLayer", prefix, postfix, ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleSizes, moduleLabels, sliderVoltage, sliderRamp, sliderRampDown);
 
       var barTest = new BarGraph('barDummy', 12, 'Module 0', 'Reported Voltage [mV]', ['000', '111', '222', '333', '444', '555', '666', '777', '888', '999', 'AAA', 'BBB'], 0, 1, waffle);
       
