@@ -72,7 +72,7 @@ function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, rows, cols, c
         if(chy==0 && obj.moduleSizes[cardIndex] == 1) suppressTT = 1;
 
         //only continue if the cursor is actually on the waffle and not on the primary of a card that doesn't have a primary:
-        if(chx<cols && chy<rows && suppressTT==0){
+        if(chx<cols && chy<rows && chy>=0 && suppressTT==0){
            	//make the tool tip say something, keeping track of which line is longest:
             var toolTipContent = '<br>';
             var nextLine
