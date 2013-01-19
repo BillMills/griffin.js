@@ -99,21 +99,8 @@ function channelSelect(waffle){
         if (waffle.channelMask[waffle.chy][xIndex] == 1) document.getElementById('onButton').checked = true;
         else document.getElementById('offButton').checked = true;
 
-        //report status word:
-        document.getElementById('status').innerHTML = 'Status: '+parseStatusWord(waffle.rampStatus[waffle.chy][xIndex]);
-        //report temperature:
-        document.getElementById('temperatureReport').innerHTML = 'Temperature: '+Math.round(waffle.reportTemperature[waffle.chy][xIndex]*100)/100+' C';
-        //report current:
-        if(waffle.chy == 0 || waffle.moduleSizes[primaryBin(waffle.moduleSizes, waffle.chx)]==1)
-            document.getElementById('currentReport').innerHTML = 'Current: '+Math.round(waffle.reportCurrent[waffle.chy][xIndex]*100)/100+' mA';
-        else
-            document.getElementById('currentReport').innerHTML = 'Current: --';
-
         //manage sliders
-        if(waffle.chy == 0 || waffle.moduleSizes[primaryBin(waffle.moduleSizes, waffle.chx)]==1)
-            waffle.voltageSlider.max = waffle.voltLimit[waffle.chy][xIndex];
-        else
-            waffle.voltageSlider.max = waffle.voltLimit[0][primaryBin(waffle.moduleSizes, waffle.chx)];
+
         waffle.voltageSlider.update(Math.round(waffle.demandVoltage[waffle.chy][xIndex]*10000)/10000);
         waffle.rampSlider.update(Math.round(waffle.demandVrampUp[waffle.chy][xIndex]*10000)/10000);
         waffle.rampDownSlider.update(Math.round(waffle.demandVrampDown[waffle.chy][xIndex]*10000)/10000);
@@ -134,8 +121,21 @@ function channelSelect(waffle){
 
     }
 
-    //dummy for now just to illustrate fill meters:
+    //these objects get updated every masterLoop:
     meter.update(Math.round(waffle.reportVoltage[waffle.chy][xIndex]*10000)/10000);
+    //report status word:
+    document.getElementById('status').innerHTML = 'Status: '+parseStatusWord(waffle.rampStatus[waffle.chy][xIndex]);
+    //report temperature:
+    document.getElementById('temperatureReport').innerHTML = 'Temperature: '+Math.round(waffle.reportTemperature[waffle.chy][xIndex]*100)/100+' C';
+    //report current & update voltage slider maximum:
+    if(waffle.chy == 0 || waffle.moduleSizes[primaryBin(waffle.moduleSizes, waffle.chx)]==1){
+        document.getElementById('currentReport').innerHTML = 'Current: '+Math.round(waffle.reportCurrent[waffle.chy][xIndex]*100)/100+' mA';
+        waffle.voltageSlider.max = waffle.voltLimit[waffle.chy][xIndex];
+    }
+    else{
+        document.getElementById('currentReport').innerHTML = 'Current: --';
+        waffle.voltageSlider.max = waffle.voltLimit[0][primaryBin(waffle.moduleSizes, waffle.chx)];
+    }
 }
 
 //point interface at new channel indicated by user in the 'changeChannel' form.
