@@ -23,9 +23,15 @@ function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, rows, cols, c
         for(i=12; i<ttArgs; i++){
             toolTipContent += '<br/>'+prefix[i-12];
             if(prefix[i-12] !== '') toolTipContent += ' ';
-            if(oldY!=0)toolTipContent += Math.round( args[i][oldY][oldX]*1000)/1000 + ' ' + postfix[i-12];
+            if(prefix[i-12] == 'Status: '){
+                toolTipContent += parseStatusWord(args[i][oldY][oldX]);
+            } else if(prefix[i-12] == 'Reported Current: '){ 
+                    if(obj.moduleSizes[cardIndex]==4 && oldY!=0) toolTipContent += '--';
+                    else toolTipContent += Math.round( args[i][oldY][oldX]*1000)/1000 + ' ' + postfix[i-12];                
+            } else if(oldY!=0)toolTipContent += Math.round( args[i][oldY][oldX]*1000)/1000 + ' ' + postfix[i-12];
             else toolTipContent += Math.round( args[i][oldY][cardIndex]*1000)/1000 + ' ' + postfix[i-12];
         }
+
         document.getElementById('TipText').innerHTML = toolTipContent;    
     }
     
