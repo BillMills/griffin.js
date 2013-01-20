@@ -1,4 +1,4 @@
-function ooTooltip(waffle, ttCanvasID, ttTextID, ttDivID, ttContainerDivID, ttParentDivID, prefix, postfix){
+function Tooltip(waffle, ttCanvasID, ttTextID, ttDivID, ttContainerDivID, ttParentDivID, prefix, postfix){
 
     this.waffle = waffle;                           //the waffle that this tooltip is associated with
     this.canvasID = ttCanvasID;                     //target canvas
@@ -63,7 +63,7 @@ function ooTooltip(waffle, ttCanvasID, ttTextID, ttDivID, ttContainerDivID, ttPa
             that.ttDiv.style.left = x-newWidth-5;
 
             //make the tool tip appear iff the waffle is showing:
-            if(window.onDisplay == 'TestWaffle') that.ttDiv.style.display = 'block';
+            if(window.onDisplay == that.canvasID) that.ttDiv.style.display = 'block';
 
             //keep track of tooltip position
             that.oldRow = row;

@@ -19,7 +19,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, wrapperDiv, rowTitle
         this.wrapperDiv = wrapperDiv;               //div ID of top level div
         this.rowTitles = rowTitles;                 //array of titles for rows
         this.InputLayer = InputLayer;               //div ID of wrapper for input fields
-        this.ODBkeys = ODBkeys;                     //array of strings describing the locations of relevant info in ODB: ['/Location/Of/demandVoltage', '/Location/Of/reportVoltage', '/Location/Of/reportCurrent', '/Location/Of/VoltageRampSpeed', '/Location/Of/reportTemperature', '/Location/Of/ChannelOnOffState']
+        this.ODBkeys = ODBkeys;                     //array of strings describing the locations of relevant info in ODB
         this.alarmPanelDivIDs = alarmPanelDivIDs;   //array containing IDs of alarm panel divs
         this.alarmPanelCanvIDs = alarmPanelCanvIDs; //array containing IDs of alarm panel canvases
         this.headerDiv = headerDiv;                 //div ID of waffle header
