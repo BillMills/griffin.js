@@ -100,7 +100,6 @@ function channelSelect(waffle){
         else document.getElementById('offButton').checked = true;
 
         //manage sliders
-
         waffle.voltageSlider.update(Math.round(waffle.demandVoltage[waffle.chy][xIndex]*10000)/10000);
         waffle.rampSlider.update(Math.round(waffle.demandVrampUp[waffle.chy][xIndex]*10000)/10000);
         waffle.rampDownSlider.update(Math.round(waffle.demandVrampDown[waffle.chy][xIndex]*10000)/10000);

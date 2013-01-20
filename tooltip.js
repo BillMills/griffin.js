@@ -1,141 +1,147 @@
-//function to generate a tool tip over a canvas targetCanvas wrapped in a parentDiv.  The tool 
-//tip consists of a div targetDiv with absolute positioning containing <p id="TipText"></p>, wrapped
-//in a containerDiv with relative positioning.  TODO: enforce div properties?
+function ooTooltip(waffle, ttCanvasID, ttTextID, ttDivID, ttContainerDivID, ttParentDivID, prefix, postfix){
 
-function Tooltip(targetCanvas, parentDiv, targetDiv, containerDiv, rows, cols, cellSide, rowTitles, colTitles, prefix, postfix, obj, data){
-	var canvas = document.getElementById(targetCanvas);
-    var i, cardIndex;
-    var ttArgs = arguments.length;
-    var args = Array.prototype.slice.call(arguments);
+    this.waffle = waffle;                           //the waffle that this tooltip is associated with
+    this.canvasID = ttCanvasID;                     //target canvas
+    this.ttTextID = ttTextID;                       //tooltip text
+    this.ttDivID = ttDivID;                         //tooltip div
+    this.ttContainerDivID = ttContainerDivID;       //tooltip container div
+    this.ttParentDivID = ttParentDivID;             //tooltip parent div
+    this.prefix = prefix;                           //prefixes to tooltip content lines
+    this.postfix = postfix;                         //postfixes to tooltip content lines
 
-    //hack to update reported value at waffle refresh if user just leaves the mouse sitting there without moving:
-    var oldX = Math.floor( (window.griffinToolTipX - document.getElementById(parentDiv).offsetLeft - document.getElementById(targetCanvas).offsetLeft) / cellSide);
-    var oldY = Math.floor( (window.griffinToolTipY - document.getElementById(parentDiv).offsetTop - document.getElementById(targetCanvas).offsetTop) / cellSide);
-    //only do this if we're still on the waffle
-    if(oldX > -1 && oldX < cols && oldY>-1 && oldY<rows){
-        //primary row is special
-        //decide where we are horizontally
-        cardIndex = primaryBin(obj.moduleSizes, oldX);
-        //define tt title
-        if(oldY != 0) var toolTipContent =  '<br>'+obj.moduleLabels[cardIndex]+', '+rowTitles[0]+' '+channelMap(oldX, oldY, obj.moduleSizes, rows)+'<br>';
-        else var toolTipContent = '<br>'+obj.moduleLabels[cardIndex]+' Primary <br>'; 
-        //define tt content
-        for(i=12; i<ttArgs; i++){
-            toolTipContent += '<br/>'+prefix[i-12];
-            if(prefix[i-12] !== '') toolTipContent += ' ';
-            if(prefix[i-12] == 'Status: '){
-                toolTipContent += parseStatusWord(args[i][oldY][oldX]);
-            } else if(prefix[i-12] == 'Reported Current: '){ 
-                    if(obj.moduleSizes[cardIndex]==4 && oldY!=0) toolTipContent += '--';
-                    else toolTipContent += Math.round( args[i][oldY][oldX]*1000)/1000 + ' ' + postfix[i-12];                
-            } else if(oldY!=0)toolTipContent += Math.round( args[i][oldY][oldX]*1000)/1000 + ' ' + postfix[i-12];
-            else toolTipContent += Math.round( args[i][oldY][cardIndex]*1000)/1000 + ' ' + postfix[i-12];
-        }
+    this.ttContainer = document.getElementById(this.ttContainerDivID);
+    this.canvas = document.getElementById(this.canvasID);
+    this.context = this.canvas.getContext('2d'); 
+    this.ttDiv = document.getElementById(this.ttDivID)
+    this.ttParent = document.getElementById(ttParentDivID);
 
-        document.getElementById('TipText').innerHTML = toolTipContent;    
-    }
-    
-	canvas.onmousemove = function(event){
-  		//get pointers:
-	    var ttDiv = document.getElementById(targetDiv);
-        var ttContainer = document.getElementById(containerDiv);
-       	var canvas = document.getElementById(targetCanvas);
-        var context = canvas.getContext('2d');
-       	var superDiv = document.getElementById(parentDiv);
+    //old tt bin, for updates when the mouse is just sitting in the same place:
+    this.oldRow = 0;
+    this.oldCol = 0;
+    this.allowUpdate = 0;
+
+    //array of values from the waffle to report in the tooltip
+    this.reportedValues = [this.waffle.demandVoltage, this.waffle.reportVoltage, this.waffle.reportCurrent, this.waffle.demandVrampUp, this.waffle.demandVrampDown, this.waffle.reportTemperature, this.waffle.rampStatus];
+
+    var that = this;
+
+    this.canvas.onmousemove = function(event){
 
         //force the tooltip off - patches persistency problem when moving down off the waffle.  TODO: understand persistency problem.
-        ttDiv.style.display = 'none';
+        that.ttDiv.style.display = 'none';
 
-       	//get mouse coords:
-	    var x = event.pageX - ttContainer.offsetLeft;	
-        var y = event.pageY - ttContainer.offsetTop;
+        //get mouse coords:
+        var x = event.pageX - that.ttContainer.offsetLeft;   
+        var y = event.pageY - that.ttContainer.offsetTop;
 
-        //approximate box size:
-        var boxX = 100;
-        var boxY = 20 + 20*(ttArgs-12) + 60;
+        //determine cell coords:
+        var row = Math.floor( (event.pageY - that.ttParent.offsetTop - that.canvas.offsetTop) / that.waffle.cellSide);
+        var col = Math.floor( (event.pageX - that.ttParent.offsetLeft - that.canvas.offsetLeft) / that.waffle.cellSide);
+        if(row == 0) col = primaryBin(that.waffle.moduleSizes, col);
 
-        //make the tool tip follow the mouse:
-	    ttDiv.style.top = y-boxY-5;
-        ttDiv.style.left = x-boxX-5;
-
-        //form coordinate system chx, chy with origin at the upper left corner of the div, and 
-        //bin as the waffle binning: 
-        var chx = Math.floor( (event.pageX - superDiv.offsetLeft - canvas.offsetLeft) / cellSide);
-       	var chy = Math.floor( (event.pageY - superDiv.offsetTop - canvas.offsetTop) / cellSide);
-
-        //horizontal binning changes in first row since primaries can span multiple columns:
-        var cardIndex = primaryBin(obj.moduleSizes, chx);
-        if(chy == 0) chx = cardIndex;
+        //decide which card we're pointing at:
+        var cardIndex = 0;
+        if(row == 0) cardIndex = col;
+        else cardIndex = primaryBin(that.waffle.moduleSizes, col);
 
         //are we on the primary of a card that doesn't have a primary?
         var suppressTT = 0;
-        if(chy==0 && obj.moduleSizes[cardIndex] == 1) suppressTT = 1;
+        if(row==0 && that.waffle.moduleSizes[cardIndex] == 1) suppressTT = 1;
 
         //only continue if the cursor is actually on the waffle and not on the primary of a card that doesn't have a primary:
-        if(chx<cols && chy<rows && chy>=0 && suppressTT==0){
-           	//make the tool tip say something, keeping track of which line is longest:
-            var toolTipContent = '<br>';
-            var nextLine
-            var longestLine = 0;
-            if(chy != 0) nextLine = obj.moduleLabels[cardIndex]+', '+rowTitles[0]+' '+channelMap(chx, chy, obj.moduleSizes, rows)+'<br>';  //+1 to get past title, -1 to accomodate primary row
-            else nextLine = obj.moduleLabels[cardIndex]+' Primary <br>';
-            longestLine = Math.max(longestLine, context.measureText(nextLine).width)
-            toolTipContent += nextLine;
+        if(col >= 0 && col<that.waffle.cols && row>=0 && row<that.waffle.rows && suppressTT == 0){
 
-            for(i=12; i<ttArgs; i++){
-                nextLine = '<br/>'+prefix[i-12];
-                if(prefix[i-12] !== '') nextLine += ' ';
-                //do some special things in some cases:
-                if(prefix[i-12] == 'Status: '){                        //parse the status code
-                    nextLine += parseStatusWord(args[i][chy][chx]);
-                } else if(prefix[i-12] == 'Reported Current: '){       //only report current when it makes sense
-                    if(obj.moduleSizes[cardIndex]==4 && chy!=0) nextLine += '--';
-                    else nextLine += Math.round( args[i][chy][chx]*1000)/1000 + ' ' + postfix[i-12];
-                } else {
-                    nextLine += Math.round( args[i][chy][chx]*1000)/1000 + ' ' + postfix[i-12];
-                }
-                longestLine = Math.max(longestLine, context.measureText(nextLine).width);
-                toolTipContent += nextLine;
-            }
+            //establish text:
+            var newWidth = that.defineText(row, col);
 
-    	    document.getElementById('TipText').innerHTML = toolTipContent;
             //update the size of the tool tip to fit the text:
-            $(ttDiv).width(1*longestLine);
-            $(ttDiv).height(boxY);
+            $(that.ttDiv).width(newWidth);
+            $(that.ttDiv).height(220);
 
-	        //make the tool tip appear iff the waffle is showing:
-            if(window.onDisplay == 'TestWaffle') ttDiv.style.display = 'block';
+            //make the tool tip follow the mouse:
+            that.ttDiv.style.top = y-220-5;
+            that.ttDiv.style.left = x-newWidth-5;
 
-            window.griffinToolTipX = event.pageX;
-            window.griffinToolTipY = event.pageY;
-        }
+            //make the tool tip appear iff the waffle is showing:
+            if(window.onDisplay == 'TestWaffle') that.ttDiv.style.display = 'block';
+
+            //keep track of tooltip position
+            that.oldRow = row;
+            that.oldCol = col;
+            that.allowUpdate = 1;
+        } else that.allowUpdate = 0;
+
     }
 
     //turn the tool tip off if it's outside the canvas:
-    canvas.onmouseout = function(event){
-        var ttDiv = document.getElementById(targetDiv);
-        ttDiv.style.display = 'none';
+    this.canvas.onmouseout = function(event){
+        that.ttDiv.style.display = 'none';
     }
 
-}
+    //updater for if the tooltip is stationary on the waffle during a master loop transition:
+    this.update = function(){
+        if(this.allowUpdate){
+            //establish text:
+            var newWidth = this.defineText(this.oldRow, this.oldCol);            
 
-function drawTextDivider(x0, y0, length, cvas){
-        var canvas = document.getElementById(cvas);
-        var context = canvas.getContext('2d');
+            //update the size of the tool tip to fit the text:
+            $(this.ttDiv).width(newWidth);
+            $(this.ttDiv).height(220);
+        }
+    };
 
-        context.strokeStyle = 'rgba(255,255,255,0.9)'
+    //establish the current tooltip text based on cell position; returns length of longest line 
+    this.defineText = function(row, col){
+        var toolTipContent = '<br>';
+        var nextLine;
+        var longestLine = 0;
+        var cardIndex;
+        var i;
 
-        context.beginPath();
-        context.moveTo(x0-length/2, y0);
-        context.lineTo(x0-0.05*length/2, y0);
-        context.moveTo(x0+0.05*length/2, y0);
-        context.lineTo(x0+length/2, y0);
-        context.moveTo(x0-0.02*length/2-5, y0+5);
-        context.lineTo(x0-0.02*length/2+5, y0-5);
-        context.moveTo(x0+0.02*length/2-5, y0+5);
-        context.lineTo(x0+0.02*length/2+5, y0-5);
-        context.stroke();
+        //decide which card we're pointing at:
+        if(row == 0) cardIndex = col;
+        else cardIndex = primaryBin(this.waffle.moduleSizes, col);
 
+        //Title for normal channels:
+        if(row != 0) nextLine = this.waffle.moduleLabels[cardIndex]+', '+this.waffle.rowTitles[0]+' '+channelMap(col, row, this.waffle.moduleSizes, this.waffle.rows)+'<br>';
+        //Title for primary channels:
+        else nextLine = this.waffle.moduleLabels[cardIndex]+' Primary <br>';
 
+        //keep track of the longest line of text:
+        longestLine = Math.max(longestLine, this.context.measureText(nextLine).width)
+        toolTipContent += nextLine;
+
+        //fill out tooltip content:
+        for(i=0; i<this.reportedValues.length; i++){
+            //establish prefix:
+            nextLine = '<br/>'+this.prefix[i];
+            if(this.prefix[i] !== '') nextLine += ' ';
+
+            //pull in content; special cases for the status word and reported current:
+            //status word:
+            if(i == 6){
+                nextLine += parseStatusWord(this.reportedValues[i][row][col]);
+            }
+            //current:
+            else if(i == 2){
+                    if(this.waffle.moduleSizes[cardIndex]==4 && row!=0) nextLine += '--';
+                    else nextLine += Math.round( this.reportedValues[i][row][col]*1000)/1000 + ' ' + this.postfix[i];                
+            } else {
+                nextLine += Math.round( this.reportedValues[i][row][col]*1000)/1000 + ' ' + this.postfix[i];
+            }
+
+            //keep track of longest line:
+            longestLine = Math.max(longestLine, this.context.measureText(nextLine).width);
+
+            //append to tooltip:
+            toolTipContent += nextLine;
+ 
+        }
+        document.getElementById('TipText').innerHTML = toolTipContent;
+
+        //return length of longest line:
+        return longestLine;
+
+    };
 
 }

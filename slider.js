@@ -1,4 +1,3 @@
-//migrating to OO slider implementation.  TODO: finish!
 function Slider(titleID, inputBoxID, sliderContainerID, sliderBackgroundID, sliderKnobID, sliderCanvID, sliderTextID, min, max, decimal, unit, length){
 
     //slider limits:

@@ -1,4 +1,4 @@
-function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer, wrapperDiv, rowTitles, colTitles, InputLayer, prefix, postfix, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs, headerDiv, moduleSizes, moduleLabels, voltageSlider, rampSlider, rampDownSlider){
+function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, wrapperDiv, rowTitles, InputLayer, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs, headerDiv, moduleSizes, moduleLabels, voltageSlider, rampSlider, rampDownSlider){
 
         //if(!document.webkitHidden && !document.mozHidden){
     	var i, j, n, columns;
@@ -12,19 +12,13 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
         this.cvas = cvas;                           //canvas ID to draw the waffle on
         this.alarm = alarm;                         //array of alarm thresholds: [voltage, current, temperature]
         this.scaleMax = scaleMax;                   //array of scale maxima: [voltage, current, temperature]
-        this.alarmStatus;                           //array containing the current alarm status
         this.prevAlarmStatus;                       //previous iteration's alarmStatus
         this.alarmStatus;                           //2D array containing the alarm level for each cell
         this.sidebar = sidebar;                     //array containing canvas IDs of left and right sidebars, [leftID, rightID]
         this.side = ['left', 'right']               //TODO: depricate
-        this.tooltip = tooltip;                     //div ID of floating tooltip
-        this.TTcontainer = TTcontainer;             //div ID of tooltip field
         this.wrapperDiv = wrapperDiv;               //div ID of top level div
         this.rowTitles = rowTitles;                 //array of titles for rows
-        this.colTitles = colTitles;                 //array of titles for columns
         this.InputLayer = InputLayer;               //div ID of wrapper for input fields
-        this.prefix = prefix;                       //array of strings describing the prefix of each line of info in the tooltip
-        this.postfix = postfix;                     //array of strings describing the postfix of each line of info in the tooltip
         this.ODBkeys = ODBkeys;                     //array of strings describing the locations of relevant info in ODB: ['/Location/Of/demandVoltage', '/Location/Of/reportVoltage', '/Location/Of/reportCurrent', '/Location/Of/VoltageRampSpeed', '/Location/Of/reportTemperature', '/Location/Of/ChannelOnOffState']
         this.alarmPanelDivIDs = alarmPanelDivIDs;   //array containing IDs of alarm panel divs
         this.alarmPanelCanvIDs = alarmPanelCanvIDs; //array containing IDs of alarm panel canvases
@@ -52,13 +46,11 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
         this.canvas = document.getElementById(this.cvas);
         this.context = this.canvas.getContext('2d');
         this.context.font = Math.min(16, this.cellSide)+'px Raleway';
-        this.longestColTitle = 0;
         this.longestModuleLabel = 0;
-        for(i = 1; i<this.colTitles.length; i++){
-            this.longestColTitle = Math.max(this.longestColTitle, this.context.measureText(this.colTitles[i]).width);
+        for(i = 0; i<this.moduleLabels.length; i++){
             this.longestModuleLabel = Math.max(this.longestModuleLabel, this.context.measureText(this.moduleLabels[i]).width);
         }
-        this.totalHeight += this.longestColTitle + this.longestModuleLabel + 50;
+        this.totalHeight += this.longestModuleLabel + 50;
 
         //establish animation parameters:
         this.FPS = 30;
@@ -372,16 +364,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
             for(i=1; i<this.rows; i++){
                 this.context.fillText(i-1, this.cellSide*this.cols+10, i*this.cellSide + this.cellSide/2 +8 );
             }
-            /* depricate individual column labels in favor of module only?
-            for(j=0; j<this.cols; j++){
-                this.context.save();
-                this.context.translate(j*this.cellSide + this.cellSide/2, this.rows*this.cellSide+10);
-                this.context.rotate(-Math.PI/2);
-                this.context.textAlign = "right";
-                this.context.fillText(this.colTitles[j+1], 0,labelFontSize/2);
-                this.context.restore();
-            }
-            */
+
             //module labels:
             var moduleDivisions = [0];
             var vertOffset;
@@ -420,9 +403,8 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, tooltip, TTcontainer
             this.cellColorUpdate();
 
             //update peripherals:
-            AlarmSidebar(this.sidebar[0], this.side[0], this.wrapperDiv, this.waffleHeight, this.prevAlarmStatus, this.alarmStatus, this.rows, this.cols, this.rowTitles, this.colTitles, callMyself, this.alarmPanelDivIDs, this.alarmPanelCanvIDs, demandVoltage, reportVoltage, reportCurrent, reportTemperature, this.alarm, ['V', 'mA', 'C'], this.moduleLabels, this.moduleSizes);
+            AlarmSidebar(this.sidebar[0], this.side[0], this.wrapperDiv, this.waffleHeight, this.prevAlarmStatus, this.alarmStatus, this.rows, this.cols, this.rowTitles, callMyself, this.alarmPanelDivIDs, this.alarmPanelCanvIDs, demandVoltage, reportVoltage, reportCurrent, reportTemperature, this.alarm, ['V', 'mA', 'C'], this.moduleLabels, this.moduleSizes);
             channelSelect(that);
-            Tooltip(this.cvas, this.wrapperDiv, this.tooltip, this.TTcontainer, this.rows, this.cols, this.cellSide, this.rowTitles, this.colTitles, this.prefix, this.postfix, that, this.demandVoltage, this.reportVoltage, this.reportCurrent, this.demandVrampUp, this.demandVrampDown, this.reportTemperature, this.rampStatus);
 
             //animate:
             animate(this, 0);

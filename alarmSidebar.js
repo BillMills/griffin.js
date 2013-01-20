@@ -1,5 +1,5 @@
 //TODO: clean up by passing in waffle object?
-function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, alarmStatus, rows, cols, rowTitles, colTitles, callMyself, alarmPanelDivIDs, alarmPanelCanvIDs, demandVoltage, reportVoltage, reportCurrent, reportTemperature, alarm, units, moduleLabels, moduleSizes){
+function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, alarmStatus, rows, cols, rowTitles, callMyself, alarmPanelDivIDs, alarmPanelCanvIDs, demandVoltage, reportVoltage, reportCurrent, reportTemperature, alarm, units, moduleLabels, moduleSizes){
 
     var i, j, n;
 
@@ -252,13 +252,17 @@ function fadeSwapCanvas(cvasID, drawOldCanvas, drawNewCanvas, frame){
 
 //funciton to define the onclick behavior of the alarm sidebar panels:
 function alarmTransition(panelID, hiddenTop){
+
+    //alarm reporting font size:
+    var alarmTextSize = $('#voltageText').width()*0.08;
+
     if($('#'+panelID).css('z-index') == 10000){
         $('#'+panelID).css('height', 150);
         $('#'+panelID).css('background', 'rgba(0,0,0,0.7)');
         $('#'+panelID).css('z-index', 1);
         $('#'+panelID).css('top', hiddenTop+'px !important;');
     } else{
-        $('#'+panelID).css('height', 600);
+        $('#'+panelID).css('height', 200+25*alarmTextSize); //600
         $('#'+panelID).css('background', 'rgba(0,0,0,1)');
         $('#'+panelID).css('z-index', 10000);
         $('#'+panelID).css('top', '0px !important;');

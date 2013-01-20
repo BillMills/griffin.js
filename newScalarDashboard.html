@@ -64,6 +64,7 @@
 
       <!---Waffle/////////////////////////////////////////////////////////-->
       <div id="mainframeLinks">
+        <!--h1  style='display: inline; opacity: 0.3; font-family: "Orbitron", sans-serif; font-size: 275%; vertical-align:-20px;'>GRIFFIN HV Mainframe 1</h1-->
         <h1  style='display: inline; opacity: 0.3; font-family: "Orbitron", sans-serif; font-size: 275%; vertical-align:-20px;'>GRIFFIN HV Mainframe 1</h1>
         <br><button id='Main1' class='MFlink' type="button" style='background:-webkit-gradient(linear, left top, left bottom, from(#999999), to(#DDDDDD))' onclick="javascript:swapFade('TestWaffle', 'Main1')">Mainframe 1</button>
         <button id='Main2' class='MFlink' type="button">Mainframe 2</button>
@@ -165,7 +166,7 @@
           <p style='display:inline; margin-left:10%'>Card</p>
           <!--input type="text" id="newCol" name='newCol' style='margin-bottom:10px; margin-left:5px; display:inline;' size='6' value='0'-->
           <select id='CardList' style='width:80px;'> </select>
-          <p style='display:inline; margin-left:10px'>Channel</p>
+          <p style='display:inline; margin-left:10%'><br>Channel</p>
           <!--input type="text" id="newRow" name='newRow' style='margin-bottom:10px; margin-left:5px; display:inline;' size='6' value='0'-->
           <select id='ChannelList' style='width:75px;'> </select>
           <br><input type="button" value="Go To Channel" style='margin-left:10%; margin-top:10px;' id='getChannelButton'>       
@@ -177,7 +178,7 @@
   <!--End Waffleboard////////////////////////////////////////////////////-->
 
   <!--Tool tip layer/////////////////////////////////////////////////////-->
-  <div id="TTcontainer">
+  <div id="TTcontainer" style="z-index:20000">
     <div id="TT">
       <p id="TipText"></p>
     </div>
@@ -187,13 +188,11 @@
 
       //--------------Experiment-specific Parameters Here--------------------------------------------------
       //---------------------------------------------------------------------------------------------------
+ 
+      var ODBkeys = ['/Location/Of/Device/Varibles', '/Location/Of/Device/Settings', 'Demand Voltage Key', 'Measured Voltage Key', 'Measured Current Key', 'Voltage Ramp Up Key', 'Voltage Ramp Down Key', 'Temperature Key', 'ChState Key', 'ChStatus Key', 'Voltage Limit Key'];
+
       //cell labels; first entry decribes cell type (channel, card, crate, rack etc)
       var rowTitles = ['Ch.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
-      //TODO: depricate individual column titles?
-      //var colTitles = ['Card', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'];
-      var colTitles = ['Card', '0-0x0000', '1-0x0000', '2-0x0000', '2-0x0001', '2-0x0002', '2-0x0003', '3-0x0000', '3-0x0001', '3-0x0002', '3-0x0003', '4-0x0000', '5-0x0000', '6-0x0000', '6-0x0001', '6-0x0002', '6-0x0003', '7-0x0000', '7-0x0001', '7-0x0002', '7-0x0003'];
-
-      var ODBkeys = ['/Location/Of/Device/Varibles', '/Location/Of/Device/Settings', 'Demand Voltage Key', 'Measured Voltage Key', 'Measured Current Key', 'Voltage Ramp Up Key', 'Voltage Ramp Down Key', 'Temperature Key', 'ChState Key', 'ChStatus Key', 'Voltage Limit Key'];
 
       //module edges and names:
       var moduleSizes = [1,1,4,4,1,1,4,4];
@@ -253,9 +252,11 @@
 
       var meter = new FillMeter('voltageMeter', 1.5*sliderWidth, 0,1, 'mV');
 
-      var waffle = new Waffle(rows,columns, 'TestWaffle', alarmThresholds, scaleMaxima, ['leftSidebar', 'rightSidebar'], "TT", "TTcontainer", "waffleplate", rowTitles, colTitles, "InputLayer", prefix, postfix, ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleSizes, moduleLabels, sliderVoltage, sliderRamp, sliderRampDown);
+      var waffle = new Waffle(rows,columns, 'TestWaffle', alarmThresholds, scaleMaxima, ['leftSidebar', 'rightSidebar'], "waffleplate", rowTitles, "InputLayer", ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleSizes, moduleLabels, sliderVoltage, sliderRamp, sliderRampDown);
 
       var barTest = new BarGraph('barDummy', 12, 'Module 0', 'Reported Voltage [mV]', ['000', '111', '222', '333', '444', '555', '666', '777', '888', '999', 'AAA', 'BBB'], 0, 1, waffle);
+
+      var tooltip = new ooTooltip(waffle, 'TestWaffle', 'TipText', 'TT', 'TTcontainer', 'waffleplate', prefix, postfix);
       
 
       //set up arrays:
@@ -295,7 +296,7 @@
       window.refreshInput = 1;
 
       //start looping:
-      masterLoop(rows+1, columns, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmThresholds, scaleMaxima, waffle, barTest, 0);
+      masterLoop(rows+1, columns, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmThresholds, scaleMaxima, waffle, barTest, tooltip, 0);
 
   </script> 
   
