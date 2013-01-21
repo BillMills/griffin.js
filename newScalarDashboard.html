@@ -102,11 +102,11 @@
           <p id='currentReport' style='margin-left:10%;'>Current: </p>
 
           <!--voltage fill meter-->
-          <p style='margin-left:10%; margin-bottom:0px;'>Reported Voltage [mV]</p>
+          <p style='margin-left:10%; margin-bottom:0px;'>Reported Voltage [V]</p>
           <br><canvas id='voltageMeter' style='margin-left:10%;'></canvas>
 
           <!--Demand voltage input field-->
-          <p id='FieldText' style='margin-left:10%'>Demand Voltage [mV]</p>
+          <p id='FieldText' style='margin-left:10%'>Demand Voltage [V]</p>
           <input type="text" id="demandVoltage" name='textbox' value='default' style='margin-bottom:10px; margin-top: 5px; margin-left:10%' size='6'>
 
           <!--Slider for demand voltage-->
@@ -119,7 +119,7 @@
           </div>
 
           <!--voltage ramp up speed input field-->
-          <p id='RampText' style='margin:0px; margin-left:10%; margin-top:20px'>Voltage Ramp Up Speed [mV/s]</p>
+          <p id='RampText' style='margin:0px; margin-left:10%; margin-top:20px'>Voltage Ramp Up Speed [V/s]</p>
           <input type="text" id="demandRampSpeed" name='textbox' value='default' style='margin-bottom:10px; margin-top: 5px; margin-left:10%' size='6'>
 
           <!--Slider for voltage ramp up speed-->
@@ -132,7 +132,7 @@
           </div>
 
           <!--voltage ramp down speed input field-->
-          <p id='RampTextDown' style='margin:0px; margin-left:10%; margin-top:20px'>Voltage Ramp Down Speed [mV/s]</p>
+          <p id='RampTextDown' style='margin:0px; margin-left:10%; margin-top:20px'>Voltage Ramp Down Speed [V/s]</p>
           <input type="text" id="demandRampDownSpeed" name='textbox' value='default' style='margin-bottom:30px; margin-top: 5px; margin-left:10%' size='6'>
 
           <!--Slider for voltage ramp down speed-->
@@ -208,9 +208,31 @@
       var rows = 12;
       var columns = 20;
 
+      //number of cards in the crate:
+      var nCards = 8;
+
       //tooltip info prefixes & postfixes:
       var prefix = ['Demand Voltage: ', 'Reported Voltage: ', 'Reported Current: ', 'Voltage Ramp Up Speed: ', 'Voltage Ramp Down Speed', 'Temperature: ', 'Status: '];
-      var postfix = ['mV', 'mV', 'mA', 'mV/s', 'mV/s', 'C', ''];
+      var postfix = ['V', 'V', 'A', 'V/s', 'V/s', 'C', ''];
+
+      //demand voltage range:
+      var minVoltage = 0;
+      var maxVoltage = 1;
+
+      //voltage ramp speed range:
+      var minRampSpeed = 0;
+      var maxRampSpeed = 1;
+
+      //number of decimal places to keep on the sliders:
+      var sliderPrecision = 3;
+
+      //voltage unit:
+      var voltUnit = 'V';
+      //ramp speed unit:
+      var rampUnit = 'V/s';
+      //current unit:
+      var currentUnit = 'A';
+
 
       //---------------End Experiment-specific parameters--------------------------------------------------
       //---------------------------------------------------------------------------------------------------
@@ -239,15 +261,15 @@
 
       //declare objects:
       var sliderWidth = parseFloat($(document.getElementById('InputLayer')).width()) - 150;
-      var sliderVoltage = new Slider('volageSliderText', 'demandVoltage', 'voltageSlider', 'voltageSliderBKG', 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', 0, 1, 3, 'mV', sliderWidth );
-      var sliderRamp = new Slider('rampSliderText', 'demandRampSpeed', 'rampSlider', 'rampSliderBKG', 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', 0, 1, 3, 'mV/s',  sliderWidth);
-      var sliderRampDown = new Slider('rampDownSliderText', 'demandRampDownSpeed', 'rampDownSlider', 'rampDownSliderBKG', 'rampDownSliderKnob', 'rampDownKnobStyle', 'rampDownSliderText', 0, 1, 3, 'mV/s',  sliderWidth);
+      var sliderVoltage = new Slider('volageSliderText', 'demandVoltage', 'voltageSlider', 'voltageSliderBKG', 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', minVoltage, maxVoltage, sliderPrecision, voltUnit, sliderWidth );
+      var sliderRamp = new Slider('rampSliderText', 'demandRampSpeed', 'rampSlider', 'rampSliderBKG', 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', minRampSpeed, maxRampSpeed, sliderPrecision, rampUnit,  sliderWidth);
+      var sliderRampDown = new Slider('rampDownSliderText', 'demandRampDownSpeed', 'rampDownSlider', 'rampDownSliderBKG', 'rampDownSliderKnob', 'rampDownKnobStyle', 'rampDownSliderText', minRampSpeed, maxRampSpeed, sliderPrecision, rampUnit,  sliderWidth);
 
-      var meter = new FillMeter('voltageMeter', 1.5*sliderWidth, 0,1, 'mV');
+      var meter = new FillMeter('voltageMeter', 1.5*sliderWidth, minVoltage,maxVoltage, voltUnit);
 
       var waffle = new Waffle(rows,columns, 'TestWaffle', alarmThresholds, scaleMaxima, ['leftSidebar', 'rightSidebar'], "waffleplate", rowTitles, "InputLayer", ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleSizes, moduleLabels, sliderVoltage, sliderRamp, sliderRampDown);
 
-      var barTest = new BarGraph('barDummy', 12, 'Module 0', 'Reported Voltage [mV]', ['000', '111', '222', '333', '444', '555', '666', '777', '888', '999', 'AAA', 'BBB'], 0, 1, waffle);
+      var barTest = new BarGraph('barDummy', 12, 'Module 0', 'Reported Voltage [V]', ['000', '111', '222', '333', '444', '555', '666', '777', '888', '999', 'AAA', 'BBB'], minVoltage, maxVoltage, waffle);
 
       var tooltip = new Tooltip(waffle, 'TestWaffle', 'TipText', 'TT', 'TTcontainer', 'waffleplate', prefix, postfix);
       
@@ -289,7 +311,7 @@
       window.refreshInput = 1;
 
       //start looping:
-      masterLoop(rows+1, columns, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmThresholds, scaleMaxima, waffle, barTest, tooltip, 0);
+      masterLoop(rows+1, columns, nCards, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmThresholds, scaleMaxima, waffle, barTest, tooltip, 0);
 
   </script> 
   

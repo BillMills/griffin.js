@@ -126,14 +126,16 @@ function channelSelect(waffle){
     document.getElementById('status').innerHTML = 'Status: '+parseStatusWord(waffle.rampStatus[waffle.chy][xIndex]);
     //report temperature:
     document.getElementById('temperatureReport').innerHTML = 'Temperature: '+Math.round(waffle.reportTemperature[waffle.chy][xIndex]*100)/100+' C';
-    //report current & update voltage slider maximum:
+    //report current & update voltage slider and meter maximum:
     if(waffle.chy == 0 || waffle.moduleSizes[primaryBin(waffle.moduleSizes, waffle.chx)]==1){
         document.getElementById('currentReport').innerHTML = 'Current: '+Math.round(waffle.reportCurrent[waffle.chy][xIndex]*100)/100+' mA';
         waffle.voltageSlider.max = waffle.voltLimit[waffle.chy][xIndex];
+        meter.max = waffle.voltLimit[waffle.chy][xIndex];
     }
     else{
         document.getElementById('currentReport').innerHTML = 'Current: --';
         waffle.voltageSlider.max = waffle.voltLimit[0][primaryBin(waffle.moduleSizes, waffle.chx)];
+        meter.max = waffle.voltLimit[0][primaryBin(waffle.moduleSizes, waffle.chx)];
     }
 }
 

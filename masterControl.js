@@ -1,15 +1,15 @@
-function masterLoop(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmTripLevel, scaleMax, waffle, barchart, tooltip, callMyself){
+function masterLoop(rows, cols, nCards, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmTripLevel, scaleMax, waffle, barchart, tooltip, callMyself){
 	if(!document.webkitHidden && !document.mozHidden){
-    	fetchNewData(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmTripLevel, scaleMax);
+    	fetchNewData(rows, cols, nCards, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmTripLevel, scaleMax);
     	waffle.update(demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, alarmStatus, channelMask, rampStatus, voltLimit, callMyself);
     	barchart.update([ reportVoltage[1][0], reportVoltage[2][0], reportVoltage[3][0], reportVoltage[4][0], reportVoltage[5][0], reportVoltage[6][0], reportVoltage[7][0], reportVoltage[8][0], reportVoltage[9][0], reportVoltage[10][0], reportVoltage[11][0], reportVoltage[12][0] ], [alarmStatus[1][0], alarmStatus[2][0], alarmStatus[3][0], alarmStatus[4][0], alarmStatus[5][0], alarmStatus[6][0], alarmStatus[7][0], alarmStatus[8][0], alarmStatus[9][0], alarmStatus[10][0], alarmStatus[11][0], alarmStatus[12][0] ] );
         tooltip.update();
     }
-    setTimeout(function(){masterLoop(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmTripLevel, scaleMax, waffle, barchart, tooltip, 1)}, 3000);
+    setTimeout(function(){masterLoop(rows, cols, nCards, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmTripLevel, scaleMax, waffle, barchart, tooltip, 1)}, 3000);
 }
 
 //populate rows by cols arrays with the appropriate information:
-function fetchNewData(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmTripLevel, scaleMax){
+function fetchNewData(rows, cols, nCards, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmTripLevel, scaleMax){
 
     var testParameter, i, j, ODBindex, columns;
 /*
@@ -29,7 +29,7 @@ function fetchNewData(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportC
 */          
     for(i=0; i<rows; i++){
         //primary row spans multi-columns:
-        if(i==0) columns = 8;
+        if(i==0) columns = nCards;
         else columns = cols;
         for(j=0; j<columns; j++){
             /*
@@ -61,7 +61,7 @@ function fetchNewData(rows, cols, ODBkeys, demandVoltage, reportVoltage, reportC
 
     for(i=0; i<rows; i++){
         //primary row spans multi-columns:
-        if(i==0) columns = 8;
+        if(i==0) columns = nCards;
         else columns = cols;
         for(j=0; j<columns; j++){
 

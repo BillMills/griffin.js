@@ -121,7 +121,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, wrapperDiv, rowTitle
         }
 
         //do an initial populate of the waffle:
-        fetchNewData(this.rows, this.cols, this.ODBkeys, this.demandVoltage, this.reportVoltage, this.reportCurrent, this.demandVrampUp, this.demandVrampDown, this.reportTemperature, this.channelMask, this.alarmStatus, this.rampStatus, this.voltLimit, this.alarm, this.scaleMax);
+        fetchNewData(this.rows, this.cols, moduleLabels.size, this.ODBkeys, this.demandVoltage, this.reportVoltage, this.reportCurrent, this.demandVrampUp, this.demandVrampDown, this.reportTemperature, this.channelMask, this.alarmStatus, this.rampStatus, this.voltLimit, this.alarm, this.scaleMax);
 
         //make waffles clickable to set a variable for a channel:
         this.canvas.onclick = function(event){clickWaffle(event, that)};
@@ -403,7 +403,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, wrapperDiv, rowTitle
             this.cellColorUpdate();
 
             //update peripherals:
-            AlarmSidebar(this.sidebar[0], this.side[0], this.wrapperDiv, this.waffleHeight, this.prevAlarmStatus, this.alarmStatus, this.rows, this.cols, this.rowTitles, callMyself, this.alarmPanelDivIDs, this.alarmPanelCanvIDs, demandVoltage, reportVoltage, reportCurrent, reportTemperature, this.alarm, ['V', 'mA', 'C'], this.moduleLabels, this.moduleSizes);
+            AlarmSidebar(this.sidebar[0], this.side[0], this.wrapperDiv, this.waffleHeight, this.prevAlarmStatus, this.alarmStatus, this.rows, this.cols, this.rowTitles, callMyself, this.alarmPanelDivIDs, this.alarmPanelCanvIDs, demandVoltage, reportVoltage, reportCurrent, reportTemperature, this.alarm, ['V', 'A', 'C'], this.moduleLabels, this.moduleSizes);
             channelSelect(that);
 
             //animate:
