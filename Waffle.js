@@ -121,7 +121,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, wrapperDiv, rowTitle
         }
 
         //do an initial populate of the waffle:
-        fetchNewData(this.rows, this.cols, moduleLabels.size, this.ODBkeys, this.demandVoltage, this.reportVoltage, this.reportCurrent, this.demandVrampUp, this.demandVrampDown, this.reportTemperature, this.channelMask, this.alarmStatus, this.rampStatus, this.voltLimit, this.alarm, this.scaleMax);
+        fetchNewData(this.rows, this.cols, moduleSizes, this.ODBkeys, this.demandVoltage, this.reportVoltage, this.reportCurrent, this.demandVrampUp, this.demandVrampDown, this.reportTemperature, this.channelMask, this.alarmStatus, this.rampStatus, this.voltLimit, this.alarm, this.scaleMax);
 
         //make waffles clickable to set a variable for a channel:
         this.canvas.onclick = function(event){clickWaffle(event, that)};
@@ -449,6 +449,23 @@ function clickWaffle(event, obj){
 function getMIDASindex(row, col){
     //do something
     return 0;
+}
+
+//given a module number and channel number, return the [row, col] that the corresponding data will be found in in the various waffle.<dataArrays>
+function getPointer(module, channel, waffle){
+    var i;
+    var row = 0;
+    var col = 0;
+
+    //column:
+    for(i=0; i<module; i++){
+        col += waffle.moduleSizes[i];
+    }
+    col += Math.floor(channel/(waffle.rows-1));
+
+    row = 1 + channel%(waffle.rows-1);
+
+    return [row, col];
 }
 
 //map the channel-sized bins in the primary row into the appropriate primary groups:

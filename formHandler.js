@@ -121,7 +121,6 @@ function channelSelect(waffle){
     }
 
     //these objects get updated every masterLoop:
-    meter.update(Math.round(waffle.reportVoltage[waffle.chy][xIndex]*10000)/10000);
     //report status word:
     document.getElementById('status').innerHTML = 'Status: '+parseStatusWord(waffle.rampStatus[waffle.chy][xIndex]);
     //report temperature:
@@ -137,6 +136,8 @@ function channelSelect(waffle){
         waffle.voltageSlider.max = waffle.voltLimit[0][primaryBin(waffle.moduleSizes, waffle.chx)];
         meter.max = waffle.voltLimit[0][primaryBin(waffle.moduleSizes, waffle.chx)];
     }
+    //update meter position after maximum has been adjusted:
+    meter.update(Math.round(waffle.reportVoltage[waffle.chy][xIndex]*10000)/10000);
 }
 
 //point interface at new channel indicated by user in the 'changeChannel' form.

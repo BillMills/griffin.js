@@ -100,9 +100,6 @@ function BarGraph(cvas, nBars, title, yAxisTitle, barTitles, scaleMin, scaleMax,
         //set up member variables for animation:
         this.setNewLevels(newLevel, alarmStatus);
 
-        //alert(this.oldAlarms[0]);
-        //alert(this.alarms[0]);
-
         //animate:
         animate(this, 0);
 

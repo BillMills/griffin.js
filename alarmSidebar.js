@@ -1,7 +1,39 @@
+/*
+function AlarmMonitor(rows, cols, divID, canvasID, dashboardDivID){
+
+    this.nAlarms = 5;                       //Maximum number of alarms to report at once
+    this.divID = divID;                     //ID of alarm div
+    this.canvasID = canvasID;               //ID of alarm canvas
+    this.dashboardDivID = dashboardDivID;   //ID of dashboard div
+    this.rows  = rows;
+
+    this.div = document.getElementById(divID);
+    this.canvas = document.getElementById(canvasID);
+    this.context = this.canvas.getContext('2d');
+
+    //set scale of sleeping alarm monitors:
+    var dashboardWidth = $('#'+dashboardDivID).width();
+    $( this.div.css('width', 0.16*dashboardWidth);
+    this.canvas.width  = 0.16*dashboardWidth;    
+
+    this.update = function(previousAlarmStatus, currentAlarmStatus){
+
+        var i, j;
+        var isAlarm, oldAlarm;
+
+        //determine & update badge status
+
+        //update alarm text
+
+    };
+
+}
+*/
+
 //TODO: clean up by passing in waffle object?
 function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, alarmStatus, rows, cols, rowTitles, callMyself, alarmPanelDivIDs, alarmPanelCanvIDs, demandVoltage, reportVoltage, reportCurrent, reportTemperature, alarm, units, moduleLabels, moduleSizes){
 
-    var i, j, n;
+    var i, j, n, columns;
 
     //number of alarms to report:
     var nAlarms = 5;
@@ -42,8 +74,10 @@ function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, 
     for(n=0; n<alarmStatus[0][0].length; n++){
         isAlarm = 0;
         oldAlarm = 0;
-        for(i=1; i<rows; i++){
-            for(j=0; j<cols; j++){
+        for(i=0; i<rows; i++){
+            if(i==0) columns = moduleSizes.length;
+            else columns = cols;
+            for(j=0; j<columns; j++){
                 if(alarmStatus[i][j][n] > 0) isAlarm = 1;
                 if(prevAlarmStatus[i][j][n] > 0) oldAlarm = 1;
             }

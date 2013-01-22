@@ -1,15 +1,24 @@
-function masterLoop(rows, cols, nCards, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmTripLevel, scaleMax, waffle, barchart, tooltip, callMyself){
+function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmTripLevel, scaleMax, waffle, barCharts, tooltip, callMyself){
 	if(!document.webkitHidden && !document.mozHidden){
-    	fetchNewData(rows, cols, nCards, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmTripLevel, scaleMax);
+    	fetchNewData(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmTripLevel, scaleMax);
     	waffle.update(demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, alarmStatus, channelMask, rampStatus, voltLimit, callMyself);
-    	barchart.update([ reportVoltage[1][0], reportVoltage[2][0], reportVoltage[3][0], reportVoltage[4][0], reportVoltage[5][0], reportVoltage[6][0], reportVoltage[7][0], reportVoltage[8][0], reportVoltage[9][0], reportVoltage[10][0], reportVoltage[11][0], reportVoltage[12][0] ], [alarmStatus[1][0], alarmStatus[2][0], alarmStatus[3][0], alarmStatus[4][0], alarmStatus[5][0], alarmStatus[6][0], alarmStatus[7][0], alarmStatus[8][0], alarmStatus[9][0], alarmStatus[10][0], alarmStatus[11][0], alarmStatus[12][0] ] );
+        for(var i=0; i<barCharts.length; i++){
+            var barChartData = [];
+            var barChartAlarms = [];
+            for(var j=0; j<barCharts[i].nBars; j++){
+                var arrayCoords = getPointer(i, j, waffle)
+                barChartData[j] = reportVoltage[arrayCoords[0]][arrayCoords[1]];
+                barChartAlarms[j] = alarmStatus[arrayCoords[0]][arrayCoords[1]];
+            }
+            barCharts[i].update(barChartData, barChartAlarms);
+        }
         tooltip.update();
     }
-    setTimeout(function(){masterLoop(rows, cols, nCards, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmTripLevel, scaleMax, waffle, barchart, tooltip, 1)}, 3000);
+    setTimeout(function(){masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmTripLevel, scaleMax, waffle, barCharts, tooltip, 1)}, 3000);
 }
 
 //populate rows by cols arrays with the appropriate information:
-function fetchNewData(rows, cols, nCards, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmTripLevel, scaleMax){
+function fetchNewData(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmTripLevel, scaleMax){
 
     var testParameter, i, j, ODBindex, columns;
 /*
@@ -28,40 +37,43 @@ function fetchNewData(rows, cols, nCards, ODBkeys, demandVoltage, reportVoltage,
     var voltageLimit    = ODBExtractRecord(settingsRecord,  ODBkeys[10]);
 */          
     for(i=0; i<rows; i++){
-        //primary row spans multi-columns:
-        if(i==0) columns = nCards;
+        //primary row spans multi-columns, only has entries for 48 channel cards:        
+        if(i==0) columns = moduleSizes.length;
         else columns = cols;
         for(j=0; j<columns; j++){
-            /*
-            ODBindex = getMIDASindex(i, j);
-            demandVoltage[i][j]     = reqVoltage[ODBindex];
-            reportVoltage[i][j]     = measVoltage[ODBindex];   
-            reportCurrent[i][j]     = measCurrent[ODBindex];
-            demandVrampUp[i][j]     = rampUp[ODBindex];
-            demandVrampDown[i][j]   = rampDown[ODBindex];
-            reportTemperature[i][j] = measTemperature[ODBindex];
-            channelMask[i][j]       = repoChState[ODBindex];
-            rampStatus[i][j]        = repoChStatus[ODBindex];
-            voltLimit[i][j]         = voltageLimit[ODBindex];
-            */
-            //fake data for offline demo
-            demandVoltage[i][j] = Math.random();
-            reportVoltage[i][j] = Math.random();
-            reportCurrent[i][j] = Math.random();
-            demandVrampUp[i][j] = Math.random();
-            demandVrampDown[i][j] = Math.random();
-            reportTemperature[i][j] = Math.random();
-            channelMask[i][j] = Math.random();
-            if (channelMask[i][j] < 0.1) channelMask[i][j] = 0;
-            else channelMask[i][j] = 1;
-            rampStatus[i][j] = Math.floor(10*Math.random());
-            voltLimit[i][j] = 1+Math.random();
+            //only populate primaries that actually exist:
+            if(i!=0 || moduleSizes[j]==4){
+                /*
+                ODBindex = getMIDASindex(i, j);
+                demandVoltage[i][j]     = parseFloat(reqVoltage[ODBindex]);
+                reportVoltage[i][j]     = parseFloat(measVoltage[ODBindex]);   
+                reportCurrent[i][j]     = parseFloat(measCurrent[ODBindex]);
+                demandVrampUp[i][j]     = parseFloat(rampUp[ODBindex]);
+                demandVrampDown[i][j]   = parseFloat(rampDown[ODBindex]);
+                reportTemperature[i][j] = parseFloat(measTemperature[ODBindex]);
+                channelMask[i][j]       = parseFloat(repoChState[ODBindex]);
+                rampStatus[i][j]        = parseFloat(repoChStatus[ODBindex]);
+                voltLimit[i][j]         = parseFloat(voltageLimit[ODBindex]);
+                */
+                //fake data for offline demo
+                demandVoltage[i][j] = Math.random();
+                reportVoltage[i][j] = Math.random();
+                reportCurrent[i][j] = Math.random();
+                demandVrampUp[i][j] = Math.random();
+                demandVrampDown[i][j] = Math.random();
+                reportTemperature[i][j] = Math.random();
+                channelMask[i][j] = Math.random();
+                if (channelMask[i][j] < 0.1) channelMask[i][j] = 0;
+                else channelMask[i][j] = 1;
+                rampStatus[i][j] = Math.floor(10*Math.random());
+                voltLimit[i][j] = 1+Math.random();
+            }
         }
     }
 
     for(i=0; i<rows; i++){
         //primary row spans multi-columns:
-        if(i==0) columns = nCards;
+        if(i==0) columns = moduleSizes.length;
         else columns = cols;
         for(j=0; j<columns; j++){
 

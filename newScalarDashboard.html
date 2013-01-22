@@ -70,17 +70,21 @@
         <button id='Main2' class='MFlink' type="button">Mainframe 2</button>
         <button id='Main3' class='MFlink' type="button">Mainframe 3</button>
 
-        <br><button id='card0' class='cardNav' type="button" style='display: inline; margin-bottom:5px;' onclick="javascript:swapFade('barDummy', 'card0')">Card<br>0</button>
-        <button id='card1' class='cardNav' type="button" style='display: inline;'>Card<br>1</button>
-        <button id='card2' class='cardNav' type="button" style='display: inline;'>Card 2</button>
-        <button id='card3' class='cardNav' type="button" style='display: inline;'>Card 3</button>
-        <button id='card4' class='cardNav' type="button" style='display: inline;'>Card<br>4</button>
-        <button id='card5' class='cardNav' type="button" style='display: inline;'>Card<br>5</button>
-        <button id='card6' class='cardNav' type="button" style='display: inline;'>Card 6</button>
-        <button id='card7' class='cardNav' type="button" style='display: inline;'>Card 7</button>
+        <br><button id='card0' class='cardNav' type="button" style='display: inline; margin-bottom:5px;' onclick="javascript:swapFade('bar0', 'card0')">Card<br>0</button>
+        <button id='card1' class='cardNav' type="button" style='display: inline; margin-bottom:5px;' onclick="javascript:swapFade('bar1', 'card1')">Card 1</button>
+        <button id='card2' class='cardNav' type="button" style='display: inline; margin-bottom:5px;' onclick="javascript:swapFade('bar2', 'card2')">Card 2</button>
+        <button id='card3' class='cardNav' type="button" style='display: inline; margin-bottom:5px;' onclick="javascript:swapFade('bar3', 'card3')">Card<br>3</button>
+        <button id='card4' class='cardNav' type="button" style='display: inline; margin-bottom:5px;' onclick="javascript:swapFade('bar0', 'card4')">Card<br>0</button>
+        <button id='card5' class='cardNav' type="button" style='display: inline; margin-bottom:5px;' onclick="javascript:swapFade('bar1', 'card5')">Card 1</button>
+        <button id='card6' class='cardNav' type="button" style='display: inline; margin-bottom:5px;' onclick="javascript:swapFade('bar2', 'card6')">Card 2</button>
+        <button id='card7' class='cardNav' type="button" style='display: inline; margin-bottom:5px;' onclick="javascript:swapFade('bar3', 'card7')">Card<br>3</button>
+
       </div>
       <canvas id="TestWaffle"></canvas>
-      <canvas id='barDummy' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
+      <canvas id='bar0' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
+      <canvas id='bar1' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
+      <canvas id='bar2' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
+      <canvas id='bar3' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
 
       <!--Input Layer//////////////////////////////////////////////////////-->
       <div align='left' id='InputLayer'>
@@ -195,8 +199,8 @@
       var rowTitles = ['Ch.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
 
       //module edges and names:
-      var moduleSizes = [1,1,4,4,1,1,4,4];
-      var moduleLabels = ['Card 0', 'Card 1', 'Card 2', 'Card 3', 'Card 4', 'Card 5', 'Card 6', 'Card 7'];
+      var moduleSizes = [1,4,4,1,1,4,4,1];
+      var moduleLabels = ['Card 0', 'Card 1', 'Card 2', 'Card 3', 'Card 0', 'Card 1', 'Card 2', 'Card 3'];
 
       //alarm thresholds [voltage, current, temperature]:
       var alarmThresholds = [0.8,0.999,0.999];
@@ -207,9 +211,6 @@
       //rows & columns:
       var rows = 12;
       var columns = 20;
-
-      //number of cards in the crate:
-      var nCards = 8;
 
       //tooltip info prefixes & postfixes:
       var prefix = ['Demand Voltage: ', 'Reported Voltage: ', 'Reported Current: ', 'Voltage Ramp Up Speed: ', 'Voltage Ramp Down Speed', 'Temperature: ', 'Status: '];
@@ -232,6 +233,10 @@
       var rampUnit = 'V/s';
       //current unit:
       var currentUnit = 'A';
+
+      //channel titles for barchart view:
+      var smallCard = [0,1,2,3,4,5,6,7,8,9,10,11];
+      var bigCard = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47];
 
 
       //---------------End Experiment-specific parameters--------------------------------------------------
@@ -269,7 +274,11 @@
 
       var waffle = new Waffle(rows,columns, 'TestWaffle', alarmThresholds, scaleMaxima, ['leftSidebar', 'rightSidebar'], "waffleplate", rowTitles, "InputLayer", ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleSizes, moduleLabels, sliderVoltage, sliderRamp, sliderRampDown);
 
-      var barTest = new BarGraph('barDummy', 12, 'Module 0', 'Reported Voltage [V]', ['000', '111', '222', '333', '444', '555', '666', '777', '888', '999', 'AAA', 'BBB'], minVoltage, maxVoltage, waffle);
+      var barCharts = [];
+      barCharts[0] = new BarGraph('bar0', 12, 'Module 0', 'Reported Voltage [V]', smallCard, minVoltage, maxVoltage, waffle);
+      barCharts[1] = new BarGraph('bar1', 48, 'Module 1', 'Reported Voltage [V]', bigCard, minVoltage, maxVoltage, waffle);
+      barCharts[2] = new BarGraph('bar2', 48, 'Module 2', 'Reported Voltage [V]', bigCard, minVoltage, maxVoltage, waffle);
+      barCharts[3] = new BarGraph('bar3', 12, 'Module 3', 'Reported Voltage [V]', smallCard, minVoltage, maxVoltage, waffle);
 
       var tooltip = new Tooltip(waffle, 'TestWaffle', 'TipText', 'TT', 'TTcontainer', 'waffleplate', prefix, postfix);
       
@@ -311,7 +320,7 @@
       window.refreshInput = 1;
 
       //start looping:
-      masterLoop(rows+1, columns, nCards, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmThresholds, scaleMaxima, waffle, barTest, tooltip, 0);
+      masterLoop(rows+1, columns, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmThresholds, scaleMaxima, waffle, barCharts, tooltip, 0);
 
   </script> 
   
