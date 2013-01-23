@@ -200,7 +200,7 @@ function Slider(titleID, inputBoxID, sliderContainerID, sliderBackgroundID, slid
         
     }
 
-    //move the slider discontinuously to a new <position>:
+    //move the slider discontinuously to a new <position>, expressed as a fraction of the way between scale min and scale max:
     this.jump = function(position){
         this.sliderTo = position*this.length;
         $(this.sliderKnob).css('left', this.sliderTo+this.leftKnob);   
@@ -233,8 +233,8 @@ function Slider(titleID, inputBoxID, sliderContainerID, sliderBackgroundID, slid
         if(newValue < this.min) newValue = this.min;
 
         //set up member variables for animation:
-        this.oldValue = this.newValue;
-        this.newValue = newValue;
+        this.oldValue = parseFloat(this.newValue);
+        this.newValue = parseFloat(newValue);
 
         //animate:
         animate(this, 0);
@@ -242,12 +242,10 @@ function Slider(titleID, inputBoxID, sliderContainerID, sliderBackgroundID, slid
 
     //draw function used by animate():
     this.draw = function(frame){
-        //this frame is this far between the start and end values...
-        var position = (this.newValue - this.oldValue)*frame/this.nFrames + this.oldValue;
-        //...which corresponds to this far along the slider:
-        var sliderPosition = (position-this.min)/(this.max-this.min);
+        //this frame is this fraction of the way between scale min and scale max:
+        var position = ((this.newValue - this.oldValue)*frame/this.nFrames + this.oldValue - this.min)/(this.max-this.min);
 
-        this.jump(sliderPosition);
+        this.jump(position);
 
     };
 

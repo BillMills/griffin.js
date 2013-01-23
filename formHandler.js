@@ -2,9 +2,10 @@
 //begins with a pair of radio buttons for channel on off, then has an arbitrary 
 //no. of text fields for inputting whatever else.
 
-function updateParameter(InputLayer){
+function updateParameter(){
 
 	var i;
+    
 	var userInputs = [];
 
     //loop over all elements in the form except the first two (off/on) and last one (submit)
@@ -13,14 +14,18 @@ function updateParameter(InputLayer){
 	}
 
     //determine where this cell falls in MIDAS vector:
-    var MIDASindex = getMIDASindex(window.griffinDialogY, window.griffinDialogX);
+    var ODBindex = getMIDASindex(window.griffinDialogY, window.griffinDialogX);
 
     //some dummy behavior, replace the rest of this function with more exciting things
     var onoff;
     if(document.getElementById('onButton').checked == true) onoff = 'on'
     else onoff = 'off'
 
-    alert(onoff+' '+userInputs[0]);    
+    alert(onoff+' '+userInputs[0]);
+
+    //once the ODB has been updated, kick the loop to update immediately:
+    clearTimeout(window.loop);
+    startLoop();
 
 }
 
@@ -78,8 +83,13 @@ function channelSelect(waffle){
 
     var inputTitle
 
+    //determine horizontal binning
+    var xIndex;
+    if(waffle.chy == 0) xIndex = primaryBin(waffle.moduleSizes, waffle.chx);
+    else xIndex = waffle.chx;
+
     //Throw up to global so the setter remembers where we're pointing.  TODO: refactor without globals?
-    window.griffinDialogX = waffle.chx;
+    window.griffinDialogX = xIndex;//waffle.chx;
     window.griffinDialogY = waffle.chy;
 	
     var superDiv = document.getElementById(waffle.wrapperDiv);
@@ -89,10 +99,6 @@ function channelSelect(waffle){
     if(waffle.chy != 0) inputTitle = 'Parameters for <br>'+waffle.moduleLabels[primaryBin(waffle.moduleSizes, waffle.chx)]+', '+waffle.rowTitles[0]+' '+channelMap(waffle.chx, waffle.chy, waffle.moduleSizes, waffle.rows);
     else inputTitle = 'Parameters for <br>'+waffle.moduleLabels[primaryBin(waffle.moduleSizes, waffle.chx)]+' Primary';
     document.getElementById('inputTitle').innerHTML = inputTitle;
-
-    var xIndex;
-    if(waffle.chy == 0) xIndex = primaryBin(waffle.moduleSizes, waffle.chx);
-    else xIndex = waffle.chx;
 
     if(window.refreshInput){
         //set defaults

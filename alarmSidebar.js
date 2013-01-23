@@ -85,8 +85,18 @@ function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, 
 
         var allClear = curry(drawAllClear, 70,75,50,alarmTitles[n]);
         var alarmTrip = curry(drawAlarm, 70,90,100,alarmTitles[n]);
+        var blank = curry(drawBlank,0,0,0,alarmTitles[n]);
 
-        if(oldAlarm != isAlarm || !callMyself){
+        if(!callMyself){
+            if(isAlarm == 1){
+                fadeSwapCanvas(alarmPanelCanvIDs[n], blank, alarmTrip, 0);
+            }
+            else{
+                fadeSwapCanvas(alarmPanelCanvIDs[n], blank, allClear, 0);
+            }            
+        }
+
+        if(oldAlarm != isAlarm){
 
             if(isAlarm == 1){
                 fadeSwapCanvas(alarmPanelCanvIDs[n], allClear, alarmTrip, 0);
@@ -250,6 +260,19 @@ function drawAlarm(x0, y0, L, title, canvasID, alphaB){
 
             context.fillStyle = 'rgba(0,0,0,1)';
             //context.font=(L*0.24)+'px Raleway';
+            context.font=($('#'+canvasID).width()*0.07)+'px Raleway';
+            context.fillText(title, 0.9*canvas.width - context.measureText(title).width+1, canvas.height*0.5+1);
+
+            context.fillStyle = 'rgba(255,255,255,1)';
+            context.fillText(title, 0.9*canvas.width - context.measureText(title).width, canvas.height*0.5);
+}
+
+function drawBlank(x0, y0, L, title, canvasID, alphaB){
+            var canvas = document.getElementById(canvasID);
+            var context = canvas.getContext('2d');
+
+            context.font=(L*0.6)+"px TImes New Roman";    
+            context.fillStyle = 'rgba(0,0,0,1)';
             context.font=($('#'+canvasID).width()*0.07)+'px Raleway';
             context.fillText(title, 0.9*canvas.width - context.measureText(title).width+1, canvas.height*0.5+1);
 

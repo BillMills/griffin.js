@@ -1,4 +1,4 @@
-function BarGraph(cvas, nBars, title, yAxisTitle, barTitles, scaleMin, scaleMax, masterWaffle){
+function BarGraph(cvas, nBars, title, yAxisTitle, barTitles, scaleMin, scaleMax, barChartPrecision, masterWaffle){
 
 	//bar chart levels:
 	this.oldLevels = [];
@@ -14,6 +14,9 @@ function BarGraph(cvas, nBars, title, yAxisTitle, barTitles, scaleMin, scaleMax,
 
 	//number of y-axis scale ticks:
 	this.yAxisTicks = 6;
+
+	//precision:
+	this.precision = barChartPrecision;
 
 	//waffle canvas ID of which these meters are a subset:
 	this.masterWaffle = masterWaffle;
@@ -136,7 +139,7 @@ function BarGraph(cvas, nBars, title, yAxisTitle, barTitles, scaleMin, scaleMax,
 		var i = 0;
 
 		//set label font:
-		this.context.font=0.25*this.barWidth+"px 'Raleway'";
+		this.context.font=Math.min(16, 0.8*this.barWidth)+"px 'Raleway'";    //0.25*this.barWidth+"px 'Raleway'";
 
 		//set text color:
 		this.context.fillStyle = 'rgba(0,0,0,1)';
@@ -151,8 +154,8 @@ function BarGraph(cvas, nBars, title, yAxisTitle, barTitles, scaleMin, scaleMax,
 		//draw x-axis labels:
 		for(i=0; i<this.nBars; i++){
 			this.context.save();
-			this.context.translate(this.width*0.1+(i+0.5)*1.05*this.barWidth,this.height - 0.9*this.bottomMargin);
-			this.context.rotate(-Math.PI/2.4);
+			this.context.translate(this.width*0.1+(i+0.6)*1.05*this.barWidth,this.height - 0.9*this.bottomMargin);
+			this.context.rotate(-Math.PI/2);  // -pi/2.4
 			this.context.textAlign = 'right';
 			this.context.fillText(this.channelNames[i], 0, 0);
 			this.context.restore();
@@ -165,12 +168,12 @@ function BarGraph(cvas, nBars, title, yAxisTitle, barTitles, scaleMin, scaleMax,
 			this.context.moveTo(this.width*0.1, this.height - this.bottomMargin - i*(this.height - this.topMargin - this.bottomMargin)/(this.yAxisTicks-1) );
 			this.context.lineTo(this.width*0.1 - 10, this.height - this.bottomMargin - i*(this.height - this.topMargin - this.bottomMargin)/(this.yAxisTicks-1) );
 			this.context.stroke();
-			yLabel = ((this.scaleMax-this.scaleMin)/(this.yAxisTicks-1)*i).toFixed(1);
+			yLabel = ((this.scaleMax-this.scaleMin)/(this.yAxisTicks-1)*i).toFixed(this.precision);
 			this.context.fillText( yLabel,  this.width*0.1 - this.context.measureText(yLabel).width - 10, this.height - this.bottomMargin - i*(this.height - this.topMargin - this.bottomMargin)/(this.yAxisTicks-1) + 5);
 		}
 
 		//draw y-axis title:
-		this.context.font=0.4*this.barWidth+"px 'Raleway'";
+		this.context.font=Math.max(0.4*this.barWidth,26)+"px 'Raleway'";
 		this.context.save();
 		this.context.translate(this.width*0.05, this.topMargin + this.context.measureText(this.yAxisTitle).width);
 		this.context.rotate(-Math.PI/2);
@@ -178,7 +181,7 @@ function BarGraph(cvas, nBars, title, yAxisTitle, barTitles, scaleMin, scaleMax,
 		this.context.restore();
 
 		//draw chart title:
-		this.context.font=0.7*this.barWidth+"px 'Raleway'";
+		this.context.font=Math.max(0.7*this.barWidth,42)+"px 'Raleway'";
 		this.context.fillText(this.title, this.width*0.9 - this.context.measureText(this.title).width, this.height - 0.35*this.bottomMargin);
 
 	};

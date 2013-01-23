@@ -106,8 +106,12 @@
           <p id='currentReport' style='margin-left:10%;'>Current: </p>
 
           <!--voltage fill meter-->
-          <p style='margin-left:10%; margin-bottom:0px;'>Reported Voltage [V]</p>
-          <br><canvas id='voltageMeter' style='margin-left:10%;'></canvas>
+          <p style='margin-left:10%; margin-bottom:0px; display:inline; position:relative; top:-18px;'>Reported Voltage [V]</p>
+          <canvas id='voltageMeter' style='margin-left:2%;'></canvas>
+
+          <!--current fill meter-->
+          <!--p style='margin-left:10%; margin-bottom:0px; display:inline; position:relative; top:-18px;'>Reported Current [mA]</p>
+          <canvas id='currentMeter' style='margin-left:2%;'></canvas-->
 
           <!--Demand voltage input field-->
           <p id='FieldText' style='margin-left:10%'>Demand Voltage [V]</p>
@@ -149,7 +153,7 @@
           </div>
 
           <!--Submit updates to channel settings-->
-          <br><input type="button" value="Submit" style='margin-left:10%' onclick="javascript:updateParameter('InputLayer', 'single')">
+          <br><input type="button" value="Submit" style='margin-left:10%' onclick="javascript:updateParameter()">
         </form>
 
         <canvas id='inputSpacer' height=5px width=200px style='margin-left:10%'></canvas>
@@ -195,7 +199,7 @@
  
       var ODBkeys = ['/Location/Of/Device/Varibles', '/Location/Of/Device/Settings', 'Demand Voltage Key', 'Measured Voltage Key', 'Measured Current Key', 'Voltage Ramp Up Key', 'Voltage Ramp Down Key', 'Temperature Key', 'ChState Key', 'ChStatus Key', 'Voltage Limit Key'];
 
-      //cell labels; first entry decribes cell type (channel, card, crate, rack etc)
+      //cell labels; first entry decribes cell type
       var rowTitles = ['Ch.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
 
       //module edges and names:
@@ -220,12 +224,18 @@
       var minVoltage = 0;
       var maxVoltage = 1;
 
+      //current meter range:
+      var minCurrent = 0;
+      var maxCurrent = 1;
+
       //voltage ramp speed range:
       var minRampSpeed = 0;
       var maxRampSpeed = 1;
 
       //number of decimal places to keep on the sliders:
       var sliderPrecision = 3;
+      //number of decimal places to keep on the bar chart y-axis:
+      var barChartPrecision = 1;
 
       //voltage unit:
       var voltUnit = 'V';
@@ -270,15 +280,16 @@
       var sliderRamp = new Slider('rampSliderText', 'demandRampSpeed', 'rampSlider', 'rampSliderBKG', 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', minRampSpeed, maxRampSpeed, sliderPrecision, rampUnit,  sliderWidth);
       var sliderRampDown = new Slider('rampDownSliderText', 'demandRampDownSpeed', 'rampDownSlider', 'rampDownSliderBKG', 'rampDownSliderKnob', 'rampDownKnobStyle', 'rampDownSliderText', minRampSpeed, maxRampSpeed, sliderPrecision, rampUnit,  sliderWidth);
 
-      var meter = new FillMeter('voltageMeter', 1.5*sliderWidth, minVoltage,maxVoltage, voltUnit);
+      var meter = new FillMeter('voltageMeter', 0.7*sliderWidth, minVoltage, maxVoltage, voltUnit);
+      //var currentMeter = new FillMeter('currentMeter', 0.7*sliderWidth, minCurrent, maxCurrent, currentUnit);
 
       var waffle = new Waffle(rows,columns, 'TestWaffle', alarmThresholds, scaleMaxima, ['leftSidebar', 'rightSidebar'], "waffleplate", rowTitles, "InputLayer", ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleSizes, moduleLabels, sliderVoltage, sliderRamp, sliderRampDown);
 
       var barCharts = [];
-      barCharts[0] = new BarGraph('bar0', 12, 'Module 0', 'Reported Voltage [V]', smallCard, minVoltage, maxVoltage, waffle);
-      barCharts[1] = new BarGraph('bar1', 48, 'Module 1', 'Reported Voltage [V]', bigCard, minVoltage, maxVoltage, waffle);
-      barCharts[2] = new BarGraph('bar2', 48, 'Module 2', 'Reported Voltage [V]', bigCard, minVoltage, maxVoltage, waffle);
-      barCharts[3] = new BarGraph('bar3', 12, 'Module 3', 'Reported Voltage [V]', smallCard, minVoltage, maxVoltage, waffle);
+      barCharts[0] = new BarGraph('bar0', 12, 'Module 0', 'Reported Voltage [V]', smallCard, minVoltage, maxVoltage, barChartPrecision, waffle);
+      barCharts[1] = new BarGraph('bar1', 48, 'Module 1', 'Reported Voltage [V]', bigCard, minVoltage, maxVoltage, barChartPrecision, waffle);
+      barCharts[2] = new BarGraph('bar2', 48, 'Module 2', 'Reported Voltage [V]', bigCard, minVoltage, maxVoltage, barChartPrecision, waffle);
+      barCharts[3] = new BarGraph('bar3', 12, 'Module 3', 'Reported Voltage [V]', smallCard, minVoltage, maxVoltage, barChartPrecision, waffle);
 
       var tooltip = new Tooltip(waffle, 'TestWaffle', 'TipText', 'TT', 'TTcontainer', 'waffleplate', prefix, postfix);
       
@@ -318,9 +329,13 @@
       window.lastTrip = 'Main1';
       //should the input sidebar be refreshed?
       window.refreshInput = 1;
+      //something to hold the settimeout loop so it can be stopped from anywhere:
+      window.loop;
 
-      //start looping:
-      masterLoop(rows+1, columns, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmThresholds, scaleMaxima, waffle, barCharts, tooltip, 0);
+      function startLoop(){
+        masterLoop(rows+1, columns, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmThresholds, scaleMaxima, waffle, barCharts, tooltip, 0);
+      }
+      startLoop();
 
   </script> 
   
