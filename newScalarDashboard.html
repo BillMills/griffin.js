@@ -100,18 +100,20 @@
           <input type='radio' id='offButton' name='HVswitch' value='off' style='margin-left:10%; margin-bottom:10px'>Off
           <input type='radio' id='onButton' name='HVswitch' value='on' style='margin-left:10px; margin-bottom:10px'>On
 
-          <!--status, temperature & current:-->
+          <!--status:-->
           <p id='status' style='margin-left:10%;'>Status:</p>
-          <p id='temperatureReport' style='display:inline; margin-left:10%;'>Temperature: </p>
-          <p id='currentReport' style='margin-left:10%;'>Current: </p>
 
           <!--voltage fill meter-->
-          <p style='margin-left:10%; margin-bottom:0px; display:inline; position:relative; top:-18px;'>Reported Voltage [V]</p>
+          <p style='margin-left:10%; margin-bottom:0px; display:inline; position:relative; top:-18px;'>Voltage [V]</p>
           <canvas id='voltageMeter' style='margin-left:2%;'></canvas>
 
           <!--current fill meter-->
-          <!--p style='margin-left:10%; margin-bottom:0px; display:inline; position:relative; top:-18px;'>Reported Current [mA]</p>
-          <canvas id='currentMeter' style='margin-left:2%;'></canvas-->
+          <p style='margin-left:10%; margin-bottom:0px; display:inline; position:relative; top:-18px;'>Current [mA]</p>
+          <canvas id='currentMeter' style='margin-left:2%;'></canvas>
+
+          <!--temperature fill meter-->
+          <p style='margin-left:10%; margin-bottom:0px; display:inline; position:relative; top:-18px;'>Temperature [C]</p>
+          <canvas id='temperatureMeter' style='margin-left:2%;'></canvas>
 
           <!--Demand voltage input field-->
           <p id='FieldText' style='margin-left:10%'>Demand Voltage [V]</p>
@@ -243,6 +245,8 @@
       var rampUnit = 'V/s';
       //current unit:
       var currentUnit = 'A';
+      //temperature unit:
+      var temperatureUnit = 'C';
 
       //channel titles for barchart view:
       var smallCard = [0,1,2,3,4,5,6,7,8,9,10,11];
@@ -281,15 +285,16 @@
       var sliderRampDown = new Slider('rampDownSliderText', 'demandRampDownSpeed', 'rampDownSlider', 'rampDownSliderBKG', 'rampDownSliderKnob', 'rampDownKnobStyle', 'rampDownSliderText', minRampSpeed, maxRampSpeed, sliderPrecision, rampUnit,  sliderWidth);
 
       var meter = new FillMeter('voltageMeter', 0.7*sliderWidth, minVoltage, maxVoltage, voltUnit);
-      //var currentMeter = new FillMeter('currentMeter', 0.7*sliderWidth, minCurrent, maxCurrent, currentUnit);
+      var currentMeter = new FillMeter('currentMeter', 0.6*sliderWidth, minCurrent, maxCurrent, currentUnit);
+      var temperatureMeter = new FillMeter('temperatureMeter', 0.6*sliderWidth, minCurrent, maxCurrent, temperatureUnit);
 
       var waffle = new Waffle(rows,columns, 'TestWaffle', alarmThresholds, scaleMaxima, ['leftSidebar', 'rightSidebar'], "waffleplate", rowTitles, "InputLayer", ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleSizes, moduleLabels, sliderVoltage, sliderRamp, sliderRampDown);
 
       var barCharts = [];
-      barCharts[0] = new BarGraph('bar0', 12, 'Module 0', 'Reported Voltage [V]', smallCard, minVoltage, maxVoltage, barChartPrecision, waffle);
-      barCharts[1] = new BarGraph('bar1', 48, 'Module 1', 'Reported Voltage [V]', bigCard, minVoltage, maxVoltage, barChartPrecision, waffle);
-      barCharts[2] = new BarGraph('bar2', 48, 'Module 2', 'Reported Voltage [V]', bigCard, minVoltage, maxVoltage, barChartPrecision, waffle);
-      barCharts[3] = new BarGraph('bar3', 12, 'Module 3', 'Reported Voltage [V]', smallCard, minVoltage, maxVoltage, barChartPrecision, waffle);
+      barCharts[0] = new BarGraph('bar0', 0, 12, 'Module 0', 'Reported Voltage [V]', smallCard, minVoltage, maxVoltage, barChartPrecision, waffle);
+      barCharts[1] = new BarGraph('bar1', 1,  48, 'Module 1', 'Reported Voltage [V]', bigCard, minVoltage, maxVoltage, barChartPrecision, waffle);
+      barCharts[2] = new BarGraph('bar2', 2,  48, 'Module 2', 'Reported Voltage [V]', bigCard, minVoltage, maxVoltage, barChartPrecision, waffle);
+      barCharts[3] = new BarGraph('bar3', 3,  12, 'Module 3', 'Reported Voltage [V]', smallCard, minVoltage, maxVoltage, barChartPrecision, waffle);
 
       var tooltip = new Tooltip(waffle, 'TestWaffle', 'TipText', 'TT', 'TTcontainer', 'waffleplate', prefix, postfix);
       

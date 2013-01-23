@@ -129,21 +129,22 @@ function channelSelect(waffle){
     //these objects get updated every masterLoop:
     //report status word:
     document.getElementById('status').innerHTML = 'Status: '+parseStatusWord(waffle.rampStatus[waffle.chy][xIndex]);
-    //report temperature:
-    document.getElementById('temperatureReport').innerHTML = 'Temperature: '+Math.round(waffle.reportTemperature[waffle.chy][xIndex]*100)/100+' C';
     //report current & update voltage slider and meter maximum:
     if(waffle.chy == 0 || waffle.moduleSizes[primaryBin(waffle.moduleSizes, waffle.chx)]==1){
-        document.getElementById('currentReport').innerHTML = 'Current: '+Math.round(waffle.reportCurrent[waffle.chy][xIndex]*100)/100+' mA';
         waffle.voltageSlider.max = waffle.voltLimit[waffle.chy][xIndex];
         meter.max = waffle.voltLimit[waffle.chy][xIndex];
+        currentMeter.max = 1; //TODO: replace dummy
+        currentMeter.update(Math.round(waffle.reportCurrent[waffle.chy][xIndex]*10000)/10000)
     }
     else{
-        document.getElementById('currentReport').innerHTML = 'Current: --';
         waffle.voltageSlider.max = waffle.voltLimit[0][primaryBin(waffle.moduleSizes, waffle.chx)];
         meter.max = waffle.voltLimit[0][primaryBin(waffle.moduleSizes, waffle.chx)];
+        currentMeter.max = 1;
+        currentMeter.update(0); //TODO: implement null state for use here, instead of 0.
     }
     //update meter position after maximum has been adjusted:
     meter.update(Math.round(waffle.reportVoltage[waffle.chy][xIndex]*10000)/10000);
+    temperatureMeter.update(Math.round(waffle.reportTemperature[waffle.chy][xIndex]*100)/100);
 }
 
 //point interface at new channel indicated by user in the 'changeChannel' form.

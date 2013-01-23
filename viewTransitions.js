@@ -11,6 +11,7 @@ function fadeOut(cvas, frame){
     var newOpacity = (nFrames - frame) / nFrames;
     if(newOpacity == 0) newOpacity = 0.00000001;
     $(canvas).css('opacity', newOpacity);
+    $(canvas).css('z-index', 0);
 
     if(frame<nFrames+1){
 	    setTimeout(function(){fadeOut(cvas, frame+1)}, 1000/FPS);
@@ -30,6 +31,7 @@ function fadeIn(cvas, frame){
     var newOpacity = frame / nFrames;
     if(newOpacity == 0) newOpacity = 0.00000001;
     $(canvas).css('opacity', newOpacity);
+    $(canvas).css('z-index', 1);
 
     if(frame<nFrames+1){
 	    setTimeout(function(){fadeIn(cvas, frame+1)}, 1000/FPS);

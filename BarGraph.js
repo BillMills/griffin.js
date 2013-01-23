@@ -1,4 +1,4 @@
-function BarGraph(cvas, nBars, title, yAxisTitle, barTitles, scaleMin, scaleMax, barChartPrecision, masterWaffle){
+function BarGraph(cvas, moduleNumber, nBars, title, yAxisTitle, barTitles, scaleMin, scaleMax, barChartPrecision, masterWaffle){
 
 	//bar chart levels:
 	this.oldLevels = [];
@@ -7,6 +7,9 @@ function BarGraph(cvas, nBars, title, yAxisTitle, barTitles, scaleMin, scaleMax,
 	//alarms:
 	this.oldAlarms = [];
 	this.alarms = [];
+
+	//module index:
+	this.modIndex = moduleNumber;
 
 	//scale:
 	this.scaleMin = scaleMin;
@@ -32,6 +35,7 @@ function BarGraph(cvas, nBars, title, yAxisTitle, barTitles, scaleMin, scaleMax,
 	this.color = [0,0,0,1];
 
     //fetch canvas:
+    this.cvas = cvas;
     this.canvas = document.getElementById(cvas);
     this.context = this.canvas.getContext('2d');
 
@@ -70,6 +74,29 @@ function BarGraph(cvas, nBars, title, yAxisTitle, barTitles, scaleMin, scaleMax,
     	this.alarms[i] = [0,0,0];
     	this.channelNames[i] = barTitles[i];
     }
+
+    //make barchart clickable to set a variable for a channel:
+    var that = this;
+    this.canvas.onclick = function(event){clickBarChart(event, that)};
+
+	//define the onclick behavior of the bar chart:
+	function clickBarChart(event, obj){
+
+        window.refreshInput = 1;
+
+		var superDiv = document.getElementById(obj.masterWaffle.wrapperDiv);
+
+        var module = obj.modIndex;
+        var channel = Math.floor((event.pageX - superDiv.offsetLeft -  obj.canvas.offsetLeft - obj.width*0.1)/(1.05*obj.barWidth));
+        var gridCoords = getPointer(module, channel, obj.masterWaffle);
+
+        if(gridCoords[1]<obj.masterWaffle.cols && gridCoords[0]>0 && gridCoords[0]<obj.masterWaffle.rows && channel<obj.nBars && window.onDisplay == obj.cvas){
+            obj.masterWaffle.chx = gridCoords[1];
+            obj.masterWaffle.chy = gridCoords[0];
+            channelSelect(obj.masterWaffle);
+        }
+
+	}
 
 	//draw a frame of a bar chart transition from previous levels to new levels:
 	this.draw = function(frame){
