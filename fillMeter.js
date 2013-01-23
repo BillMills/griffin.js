@@ -14,7 +14,7 @@ function FillMeter(cvas, width, min, max, unit){
     this.context = this.canvas.getContext('2d');
 
     //set canvas dimensions
-    this.canvas.width = width;
+    this.canvas.width = width*1.2;
     this.canvas.height = 45;//0.15*width;
 
     //center of left end semicircle:
@@ -98,6 +98,11 @@ function FillMeter(cvas, width, min, max, unit){
             this.xPos = this.rightX0 - this.context.measureText(fillString).width;
         }
         this.context.fillText(fillString, this.xPos, this.leftY0-1.7*this.radius);
+
+        //quote meter max to right of meter:
+        this.context.font = '12px Raleway';
+        this.context.clearRect(this.rightX0+this.radius, 0, this.width, 45);
+        this.context.fillText('Max: '+this.max.toFixed(0)+' '+this.unit, this.rightX0 + 1.5*this.radius, this.rightY0 + 5)
     };
 
     //wrapper for transition from old state to new state via this.animate:
