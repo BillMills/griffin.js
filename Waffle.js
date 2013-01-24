@@ -450,8 +450,29 @@ function clickWaffle(event, obj){
 
 //map the active grid cooridnates onto MIDAS's channel numbering:
 function getMIDASindex(row, col){
-    //do something
-    return 0;
+    
+    var MIDASindex = 0;
+    var moduleNumber, i;
+
+    if(row != 0){
+        //count up regular channels
+        MIDASindex += (waffle.rows-1)*col + row-1;
+        //add on primary channels
+        moduleNumber = primaryBin(waffle.moduleSizes, col);
+        for(i=0; i<moduleNumber+1; i++){
+            if(waffle.moduleSizes[i] == 4) MIDASindex++;
+        }
+    } else{
+        moduleNumber = col;
+        //add up all the channels from previous cards:
+        for(i=0; i<moduleNumber; i++){
+            if(waffle.moduleSizes[i] == 1) MIDASindex += 12;
+            if(waffle.moduleSizes[i] == 4) MIDASindex += 49;
+        }
+        MIDASindex++;
+    }
+
+    return MIDASindex;
 }
 
 //given a module number and channel number, return the [row, col] that the corresponding data will be found in in the various waffle.<dataArrays>
