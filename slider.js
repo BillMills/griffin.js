@@ -26,6 +26,8 @@ function Slider(titleID, inputBoxID, sliderContainerID, sliderBackgroundID, slid
     this.oldValue = 0;
     //current value:
     this.newValue = 0;
+    //value of field on click:
+    this.valueOnFocus = 0;
 
     //animation parameters:
     this.duration = 0.4; //seconds
@@ -166,15 +168,19 @@ function Slider(titleID, inputBoxID, sliderContainerID, sliderBackgroundID, slid
             $(that.sliderKnob).css('left', that.sliderTo);
 
             that.inputBox.value = (that.scale*(that.max-that.min)+that.min).toFixed(that.dec);
+
+            highlight('submitParameters');
         }
     }
 
     this.sliderKnob.onkeydown = function(event){
         if(event.keyCode == 39) {
             that.step(Math.pow(10, -1*that.dec));
+            highlight('submitParameters');
         }
         else if(event.keyCode == 37) {
             that.step(-1*Math.pow(10, -1*that.dec));
+            highlight('submitParameters');
         }
     }
 
@@ -191,8 +197,8 @@ function Slider(titleID, inputBoxID, sliderContainerID, sliderBackgroundID, slid
         
         //keep the animation parameters updated:
         that.oldValue = that.newValue;
-        that.newValue = newSliderVal;  
-        
+        that.newValue = newSliderVal;
+  
         //find the fraction of the way along the rail the knob should jump to:
         var sliderPosition = (newSliderVal-that.min)/(that.max-that.min);
         

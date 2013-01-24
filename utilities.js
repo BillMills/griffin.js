@@ -24,3 +24,25 @@ function animate(thing, frame){
         setTimeout(function(){animate(thing, frame)},thing.duration/thing.FPS*1000);
     }
 }
+
+//styling functions to highlight / unhighlight submit button
+function unhighlight(buttonID){
+    clearTimeout(window.commitBlink);
+    $('#'+buttonID).css('background-color', '#FFFFFF');
+}
+
+function highlight(buttonID){
+
+    //$('#'+buttonID).css('background-color', '#FFFF00');
+
+    function blinkHighlight(color){
+        $('#'+buttonID).css('background-color', color);
+
+        if(color == '#FFFFFF') window.commitBlink = setTimeout(function(){blinkHighlight('#FFFF00')},1000);
+        if(color == '#FFFF00') window.commitBlink = setTimeout(function(){blinkHighlight('#FFFFFF')},1000);
+    }
+
+    blinkHighlight('#FFFF00')
+
+
+}

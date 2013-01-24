@@ -8,9 +8,12 @@ function updateParameter(){
     
 	var userInputs = [];
 
-    //loop over all elements in the form except the first two (off/on) and last one (submit)
-	for(i=2; i<document.getElementById('setValues').elements.length - 1; i++){
-		userInputs[i-2] = getInput('setValues', i);
+    //clear commit button highlighting:
+    unhighlight('submitParameters');
+
+    //loop over all elements in the form except the first three (off/on/submit)
+	for(i=3; i<document.getElementById('setValues').elements.length; i++){
+		userInputs[i-3] = getInput('setValues', i);
 	}
 
     //determine where this cell falls in MIDAS vector:

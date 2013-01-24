@@ -123,38 +123,23 @@ div#tempAlarm
 	overflow: hidden;
 	top:340px;
 }
-/*
-div#voltAlarm:hover
-{
-height:600px;
-background: rgba(0,0,0,1);
-z-index: 10000;
-}
 
-div#currentAlarm:hover
-{
-height:600px;
-top: 0px;
-background: rgba(0,0,0,1);
-z-index: 10000;
-}
-
-div#tempAlarm:hover
-{
-height:600px;
-top:0px;
-background: rgba(0,0,0,1);
-z-index: 10000;
-}
-*/
-/*
-button.cardNav{
-	
+input#submitParameters{
+	width: 40%; 
+	height: 30px;  
+	margin-left: 5%; 
+	background-color: #FFFFFF;
+	background-image: -webkit-linear-gradient(transparent, #C1C1C1);
+    background-image: -moz-linear-gradient(transparent, #C1C1C1); 
+	-webkit-border-radius: 5; 
+	-moz-border-radius: 5; 
+	border-radius: 5; 
+	font-size:20px; 
 	padding:0px;
-	margin:0px;
-	border:0px;
+	border-color: #000000;
+	-webkit-transition: background-color 1s;
+    -moz-transition: background-color 1s;
 }
-*/
 
 button.MFlink{
 	background: -webkit-gradient(linear, left top, left bottom, from(#DDDDDD), to(#FFFFFF)); 
