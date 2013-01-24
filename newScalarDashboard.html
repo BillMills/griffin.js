@@ -3,6 +3,8 @@
 
     <link href='http://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Actor' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Libre+Baskerville' rel='stylesheet' type='text/css'>
 
     <script src="zepto.min.js" type="text/javascript"></script>
     <script src="utilities.js" type="text/javascript"></script>
@@ -22,7 +24,7 @@
   </head> 
 
 
-  <body style="font-family: 'Raleway', sans-serif;"> 
+  <body style="font-family: 'Raleway', sans-serif; font-size:14px"> 
 
     <!--Branding///////////////////////////////////////////////////////////-->
     <canvas id="banner"></canvas>
@@ -64,8 +66,8 @@
 
       <!---Waffle/////////////////////////////////////////////////////////-->
       <div id="mainframeLinks">
-        <!--h1  style='display: inline; opacity: 0.3; font-family: "Orbitron", sans-serif; font-size: 275%; vertical-align:-20px;'>GRIFFIN HV Mainframe 1</h1-->
         <h1  style='display: inline; opacity: 0.3; font-family: "Orbitron", sans-serif; font-size: 275%; vertical-align:-20px;'>GRIFFIN HV Mainframe 1</h1>
+        <!--h1  style='display: inline; opacity: 0.3; font-family: "Libre Baskerville", sans-serif; font-size: 275%; vertical-align:-20px;'>GRIFFIN HV Mainframe 1</h1-->
         <br><button id='Main1' class='MFlink' type="button" style='background:-webkit-gradient(linear, left top, left bottom, from(#999999), to(#DDDDDD))' onclick="javascript:swapFade('TestWaffle', 'Main1')">Mainframe 1</button>
         <button id='Main2' class='MFlink' type="button">Mainframe 2</button>
         <button id='Main3' class='MFlink' type="button">Mainframe 3</button>
@@ -107,16 +109,16 @@
           <p id='status' style='margin-left:10%;'>Status:</p>
 
           <!--voltage fill meter-->
-          <p style='margin-left:10%; margin-bottom:0px; display:inline; position:relative; top:-18px;'>Voltage [V]</p>
-          <canvas id='voltageMeter' style='margin-left:2%;'></canvas>
+          <p id='voltageMeterTitle' style='margin-left:10%; margin-bottom:0px; display:inline; position:relative; top:-18px;'>Voltage [V]</p>
+          <canvas id='voltageMeter' style='margin-left:2px;' align='right'></canvas>
 
           <!--current fill meter-->
-          <p style='margin-left:10%; margin-bottom:0px; display:inline; position:relative; top:-18px;'>Current [mA]</p>
-          <canvas id='currentMeter' style='margin-left:2%;'></canvas>
+          <p id='currentMeterTitle' style='margin-left:10%; margin-bottom:0px; display:inline; position:relative; top:-18px;'>Current [mA]</p>
+          <canvas id='currentMeter' style='margin-left:2%;' align='right'></canvas>
 
           <!--temperature fill meter-->
-          <p style='margin-left:10%; margin-bottom:0px; display:inline; position:relative; top:-18px;'>Temperature [C]</p>
-          <canvas id='temperatureMeter' style='margin-left:2%;'></canvas>
+          <p id='temperatureMeterTitle' style='margin-left:10%; margin-bottom:0px; display:inline; position:relative; top:-18px;'>Temperature [C]</p>
+          <canvas id='temperatureMeter' style='margin-left:2%;' align='right'></canvas>
 
           <!--Demand voltage input field-->
           <p id='FieldText' style='margin-left:10%'>Demand Voltage [V]</p>
@@ -200,7 +202,7 @@
       //--------------Experiment-specific Parameters Here--------------------------------------------------
       //---------------------------------------------------------------------------------------------------
  
-      var ODBkeys = ['/Location/Of/Device/Varibles', '/Location/Of/Device/Settings', 'Demand Voltage Key', 'Measured Voltage Key', 'Measured Current Key', 'Voltage Ramp Up Key', 'Voltage Ramp Down Key', 'Temperature Key', 'ChState Key', 'ChStatus Key', 'Voltage Limit Key'];
+      var ODBkeys = ['/Location/Of/Device/Varibles', '/Location/Of/Device/Settings', 'Demand Voltage Key', 'Measured Voltage Key', 'Measured Current Key', 'Voltage Ramp Up Key', 'Voltage Ramp Down Key', 'Temperature Key', 'ChState Key', 'ChStatus Key', 'Voltage Limit Key', 'Current Limit Key'];
 
       //cell labels; first entry decribes cell type
       var rowTitles = ['Ch.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
@@ -292,9 +294,9 @@
       var sliderRamp = new Slider('rampSliderText', 'demandRampSpeed', 'rampSlider', 'rampSliderBKG', 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', minRampSpeed, maxRampSpeed, sliderPrecision, rampUnit,  sliderWidth);
       var sliderRampDown = new Slider('rampDownSliderText', 'demandRampDownSpeed', 'rampDownSlider', 'rampDownSliderBKG', 'rampDownSliderKnob', 'rampDownKnobStyle', 'rampDownSliderText', minRampSpeed, maxRampSpeed, sliderPrecision, rampUnit,  sliderWidth);
 
-      var meter = new FillMeter('voltageMeter', 0.7*sliderWidth, minVoltage, maxVoltage, voltUnit);
-      var currentMeter = new FillMeter('currentMeter', 0.6*sliderWidth, minCurrent, maxCurrent, currentUnit);
-      var temperatureMeter = new FillMeter('temperatureMeter', 0.6*sliderWidth, minCurrent, maxCurrent, temperatureUnit);
+      var meter = new FillMeter('voltageMeter', 'InputLayer', 0, minVoltage, maxVoltage, voltUnit);
+      var currentMeter = new FillMeter('currentMeter', 'InputLayer', 0, minCurrent, maxCurrent, currentUnit);
+      var temperatureMeter = new FillMeter('temperatureMeter', 'InputLayer', 0, minCurrent, maxCurrent, temperatureUnit);
 
       var waffle = new Waffle(rows,columns, 'TestWaffle', alarmThresholds, scaleMaxima, ['leftSidebar', 'rightSidebar'], "waffleplate", rowTitles, "InputLayer", ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleSizes, moduleLabels, sliderVoltage, sliderRamp, sliderRampDown);
 
@@ -308,7 +310,7 @@
       
 
       //set up arrays:
-      var demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit;
+      var demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit;
       demandVoltage = [];
       reportVoltage = [];
       reportCurrent = [];
@@ -319,6 +321,7 @@
       alarmStatus = [];
       rampStatus = [];
       voltLimit = [];
+      currentLimit = [];
       for(i=0; i<rows+1; i++){
         demandVoltage[i] = [];
         reportVoltage[i] = [];
@@ -330,6 +333,7 @@
         alarmStatus[i] = [];
         rampStatus[i] = [];
         voltLimit[i] = [];
+        currentLimit[i] = [];
         for(j=0;j<columns;j++){
           alarmStatus[i][j] = [];
         }
@@ -349,7 +353,7 @@
 
       //wrap this in a function so it can be easily called to restart the loop somewhere else:
       function startLoop(){
-        masterLoop(rows+1, columns, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmThresholds, scaleMaxima, waffle, barCharts, tooltip, 0);
+        masterLoop(rows+1, columns, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmThresholds, scaleMaxima, waffle, barCharts, tooltip, 0);
       }
       startLoop(); 
 

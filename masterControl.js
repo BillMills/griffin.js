@@ -1,7 +1,7 @@
-function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmTripLevel, scaleMax, waffle, barCharts, tooltip, callMyself){
+function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax, waffle, barCharts, tooltip, callMyself){
 	if(!document.webkitHidden && !document.mozHidden){
-    	fetchNewData(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmTripLevel, scaleMax);
-    	waffle.update(demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, alarmStatus, channelMask, rampStatus, voltLimit, callMyself);
+    	fetchNewData(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax);
+    	waffle.update(demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, alarmStatus, channelMask, rampStatus, voltLimit, currentLimit, callMyself);
         for(var i=0; i<barCharts.length; i++){
             var barChartData = [];
             var barChartAlarms = [];
@@ -14,11 +14,11 @@ function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVolta
         }
         tooltip.update();
     }
-    window.loop = setTimeout(function(){masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmTripLevel, scaleMax, waffle, barCharts, tooltip, 1)}, 3000);
+    window.loop = setTimeout(function(){masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax, waffle, barCharts, tooltip, 1)}, 3000);
 }
 
 //populate rows by cols arrays with the appropriate information:
-function fetchNewData(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, alarmTripLevel, scaleMax){
+function fetchNewData(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, curLimit, alarmTripLevel, scaleMax){
 
     var testParameter, i, j, ODBindex, columns;
 /*
@@ -35,6 +35,7 @@ function fetchNewData(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVol
     var repoChState     = ODBExtractRecord(settingsRecord,  ODBkeys[8]);
     var repoChStatus    = ODBExtractRecord(variablesRecord, ODBkeys[9]);
     var voltageLimit    = ODBExtractRecord(settingsRecord,  ODBkeys[10]);
+    var currentLimit    = ODBExtractRecord(settingsRecord,  ODBkeys[11]);
 */          
     for(i=0; i<rows; i++){
         //primary row spans multi-columns, only has entries for 48 channel cards:        
@@ -54,6 +55,7 @@ function fetchNewData(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVol
                 channelMask[i][j]       = parseFloat(repoChState[ODBindex]);
                 rampStatus[i][j]        = parseFloat(repoChStatus[ODBindex]);
                 voltLimit[i][j]         = parseFloat(voltageLimit[ODBindex]);
+                curLimit[i][j]          = parseFloat(currentLimit[ODBindex]);
                 */
                 //fake data for offline demo
                 demandVoltage[i][j] = Math.random();
@@ -67,6 +69,7 @@ function fetchNewData(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVol
                 else channelMask[i][j] = 1;
                 rampStatus[i][j] = Math.floor(10*Math.random());
                 voltLimit[i][j] = 1+Math.random();
+                curLimit[i][j] = 1+Math.random();
             }
         }
     }

@@ -138,14 +138,14 @@ function channelSelect(waffle){
     if(waffle.chy == 0 || waffle.moduleSizes[primaryBin(waffle.moduleSizes, waffle.chx)]==1){
         waffle.voltageSlider.max = waffle.voltLimit[waffle.chy][xIndex];
         meter.max = waffle.voltLimit[waffle.chy][xIndex];
-        currentMeter.max = 1; //TODO: replace dummy
+        currentMeter.max = waffle.currentLimit[waffle.chy][xIndex];
         currentMeter.update(Math.round(waffle.reportCurrent[waffle.chy][xIndex]*10000)/10000)
     }
     else{
         waffle.voltageSlider.max = waffle.voltLimit[0][primaryBin(waffle.moduleSizes, waffle.chx)];
         meter.max = waffle.voltLimit[0][primaryBin(waffle.moduleSizes, waffle.chx)];
-        currentMeter.max = 1;
-        currentMeter.update(0); //TODO: implement null state for use here, instead of 0.
+        currentMeter.max = waffle.currentLimit[0][primaryBin(waffle.moduleSizes, waffle.chx)];
+        currentMeter.update('--');
     }
     //update meter position after maximum has been adjusted:
     meter.update(Math.round(waffle.reportVoltage[waffle.chy][xIndex]*10000)/10000);
