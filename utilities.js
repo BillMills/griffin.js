@@ -34,7 +34,7 @@ function unhighlight(buttonID){
 function highlight(buttonID){
 
     //$('#'+buttonID).css('background-color', '#FFFF00');
-
+    clearTimeout(window.commitBlink);
     function blinkHighlight(color){
         $('#'+buttonID).css('background-color', color);
 
