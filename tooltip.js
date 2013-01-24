@@ -56,10 +56,10 @@ function Tooltip(waffle, ttCanvasID, ttTextID, ttDivID, ttContainerDivID, ttPare
 
             //update the size of the tool tip to fit the text:
             $(that.ttDiv).width(newWidth);
-            $(that.ttDiv).height(220);
+            $(that.ttDiv).height(180);
 
             //make the tool tip follow the mouse:
-            that.ttDiv.style.top = y-220-5;
+            that.ttDiv.style.top = y-180-5;
             that.ttDiv.style.left = x-newWidth-5;
 
             //make the tool tip appear iff the waffle is showing:
@@ -86,7 +86,7 @@ function Tooltip(waffle, ttCanvasID, ttTextID, ttDivID, ttContainerDivID, ttPare
 
             //update the size of the tool tip to fit the text:
             $(this.ttDiv).width(newWidth);
-            $(this.ttDiv).height(220);
+            $(this.ttDiv).height(180);
         }
     };
 

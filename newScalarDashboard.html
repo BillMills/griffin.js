@@ -113,7 +113,7 @@
           <canvas id='voltageMeter' style='margin-left:2px;' align='right'></canvas>
 
           <!--current fill meter-->
-          <p id='currentMeterTitle' style='margin-left:10%; margin-bottom:0px; display:inline; position:relative; top:-18px;'>Current [mA]</p>
+          <p id='currentMeterTitle' style='margin-left:10%; margin-bottom:0px; display:inline; position:relative; top:-18px;'>Current [uA]</p>
           <canvas id='currentMeter' style='margin-left:2%;' align='right'></canvas>
 
           <!--temperature fill meter-->
@@ -217,10 +217,6 @@
       //scale maxima [voltage, current, temperature]:
       var scaleMaxima = [1,1,1];
 
-      //rows & columns:
-      var rows = 12;
-      var columns = 20;
-
       //tooltip info prefixes & postfixes:
       var prefix = ['Demand Voltage: ', 'Reported Voltage: ', 'Reported Current: ', 'Voltage Ramp Up Speed: ', 'Voltage Ramp Down Speed', 'Temperature: ', 'Status: '];
       var postfix = ['V', 'V', 'A', 'V/s', 'V/s', 'C', ''];
@@ -237,8 +233,8 @@
       var minRampSpeed = 0;
       var maxRampSpeed = 1;
 
-      //number of decimal places to keep on the sliders:
-      var sliderPrecision = 3;
+      //number of decimal places to keep on the sliders and status pane:
+      var statusPrecision = 3;
       //number of decimal places to keep on the bar chart y-axis:
       var barChartPrecision = 1;
 
@@ -263,6 +259,11 @@
       //---------------------------------------------------------------------------------------------------
 
       var i,j;
+
+      //rows & columns:
+      var rows = 12;
+      var columns = 0;
+      for(i=0; i<moduleSizes.length; i++) columns += moduleSizes[i];
 
       //Insert branding & navigation
       Banner('banner', 'youAreHere', 'navBar', 'GRIFFIN HV Mainframe 1');
@@ -290,13 +291,13 @@
 
       //declare objects:
       var sliderWidth = parseFloat($(document.getElementById('InputLayer')).width()) - 150;
-      var sliderVoltage = new Slider('volageSliderText', 'demandVoltage', 'voltageSlider', 'voltageSliderBKG', 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', minVoltage, maxVoltage, sliderPrecision, voltUnit, sliderWidth );
-      var sliderRamp = new Slider('rampSliderText', 'demandRampSpeed', 'rampSlider', 'rampSliderBKG', 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', minRampSpeed, maxRampSpeed, sliderPrecision, rampUnit,  sliderWidth);
-      var sliderRampDown = new Slider('rampDownSliderText', 'demandRampDownSpeed', 'rampDownSlider', 'rampDownSliderBKG', 'rampDownSliderKnob', 'rampDownKnobStyle', 'rampDownSliderText', minRampSpeed, maxRampSpeed, sliderPrecision, rampUnit,  sliderWidth);
+      var sliderVoltage = new Slider('volageSliderText', 'demandVoltage', 'voltageSlider', 'voltageSliderBKG', 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', minVoltage, maxVoltage, statusPrecision, voltUnit, sliderWidth );
+      var sliderRamp = new Slider('rampSliderText', 'demandRampSpeed', 'rampSlider', 'rampSliderBKG', 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', minRampSpeed, maxRampSpeed, statusPrecision, rampUnit,  sliderWidth);
+      var sliderRampDown = new Slider('rampDownSliderText', 'demandRampDownSpeed', 'rampDownSlider', 'rampDownSliderBKG', 'rampDownSliderKnob', 'rampDownKnobStyle', 'rampDownSliderText', minRampSpeed, maxRampSpeed, statusPrecision, rampUnit,  sliderWidth);
 
-      var meter = new FillMeter('voltageMeter', 'InputLayer', 0, minVoltage, maxVoltage, voltUnit);
-      var currentMeter = new FillMeter('currentMeter', 'InputLayer', 0, minCurrent, maxCurrent, currentUnit);
-      var temperatureMeter = new FillMeter('temperatureMeter', 'InputLayer', 0, minCurrent, maxCurrent, temperatureUnit);
+      var meter = new FillMeter('voltageMeter', 'InputLayer', 0, minVoltage, maxVoltage, voltUnit, statusPrecision);
+      var currentMeter = new FillMeter('currentMeter', 'InputLayer', 0, minCurrent, maxCurrent, currentUnit, statusPrecision);
+      var temperatureMeter = new FillMeter('temperatureMeter', 'InputLayer', 0, minCurrent, maxCurrent, temperatureUnit, statusPrecision);
 
       var waffle = new Waffle(rows,columns, 'TestWaffle', alarmThresholds, scaleMaxima, ['leftSidebar', 'rightSidebar'], "waffleplate", rowTitles, "InputLayer", ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleSizes, moduleLabels, sliderVoltage, sliderRamp, sliderRampDown);
 
@@ -350,6 +351,11 @@
       window.loop;
       //status flag for if the Commit button is blinking on loop:
       window.commitBlink = 0;
+      //hack so getMIDASindex can access these from anywhere.  TODO: fix
+      window.rows = rows;
+      window.moduleSizes = moduleSizes;
+      //hack so this is available to the alarms easily; will remove on alarm refactor
+      window.precision = statusPrecision;
 
       //wrap this in a function so it can be easily called to restart the loop somewhere else:
       function startLoop(){

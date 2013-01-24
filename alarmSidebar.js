@@ -147,9 +147,9 @@ function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, 
     var alarmString = '';
     while(n<nAlarms && voltageAlarmArray[n][2]>0){
         if(channelMap(voltageAlarmArray[n][1], voltageAlarmArray[n][0], moduleSizes, rows) != -1)
-           alarmString += moduleLabels[ primaryBin(moduleSizes, voltageAlarmArray[n][1]) ] + ', ' + rowTitles[0] + ' ' + channelMap(voltageAlarmArray[n][1], voltageAlarmArray[n][0], moduleSizes, rows) + '<br>Demand Voltage: ' + demandVoltage[voltageAlarmArray[n][0]][voltageAlarmArray[n][1]].toFixed(3) + ' ' + units[0] + '<br>Reported Voltage: ' + reportVoltage[voltageAlarmArray[n][0]][voltageAlarmArray[n][1]].toFixed(3) + ' ' + units[0] + '<br><br>';
+           alarmString += moduleLabels[ primaryBin(moduleSizes, voltageAlarmArray[n][1]) ] + ', ' + rowTitles[0] + ' ' + channelMap(voltageAlarmArray[n][1], voltageAlarmArray[n][0], moduleSizes, rows) + '<br>Demand Voltage: ' + demandVoltage[voltageAlarmArray[n][0]][voltageAlarmArray[n][1]].toFixed(window.precision) + ' ' + units[0] + '<br>Reported Voltage: ' + reportVoltage[voltageAlarmArray[n][0]][voltageAlarmArray[n][1]].toFixed(window.precision) + ' ' + units[0] + '<br><br>';
         else {
-           alarmString += moduleLabels[ voltageAlarmArray[n][1] ] + ' Primary<br>Demand Voltage: ' + demandVoltage[voltageAlarmArray[n][0]][voltageAlarmArray[n][1]].toFixed(3) + ' ' + units[0] + '<br>Reported Voltage: ' + reportVoltage[voltageAlarmArray[n][0]][voltageAlarmArray[n][1]].toFixed(3) + ' ' + units[0] + '<br><br>'; 
+           alarmString += moduleLabels[ voltageAlarmArray[n][1] ] + ' Primary<br>Demand Voltage: ' + demandVoltage[voltageAlarmArray[n][0]][voltageAlarmArray[n][1]].toFixed(window.precision) + ' ' + units[0] + '<br>Reported Voltage: ' + reportVoltage[voltageAlarmArray[n][0]][voltageAlarmArray[n][1]].toFixed(window.precision) + ' ' + units[0] + '<br><br>'; 
         }
         n++;
     }
@@ -165,9 +165,9 @@ function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, 
     while(n<nAlarms && (currentAlarmArray[n][2]>0 || currentAlarmArray[n][2]==-2) ){
         if(n == 0) alarmString = 'Alarm Threshold: ' + alarm[1] + ' ' + units[1] + '<br><br>'
         if(channelMap(currentAlarmArray[n][1], currentAlarmArray[n][0], moduleSizes, rows) != -1)
-            alarmString += moduleLabels[ primaryBin(moduleSizes, currentAlarmArray[n][1]) ] + ', ' + rowTitles[0] + ' ' + channelMap(currentAlarmArray[n][1], currentAlarmArray[n][0], moduleSizes, rows) + '<br>Current: ' + reportCurrent[currentAlarmArray[n][0]][currentAlarmArray[n][1]].toFixed(3) + ' ' + units[1] + '<br><br>';
+            alarmString += moduleLabels[ primaryBin(moduleSizes, currentAlarmArray[n][1]) ] + ', ' + rowTitles[0] + ' ' + channelMap(currentAlarmArray[n][1], currentAlarmArray[n][0], moduleSizes, rows) + '<br>Current: ' + reportCurrent[currentAlarmArray[n][0]][currentAlarmArray[n][1]].toFixed(window.precision) + ' ' + units[1] + '<br><br>';
         else
-            alarmString += moduleLabels[ currentAlarmArray[n][1] ] + ' Primary<br>Current: ' + reportCurrent[currentAlarmArray[n][0]][currentAlarmArray[n][1]].toFixed(3) + ' ' + units[1] + '<br><br>';
+            alarmString += moduleLabels[ currentAlarmArray[n][1] ] + ' Primary<br>Current: ' + reportCurrent[currentAlarmArray[n][0]][currentAlarmArray[n][1]].toFixed(window.precision) + ' ' + units[1] + '<br><br>';
         n++;
     }
     if(alarmString == ''){
@@ -182,9 +182,9 @@ function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, 
     while(n<nAlarms && (temperatureAlarmArray[n][2]>0 || temperatureAlarmArray[n][2]==-2) ){
         if(n == 0) alarmString = 'Alarm Threshold: ' + alarm[2] + ' ' + units[2] + '<br><br>'
         if(channelMap(temperatureAlarmArray[n][1], temperatureAlarmArray[n][0], moduleSizes, rows) != -1)
-            alarmString += moduleLabels[ primaryBin(moduleSizes, temperatureAlarmArray[n][1]) ] + ', ' + rowTitles[0] + ' ' + channelMap(temperatureAlarmArray[n][1], temperatureAlarmArray[n][0], moduleSizes, rows) + '<br>Temperature: ' + reportTemperature[temperatureAlarmArray[n][0]][temperatureAlarmArray[n][1]].toFixed(3) + ' ' + units[2] + '<br><br>';
+            alarmString += moduleLabels[ primaryBin(moduleSizes, temperatureAlarmArray[n][1]) ] + ', ' + rowTitles[0] + ' ' + channelMap(temperatureAlarmArray[n][1], temperatureAlarmArray[n][0], moduleSizes, rows) + '<br>Temperature: ' + reportTemperature[temperatureAlarmArray[n][0]][temperatureAlarmArray[n][1]].toFixed(window.precision) + ' ' + units[2] + '<br><br>';
         else
-            alarmString += moduleLabels[ temperatureAlarmArray[n][1] ] + 'Primary<br>Temperature: ' + reportTemperature[temperatureAlarmArray[n][0]][temperatureAlarmArray[n][1]].toFixed(3) + ' ' + units[2] + '<br><br>';
+            alarmString += moduleLabels[ temperatureAlarmArray[n][1] ] + 'Primary<br>Temperature: ' + reportTemperature[temperatureAlarmArray[n][0]][temperatureAlarmArray[n][1]].toFixed(window.precision) + ' ' + units[2] + '<br><br>';
         n++;
     }
     if(alarmString == ''){

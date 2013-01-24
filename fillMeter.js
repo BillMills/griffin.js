@@ -1,5 +1,5 @@
 //meter that fills to show the level of a scalar, with decorations.
-function FillMeter(cvas, wrapperDiv, width, min, max, unit){
+function FillMeter(cvas, wrapperDiv, width, min, max, unit, precision){
 
     this.oldFillLevel = 0;
     this.fillLevel = 0;
@@ -8,6 +8,7 @@ function FillMeter(cvas, wrapperDiv, width, min, max, unit){
     this.unit = unit;
     this.xPos = 0;  //left margin of value label
     this.wrapperDiv = wrapperDiv;
+    this.precision = precision;
 
     //fetch canvas:
     this.canvas = document.getElementById(cvas);
@@ -115,7 +116,7 @@ function FillMeter(cvas, wrapperDiv, width, min, max, unit){
             fillString = 'Unavailable';
             this.context.font = '10px Raleway';
         } 
-        else fillString = (frameFill*(this.max-this.min)+this.min).toFixed(3)+' '+this.unit;
+        else fillString = (frameFill*(this.max-this.min)+this.min).toFixed(this.precision)+' '+this.unit;
         this.xPos = fillLimit - this.context.measureText(fillString).width/2;
         if(this.xPos < this.leftX0) {
             this.xPos = this.leftX0

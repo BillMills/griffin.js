@@ -56,6 +56,12 @@ function fetchNewData(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVol
                 rampStatus[i][j]        = parseFloat(repoChStatus[ODBindex]);
                 voltLimit[i][j]         = parseFloat(voltageLimit[ODBindex]);
                 curLimit[i][j]          = parseFloat(currentLimit[ODBindex]);
+                //48ch cards report the currents in mA, convert to uA:
+                if(i==0){
+                    reportCurrent[i][j] = reportCurrent[i][j]*1000;
+                    curLimit[i][j] = curLimit[i][j]*1000;
+                }
+
                 */
                 //fake data for offline demo
                 demandVoltage[i][j] = Math.random();

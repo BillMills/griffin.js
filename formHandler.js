@@ -18,14 +18,24 @@ function updateParameter(){
 
     //determine where this cell falls in MIDAS vector:
     var ODBindex = getMIDASindex(window.griffinDialogY, window.griffinDialogX);
+/*
+    //switch channel on/off
+    if(document.getElementById('onButton').checked == true){
+      ODBSet("/Equipment/HV/Settings/ChState["+ODBindex+"]",1);
+    }
+    else{
+      ODBSet("/Equipment/HV/Settings/ChState["+ODBindex+"]",0);
+    }
 
-    //some dummy behavior, replace the rest of this function with more exciting things
-    var onoff;
-    if(document.getElementById('onButton').checked == true) onoff = 'on'
-    else onoff = 'off'
+    //set demand voltage:
+    ODBSet("/Equipment/HV/Variables/Demand["+ODBindex+"]", parseFloat(userInputs[0]));
 
-    alert(onoff+' '+userInputs[0]);
+    //set ramp up voltage:
+    ODBSet("/Equipment/HV/Settings/Ramp Up Speed["+ODBindex+"]", parseFloat(userInputs[1]));
 
+    //set ramp down voltage:
+    ODBSet("/Equipment/HV/Settings/Ramp Down Speed["+ODBindex+"]", parseFloat(userInputs[2]));
+*/
     //once the ODB has been updated, kick the loop to update immediately:
     clearTimeout(window.loop);
     startLoop();

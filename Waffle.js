@@ -445,7 +445,7 @@ function clickWaffle(event, obj){
                 obj.chy = chy;
                 channelSelect(obj);
             }
-
+alert(getMIDASindex(chy,chx))
 }
 
 //map the active grid cooridnates onto MIDAS's channel numbering:
@@ -456,20 +456,20 @@ function getMIDASindex(row, col){
 
     if(row != 0){
         //count up regular channels
-        MIDASindex += (waffle.rows-1)*col + row-1;
+        MIDASindex += (window.rows-1 +1)*col + row-1;
         //add on primary channels
-        moduleNumber = primaryBin(waffle.moduleSizes, col);
+        moduleNumber = primaryBin(window.moduleSizes, col);
         for(i=0; i<moduleNumber+1; i++){
-            if(waffle.moduleSizes[i] == 4) MIDASindex++;
+            if(window.moduleSizes[i] == 4) MIDASindex++;
         }
     } else{
         moduleNumber = col;
         //add up all the channels from previous cards:
         for(i=0; i<moduleNumber; i++){
-            if(waffle.moduleSizes[i] == 1) MIDASindex += 12;
-            if(waffle.moduleSizes[i] == 4) MIDASindex += 49;
+            if(window.moduleSizes[i] == 1) MIDASindex += 12;
+            if(window.moduleSizes[i] == 4) MIDASindex += 49;
         }
-        MIDASindex++;
+        //MIDASindex++;
     }
 
     return MIDASindex;
