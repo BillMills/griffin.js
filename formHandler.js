@@ -121,12 +121,14 @@ function channelSelect(waffle){
         //set the channel number
         setInput('changeChannel',1,channelMap(waffle.chx, waffle.chy, waffle.moduleSizes, waffle.rows));
         if(waffle.chy==0) setInput('changeChannel',1,'Primary');
+
+        //abandon the please update me flag when navigating away from the channel:
+        unhighlight('submitParameters');
     }
 
     //only actually display if the click was on the waffle and not the rest of the canvas:
     if(waffle.chx < waffle.cols && waffle.chy < waffle.rows){
         divFade(inputDiv, 'in', 0);
-
     }
 
     //these objects get updated every masterLoop:
@@ -148,6 +150,7 @@ function channelSelect(waffle){
     //update meter position after maximum has been adjusted:
     meter.update(Math.round(waffle.reportVoltage[waffle.chy][xIndex]*10000)/10000);
     temperatureMeter.update(Math.round(waffle.reportTemperature[waffle.chy][xIndex]*100)/100);
+
 }
 
 //point interface at new channel indicated by user in the 'changeChannel' form.
