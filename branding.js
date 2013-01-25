@@ -46,7 +46,7 @@ function Banner(canvas, location, navbar, title) {
     //move local title around:
     context.font = '24px Raleway'
     var urHere = document.getElementById(location);
-    $(urHere).css('width', context.measureText(title).width);
+    $(urHere).css('width', context.measureText(title).width*1.1);
     $(urHere).css('left', renderWidth - 50 - context.measureText(title).width);
     urHere.innerHTML = title;
 }

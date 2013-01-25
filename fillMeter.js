@@ -20,7 +20,7 @@ function FillMeter(cvas, wrapperDiv, width, min, max, unit, precision){
     //remove margins and spacing:
     var canvWidth = 0.88*divWidth;
     //remove title length:
-    canvWidth = canvWidth - this.context.measureText(document.getElementById(cvas+'Title').innerHTML).width;
+    canvWidth = canvWidth - $(document.getElementById(cvas+'Title')).width()*1.1;
     //set canvas dimensions
     this.canvas.width = canvWidth;
     this.canvas.height = 45;

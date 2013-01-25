@@ -41,10 +41,13 @@ function fadeIn(cvas, frame){
 //swap two canvases:
 function swapFade(inbound, buttonID){
 
-	$('#'+window.lastTrip).css('background', '-webkit-gradient(linear, left top, left bottom, from(#DDDDDD), to(#FFFFFF))')
-	//$('#'+buttonID).css('background', '-webkit-gradient(linear, left top, left bottom, from(#faa51a), to(#f47a20))')
-	//$('#'+buttonID).css('background', '-webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#FFFFAA))')
-	$('#'+buttonID).css('background', '-webkit-gradient(linear, left top, left bottom, from(#999999), to(#DDDDDD))')
+	//chrome
+	$('#'+window.lastTrip).css('background', '-webkit-gradient(linear, left top, left bottom, from(#DDDDDD), to(#FFFFFF));')
+	$('#'+buttonID).css('background', '-webkit-gradient(linear, left top, left bottom, from(#999999), to(#DDDDDD));')
+	//FF
+	$('#'+window.lastTrip).css('background', '-moz-linear-gradient(top,  #DDDDDD,  #FFFFFF);')
+	$('#'+buttonID).css('background', '-moz-linear-gradient(top,  #999999,  #DDDDDD);')
+
 	window.lastTrip = buttonID;
 
 	if(inbound != window.onDisplay){
