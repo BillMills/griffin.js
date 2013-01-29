@@ -65,7 +65,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, wrapperDiv, rowTitle
             //FF freaks out if you try and overwrite a styleSheet :(
             //newRule = "button#card"+i+"{width:"+buttonWidth+"px; height:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; margin-top:"+0.05*this.cellSide+"px; float:left; background: -webkit-gradient(linear, left top, left bottom, from(#DDDDDD), to(#FFFFFF)); background: -moz-linear-gradient(top,  #DDDDDD,  #FFFFFF); -webkit-border-radius: 5; -moz-border-radius: 5; border-radius: 5; font-size:"+this.cellSide/4+"px; padding:0px}";
             //document.styleSheets[0].insertRule(newRule,0);
-            newRule = "width:"+buttonWidth+"px; height:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; margin-top:"+0.05*this.cellSide+"px; float:left; background: -webkit-gradient(linear, left top, left bottom, from(#DDDDDD), to(#FFFFFF)); background: -moz-linear-gradient(top,  #DDDDDD,  #FFFFFF); -webkit-border-radius: 5; -moz-border-radius: 5; border-radius: 5; font-size:"+this.cellSide/4+"px; padding:0px;";
+            newRule = "width:"+buttonWidth+"px; height:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; margin-top:"+0.05*this.cellSide+"px; float:left; background: -webkit-gradient(linear, left top, left bottom, from(#999999), to(#DDDDDD)); background: -moz-linear-gradient(top,  #999999,  #DDDDDD); -webkit-border-radius: 5; -moz-border-radius: 5; border-radius: 5; font-size:"+this.cellSide/4+"px; padding:0px;";
             document.getElementById('card'+i).setAttribute('style', newRule);
         }
 
@@ -175,7 +175,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, wrapperDiv, rowTitle
         //determine per cell color info for start and finish.
         //Color info is packed as four numbers: red, green, blue, alpha
         this.cellColorUpdate = function(){
-            var R, G, B, A;
+            var R, G, B, A, color;
             for(var i=0; i<this.rows; i++){
                 //primary row spans multi-columns:
                 if(i==0) columns = this.moduleSizes.length;
@@ -268,8 +268,10 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, wrapperDiv, rowTitle
 
             //whiteout old canvas:
             this.context.globalAlpha = 1;
-            this.context.fillStyle = "rgba(255,255,255,1)"
+            this.context.fillStyle = '#333333'//"rgba(255,255,255,1)"
             this.context.fillRect(0,0,this.totalWidth,this.totalHeight);
+            this.context.fillStyle = "rgba(255,255,255,1)"
+            this.context.fillRect(0,0,this.cellSide*this.cols,this.cellSide*this.rows);
 
             for(i=0; i<this.rows; i++){
                 //primary row spans multi-columns:
@@ -281,6 +283,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, wrapperDiv, rowTitle
                     B = this.startColor[i][j][2] + (this.endColor[i][j][2] - this.startColor[i][j][2])*frame/this.nFrames;
                     A = this.startColor[i][j][3] + (this.endColor[i][j][3] - this.startColor[i][j][3])*frame/this.nFrames;
                     color = "rgba("+R+","+G+","+B+","+A+")";
+            
                     this.context.fillStyle = color;
                     cornerY = i*this.cellSide;
                     //primary row has different size bins than the rest:
@@ -360,8 +363,8 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, wrapperDiv, rowTitle
             var i, j;
             var moduleWidth, modRotation, modAlign, modHeight;
             
-            this.context.fillStyle = 'black';
-            this.context.globalAlpha = 0.6;
+            this.context.fillStyle = 'white'; //'black'
+            this.context.globalAlpha = 0.3;    //0.6
 
             //channel labels:
             var labelFontSize = Math.min(16, this.cellSide);

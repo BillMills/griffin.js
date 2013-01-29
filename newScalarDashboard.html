@@ -24,7 +24,7 @@
   </head> 
 
 
-  <body style="font-family: 'Raleway', sans-serif; font-size:14px"> 
+  <body style="font-family: 'Raleway', sans-serif; font-size:14px; background-color:#333333; color:#FFFFFF"> 
 
     <!--Branding///////////////////////////////////////////////////////////-->
     <canvas id="banner"></canvas>
@@ -32,12 +32,12 @@
     <!--Buttons////////////////////////////////////////////////////////////-->
     <div id="navBar">
       <form id='statusLink' style='display:inline; position:relative; left:1%;'>
-        <input type="submit" value="Status">
+        <input class='link' type="submit" value="Status">
       </form>
       <!--button type="button" style='position:relative; left:1%;'>Trigger</button>
       <button type="button" style='position:relative; left:1%;'>Monitoring</button>
       <button type="button" style='position:relative; left:1%;'>ELog</button-->
-      <p id="youAreHere" style='display: inline; color:rgba(0,0,0,0.2); font-size:24px; position:absolute; margin:0'></p>
+      <p id="youAreHere" style='display: inline; color:rgba(255,255,255,0.3); font-size:24px; position:absolute; margin:0'></p>
     </div>
 
     <!--Waffleboard////////////////////////////////////////////////////////-->
@@ -68,7 +68,7 @@
       <div id="mainframeLinks">
         <h1  style='display: inline; opacity: 0.3; font-family: "Orbitron", sans-serif; font-size: 275%; vertical-align:-20px;'>GRIFFIN HV Mainframe 1</h1>
         <!--h1  style='display: inline; opacity: 0.3; font-family: "Libre Baskerville", sans-serif; font-size: 275%; vertical-align:-20px;'>GRIFFIN HV Mainframe 1</h1-->
-        <br><button id='Main1' class='MFlink' type="button" style='background:-webkit-gradient(linear, left top, left bottom, from(#999999), to(#DDDDDD)); background: -moz-linear-gradient(top,  #999999,  #DDDDDD);' onclick="javascript:swapFade('TestWaffle', 'Main1')">Mainframe 1</button>
+        <br><button id='Main1' class='MFlink' type="button" style='background:-webkit-gradient(linear, left top, left bottom, from(#DDDDDD), to(#FFFFFF)); background: -moz-linear-gradient(top,  #999999,  #DDDDDD);' onclick="javascript:swapFade('TestWaffle', 'Main1')">Mainframe 1</button>
         <button id='Main2' class='MFlink' type="button">Mainframe 2</button>
         <button id='Main3' class='MFlink' type="button">Mainframe 3</button>
 
@@ -97,7 +97,7 @@
         <h2 id='inputTitle' align='left' style='margin-left:10%; font-family: "Orbitron", sans-serif;'>sintitulo</h2>
 
         <!--Form for channel reporting and input-->
-        <form id='setValues'>
+        <form id='setValues' style='margin-bottom:0px;'>
           <!--Channel on off & status:-->
           <input type='radio' id='offButton' name='HVswitch' value='off' style='margin-left:10%; margin-bottom:10px'>Off
           <input type='radio' id='onButton' name='HVswitch' value='on' style='margin-left:10px; margin-bottom:10px; display:inline;'>On
@@ -179,10 +179,10 @@
           <p style='display:inline; margin-left:10%'>Card</p>
           <!--input type="text" id="newCol" name='newCol' style='margin-bottom:10px; margin-left:5px; display:inline;' size='6' value='0'-->
           <select id='CardList' style='width:80px;'> </select>
-          <br><p style='display:inline; margin-left:10%'>Channel</p>
+          <br><p style='display:inline; margin-left:10%; position:relative; top:-20px;'>Channel</p>
           <!--input type="text" id="newRow" name='newRow' style='margin-bottom:10px; margin-left:5px; display:inline;' size='6' value='0'-->
-          <select id='ChannelList' style='width:75px;'> </select>
-          <br><input type="button" value="Go To Channel" style='margin-left:10%; margin-top:10px;' id='getChannelButton'>       
+          <select id='ChannelList' style='width:75px; position:relative; top:-20px;'> </select>
+          <input type="button" value="Go" class='link' style='position:relative; top:-30px; width: 50px; height:50px; font-size:24px; margin-left:3%; margin-top:10px; border-color:black' id='getChannelButton'>       
         </form>
 
       </div>

@@ -315,12 +315,12 @@ function alarmTransition(panelID, hiddenTop){
 
     if($('#'+panelID).css('z-index') == 10000){
         $('#'+panelID).css('height', 150);
-        $('#'+panelID).css('background', 'rgba(0,0,0,0.7)');
+        //$('#'+panelID).css('background', 'rgba(0,0,0,0.7)');
         $('#'+panelID).css('z-index', 1);
         $('#'+panelID).css('top', hiddenTop+'px !important;');
     } else{
         $('#'+panelID).css('height', 200+25*alarmTextSize); //600
-        $('#'+panelID).css('background', 'rgba(0,0,0,1)');
+        //$('#'+panelID).css('background', 'rgba(0,0,0,1)');
         $('#'+panelID).css('z-index', 10000);
         $('#'+panelID).css('top', '0px !important;');
     }

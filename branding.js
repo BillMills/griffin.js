@@ -16,9 +16,10 @@ function Banner(canvas, location, navbar, title) {
     context.canvas.height = renderHeight*0.1;//window.innerHeight*0.1;
 
     //style canvas
-    context.fillStyle = 'black';
-    context.globalAlpha = 0.2;
+    context.fillStyle = 'white' //'black';
+    context.globalAlpha =  0.3;  //0.2;
     context.lineWidth = 5;
+    context.strokeStyle = 'white';
 		
     //draw border
 	context.beginPath();

@@ -111,9 +111,11 @@ function BarGraph(cvas, moduleNumber, nBars, title, yAxisTitle, barTitles, scale
 
 		//loop over bars:
 		for(i=0; i<this.nBars; i++){
-			this.context.fillStyle = this.colorGradient(i, frame);
 			barHeight = this.oldLevels[i]*this.barMax + (this.levels[i] - this.oldLevels[i])*this.barMax*frame/this.nFrames;
 			barTop = this.height - this.bottomMargin - barHeight;
+			this.context.fillStyle = '#FFFFFF';
+			this.context.fillRect(leftEdge, barTop, this.barWidth, barHeight);			
+			this.context.fillStyle = this.colorGradient(i, frame);
 			this.context.fillRect(leftEdge, barTop, this.barWidth, barHeight);
 			this.context.strokeRect(leftEdge, barTop, this.barWidth, barHeight);
 			leftEdge += 1.05*this.barWidth;
@@ -169,7 +171,8 @@ function BarGraph(cvas, moduleNumber, nBars, title, yAxisTitle, barTitles, scale
 		this.context.font=Math.min(16, 0.8*this.barWidth)+"px 'Raleway'";    //0.25*this.barWidth+"px 'Raleway'";
 
 		//set text color:
-		this.context.fillStyle = 'rgba(0,0,0,1)';
+		this.context.fillStyle = 'rgba(255,255,255,0.3)';
+		this.context.strokeStyle = 'rgba(255,255,255,0.3)';
 
 		//draw principle axes:
 		this.context.beginPath();

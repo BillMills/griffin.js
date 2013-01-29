@@ -42,8 +42,8 @@ function fadeIn(cvas, frame){
 function swapFade(inbound, buttonID){
 
 	//chrome
-	$('#'+window.lastTrip).css('background', '-webkit-gradient(linear, left top, left bottom, from(#DDDDDD), to(#FFFFFF));')
-	$('#'+buttonID).css('background', '-webkit-gradient(linear, left top, left bottom, from(#999999), to(#DDDDDD));')
+	$('#'+window.lastTrip).css('background', '-webkit-gradient(linear, left top, left bottom, from(#999999), to(#DDDDDD));')
+	$('#'+buttonID).css('background', '-webkit-gradient(linear, left top, left bottom, from(#DDDDDD), to(#FFFFFF));')
 	//FF
 	$('#'+window.lastTrip).css('background', '-moz-linear-gradient(top,  #DDDDDD,  #FFFFFF);')
 	$('#'+buttonID).css('background', '-moz-linear-gradient(top,  #999999,  #DDDDDD);')
