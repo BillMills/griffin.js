@@ -51,7 +51,10 @@ function StripMonitor(monitor, orientation, cvas, rows, columns, nStrips, nRadia
     this.nEllipticalChannels = nAzimuthal*nRadial;
     this.minRadius = 10;
     this.maxRadius = 170;
-    this.radiusStep = 40;//(this.maxRadius - this.minRadius) / this.nRadial;
+    this.radiusStep = (this.maxRadius - this.minRadius) / this.nRadial;
+    this.azimuthalStep = 2*Math.PI / this.nAzimuthal;
+    this.topPhase = Math.PI/4;
+    this.bottomPhase = 0;
 
     //establish data buffers////////////////////////////////////////////////////////////////////////////
     this.level = [];
@@ -114,31 +117,30 @@ function StripMonitor(monitor, orientation, cvas, rows, columns, nStrips, nRadia
     	if(this.orientation == 'horizontal'){
 	    	for(i=0; i<nRadial + 1; i++){
 	    		this.context.beginPath();
-    			ellipse(this.context, this.centerX, this.centerTopY, this.minRadius+i*this.radiusStep, 0, 2*Math.PI, true);
+    			ellipse(this.context, this.centerX, this.centerTopY, this.minRadius+i*this.radiusStep, 0, 2*Math.PI);
     			this.context.beginPath();
-    			ellipse(this.context, this.centerX, this.centerBottomY, this.minRadius+i*this.radiusStep, 0, 2*Math.PI, true);
+    			ellipse(this.context, this.centerX, this.centerBottomY, this.minRadius+i*this.radiusStep, 0, 2*Math.PI);
     		}
 		} else if(this.orientation == 'vertical'){
 			for(i=0; i<2; i++){
 				this.context.beginPath();
-				ellipse(this.context, this.centerX, this.centerTopY, this.minRadius+i*this.radiusStep*4, 0, 2*Math.PI, true);
+				ellipse(this.context, this.centerX, this.centerTopY, this.minRadius+i*this.radiusStep, 0, 2*Math.PI);
 				this.context.beginPath();
-    			ellipse(this.context, this.centerX, this.centerBottomY, this.minRadius+i*this.radiusStep*4, 0, 2*Math.PI, true);	
+    			ellipse(this.context, this.centerX, this.centerBottomY, this.minRadius+i*this.radiusStep, 0, 2*Math.PI);	
 			}
 		}
 		//draw spokes
 		if(this.orientation == 'horizontal'){
 	    	for(i=0; i<this.nRadial + 1; i++){
-				ellipseSpoke(this.context, this.centerX, this.centerTopY, this.minRadius, this.minRadius+this.radiusStep*this.nAzimuthal, Math.PI/4, this.nAzimuthal, i);
-				ellipseSpoke(this.context, this.centerX, this.centerBottomY, this.minRadius, this.minRadius+this.radiusStep*this.nAzimuthal, 0, this.nAzimuthal, i);
+				ellipseSpoke(this.context, this.centerX, this.centerTopY, this.minRadius, this.maxRadius, this.topPhase, this.nAzimuthal, i);
+				ellipseSpoke(this.context, this.centerX, this.centerBottomY, this.minRadius, this.maxRadius, this.bottomPhase, this.nAzimuthal, i);
     		}
 		} else if(this.orientation == 'vertical'){
 			for(i=0; i<this.nEllipticalChannels; i++){
-				ellipseSpoke(this.context, this.centerX, this.centerTopY, this.minRadius, this.minRadius+this.radiusStep*4, 0, this.nEllipticalChannels, i);
-				ellipseSpoke(this.context, this.centerX, this.centerBottomY, this.minRadius, this.minRadius+this.radiusStep*4, 0, this.nEllipticalChannels, i);
+				ellipseSpoke(this.context, this.centerX, this.centerTopY, this.minRadius, this.maxRadius, 0, this.nEllipticalChannels, i);
+				ellipseSpoke(this.context, this.centerX, this.centerBottomY, this.minRadius, this.maxRadius, 0, this.nEllipticalChannels, i);
 			}
 		}
-		//this.context.closePath();
 
     };
 
@@ -175,27 +177,59 @@ function StripMonitor(monitor, orientation, cvas, rows, columns, nStrips, nRadia
 				this.context.fillRect(xCorner, yCorner, this.stripWidth, this.detectorHeight);
 			}
 		}
-/*
-		//loop for elliptical wheels:
-		for(i=0; i<2*this.nEllipticalChannels; i++){
 
-			//azimuthal start angle:
-			var azimuthal = 
+		//loop for top elliptical wheels:
+		for(i=this.rows*this.columns*this.nStrips; i<this.rows*this.columns*this.nStrips + this.nEllipticalChannels; i++){
+			R = Math.round((this.color[i][0] - this.oldColor[i][0])*frame/this.nFrames + this.oldColor[i][0]);
+			G = Math.round((this.color[i][1] - this.oldColor[i][1])*frame/this.nFrames + this.oldColor[i][1]);
+			B = Math.round((this.color[i][2] - this.oldColor[i][2])*frame/this.nFrames + this.oldColor[i][2]);
+			this.context.fillStyle = 'rgba('+R+','+G+','+B+',1)';
+
+			var azimuthalStart, azimuthalEnd, innerRadius, outerRadius;
 
 			if(this.orientation == 'horizontal'){
-
+				azimuthalStart = this.topPhase + Math.floor(i/this.nRadial)*this.azimuthalStep;
+				azimuthalEnd = this.topPhase + Math.floor(i/this.nRadial + 1)*this.azimuthalStep;
+				innerRadius = this.minRadius + (i%this.nRadial)*this.radiusStep;
+				outerRadius = this.minRadius + (1 + i%this.nRadial)*this.radiusStep;
+				fillAnnularSection(this.context, this.centerX, this.centerTopY, innerRadius, outerRadius, azimuthalStart, azimuthalEnd);
 			} else if(this.orientation == 'vertical'){
-
+				azimuthalStart = 0 + i*this.azimuthalStep; //no phase on these ones (yet?)
+				azimuthalEnd = 0 + (i+1)*this.azimuthalStep;
+				innerRadius = this.minRadius;
+				outerRadius = this.maxRadius;
+				fillAnnularSection(this.context, this.centerX, this.centerTopY, innerRadius, outerRadius, azimuthalStart, azimuthalEnd);
 			}
 
 		}
-*/
 
-		if(this.orientation == 'horizontal'){
-			fillAnnularSection(this.context, this.centerX, this.centerTopY, this.minRadius, this.minRadius+this.radiusStep, Math.PI/4, Math.PI/4+2*Math.PI/this.nAzimuthal);
-		} else if (this.orientation == 'vertical'){
-			fillAnnularSection(this.context, this.centerX, this.centerTopY, this.minRadius, this.maxRadius, 0, 2*Math.PI/this.nAzimuthal);
+		//loop for bottom elliptical wheels:
+		for(i=this.rows*this.columns*this.nStrips + this.nEllipticalChannels; i<this.color.length; i++){
+			R = Math.round((this.color[i][0] - this.oldColor[i][0])*frame/this.nFrames + this.oldColor[i][0]);
+			G = Math.round((this.color[i][1] - this.oldColor[i][1])*frame/this.nFrames + this.oldColor[i][1]);
+			B = Math.round((this.color[i][2] - this.oldColor[i][2])*frame/this.nFrames + this.oldColor[i][2]);
+			this.context.fillStyle = 'rgba('+R+','+G+','+B+',1)';
+
+			var azimuthalStart, azimuthalEnd, innerRadius, outerRadius;
+
+			if(this.orientation == 'horizontal'){
+				azimuthalStart = this.bottomPhase + Math.floor(i/this.nRadial)*this.azimuthalStep;
+				azimuthalEnd = this.bottomPhase + Math.floor(i/this.nRadial + 1)*this.azimuthalStep;
+				innerRadius = this.minRadius + (i%this.nRadial)*this.radiusStep;
+				outerRadius = this.minRadius + (1 + i%this.nRadial)*this.radiusStep;
+				fillAnnularSection(this.context, this.centerX, this.centerBottomY, innerRadius, outerRadius, azimuthalStart, azimuthalEnd);
+			} else if(this.orientation == 'vertical'){
+				azimuthalStart = 0 + i*this.azimuthalStep; //no phase on these ones (yet?)
+				azimuthalEnd = 0 + (i+1)*this.azimuthalStep;
+				innerRadius = this.minRadius;
+				outerRadius = this.maxRadius;
+				fillAnnularSection(this.context, this.centerX, this.centerBottomY, innerRadius, outerRadius, azimuthalStart, azimuthalEnd);
+			}
+
 		}
+
+
+
 
 		//redraw frame:
 		this.wireframe();
@@ -228,13 +262,13 @@ function StripMonitor(monitor, orientation, cvas, rows, columns, nStrips, nRadia
 }
 
 //draw elliptical arc:
-ellipse = function(context, centerX, centerY, horizRadius, startAngle, endAngle, isCounterclockwise){
+ellipse = function(context, centerX, centerY, horizRadius, startAngle, endAngle){
     context.save();
     context.translate(centerX, centerY);
     context.scale(1, 0.3);
     //context.beginPath();
     //recall the internet counts its angles backwards :(
-    context.arc(0, 0, horizRadius, 2*Math.PI - startAngle, 2*Math.PI - endAngle, isCounterclockwise);
+    context.arc(0, 0, horizRadius, 2*Math.PI - startAngle, 2*Math.PI - endAngle);
     context.restore();
     context.stroke();
 }
@@ -260,8 +294,6 @@ ellipseSpoke = function(context, centerX, centerY, horizRadiusInner, horizRadius
 
 //color in a particular annular section
 fillAnnularSection = function(context, centerX, centerY, innerRadius, outerRadius, startAngle, endAngle){
-
-	context.fillStyle = '#00FF00';
 
 	context.save();
     context.translate(centerX, centerY);
