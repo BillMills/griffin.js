@@ -1,4 +1,4 @@
-function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, wrapperDiv, rowTitles, InputLayer, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs, headerDiv, moduleSizes, moduleLabels, voltageSlider, rampSlider, rampDownSlider){
+function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, wrapperDiv, rowTitles, InputLayer, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs, headerDiv, moduleSizes, moduleLabels, voltageSlider, rampSlider, rampDownSlider, tooltip){
 
         //if(!document.webkitHidden && !document.mozHidden){
     	var i, j, n, columns;
@@ -30,6 +30,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, wrapperDiv, rowTitle
         this.voltageSlider = voltageSlider;         //demand voltage slider associated with this waffle
         this.rampSlider = rampSlider;               //voltage ramp up speed slider associated with this waffle
         this.rampDownSlider = rampDownSlider;       //voltage ramp down speed slider associated with this waffle
+        this.tooltip = tooltip;                     //tooltip this object will use
 
         //determine dimesions of canvas:
         this.totalWidth = Math.round(0.5*$('#'+this.wrapperDiv).width());
@@ -124,6 +125,11 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, wrapperDiv, rowTitle
                 }
             }
         }
+
+        //array of values from the waffle to report in the tooltip
+        this.reportedValues = [this.demandVoltage, this.reportVoltage, this.reportCurrent, this.demandVrampUp, this.demandVrampDown, this.reportTemperature, this.rampStatus];
+        //give the tooltip a pointer back to this object:
+        this.tooltip.obj = that;
 
         //do an initial populate of the waffle:
         fetchNewData(this.rows, this.cols, moduleSizes, this.ODBkeys, this.demandVoltage, this.reportVoltage, this.reportCurrent, this.demandVrampUp, this.demandVrampDown, this.reportTemperature, this.channelMask, this.alarmStatus, this.rampStatus, this.voltLimit, this.currentLimit, this.alarm, this.scaleMax);
@@ -419,6 +425,83 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, wrapperDiv, rowTitle
             animate(this, 0);
 
         };
+
+    //determine which cell pixel x,y falls in, with 0,0 being the top left corner of the canvas; return -1 if no corresponding cell.
+    this.findCell = function(x, y){
+        var cell;
+
+        var chx = Math.floor(x / this.cellSide);
+        var chy = Math.floor(y / this.cellSide);
+
+        if(chx < this.cols && chx > -1 && chy < this.rows && chy > -1){
+            cell = [];
+            if(chy == 0){
+                chx = primaryBin(this.moduleSizes, chx);
+            }
+            cell[0] = chy;
+            cell[1] = chx;
+            if(chy == 0 && this.moduleSizes[chx] == 1) cell = -1;
+        } else 
+            cell = -1;
+
+        return cell   
+    };
+
+    //establish the tooltip text for the cell returned by this.findCell; return length of longest line:
+    this.defineText = function(cell){
+        var toolTipContent = '<br>';
+        var nextLine;
+        var longestLine = 0;
+        var cardIndex;
+        var i;
+
+        var row = cell[0];
+        var col = cell[1];
+
+        //decide which card we're pointing at:
+        if(row == 0) cardIndex = col;
+        else cardIndex = primaryBin(this.moduleSizes, col);
+
+        //Title for normal channels:
+        if(row != 0) nextLine = this.moduleLabels[cardIndex]+', '+this.rowTitles[0]+' '+channelMap(col, row, this.moduleSizes, this.rows)+'<br>';
+        //Title for primary channels:
+        else nextLine = this.moduleLabels[cardIndex]+' Primary <br>';
+
+        //keep track of the longest line of text:
+        longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
+        toolTipContent += nextLine;
+
+        //fill out tooltip content:
+        for(i=0; i<this.reportedValues.length; i++){
+            //establish prefix:
+            nextLine = '<br/>'+this.tooltip.prefix[i];
+            if(this.tooltip.prefix[i] !== '') nextLine += ' ';
+
+            //pull in content; special cases for the status word and reported current:
+            //status word:
+            if(i == 6){
+                nextLine += parseStatusWord(this.reportedValues[i][row][col]);
+            }
+            //current:
+            else if(i == 2){
+                    if(this.moduleSizes[cardIndex]==4 && row!=0) nextLine += '--';
+                    else nextLine += Math.round( this.reportedValues[i][row][col]*1000)/1000 + ' ' + this.tooltip.postfix[i];                
+            } else {
+                nextLine += Math.round( this.reportedValues[i][row][col]*1000)/1000 + ' ' + this.tooltip.postfix[i];
+            }
+
+            //keep track of longest line:
+            longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width);
+
+            //append to tooltip:
+            toolTipContent += nextLine;
+ 
+        }
+        document.getElementById('TipText').innerHTML = toolTipContent;
+
+        //return length of longest line:
+        return longestLine;
+    };
 
 }
 

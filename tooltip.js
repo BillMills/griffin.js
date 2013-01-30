@@ -1,21 +1,23 @@
-function Tooltip(object, ttCanvasID, ttTextID, ttDivID, prefix, postfix){
+function Tooltip(ttCanvasID, ttTextID, ttDivID, wrapperID, prefix, postfix){
 
-    this.obj = object;                              //the object that this tooltip is associated with
+    this.obj;                                       //the object that this tooltip is associated with
     this.canvasID = ttCanvasID;                     //target canvas
     this.ttTextID = ttTextID;                       //tooltip text
     this.ttDivID = ttDivID;                         //tooltip div
+    this.wrapperID = wrapperID;                     //ID of div which wraps the tooltip's canvas
     this.prefix = prefix;                           //prefixes to tooltip content lines
     this.postfix = postfix;                         //postfixes to tooltip content lines
 
     this.canvas = document.getElementById(this.canvasID);
     this.context = this.canvas.getContext('2d'); 
-    this.ttDiv = document.getElementById(this.ttDivID)
+    this.ttDiv = document.getElementById(this.ttDivID);
+    this.ttParent = document.getElementById(this.wrapperID);
 
     //old tt bin, for updates when the mouse is just sitting in the same place:
     this.oldCellIndex = -1;
     this.allowUpdate = 0;
 
-    //array of values from the waffle to report in the tooltip
+    //array of values from the waffle to report in the tooltip DEPRICATED
     this.reportedValues = [/*this.obj....*/];
 
     var that = this;
@@ -26,8 +28,8 @@ function Tooltip(object, ttCanvasID, ttTextID, ttDivID, prefix, postfix){
         that.ttDiv.style.display = 'none';
 
         //get mouse coords:
-        var x = event.pageX - that.canvas.offsetLeft;   
-        var y = event.pageY - that.canvas.offsetTop;;
+        var x = event.pageX - that.canvas.offsetLeft - that.ttParent.offsetLeft;   
+        var y = event.pageY - that.canvas.offsetTop - that.ttParent.offsetTop;
 
         //turn mouse coords into the index pointing to where the relevant info is stored in obj's info arrays:
         var cellIndex = that.obj.findCell(x, y);
@@ -36,7 +38,7 @@ function Tooltip(object, ttCanvasID, ttTextID, ttDivID, prefix, postfix){
         if(cellIndex != -1){
 
             //establish text:
-            var newWidth = that.defineText(cellIndex);
+            var newWidth = that.obj.defineText(cellIndex);
 
             //update the size of the tool tip to fit the text:
             $(that.ttDiv).width(newWidth);
@@ -72,7 +74,7 @@ function Tooltip(object, ttCanvasID, ttTextID, ttDivID, prefix, postfix){
             $(this.ttDiv).height(180);
         }
     };
-
+/*
     //establish the current tooltip text based on cell position; returns length of longest line 
     this.defineText = function(cellIndex){
         var toolTipContent = '<br>';
@@ -109,5 +111,5 @@ function Tooltip(object, ttCanvasID, ttTextID, ttDivID, prefix, postfix){
         return longestLine;
 
     };
-
+*/
 }

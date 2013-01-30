@@ -35,11 +35,6 @@ canvas#rightSidebar{
 	z-index: -10000;
 }
 
-div#TTcontainer{
-	position:relative;
-	top:0;
-	left:0;
-}
 
 div#TT{
 	display:none;
