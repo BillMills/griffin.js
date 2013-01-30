@@ -228,9 +228,6 @@ function StripMonitor(monitor, orientation, cvas, rows, columns, nStrips, nRadia
 
 		}
 
-
-
-
 		//redraw frame:
 		this.wireframe();
 
@@ -258,6 +255,67 @@ function StripMonitor(monitor, orientation, cvas, rows, columns, nStrips, nRadia
 
 		return rainbow(scale);
 	};
+
+	//determine which cell pixel x,y falls in, with 0,0 being the top left corner of the canvas; return -1 if no corresponding cell.
+	this.findCell = function(x, y){
+		var cell = -1;
+		var radius, phi, row, col, phiBin, radBin;
+
+		if(y <= this.canvasHeight*(1-this.boxElementFraction)/2){  //top disk
+			radius = Math.sqrt(Math.pow( x - this.centerX, 2 ) + Math.pow( (y - this.centerTopY)/0.3, 2 ));
+			phi = Math.asin( (this.centerTopY-y)/0.3/ Math.sqrt(Math.pow( x - this.centerX, 2 ) + Math.pow( (this.centerTopY - y)/0.3, 2 )) );
+			//need to correct for asin mapping only onto [-pi/2, pi/2]:
+			if(x < this.centerX)
+				phi = Math.PI - phi;
+			else if(y > this.centerTopY)
+				phi = 2*Math.PI + phi;
+
+			if(radius < this.maxRadius && radius > this.minRadius){
+				radBin = Math.floor( (radius-this.minRadius) / this.radiusStep);
+				phiBin = Math.floor( (phi - this.topPhase) / this.azimuthalStep);
+				if(phiBin < 0) phiBin += this.nAzimuthal;
+				cell = phiBin*this.nRadial + radBin;
+			}
+
+		} else if (y <= this.canvasHeight - this.canvasHeight*(1-this.boxElementFraction)/2){ //strips
+			//measure from the top of where we start drawing the boxes:
+			var Y = y - this.canvasHeight*(1-this.boxElementFraction)/2;
+			//determine the row and coulmn of the box being pointed at:
+			row = Math.floor( Y / (this.detectorHeight + this.gutterWidth*this.detectorWidth));
+			col = Math.floor((x - this.gutterWidth*this.detectorWidth)/(this.detectorWidth*(1+this.gutterWidth)));
+			cell = row*this.columns*this.nStrips + col*this.nStrips;
+			//determine which cell we're on within the box:
+			if(this.orientation == 'horizontal'){
+				cell += Math.floor((Y - row*(this.detectorHeight + this.detectorWidth*this.gutterWidth)) / this.stripWidth);
+			} else if(this.orientation == 'vertical'){
+				cell += Math.floor((x - this.detectorWidth*this.gutterWidth - col*this.detectorWidth*(1+this.gutterWidth)) / this.stripWidth);
+			}
+			//suppress when pointing at a gutter:
+			if( (Y % (this.detectorHeight+this.detectorWidth*this.gutterWidth)) > this.detectorHeight )
+				cell = -1;
+			if( (x % (this.detectorWidth*(1+this.gutterWidth))) < this.detectorWidth*this.gutterWidth )
+				cell = -1;
+
+		} else {  //bottom disk
+			radius = Math.sqrt(Math.pow( x - this.centerX, 2 ) + Math.pow( (y - this.centerBottomY)/0.3, 2 ));
+			phi = Math.asin( (this.centerBottomY-y)/0.3/ Math.sqrt(Math.pow( x - this.centerX, 2 ) + Math.pow( (this.centerBottomY - y)/0.3, 2 )) );
+			//need to correct for asin mapping only onto [-pi/2, pi/2]:
+			if(x < this.centerX)
+				phi = Math.PI - phi;
+			else if(y > this.centerBottomY)
+				phi = 2*Math.PI + phi;
+
+			if(radius < this.maxRadius && radius > this.minRadius){
+				radBin = Math.floor( (radius-this.minRadius) / this.radiusStep);
+				phiBin = Math.floor( (phi - this.bottomPhase) / this.azimuthalStep);
+				if(phiBin < 0) phiBin += this.nAzimuthal;
+				cell = phiBin*this.nRadial + radBin;
+			}
+
+		}
+		return cell;
+	};
+
 
 }
 

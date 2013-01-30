@@ -10,7 +10,7 @@
     <script src="utilities.js" type="text/javascript"></script>
     <script src="branding.js" type="text/javascript"></script>
     <script src="Waffle.js" type="text/javascript"></script>
-    <script src="tooltip.js" type="text/javascript"></script>
+    <script src="wTooltip.js" type="text/javascript"></script>
     <script src="alarmSidebar.js" type="text/javascript"></script>
     <script src="formHandler.js" type="text/javascript"></script>
     <script src="slider.js" type="text/javascript"></script>
@@ -307,7 +307,7 @@
       barCharts[2] = new BarGraph('bar2', 2,  48, 'Module 2', 'Reported Voltage [V]', bigCard, minVoltage, maxVoltage, barChartPrecision, waffle);
       barCharts[3] = new BarGraph('bar3', 3,  12, 'Module 3', 'Reported Voltage [V]', smallCard, minVoltage, maxVoltage, barChartPrecision, waffle);
 
-      var tooltip = new Tooltip(waffle, 'TestWaffle', 'TipText', 'TT', 'TTcontainer', 'waffleplate', prefix, postfix);
+      var tooltip = new wTooltip(waffle, 'TestWaffle', 'TipText', 'TT', 'TTcontainer', 'waffleplate', prefix, postfix);
       
 
       //set up arrays:

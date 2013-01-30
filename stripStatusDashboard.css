@@ -9,3 +9,19 @@ input.navButton{
 	-moz-border-radius: 5; 
 	border-radius: 5; 
 }
+
+div#TT{
+	display:none;
+	position:absolute;
+	background: rgba(0,0,0,0.7);
+	width:100px;
+	height:60px;
+	color:#FFFFFF;
+	text-align: center
+}
+
+p#TipText{
+	position:relative;
+	left: 5px;
+	top: -15px;
+}

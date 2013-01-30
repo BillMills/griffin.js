@@ -8,6 +8,7 @@
     	<script src="utilities.js" type="text/javascript"></script>
     	<script src="StripMonitor.js" type="text/javascript"></script>
     	<script src="stripMonitorControl.js" type="text/javascript"></script>
+    	<script src="tooltip.js" type="text/javascript"></script>
 
     	<link rel="stylesheet" type="text/css" href="stripStatusDashboard.css" />
 
@@ -46,7 +47,10 @@
 			<canvas id='verticalStripCanvas' style='float:right;'></canvas>
 		</div>
 
-
+		<!--Tool tip layer/////////////////////////////////////////////////////-->
+    	<div id="TT">
+    		<p id="TipText"></p>
+    	</div>
 
 
 
@@ -75,6 +79,9 @@
 			//declare objects:
 			var horizontalStripMonitor = new StripMonitor('monitors','horizontal', 'horizontalStripCanvas', rows, columns, nChannels, 4, 4, minima, maxima);
 			var verticalStripMonitor = new StripMonitor('monitors', 'vertical', 'verticalStripCanvas', rows, columns, nChannels, 1, 16, minima, maxima);
+
+			var horizTooltip = new Tooltip(horizontalStripMonitor, 'horizontalStripCanvas', 'TipText', 'TT');
+			var vertTooltip =  new Tooltip(verticalStripMonitor, 'verticalStripCanvas', 'TipText', 'TT');
 
 			//start the loop:
 			stripMasterLoop(horizontalStripMonitor, verticalStripMonitor, nChannels*rows*columns + 2*16, HVdata);
