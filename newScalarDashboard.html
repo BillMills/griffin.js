@@ -352,7 +352,7 @@
       barCharts[2] = new BarGraph('bar2', 2,  48, 'Module 2', 'Reported Voltage [V]', bigCard, minVoltage, maxVoltage, barChartPrecision, waffle);
       barCharts[3] = new BarGraph('bar3', 3,  12, 'Module 3', 'Reported Voltage [V]', smallCard, minVoltage, maxVoltage, barChartPrecision, waffle);
 
-      var horizontalStripMonitor = new StripMonitor('waffleplate','horizontal', 'horizontalStripCanvas', SMrows, SMcolumns, SMnChannels, 4, 4, SMminima, SMmaxima, SMtooltip);
+      var horizontalStripMonitor = new StripMonitor('waffleplate','horizontal', 'horizontalStripCanvas', SMrows, SMcolumns, SMnChannels, 4, 4, 1, 16, SMminima, SMmaxima, SMtooltip);
 
       //set up arrays:
       //HV monitor
@@ -410,7 +410,7 @@
 
       //wrap this in a function so it can be easily called to restart the loop somewhere else:
       function startLoop(){
-        masterLoop(rows+1, columns, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmThresholds, scaleMaxima, waffle, barCharts, horizontalStripMonitor, SMnChannels*SMrows*SMcolumns + 2*16, SMHV, [MFtooltip, SMtooltip] , 0);
+        masterLoop(rows+1, columns, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmThresholds, scaleMaxima, waffle, barCharts, horizontalStripMonitor, 2*(SMnChannels*SMrows*SMcolumns + 2*16), SMHV, [MFtooltip, SMtooltip] , 0);
       }
       startLoop(); 
 
