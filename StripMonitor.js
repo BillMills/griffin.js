@@ -1,4 +1,4 @@
-function StripMonitor(monitor, orientation, cvas, rows, columns, nStrips, nRadial, nAzimuthal, minima, maxima){
+function StripMonitor(monitor, orientation, cvas, rows, columns, nStrips, nRadial, nAzimuthal, minima, maxima, tooltip){
 
 	var i,j;
 
@@ -11,10 +11,13 @@ function StripMonitor(monitor, orientation, cvas, rows, columns, nStrips, nRadia
 	this.nStrips = nStrips;			//number of sense strips per detector
 	this.minima = minima;			//array of scale minima, one entry for each scalar option
 	this.maxima = maxima;			//array of scale maxima, one entry for each scalar option
+	this.tooltip = tooltip;			//tooltip belonging to this object
 
 	this.canvas = document.getElementById(this.canvasID);
 	this.context = this.canvas.getContext('2d');
 	this.monitor = document.getElementById(this.monitorID);
+
+	that = this;
 
     //establish animation parameters////////////////////////////////////////////////////////////////////
     this.FPS = 30;
@@ -29,6 +32,12 @@ function StripMonitor(monitor, orientation, cvas, rows, columns, nStrips, nRadia
     this.canvasHeight = 0.8*$(this.monitor).height();
     this.canvas.setAttribute('width', this.canvasWidth);
     this.canvas.setAttribute('height', this.canvasHeight);
+
+    //position canvas
+    $('#'+cvas).css('top', $('#'+'scalarMonitorLinks').height() + 5 )
+
+    //set up tooltip:
+    this.tooltip.obj = that;
 
     //define dimensions of each detector display/////////////////////////////////////////////////////////
     //gutter width as fraction of detector width:
@@ -316,6 +325,52 @@ function StripMonitor(monitor, orientation, cvas, rows, columns, nStrips, nRadia
 		return cell;
 	};
 
+    //establish the tooltip text for the cell returned by this.findCell; return length of longest line:
+	this.defineText = function(cell){
+        var toolTipContent = '<br>';
+        var nextLine;
+        var longestLine = 0;
+        var cardIndex;
+        var i;
+
+        nextLine = cell;
+
+        //keep track of the longest line of text:
+        longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
+        toolTipContent += nextLine;
+/*
+        //fill out tooltip content:
+        for(i=0; i<this.reportedValues.length; i++){
+            //establish prefix:
+            nextLine = '<br/>'+this.tooltip.prefix[i];
+            if(this.tooltip.prefix[i] !== '') nextLine += ' ';
+
+            //pull in content; special cases for the status word and reported current:
+            //status word:
+            if(i == 6){
+                nextLine += parseStatusWord(this.reportedValues[i][row][col]);
+            }
+            //current:
+            else if(i == 2){
+                    if(this.moduleSizes[cardIndex]==4 && row!=0) nextLine += '--';
+                    else nextLine += Math.round( this.reportedValues[i][row][col]*1000)/1000 + ' ' + this.tooltip.postfix[i];                
+            } else {
+                nextLine += Math.round( this.reportedValues[i][row][col]*1000)/1000 + ' ' + this.tooltip.postfix[i];
+            }
+
+            //keep track of longest line:
+            longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width);
+
+            //append to tooltip:
+            toolTipContent += nextLine;
+ 
+        }
+*/
+        document.getElementById(this.tooltip.ttTextID).innerHTML = toolTipContent;
+
+        //return length of longest line:
+        return longestLine;
+	};
 
 }
 

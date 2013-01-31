@@ -74,42 +74,5 @@ function Tooltip(ttCanvasID, ttTextID, ttDivID, wrapperID, prefix, postfix){
             $(this.ttDiv).height(180);
         }
     };
-/*
-    //establish the current tooltip text based on cell position; returns length of longest line 
-    this.defineText = function(cellIndex){
-        var toolTipContent = '<br>';
-        var nextLine;
-        var longestLine = 0;
-        var cardIndex;
-        var i;
 
-        nextLine = cellIndex;
-
-        //keep track of the longest line of text:
-        longestLine = Math.max(longestLine, this.context.measureText(nextLine).width)
-        toolTipContent += nextLine;
-
-        //fill out tooltip content:
-        for(i=0; i<this.reportedValues.length; i++){
-            //establish prefix:
-            nextLine = '<br/>'+this.prefix[i];
-            if(this.prefix[i] !== '') nextLine += ' ';
-
-            nextLine += Math.round( this.reportedValues[i][row][col]*1000)/1000 + ' ' + this.postfix[i];
-
-            //keep track of longest line:
-            longestLine = Math.max(longestLine, this.context.measureText(nextLine).width);
-
-            //append to tooltip:
-            toolTipContent += nextLine;
- 
-        }
-
-        document.getElementById('TipText').innerHTML = toolTipContent;
-
-        //return length of longest line:
-        return longestLine;
-
-    };
-*/
 }

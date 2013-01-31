@@ -14,19 +14,17 @@ div#waffleplate{
 	top: 2%; 
 }
 
+div.navPanel{
+	opacity:0;
+	z-index:-1;
+	transition:opacity 0.5s, z-index 0.5s;
+	-moz-transition:opacity 0.5s, z-index 0.5s;
+	-webkit-transition:opacity 0.5s, z-index 0.5s;
+}
+
 canvas#leftSidebar{
 	position:absolute;
 	left:1%;
-}
-
-canvas#TestWaffle{
-	position: absolute;
-	left:24%;
-}
-
-div#mainframeLinks{
-	position: absolute;
-	left: 24%;
 }
 
 canvas#rightSidebar{
@@ -36,25 +34,27 @@ canvas#rightSidebar{
 }
 
 
-div#TT{
+div.tooltip{
 	display:none;
 	position:absolute;
 	background: rgba(0,0,0,0.7);
 	width:100px;
 	height:60px;
 	color:#FFFFFF;
-	text-align: center
+	text-align: center;
+	z-index: 20000;
 }
 
-p#TipText{
+p.TTtext{
+	text-align: center;
 	position:relative;
 	left: 5px;
 	top: -15px;
 }
 
-div#InputLayer{
+/*div#InputLayer{*/
+div.Sidebar{
 	position: absolute;
-	/*display: none;*/
 	background-color: #4C4C4C  !important;
 	color: rgba(255,255,255,0.9);
 	width: 20%;
@@ -62,8 +62,10 @@ div#InputLayer{
 	border-style:ridge; 
 	border-width:5px; 
 	border-color:black;
-
 	right:3%;
+
+	opacity:0;
+	z-index:-1;
 }
 
 p#FieldText{

@@ -38,6 +38,25 @@ function fadeIn(cvas, frame){
 	}
 }
 
+//fade a div out
+function fadeDivOut(navDiv){
+
+	$('#'+navDiv).css('z-index', -1);
+
+	div = document.getElementById(navDiv);
+	div.style.opacity = 0;
+
+}
+
+//fade a div in
+function fadeDivIn(navDiv){
+
+	$('#'+navDiv).css('z-index', 1);
+	div = document.getElementById(navDiv);
+	div.style.opacity = 1;
+
+}
+
 //swap two canvases:
 function swapFade(inbound, buttonID){
 
@@ -55,4 +74,26 @@ function swapFade(inbound, buttonID){
 		fadeOut(window.onDisplay, 0);
 		window.onDisplay = inbound;
 	}
+}
+
+//swap top level views
+function swapView(inboundNav, inboundCanvas, inboundSidebar){
+	if(inboundNav != window.navOnDisplay){
+
+		fadeIn(inboundCanvas, 0);
+		fadeOut(window.onDisplay, 0);
+		window.onDisplay = inboundCanvas;
+
+		fadeDivIn(inboundNav);
+		fadeDivOut(window.navOnDisplay);
+
+		fadeDivIn(inboundSidebar);
+		fadeDivOut(window.sidebarOnDisplay);		
+
+		document.getElementById('youAreHere').innerHTML = document.getElementById(inboundNav+'Banner').innerHTML;
+
+		window.navOnDisplay = inboundNav;
+		window.sidebarOnDisplay = inboundSidebar;
+
+	}	
 }

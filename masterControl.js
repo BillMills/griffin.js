@@ -1,8 +1,11 @@
-function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax, waffle, barCharts, tooltip, callMyself){
+function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax, waffle, barCharts, SM, nSMchannels, HVdata, tooltips, callMyself){
 	if(!document.webkitHidden && !document.mozHidden){
+        var i;
+
+        //HV monitor
     	fetchNewData(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax);
     	waffle.update(demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, alarmStatus, channelMask, rampStatus, voltLimit, currentLimit, callMyself);
-        for(var i=0; i<barCharts.length; i++){
+        for(i=0; i<barCharts.length; i++){
             var barChartData = [];
             var barChartAlarms = [];
             for(var j=0; j<barCharts[i].nBars; j++){
@@ -12,12 +15,20 @@ function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVolta
             }
             barCharts[i].update(barChartData, barChartAlarms);
         }
-        tooltip.update();
+
+        //scalar monitor
+        fetchNewSMData(nSMchannels, HVdata);
+        SM.update(HVdata);
+
+        //update tooltips
+        for(i=0; i<tooltips.length; i++){
+            tooltips[i].update();
+        }
     }
-    window.loop = setTimeout(function(){masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax, waffle, barCharts, tooltip, 1)}, 3000);
+    window.loop = setTimeout(function(){masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax, waffle, barCharts, SM, nSMchannels, HVdata, tooltips, 1)}, 3000);
 }
 
-//populate rows by cols arrays with the appropriate information:
+//populate HV monitor rows by cols arrays with the appropriate information:
 function fetchNewData(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, curLimit, alarmTripLevel, scaleMax){
 
     var testParameter, i, j, ODBindex, columns;
@@ -112,4 +123,15 @@ function fetchNewData(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVol
 
         }
     }   
+}
+
+//fetch new data for the scalar monitor
+function fetchNewSMData(nChannels, HVdata){
+    var i = 0;
+
+    //dummy data for offline dev:
+    for(i=0; i<nChannels; i++){
+        HVdata[i] = Math.random();
+    }
+
 }

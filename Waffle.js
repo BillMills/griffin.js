@@ -497,7 +497,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, wrapperDiv, rowTitle
             toolTipContent += nextLine;
  
         }
-        document.getElementById('TipText').innerHTML = toolTipContent;
+        document.getElementById(this.tooltip.ttTextID).innerHTML = toolTipContent;
 
         //return length of longest line:
         return longestLine;
