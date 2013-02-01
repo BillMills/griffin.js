@@ -31,16 +31,12 @@ function AlarmMonitor(rows, cols, divID, canvasID, dashboardDivID){
 */
 
 //TODO: clean up by passing in waffle object?
-function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, alarmStatus, rows, cols, rowTitles, callMyself, alarmPanelDivIDs, alarmPanelCanvIDs, demandVoltage, reportVoltage, reportCurrent, reportTemperature, alarm, units, moduleLabels, moduleSizes){
+function AlarmSidebar(side, wrapperDiv, waffleHeight, prevAlarmStatus, alarmStatus, rows, cols, rowTitles, callMyself, alarmPanelDivIDs, alarmPanelCanvIDs, demandVoltage, reportVoltage, reportCurrent, reportTemperature, alarm, units, moduleLabels, moduleSizes){
 
     var i, j, n, columns;
 
     //number of alarms to report:
     var nAlarms = 5;
-
-    //fetch canvas:
-    var canvas = document.getElementById(sidebar);
-    var context = canvas.getContext('2d');
 
     //get container div dimensions:
     var parentWidth = $('#'+wrapperDiv).width();
@@ -49,12 +45,6 @@ function AlarmSidebar(sidebar, side, wrapperDiv, waffleHeight, prevAlarmStatus, 
     //define sidebar dimensions:
     var width = parentWidth*0.2;
     var height = parentHeight;
-
-    //set sidebar dimensions first time:
-    if(!callMyself){
-       canvas.width = width;
-       canvas.height = height;
-    }
 
     //separator line inset
     var inset = 0.1*width;
@@ -308,20 +298,18 @@ function fadeSwapCanvas(cvasID, drawOldCanvas, drawNewCanvas, frame){
 }
 
 //funciton to define the onclick behavior of the alarm sidebar panels:
-function alarmTransition(panelID, hiddenTop){
+function alarmTransition(panelID, hiddenTop, alarmTop){
 
     //alarm reporting font size:
     var alarmTextSize = $('#voltageText').width()*0.08;
 
     if($('#'+panelID).css('z-index') == 10000){
         $('#'+panelID).css('height', 150);
-        //$('#'+panelID).css('background', 'rgba(0,0,0,0.7)');
         $('#'+panelID).css('z-index', 1);
         $('#'+panelID).css('top', hiddenTop+'px !important;');
     } else{
-        $('#'+panelID).css('height', 200+25*alarmTextSize); //600
-        //$('#'+panelID).css('background', 'rgba(0,0,0,1)');
+        $('#'+panelID).css('height', 200+25*alarmTextSize);
         $('#'+panelID).css('z-index', 10000);
-        $('#'+panelID).css('top', '0px !important;');
+        $('#'+panelID).css('top', alarmTop+'px !important;');
     }
 }

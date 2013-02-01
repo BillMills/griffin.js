@@ -17,22 +17,11 @@ div#waffleplate{
 div.navPanel{
 	opacity:0;
 	z-index:-1;
+	display:inline;
 	transition:opacity 0.5s, z-index 0.5s;
 	-moz-transition:opacity 0.5s, z-index 0.5s;
 	-webkit-transition:opacity 0.5s, z-index 0.5s;
 }
-
-canvas#leftSidebar{
-	position:absolute;
-	left:1%;
-}
-
-canvas#rightSidebar{
-	position: absolute;
-	right:1%;
-	z-index: -10000;
-}
-
 
 div.tooltip{
 	display:none;
@@ -63,9 +52,13 @@ div.Sidebar{
 	border-width:5px; 
 	border-color:black;
 	right:3%;
-
+	display:inline;
 	opacity:0;
 	z-index:-1;
+
+	transition:opacity 0.5s, z-index 0.5s;
+	-moz-transition:opacity 0.5s, z-index 0.5s;
+	-webkit-transition:opacity 0.5s, z-index 0.5s;
 }
 
 p#FieldText{
@@ -106,19 +99,19 @@ div.alarmDiv{
 div#voltAlarm
 {
 	overflow: hidden;
-	top:0px;
+	left:3%;
 }
 
 div#currentAlarm
 {
 	overflow: hidden;
-	top:170px;
+	left:3%;
 }
 
 div#tempAlarm
 {
 	overflow: hidden;
-	top:340px;
+	left:3%;
 }
 
 input#submitParameters{
@@ -154,4 +147,43 @@ input.link{
 	-moz-border-radius: 5; 
 	border-radius: 5;
     display: inline;
+}
+
+div.slider{
+	position: absolute; 
+	width: 270px;
+	height: 36px;
+	margin-top: 5px;
+	display: inline;
+	margin-left: 10px;
+}
+
+canvas.sliderBKG{
+	display: inline;
+	position:absolute;
+}
+div.sliderKnob{
+	display: inline;
+	position:absolute; 
+	left: 10px;
+	width: 100px;
+	height: 36px;
+}
+
+canvas.knobStyle{
+	display: inline;
+	position:absolute;
+}
+
+p.sliderText{
+	display: inline;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	color: rgba(255,255,255,0.9);
+	position:relative;
+}
+
+canvas#downStep{
+	display: inline;
+	background-color: Black;
 }

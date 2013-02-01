@@ -1,4 +1,4 @@
-function StripMonitor(monitor, orientation, cvas, rows, columns, nStrips, nRadialHoriz, nAzimuthalHoriz, nRadialVert, nAzimuthalVert, minima, maxima, tooltip){
+function SHARC(monitor, orientation, cvas, rows, columns, nStrips, nRadialHoriz, nAzimuthalHoriz, nRadialVert, nAzimuthalVert, minima, maxima, tooltip){
 
 	var i,j;
 
@@ -37,7 +37,7 @@ function StripMonitor(monitor, orientation, cvas, rows, columns, nStrips, nRadia
     this.halfWidth = this.canvasWidth/2;
 
     //position canvas
-    $('#'+cvas).css('top', $('#'+'scalarMonitorLinks').height() + 5 )
+    $('#'+cvas).css('top', $('#'+'SubsystemLinks').height() + 5 )
 
     //set up tooltip:
     this.tooltip.obj = that;
@@ -439,85 +439,4 @@ function StripMonitor(monitor, orientation, cvas, rows, columns, nStrips, nRadia
 
 }
 
-//draw elliptical arc:
-ellipse = function(context, centerX, centerY, horizRadius, startAngle, endAngle){
-    context.save();
-    context.translate(centerX, centerY);
-    context.scale(1, 0.3);
-    //context.beginPath();
-    //recall the internet counts its angles backwards :(
-    context.arc(0, 0, horizRadius, 2*Math.PI - startAngle, 2*Math.PI - endAngle);
-    context.restore();
-    context.stroke();
-}
-
-//draw spokes from center ellipse to outer ellipse
-ellipseSpoke = function(context, centerX, centerY, horizRadiusInner, horizRadiusOuter, phase, nSpokes, spokeNumber){
-
-	//angle between spokes
-	var sectionArc = 2*Math.PI / nSpokes;
-	//angle of this spoke; recall the internet counts its angles backwards :(
-	var phi = 2*Math.PI - (phase + spokeNumber*sectionArc);
-
-    context.save();
-    context.translate(centerX, centerY);
-    context.scale(1, 0.3);
-    //context.beginPath();
-    context.moveTo(horizRadiusInner*Math.cos(phi), horizRadiusInner*Math.sin(phi));
-    context.lineTo(horizRadiusOuter*Math.cos(phi), horizRadiusOuter*Math.sin(phi));
-    context.restore();
-    context.stroke();
-
-}
-
-//color in a particular annular section
-fillAnnularSection = function(context, centerX, centerY, innerRadius, outerRadius, startAngle, endAngle){
-
-	context.save();
-    context.translate(centerX, centerY);
-    context.scale(1, 0.3);
-	context.beginPath();
-	context.moveTo(innerRadius*Math.cos(2*Math.PI - startAngle), innerRadius*Math.sin(2*Math.PI - startAngle));
-	context.arc(0, 0, innerRadius, 2*Math.PI - startAngle, 2*Math.PI - endAngle, true);
-	context.lineTo(outerRadius*Math.cos(2*Math.PI - endAngle), outerRadius*Math.sin(2*Math.PI - endAngle));
-	context.arc(0, 0, outerRadius, 2*Math.PI - endAngle, 2*Math.PI - startAngle, false);
-	context.closePath();
-	context.restore();
-	context.fill();
-
-}
-
-//map [0,1] onto a rainbow:
-rainbow = function(scale){
-    //map scale onto [0,360]:
-    var H = scale*360 / 60;
-   	var R, G, B;
-   	if(H>=0 && H<1){
-    	R = 255;
-    	G = Math.round(255 - 255*Math.abs(H%2 - 1));
-   		B = 0;
-    } else if(H>=1 && H<2){
-   		R = Math.round(255 - 255*Math.abs(H%2 - 1));
-   		G = 255;
-    	B = 0;
-   	} else if(H>=2 && H<3){
-   		R = 0;
-    	G = 255;
-    	B = Math.round(255 - 255*Math.abs(H%2 - 1));
-   	} else if(H>=3 && H<4){
-    	R = 0;
-    	G = Math.round(255 - 255*Math.abs(H%2 - 1));
-   		B = 255;
-    } else if(H>=4 && H<5){
-   		R = Math.round(255 - 255*Math.abs(H%2 - 1));
-   		G = 0;
-   		B = 255;
-   	} else if(H>=5 && H<6){
-   		R = 255;
-   		G = 0;
-    	B = Math.round(255 - 255*Math.abs(H%2 - 1));
-   	} 
-   	return [R,G,B];
-
-}
 

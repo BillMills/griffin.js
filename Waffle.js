@@ -1,4 +1,4 @@
-function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, wrapperDiv, rowTitles, InputLayer, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs, headerDiv, moduleSizes, moduleLabels, voltageSlider, rampSlider, rampDownSlider, tooltip){
+function Waffle(rows, cols, cvas, alarm, scaleMax, wrapperDiv, rowTitles, InputLayer, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs, headerDiv, moduleSizes, moduleLabels, voltageSlider, rampSlider, rampDownSlider, tooltip){
 
         //if(!document.webkitHidden && !document.mozHidden){
     	var i, j, n, columns;
@@ -14,7 +14,6 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, wrapperDiv, rowTitle
         this.scaleMax = scaleMax;                   //array of scale maxima: [voltage, current, temperature]
         this.prevAlarmStatus;                       //previous iteration's alarmStatus
         this.alarmStatus;                           //2D array containing the alarm level for each cell
-        this.sidebar = sidebar;                     //array containing canvas IDs of left and right sidebars, [leftID, rightID]
         this.side = ['left', 'right']               //TODO: depricate
         this.wrapperDiv = wrapperDiv;               //div ID of top level div
         this.rowTitles = rowTitles;                 //array of titles for rows
@@ -418,7 +417,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, sidebar, wrapperDiv, rowTitle
             this.cellColorUpdate();
 
             //update peripherals:
-            AlarmSidebar(this.sidebar[0], this.side[0], this.wrapperDiv, this.waffleHeight, this.prevAlarmStatus, this.alarmStatus, this.rows, this.cols, this.rowTitles, callMyself, this.alarmPanelDivIDs, this.alarmPanelCanvIDs, demandVoltage, reportVoltage, reportCurrent, reportTemperature, this.alarm, ['V', 'A', 'C'], this.moduleLabels, this.moduleSizes);
+            AlarmSidebar(this.side[0], this.wrapperDiv, this.waffleHeight, this.prevAlarmStatus, this.alarmStatus, this.rows, this.cols, this.rowTitles, callMyself, this.alarmPanelDivIDs, this.alarmPanelCanvIDs, demandVoltage, reportVoltage, reportCurrent, reportTemperature, this.alarm, ['V', 'A', 'C'], this.moduleLabels, this.moduleSizes);
             channelSelect(that);
 
             //animate:

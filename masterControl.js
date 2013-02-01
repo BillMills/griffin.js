@@ -129,8 +129,17 @@ function fetchNewData(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVol
 function fetchNewSMData(nChannels, HVdata){
     var i = 0;
 
+    //var variablesRecord = ODBGetRecord(SM_ODBkeys[0]);
+    //var settingsRecord  = ODBGetRecord(SM_ODBkeys[1]);
+
+    //var HV              = ODBExtractRecord(variablesRecord, SM_ODBkeys[2]);
+
     //dummy data for offline dev:
     for(i=0; i<nChannels; i++){
+
+        //HVdata[i] = parseFloat(HV[i]);
+
+        //fake data for offline demo:
         HVdata[i] = Math.random();
     }
 
