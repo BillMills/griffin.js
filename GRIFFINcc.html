@@ -16,7 +16,9 @@
     <script src="BarGraph.js" type="text/javascript"></script>
     <script src="masterControl.js" type="text/javascript"></script>
     <script src="viewTransitions.js" type="text/javascript"></script>
+    <script src="drawing.js" type="text/javascript"></script>
     <script src="SHARC.js" type="text/javascript"></script>
+    <script src="DESCANT.js" type="text/javascript"></script>
 
     <link rel="stylesheet" type="text/css" href="GRIFFINcc.css" />
   </head> 
@@ -33,7 +35,7 @@
         <input class='link' type="submit" value="MIDAS Status">
         <input id='DashboardButton' class='link' type='button' value='Dashboard' onclick="javascript:swapView('DashboardLinks', 'DashboardCanvas', 'DashboardSidebar')">
         <input id='HVmonitorButton' class='link' type="button" value="HV Monitor" onclick="javascript:swapView('mainframeLinks', 'TestWaffle', 'InputLayer')">
-        <input id='SubsystemsButton' class='link' type="button" value="Subsystem Monitor" onclick="javascript:swapView('SubsystemLinks', 'SubsystemCanvas', 'SubsystemSidebar')">
+        <input id='SubsystemsButton' class='link' type="button" value="Subsystem Monitor" onclick="javascript:swapView('SubsystemLinks', 'SHARCCanvas', 'SubsystemSidebar')">
         <input id='DAQbutton' class='link' type='button' value='DAQ' onclick="javascript:swapView('DAQlinks', 'DAQcanvas', 'DAQsidebar')">
         <input id='ClockButton' class='link' type='button' value='Clock' onclick="javascript:swapView('ClockLinks', 'ClockCanvas', 'ClockSidebar')">
         <input id='TriggerButton' class='link' type='button' value='Trigger' onclick="javascript:swapView('TriggerLinks', 'TriggerCanvas', 'TriggerSidebar')">
@@ -89,9 +91,9 @@
       <div id='SubsystemLinks' class='navPanel' style='position:absolute; left:24%;'>
         <h1 id='SubsystemLinksBanner' style='display: inline; opacity: 0.3; font-family: "Orbitron", sans-serif; font-size: 275%; vertical-align:-20px;'>GRIFFIN Subsystems</h1>
 
-        <br><button id='SHARClink' class='MFlink' type="button">SHARC</button>
+        <br><button id='SHARClink' class='MFlink' type="button" onclick="javascript:swapFade('SHARCCanvas', 'SHARClink')">SHARC</button>
         <button id='HPGElink' class='MFlink' type="button">HPGE</button>
-        <button id='DESCANTlink' class='MFlink' type="button">DESCANT</button>
+        <button id='DESCANTlink' class='MFlink' type="button" onclick="javascript:swapFade('DESCANTCanvas', 'DESCANTlink')">DESCANT</button>
         <button id='PACESlink' class='MFlink' type="button">PACES</button>
         <button id='DANTElink' class='MFlink' type="button">DANTE</button>
         <button id='BAMBINOlink' class='MFlink' type="button">BAMBINO</button>
@@ -133,7 +135,8 @@
       <canvas id='bar3' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
 
       <!--Subsystem-->
-      <canvas id='SubsystemCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
+      <canvas id='SHARCCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
+      <canvas id='DESCANTCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
 
       <!--DAQ-->
       <canvas id='DAQcanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>     
@@ -409,7 +412,7 @@
 
       //tooltips:
       var MFtooltip = new Tooltip('TestWaffle', 'MFTipText', 'MFTT', 'waffleplate', prefix, postfix);
-      var SubsystemTooltip = new Tooltip('SubsystemCanvas', 'SubsystemTipText', 'SubsystemTT', 'waffleplate', [], []);
+      var SubsystemTooltip = new Tooltip('SHARCCanvas', 'SubsystemTipText', 'SubsystemTT', 'waffleplate', [], []);
 
       //main elements
       var waffle = new Waffle(rows,columns, 'TestWaffle', alarmThresholds, scaleMaxima, "waffleplate", rowTitles, "InputLayer", ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleSizes, moduleLabels, sliderVoltage, sliderRamp, sliderRampDown, MFtooltip);
@@ -420,7 +423,10 @@
       barCharts[2] = new BarGraph('bar2', 2,  48, 'Module 2', 'Reported Voltage [V]', bigCard, minVoltage, maxVoltage, barChartPrecision, waffle);
       barCharts[3] = new BarGraph('bar3', 3,  12, 'Module 3', 'Reported Voltage [V]', smallCard, minVoltage, maxVoltage, barChartPrecision, waffle);
 
-      var SHARCMonitor = new SHARC('waffleplate','horizontal', 'SubsystemCanvas', SMrows, SMcolumns, SMnChannels, 4, 4, 1, 16, SMminima, SMmaxima, SubsystemTooltip);
+      var SHARCMonitor = new SHARC('waffleplate','horizontal', 'SHARCCanvas', SMrows, SMcolumns, SMnChannels, 4, 4, 1, 16, SMminima, SMmaxima, SubsystemTooltip);
+      var DESCANTMonitor = new DESCANT('waffleplate', 'DESCANTCanvas');
+
+      DESCANTMonitor.wireframe();
 
       //set up arrays:
       //HV monitor
