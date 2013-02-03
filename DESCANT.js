@@ -1,9 +1,12 @@
-function DESCANT(monitor, canvas){
+function DESCANT(monitor, canvas, tooltip){
 
 	var i, j;
 
+	var that = this;
+
 	this.monitorID = monitor;		//div ID of wrapper div
 	this.canvasID = canvas;			//ID of canvas to draw DESCANT on
+	this.tooltip = tooltip;			//tooltip associated with this object
 
 	this.canvas = document.getElementById(canvas);
 	this.context = this.canvas.getContext('2d');
@@ -14,6 +17,20 @@ function DESCANT(monitor, canvas){
     this.canvasHeight = 0.8*$(this.monitor).height();
     this.canvas.setAttribute('width', this.canvasWidth);
     this.canvas.setAttribute('height', this.canvasHeight);
+
+    //Dirty trick to implement DESCANT's tooltip on its obnoxious geometry: make another canvas of the same size hidden beneath, with the 
+    //detector drawn on it, but with each element filled in with rgba(0,0,n,1), where n is the channel number; fetching the color from the 
+    //hidden canvas at point x,y will then return the appropriate channel index.
+    this.TTcanvas = document.getElementById('DESCANTTTCanvas');
+    this.TTcontext = this.TTcanvas.getContext('2d');
+    this.TTcanvas.setAttribute('width', this.canvasWidth);
+    this.TTcanvas.setAttribute('height', this.canvasHeight);
+    //paint whole hidden canvas with R!=G!=B to trigger TT suppression:
+    this.TTcontext.fillStyle = 'rgba(50,100,150,1)';
+    this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
+
+    //associate tooltip:
+    this.tooltip.obj = that;
 
 	//center of DESCANT
 	this.centerX = $(this.canvas).width() / 2;
@@ -34,9 +51,6 @@ function DESCANT(monitor, canvas){
 
 	//array of rules for drawing DESCANT channels.  Array index should correspond to real channel number; packed as [type, center x, center y, canvas rotation, element rotation]
 	this.drawRules = [];
-
-var fudgePhase = 130/180*Math.PI;
-var fudgeRad = 151.5+this.pentagonNormal;
 
 	this.drawRules[0] = ['white', 0, 0 - this.pentagonNormal-71.9*this.scale, -72/180*Math.PI];
 	this.drawRules[1] = ['white', 0, 0 - this.pentagonNormal-71.9*this.scale - 1*(151.5*this.scale+this.explode), -72/180*Math.PI];
@@ -78,19 +92,19 @@ var fudgeRad = 151.5+this.pentagonNormal;
 	this.drawRules[37] = ['greenLeft', 0, 0-(this.pentagonNormal + this.scale*(146.5/0.4 + 325)),  -1*(45 - 288)/180*Math.PI, 0/180*Math.PI];
 	this.drawRules[38] = ['greenRight', 0, 0-(this.pentagonNormal + this.scale*(146.5/0.4 + 325)),  -1*(27 - 288)/180*Math.PI, -3/180*Math.PI];
 	this.drawRules[39] = ['greenRight', 0, 0-(this.pentagonNormal + this.scale*(146.5/0.4 + 350)),  -1*(12 - 288)/180*Math.PI, -13/180*Math.PI];
-	this.drawRules[40] = ['red', 0, 0-this.pentagonVertex - this.scale*(   Math.sqrt( Math.pow( 93-41.5 , 2) + Math.pow( 79.6 , 2) ) +73.1 + this.explode ), (36/180)*Math.PI, Math.PI/2];
+	this.drawRules[40] = ['red', 0, 0-this.pentagonVertex - this.scale*(   Math.sqrt( Math.pow( 93-41.5 , 2) + Math.pow( 79.6 , 2) ) +73.1 +this.explode), (4*72/180 + 36/180)*Math.PI, Math.PI/2];
 	this.drawRules[41] = ['red',0, 0-(this.pentagonNormal + this.scale*(146.5/0.4 + 160)), -1*(55)/180*Math.PI, Math.PI/2 + 15/180*Math.PI]
 	this.drawRules[42] = ['red',0, 0-(this.pentagonNormal + this.scale*(146.5/0.4 + 160)), -1*(16)/180*Math.PI, Math.PI/2 - 15/180*Math.PI]
-	this.drawRules[43] = ['red', 0, 0-this.pentagonVertex - this.scale*(   Math.sqrt( Math.pow( 93-41.5 , 2) + Math.pow( 79.6 , 2) ) +73.1 +this.explode), (4*72/180 + 36/180)*Math.PI, Math.PI/2];
+	this.drawRules[43] = ['red', 0, 0-this.pentagonVertex - this.scale*(   Math.sqrt( Math.pow( 93-41.5 , 2) + Math.pow( 79.6 , 2) ) +73.1 + this.explode ), (36/180)*Math.PI, Math.PI/2];
 	this.drawRules[44] = ['red',0, 0-(this.pentagonNormal + this.scale*(146.5/0.4 + 160)), -1*(55 - 72)/180*Math.PI, Math.PI/2 + 15/180*Math.PI]
 	this.drawRules[45] = ['red',0, 0-(this.pentagonNormal + this.scale*(146.5/0.4 + 160)), -1*(16 - 72)/180*Math.PI, Math.PI/2 - 15/180*Math.PI]
-	this.drawRules[46] = ['red', 0, 0-this.pentagonVertex - this.scale*(   Math.sqrt( Math.pow( 93-41.5 , 2) + Math.pow( 79.6 , 2) ) +73.1 +this.explode), (3*72/180 + 36/180)*Math.PI, Math.PI/2];
+	this.drawRules[46] = ['red', 0, 0-this.pentagonVertex - this.scale*(   Math.sqrt( Math.pow( 93-41.5 , 2) + Math.pow( 79.6 , 2) ) +73.1 +this.explode), (1*72/180 + 36/180)*Math.PI, Math.PI/2];
 	this.drawRules[47] = ['red',0, 0-(this.pentagonNormal + this.scale*(146.5/0.4 + 160)), -1*(55 - 144)/180*Math.PI, Math.PI/2 + 15/180*Math.PI]
 	this.drawRules[48] = ['red',0, 0-(this.pentagonNormal + this.scale*(146.5/0.4 + 160)), -1*(16 - 144)/180*Math.PI, Math.PI/2 - 15/180*Math.PI]
 	this.drawRules[49] = ['red', 0, 0-this.pentagonVertex - this.scale*(   Math.sqrt( Math.pow( 93-41.5 , 2) + Math.pow( 79.6 , 2) ) +73.1 +this.explode), (2*72/180 + 36/180)*Math.PI, Math.PI/2];
 	this.drawRules[50] = ['red',0, 0-(this.pentagonNormal + this.scale*(146.5/0.4 + 160)), -1*(55 - 216)/180*Math.PI, Math.PI/2 + 15/180*Math.PI]
 	this.drawRules[51] = ['red',0, 0-(this.pentagonNormal + this.scale*(146.5/0.4 + 160)), -1*(16 - 216)/180*Math.PI, Math.PI/2 - 15/180*Math.PI]
-	this.drawRules[52] = ['red', 0, 0-this.pentagonVertex - this.scale*(   Math.sqrt( Math.pow( 93-41.5 , 2) + Math.pow( 79.6 , 2) ) +73.1 +this.explode), (1*72/180 + 36/180)*Math.PI, Math.PI/2];
+	this.drawRules[52] = ['red', 0, 0-this.pentagonVertex - this.scale*(   Math.sqrt( Math.pow( 93-41.5 , 2) + Math.pow( 79.6 , 2) ) +73.1 +this.explode), (3*72/180 + 36/180)*Math.PI, Math.PI/2];
 	this.drawRules[53] = ['red',0, 0-(this.pentagonNormal + this.scale*(146.5/0.4 + 160)), -1*(55 - 288)/180*Math.PI, Math.PI/2 + 15/180*Math.PI]
 	this.drawRules[54] = ['red',0, 0-(this.pentagonNormal + this.scale*(146.5/0.4 + 160)), -1*(16 - 288)/180*Math.PI, Math.PI/2 - 15/180*Math.PI]
 	this.drawRules[55] = ['blue',0, 0-(this.pentagonNormal + this.scale*146.5/0.4), -1*(32+17)/180*Math.PI, -Math.PI*22/180]
@@ -112,26 +126,118 @@ var fudgeRad = 151.5+this.pentagonNormal;
 
     //position canvas
     $('#'+canvas).css('top', $('#'+'SubsystemLinks').height() + 5 )
+    $('#DESCANTTTCanvas').css('top', $('#'+'SubsystemLinks').height() + 5 )
 
 	//member functions
 	this.wireframe = function(){
 		var i, j;
-
+		if(this.drawRules[i]!=0){
 		for(i=0; i<70; i++){
-			if(this.drawRules[i]!=0){
 			this.context.save();
 			this.context.translate(this.centerX, this.centerY);
 			this.context.rotate(this.drawRules[i][3]);
 
-			if(this.drawRules[i][0] == 'white')whiteDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0);
-			else if(this.drawRules[i][0] == 'red') redDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4]);
-			else if(this.drawRules[i][0] == 'blue') blueDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4]);
-			else if(this.drawRules[i][0] == 'greenLeft') greenLeftDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4]);
-			else if(this.drawRules[i][0] == 'greenRight') greenRightDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4]);
+			this.TTcontext.fillStyle = 'rgba(0,0,0,0)';
+
+			if(this.drawRules[i][0] == 'white')whiteDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, 0);
+			else if(this.drawRules[i][0] == 'red') redDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 0);
+			else if(this.drawRules[i][0] == 'blue') blueDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 0);
+			else if(this.drawRules[i][0] == 'greenLeft') greenLeftDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 0);
+			else if(this.drawRules[i][0] == 'greenRight') greenRightDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 0);
 
 			this.context.restore();
-			}
+		}
+
+		//and the same again for the hidden TT info canvas:
+		for(i=0; i<70; i++){
+			this.TTcontext.save();
+			this.TTcontext.translate(this.centerX, this.centerY);
+			this.TTcontext.rotate(this.drawRules[i][3]);
+
+			this.TTcontext.fillStyle = 'rgba('+i+','+i+','+i+',1)';
+
+			if(this.drawRules[i][0] == 'white')whiteDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, 1);
+			else if(this.drawRules[i][0] == 'red') redDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 1);
+			else if(this.drawRules[i][0] == 'blue') blueDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 1);
+			else if(this.drawRules[i][0] == 'greenLeft') greenLeftDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 1);
+			else if(this.drawRules[i][0] == 'greenRight') greenRightDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 1);
+
+			this.TTcontext.restore();
+		}
 		}
 
 	};
+
+	//fetch the channel number that pixel x,y sits on by parsing the info encoded in the blue entry of the hidden tooltip canvas
+	this.fetchChannel = function(x, y){
+		var imageData = this.TTcontext.getImageData(x,y,1,1);
+		var index = -1;
+		if(imageData.data[0] == imageData.data[1] && imageData.data[0] == imageData.data[2]) index = imageData.data[0];
+		return index;
+	};
+
+	this.findCell = function(x, y){
+		return this.fetchChannel(x,y);
+	};
+
+    //establish the tooltip text for the cell returned by this.findCell; return length of longest line:
+	this.defineText = function(cell){
+        var toolTipContent = '<br>';
+        var nextLine;
+        var longestLine = 0;
+        var cardIndex;
+        var i;
+
+        nextLine = cell;
+
+        //keep track of the longest line of text:
+        longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
+        toolTipContent += nextLine;
+/*
+        //fill out tooltip content:
+        for(i=0; i<this.reportedValues.length; i++){
+            //establish prefix:
+            nextLine = '<br/>'+this.tooltip.prefix[i];
+            if(this.tooltip.prefix[i] !== '') nextLine += ' ';
+
+            //pull in content; special cases for the status word and reported current:
+            //status word:
+            if(i == 6){
+                nextLine += parseStatusWord(this.reportedValues[i][row][col]);
+            }
+            //current:
+            else if(i == 2){
+                    if(this.moduleSizes[cardIndex]==4 && row!=0) nextLine += '--';
+                    else nextLine += Math.round( this.reportedValues[i][row][col]*1000)/1000 + ' ' + this.tooltip.postfix[i];                
+            } else {
+                nextLine += Math.round( this.reportedValues[i][row][col]*1000)/1000 + ' ' + this.tooltip.postfix[i];
+            }
+
+            //keep track of longest line:
+            longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width);
+
+            //append to tooltip:
+            toolTipContent += nextLine;
+ 
+        }
+*/
+        document.getElementById(this.tooltip.ttTextID).innerHTML = toolTipContent;
+
+        //return length of longest line:
+        return longestLine;
+	};
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

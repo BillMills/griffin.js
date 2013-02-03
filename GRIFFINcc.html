@@ -137,6 +137,7 @@
       <!--Subsystem-->
       <canvas id='SHARCCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
       <canvas id='DESCANTCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
+      <canvas id='DESCANTTTCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
 
       <!--DAQ-->
       <canvas id='DAQcanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>     
@@ -278,6 +279,10 @@
     <p class='TTtext' id="SubsystemTipText"></p>
   </div>
 
+  <div class='tooltip' id="DESCANTTT">
+    <p class='TTtext' id="DESCANTTipText"></p>
+  </div>
+
   <script type="text/JavaScript">
 
       //--------------Experiment-specific Parameters Here--------------------------------------------------
@@ -413,6 +418,7 @@
       //tooltips:
       var MFtooltip = new Tooltip('TestWaffle', 'MFTipText', 'MFTT', 'waffleplate', prefix, postfix);
       var SubsystemTooltip = new Tooltip('SHARCCanvas', 'SubsystemTipText', 'SubsystemTT', 'waffleplate', [], []);
+      var DESCANTTooltip = new Tooltip('DESCANTCanvas', 'DESCANTTipText', 'DESCANTTT', 'waffleplate', [], []);
 
       //main elements
       var waffle = new Waffle(rows,columns, 'TestWaffle', alarmThresholds, scaleMaxima, "waffleplate", rowTitles, "InputLayer", ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleSizes, moduleLabels, sliderVoltage, sliderRamp, sliderRampDown, MFtooltip);
@@ -424,7 +430,7 @@
       barCharts[3] = new BarGraph('bar3', 3,  12, 'Module 3', 'Reported Voltage [V]', smallCard, minVoltage, maxVoltage, barChartPrecision, waffle);
 
       var SHARCMonitor = new SHARC('waffleplate','horizontal', 'SHARCCanvas', SMrows, SMcolumns, SMnChannels, 4, 4, 1, 16, SMminima, SMmaxima, SubsystemTooltip);
-      var DESCANTMonitor = new DESCANT('waffleplate', 'DESCANTCanvas');
+      var DESCANTMonitor = new DESCANT('waffleplate', 'DESCANTCanvas', DESCANTTooltip);
 
       DESCANTMonitor.wireframe();
 
