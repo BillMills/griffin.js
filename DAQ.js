@@ -1,5 +1,5 @@
 function DAQ(monitor, canvas, tooltip){
-	var i, j;
+	var i, j, k, m;
 
 	var that = this;
 
@@ -42,9 +42,177 @@ function DAQ(monitor, canvas, tooltip){
     this.inboundCollector = -1;
     this.presentCollector = -1;
 
-    //animation test:
-    //this.canvas.onclick = function(event){animate(that,0)};
+    //establish animation transition to detailed view:
     this.canvas.onclick = function(event){that.swapDetail(event.pageX - that.canvas.offsetLeft - that.monitor.offsetLeft, event.pageY - that.canvas.offsetTop - that.monitor.offsetTop)};
+
+    //establish data buffers////////////////////////////////////////////////////////////////////////////
+    //master
+    this.masterRate = 0;
+    this.masterColor = [0,0,0];
+    this.oldMasterColor = [0,0,0];
+    //links from collectors to master
+    this.masterLinkRate = [];
+    this.masterLinkColor = [];
+    this.oldMasterLinkColor = [];
+    //collectors
+    this.collectorRate = [];
+    this.collectorColor = [];
+    this.oldCollectorColor = [];
+    //links from digitizer summary node to collector
+    this.collectorLinkRate = [];
+    this.collectorLinkColor = [];
+    this.oldCollectorLinkColor = [];
+    //digitizer summary node
+    this.digiSummaryRate = [];
+    this.digiSummaryColor = [];
+    this.oldDigiSummaryColor = [];
+    //links from digitizer group to digitizer summary node
+    this.digiGroupSummaryRate = [];
+    this.digiGroupSummaryColor = [];
+    this.oldDigiGroupSummaryColor = [];
+    //links from digitizers to digitizer group
+    this.digitizerLinkRate = [];
+    this.digitizerLinkColor = [];
+    this.oldDigitizerLinkColor = [];
+    //digitizers
+    this.digitizerRate = [];
+    this.digitizerColor = [];
+    this.oldDigitizerColor = [];
+
+    for(i=0; i<16; i++){
+    	this.masterLinkRate[i] = 0;
+    	this.masterLinkColor[i] = [];
+    	this.oldMasterLinkColor[i] = [];
+    	this.collectorRate[i] = 0;
+    	this.collectorColor[i] = [];
+    	this.oldCollectorColor[i] = [];
+    	this.collectorLinkRate[i] = 0
+    	this.collectorLinkColor[i] = [];
+    	this.oldCollectorLinkColor[i] = [];
+    	this.digiSummaryRate[i] = 0;
+    	this.digiSummaryColor[i] = [];
+    	this.oldDigiSummaryColor[i] = [];
+
+	    this.digiGroupSummaryRate[i] = [];
+    	this.digiGroupSummaryColor[i] = [];
+	    this.oldDigiGroupSummaryColor[i] = [];
+
+    	this.digitizerLinkRate[i] = [];
+    	this.digitizerLinkColor[i] = [];
+    	this.oldDigitizerLinkColor[i] = [];
+    	this.digitizerRate[i] = [];
+    	this.digitizerColor[i] = [];
+    	this.oldDigitizerColor[i] = [];
+
+    	for(j=0; j<3; j++){
+    		this.masterLinkColor[i][j] = 0;
+    		this.oldMasterLinkColor[i][j] = 0;
+    		this.collectorColor[i][j] = 0;
+    		this.oldCollectorColor[i][j] = 0;
+    		this.collectorLinkColor[i][j] = 0;
+    		this.oldCollectorLinkColor[i][j] = 0;
+    		this.digiSummaryColor[i][j] = 0;
+    		this.oldDigiSummaryColor[i][j] = 0;
+    	}
+	
+		for(j=0; j<4; j++){
+			this.digiGroupSummaryRate[i][j] = 0;
+    		this.digiGroupSummaryColor[i][j] = [];
+    		this.oldDigiGroupSummaryColor[i][j] = [];
+
+	    	this.digitizerLinkRate[i][j] = [];
+    		this.digitizerLinkColor[i][j] = [];
+    		this.oldDigitizerLinkColor[i][j] = [];
+	    	this.digitizerRate[i][j] = [];
+    		this.digitizerColor[i][j] = [];
+    		this.oldDigitizerColor[i][j] = [];
+
+	    	for(m=0; m<4; m++){
+		    	this.digitizerLinkRate[i][j][m] = 0;
+    			this.digitizerLinkColor[i][j][m] = [];
+    			this.oldDigitizerLinkColor[i][j][m] = [];
+	    		this.digitizerRate[i][j][m] = 0;
+    			this.digitizerColor[i][j][m] = [];
+    			this.oldDigitizerColor[i][j][m] = [];    		
+	    	
+    			for(k=0; k<3; k++){
+    				this.digiGroupSummaryColor[i][j][k] = 0;
+	    			this.oldDigiGroupSummaryColor[i][j][k] = 0;
+
+		    		this.digitizerLinkColor[i][j][m][k] = 0;
+    				this.oldDigitizerLinkColor[i][j][m][k] = 0;
+    				this.digitizerColor[i][j][m][k] = 0;
+    				this.oldDigitizerColor[i][j][m][k] = 0; 
+    			}
+    		}
+		}
+	} //finished declaring data buffers
+
+	//update the info for each cell in the monitor
+	this.update = function(masterRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate){
+		var i,j,k,m;
+
+		//master
+    	this.masterRate = masterRate;
+	    for(i=0; i<3; i++){
+    		this.oldMasterColor[i] = this.masterColor[i];
+	    }
+    	this.masterColor = this.parseColor(masterRate);
+	    //links from collectors to master, collectors, links from digitizer summary node to collector, digitizer summary nodes
+    	for(i=0; i<16; i++){
+    		this.masterLinkRate[i] = masterLinkRate[i];
+	    	this.collectorRate[i] = collectorRate[i];
+    		this.collectorLinkRate[i] = collectorLinkRate[i];
+    		this.digiSummaryRate[i] = digiSummaryRate[i];
+	    	for(j=0; j<3; j++){
+    			this.oldMasterLinkColor[i][j] = this.masterLinkColor[i][j];
+    			this.oldcollectorColor[i][j] = this.collectorColor[i][j];
+    			this.oldCollectorLinkColor[i][j] = this.collectorLinkColor[i][j];
+	    		this.oldDigiSummaryColor[i][j] = this.digiSummaryColor[i][j];
+    		}
+    		this.masterLinkColor[i] = this.parseColor(masterLinkRate[i]);
+	    	this.collectorColor[i] = this.parseColor(collectorRate[i]);
+    		this.collectorLinkColor[i] = this.parseColor(collectorLinkRate[i]);
+    		this.digiSummaryColor[i] = this.parseColor(digitizerRate[i]);
+	    }
+
+    	//links from digitizer group to digitizer summary node
+	    for(i=0; i<16; i++){
+    		for(j=0; j<4; j++){
+    			this.digiGroupSummaryRate[i][j] = digiGroupSummaryRate[i][j];
+    			for(k=0; k<3; k++){
+    				this.oldDigiGroupSummaryColor[i][j][k] = this.digiGroupSummaryColor[i][j][k];
+	    		}
+    			this.digiGroupSummaryColor[i][j] = this.parseColor(digiGroupSummaryRate[i][j]);
+    		}
+    	}
+
+	    //links from digitizers to digitizer group, and digitizers
+
+    	for(i=0; i<16; i++){
+    		for(j=0; j<4; j++){
+    			for(k=0; k<4; k++){
+    				this.digitizerLinkRate[i][j][k] = digitizerLinkRate[i][j][k];
+	    			this.digitizerRate[i][j][k] = digitizerRate[i][j][k];
+    				for(m=0; m<3; m++){
+    					this.oldDigitizerLinkColor[i][j][k][m] = this.digitizerLinkColor[i][j][k][m];
+    					this.oldDigitizerColor[i][j][k][m] = this.digitizerColor[i][j][k][m];
+    				}
+	    			this.digitizerLinkColor[i][j][k] = this.parseColor(digitizerLinkRate[i][j][k]);
+    				this.digitizerColor[i][j][k] = this.parseColor(digitizerRate[i][j][k]);
+    			}
+    		}
+    	}
+
+	};
+
+	this.parseColor = function(scalar){
+
+	};
+
+	this.draw = function(frame){
+
+	};
 
     this.drawNodeMap = function(){
     	var i;
@@ -60,7 +228,7 @@ function DAQ(monitor, canvas, tooltip){
     	}
     };
 
-    this.draw = function(frame){
+    this.drawDetail = function(frame){
     	this.context.clearRect(0,0, this.canvasWidth, this.canvasWidth);
     	this.drawNodeMap();
     	if(this.presentCollector != this.inboundCollector){
@@ -227,24 +395,22 @@ function DAQ(monitor, canvas, tooltip){
 			this.inboundCollector = collector
 
 		if(radius < 2*this.collectorRingRadius && radius > 14){
-			animate(this,0)
+			animateDetail(this,0)
 		}
 
     };
 
-
-
-
-
-
-
-
-
-
-
 }
 
+//copy of animate from utilities, for use on a different animation process than the passive updates
+function animateDetail(thing, frame){
 
+    thing.drawDetail(frame);
+    if(frame < thing.nFrames){
+        frame++;
+        setTimeout(function(){animateDetail(thing, frame)},thing.duration/thing.FPS*1000);
+    }
+}
 
 
 
