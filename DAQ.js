@@ -1,4 +1,4 @@
-function DAQ(monitor, canvas, tooltip){
+function DAQ(monitor, canvas, tooltip, minima, maxima){
 	var i, j, k, m;
 
 	var that = this;
@@ -6,6 +6,10 @@ function DAQ(monitor, canvas, tooltip){
 	this.monitorID = monitor;		//div ID of wrapper div
 	this.canvasID = canvas;			//ID of canvas to draw DESCANT on
 	//this.tooltip = tooltip;			//tooltip associated with this object
+	this.minima = minima;			//minima of element scalea: [master, master link, collector, digi summary link, digi summary node, digi group link, digi transfer, digitizer]
+	this.maxima = maxima;			//as minima.
+	this.nCollectors = 16;
+	this.nDigitizers = 256;
 
 	this.canvas = document.getElementById(canvas);
 	this.context = this.canvas.getContext('2d');
@@ -28,7 +32,7 @@ function DAQ(monitor, canvas, tooltip){
     this.centerX = this.canvasWidth / 2;
     this.centerY = this.canvasHeight / 2;
     //default node color
-    this.nodeColor = 'rgba(200,200,200,1)';
+    this.nodeColor = 'rgba(0,0,0,1)';
     //background color
     this.bkgColor = '#333333';
     //radius of collector ring:
@@ -153,11 +157,12 @@ function DAQ(monitor, canvas, tooltip){
 		var i,j,k,m;
 
 		//master
-    	this.masterRate = masterRate;
+    	this.masterRate[0] = masterRate;
 	    for(i=0; i<3; i++){
     		this.oldMasterColor[i] = this.masterColor[i];
 	    }
-    	this.masterColor = this.parseColor(masterRate);
+    	this.masterColor = this.parseColor(masterRate[0], 0);
+
 	    //links from collectors to master, collectors, links from digitizer summary node to collector, digitizer summary nodes
     	for(i=0; i<16; i++){
     		this.masterLinkRate[i] = masterLinkRate[i];
@@ -166,14 +171,14 @@ function DAQ(monitor, canvas, tooltip){
     		this.digiSummaryRate[i] = digiSummaryRate[i];
 	    	for(j=0; j<3; j++){
     			this.oldMasterLinkColor[i][j] = this.masterLinkColor[i][j];
-    			this.oldcollectorColor[i][j] = this.collectorColor[i][j];
+    			this.oldCollectorColor[i][j] = this.collectorColor[i][j];
     			this.oldCollectorLinkColor[i][j] = this.collectorLinkColor[i][j];
 	    		this.oldDigiSummaryColor[i][j] = this.digiSummaryColor[i][j];
     		}
-    		this.masterLinkColor[i] = this.parseColor(masterLinkRate[i]);
-	    	this.collectorColor[i] = this.parseColor(collectorRate[i]);
-    		this.collectorLinkColor[i] = this.parseColor(collectorLinkRate[i]);
-    		this.digiSummaryColor[i] = this.parseColor(digitizerRate[i]);
+    		this.masterLinkColor[i] = this.parseColor(masterLinkRate[i], 1);
+	    	this.collectorColor[i] = this.parseColor(collectorRate[i], 2);
+    		this.collectorLinkColor[i] = this.parseColor(collectorLinkRate[i],3);
+    		this.digiSummaryColor[i] = this.parseColor(digiSummaryRate[i],4);
 	    }
 
     	//links from digitizer group to digitizer summary node
@@ -183,12 +188,11 @@ function DAQ(monitor, canvas, tooltip){
     			for(k=0; k<3; k++){
     				this.oldDigiGroupSummaryColor[i][j][k] = this.digiGroupSummaryColor[i][j][k];
 	    		}
-    			this.digiGroupSummaryColor[i][j] = this.parseColor(digiGroupSummaryRate[i][j]);
+    			this.digiGroupSummaryColor[i][j] = this.parseColor(digiGroupSummaryRate[i][j], 5);
     		}
     	}
 
 	    //links from digitizers to digitizer group, and digitizers
-
     	for(i=0; i<16; i++){
     		for(j=0; j<4; j++){
     			for(k=0; k<4; k++){
@@ -198,56 +202,101 @@ function DAQ(monitor, canvas, tooltip){
     					this.oldDigitizerLinkColor[i][j][k][m] = this.digitizerLinkColor[i][j][k][m];
     					this.oldDigitizerColor[i][j][k][m] = this.digitizerColor[i][j][k][m];
     				}
-	    			this.digitizerLinkColor[i][j][k] = this.parseColor(digitizerLinkRate[i][j][k]);
-    				this.digitizerColor[i][j][k] = this.parseColor(digitizerRate[i][j][k]);
+	    			this.digitizerLinkColor[i][j][k] = this.parseColor(digitizerLinkRate[i][j][k], 6);
+    				this.digitizerColor[i][j][k] = this.parseColor(digitizerRate[i][j][k], 7);
     			}
     		}
     	}
 
+    	//animate(this,0);
+
 	};
 
-	this.parseColor = function(scalar){
+	//parse scalar into a color on a color scale bounded by the entries in this.minima[index] and this.maxima[index] 
+	this.parseColor = function(scalar, index){
+		//how far along the scale are we?
+		var scale = (scalar - this.minima[index]) / (this.maxima[index] - this.minima[index]);
 
+		return redScale(scale);
 	};
 
 	this.draw = function(frame){
+		var color, i, j, k;
+
+		this.context.clearRect(0,0, this.canvasWidth, this.canvasWidth);
+
+    	//digitizer summary detail
+    	if(this.presentCollector != -1)
+	    	this.drawDigiDetail(this.presentCollector, frame, this.nFrames);
+
+    	for(i=0; i<16; i++){
+    		//digi summary nodes:
+    		color = interpolateColor(this.oldDigiSummaryColor[i], this.digiSummaryColor[i], frame/this.nFrames);
+    		this.drawSummaryDigitizerNode(i, color);
+    		//collector-digi summary links:
+    		color = interpolateColor(this.oldCollectorLinkColor[i], this.collectorLinkColor[i], frame/this.nFrames);
+    		this.drawSummaryDigitizerNodeLink(i, color);
+    		//collecter nodes:
+    		color = interpolateColor(this.oldCollectorColor[i], this.collectorColor[i], frame/this.nFrames);
+    		this.drawCollectorNode(i, color);    		    		
+    		//collector-master links:
+    		color = interpolateColor(this.oldMasterLinkColor[i], this.masterLinkColor[i], frame/this.nFrames);
+    		this.drawMasterLink(i, color);
+    	}		
+
+    	//master node:
+		color = interpolateColor(this.oldMasterColor, this.masterColor, frame/this.nFrames);
+		this.drawMasterNode(this.centerX, this.centerY, color);
+
+
 
 	};
 
     this.drawNodeMap = function(){
     	var i;
 
-    	this.drawMasterNode(this.centerX, this.centerY, this.nodeColor);
-
     	for(i=0; i<16; i++){
-    		this.drawCollectorNode(i, this.nodeColor);
-    		this.drawMasterLink(i, this.nodeColor);
+    		//digi summary nodes:
+    		color = interpolateColor(this.oldDigiSummaryColor[i], this.digiSummaryColor[i], 1);
+    		this.drawSummaryDigitizerNode(i, color);
+    		//collector-digi summary links:
+    		color = interpolateColor(this.oldCollectorLinkColor[i], this.collectorLinkColor[i], 1);
+    		this.drawSummaryDigitizerNodeLink(i, color);
+    		//collecter nodes:
+    		color = interpolateColor(this.oldCollectorColor[i], this.collectorColor[i], 1);
+    		this.drawCollectorNode(i, color);    		    		
+    		//collector-master links:
+    		color = interpolateColor(this.oldMasterLinkColor[i], this.masterLinkColor[i], 1);
+    		this.drawMasterLink(i, color);
+    	}		
 
-    		this.drawSummaryDigitizerNode(i, this.nodeColor);
-    		this.drawSummaryDigitizerNodeLink(i, this.nodeColor);
-    	}
+    	//master node:
+		color = interpolateColor(this.oldMasterColor, this.masterColor, 1);
+		this.drawMasterNode(this.centerX, this.centerY, color);
     };
 
     this.drawDetail = function(frame){
     	this.context.clearRect(0,0, this.canvasWidth, this.canvasWidth);
     	this.drawNodeMap();
     	if(this.presentCollector != this.inboundCollector){
-	    	this.drawDigiDetail(this.inboundCollector, frame)
-    		if(this.presentCollector != -1) this.drawDigiDetail(this.presentCollector,this.nFrames - frame);
+	    	this.drawDigiDetail(this.inboundCollector, frame, frame)
+    		if(this.presentCollector != -1) this.drawDigiDetail(this.presentCollector,this.nFrames - frame, this.nFrames - frame);
     		if(frame == this.nFrames) this.presentCollector = this.inboundCollector;
     	} else {
-    		this.drawDigiDetail(this.inboundCollector, this.nFrames - frame);
+    		this.drawDigiDetail(this.inboundCollector, this.nFrames - frame, this.nFrames - frame);
     		if(frame == this.nFrames) this.presentCollector = -1;
     	}
     }
 
     this.drawMasterNode = function(xCenter, yCenter, color){
 
+    	this.context.strokeStyle = color;
     	this.context.fillStyle = color;
     	this.context.beginPath();
     	this.context.arc(xCenter, yCenter, 14, 0, 2*Math.PI);
     	this.context.closePath();
 		this.context.fill();
+		this.context.stroke();
 
     	this.context.fillStyle = this.bkgColor;
     	this.context.beginPath();
@@ -260,6 +309,7 @@ function DAQ(monitor, canvas, tooltip){
     	this.context.arc(xCenter, yCenter, 10, 0, 2*Math.PI);
     	this.context.closePath();
 		this.context.fill();
+		this.context.stroke();
 
     	this.context.fillStyle = this.bkgColor;
     	this.context.beginPath();
@@ -271,7 +321,8 @@ function DAQ(monitor, canvas, tooltip){
     	this.context.beginPath();
     	this.context.arc(xCenter, yCenter, 5, 0, 2*Math.PI);
     	this.context.closePath();
-		this.context.fill();			
+		this.context.fill();
+		this.context.stroke();			
     };
 
     this.drawCollectorNode = function(index, color){
@@ -301,16 +352,16 @@ function DAQ(monitor, canvas, tooltip){
     };
 
     this.drawSummaryDigitizerNode = function(index, color){
+    	this.context.strokeStyle = color;
+		this.context.fillStyle = color;
     	this.context.save();
     	this.context.translate(this.centerX, this.centerY);
     	this.context.rotate(-Math.PI/2 + index*22.5/180*Math.PI);
-
-		this.context.fillStyle = color;
     	this.context.beginPath();
     	this.context.arc(0, -2*this.collectorRingRadius, 3, 0, 2*Math.PI);
     	this.context.closePath();
 		this.context.fill();	
-
+		this.context.stroke();
 		this.context.restore();	
     };
 
@@ -331,16 +382,16 @@ function DAQ(monitor, canvas, tooltip){
     	this.context.translate(this.centerX, this.centerY);
     	this.context.rotate(-Math.PI/2 + index*22.5/180*Math.PI);
     	this.context.moveTo(0, -this.collectorRingRadius-8);
-    	this.context.lineTo(0, -2*this.collectorRingRadius);
+    	this.context.lineTo(0, -2*this.collectorRingRadius+3);
     	this.context.stroke();
     	this.context.restore();
     };
 
-    this.drawDigiDetail = function(collectorIndex, frame){
+    this.drawDigiDetail = function(collectorIndex, colorFrame, sizeFrame){
     	var i, j; 
 
-    	var groupLinkLength = 100*frame/this.nFrames;
-    	var digiLinkLength = 30*frame/this.nFrames;
+    	var groupLinkLength = 100*Math.min(sizeFrame/(this.nFrames/2), 1 );
+    	var digiLinkLength = 30*Math.max(0,(sizeFrame-this.nFrames/2)/(this.nFrames/2));
 
     	//rotate canvas to place this collector due north:
     	this.context.save();
@@ -351,7 +402,7 @@ function DAQ(monitor, canvas, tooltip){
     	for(i=0; i<4; i++){    		
     		var groupLinkEndX = 0 - groupLinkLength*Math.cos( (30+i*40)/180*Math.PI);
     		var groupLinkEndY = -2*this.collectorRingRadius - groupLinkLength*Math.sin( (30+i*40)/180*Math.PI);
-    		this.context.strokeStyle = this.nodeColor;  //later we'll fetch the right color from a member array
+    		this.context.strokeStyle = interpolateColor(this.oldDigiGroupSummaryColor[collectorIndex][i], this.digiGroupSummaryColor[collectorIndex][i], colorFrame);
     		this.context.beginPath();
     		this.context.moveTo(0, -2*this.collectorRingRadius);
     		this.context.lineTo(groupLinkEndX, groupLinkEndY);
@@ -361,14 +412,14 @@ function DAQ(monitor, canvas, tooltip){
     		for(j=0; j<4; j++){
     			var digiLinkEndX = groupLinkEndX - digiLinkLength*Math.cos( (30+j*40 - (60-40*i) )/180*Math.PI);
     			var digiLinkEndY = groupLinkEndY - digiLinkLength*Math.sin( (30+j*40 - (60-40*i) )/180*Math.PI);
-    			this.context.strokeStyle = this.nodeColor; //again, placeholder for proper color later
+    			this.context.strokeStyle = interpolateColor(this.oldDigitizerLinkColor[collectorIndex][i][j], this.digitizerLinkColor[collectorIndex][i][j], colorFrame);
     			this.context.beginPath();
     			this.context.moveTo(groupLinkEndX, groupLinkEndY);
     			this.context.lineTo(digiLinkEndX, digiLinkEndY);
     			this.context.stroke();
 
     			//draw digitizer node on the end:
-    			this.context.fillStyle = this.nodeColor;  //more colors later
+    			this.context.fillStyle = interpolateColor(this.oldDigitizerColor[collectorIndex][i][j], this.digitizerColor[collectorIndex][i][j], colorFrame);
     			this.context.beginPath();
     			this.context.arc(digiLinkEndX, digiLinkEndY, 3, 0, 2*Math.PI);
     			this.context.closePath();	

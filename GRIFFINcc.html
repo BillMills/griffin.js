@@ -19,6 +19,7 @@
     <script src="drawing.js" type="text/javascript"></script>
     <script src="SHARC.js" type="text/javascript"></script>
     <script src="DESCANT.js" type="text/javascript"></script>
+    <script src="DAQ.js" type="text/javascript"></script>
 
     <link rel="stylesheet" type="text/css" href="GRIFFINcc.css" />
   </head> 
@@ -356,6 +357,9 @@
       var SMminima = [0];
       var SMmaxima = [1];
 
+      //DAQ//////////////////////////////////////////////////////////////////////////////////
+      var DAQminima = [0,0,0,0,0,0,0,0];
+      var DAQmaxima = [1,1,1,1,1,1,1,1];
 
       //---------------End Experiment-specific parameters--------------------------------------------------
       //---------------------------------------------------------------------------------------------------
@@ -431,8 +435,10 @@
 
       var SHARCMonitor = new SHARC('waffleplate','horizontal', 'SHARCCanvas', SMrows, SMcolumns, SMnChannels, 4, 4, 1, 16, SMminima, SMmaxima, SubsystemTooltip);
       var DESCANTMonitor = new DESCANT('waffleplate', 'DESCANTCanvas', DESCANTTooltip);
-
       DESCANTMonitor.wireframe();
+
+      var DAQMonitor = new DAQ('waffleplate', 'DAQcanvas', 0, DAQminima, DAQmaxima);
+      DAQMonitor.drawNodeMap();
 
       //set up arrays:
       //HV monitor
@@ -467,6 +473,28 @@
       //scalar monitor:
       var SMHV;
       SMHV = [];
+      //DAQ:
+      var masterRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate;
+      masterRate = [];
+      masterLinkRate = [];
+      collectorRate = [];
+      collectorLinkRate = [];
+      digiSummaryRate = [];
+      digiGroupSummaryRate = [];
+      digitizerLinkRate = [];
+      digitizerRate = [];
+      for(i=0; i<16; i++){
+        digiGroupSummaryRate[i] = [];
+        digitizerLinkRate[i] = [];
+        digitizerRate[i] = [];
+
+        for(j=0; j<4; j++){
+          digitizerLinkRate[i][j] = [];
+          digitizerRate[i][j] = [];          
+        }
+      }
+
+
 
       //which nav panel is on top?
       window.navOnDisplay = 'mainframeLinks';
@@ -490,7 +518,7 @@
 
       //wrap this in a function so it can be easily called to restart the loop somewhere else:
       function startLoop(){
-        masterLoop(rows+1, columns, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmThresholds, scaleMaxima, waffle, barCharts, SHARCMonitor, 2*(SMnChannels*SMrows*SMcolumns + 2*16), SMHV, [MFtooltip, SubsystemTooltip] , 0);
+        masterLoop(rows+1, columns, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmThresholds, scaleMaxima, waffle, barCharts, SHARCMonitor, DAQMonitor, 2*(SMnChannels*SMrows*SMcolumns + 2*16), SMHV, masterRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, [MFtooltip, SubsystemTooltip] , 0);
       }
       startLoop(); 
 

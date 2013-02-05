@@ -165,7 +165,7 @@ function SHARC(monitor, orientation, cvas, rows, columns, nStrips, nRadialHoriz,
 
 	//draw the monitor at a particular frame in its current transition
 	this.draw = function(frame){
-		var i, j, R, G, B, xCorner, yCorner, boxRow, boxCol, boxNum, half;
+		var i, j, xCorner, yCorner, boxRow, boxCol, boxNum, half;
 
 		//number of channels per half, for index offset purposes:
 		var totalChannels = this.color.length / 2;
@@ -174,9 +174,6 @@ function SHARC(monitor, orientation, cvas, rows, columns, nStrips, nRadialHoriz,
 		for(half=0; half<2; half++){
 			//loop for the rectangular displays:
 			for(i=0+half*totalChannels; i<half*totalChannels + this.color.length/2 - this.nEllipticalChannelsHoriz - this.nEllipticalChannelsVert; i++){
-				R = Math.round((this.color[i][0] - this.oldColor[i][0])*frame/this.nFrames + this.oldColor[i][0]);
-				G = Math.round((this.color[i][1] - this.oldColor[i][1])*frame/this.nFrames + this.oldColor[i][1]);
-				B = Math.round((this.color[i][2] - this.oldColor[i][2])*frame/this.nFrames + this.oldColor[i][2]);
 
 				//index modulo half channels:
 				j = i%totalChannels;
@@ -197,7 +194,7 @@ function SHARC(monitor, orientation, cvas, rows, columns, nStrips, nRadialHoriz,
 	    			xCorner += (j%this.nStrips)*this.vertStripWidth;
     			}
 
-				this.context.fillStyle = 'rgba('+R+','+G+','+B+',1)';
+				this.context.fillStyle = interpolateColor(this.oldColor[i], this.color[i], frame/this.nFrames);
 				if(half == 0){
 					this.context.fillRect(xCorner, yCorner, this.detectorWidth, this.horizStripWidth);
 				} else{ 
@@ -207,10 +204,7 @@ function SHARC(monitor, orientation, cvas, rows, columns, nStrips, nRadialHoriz,
 
 			//loop for top elliptical wheels:
 			for(i=half*totalChannels + this.rows*this.columns*this.nStrips; i<half*totalChannels + this.rows*this.columns*this.nStrips + this.nEllipticalChannelsHoriz; i++){
-				R = Math.round((this.color[i][0] - this.oldColor[i][0])*frame/this.nFrames + this.oldColor[i][0]);
-				G = Math.round((this.color[i][1] - this.oldColor[i][1])*frame/this.nFrames + this.oldColor[i][1]);
-				B = Math.round((this.color[i][2] - this.oldColor[i][2])*frame/this.nFrames + this.oldColor[i][2]);
-				this.context.fillStyle = 'rgba('+R+','+G+','+B+',1)';
+				this.context.fillStyle = interpolateColor(this.oldColor[i], this.color[i], frame/this.nFrames);
 
 				//index modulo half channels:
 				j = i%totalChannels;
@@ -235,10 +229,7 @@ function SHARC(monitor, orientation, cvas, rows, columns, nStrips, nRadialHoriz,
 
 			//loop for bottom elliptical wheels:
 			for(i=half*totalChannels + this.rows*this.columns*this.nStrips + this.nEllipticalChannelsHoriz; i<half*totalChannels + totalChannels; i++){
-				R = Math.round((this.color[i][0] - this.oldColor[i][0])*frame/this.nFrames + this.oldColor[i][0]);
-				G = Math.round((this.color[i][1] - this.oldColor[i][1])*frame/this.nFrames + this.oldColor[i][1]);
-				B = Math.round((this.color[i][2] - this.oldColor[i][2])*frame/this.nFrames + this.oldColor[i][2]);
-				this.context.fillStyle = 'rgba('+R+','+G+','+B+',1)';
+				this.context.fillStyle = interpolateColor(this.oldColor[i], this.color[i], frame/this.nFrames);
 
 				//index modulo half channels:
 				j = i%totalChannels;

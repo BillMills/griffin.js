@@ -1,4 +1,4 @@
-function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax, waffle, barCharts, SM, nSMchannels, HVdata, tooltips, callMyself){
+function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax, waffle, barCharts, SM, DAQ, nSMchannels, HVdata, masterRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, tooltips, callMyself){
 	if(!document.webkitHidden && !document.mozHidden){
         var i;
 
@@ -20,12 +20,16 @@ function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVolta
         fetchNewSMData(nSMchannels, HVdata);
         SM.update(HVdata);
 
+        //DAQ
+        fetchNewDAQData(masterRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate);
+        DAQ.update(masterRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate);
+
         //update tooltips
         for(i=0; i<tooltips.length; i++){
             tooltips[i].update();
         }
     }
-    window.loop = setTimeout(function(){masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax, waffle, barCharts, SM, nSMchannels, HVdata, tooltips, 1)}, 3000);
+    window.loop = setTimeout(function(){masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax, waffle, barCharts, SM, DAQ, nSMchannels, HVdata, masterRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, tooltips, 1)}, 3000);
 }
 
 //populate HV monitor rows by cols arrays with the appropriate information:
@@ -144,3 +148,38 @@ function fetchNewSMData(nChannels, HVdata){
     }
 
 }
+
+//fetch new data for the DAQ:
+function fetchNewDAQData(masterRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate){
+    var i,j;
+
+    masterRate[0] = Math.random();
+    for(i=0; i<16; i++){
+        masterLinkRate[i] = Math.random();
+        collectorRate[i] = Math.random();
+        collectorLinkRate[i] = Math.random();
+        collectorRate[i] = Math.random();
+        digiSummaryRate[i] = Math.random();
+
+        for(j=0; j<4; j++){
+            digiGroupSummaryRate[i][j] = Math.random();
+            for(k=0; k<4; k++){
+                digitizerLinkRate[i][j][k] = Math.random();
+                digitizerRate[i][j][k] = Math.random();
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
