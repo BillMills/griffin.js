@@ -358,13 +358,16 @@
       var SMmaxima = [1];
 
       //DAQ//////////////////////////////////////////////////////////////////////////////////
-      var DAQminima = [0,0,0,0,0,0,0,0];
-      var DAQmaxima = [1,1,1,1,1,1,1,1];
+      var nCollectors = 16;
+      var nDigitizers = 256;
+
+      var DAQminima = [0,0,0,0,0,0,0,0,0];
+      var DAQmaxima = [1,1,1,1,1,1,1,1,1];
 
       //---------------End Experiment-specific parameters--------------------------------------------------
       //---------------------------------------------------------------------------------------------------
 
-      var i,j;
+      var i,j,k;
 
       //rows & columns:
       var rows = 12;
@@ -438,7 +441,6 @@
       DESCANTMonitor.wireframe();
 
       var DAQMonitor = new DAQ('waffleplate', 'DAQcanvas', 0, DAQminima, DAQmaxima);
-      DAQMonitor.drawNodeMap();
 
       //set up arrays:
       //HV monitor
@@ -474,8 +476,9 @@
       var SMHV;
       SMHV = [];
       //DAQ:
-      var masterRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate;
+      var masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate;
       masterRate = [];
+      masterGroupRate = [];
       masterLinkRate = [];
       collectorRate = [];
       collectorLinkRate = [];
@@ -483,18 +486,28 @@
       digiGroupSummaryRate = [];
       digitizerLinkRate = [];
       digitizerRate = [];
-      for(i=0; i<16; i++){
+      //collector groups:
+      for(i=0; i<Math.ceil(nCollectors/4); i++){
+        masterGroupRate[i] = [];
+        masterLinkRate[i] = [];
+        collectorRate[i] = [];
+        collectorLinkRate[i] = [];
+        digiSummaryRate[i] = [];
         digiGroupSummaryRate[i] = [];
         digitizerLinkRate[i] = [];
         digitizerRate[i] = [];
-
+        //digitizer groups: 
         for(j=0; j<4; j++){
+          digiGroupSummaryRate[i][j] = [];
           digitizerLinkRate[i][j] = [];
-          digitizerRate[i][j] = [];          
+          digitizerRate[i][j] = [];
+          //digitizers:
+          for(k=0; k<4; k++){
+            digitizerLinkRate[i][j][k] = [];
+            digitizerRate[i][j][k] = [];
+          }
         }
       }
-
-
 
       //which nav panel is on top?
       window.navOnDisplay = 'mainframeLinks';
@@ -518,7 +531,7 @@
 
       //wrap this in a function so it can be easily called to restart the loop somewhere else:
       function startLoop(){
-        masterLoop(rows+1, columns, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmThresholds, scaleMaxima, waffle, barCharts, SHARCMonitor, DAQMonitor, 2*(SMnChannels*SMrows*SMcolumns + 2*16), SMHV, masterRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, [MFtooltip, SubsystemTooltip] , 0);
+        masterLoop(rows+1, columns, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmThresholds, scaleMaxima, waffle, barCharts, SHARCMonitor, DAQMonitor, 2*(SMnChannels*SMrows*SMcolumns + 2*16), SMHV, masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, [MFtooltip, SubsystemTooltip] , 0);
       }
       startLoop(); 
 
