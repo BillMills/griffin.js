@@ -317,6 +317,10 @@
       var minCurrent = 0;
       var maxCurrent = 1;
 
+      //temperature meter range:
+      var minTemperature = 0;
+      var maxTemperature = 1;
+
       //voltage ramp speed range:
       var minRampSpeed = 0;
       var maxRampSpeed = 1;
@@ -420,7 +424,7 @@
 
       window.meter = new FillMeter('voltageMeter', 'InputLayer', 0, minVoltage, maxVoltage, voltUnit, statusPrecision);
       var currentMeter = new FillMeter('currentMeter', 'InputLayer', 0, minCurrent, maxCurrent, currentUnit, statusPrecision);
-      var temperatureMeter = new FillMeter('temperatureMeter', 'InputLayer', 0, minCurrent, maxCurrent, temperatureUnit, statusPrecision);
+      var temperatureMeter = new FillMeter('temperatureMeter', 'InputLayer', 0, minTemperature, maxTemperature, temperatureUnit, statusPrecision);
 
       //tooltips:
       var MFtooltip = new Tooltip('TestWaffle', 'MFTipText', 'MFTT', 'waffleplate', prefix, postfix);
@@ -486,28 +490,6 @@
       digiGroupSummaryRate = [];
       digitizerLinkRate = [];
       digitizerRate = [];
-      //collector groups:
-      for(i=0; i<Math.ceil(nCollectors/4); i++){
-        masterGroupRate[i] = [];
-        masterLinkRate[i] = [];
-        collectorRate[i] = [];
-        collectorLinkRate[i] = [];
-        digiSummaryRate[i] = [];
-        digiGroupSummaryRate[i] = [];
-        digitizerLinkRate[i] = [];
-        digitizerRate[i] = [];
-        //digitizer groups: 
-        for(j=0; j<4; j++){
-          digiGroupSummaryRate[i][j] = [];
-          digitizerLinkRate[i][j] = [];
-          digitizerRate[i][j] = [];
-          //digitizers:
-          for(k=0; k<4; k++){
-            digitizerLinkRate[i][j][k] = [];
-            digitizerRate[i][j][k] = [];
-          }
-        }
-      }
 
       //which nav panel is on top?
       window.navOnDisplay = 'mainframeLinks';
@@ -521,6 +503,9 @@
       window.refreshInput = 1;
       //something to hold the settimeout loop so it can be stopped from anywhere:
       window.loop;
+      //...and similar for animation loops:
+      window.animateLoop;
+      window.transAnimateLoop;
       //status flag for if the Commit button is blinking on loop:
       window.commitBlink = 0;
       //hack so getMIDASindex can access these from anywhere.  TODO: fix
@@ -531,11 +516,12 @@
 
       //wrap this in a function so it can be easily called to restart the loop somewhere else:
       function startLoop(){
-        masterLoop(rows+1, columns, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmThresholds, scaleMaxima, waffle, barCharts, SHARCMonitor, DAQMonitor, 2*(SMnChannels*SMrows*SMcolumns + 2*16), SMHV, masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, [MFtooltip, SubsystemTooltip] , 0);
+        masterLoop(rows+1, columns, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmThresholds, scaleMaxima, waffle, barCharts, SHARCMonitor, DAQMonitor, 2*(SMnChannels*SMrows*SMcolumns + 2*16), SMHV, Math.ceil(nCollectors/4), masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, [MFtooltip, SubsystemTooltip] , 0);
       }
       startLoop(); 
 
       $('#setValues').on('change', function(event){highlight('submitParameters')})
+
   </script> 
   
   </body>

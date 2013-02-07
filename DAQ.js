@@ -1,5 +1,5 @@
 function DAQ(monitor, canvas, tooltip, minima, maxima){
-	var i, j, k, m, n;
+	var i, j, k, m;
 
 	var that = this;
 
@@ -9,7 +9,7 @@ function DAQ(monitor, canvas, tooltip, minima, maxima){
 	this.minima = minima;			//minima of element scalea: [master, master group, master link, collector, digi summary link, digi summary node, digi group link, digi transfer, digitizer]
 	this.maxima = maxima;			//as minima.
 	this.nCollectors = 16;
-	this.nDigitizers = 256;
+	this.nDigitizers = this.nCollectors*16;
 
 	this.canvas = document.getElementById(canvas);
 	this.context = this.canvas.getContext('2d');
@@ -45,8 +45,8 @@ function DAQ(monitor, canvas, tooltip, minima, maxima){
     //establish data buffers////////////////////////////////////////////////////////////////////////////
     //master
     this.masterRate = [0];
-    this.masterColor = [0,0,0];
-    this.oldMasterColor = [0,0,0];
+    this.masterColor = '#000000';
+    this.oldMasterColor = '#000000';
     //master group links
     this.masterGroupRate = [];
     this.masterGroupColor = [];
@@ -80,164 +80,89 @@ function DAQ(monitor, canvas, tooltip, minima, maxima){
     this.digitizerColor = [];
     this.oldDigitizerColor = [];
 
-    for(i=0; i<Math.ceil(nCollectors/4); i++){
+    for(i=0; i<Math.ceil(this.nCollectors/4); i++){
         this.masterGroupRate[i] = 0;
-        this.masterGroupColor[i] = [];
-    	this.oldMasterGroupColor[i] = [];
-    	this.masterLinkRate[i] = [];
-	    this.masterLinkColor[i] = [];
-    	this.oldMasterLinkColor[i] = [];
-    	this.collectorRate[i] = [];
-    	this.collectorColor[i] = [];
-    	this.oldCollectorColor[i] = [];
-    	this.collectorLinkRate[i] = [];
-   		this.collectorLinkColor[i] = [];
-    	this.oldCollectorLinkColor[i] = [];
-    	this.digiSummaryRate[i] = [];
-   		this.digiSummaryColor[i] = [];
-   		this.oldDigiSummaryColor[i] = [];
-    	this.digiGroupSummaryRate[i] = [];
-	   	this.digiGroupSummaryColor[i] = [];
-	   	this.oldDigiGroupSummaryColor[i] = [];
-		this.digitizerLinkRate[i] = [];
-	  	this.digitizerLinkColor[i] = [];
-	 	this.oldDigitizerLinkColor[i] = [];
-	 	this.digitizerRate[i] = [];
-		this.digitizerColor[i] = [];
-		this.oldDigitizerColor[i] = [];	   	
-
-    	for(j=0; j<3; j++){
-    		this.masterGroupColor[i][j] = 0;
-    		this.oldMasterGroupColor[i][j] = 0;
-    	}
-
-    	for(j=0; j<4; j++){
-    		this.masterLinkRate[i][j] = 0;
-	    	this.masterLinkColor[i][j] = [];
-    		this.oldMasterLinkColor[i][j] = [];
-    		this.collectorRate[i][j] = 0;
-    		this.collectorColor[i][j] = [];
-    		this.oldCollectorColor[i][j] = [];
-    		this.collectorLinkRate[i][j] = 0
-    		this.collectorLinkColor[i][j] = [];
-    		this.oldCollectorLinkColor[i][j] = [];
-    		this.digiSummaryRate[i][j] = 0;
-    		this.digiSummaryColor[i][j] = [];
-    		this.oldDigiSummaryColor[i][j] = [];
-    		this.digiGroupSummaryRate[i][j] = [];
-	    	this.digiGroupSummaryColor[i][j] = [];
-	    	this.oldDigiGroupSummaryColor[i][j] = [];
-		    this.digitizerLinkRate[i][j] = [];
-		   	this.digitizerLinkColor[i][j] = [];
-		  	this.oldDigitizerLinkColor[i][j] = [];
-		 	this.digitizerRate[i][j] = [];
-			this.digitizerColor[i][j] = [];
-	   		this.oldDigitizerColor[i][j] = [];
-
-    		for(k=0; k<3; k++){
-	      		this.masterLinkColor[i][j][k] = 0;
-    			this.oldMasterLinkColor[i][j][k] = 0;
-    			this.collectorColor[i][j][k] = 0;
-    			this.oldCollectorColor[i][j][k] = 0;
-	    		this.collectorLinkColor[i][j][k] = 0;
-    			this.oldCollectorLinkColor[i][j][k] = 0;
-    			this.digiSummaryColor[i][j][k] = 0;
-    			this.oldDigiSummaryColor[i][j][k] = 0;  			
-    		}
-
-    		for(k=0; k<4; k++){
-    			this.digiGroupSummaryRate[i][j][k] = 0;
-	    		this.digiGroupSummaryColor[i][j][k] = [];
-		    	this.oldDigiGroupSummaryColor[i][j][k] = [];
-		    	this.digitizerLinkRate[i][j][k] = [];
-		    	this.digitizerLinkColor[i][j][k] = [];
-		   		this.oldDigitizerLinkColor[i][j][k] = [];
-		   		this.digitizerRate[i][j][k] = [];
-		   		this.digitizerColor[i][j][k] = [];
-		   		this.oldDigitizerColor[i][j][k] = [];		    	
-
-		    	for(m=0; m<3; m++){
-		    		this.digiGroupSummaryColor[i][j][k][m] = 0;
-			    	this.oldDigiGroupSummaryColor[i][j][k][m] = 0;
-		    	}
-
-		    	for(m=0; m<4; m++){
-		    		this.digitizerLinkRate[i][j][k][m] = 0;
-		    		this.digitizerLinkColor[i][j][k][m] = [];
-		    		this.oldDigitizerLinkColor[i][j][k][m] = [];
-		    		this.digitizerRate[i][j][k][m] = 0;
-		    		this.digitizerColor[i][j][k][m] = [];
-		    		this.oldDigitizerColor[i][j][k][m] = [];
-		    		for(n=0; n<3; n++){
-		    			this.digitizerLinkColor[i][j][k][m][n] = 0;
-			    		this.oldDigitizerLinkColor[i][j][k][m][n] = 0;
-			    		this.digitizerColor[i][j][k][m][n] = 0;
-			    		this.oldDigitizerColor[i][j][k][m][n] = 0;
-		    		}
-		    	}
-    		}
-    	}
-
-	} //finished declaring data buffers; recall indices go [collector group][collector][digitizer group][digitizer][RGB].
+        this.masterGroupColor[i] = '#000000';
+        this.oldMasterGroupColor[i] = '#000000';        
+    }
+    for(i=0; i<4*Math.ceil(this.nCollectors/4); i++){
+        this.masterLinkRate[i] = 0;
+        this.masterLinkColor[i] = '#000000';
+        this.oldMasterLinkColor[i] = '#000000';
+        this.collectorRate[i] = 0;
+        this.collectorColor[i] = '#000000';
+        this.oldCollectorColor[i] = '#000000';
+        this.collectorLinkRate[i] = 0;
+        this.collectorLinkColor[i] = '#000000';
+        this.oldCollectorLinkColor[i] = '#000000';
+        this.digiSummaryRate[i] = 0;
+        this.digiSummaryColor[i] = '#000000';
+        this.oldDigiSummaryColor[i] = '#000000';        
+    }
+    for(i=0; i<4*4*Math.ceil(this.nCollectors/4); i++){
+        this.digiGroupSummaryRate[i] = 0;
+        this.digiGroupSummaryColor[i] = '#000000';
+        this.oldDigiGroupSummaryColor[i] = '#000000';        
+    }
+    for(i=0; i<4*4*4*Math.ceil(this.nCollectors/4); i++){
+        this.digitizerLinkRate[i] = 0;
+        this.digitizerLinkColor[i] = '#000000';
+        this.oldDigitizerLinkColor[i] = '#000000';
+        this.digitizerRate[i] = 0;
+        this.digitizerColor[i] = '#000000';
+        this.oldDigitizerColor[i] = '#000000';        
+    }
 
 	//update the info for each cell in the monitor
 	this.update = function(masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate){
-		var i,j,k,m,n;
+		var i,j,k,m;
 
 		//master
     	this.masterRate[0] = masterRate;
-	    for(i=0; i<3; i++){
-    		this.oldMasterColor[i] = this.masterColor[i];
-	    }
+    	this.oldMasterColor = this.masterColor;
     	this.masterColor = this.parseColor(masterRate[0], 0);
 
-    	//master groups
-    	for(i=0; i<Math.ceil(this.nCollectors/4); i++){
-    		this.masterGroupRate[i] = masterGroupRate[i];
-    		for(j=0; j<3; j++){
-    			this.oldMasterGroupColor[i][j] = this.masterGroupColor[i][j];
-    		}
-    		this.masterGroupColor[i] = this.parseColor(masterGroupRate[i], 1);
+        //master groups
+        for(i=0; i<Math.ceil(nCollectors/4); i++){
+            this.masterGroupRate[i] = masterGroupRate[i];  
+            this.oldMasterGroupColor[i] = this.masterGroupColor[i];
+            this.masterGroupColor[i] = this.parseColor(this.masterGroupRate[i],1)    
+        }
 
-		    //links from collectors to master, collectors, links from digitizer summary node to collector, digitizer summary nodes
-    		for(j=0; j<4; j++){
-    			this.masterLinkRate[i][j] = masterLinkRate[i][j];
-	    		this.collectorRate[i][j] = collectorRate[i][j];
-	    		this.collectorLinkRate[i][j] = collectorLinkRate[i][j];
-    			this.digiSummaryRate[i][j] = digiSummaryRate[i][j];
-	    		for(k=0; k<3; k++){
-    				this.oldMasterLinkColor[i][j][k] = this.masterLinkColor[i][j][k];
-    				this.oldCollectorColor[i][j][k] = this.collectorColor[i][j][k];
-	    			this.oldCollectorLinkColor[i][j][k] = this.collectorLinkColor[i][j][k];
-		    		this.oldDigiSummaryColor[i][j][k] = this.digiSummaryColor[i][j][k];
-    			}
-    			this.masterLinkColor[i][j] = this.parseColor(masterLinkRate[i][j], 2);
-		    	this.collectorColor[i][j] = this.parseColor(collectorRate[i][j], 3);
-    			this.collectorLinkColor[i][j] = this.parseColor(collectorLinkRate[i][j],4);
-    			this.digiSummaryColor[i][j] = this.parseColor(digiSummaryRate[i][j],5);
-	    		//links from digitizer group to digitizer summary node
-	    		for(k=0; k<4; k++){	
-    				this.digiGroupSummaryRate[i][j][k] = digiGroupSummaryRate[i][j][k];
-	    			for(m=0; m<3; m++){
-    					this.oldDigiGroupSummaryColor[i][j][k][m] = this.digiGroupSummaryColor[i][j][k][m];
-	    			}
-    				this.digiGroupSummaryColor[i][j][k] = this.parseColor(digiGroupSummaryRate[i][j][k], 6);
-    				//individual digitizers and links:
-    				for(m=0; m<4; m++){
-    					this.digitizerLinkRate[i][j][k][m] = digitizerLinkRate[i][j][k][m];
-		    			this.digitizerRate[i][j][k][m] = digitizerRate[i][j][k][m];
-    					for(n=0; n<3; n++){
-    						this.oldDigitizerLinkColor[i][j][k][m][n] = this.digitizerLinkColor[i][j][k][m][n];
-    						this.oldDigitizerColor[i][j][k][m][n] = this.digitizerColor[i][j][k][m][n];
-    					}
-	    				this.digitizerLinkColor[i][j][k][m] = this.parseColor(digitizerLinkRate[i][j][k][m], 7);
-    					this.digitizerColor[i][j][k][m] = this.parseColor(digitizerRate[i][j][k][m], 8);    				
-    				}	
-    			}
-	    	}
-    	}
+		//links from collectors to master, collectors, links from digitizer summary node to collector, digitizer summary nodes
+    	for(i=0; i<4*Math.ceil(nCollectors/4); i++){
+    		this.masterLinkRate[i] = masterLinkRate[i];
+	    	this.collectorRate[i] = collectorRate[i];
+	   		this.collectorLinkRate[i] = collectorLinkRate[i];
+    		this.digiSummaryRate[i] = digiSummaryRate[i];
 
-    	animate(this,0);
+    		this.oldMasterLinkColor[i] = this.masterLinkColor[i];
+    		this.oldCollectorColor[i] = this.collectorColor[i];
+	   		this.oldCollectorLinkColor[i] = this.collectorLinkColor[i];
+	 		this.oldDigiSummaryColor[i] = this.digiSummaryColor[i];
+
+    		this.masterLinkColor[i] = this.parseColor(masterLinkRate[i], 2);
+		  	this.collectorColor[i] = this.parseColor(collectorRate[i], 3);
+    		this.collectorLinkColor[i] = this.parseColor(collectorLinkRate[i],4);
+			this.digiSummaryColor[i] = this.parseColor(digiSummaryRate[i],5);
+        }
+	    //links from digitizer group to digitizer summary node
+	    for(i=0; i<4*4*Math.ceil(nCollectors/4); i++){	
+    		this.digiGroupSummaryRate[i] = digiGroupSummaryRate[i];
+    		this.oldDigiGroupSummaryColor[i] = this.digiGroupSummaryColor[i];
+			this.digiGroupSummaryColor[i] = this.parseColor(digiGroupSummaryRate[i], 6);
+        }
+
+    	//individual digitizers and links:
+    	for(i=0; i<4*4*4*Math.ceil(nCollectors/4); i++){
+    		this.digitizerLinkRate[i] = digitizerLinkRate[i];
+		    this.digitizerRate[i] = digitizerRate[i];
+       		this.oldDigitizerLinkColor[i] = this.digitizerLinkColor[i];
+    		this.oldDigitizerColor[i] = this.digitizerColor[i];	
+	   		this.digitizerLinkColor[i] = this.parseColor(digitizerLinkRate[i], 7);
+			this.digitizerColor[i] = this.parseColor(digitizerRate[i], 8);    				
+		}	
+    	//animate(this,0);
 
 	};
 
@@ -259,29 +184,31 @@ function DAQ(monitor, canvas, tooltip, minima, maxima){
 	    //	this.drawDigiDetail(this.presentCollector, frame, this.nFrames);
 
     	//master node:
-		color = interpolateColor(this.oldMasterColor, this.masterColor, frame/this.nFrames);
-		this.drawMasterNode(this.centerX, this.centerY, color);	    
+		color = interpolateColor(parseHexColor(this.oldMasterColor), parseHexColor(this.masterColor), frame/this.nFrames);
+		this.drawMasterNode(color);	    
 
 		for(i=0; i<Math.ceil(this.nCollectors/4); i++){
 			//master group links
-    		color = interpolateColor(this.oldMasterGroupColor[i], this.masterGroupColor[i], frame/this.nFrames);
+    		color = interpolateColor(parseHexColor(this.oldMasterGroupColor[i]), parseHexColor(this.masterGroupColor[i]), frame/this.nFrames);
 	    	this.drawMasterGroupLink(i, color);
+            /*
 			for(j=0; j<4; j++){
     			//digi summary nodes:
-    			color = interpolateColor(this.oldDigiSummaryColor[i][j], this.digiSummaryColor[i][j], frame/this.nFrames);
-	    		this.drawSummaryDigitizerNode(i*Math.ceil(this.nCollectors/4)+j, color);
+    			//color = interpolateColor(parseHexColor(this.oldDigiSummaryColor[i][j]), parseHexColor(this.digiSummaryColor[i][j]), frame/this.nFrames);
+	    		//this.drawSummaryDigitizerNode(i*Math.ceil(this.nCollectors/4)+j, color);
     			//collector-digi summary links:
-    			color = interpolateColor(this.oldCollectorLinkColor[i][j], this.collectorLinkColor[i][j], frame/this.nFrames);
-    			this.drawSummaryDigitizerNodeLink(i*4+j, color);
+    			//color = interpolateColor(parseHexColor(this.oldCollectorLinkColor[i][j]), parseHexColor(this.collectorLinkColor[i][j]), frame/this.nFrames);
+    			//this.drawSummaryDigitizerNodeLink(i*4+j, color);
 	    		//collecter nodes:
-    			color = interpolateColor(this.oldCollectorColor[i][j], this.collectorColor[i][j], frame/this.nFrames);
-    			this.drawCollectorNode(i*Math.ceil(this.nCollectors/4)+j, color);    		    		
+    			//color = interpolateColor(parseHexColor(this.oldCollectorColor[i][j]), parseHexColor(this.collectorColor[i][j]), frame/this.nFrames);
+    			//this.drawCollectorNode(i*Math.ceil(this.nCollectors/4)+j, color);    		    		
     			//collector links:
-	    		color = interpolateColor(this.oldMasterLinkColor[i][j], this.masterLinkColor[i][j], frame/this.nFrames);
-    			this.drawMasterLink(i*Math.ceil(this.nCollectors/4)+j, color);
-
+	    		color = interpolateColor(parseHexColor(this.oldMasterLinkColor[i][j]), parseHexColor(this.masterLinkColor[i][j]), frame/this.nFrames);
+    			this.drawMasterLink(i*Math.ceil(this.nCollectors/4)+j, color); 
 			}
+            */
 		}
+
 	};
 
     this.drawNodeMap = function(){
@@ -321,11 +248,11 @@ function DAQ(monitor, canvas, tooltip, minima, maxima){
     		this.drawDigiDetail(this.inboundCollector, this.nFrames - frame, this.nFrames - frame);
     		if(frame == this.nFrames) this.presentCollector = -1;
     	}
-    }
+    };
 
-    this.drawMasterNode = function(xCenter, yCenter, color){
+    this.drawMasterNode = function(color){
 
-    	this.context.strokeStyle = '#000000';
+    	this.context.strokeStyle = color;
     	this.context.fillStyle = '#4C4C4C'//color;		
 		roundBox(this.context, 5, 5, this.canvasWidth-10, 100, 5);
 		this.context.stroke();
@@ -450,7 +377,7 @@ function animateDetail(thing, frame){
     thing.drawDetail(frame);
     if(frame < thing.nFrames){
         frame++;
-        setTimeout(function(){animateDetail(thing, frame)},thing.duration/thing.FPS*1000);
+        window.transAnimateLoop = setTimeout(function(){animateDetail(thing, frame)},thing.duration/thing.FPS*1000);
     }
 }
 

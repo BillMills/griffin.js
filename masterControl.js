@@ -1,4 +1,4 @@
-function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax, waffle, barCharts, SM, DAQ, nSMchannels, HVdata, masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, tooltips, callMyself){
+function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax, waffle, barCharts, SM, DAQ, nSMchannels, HVdata, nCollectorGroups, masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, tooltips, callMyself){
 	if(!document.webkitHidden && !document.mozHidden){
         var i;
 
@@ -21,15 +21,27 @@ function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVolta
         SM.update(HVdata);
 
         //DAQ
-        fetchNewDAQData(masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate);
+        fetchNewDAQData(nCollectorGroups, masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate);
         DAQ.update(masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate);
 
         //update tooltips
         for(i=0; i<tooltips.length; i++){
             tooltips[i].update();
         }
+
+        //animate whoever is showing on top, flat draw the rest:
+        if(window.onDisplay == 'TestWaffle') animate(waffle, 0);
+        else waffle.draw(waffle.nFrames);
+        for(i=0; i<barCharts.length; i++){
+            if(window.onDisplay == barCharts[i].cvas) animate(barCharts[i], 0);
+            else barCharts[i].draw(barCharts[i].nFrames);
+        }
+        if(window.onDisplay == 'SHARCCanvas') animate(SM,0);
+        else SM.draw(SM.nFrames);
+        if(window.onDisplay == 'DAQcanvas') animate(DAQ,0);
+        else DAQ.draw(DAQ.nFrames);
     }
-    window.loop = setTimeout(function(){masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax, waffle, barCharts, SM, DAQ, nSMchannels, HVdata, masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, tooltips, 1)}, 3000);
+    window.loop = setTimeout(function(){masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax, waffle, barCharts, SM, DAQ, nSMchannels, HVdata, nCollectorGroups, masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, tooltips, 1)}, 3000);
 }
 
 //populate HV monitor rows by cols arrays with the appropriate information:
@@ -150,25 +162,25 @@ function fetchNewSMData(nChannels, HVdata){
 }
 
 //fetch new data for the DAQ:
-function fetchNewDAQData(masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate){
+function fetchNewDAQData(nCollectorGroups, masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate){
     var i,j,k,m;
 
     masterRate[0] = Math.random();
-    for(i=0; i<masterGroupRate.length; i++){
+    for(i=0; i<nCollectorGroups; i++){
         masterGroupRate[i] = Math.random();
-        for(j=0; j<4; j++){
-            masterLinkRate[i][j] = Math.random();
-            collectorRate[i][j] = Math.random();
-            collectorLinkRate[i][j] = Math.random();
-            digiSummaryRate[i][j] = Math.random();
-            for(k=0; k<4; k++){
-                digiGroupSummaryRate[i][j][k] = Math.random();
-                for(m=0; m<4; m++){
-                    digitizerLinkRate[i][j][k][m] = Math.random();
-                    digitizerRate[i][j][k][m] = Math.random();
-                }
-            }
-        }
+    }
+    for(i=0; i<4*nCollectorGroups; i++){
+        masterLinkRate[i] = Math.random();
+        collectorRate[i] = Math.random();
+        collectorLinkRate[i] = Math.random();
+        digiSummaryRate[i] = Math.random();
+    }
+    for(i=0; i<4*4*nCollectorGroups; i++){
+        digiGroupSummaryRate[i] = Math.random();
+    }
+    for(i=0; i<4*4*4*nCollectorGroups; i++){
+        digitizerLinkRate[i] = Math.random();
+        digitizerRate[i] = Math.random();
     }
 }
 

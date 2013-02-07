@@ -133,7 +133,7 @@ function BarGraph(cvas, moduleNumber, nBars, title, yAxisTitle, barTitles, scale
         this.setNewLevels(newLevel, alarmStatus);
 
         //animate:
-        animate(this, 0);
+        //animate(this, 0);
 
     };
 

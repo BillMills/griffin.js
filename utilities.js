@@ -21,7 +21,7 @@ function animate(thing, frame){
     thing.draw(frame);
     if(frame < thing.nFrames){
         frame++;
-        setTimeout(function(){animate(thing, frame)},thing.duration/thing.FPS*1000);
+        window.animateLoop = setTimeout(function(){animate(thing, frame)},thing.duration/thing.FPS*1000);
     }
 }
 
@@ -46,3 +46,12 @@ function highlight(buttonID){
 
 
 }
+
+
+
+
+
+
+
+
+

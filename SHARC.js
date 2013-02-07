@@ -76,13 +76,6 @@ function SHARC(monitor, orientation, cvas, rows, columns, nStrips, nRadialHoriz,
     this.level = [];
     this.color = [];
     this.oldColor = [];
-    for(i=0; i<2*(nStrips*rows*columns + this.nEllipticalChannelsHoriz + this.nEllipticalChannelsVert); i++){
-    	this.color[i] = [];
-    	this.oldColor[i] = [];
-    	for(j=0; j<3; j++)
-    		this.color[i][j] = 0;
-	    	this.oldColor[i][j] = 0;
-    }
 
     //member functions/////////////////////////////////////////////////////////////////////////////////
 
@@ -194,7 +187,7 @@ function SHARC(monitor, orientation, cvas, rows, columns, nStrips, nRadialHoriz,
 	    			xCorner += (j%this.nStrips)*this.vertStripWidth;
     			}
 
-				this.context.fillStyle = interpolateColor(this.oldColor[i], this.color[i], frame/this.nFrames);
+				this.context.fillStyle = interpolateColor(parseHexColor(this.oldColor[i]), parseHexColor(this.color[i]), frame/this.nFrames);
 				if(half == 0){
 					this.context.fillRect(xCorner, yCorner, this.detectorWidth, this.horizStripWidth);
 				} else{ 
@@ -204,7 +197,7 @@ function SHARC(monitor, orientation, cvas, rows, columns, nStrips, nRadialHoriz,
 
 			//loop for top elliptical wheels:
 			for(i=half*totalChannels + this.rows*this.columns*this.nStrips; i<half*totalChannels + this.rows*this.columns*this.nStrips + this.nEllipticalChannelsHoriz; i++){
-				this.context.fillStyle = interpolateColor(this.oldColor[i], this.color[i], frame/this.nFrames);
+				this.context.fillStyle = interpolateColor(parseHexColor(this.oldColor[i]), parseHexColor(this.color[i]), frame/this.nFrames);
 
 				//index modulo half channels:
 				j = i%totalChannels;
@@ -229,7 +222,7 @@ function SHARC(monitor, orientation, cvas, rows, columns, nStrips, nRadialHoriz,
 
 			//loop for bottom elliptical wheels:
 			for(i=half*totalChannels + this.rows*this.columns*this.nStrips + this.nEllipticalChannelsHoriz; i<half*totalChannels + totalChannels; i++){
-				this.context.fillStyle = interpolateColor(this.oldColor[i], this.color[i], frame/this.nFrames);
+				this.context.fillStyle = interpolateColor(parseHexColor(this.oldColor[i]), parseHexColor(this.color[i]), frame/this.nFrames);
 
 				//index modulo half channels:
 				j = i%totalChannels;
@@ -264,13 +257,11 @@ function SHARC(monitor, orientation, cvas, rows, columns, nStrips, nRadialHoriz,
 		var i, j;
 		for(i=0; i<newInfo.length; i++){
 			this.level[i] = newInfo[i];
-			for(j=0; j<3; j++){
-				this.oldColor[i][j] = this.color[i][j];
-			}
+			this.oldColor[i] = this.color[i];
 			this.color[i] = this.parseColor(newInfo[i]);
 		}
 
-		animate(this, 0);
+		//animate(this, 0);
 	};
 
 	//determine which color <scalar> corresponds to
