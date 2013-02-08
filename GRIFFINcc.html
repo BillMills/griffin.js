@@ -110,7 +110,25 @@
 
       <!--DAQ-->
       <div id='DAQlinks' class='navPanel', style='position:absolute; left:24%;'>
-        <h1 id='DAQlinksBanner' style='display: inline; opacity: 0.3; font-family: "Orbitron", sans-serif; font-size: 275%; vertical-align:-20px;'>GRIFFIN DAQ Status</h1>        
+        <h1 id='DAQlinksBanner' style='display: inline; opacity: 0.3; font-family: "Orbitron", sans-serif; font-size: 275%; vertical-align:-20px;'>GRIFFIN DAQ Status</h1> 
+
+        <br><button id='DAQToplink' class='MFlink' type="button" onclick="javascript:swapFade('DAQcanvas', 'DAQToplink')">Top Level</button>
+        <br><button id='Collector0' class='MFlink' type="button" onclick="javascript:swapFade('DAQdetailCanvas', 'Collector0')">Collector 00</button>
+        <button id='Collector1' class='MFlink' type="button" onclick="javascript:swapFade('DAQdetailCanvas', 'Collector1')">Collector 01</button>
+        <button id='Collector2' class='MFlink' type="button" onclick="javascript:swapFade('DAQdetailCanvas', 'Collector2')">Collector 02</button>
+        <button id='Collector3' class='MFlink' type="button" onclick="javascript:swapFade('DAQdetailCanvas', 'Collector3')">Collector 03</button>
+        <button id='Collector4' class='MFlink' type="button" onclick="javascript:swapFade('DAQdetailCanvas', 'Collector4')">Collector 04</button>
+        <button id='Collector5' class='MFlink' type="button" onclick="javascript:swapFade('DAQdetailCanvas', 'Collector5')">Collector 05</button>
+        <button id='Collector6' class='MFlink' type="button" onclick="javascript:swapFade('DAQdetailCanvas', 'Collector6')">Collector 06</button>
+        <button id='Collector7' class='MFlink' type="button" onclick="javascript:swapFade('DAQdetailCanvas', 'Collector7')">Collector 07</button>
+        <br><button id='Collector8' class='MFlink' type="button" onclick="javascript:swapFade('DAQdetailCanvas', 'Collector8')">Collector 08</button>
+        <button id='Collector9' class='MFlink' type="button" onclick="javascript:swapFade('DAQdetailCanvas', 'Collector9')">Collector 09</button>
+        <button id='Collector10' class='MFlink' type="button" onclick="javascript:swapFade('DAQdetailCanvas', 'Collector10')">Collector 10</button>
+        <button id='Collector11' class='MFlink' type="button" onclick="javascript:swapFade('DAQdetailCanvas', 'Collector11')">Collector 11</button>
+        <button id='Collector12' class='MFlink' type="button" onclick="javascript:swapFade('DAQdetailCanvas', 'Collector12')">Collector 12</button>
+        <button id='Collector13' class='MFlink' type="button" onclick="javascript:swapFade('DAQdetailCanvas', 'Collector13')">Collector 13</button>
+        <button id='Collector14' class='MFlink' type="button" onclick="javascript:swapFade('DAQdetailCanvas', 'Collector14')">Collector 14</button>
+        <button id='Collector15' class='MFlink' type="button" onclick="javascript:swapFade('DAQdetailCanvas', 'Collector15')">Collector 15</button>
       </div>
 
       <!--Clock-->
@@ -141,7 +159,8 @@
       <canvas id='DESCANTTTCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
 
       <!--DAQ-->
-      <canvas id='DAQcanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>     
+      <canvas id='DAQcanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>  
+      <canvas id='DAQdetailCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
 
       <!--Clock-->
       <canvas id='ClockCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
@@ -444,7 +463,7 @@
       var DESCANTMonitor = new DESCANT('waffleplate', 'DESCANTCanvas', DESCANTTooltip);
       DESCANTMonitor.wireframe();
 
-      var DAQMonitor = new DAQ('waffleplate', 'DAQcanvas', 0, DAQminima, DAQmaxima);
+      var DAQMonitor = new DAQ('waffleplate', 'DAQcanvas', 'DAQdetailCanvas', 0, DAQminima, DAQmaxima);
 
       //set up arrays:
       //HV monitor
@@ -501,6 +520,8 @@
       window.lastTrip = 'Main1';
       //should the input sidebar be refreshed?
       window.refreshInput = 1;
+      //which DAQ detail is on display in the DAQ view?
+      window.DAQdetail = 0;
       //something to hold the settimeout loop so it can be stopped from anywhere:
       window.loop;
       //...and similar for animation loops:

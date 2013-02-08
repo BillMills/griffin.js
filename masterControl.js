@@ -40,6 +40,8 @@ function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVolta
         else SM.draw(SM.nFrames);
         if(window.onDisplay == 'DAQcanvas') animate(DAQ,0);
         else DAQ.draw(DAQ.nFrames);
+        if(window.onDisplay == 'DAQdetailCanvas') animateDetail(DAQ,0) //do some animating
+        else DAQ.drawDetail(DAQ.nFrames);
     }
 
     //clearTimeout(window.loop);
