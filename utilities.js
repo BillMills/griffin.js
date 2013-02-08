@@ -18,6 +18,8 @@ function curry (fn) {
 //the thing only as a function of what frame the animation is on, and member data .duration, .FPS and .nFrames.
 function animate(thing, frame){
 
+    //clearTimeout(window.animateLoop);
+
     thing.draw(frame);
     if(frame < thing.nFrames){
         frame++;

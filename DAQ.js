@@ -185,28 +185,28 @@ function DAQ(monitor, canvas, tooltip, minima, maxima){
 
     	//master node:
 		color = interpolateColor(parseHexColor(this.oldMasterColor), parseHexColor(this.masterColor), frame/this.nFrames);
-		this.drawMasterNode(color);	    
+		this.drawMasterNode(color);
 
 		for(i=0; i<Math.ceil(this.nCollectors/4); i++){
 			//master group links
     		color = interpolateColor(parseHexColor(this.oldMasterGroupColor[i]), parseHexColor(this.masterGroupColor[i]), frame/this.nFrames);
 	    	this.drawMasterGroupLink(i, color);
-            /*
+            
 			for(j=0; j<4; j++){
     			//digi summary nodes:
-    			//color = interpolateColor(parseHexColor(this.oldDigiSummaryColor[i][j]), parseHexColor(this.digiSummaryColor[i][j]), frame/this.nFrames);
-	    		//this.drawSummaryDigitizerNode(i*Math.ceil(this.nCollectors/4)+j, color);
+    			color = interpolateColor(parseHexColor(this.oldDigiSummaryColor[i][j]), parseHexColor(this.digiSummaryColor[i][j]), frame/this.nFrames);
+	    		this.drawSummaryDigitizerNode(i*Math.ceil(this.nCollectors/4)+j, color);
     			//collector-digi summary links:
-    			//color = interpolateColor(parseHexColor(this.oldCollectorLinkColor[i][j]), parseHexColor(this.collectorLinkColor[i][j]), frame/this.nFrames);
-    			//this.drawSummaryDigitizerNodeLink(i*4+j, color);
+    			color = interpolateColor(parseHexColor(this.oldCollectorLinkColor[i][j]), parseHexColor(this.collectorLinkColor[i][j]), frame/this.nFrames);
+    			this.drawSummaryDigitizerNodeLink(i*4+j, color);
 	    		//collecter nodes:
-    			//color = interpolateColor(parseHexColor(this.oldCollectorColor[i][j]), parseHexColor(this.collectorColor[i][j]), frame/this.nFrames);
-    			//this.drawCollectorNode(i*Math.ceil(this.nCollectors/4)+j, color);    		    		
+    			color = interpolateColor(parseHexColor(this.oldCollectorColor[i][j]), parseHexColor(this.collectorColor[i][j]), frame/this.nFrames);
+    			this.drawCollectorNode(i*Math.ceil(this.nCollectors/4)+j, color);    		    		
     			//collector links:
 	    		color = interpolateColor(parseHexColor(this.oldMasterLinkColor[i][j]), parseHexColor(this.masterLinkColor[i][j]), frame/this.nFrames);
     			this.drawMasterLink(i*Math.ceil(this.nCollectors/4)+j, color); 
 			}
-            */
+            
 		}
 
 	};
@@ -261,7 +261,7 @@ function DAQ(monitor, canvas, tooltip, minima, maxima){
 
     this.drawCollectorNode = function(index, color){
 
-    	this.context.strokeStyle = '#000000';
+    	this.context.strokeStyle = color;
     	this.context.fillStyle = '#4C4C4C';
 		roundBox(this.context, 5+0.05*this.collectorWidth + index*this.collectorWidth/0.9, 225, this.collectorWidth, this.collectorHeight, 5);
 		this.context.stroke();
@@ -270,7 +270,7 @@ function DAQ(monitor, canvas, tooltip, minima, maxima){
 
     this.drawSummaryDigitizerNode = function(index, color){
 
-    	this.context.strokeStyle = '#000000';
+    	this.context.strokeStyle = color;
     	this.context.fillStyle = '#4C4C4C';
 		roundBox(this.context, 5+0.05*this.collectorWidth + index*this.collectorWidth/0.9, 425, this.collectorWidth, this.collectorHeight, 5);
 		this.context.stroke();
@@ -278,16 +278,16 @@ function DAQ(monitor, canvas, tooltip, minima, maxima){
     };
 
     this.drawMasterGroupLink = function(index, color){
-    	this.context.strokeStyle = '#000000';
-    	this.context.fillStyle = '#000000';
+    	this.context.strokeStyle = color;
+    	this.context.fillStyle = color;
  		this.context.moveTo(5+0.1*this.collectorWidth*2 + 2*this.collectorWidth + index*4*this.collectorWidth/0.9, 105);
  		this.context.lineTo(5+0.1*this.collectorWidth*2 + 2*this.collectorWidth + index*4*this.collectorWidth/0.9, 155);
  		this.context.stroke();
     };
 
     this.drawMasterLink = function(index, color){
-    	this.context.strokeStyle = '#000000';
-    	this.context.fillStyle = '#000000';
+    	this.context.strokeStyle = color;
+    	this.context.fillStyle = color;
  		this.context.moveTo(5+0.1*this.collectorWidth*2 + 2*this.collectorWidth + Math.floor(index/4)*4*this.collectorWidth/0.9, 155);
  		this.context.lineTo(5 + 0.55*this.collectorWidth + index*this.collectorWidth/0.9, 225)
  		this.context.stroke();
@@ -295,8 +295,8 @@ function DAQ(monitor, canvas, tooltip, minima, maxima){
 
     this.drawSummaryDigitizerNodeLink = function(index, color){
     	
-    	this.context.strokeStyle = '#000000';
-    	this.context.fillStyle = '#000000';
+    	this.context.strokeStyle = color;
+    	this.context.fillStyle = color;
     	this.context.moveTo(5+0.05*this.collectorWidth + this.collectorWidth*0.5 + index*this.collectorWidth/0.9, 225+this.collectorHeight);
     	this.context.lineTo(5+0.05*this.collectorWidth + this.collectorWidth*0.5 + index*this.collectorWidth/0.9, 425)
     	this.context.stroke();
