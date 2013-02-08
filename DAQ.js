@@ -177,7 +177,12 @@ function DAQ(monitor, canvas, tooltip, minima, maxima){
 	this.draw = function(frame){
 		var color, i, j, k;
 
-		this.context.clearRect(0,0, this.canvasWidth, this.canvasWidth);
+		this.context.clearRect(0,0, this.canvasWidth, this.canvasHeight - 110);
+
+        if(frame == this.nFrames){
+            this.drawScale();
+        }
+        this.context.lineWidth = 2;
 
     	//digitizer summary detail
     	//if(this.presentCollector != -1)
@@ -191,63 +196,69 @@ function DAQ(monitor, canvas, tooltip, minima, maxima){
 			//master group links
     		color = interpolateColor(parseHexColor(this.oldMasterGroupColor[i]), parseHexColor(this.masterGroupColor[i]), frame/this.nFrames);
 	    	this.drawMasterGroupLink(i, color);
-            
-			for(j=0; j<4; j++){
-    			//digi summary nodes:
-    			color = interpolateColor(parseHexColor(this.oldDigiSummaryColor[i][j]), parseHexColor(this.digiSummaryColor[i][j]), frame/this.nFrames);
-	    		this.drawSummaryDigitizerNode(i*Math.ceil(this.nCollectors/4)+j, color);
-    			//collector-digi summary links:
-    			color = interpolateColor(parseHexColor(this.oldCollectorLinkColor[i][j]), parseHexColor(this.collectorLinkColor[i][j]), frame/this.nFrames);
-    			this.drawSummaryDigitizerNodeLink(i*4+j, color);
-	    		//collecter nodes:
-    			color = interpolateColor(parseHexColor(this.oldCollectorColor[i][j]), parseHexColor(this.collectorColor[i][j]), frame/this.nFrames);
-    			this.drawCollectorNode(i*Math.ceil(this.nCollectors/4)+j, color);    		    		
-    			//collector links:
-	    		color = interpolateColor(parseHexColor(this.oldMasterLinkColor[i][j]), parseHexColor(this.masterLinkColor[i][j]), frame/this.nFrames);
-    			this.drawMasterLink(i*Math.ceil(this.nCollectors/4)+j, color); 
-			}
-            
+        }
+        for(i=0; i<4*Math.ceil(this.nCollectors/4); i++){
+    		//digi summary nodes:
+    		color = interpolateColor(parseHexColor(this.oldDigiSummaryColor[i]), parseHexColor(this.digiSummaryColor[i]), frame/this.nFrames);
+	   		this.drawSummaryDigitizerNode(i, color);
+    		//collector-digi summary links:
+    		color = interpolateColor(parseHexColor(this.oldCollectorLinkColor[i]), parseHexColor(this.collectorLinkColor[i]), frame/this.nFrames);
+    		this.drawSummaryDigitizerNodeLink(i, color);
+	   		//collecter nodes:
+    		color = interpolateColor(parseHexColor(this.oldCollectorColor[i]), parseHexColor(this.collectorColor[i]), frame/this.nFrames);
+			this.drawCollectorNode(i, color);    		    		
+    		//collector links:
+	    	color = interpolateColor(parseHexColor(this.oldMasterLinkColor[i]), parseHexColor(this.masterLinkColor[i]), frame/this.nFrames);
+    		this.drawMasterLink(i, color); 
 		}
 
 	};
 
-    this.drawNodeMap = function(){
-    	var i;
+    this.drawScale = function(){
+        var i, j; 
+        var scaleHeight = 110;
+        this.context.clearRect(0, this.canvasHeight - scaleHeight, this.canvasWidth, this.canvasHeight);
 
-    	for(i=0; i<16; i++){
-    		//digi summary nodes:
-    		color = interpolateColor(this.oldDigiSummaryColor[i], this.digiSummaryColor[i], 1);
-    		this.drawSummaryDigitizerNode(i, color);
-    		//collector-digi summary links:
-    		color = interpolateColor(this.oldCollectorLinkColor[i], this.collectorLinkColor[i], 1);
-    		this.drawSummaryDigitizerNodeLink(i, color);
-    		//collecter nodes:
-    		color = interpolateColor(this.oldCollectorColor[i], this.collectorColor[i], 1);
-    		this.drawCollectorNode(i, color);    		    		
-    		//collector-master links:
-    		color = interpolateColor(this.oldMasterLinkColor[i], this.masterLinkColor[i], 1);
-    		this.drawMasterLink(i, color);
-    		//master group links:
-    		color = 0;
-    		this.drawMasterGroupLink(Math.floor(i/4), color );
-    	}		
+        //titles
+        this.context.fillStyle = '#999999';
+        this.context.font="24px 'Orbitron'";
+        this.context.fillText('Transfer Rate', this.canvasWidth/2 - this.context.measureText('Transfer Rate').width/2, this.canvasHeight-scaleHeight/2-10);
+        this.context.fillText('Trigger Rate', this.canvasWidth/2 - this.context.measureText('Trigger Rate').width/2, this.canvasHeight-8);
 
-    	//master node:
-		color = interpolateColor(this.oldMasterColor, this.masterColor, 1);
-		this.drawMasterNode(this.centerX, this.centerY, color);
-    };
+        //tickmarks
+        this.context.strokeStyle = '#999999';
+        this.context.lineWidth = 1;
+        this.context.font="12px 'Raleway'";
 
-    this.drawDetail = function(frame){
-    	this.context.clearRect(0,0, this.canvasWidth, this.canvasWidth);
-    	this.drawNodeMap();
-    	if(this.presentCollector != this.inboundCollector){
-	    	this.drawDigiDetail(this.inboundCollector, frame, frame)
-    		if(this.presentCollector != -1) this.drawDigiDetail(this.presentCollector,this.nFrames - frame, this.nFrames - frame);
-    		if(frame == this.nFrames) this.presentCollector = this.inboundCollector;
-    	} else {
-    		this.drawDigiDetail(this.inboundCollector, this.nFrames - frame, this.nFrames - frame);
-    		if(frame == this.nFrames) this.presentCollector = -1;
-    	}
+        this.context.beginPath();
+        this.context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - scaleHeight/2);
+        this.context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - scaleHeight/2-10);
+        this.context.stroke();
+        this.context.fillText('0 Mb/s', this.canvasWidth*0.05 - this.context.measureText('0 Mb/s').width/2, this.canvasHeight-scaleHeight/2-15);
+
+        this.context.beginPath();
+        this.context.moveTo(this.canvasWidth*0.95-1, this.canvasHeight - scaleHeight/2);
+        this.context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - scaleHeight/2-10); 
+        this.context.stroke();      
+        this.context.fillText('100 Mb/s', this.canvasWidth*0.95 - this.context.measureText('100 Mb/s').width/2, this.canvasHeight-scaleHeight/2-15);
+
+        this.context.beginPath();
+        this.context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - scaleHeight/2 + 20);
+        this.context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - scaleHeight/2 + 20 + 10);
+        this.context.stroke();
+        this.context.fillText('0 Hz', this.canvasWidth*0.05 - this.context.measureText('0 Hz').width/2, this.canvasHeight-scaleHeight/2 + 45);
+
+        this.context.beginPath();
+        this.context.moveTo(this.canvasWidth*0.95-1, this.canvasHeight - scaleHeight/2 + 20);
+        this.context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - scaleHeight/2 + 20 + 10); 
+        this.context.stroke();      
+        this.context.fillText('1 MHz', this.canvasWidth*0.95 - this.context.measureText('1 MHz').width/2, this.canvasHeight-scaleHeight/2 + 45);
+
+        for(i=0; i<3000; i++){
+            this.context.fillStyle = redScale(0.001*(i%1000));
+            this.context.fillRect(this.canvasWidth*0.05 + this.canvasWidth*0.9/1000*(i%1000), this.canvasHeight-scaleHeight/2, this.canvasWidth*0.9/1000, 20);
+        }
+
     };
 
     this.drawMasterNode = function(color){
@@ -272,6 +283,9 @@ function DAQ(monitor, canvas, tooltip, minima, maxima){
 
     	this.context.strokeStyle = color;
     	this.context.fillStyle = '#4C4C4C';
+        //this.context.beginPath();
+        //this.context.arc( 5+0.05*this.collectorWidth + index*this.collectorWidth/0.9, 525, this.collectorWidth/2, 0, 2*Math.PI);
+        //this.context.closePath();
 		roundBox(this.context, 5+0.05*this.collectorWidth + index*this.collectorWidth/0.9, 425, this.collectorWidth, this.collectorHeight, 5);
 		this.context.stroke();
 		this.context.fill();
@@ -301,6 +315,56 @@ function DAQ(monitor, canvas, tooltip, minima, maxima){
     	this.context.lineTo(5+0.05*this.collectorWidth + this.collectorWidth*0.5 + index*this.collectorWidth/0.9, 425)
     	this.context.stroke();
     	
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+    this.drawNodeMap = function(){
+        var i;
+
+        for(i=0; i<16; i++){
+            //digi summary nodes:
+            color = interpolateColor(this.oldDigiSummaryColor[i], this.digiSummaryColor[i], 1);
+            this.drawSummaryDigitizerNode(i, color);
+            //collector-digi summary links:
+            color = interpolateColor(this.oldCollectorLinkColor[i], this.collectorLinkColor[i], 1);
+            this.drawSummaryDigitizerNodeLink(i, color);
+            //collecter nodes:
+            color = interpolateColor(this.oldCollectorColor[i], this.collectorColor[i], 1);
+            this.drawCollectorNode(i, color);                       
+            //collector-master links:
+            color = interpolateColor(this.oldMasterLinkColor[i], this.masterLinkColor[i], 1);
+            this.drawMasterLink(i, color);
+            //master group links:
+            color = 0;
+            this.drawMasterGroupLink(Math.floor(i/4), color );
+        }       
+
+        //master node:
+        color = interpolateColor(this.oldMasterColor, this.masterColor, 1);
+        this.drawMasterNode(this.centerX, this.centerY, color);
+    };
+
+    this.drawDetail = function(frame){
+        this.context.clearRect(0,0, this.canvasWidth, this.canvasWidth);
+        this.drawNodeMap();
+        if(this.presentCollector != this.inboundCollector){
+            this.drawDigiDetail(this.inboundCollector, frame, frame)
+            if(this.presentCollector != -1) this.drawDigiDetail(this.presentCollector,this.nFrames - frame, this.nFrames - frame);
+            if(frame == this.nFrames) this.presentCollector = this.inboundCollector;
+        } else {
+            this.drawDigiDetail(this.inboundCollector, this.nFrames - frame, this.nFrames - frame);
+            if(frame == this.nFrames) this.presentCollector = -1;
+        }
     };
 
     this.drawDigiDetail = function(collectorIndex, colorFrame, sizeFrame){
