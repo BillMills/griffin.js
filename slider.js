@@ -52,29 +52,11 @@ function Slider(titleID, inputBoxID, sliderContainerID, sliderBackgroundID, slid
     this.sliderText = document.getElementById(sliderTextID);
 
     $(this.sliderContainer).css('left', $(this.inputBox).width() + 25 );
-/*
+
     //configure slider div and canvas css:
-    $(this.inputBox).attr('size', '6');
-    $(this.sliderContainer).css('width', '270px');
-    $(this.sliderContainer).css('height', '36px');
-    $(this.sliderContainer).css('display', 'inline');
-    $(this.sliderContainer).css('position', 'absolute');
-    $(this.sliderBackground).css('width', '260px');
-    $(this.sliderBackground).css('height', '24px');
-    $(this.sliderBackground).css('display', 'inline');
-    $(this.sliderBackground).css('position', 'absolute');
-    $(this.sliderKnob).css('width', '24px');
-    $(this.sliderKnob).css('height', '36px');
-    $(this.sliderKnob).css('left', '10px');
-    $(this.sliderKnob).css('display', 'inline');
-    $(this.sliderKnob).css('position', 'absolute');
-    $(this.sliderCanv).css('width', '24px');
-    $(this.sliderCanv).css('height', '16px');
-    $(this.sliderCanv).css('display', 'inline');
-    $(this.sliderCanv).css('position', 'absolute');
-    $(this.sliderText).css('display', 'inline');
-    //$(this.sliderText).css('color', 'Grey');
-*/
+    this.sliderContainer.width = 1.2*length;
+    this.sliderBackground.width = 1.2*length;
+
     //draw the slider canvases:
     this.sliderContext = this.sliderBackground.getContext('2d');
     this.knobContext = this.sliderCanv.getContext('2d');
@@ -156,7 +138,7 @@ function Slider(titleID, inputBoxID, sliderContainerID, sliderBackgroundID, slid
             //center label under knob, but don't let it fall off the end of the slider.
             var stringWidth = that.knobContext.measureText(that.sliderString).width*1.2
             $('#'+sliderTextID).css('left',(-1*stringWidth/2 -10) );
-            if(stringWidth/2+that.sliderTo+0+10 > that.rightRail){
+            if(stringWidth/2+that.sliderTo+0+10> that.rightRail){
                 $('#'+sliderTextID).css('left', that.rightKnob - stringWidth - that.sliderTo - 10);
             }
             if(that.sliderTo - stringWidth/2 -0-10 < that.leftRail){

@@ -43,6 +43,7 @@ p.TTtext{
 
 /*div#InputLayer{*/
 div.Sidebar{
+	/*
 	position: absolute;
 	background-color: #4C4C4C  !important;
 	color: rgba(255,255,255,0.9);
@@ -52,6 +53,20 @@ div.Sidebar{
 	border-width:5px; 
 	border-color:black;
 	right:3%;
+	display:inline;
+	opacity:0;
+	z-index:-1;
+
+	transition:opacity 0.5s, z-index 0.5s;
+	-moz-transition:opacity 0.5s, z-index 0.5s;
+	-webkit-transition:opacity 0.5s, z-index 0.5s;
+	*/
+
+	position: absolute;
+	color: rgba(255,255,255,0.9);
+	width: 25%;
+	height: 695px;
+	right:0%;
 	display:inline;
 	opacity:0;
 	z-index:-1;
@@ -151,7 +166,6 @@ input.link{
 
 div.slider{
 	position: absolute; 
-	width: 270px;
 	height: 36px;
 	margin-top: 5px;
 	display: inline;

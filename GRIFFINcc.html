@@ -19,9 +19,13 @@
     <script src="drawing.js" type="text/javascript"></script>
     <script src="SHARC.js" type="text/javascript"></script>
     <script src="DESCANT.js" type="text/javascript"></script>
+    <script src="TIGRESS.js" type="text/javascript"></script>
     <script src="DAQ.js" type="text/javascript"></script>
 
+    <!--link rel="stylesheet" type="text/css" href="cssreset.css" /-->
     <link rel="stylesheet" type="text/css" href="GRIFFINcc.css" />
+
+    <link rel="icon" type="image/x-icon" href="favicon.ico"/>
   </head> 
 
 
@@ -93,7 +97,7 @@
         <h1 id='SubsystemLinksBanner' style='display: inline; opacity: 0.3; font-family: "Orbitron", sans-serif; font-size: 275%; vertical-align:-20px;'>GRIFFIN Subsystems</h1>
 
         <br><button id='SHARClink' class='MFlink' type="button" onclick="javascript:swapFade('SHARCCanvas', 'SHARClink')">SHARC</button>
-        <button id='HPGElink' class='MFlink' type="button">HPGE</button>
+        <button id='HPGElink' class='MFlink' type="button" onclick="javascript:swapFade('TIGRESSCanvas', 'HPGElink')">HPGE</button>
         <button id='DESCANTlink' class='MFlink' type="button" onclick="javascript:swapFade('DESCANTCanvas', 'DESCANTlink')">DESCANT</button>
         <button id='PACESlink' class='MFlink' type="button">PACES</button>
         <button id='DANTElink' class='MFlink' type="button">DANTE</button>
@@ -155,6 +159,8 @@
 
       <!--Subsystem-->
       <canvas id='SHARCCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
+      <canvas id='TIGRESSCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
+      <canvas id='TIGRESSdetailCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
       <canvas id='DESCANTCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
       <canvas id='DESCANTTTCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
 
@@ -177,8 +183,9 @@
       <!--Sidebar for HV monitor//////////////////////////////////////////////////////-->
       <div align='left' id='InputLayer' class='Sidebar' style='opacity:1; z-index:1'>
 
+        <canvas id='waffleSidebarBKG' style='position:absolute; z-index:-1'> </canvas>
         <!--title-->
-        <h2 id='inputTitle' align='left' style='margin-left:10%; font-family: "Orbitron", sans-serif;'>sintitulo</h2>
+        <h2 id='inputTitle' align='left' style='margin-left:10%; margin-top:25px; font-family: "Orbitron", sans-serif;'>sintitulo</h2>
 
         <!--Form for channel reporting and input-->
         <form id='setValues' style='margin-bottom:0px;'>
@@ -210,7 +217,7 @@
 
           <!--Slider for demand voltage-->
           <div class='slider' id='voltageSlider'>
-            <canvas class='sliderBKG' id='voltageSliderBKG' width=260 height=24></canvas>
+            <canvas class='sliderBKG' id='voltageSliderBKG' height=24></canvas>
             <div class='sliderKnob' id='voltageSliderKnob'>
               <canvas class='knobStyle' id='voltageKnobStyle' width=24 height=16> </canvas>
               <p class='sliderText' id='voltageSliderText'><br>0%</p>
@@ -223,7 +230,7 @@
 
           <!--Slider for voltage ramp up speed-->
           <div class='slider' id='rampSlider'>
-            <canvas class='sliderBKG' id='rampSliderBKG' width=260 height=24></canvas>
+            <canvas class='sliderBKG' id='rampSliderBKG' height=24></canvas>
             <div class='sliderKnob' id='rampSliderKnob'>
               <canvas class='knobStyle' id='rampKnobStyle' width=24 height=16> </canvas>
               <p class='sliderText' id='rampSliderText'><br>0%</p>
@@ -236,7 +243,7 @@
 
           <!--Slider for voltage ramp down speed-->
           <div class='slider' id='rampDownSlider'>
-            <canvas class='sliderBKG' id='rampDownSliderBKG' width=260 height=24></canvas>
+            <canvas class='sliderBKG' id='rampDownSliderBKG' height=24></canvas>
             <div class='sliderKnob' id='rampDownSliderKnob'>
               <canvas class='knobStyle' id='rampDownKnobStyle' width=24 height=16> </canvas>
               <p class='sliderText' id='rampDownSliderText'><br>0%</p>
@@ -436,7 +443,7 @@
 
       //declare objects:
       //HV monitor control sidebar elements:
-      var sliderWidth = parseFloat($(document.getElementById('InputLayer')).width()) - 150;
+      var sliderWidth = parseFloat($(document.getElementById('InputLayer')).width())*0.5;
       var sliderVoltage = new Slider('volageSliderText', 'demandVoltage', 'voltageSlider', 'voltageSliderBKG', 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', minVoltage, maxVoltage, statusPrecision, voltUnit, sliderWidth );
       var sliderRamp = new Slider('rampSliderText', 'demandRampSpeed', 'rampSlider', 'rampSliderBKG', 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', minRampSpeed, maxRampSpeed, statusPrecision, rampUnit,  sliderWidth);
       var sliderRampDown = new Slider('rampDownSliderText', 'demandRampDownSpeed', 'rampDownSlider', 'rampDownSliderBKG', 'rampDownSliderKnob', 'rampDownKnobStyle', 'rampDownSliderText', minRampSpeed, maxRampSpeed, statusPrecision, rampUnit,  sliderWidth);
@@ -460,6 +467,8 @@
       barCharts[3] = new BarGraph('bar3', 3,  12, 'Module 3', 'Reported Voltage [V]', smallCard, minVoltage, maxVoltage, barChartPrecision, waffle);
 
       var SHARCMonitor = new SHARC('waffleplate','horizontal', 'SHARCCanvas', SMrows, SMcolumns, SMnChannels, 4, 4, 1, 16, SMminima, SMmaxima, SubsystemTooltip);
+      var TIGRESSMonitor = new TIGRESS('waffleplate', 'TIGRESSCanvas', 'TIGRESSCanvas');
+      TIGRESSMonitor.wireframeDetail();
       var DESCANTMonitor = new DESCANT('waffleplate', 'DESCANTCanvas', DESCANTTooltip);
       DESCANTMonitor.wireframe();
 

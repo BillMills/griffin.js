@@ -29,18 +29,18 @@ function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVolta
             tooltips[i].update();
         }
 
-        //animate whoever is showing on top, flat draw the rest:
-        if(window.onDisplay == 'TestWaffle') animate(waffle, 0);
+        //animate whoever is showing on top, flat draw the rest; force animate for everyone on first pass, since Google fonts don't render in canvas on the first call to draw (investigate):
+        if(window.onDisplay == 'TestWaffle' || !callMyself) animate(waffle, 0);
         else waffle.draw(waffle.nFrames);
         for(i=0; i<barCharts.length; i++){
-            if(window.onDisplay == barCharts[i].cvas) animate(barCharts[i], 0);
+            if(window.onDisplay == barCharts[i].cvas || !callMyself) animate(barCharts[i], 0);
             else barCharts[i].draw(barCharts[i].nFrames);
         }
-        if(window.onDisplay == 'SHARCCanvas') animate(SM,0);
+        if(window.onDisplay == 'SHARCCanvas' || !callMyself) animate(SM,0);
         else SM.draw(SM.nFrames);
-        if(window.onDisplay == 'DAQcanvas') animate(DAQ,0);
+        if(window.onDisplay == 'DAQcanvas' || !callMyself) animate(DAQ,0);
         else DAQ.draw(DAQ.nFrames);
-        if(window.onDisplay == 'DAQdetailCanvas') animateDetail(DAQ,0) //do some animating
+        if(window.onDisplay == 'DAQdetailCanvas' || !callMyself) animateDetail(DAQ,0) //do some animating
         else DAQ.drawDetail(DAQ.nFrames);
     }
 

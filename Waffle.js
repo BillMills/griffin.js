@@ -142,6 +142,11 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, wrapperDiv, rowTitles, InputL
         //also, draw the input sidebar for 0,0 on first call:
         channelSelect(that);
 
+        //style the input sidebar background:
+        document.getElementById('waffleSidebarBKG').width = 360;
+        document.getElementById('waffleSidebarBKG').height = 695;
+        tabBKG('waffleSidebarBKG');
+
         //que up new data:
         this.populate = function(demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit){
 
