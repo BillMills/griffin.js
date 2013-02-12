@@ -43,24 +43,6 @@ p.TTtext{
 
 /*div#InputLayer{*/
 div.Sidebar{
-	/*
-	position: absolute;
-	background-color: #4C4C4C  !important;
-	color: rgba(255,255,255,0.9);
-	width: 20%;
-	height: 645px;
-	border-style:ridge; 
-	border-width:5px; 
-	border-color:black;
-	right:3%;
-	display:inline;
-	opacity:0;
-	z-index:-1;
-
-	transition:opacity 0.5s, z-index 0.5s;
-	-moz-transition:opacity 0.5s, z-index 0.5s;
-	-webkit-transition:opacity 0.5s, z-index 0.5s;
-	*/
 
 	position: absolute;
 	color: rgba(255,255,255,0.9);
@@ -79,7 +61,6 @@ div.Sidebar{
 p#FieldText{
 	margin-top: 0px;
 	margin-bottom: 0px;
-	margin-left: 10px;
 	margin-right: 10px;
 }
 
@@ -91,8 +72,6 @@ p#inputTitle{
 
 input#demandVoltage{
 	position: relative;
-	margin-left: 10px;
-	margin-bottom: 10px;
 }
 
 div.alarmDiv{
@@ -165,7 +144,7 @@ input.link{
 }
 
 div.slider{
-	position: absolute; 
+	position:absolute;
 	height: 36px;
 	margin-top: 5px;
 	display: inline;
@@ -180,7 +159,7 @@ div.sliderKnob{
 	display: inline;
 	position:absolute; 
 	left: 10px;
-	width: 100px;
+	width: 70px;
 	height: 36px;
 }
 

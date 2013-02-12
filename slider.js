@@ -1,4 +1,4 @@
-function Slider(titleID, inputBoxID, sliderContainerID, sliderBackgroundID, sliderKnobID, sliderCanvID, sliderTextID, min, max, decimal, unit, length){
+function Slider(wrapperID, titleID, inputBoxID, sliderContainerID, sliderBackgroundID, sliderKnobID, sliderCanvID, sliderTextID, min, max, decimal, unit, length){
 
     //slider limits:
     this.min = min;
@@ -35,6 +35,7 @@ function Slider(titleID, inputBoxID, sliderContainerID, sliderBackgroundID, slid
     this.nFrames = this.duration*this.FPS;
 
     //IDs:
+    this.wrapperID = wrapperID;
     this.titleID = titleID;
     this.inputBoxID = inputBoxID;
     this.sliderContainerID = sliderContainerID;
@@ -44,6 +45,7 @@ function Slider(titleID, inputBoxID, sliderContainerID, sliderBackgroundID, slid
     this.sliderTextID = sliderTextID;
 
     //pointers by ID:
+    this.wrapper = document.getElementById(wrapperID);
     this.inputBox = document.getElementById(inputBoxID);
     this.sliderContainer = document.getElementById(sliderContainerID);
     this.sliderBackground = document.getElementById(sliderBackgroundID);
@@ -51,7 +53,7 @@ function Slider(titleID, inputBoxID, sliderContainerID, sliderBackgroundID, slid
     this.sliderCanv = document.getElementById(sliderCanvID);
     this.sliderText = document.getElementById(sliderTextID);
 
-    $(this.sliderContainer).css('left', $(this.inputBox).width() + 25 );
+    $(this.sliderContainer).css('left', $(this.inputBox).width() +  0.1*$(this.wrapper).width()*1.5 );
 
     //configure slider div and canvas css:
     this.sliderContainer.width = 1.2*length;

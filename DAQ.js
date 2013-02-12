@@ -36,7 +36,7 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima){
 
     //drawing parameters//////////////////////////////////////////////
     this.collectorWidth = 0.9*(this.canvasWidth-10) / 16;
-    this.collectorHeight = 2*this.collectorWidth; //100;
+    this.collectorHeight = 1.5*this.collectorWidth; //100;
 
     this.cellColor = '#4C4C4C';
     this.lineweight = 2;

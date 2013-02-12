@@ -143,9 +143,9 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, wrapperDiv, rowTitles, InputL
         channelSelect(that);
 
         //style the input sidebar background:
-        document.getElementById('waffleSidebarBKG').width = 360;
-        document.getElementById('waffleSidebarBKG').height = 695;
-        tabBKG('waffleSidebarBKG');
+        document.getElementById('waffleSidebarBKG').width = parseInt(($('#InputLayer').css('width')).slice(0,3)); //360;
+        document.getElementById('waffleSidebarBKG').height = parseInt($('#InputLayer').css('height').slice(0,3)); //695;
+        tabBKG('waffleSidebarBKG', 'right');
 
         //que up new data:
         this.populate = function(demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit){

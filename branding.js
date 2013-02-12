@@ -12,7 +12,7 @@ function Banner(canvas, location, navbar, title) {
     var renderHeight = Math.max(900, window.innerHeight)
 
     //resize canvas
-    context.canvas.width = renderWidth-10;
+    context.canvas.width = renderWidth;
     context.canvas.height = renderHeight*0.1;//window.innerHeight*0.1;
 
     //style canvas
@@ -26,7 +26,7 @@ function Banner(canvas, location, navbar, title) {
 	context.moveTo(5,0);
 	context.lineTo(5,context.canvas.height*0.7);
 	context.arcTo(5,context.canvas.height*0.9,25,context.canvas.height*0.9,20);
-	context.lineTo(renderWidth-50,context.canvas.height*0.9);
+	context.lineTo(renderWidth,context.canvas.height*0.9);
 	context.stroke();
 
     //insert logo
