@@ -10,8 +10,15 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima){
 	this.minima = minima;			        //minima of element scalea: [master, master group, master link, collector, digi summary link, digi summary node, digi group link, digi transfer, digitizer]
 	this.maxima = maxima;			        //as minima.
     this.nCollectorGroups = 4;
-	this.nCollectors = this.nCollectorGroups*4;
-	this.nDigitizers = this.nCollectors*16;
+    if(this.nCollectorGroups == 0)
+        this.nCollectors = 12;
+    else
+    	this.nCollectors = this.nCollectorGroups*4;
+    this.nDigitizerGroups = 4;
+    if(this.nDigitizerGroups == 0)
+        this.nDigitizers = 12;
+    else
+    	this.nDigitizers = this.nDigitizerGroups*4;
 
 	this.canvas = document.getElementById(canvas);
 	this.context = this.canvas.getContext('2d');
