@@ -1,4 +1,4 @@
-function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima){
+function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
 	var i, j, k, m;
 
 	var that = this;
@@ -9,16 +9,18 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima){
 	//this.tooltip = tooltip;			    //tooltip associated with this object
 	this.minima = minima;			        //minima of element scalea: [master, master group, master link, collector, digi summary link, digi summary node, digi group link, digi transfer, digitizer]
 	this.maxima = maxima;			        //as minima.
-    this.nCollectorGroups = 4;
+    this.config = config;                   //[nCollectorGroups, nCollectors, nDigitizerGroups, nDigitizers, nDigitizersPerCollector]
+    this.nCollectorGroups = config[0];
     if(this.nCollectorGroups == 0)
-        this.nCollectors = 12;
+        this.nCollectors = config[1];
     else
     	this.nCollectors = this.nCollectorGroups*4;
-    this.nDigitizerGroups = 4;
+    this.nDigitizerGroups = config[2];
     if(this.nDigitizerGroups == 0)
-        this.nDigitizers = 12;
+        this.nDigitizers = config[3];
     else
     	this.nDigitizers = this.nDigitizerGroups*4;
+    this.nDigitizersPerCollector = config[4];
 
 	this.canvas = document.getElementById(canvas);
 	this.context = this.canvas.getContext('2d');
@@ -219,16 +221,15 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima){
         }
         this.context.lineWidth = this.lineweight;
 
-    	//master node:
-		color = interpolateColor(parseHexColor(this.oldMasterColor), parseHexColor(this.masterColor), frame/this.nFrames);
-		this.drawMasterNode(color);
-
-		for(i=0; i<Math.ceil(this.nCollectors/4); i++){
-			//master group links
-    		color = interpolateColor(parseHexColor(this.oldMasterGroupColor[i]), parseHexColor(this.masterGroupColor[i]), frame/this.nFrames);
-	    	this.drawMasterGroupLink(i, color);
+        //GRIFFIN mode:
+        if(this.nCollectorGroups != 0){
+    		for(i=0; i<this.nCollectorGroups; i++){
+                //master group links
+                color = interpolateColor(parseHexColor(this.oldMasterGroupColor[i]), parseHexColor(this.masterGroupColor[i]), frame/this.nFrames);
+                this.drawMasterGroupLink(i, color);
+            }
         }
-        for(i=0; i<4*Math.ceil(this.nCollectors/4); i++){
+        for(i=0; i<this.nCollectors; i++){
     		//digi summary nodes:
     		color = interpolateColor(parseHexColor(this.oldDigiSummaryColor[i]), parseHexColor(this.digiSummaryColor[i]), frame/this.nFrames);
 	   		this.drawSummaryDigitizerNode(i, color);
@@ -242,6 +243,10 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima){
 	    	color = interpolateColor(parseHexColor(this.oldMasterLinkColor[i]), parseHexColor(this.masterLinkColor[i]), frame/this.nFrames);
     		this.drawMasterLink(i, color); 
 		}
+
+        //master node:
+        color = interpolateColor(parseHexColor(this.oldMasterColor), parseHexColor(this.masterColor), frame/this.nFrames);
+        this.drawMasterNode(color);
 
 	};
 
@@ -304,7 +309,11 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima){
 
     	this.context.strokeStyle = color;
     	this.context.fillStyle = this.cellColor;
-		roundBox(this.context, this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups + (index%4 - 1.5)*(this.collectorWidth + this.collectorGutter) - this.collectorWidth/2, this.collectorTop, this.collectorWidth, this.collectorBottom - this.collectorTop, 5);
+        if(this.nCollectorGroups != 0){  //GRIFFIN mode:
+    		roundBox(this.context, this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups + (index%4 - 1.5)*(this.collectorWidth + this.collectorGutter) - this.collectorWidth/2, this.collectorTop, this.collectorWidth, this.collectorBottom - this.collectorTop, 5);
+        } else {  //TIGRESS mode:
+            roundBox(this.context, this.margin + (index+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectors - this.collectorWidth/2, this.collectorTop, this.collectorWidth, this.collectorBottom - this.collectorTop, 5);
+        }
 		this.context.stroke();
 		this.context.fill();
     };
@@ -313,7 +322,11 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima){
 
     	this.context.strokeStyle = color;
     	this.context.fillStyle = this.cellColor;
-		roundBox(this.context, this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups + (index%4 - 1.5)*(this.collectorWidth + this.collectorGutter) - this.collectorWidth/2, this.digiSummaryTop, this.collectorWidth, this.digiSummaryBottom - this.digiSummaryTop, 5);
+        if(this.nCollectorGroups != 0){ //GRIFFIN mode:
+    		roundBox(this.context, this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups + (index%4 - 1.5)*(this.collectorWidth + this.collectorGutter) - this.collectorWidth/2, this.digiSummaryTop, this.collectorWidth, this.digiSummaryBottom - this.digiSummaryTop, 5);
+        } else { //TIGRESS mode
+            roundBox(this.context, this.margin + (index+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectors - this.collectorWidth/2, this.digiSummaryTop, this.collectorWidth, this.digiSummaryBottom - this.digiSummaryTop, 5);
+        }
 		this.context.fill();
         this.context.stroke();
     };
@@ -329,19 +342,28 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima){
     this.drawMasterLink = function(index, color){
     	this.context.strokeStyle = color;
     	this.context.fillStyle = color;
- 		this.context.moveTo(this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups, this.masterLinkTop);
- 		this.context.lineTo(this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups + (index%4 - 1.5)*(this.collectorWidth + this.collectorGutter), this.masterLinkBottom);
+
+        if(this.nCollectorGroups != 0) {  //GRIFFIN mode:
+     		this.context.moveTo(this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups, this.masterLinkTop);
+     	  	this.context.lineTo(this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups + (index%4 - 1.5)*(this.collectorWidth + this.collectorGutter), this.masterLinkBottom);
+        } else { //TIGRESS mode:
+            this.context.moveTo(this.margin + (index + 0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectors, this.masterGroupLinkTop );
+            this.context.lineTo(this.margin + (index + 0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectors, this.masterLinkBottom );
+        }
  		this.context.stroke();
     };
 
     this.drawSummaryDigitizerNodeLink = function(index, color){
-    	
     	this.context.strokeStyle = color;
     	this.context.fillStyle = color;
-    	this.context.moveTo(this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups + (index%4 - 1.5)*(this.collectorWidth + this.collectorGutter), this.digiSummaryLinkTop);
-    	this.context.lineTo(this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups + (index%4 - 1.5)*(this.collectorWidth + this.collectorGutter), this.digiSummaryLinkBottom);
+        if(this.nCollectorGroups != 0){ //GRIFFIN mode:
+        	this.context.moveTo(this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups + (index%4 - 1.5)*(this.collectorWidth + this.collectorGutter), this.digiSummaryLinkTop);
+        	this.context.lineTo(this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups + (index%4 - 1.5)*(this.collectorWidth + this.collectorGutter), this.digiSummaryLinkBottom);
+        } else {  //TIGRESS mode:
+            this.context.moveTo(this.margin + (index + 0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectors, this.digiSummaryLinkTop);
+            this.context.lineTo(this.margin + (index + 0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectors, this.digiSummaryLinkBottom);
+        }
     	this.context.stroke();
-    	
     };
 
     this.drawDetail = function(frame){
@@ -360,39 +382,54 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima){
         //collector index:
         var clctr = window.DAQdetail;
 
-        //group connecters:
-        for(i=4*clctr; i<4*clctr + 4; i++){
-            this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.oldDigiGroupSummaryColor[i]), parseHexColor(this.digiGroupSummaryColor[i]), frame/this.nFrames);
-            this.detailContext.beginPath();
-            this.detailContext.moveTo(this.canvasWidth/2 - this.collectorWidth*0.3 + this.collectorWidth*0.2*i, topMargin+this.collectorHeight);
-            this.detailContext.lineTo( 0.12*this.canvasWidth + 0.76/3*this.canvasWidth*i, this.canvasHeight*0.4 + topMargin);
-            this.detailContext.closePath();
-            this.detailContext.stroke();
-        }
+        if(this.nDigitizerGroups != 0){  //GRIFFIN mode:
+            //group connecters:
+            for(i=4*clctr; i<4*clctr + 4; i++){
+                this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.oldDigiGroupSummaryColor[i]), parseHexColor(this.digiGroupSummaryColor[i]), frame/this.nFrames);
+                this.detailContext.beginPath();
+                this.detailContext.moveTo(this.canvasWidth/2 - this.collectorWidth*0.3 + this.collectorWidth*0.2*i, topMargin+this.collectorHeight);
+                this.detailContext.lineTo( 0.12*this.canvasWidth + 0.76/3*this.canvasWidth*i, this.canvasHeight*0.4 + topMargin);
+                this.detailContext.closePath();
+                this.detailContext.stroke();
+            }
 
-        //digitizer connecters:
-        for(i=16*clctr; i<16*clctr+16; i++){
-            this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.oldDigitizerLinkColor[i]), parseHexColor(this.digitizerLinkColor[i]), frame/this.nFrames);
-            this.detailContext.beginPath();
-            this.detailContext.moveTo( Math.floor( (i - 16*clctr)/4 )*0.76/3*this.canvasWidth + 0.12*this.canvasWidth, this.canvasHeight*0.4 + topMargin );
-            this.detailContext.lineTo( Math.floor( (i - 16*clctr)/4 )*0.76/3*this.canvasWidth + 0.12*this.canvasWidth - this.canvasWidth*0.09 + (i%4)*this.canvasWidth*0.06, this.canvasHeight*0.6 + topMargin );
-            this.detailContext.closePath();
-            this.detailContext.stroke();   
-        }
+            //digitizer connecters:
+            for(i=this.nDigitizersPerCollector*clctr; i<this.nDigitizersPerCollector*clctr+this.nDigitizersPerCollector; i++){
+                this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.oldDigitizerLinkColor[i]), parseHexColor(this.digitizerLinkColor[i]), frame/this.nFrames);
+                this.detailContext.beginPath();
+                this.detailContext.moveTo( Math.floor( (i - this.nDigitizersPerCollector*clctr)/4 )*0.76/3*this.canvasWidth + 0.12*this.canvasWidth, this.canvasHeight*0.4 + topMargin );
+                this.detailContext.lineTo( Math.floor( (i - this.nDigitizersPerCollector*clctr)/4 )*0.76/3*this.canvasWidth + 0.12*this.canvasWidth - this.canvasWidth*0.09 + (i%4)*this.canvasWidth*0.06, this.canvasHeight*0.6 + topMargin );
+                this.detailContext.closePath();
+                this.detailContext.stroke();   
+            }
 
+            //digitizers:
+            for(i=this.nDigitizersPerCollector*clctr; i<this.nDigitizersPerCollector*clctr+this.nDigitizersPerCollector; i++){
+                this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.oldDigitizerColor[i]), parseHexColor(this.digitizerColor[i]), frame/this.nFrames);
+                roundBox(this.detailContext, Math.floor( (i - this.nDigitizersPerCollector*clctr)/4 )*0.76/3*this.canvasWidth + 0.12*this.canvasWidth - this.canvasWidth*0.09 + (i%4)*this.canvasWidth*0.06 - 0.02*this.canvasWidth , this.canvasHeight*0.6 + topMargin, 0.04*this.canvasWidth, 0.04*this.canvasWidth, 5);
+                this.detailContext.fill();
+                this.detailContext.stroke();
+            }
+        } else {  //TIGRESS mode:
+            for(i=this.nDigitizersPerCollector*clctr; i<this.nDigitizersPerCollector*clctr + this.nDigitizersPerCollector; i++){
+                //digitizers:
+                this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.oldDigitizerColor[i]), parseHexColor(this.digitizerColor[i]), frame/this.nFrames);
+                roundBox(this.detailContext, this.margin + (i+0.5)*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector - 0.02*this.canvasWidth , this.canvasHeight*0.6 + topMargin, 0.04*this.canvasWidth, 0.04*this.canvasWidth, 5);
+                this.detailContext.fill();
+                this.detailContext.stroke();
+
+                //digitizer to collector link:
+                this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.oldDigitizerLinkColor[i]), parseHexColor(this.digitizerLinkColor[i]), frame/this.nFrames);
+                this.detailContext.moveTo(this.margin + (i+0.5)*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector, this.canvasHeight*0.6 + topMargin);
+                this.detailContext.lineTo( this.canvasWidth/2 - this.collectorWidth/2 + (i+0.5)*this.collectorWidth/this.nDigitizersPerCollector, topMargin + this.collectorHeight);
+                this.detailContext.stroke();
+            }
+        }
         //parent collector:
         this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.oldCollectorColor[clctr]), parseHexColor(this.collectorColor[clctr]), frame/this.nFrames);
         roundBox(this.detailContext, this.canvasWidth/2 - this.collectorWidth/2, topMargin, this.collectorWidth, this.collectorHeight, 5);
         this.detailContext.fill();
         this.detailContext.stroke();
-
-        //digitizers:
-        for(i=16*clctr; i<16*clctr+16; i++){
-            this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.oldDigitizerColor[i]), parseHexColor(this.digitizerColor[i]), frame/this.nFrames);
-            roundBox(this.detailContext, Math.floor( (i - 16*clctr)/4 )*0.76/3*this.canvasWidth + 0.12*this.canvasWidth - this.canvasWidth*0.09 + (i%4)*this.canvasWidth*0.06 - 0.02*this.canvasWidth , this.canvasHeight*0.6 + topMargin, 0.04*this.canvasWidth, 0.04*this.canvasWidth, 5);
-            this.detailContext.fill();
-            this.detailContext.stroke();
-        }
 
     };
 

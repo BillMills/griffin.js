@@ -396,6 +396,8 @@
       var DAQminima = [0,0,0,0,0,0,0,0,0];
       var DAQmaxima = [1,1,1,1,1,1,1,1,1];
 
+      var configParameters = [4, 16, 16, 16*16, 16];
+
       //---------------End Experiment-specific parameters--------------------------------------------------
       //---------------------------------------------------------------------------------------------------
 
@@ -470,11 +472,11 @@
 
       var SHARCMonitor = new SHARC('waffleplate','horizontal', 'SHARCCanvas', SMrows, SMcolumns, SMnChannels, 4, 4, 1, 16, SMminima, SMmaxima, SubsystemTooltip);
       var TIGRESSMonitor = new TIGRESS('waffleplate', 'TIGRESSCanvas', 'TIGRESSCanvas');
-      TIGRESSMonitor.wireframeDetail();
+      TIGRESSMonitor.drawDetail();
       var DESCANTMonitor = new DESCANT('waffleplate', 'DESCANTCanvas', DESCANTTooltip);
       DESCANTMonitor.wireframe();
 
-      var DAQMonitor = new DAQ('waffleplate', 'DAQcanvas', 'DAQdetailCanvas', 0, DAQminima, DAQmaxima);
+      var DAQMonitor = new DAQ('waffleplate', 'DAQcanvas', 'DAQdetailCanvas', 0, DAQminima, DAQmaxima, configParameters);
 
       //set up arrays:
       //HV monitor

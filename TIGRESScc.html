@@ -382,6 +382,8 @@
       var DAQminima = [0,0,0,0,0,0,0,0,0];
       var DAQmaxima = [1,1,1,1,1,1,1,1,1];
 
+      var configParameters = [0, 12, 0, 144, 12];
+
       //---------------End Experiment-specific parameters--------------------------------------------------
       //---------------------------------------------------------------------------------------------------
 
@@ -456,7 +458,7 @@
       TIGRESSMonitor.drawDetail('rate');
       TIGRESSMonitor.draw();
 
-      var DAQMonitor = new DAQ('waffleplate', 'DAQcanvas', 'DAQdetailCanvas', 0, DAQminima, DAQmaxima);
+      var DAQMonitor = new DAQ('waffleplate', 'DAQcanvas', 'DAQdetailCanvas', 0, DAQminima, DAQmaxima, configParameters);
 
       //set up arrays:
       //HV monitor
