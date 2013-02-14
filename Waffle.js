@@ -1,4 +1,4 @@
-function Waffle(rows, cols, cvas, alarm, scaleMax, wrapperDiv, rowTitles, InputLayer, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs, headerDiv, moduleSizes, moduleLabels, voltageSlider, rampSlider, rampDownSlider, tooltip){
+function Waffle(rows, cols, cvas, alarm, scaleMax, wrapperDiv, rowTitles, InputLayer, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs, headerDiv, moduleSizes, moduleLabels, voltageSlider, rampSlider, rampDownSlider, tooltip, barChartPrecision){
 
         //if(!document.webkitHidden && !document.mozHidden){
     	var i, j, n, columns;
@@ -74,11 +74,21 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, wrapperDiv, rowTitles, InputL
             document.getElementById('card'+i).setAttribute('style', newRule);
         }
 
-
         //header size:
         this.headerHeight = $('#'+this.headerDiv).height();
         //make the vertical spacing between the waffle and nav header nice:
         $('#'+this.cvas).css('top', (this.headerHeight)+'px !important;' );
+
+        //declare bar charts & canvases to paint them on:
+        this.barCharts = [];
+        var newCanvas;
+        for(i=0; i<moduleSizes.length; i++){
+            newCanvas = document.createElement('canvas');
+            newCanvas.setAttribute('id', 'bar'+i);
+            newCanvas.setAttribute('style', 'position:absolute; left:24%; opacity:0; z-index:-10000;');
+            document.getElementById(wrapperDiv).appendChild(newCanvas);
+            this.barCharts[i] = new BarGraph('bar'+i, i, Math.max(moduleSizes[i],1)*12, 'Slot '+i, 'Reported Voltage [V]', 0, scaleMax[0], barChartPrecision, that);
+        }
 
         //set up arrays:
         //ODB info:
@@ -232,7 +242,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, wrapperDiv, rowTitles, InputL
                         R = 0;
                         G = 0;
                         B = 0;
-                        A = 0.8;
+                        A = 0.9;
                     }
                     this.startColor[i][j] = [R,G,B,A];
 
@@ -263,7 +273,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, wrapperDiv, rowTitles, InputL
                         R = 0;
                         G = 0;
                         B = 0;
-                        A = 0.8;
+                        A = 0.9;
                     }
                     this.endColor[i][j] = [R,G,B,A];
     	       }

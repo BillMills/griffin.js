@@ -1,4 +1,4 @@
-function BarGraph(cvas, moduleNumber, nBars, title, yAxisTitle, barTitles, scaleMin, scaleMax, barChartPrecision, masterWaffle){
+function BarGraph(cvas, moduleNumber, nBars, title, yAxisTitle, scaleMin, scaleMax, barChartPrecision, masterWaffle){
 
 	//bar chart levels:
 	this.oldLevels = [];
@@ -45,7 +45,7 @@ function BarGraph(cvas, moduleNumber, nBars, title, yAxisTitle, barTitles, scale
     this.headerHeight = masterWaffle.headerHeight;
     $('#'+cvas).attr('width', this.width);
     $('#'+cvas).attr('height', this.height);
-    $(document.getElementById(cvas)).css('top', this.headerHeight);
+    $('#'+cvas).css('top', this.headerHeight);
 
     //number of bars:
     this.nBars = nBars;
@@ -72,7 +72,7 @@ function BarGraph(cvas, moduleNumber, nBars, title, yAxisTitle, barTitles, scale
     	this.levels[i] = 0.01;
     	this.oldAlarms[i] = [0,0,0];
     	this.alarms[i] = [0,0,0];
-    	this.channelNames[i] = barTitles[i];
+    	this.channelNames[i] = i;
     }
 
     //make barchart clickable to set a variable for a channel:

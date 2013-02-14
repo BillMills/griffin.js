@@ -155,12 +155,12 @@
 
       <!--HV-->
       <canvas id="TestWaffle" style='position:absolute; left:24%;'></canvas>
-      <canvas id='bar0' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
+      <!--canvas id='bar0' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
       <canvas id='bar1' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
       <canvas id='bar2' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
       <canvas id='bar3' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
       <canvas id='bar4' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
-      <canvas id='bar5' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
+      <canvas id='bar5' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas-->
 
       <!--Subsystem-->
       <canvas id='SHARCCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
@@ -334,7 +334,7 @@
 
       //module edges and names:
       var moduleSizes = [0,4,0,4,0,1]; //[1,4,4,1,1,4,4,1];
-      var moduleLabels = ['Slot 0', 'Slot 1', 'Slot 2', 'Slot 3', 'Slot 4', 'Slot 5']; //['Card 0', 'Card 1', 'Card 2', 'Card 3', 'Card 0', 'Card 1', 'Card 2', 'Card 3'];
+      var moduleLabels = ['Slot 0', 'Slot 1', 'Slot 2', 'Slot 3', 'Slot 4', 'Slot 5'];
 
       //alarm thresholds [voltage, current, temperature]:
       var alarmThresholds = [0.8,0.999,0.999];
@@ -375,10 +375,6 @@
       var currentUnit = 'uA';
       //temperature unit:
       var temperatureUnit = 'C';
-
-      //channel titles for barchart view:
-      var smallCard = [0,1,2,3,4,5,6,7,8,9,10,11];
-      var bigCard = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47];
 
       //url of MIDAS status page
       var statusURL = 'http://horus.triumf.ca:8081';
@@ -474,15 +470,7 @@
       var DESCANTTooltip = new Tooltip('DESCANTCanvas', 'DESCANTTipText', 'DESCANTTT', 'waffleplate', [], []);
 
       //main elements
-      var waffle = new Waffle(rows,columns, 'TestWaffle', alarmThresholds, scaleMaxima, "waffleplate", rowTitles, "InputLayer", ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleSizes, moduleLabels, sliderVoltage, sliderRamp, sliderRampDown, MFtooltip);
-
-      var barCharts = [];
-      barCharts[0] = new BarGraph('bar0', 0,  12, 'Slot 0', 'Reported Voltage [V]', smallCard, minVoltage, maxVoltage, barChartPrecision, waffle);
-      barCharts[1] = new BarGraph('bar1', 1,  48, 'Slot 1', 'Reported Voltage [V]', bigCard, minVoltage, maxVoltage, barChartPrecision, waffle);
-      barCharts[2] = new BarGraph('bar2', 2,  12, 'Slot 2', 'Reported Voltage [V]', smallCard, minVoltage, maxVoltage, barChartPrecision, waffle);
-      barCharts[3] = new BarGraph('bar3', 3,  48, 'Slot 3', 'Reported Voltage [V]', bigCard, minVoltage, maxVoltage, barChartPrecision, waffle);
-      barCharts[4] = new BarGraph('bar4', 2,  12, 'Slot 4', 'Reported Voltage [V]', smallCard, minVoltage, maxVoltage, barChartPrecision, waffle);
-      barCharts[5] = new BarGraph('bar5', 3,  12, 'Slot 5', 'Reported Voltage [V]', smallCard, minVoltage, maxVoltage, barChartPrecision, waffle);
+      var waffle = new Waffle(rows,columns, 'TestWaffle', alarmThresholds, scaleMaxima, "waffleplate", rowTitles, "InputLayer", ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleSizes, moduleLabels, sliderVoltage, sliderRamp, sliderRampDown, MFtooltip, barChartPrecision);
 
       var SHARCMonitor = new SHARC('waffleplate','horizontal', 'SHARCCanvas', SMrows, SMcolumns, SMnChannels, 4, 4, 1, 16, SMminima, SMmaxima, SubsystemTooltip);
       var TIGRESSMonitor = new TIGRESS('waffleplate', 'TIGRESSCanvas', 'TIGRESSCanvas');
@@ -573,7 +561,7 @@
 
       //wrap this in a function so it can be easily called to restart the loop somewhere else:
       function startLoop(){
-        masterLoop(rows+1, columns, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmThresholds, scaleMaxima, waffle, barCharts, SHARCMonitor, DANTEMonitor, BAMBINOMonitor, SCEPTARMonitor, SPICEMonitor, DAQMonitor, 2*(SMnChannels*SMrows*SMcolumns + 2*16), SMHV, Math.ceil(nCollectors/4), masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, [MFtooltip, SubsystemTooltip] , 0);
+        masterLoop(rows+1, columns, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmThresholds, scaleMaxima, waffle, SHARCMonitor, DANTEMonitor, BAMBINOMonitor, SCEPTARMonitor, SPICEMonitor, DAQMonitor, 2*(SMnChannels*SMrows*SMcolumns + 2*16), SMHV, Math.ceil(nCollectors/4), masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, [MFtooltip, SubsystemTooltip] , 0);
       }
       startLoop(); 
 

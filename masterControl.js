@@ -1,19 +1,19 @@
-function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax, waffle, barCharts, SM, DANTE, BAMBINO, SCEPTAR, SPICE, DAQ, nSMchannels, HVdata, nCollectorGroups, masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, tooltips, callMyself){
+function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax, waffle, SM, DANTE, BAMBINO, SCEPTAR, SPICE, DAQ, nSMchannels, HVdata, nCollectorGroups, masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, tooltips, callMyself){
 	if(!document.webkitHidden && !document.mozHidden){
         var i;
 
         //HV monitor
     	fetchNewData(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax);
     	waffle.update(demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, alarmStatus, channelMask, rampStatus, voltLimit, currentLimit, callMyself);
-        for(i=0; i<barCharts.length; i++){
+        for(i=0; i<waffle.barCharts.length; i++){
             var barChartData = [];
             var barChartAlarms = [];
-            for(var j=0; j<barCharts[i].nBars; j++){
+            for(var j=0; j<waffle.barCharts[i].nBars; j++){
                 var arrayCoords = getPointer(i, j, waffle)
                 barChartData[j] = reportVoltage[arrayCoords[0]][arrayCoords[1]];
                 barChartAlarms[j] = alarmStatus[arrayCoords[0]][arrayCoords[1]];
             }
-            barCharts[i].update(barChartData, barChartAlarms);
+            waffle.barCharts[i].update(barChartData, barChartAlarms);
         }
 
         //scalar monitor
@@ -32,9 +32,9 @@ function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVolta
         //animate whoever is showing on top, flat draw the rest; force animate for everyone on first pass, since Google fonts don't render in canvas on the first call to draw (investigate):
         if(window.onDisplay == 'TestWaffle' || !callMyself) animate(waffle, 0);
         else waffle.draw(waffle.nFrames);
-        for(i=0; i<barCharts.length; i++){
-            if(window.onDisplay == barCharts[i].cvas || !callMyself) animate(barCharts[i], 0);
-            else barCharts[i].draw(barCharts[i].nFrames);
+        for(i=0; i<waffle.barCharts.length; i++){
+            if(window.onDisplay == waffle.barCharts[i].cvas || !callMyself) animate(waffle.barCharts[i], 0);
+            else waffle.barCharts[i].draw(waffle.barCharts[i].nFrames);
         }
         if(window.onDisplay == 'SHARCCanvas' || !callMyself) animate(SM,0);
         else SM.draw(SM.nFrames);
@@ -53,7 +53,7 @@ function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVolta
     }
 
     //clearTimeout(window.loop);
-    window.loop = setTimeout(function(){masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax, waffle, barCharts, SM, DANTE, BAMBINO, SCEPTAR, SPICE, DAQ, nSMchannels, HVdata, nCollectorGroups, masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, tooltips, 1)}, 3000);
+    window.loop = setTimeout(function(){masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax, waffle, SM, DANTE, BAMBINO, SCEPTAR, SPICE, DAQ, nSMchannels, HVdata, nCollectorGroups, masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, tooltips, 1)}, 3000);
 }
 
 //populate HV monitor rows by cols arrays with the appropriate information:
