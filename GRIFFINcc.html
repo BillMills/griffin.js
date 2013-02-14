@@ -87,14 +87,12 @@
         <button id='Main2' class='MFlink' type="button">Mainframe 2</button>
         <button id='Main3' class='MFlink' type="button">Mainframe 3</button>
 
-        <br><button id='card0' class='cardNav' type="button" style='display: inline; margin-bottom:5px;' onclick="javascript:swapFade('bar0', 'card0')">Card<br>0</button>
-        <button id='card1' class='cardNav' type="button" style='display: inline; margin-bottom:5px;' onclick="javascript:swapFade('bar1', 'card1')">Card 1</button>
-        <button id='card2' class='cardNav' type="button" style='display: inline; margin-bottom:5px;' onclick="javascript:swapFade('bar2', 'card2')">Card 2</button>
-        <button id='card3' class='cardNav' type="button" style='display: inline; margin-bottom:5px;' onclick="javascript:swapFade('bar3', 'card3')">Card<br>3</button>
-        <button id='card4' class='cardNav' type="button" style='display: inline; margin-bottom:5px;' onclick="javascript:swapFade('bar0', 'card4')">Card<br>0</button>
-        <button id='card5' class='cardNav' type="button" style='display: inline; margin-bottom:5px;' onclick="javascript:swapFade('bar1', 'card5')">Card 1</button>
-        <button id='card6' class='cardNav' type="button" style='display: inline; margin-bottom:5px;' onclick="javascript:swapFade('bar2', 'card6')">Card 2</button>
-        <button id='card7' class='cardNav' type="button" style='display: inline; margin-bottom:5px;' onclick="javascript:swapFade('bar3', 'card7')">Card<br>3</button>
+        <br><button id='card0' class='cardNav' type="button" style='display: inline; margin-bottom:5px;' onclick="javascript:swapFade('bar0', 'card0')">Slot<br>0</button>
+        <button id='card1' class='cardNav' type="button" style='display: inline; margin-bottom:5px;' onclick="javascript:swapFade('bar1', 'card1')">Slot 1</button>
+        <button id='card2' class='cardNav' type="button" style='display: inline; margin-bottom:5px;' onclick="javascript:swapFade('bar2', 'card2')">Slot 2</button>
+        <button id='card3' class='cardNav' type="button" style='display: inline; margin-bottom:5px;' onclick="javascript:swapFade('bar3', 'card3')">Slot<br>3</button>
+        <button id='card4' class='cardNav' type="button" style='display: inline; margin-bottom:5px;' onclick="javascript:swapFade('bar4', 'card4')">Slot<br>4</button>
+        <button id='card5' class='cardNav' type="button" style='display: inline; margin-bottom:5px;' onclick="javascript:swapFade('bar5', 'card5')">Slot 5</button>
 
       </div>
 
@@ -161,6 +159,8 @@
       <canvas id='bar1' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
       <canvas id='bar2' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
       <canvas id='bar3' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
+      <canvas id='bar4' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
+      <canvas id='bar5' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
 
       <!--Subsystem-->
       <canvas id='SHARCCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
@@ -333,8 +333,8 @@
       var rowTitles = ['Ch.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
 
       //module edges and names:
-      var moduleSizes = [1,4,4,1,1,4,4,1];
-      var moduleLabels = ['Card 0', 'Card 1', 'Card 2', 'Card 3', 'Card 0', 'Card 1', 'Card 2', 'Card 3'];
+      var moduleSizes = [0,4,0,4,0,1]; //[1,4,4,1,1,4,4,1];
+      var moduleLabels = ['Slot 0', 'Slot 1', 'Slot 2', 'Slot 3', 'Slot 4', 'Slot 5']; //['Card 0', 'Card 1', 'Card 2', 'Card 3', 'Card 0', 'Card 1', 'Card 2', 'Card 3'];
 
       //alarm thresholds [voltage, current, temperature]:
       var alarmThresholds = [0.8,0.999,0.999];
@@ -415,7 +415,10 @@
       //rows & columns:
       var rows = 12;
       var columns = 0;
-      for(i=0; i<moduleSizes.length; i++) columns += moduleSizes[i];
+      for(i=0; i<moduleSizes.length; i++){
+        columns += moduleSizes[i];
+        if (moduleSizes[i] == 0) columns++;
+      }
 
       //Insert branding & navigation
       Banner('banner', 'youAreHere', 'navBar', 'GRIFFIN HV Mainframes');
@@ -451,7 +454,7 @@
       window.griffinDialogY;
 
       //set up channel navigation dropdowns:
-      configureDropdowns('ChannelList', 'CardList', moduleLabels);
+      configureDropdowns('ChannelList', 'CardList', moduleLabels, moduleSizes);
       document.getElementById('CardList').onblur = function(event){reconfigureChannelList(moduleLabels, moduleSizes, 'ChannelList')};
 
       //declare objects:
@@ -474,10 +477,12 @@
       var waffle = new Waffle(rows,columns, 'TestWaffle', alarmThresholds, scaleMaxima, "waffleplate", rowTitles, "InputLayer", ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleSizes, moduleLabels, sliderVoltage, sliderRamp, sliderRampDown, MFtooltip);
 
       var barCharts = [];
-      barCharts[0] = new BarGraph('bar0', 0, 12, 'Module 0', 'Reported Voltage [V]', smallCard, minVoltage, maxVoltage, barChartPrecision, waffle);
-      barCharts[1] = new BarGraph('bar1', 1,  48, 'Module 1', 'Reported Voltage [V]', bigCard, minVoltage, maxVoltage, barChartPrecision, waffle);
-      barCharts[2] = new BarGraph('bar2', 2,  48, 'Module 2', 'Reported Voltage [V]', bigCard, minVoltage, maxVoltage, barChartPrecision, waffle);
-      barCharts[3] = new BarGraph('bar3', 3,  12, 'Module 3', 'Reported Voltage [V]', smallCard, minVoltage, maxVoltage, barChartPrecision, waffle);
+      barCharts[0] = new BarGraph('bar0', 0,  12, 'Slot 0', 'Reported Voltage [V]', smallCard, minVoltage, maxVoltage, barChartPrecision, waffle);
+      barCharts[1] = new BarGraph('bar1', 1,  48, 'Slot 1', 'Reported Voltage [V]', bigCard, minVoltage, maxVoltage, barChartPrecision, waffle);
+      barCharts[2] = new BarGraph('bar2', 2,  12, 'Slot 2', 'Reported Voltage [V]', smallCard, minVoltage, maxVoltage, barChartPrecision, waffle);
+      barCharts[3] = new BarGraph('bar3', 3,  48, 'Slot 3', 'Reported Voltage [V]', bigCard, minVoltage, maxVoltage, barChartPrecision, waffle);
+      barCharts[4] = new BarGraph('bar4', 2,  12, 'Slot 4', 'Reported Voltage [V]', smallCard, minVoltage, maxVoltage, barChartPrecision, waffle);
+      barCharts[5] = new BarGraph('bar5', 3,  12, 'Slot 5', 'Reported Voltage [V]', smallCard, minVoltage, maxVoltage, barChartPrecision, waffle);
 
       var SHARCMonitor = new SHARC('waffleplate','horizontal', 'SHARCCanvas', SMrows, SMcolumns, SMnChannels, 4, 4, 1, 16, SMminima, SMmaxima, SubsystemTooltip);
       var TIGRESSMonitor = new TIGRESS('waffleplate', 'TIGRESSCanvas', 'TIGRESSCanvas');

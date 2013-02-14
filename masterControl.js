@@ -59,7 +59,7 @@ function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVolta
 //populate HV monitor rows by cols arrays with the appropriate information:
 function fetchNewData(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, curLimit, alarmTripLevel, scaleMax){
 
-    var testParameter, i, j, ODBindex, columns;
+    var testParameter, i, j, ODBindex, columns, slot;
 /*
     //batch fetch all in one big lump:
     var variablesRecord = ODBGetRecord(ODBkeys[0]);
@@ -80,9 +80,12 @@ function fetchNewData(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVol
         //primary row spans multi-columns, only has entries for 48 channel cards:        
         if(i==0) columns = moduleSizes.length;
         else columns = cols;
+
         for(j=0; j<columns; j++){
-            //only populate primaries that actually exist:
-            if(i!=0 || moduleSizes[j]==4){
+            if (i>0) slot = primaryBin(moduleSizes, j);
+            else slot = j;
+            //don't populate the primary of a 12 channel card, or any channel corresponding to an empty slot:
+            if( (i!=0 || moduleSizes[j]==4) && moduleSizes[slot]!=0 ){
                 /*
                 ODBindex = getMIDASindex(i, j);
                 demandVoltage[i][j]     = parseFloat(reqVoltage[ODBindex]);
@@ -115,6 +118,17 @@ function fetchNewData(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVol
                 rampStatus[i][j] = Math.floor(10*Math.random());
                 voltLimit[i][j] = 1+Math.random();
                 curLimit[i][j] = 1+Math.random();
+            } else if (i!=0 || moduleSizes[j]==4){  //keep the array filled, even for empty slots to avoid unpredictable behavior
+                demandVoltage[i][j] = 0;
+                reportVoltage[i][j] = 0;
+                reportCurrent[i][j] = 0;
+                demandVrampUp[i][j] = 0;
+                demandVrampDown[i][j] = 0;
+                reportTemperature[i][j] = 0;
+                channelMask[i][j] = 0;
+                rampStatus[i][j] = 0;
+                voltLimit[i][j] = 0;
+                curLimit[i][j] = 0;
             }
         }
     }
@@ -124,7 +138,6 @@ function fetchNewData(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVol
         if(i==0) columns = moduleSizes.length;
         else columns = cols;
         for(j=0; j<columns; j++){
-
             //construct the parameter to be tested against the voltage alarm:
             testParameter = Math.abs(demandVoltage[i][j] - reportVoltage[i][j]); 
 
@@ -148,7 +161,6 @@ function fetchNewData(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVol
                 alarmStatus[i][j][1] = -1;
                 alarmStatus[i][j][2] = -1;
             }
-
         }
     }   
 }

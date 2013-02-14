@@ -24,7 +24,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, wrapperDiv, rowTitles, InputL
         this.headerDiv = headerDiv;                 //div ID of waffle header
         this.moduleSizes = moduleSizes;             //array containing sizes of modules in groups of 12 channels
         this.moduleLabels = moduleLabels;           //array containing module labels
-        this.chx = 0;                               //x channel of input sidebar focus
+        this.chx = 1;                               //x channel of input sidebar focus
         this.chy = 1;                               //y channel of input sidebar focus
         this.voltageSlider = voltageSlider;         //demand voltage slider associated with this waffle
         this.rampSlider = rampSlider;               //voltage ramp up speed slider associated with this waffle
@@ -33,14 +33,13 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, wrapperDiv, rowTitles, InputL
 
         //determine dimesions of canvas:
         this.totalWidth = Math.round(0.5*$('#'+this.wrapperDiv).width());
-        this.totalHeight = this.totalWidth*this.rows/this.cols;  //base height
+        //cell dimensions controlled by total width, since width more visually important here:
+        this.cellSide = (this.totalWidth - 60) / Math.max(20, this.cols);
+        this.totalHeight = 16*this.cellSide;   //this.totalWidth*this.rows/this.cols;  //base height
 
         //waffle dimensions; leave gutters for labels & title
-        this.waffleWidth = this.totalWidth - 60;
+        this.waffleWidth = this.cellSide*this.cols;
         this.waffleHeight = this.totalHeight;
-
-        //cell dimensions controlled by width, since width more visually important here:
-        this.cellSide = this.waffleWidth / this.cols;
 
         //adjust height to accommodate card and module labels:
         this.canvas = document.getElementById(this.cvas);
@@ -52,6 +51,9 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, wrapperDiv, rowTitles, InputL
         }
         this.totalHeight += this.longestModuleLabel + 50;
 
+        //want waffle and navbar centered nicely:
+        this.leftEdge = (this.totalWidth - (this.waffleWidth + this.context.measureText('Prim').width))/2;
+
         //establish animation parameters:
         this.FPS = 30;
         this.duration = 0.5;
@@ -61,11 +63,14 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, wrapperDiv, rowTitles, InputL
         var newRule;
         for(i=0; i<moduleLabels.length; i++){
             var buttonWidth;
-            buttonWidth = moduleSizes[i]*0.9*this.cellSide + (moduleSizes[i]-1)*0.1*this.cellSide;
+            buttonWidth = Math.max(moduleSizes[i],1)*0.9*this.cellSide + (Math.max(moduleSizes[i],1)-1)*0.1*this.cellSide;
             //FF freaks out if you try and overwrite a styleSheet :(
             //newRule = "button#card"+i+"{width:"+buttonWidth+"px; height:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; margin-top:"+0.05*this.cellSide+"px; float:left; background: -webkit-gradient(linear, left top, left bottom, from(#DDDDDD), to(#FFFFFF)); background: -moz-linear-gradient(top,  #DDDDDD,  #FFFFFF); -webkit-border-radius: 5; -moz-border-radius: 5; border-radius: 5; font-size:"+this.cellSide/4+"px; padding:0px}";
             //document.styleSheets[0].insertRule(newRule,0);
-            newRule = "width:"+buttonWidth+"px; height:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; margin-top:"+0.05*this.cellSide+"px; float:left; background: -webkit-gradient(linear, left top, left bottom, from(#999999), to(#DDDDDD)); background: -moz-linear-gradient(top,  #999999,  #DDDDDD); -webkit-border-radius: 5; -moz-border-radius: 5; border-radius: 5; font-size:"+this.cellSide/4+"px; padding:0px;";
+            if(moduleSizes[i] != 0)
+                newRule = "width:"+buttonWidth+"px; height:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; margin-top:"+0.05*this.cellSide+"px; float:left; background: -webkit-gradient(linear, left top, left bottom, from(#999999), to(#DDDDDD)); background: -moz-linear-gradient(top,  #999999,  #DDDDDD); -webkit-border-radius: 5; -moz-border-radius: 5; border-radius: 5; font-size:"+this.cellSide/4+"px; padding:0px;";
+            else 
+                newRule = "width:"+buttonWidth+"px; height:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; margin-top:"+0.05*this.cellSide+"px; float:left; background: -webkit-gradient(linear, left top, left bottom, from(#999999), to(#DDDDDD)); background: -moz-linear-gradient(top,  #999999,  #DDDDDD); -webkit-border-radius: 5; -moz-border-radius: 5; border-radius: 5; font-size:"+this.cellSide/4+"px; padding:0px;";
             document.getElementById('card'+i).setAttribute('style', newRule);
         }
 
@@ -143,8 +148,8 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, wrapperDiv, rowTitles, InputL
         channelSelect(that);
 
         //style the input sidebar background:
-        document.getElementById('waffleSidebarBKG').width = parseInt(($('#InputLayer').css('width')).slice(0,3)); //360;
-        document.getElementById('waffleSidebarBKG').height = parseInt($('#InputLayer').css('height').slice(0,3)); //695;
+        document.getElementById('waffleSidebarBKG').width = parseInt(($('#InputLayer').css('width')).slice(0,3));
+        document.getElementById('waffleSidebarBKG').height = parseInt($('#InputLayer').css('height').slice(0,3));
         tabBKG('waffleSidebarBKG', 'right');
 
         //que up new data:
@@ -185,12 +190,16 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, wrapperDiv, rowTitles, InputL
         //determine per cell color info for start and finish.
         //Color info is packed as four numbers: red, green, blue, alpha
         this.cellColorUpdate = function(){
-            var R, G, B, A, color;
+            var R, G, B, A, color, primary;
             for(var i=0; i<this.rows; i++){
                 //primary row spans multi-columns:
                 if(i==0) columns = this.moduleSizes.length;
                 else columns = this.cols;
             	for(var j=0; j<columns; j++){
+                    if(i > 0)
+                        primary = primaryBin(this.moduleSizes,j);
+                    else primary = j;
+
     	         	//start values:
                     //show green on all clear:
     	            if( this.prevAlarmStatus[i][j][0] == 0 && this.prevAlarmStatus[i][j][1] == 0 && this.prevAlarmStatus[i][j][2] == 0){
@@ -218,8 +227,8 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, wrapperDiv, rowTitles, InputL
                         A = Math.max(this.prevAlarmStatus[i][j][0], this.prevAlarmStatus[i][j][1], this.prevAlarmStatus[i][j][2])*0.7 + 0.3;  //enforce minimum 0.3 to make it clearly red
                         if(A>1) {A = 1;}
     	            }
-                    //12-channel cards don't have primary channels, show black:
-                    if(i==0 && this.moduleSizes[j] == 1){
+                    //12-channel cards don't have primary channels, show black (also empty slots):
+                    if( (i==0 && this.moduleSizes[j] == 1) || this.moduleSizes[primary] == 0 ){
                         R = 0;
                         G = 0;
                         B = 0;
@@ -250,7 +259,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, wrapperDiv, rowTitles, InputL
                         A = Math.max(this.alarmStatus[i][j][0], this.alarmStatus[i][j][1], this.alarmStatus[i][j][2])*0.7 + 0.3;  //enforce minimum 0.3 to make it clearly red
                         if(A>1) {A = 1;}
                     }
-                    if(i==0 && this.moduleSizes[j] == 1){
+                    if( (i==0 && this.moduleSizes[j] == 1) || this.moduleSizes[primary] == 0 ){
                         R = 0;
                         G = 0;
                         B = 0;
@@ -261,7 +270,6 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, wrapperDiv, rowTitles, InputL
             }
         };
 
-        //formerly drawWaffle:
         this.draw = function(frame){
 
             var i, j;
@@ -278,10 +286,9 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, wrapperDiv, rowTitles, InputL
 
             //whiteout old canvas:
             this.context.globalAlpha = 1;
-            this.context.fillStyle = '#333333'//"rgba(255,255,255,1)"
-            this.context.fillRect(0,0,this.totalWidth,this.totalHeight);
+            this.context.clearRect(this.leftEdge,0,this.totalWidth,this.totalHeight);
             this.context.fillStyle = "rgba(255,255,255,1)"
-            this.context.fillRect(0,0,this.cellSide*this.cols,this.cellSide*this.rows);
+            this.context.fillRect(this.leftEdge,0,this.cellSide*this.cols,this.cellSide*this.rows);
 
             for(i=0; i<this.rows; i++){
                 //primary row spans multi-columns:
@@ -298,16 +305,16 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, wrapperDiv, rowTitles, InputL
                     cornerY = i*this.cellSide;
                     //primary row has different size bins than the rest:
                     if(i != 0){
-                        cornerX = j*this.cellSide;
+                        cornerX = this.leftEdge + j*this.cellSide;
                         this.context.fillRect(cornerX, cornerY,this.cellSide,this.cellSide);
                     }
                     else{
                         cornerX = 0;
                         for(var sum=0; sum<j; sum++){
-                            cornerX = cornerX + this.moduleSizes[sum]
+                            cornerX = cornerX + Math.max(this.moduleSizes[sum],1);
                         }
-                        cornerX = cornerX*this.cellSide;
-                        this.context.fillRect(cornerX, cornerY,this.cellSide*this.moduleSizes[j],this.cellSide);
+                        cornerX = this.leftEdge + cornerX*this.cellSide;
+                        this.context.fillRect(cornerX, cornerY,this.cellSide*Math.max(this.moduleSizes[j],1),this.cellSide);
                     }
                 }
             }
@@ -322,7 +329,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, wrapperDiv, rowTitles, InputL
 
             var modDivCopy = [0];
             for(i=0; i < this.moduleSizes.length; i++){
-                modDivCopy[i+1] = modDivCopy[i] + this.moduleSizes[i];
+                modDivCopy[i+1] = modDivCopy[i] + Math.max(this.moduleSizes[i],1);
             }
             modDivCopy.shift();
 
@@ -331,21 +338,15 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, wrapperDiv, rowTitles, InputL
             this.context.lineWidth = 1;
 
             //draw border:
-            this.context.beginPath();
-            this.context.moveTo(0,0);
-            this.context.lineTo(0,this.cellSide*this.rows);
-            this.context.lineTo(this.cellSide*this.cols,this.cellSide*this.rows);
-            this.context.lineTo(this.cellSide*this.cols,0);
-            this.context.lineTo(0,0);
-            this.context.stroke();
+            this.context.strokeRect(this.leftEdge,0,this.cellSide*this.cols, this.cellSide*this.rows);
 
             //draw inner lines:
             for(i=1; i<this.rows; i++){
                 this.context.beginPath();
                 if(i==1) this.context.lineWidth = 3;
                 else this.context.lineWidth = 1;
-                this.context.moveTo(0,i*this.cellSide);
-                this.context.lineTo(this.cellSide*this.cols,i*this.cellSide);
+                this.context.moveTo(this.leftEdge,i*this.cellSide);
+                this.context.lineTo(this.leftEdge + this.cellSide*this.cols,i*this.cellSide);
                 this.context.stroke();       
             }
             for(j=1; j<this.cols; j++){
@@ -356,17 +357,15 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, wrapperDiv, rowTitles, InputL
                 }
                 else this.context.lineWidth = 1;
                 if(this.context.lineWidth == 1){
-                    this.context.moveTo(j*this.cellSide,this.cellSide);
-                    this.context.lineTo(j*this.cellSide,this.cellSide*this.rows);
+                    this.context.moveTo(this.leftEdge + j*this.cellSide,this.cellSide);
+                    this.context.lineTo(this.leftEdge + j*this.cellSide,this.cellSide*this.rows);
                 } else {
-                    this.context.moveTo(j*this.cellSide,0);
+                    this.context.moveTo(this.leftEdge + j*this.cellSide,0);
                     //this.context.lineTo(j*this.cellSide,this.cellSide*this.rows + this.longestColTitle + this.longestModuleLabel + 25);
-                    this.context.lineTo(j*this.cellSide,this.cellSide*this.rows);
+                    this.context.lineTo(this.leftEdge + j*this.cellSide,this.cellSide*this.rows);
                 }
                 this.context.stroke();
             }
-
-            //style card link buttons:
         };
 
         this.drawWaffleLabels = function(){
@@ -379,21 +378,21 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, wrapperDiv, rowTitles, InputL
             //channel labels:
             var labelFontSize = Math.min(16, this.cellSide);
             this.context.font=labelFontSize+"px Raleway";
-            this.context.fillText('Prim', this.cellSide*this.cols+10, this.cellSide/2 +8 );
+            this.context.fillText('Prim', this.leftEdge + this.cellSide*this.cols+10, this.cellSide/2 +8 );
             for(i=1; i<this.rows; i++){
-                this.context.fillText(i-1, this.cellSide*this.cols+10, i*this.cellSide + this.cellSide/2 +8 );
+                this.context.fillText(i-1, this.leftEdge + this.cellSide*this.cols+10, i*this.cellSide + this.cellSide/2 +8 );
             }
 
             //module labels:
             var moduleDivisions = [0];
             var vertOffset;
             for(i=0; i < this.moduleSizes.length; i++){
-                moduleDivisions[i+1] = moduleDivisions[i] + this.moduleSizes[i];
+                moduleDivisions[i+1] = moduleDivisions[i] + Math.max(this.moduleSizes[i],1);
             }
             for(j=1; j<moduleDivisions.length; j++){
                 var moduleWidth = moduleDivisions[j] - moduleDivisions[j-1];
 
-                if(moduleWidth*this.cellSide < this.context.measureText(this.moduleLabels[j-1]).width){
+                if(moduleWidth*this.cellSide < 1.2*this.context.measureText(this.moduleLabels[j-1]).width){
                     modRotation = -Math.PI/2;  //2.4
                     modAlign = 'right';
                     modHeight = 0;
@@ -405,8 +404,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, wrapperDiv, rowTitles, InputL
                     vertOffset = 25;
                 }
                 this.context.save();
-                //this.context.translate(( moduleWidth/2 + moduleDivisions[j-1])*this.cellSide, this.rows*this.cellSide + modHeight + this.longestColTitle + this.longestModuleLabel/2 + 10);
-                this.context.translate(( moduleWidth/2 + moduleDivisions[j-1])*this.cellSide, this.rows*this.cellSide+vertOffset);
+                this.context.translate(this.leftEdge + (moduleWidth/2 + moduleDivisions[j-1])*this.cellSide, this.rows*this.cellSide+vertOffset);
                 this.context.rotate(modRotation);
                 this.context.textAlign = modAlign;
                 this.context.fillText(this.moduleLabels[j-1], 0,labelFontSize/2);
@@ -430,21 +428,22 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, wrapperDiv, rowTitles, InputL
 
         };
 
-        //determine which cell pixel x,y falls in, with 0,0 being the top left corner of the canvas; return -1 if no corresponding cell.
+        //determine which cell pixel x,y falls in, with this.leftEdge,0 being the top left corner of the canvas; return -1 if no corresponding cell.
         this.findCell = function(x, y){
-            var cell;
+            var cell, slot;
 
-            var chx = Math.floor(x / this.cellSide);
+            var chx = Math.floor((x-this.leftEdge) / this.cellSide);
             var chy = Math.floor(y / this.cellSide);
+            slot = primaryBin(this.moduleSizes, chx)
 
             if(chx < this.cols && chx > -1 && chy < this.rows && chy > -1){
                 cell = [];
                 if(chy == 0){
-                    chx = primaryBin(this.moduleSizes, chx);
+                    chx = slot;
                 }
                 cell[0] = chy;
                 cell[1] = chx;
-                if(chy == 0 && this.moduleSizes[chx] == 1) cell = -1;
+                if( (chy == 0 && this.moduleSizes[chx] == 1) || this.moduleSizes[slot] == 0 ) cell = -1;
             } else 
                 cell = -1;
 
@@ -525,15 +524,15 @@ function clickWaffle(event, obj){
 
             //form coordinate system chx, chy with origin at the upper left corner of the div, and 
             //bin as the waffle binning: 
-            var chx = Math.floor( (event.pageX - superDiv.offsetLeft - obj.canvas.offsetLeft) / obj.cellSide);
+            var chx = Math.floor( (event.pageX - obj.leftEdge - superDiv.offsetLeft - obj.canvas.offsetLeft) / obj.cellSide);
             var chy = Math.floor( (event.pageY - superDiv.offsetTop - obj.canvas.offsetTop) / obj.cellSide);
 
-            //are we on the primary of a card that doesn't have a primary?
+            //are we on the primary of a card that doesn't have a primary, or an empty slot??
             var suppressClick = 0;
             var cardIndex = primaryBin(obj.moduleSizes, chx);
-            if(chy==0 && obj.moduleSizes[cardIndex] == 1) suppressClick = 1;
+            if( (chy==0 && obj.moduleSizes[cardIndex] == 1) || obj.moduleSizes[cardIndex] == 0 ) suppressClick = 1;
 
-            if(chx<obj.cols && chy<obj.rows && window.onDisplay == obj.cvas && suppressClick==0){
+            if(chx<obj.cols && chx>=0 && chy<obj.rows && chy>=0 && window.onDisplay == obj.cvas && suppressClick==0){
                 obj.chx = chx;
                 obj.chy = chy;
                 channelSelect(obj);
@@ -557,9 +556,9 @@ function getMIDASindex(row, col){
         }
     } else{
         moduleNumber = col;
-        //add up all the channels from previous cards:
+        //add up all the channels from previous cards; recall empty slots occupy a 12-channel card in the arrays:
         for(i=0; i<moduleNumber; i++){
-            if(window.moduleSizes[i] == 1) MIDASindex += 12;
+            if( (window.moduleSizes[i] == 1) || (window.moduleSizes[i] == 0) ) MIDASindex += 12;
             if(window.moduleSizes[i] == 4) MIDASindex += 49;
         }
         //MIDASindex++;
@@ -576,7 +575,7 @@ function getPointer(module, channel, waffle){
 
     //column:
     for(i=0; i<module; i++){
-        col += waffle.moduleSizes[i];
+        col += Math.max(waffle.moduleSizes[i],1);
     }
     col += Math.floor(channel/(waffle.rows-1));
 
@@ -590,7 +589,7 @@ function primaryBin(moduleSizes, chx){
     var primary = 0;
     var i = 0;
     while(chx>=0){
-        chx = chx - moduleSizes[i];
+        chx = chx - Math.max(moduleSizes[i],1);
         i++;
     }
     return i-1;
@@ -603,14 +602,14 @@ function channelMap(chx, chy, moduleSizes, rows){
     else{
         var channelNo = (rows-1)*chx + chy-1;
         for(var i=0; i<primary; i++){
-            channelNo -= (rows-1)*moduleSizes[i];
+            channelNo -= (rows-1)*Math.max(moduleSizes[i],1);
         }
         return channelNo;
     }
 }
 
 //set up channel navigation dropdowns and modify on the fly:
-function configureDropdowns(ChannelListDD, CardListDD, moduleLabels){
+function configureDropdowns(ChannelListDD, CardListDD, moduleLabels, moduleSizes){
 
     var i;
     var option = [];
@@ -618,9 +617,11 @@ function configureDropdowns(ChannelListDD, CardListDD, moduleLabels){
     //establish card list
     var colDD = document.getElementById(CardListDD);
     for(i=0; i<moduleLabels.length; i++){
-        option[i] = document.createElement('option');
-        option[i].text = moduleLabels[i];
-        colDD.add(option[i], null);
+        if(moduleSizes[i] != 0){
+            option[i] = document.createElement('option');
+            option[i].text = moduleLabels[i];
+            colDD.add(option[i], null);
+        }
     }
 
     //establish channel list
