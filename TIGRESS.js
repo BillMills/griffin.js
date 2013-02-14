@@ -88,11 +88,12 @@ function TIGRESS(monitor, canvas, detailCanvas){
             this.HPGEsummary(this.summaryCoord[i][0], this.summaryCoord[i][1]);
         }
 
+        this.context.clearRect(0,0.65*this.canvasHeight,this.canvasWidth,0.35*this.canvasHeight);
         this.context.fillStyle = '#999999';
         this.context.font="24px 'Orbitron'";
         this.context.fillText('North Hemisphere', 0.325*this.canvasWidth - this.context.measureText('North Hemisphere').width/2, 0.7*this.canvasHeight);
         this.context.fillText('South Hemisphere', 0.725*this.canvasWidth - this.context.measureText('North Hemisphere').width/2, 0.7*this.canvasHeight);
-    }
+    };
 
     this.drawDetail = function(mode){
 
@@ -202,7 +203,7 @@ function TIGRESS(monitor, canvas, detailCanvas){
     //draw crystal core
     this.crystalCore = function(x0, y0, border, fill){
     	this.detailContext.strokeStyle = border;
-        this.detailContext.fillStyle = '#777777';
+        this.detailContext.fillStyle = '#4C4C4C';
     	this.detailContext.fillRect(x0, y0, this.crystalSide/3, this.crystalSide/3);
     	this.detailContext.stroke();
     };
@@ -210,7 +211,7 @@ function TIGRESS(monitor, canvas, detailCanvas){
     //draw split crystal for HV view
     this.splitCrystal = function(x0, y0, border, fill){
         this.detailContext.strokeStyle = border;
-        this.detailContext.fillStyle = '#777777';
+        this.detailContext.fillStyle = '#4C4C4C';
         this.detailContext.beginPath();
         this.detailContext.moveTo(x0+this.crystalSide,y0);
         this.detailContext.lineTo(x0,y0);
@@ -249,7 +250,7 @@ function TIGRESS(monitor, canvas, detailCanvas){
     //draw L shape
     this.drawL = function(phi, thickness, length, x0, y0, border, fill){
         this.detailContext.strokeStyle = border;
-        this.detailContext.fillStyle = '#777777';
+        this.detailContext.fillStyle = '#4C4C4C';
     	this.detailContext.save();
     	this.detailContext.translate(x0, y0);
     	this.detailContext.rotate(phi);
@@ -272,7 +273,7 @@ function TIGRESS(monitor, canvas, detailCanvas){
     //draw half-L
     this.drawHalfL = function(phi, thickness, length, x0, y0, chirality, split, border, fill){
         this.detailContext.strokeStyle = border;
-        this.detailContext.fillStyle = '#777777';
+        this.detailContext.fillStyle = '#4C4C4C';
         this.detailContext.save();
         this.detailContext.translate(x0, y0);
         this.detailContext.rotate(phi);

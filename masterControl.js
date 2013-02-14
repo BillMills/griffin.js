@@ -1,4 +1,4 @@
-function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax, waffle, barCharts, SM, DAQ, nSMchannels, HVdata, nCollectorGroups, masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, tooltips, callMyself){
+function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax, waffle, barCharts, SM, DANTE, BAMBINO, SCEPTAR, SPICE, DAQ, nSMchannels, HVdata, nCollectorGroups, masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, tooltips, callMyself){
 	if(!document.webkitHidden && !document.mozHidden){
         var i;
 
@@ -38,6 +38,14 @@ function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVolta
         }
         if(window.onDisplay == 'SHARCCanvas' || !callMyself) animate(SM,0);
         else SM.draw(SM.nFrames);
+        if(window.onDisplay == 'DANTECanvas' || !callMyself) animate(DANTE,0);
+        else DANTE.draw(DANTE.nFrames);
+        if(window.onDisplay == 'BAMBINOCanvas' || !callMyself) animate(BAMBINO,0);
+        else BAMBINO.draw(BAMBINO.nFrames);
+        if(window.onDisplay == 'SCEPTARCanvas' || !callMyself) animate(SCEPTAR,0);
+        else SCEPTAR.draw(SCEPTAR.nFrames);
+        if(window.onDisplay == 'SPICECanvas' || !callMyself) animate(SPICE,0);
+        else SPICE.draw(SPICE.nFrames);
         if(window.onDisplay == 'DAQcanvas' || !callMyself) animate(DAQ,0);
         else DAQ.draw(DAQ.nFrames);
         if(window.onDisplay == 'DAQdetailCanvas' || !callMyself) animateDetail(DAQ,0) //do some animating
@@ -45,7 +53,7 @@ function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVolta
     }
 
     //clearTimeout(window.loop);
-    window.loop = setTimeout(function(){masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax, waffle, barCharts, SM, DAQ, nSMchannels, HVdata, nCollectorGroups, masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, tooltips, 1)}, 3000);
+    window.loop = setTimeout(function(){masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax, waffle, barCharts, SM, DANTE, BAMBINO, SCEPTAR, SPICE, DAQ, nSMchannels, HVdata, nCollectorGroups, masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, tooltips, 1)}, 3000);
 }
 
 //populate HV monitor rows by cols arrays with the appropriate information:
