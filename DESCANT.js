@@ -1,4 +1,4 @@
-function DESCANT(monitor, canvas, tooltip){
+function DESCANT(monitor, canvas, prefix, postfix){
 
 	var i, j;
 
@@ -6,7 +6,6 @@ function DESCANT(monitor, canvas, tooltip){
 
 	this.monitorID = monitor;		//div ID of wrapper div
 	this.canvasID = canvas;			//ID of canvas to draw DESCANT on
-	this.tooltip = tooltip;			//tooltip associated with this object
 
 	this.canvas = document.getElementById(canvas);
 	this.context = this.canvas.getContext('2d');
@@ -29,7 +28,8 @@ function DESCANT(monitor, canvas, tooltip){
     this.TTcontext.fillStyle = 'rgba(50,100,150,1)';
     this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
 
-    //associate tooltip:
+    //set up tooltip:
+    this.tooltip = new Tooltip(this.canvasID, 'DESCANTTipText', 'DESCANTTT', this.monitorID, prefix, postfix);
     this.tooltip.obj = that;
 
 	//center of DESCANT
@@ -152,6 +152,12 @@ function DESCANT(monitor, canvas, tooltip){
         return longestLine;
 	};
 
+	this.update = function(){
+		this.tooltip.update();
+	}
+
+
+
 	//array of rules for drawing DESCANT channels.  Array index should correspond to real channel number; packed as [type, center x, center y, canvas rotation, element rotation]
 	this.drawRules = [];
 	for(i=0; i<5; i++){
@@ -170,6 +176,7 @@ function DESCANT(monitor, canvas, tooltip){
 		this.drawRules[56 + i*3] = ['blue',0, 0 - this.pentagonNormal - this.scale*(356.25 + this.explode), (i*72 - 23)/180*Math.PI, Math.PI*22/180]
 		this.drawRules[57 + i*3] = ['blue',0, 0 - this.pentagonNormal - this.scale*(516.25 + this.explode), (i*72 - 36)/180*Math.PI, Math.PI*90/180]
 	}
+
 }
 
 

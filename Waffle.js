@@ -1,4 +1,4 @@
-function Waffle(rows, cols, cvas, alarm, scaleMax, wrapperDiv, rowTitles, InputLayer, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs, headerDiv, moduleSizes, moduleLabels, voltageSlider, rampSlider, rampDownSlider, tooltip, barChartPrecision){
+function Waffle(rows, cols, alarm, scaleMax, wrapperDiv, rowTitles, InputLayer, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs, headerDiv, moduleSizes, moduleLabels, voltageSlider, rampSlider, rampDownSlider, barChartPrecision, prefix, postfix){
 
         //if(!document.webkitHidden && !document.mozHidden){
     	var i, j, n, columns;
@@ -9,7 +9,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, wrapperDiv, rowTitles, InputL
         //member data:
         this.rows = rows + 1;                       //number of rows in the waffle; +1 for primary row
         this.cols = cols;                           //numver of columns in the waffle
-        this.cvas = cvas;                           //canvas ID to draw the waffle on
+        this.canvasID = 'TestWaffle';               //canvas ID to draw the waffle on
         this.alarm = alarm;                         //array of alarm thresholds: [voltage, current, temperature]
         this.scaleMax = scaleMax;                   //array of scale maxima: [voltage, current, temperature]
         this.prevAlarmStatus;                       //previous iteration's alarmStatus
@@ -29,31 +29,44 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, wrapperDiv, rowTitles, InputL
         this.voltageSlider = voltageSlider;         //demand voltage slider associated with this waffle
         this.rampSlider = rampSlider;               //voltage ramp up speed slider associated with this waffle
         this.rampDownSlider = rampDownSlider;       //voltage ramp down speed slider associated with this waffle
-        this.tooltip = tooltip;                     //tooltip this object will use
 
         //determine dimesions of canvas:
         this.totalWidth = Math.round(0.5*$('#'+this.wrapperDiv).width());
         //cell dimensions controlled by total width, since width more visually important here:
         this.cellSide = (this.totalWidth - 60) / Math.max(20, this.cols);
-        this.totalHeight = 16*this.cellSide;   //this.totalWidth*this.rows/this.cols;  //base height
+        this.totalHeight = 16*this.cellSide;
+/*
+        //inject canvas into DOM for waffle to paint on:
+        var newCanvas = document.createElement('canvas');
+        newCanvas.setAttribute('id', this.canvasID);
+        newCanvas.setAttribute('style', 'position:absolute; left:24%; opacity:0; z-index:-10000; top:' + ($('#mainframeLinks').height() + 5) +'px;');
+        newCanvas.setAttribute('width', this.totalWidth);
+        newCanvas.setAttribute('height', this.totalHeight);
+        document.getElementById(wrapperDiv).appendChild(newCanvas);
+*/
+        this.canvas = document.getElementById(this.canvasID);
+        this.context = this.canvas.getContext('2d');
+
+        //adjust height to accommodate card and module labels:
+        //this.context.font = Math.min(16, this.cellSide)+'px Raleway';
+        //this.longestModuleLabel = 0;
+        //for(i = 0; i<this.moduleLabels.length; i++){
+        //    this.longestModuleLabel = Math.max(this.longestModuleLabel, this.context.measureText(this.moduleLabels[i]).width);
+        //}
+        //this.totalHeight += this.longestModuleLabel + 50;
 
         //waffle dimensions; leave gutters for labels & title
         this.waffleWidth = this.cellSide*this.cols;
         this.waffleHeight = this.totalHeight;
 
-        //adjust height to accommodate card and module labels:
-        this.canvas = document.getElementById(this.cvas);
-        this.context = this.canvas.getContext('2d');
-        this.context.font = Math.min(16, this.cellSide)+'px Raleway';
-        this.longestModuleLabel = 0;
-        for(i = 0; i<this.moduleLabels.length; i++){
-            this.longestModuleLabel = Math.max(this.longestModuleLabel, this.context.measureText(this.moduleLabels[i]).width);
-        }
-        this.totalHeight += this.longestModuleLabel + 50;
-
         //want waffle and navbar centered nicely:
         this.leftEdge = (this.totalWidth - (this.waffleWidth + this.context.measureText('Prim').width))/2;
 
+        //make a tooltip for this object:
+        this.tooltip = new Tooltip(this.canvasID, 'MFTipText', 'MFTT', this.wrapperDiv, prefix, postfix);
+        //give the tooltip a pointer back to this object:
+        this.tooltip.obj = that;
+        
         //establish animation parameters:
         this.FPS = 30;
         this.duration = 0.5;
@@ -77,7 +90,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, wrapperDiv, rowTitles, InputL
         //header size:
         this.headerHeight = $('#'+this.headerDiv).height();
         //make the vertical spacing between the waffle and nav header nice:
-        $('#'+this.cvas).css('top', (this.headerHeight)+'px !important;' );
+        $('#'+this.canvasID).css('top', (this.headerHeight)+'px !important;' );
 
         //declare bar charts & canvases to paint them on:
         this.barCharts = [];
@@ -142,8 +155,6 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, wrapperDiv, rowTitles, InputL
 
         //array of values from the waffle to report in the tooltip
         this.reportedValues = [this.demandVoltage, this.reportVoltage, this.reportCurrent, this.demandVrampUp, this.demandVrampDown, this.reportTemperature, this.rampStatus];
-        //give the tooltip a pointer back to this object:
-        this.tooltip.obj = that;
 
         //do an initial populate of the waffle:
         fetchNewData(this.rows, this.cols, moduleSizes, this.ODBkeys, this.demandVoltage, this.reportVoltage, this.reportCurrent, this.demandVrampUp, this.demandVrampDown, this.reportTemperature, this.channelMask, this.alarmStatus, this.rampStatus, this.voltLimit, this.currentLimit, this.alarm, this.scaleMax);
@@ -289,10 +300,10 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, wrapperDiv, rowTitles, InputL
             var cornerX, cornerY;
 
             //adjust canvas to fit:
-            $('#'+this.cvas).attr('width', this.totalWidth);
-            $('#'+this.cvas).attr('height', this.totalHeight);
-            //var headerHeight = $('#'+this.headerDiv).height() + 10;
-            $(document.getElementById(this.cvas)).css('top', this.headerHeight);
+            $('#'+this.canvasID).attr('width', this.totalWidth);
+            $('#'+this.canvasID).attr('height', this.totalHeight);
+            var headerHeight = $('#'+this.headerDiv).height() + 10;
+            $(document.getElementById(this.canvasID)).css('top', this.headerHeight);
 
             //whiteout old canvas:
             this.context.globalAlpha = 1;
@@ -432,9 +443,7 @@ function Waffle(rows, cols, cvas, alarm, scaleMax, wrapperDiv, rowTitles, InputL
             //update peripherals:
             AlarmSidebar(this.side[0], this.wrapperDiv, this.waffleHeight, this.prevAlarmStatus, this.alarmStatus, this.rows, this.cols, this.rowTitles, callMyself, this.alarmPanelDivIDs, this.alarmPanelCanvIDs, demandVoltage, reportVoltage, reportCurrent, reportTemperature, this.alarm, ['V', 'A', 'C'], this.moduleLabels, this.moduleSizes);
             channelSelect(that);
-
-            //animate:
-            //animate(this, 0);
+            this.tooltip.update();
 
         };
 
@@ -542,7 +551,7 @@ function clickWaffle(event, obj){
             var cardIndex = primaryBin(obj.moduleSizes, chx);
             if( (chy==0 && obj.moduleSizes[cardIndex] == 1) || obj.moduleSizes[cardIndex] == 0 ) suppressClick = 1;
 
-            if(chx<obj.cols && chx>=0 && chy<obj.rows && chy>=0 && window.onDisplay == obj.cvas && suppressClick==0){
+            if(chx<obj.cols && chx>=0 && chy<obj.rows && chy>=0 && window.onDisplay == obj.canvasID && suppressClick==0){
                 obj.chx = chx;
                 obj.chy = chy;
                 channelSelect(obj);

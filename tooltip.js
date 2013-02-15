@@ -8,6 +8,16 @@ function Tooltip(ttCanvasID, ttTextID, ttDivID, wrapperID, prefix, postfix){
     this.prefix = prefix;                           //prefixes to tooltip content lines
     this.postfix = postfix;                         //postfixes to tooltip content lines
 
+    //inject the necessary DOM elements for this tooltip:
+    var newDiv = document.createElement('div');
+    newDiv.setAttribute('id', ttDivID);
+    newDiv.setAttribute('class', 'tooltip');
+    document.body.appendChild(newDiv);
+    var newPara = document.createElement('p');
+    newPara.setAttribute('id', ttTextID);
+    newPara.setAttribute('class', 'TTtext');
+    document.getElementById(ttDivID).appendChild(newPara);
+
     this.canvas = document.getElementById(this.canvasID);
     this.context = this.canvas.getContext('2d'); 
     this.ttDiv = document.getElementById(this.ttDivID);
@@ -16,9 +26,6 @@ function Tooltip(ttCanvasID, ttTextID, ttDivID, wrapperID, prefix, postfix){
     //old tt bin, for updates when the mouse is just sitting in the same place:
     this.oldCellIndex = -1;
     this.allowUpdate = 0;
-
-    //array of values from the waffle to report in the tooltip DEPRICATED
-    this.reportedValues = [/*this.obj....*/];
 
     var that = this;
 

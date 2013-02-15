@@ -1,4 +1,4 @@
-function SHARC(monitor, orientation, cvas, rows, columns, nStrips, nRadialHoriz, nAzimuthalHoriz, nRadialVert, nAzimuthalVert, minima, maxima, tooltip){
+function SHARC(monitor, orientation, cvas, rows, columns, nStrips, nRadialHoriz, nAzimuthalHoriz, nRadialVert, nAzimuthalVert, minima, maxima, prefix, postfix){
 
 	var i,j;
 
@@ -11,7 +11,6 @@ function SHARC(monitor, orientation, cvas, rows, columns, nStrips, nRadialHoriz,
 	this.nStrips = nStrips;			//number of sense strips per detector
 	this.minima = minima;			//array of scale minima, one entry for each scalar option
 	this.maxima = maxima;			//array of scale maxima, one entry for each scalar option
-	this.tooltip = tooltip;			//tooltip belonging to this object
 
 	this.canvas = document.getElementById(this.canvasID);
 	this.context = this.canvas.getContext('2d');
@@ -40,6 +39,7 @@ function SHARC(monitor, orientation, cvas, rows, columns, nStrips, nRadialHoriz,
     $('#'+cvas).css('top', $('#'+'SubsystemLinks').height() + 5 )
 
     //set up tooltip:
+    this.tooltip = new Tooltip(this.canvasID, 'SHARCTipText', 'SHARCTT', this.monitorID, prefix, postfix);
     this.tooltip.obj = that;
 
     //define dimensions of each detector display/////////////////////////////////////////////////////////
@@ -261,7 +261,7 @@ function SHARC(monitor, orientation, cvas, rows, columns, nStrips, nRadialHoriz,
 			this.color[i] = this.parseColor(newInfo[i]);
 		}
 
-		//animate(this, 0);
+		this.tooltip.update();
 	};
 
 	//determine which color <scalar> corresponds to
