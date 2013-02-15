@@ -270,7 +270,7 @@ function SHARC(monitor, orientation, cvas, rows, columns, nStrips, nRadialHoriz,
 		//how far along the scale are we?
 		var scale = (scalar - this.minima[this.trackingIndex]) / (this.maxima[this.trackingIndex] - this.minima[this.trackingIndex]);
 
-		return redScale(scale);
+		return colorScale(76,76,76,142,237,48,scale);
 	};
 
 	//determine which cell pixel x,y falls in, with 0,0 being the top left corner of the canvas; return -1 if no corresponding cell.
@@ -419,6 +419,10 @@ function SHARC(monitor, orientation, cvas, rows, columns, nStrips, nRadialHoriz,
         return longestLine;
 	};
 
+
+    //do an initial populate:
+    fetchNewSHARCData( 2*(rows*columns+2)*nStrips, this.level);
+    this.update(this.level);
 }
 
 

@@ -1,4 +1,4 @@
-function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax, waffle, SM, DANTE, BAMBINO, SCEPTAR, SPICE, DAQ, Clock, nSMchannels, HVdata, nCollectorGroups, masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, tooltips, callMyself){
+function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax, waffle, SHARC, DANTE, BAMBINO, SCEPTAR, SPICE, DAQ, Clock, nSHARCchannels, HVdata, nCollectorGroups, masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, tooltips, callMyself){
 	if(!document.webkitHidden && !document.mozHidden){
         var i;
 
@@ -16,9 +16,9 @@ function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVolta
             waffle.barCharts[i].update(barChartData, barChartAlarms);
         }
 
-        //scalar monitor
-        fetchNewSMData(nSMchannels, HVdata);
-        SM.update(HVdata);
+        //SHARC
+        fetchNewSHARCData(nSHARCchannels, HVdata);
+        SHARC.update(HVdata);
 
         //DAQ
         fetchNewDAQData(nCollectorGroups, masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate);
@@ -36,8 +36,8 @@ function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVolta
             if(window.onDisplay == waffle.barCharts[i].cvas || !callMyself) animate(waffle.barCharts[i], 0);
             else waffle.barCharts[i].draw(waffle.barCharts[i].nFrames);
         }
-        if(window.onDisplay == 'SHARCCanvas' || !callMyself) animate(SM,0);
-        else SM.draw(SM.nFrames);
+        if(window.onDisplay == 'SHARCCanvas' || !callMyself) animate(SHARC,0);
+        else SHARC.draw(SHARC.nFrames);
         if(window.onDisplay == 'DANTECanvas' || !callMyself) animate(DANTE,0);
         else DANTE.draw(DANTE.nFrames);
         if(window.onDisplay == 'BAMBINOCanvas' || !callMyself) animate(BAMBINO,0);
@@ -55,7 +55,7 @@ function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVolta
     }
 
     //clearTimeout(window.loop);
-    window.loop = setTimeout(function(){masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax, waffle, SM, DANTE, BAMBINO, SCEPTAR, SPICE, DAQ, Clock, nSMchannels, HVdata, nCollectorGroups, masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, tooltips, 1)}, 3000);
+    window.loop = setTimeout(function(){masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax, waffle, SHARC, DANTE, BAMBINO, SCEPTAR, SPICE, DAQ, Clock, nSHARCchannels, HVdata, nCollectorGroups, masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, tooltips, 1)}, 3000);
 }
 
 //populate HV monitor rows by cols arrays with the appropriate information:
@@ -177,7 +177,7 @@ function detectCards(){
 }
 
 //fetch new data for the scalar monitor
-function fetchNewSMData(nChannels, HVdata){
+function fetchNewSHARCData(nChannels, HVdata){
     var i = 0;
 
     //var variablesRecord = ODBGetRecord(SM_ODBkeys[0]);
