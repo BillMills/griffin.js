@@ -21,7 +21,7 @@
     <script src="drawing.js" type="text/javascript"></script>
     <script src="SHARC.js" type="text/javascript"></script>
     <script src="DESCANT.js" type="text/javascript"></script>
-    <script src="TIGRESS.js" type="text/javascript"></script>
+    <script src="HPGE.js" type="text/javascript"></script>
     <script src="PACES.js" type="text/javascript"></script>
     <script src="DANTE.js" type="text/javascript"></script>
     <script src="BAMBINO.js" type="text/javascript"></script>
@@ -102,7 +102,7 @@
         <h1 id='SubsystemLinksBanner' style='display: inline; opacity: 0.3; font-family: "Orbitron", sans-serif; font-size: 275%; vertical-align:-20px;'>GRIFFIN Subsystems</h1>
 
         <br><button id='SHARClink' class='MFlink' type="button" onclick="javascript:swapFade('SHARCCanvas', 'SHARClink')">SHARC</button>
-        <button id='HPGElink' class='MFlink' type="button" onclick="javascript:swapFade('TIGRESSCanvas', 'HPGElink')">HPGE</button>
+        <button id='HPGElink' class='MFlink' type="button" onclick="javascript:swapFade('HPGECanvas', 'HPGElink')">HPGE</button>
         <button id='DESCANTlink' class='MFlink' type="button" onclick="javascript:swapFade('DESCANTCanvas', 'DESCANTlink')">DESCANT</button>
         <button id='PACESlink' class='MFlink' type="button" onclick="javascript:swapFade('PACESCanvas', 'PACESlink')">PACES</button>
         <button id='DANTElink' class='MFlink' type="button" onclick="javascript:swapFade('DANTECanvas', 'DANTElink')">DANTE</button>
@@ -159,8 +159,8 @@
 
       <!--Subsystem-->
       <canvas id='SHARCCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
-      <canvas id='TIGRESSCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
-      <canvas id='TIGRESSdetailCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
+      <canvas id='HPGECanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
+      <canvas id='HPGEdetailCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
       <canvas id='DESCANTCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
       <canvas id='DESCANTTTCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
       <canvas id='PACESCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
@@ -470,8 +470,7 @@
       var waffle = new Waffle(rows,columns, 'TestWaffle', alarmThresholds, scaleMaxima, "waffleplate", rowTitles, "InputLayer", ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleSizes, moduleLabels, sliderVoltage, sliderRamp, sliderRampDown, MFtooltip, barChartPrecision);
 
       var SHARCMonitor = new SHARC('waffleplate','horizontal', 'SHARCCanvas', SMrows, SMcolumns, SMnChannels, 4, 4, 1, 16, SMminima, SMmaxima, SubsystemTooltip);
-      var TIGRESSMonitor = new TIGRESS('waffleplate', 'TIGRESSCanvas', 'TIGRESSCanvas');
-      TIGRESSMonitor.drawDetail();
+      var HPGEMonitor = new HPGE('waffleplate', 'HPGECanvas', 'HPGECanvas', 0);
       var DESCANTMonitor = new DESCANT('waffleplate', 'DESCANTCanvas', DESCANTTooltip);
       DESCANTMonitor.wireframe();
       var PACESMonitor = new PACES('waffleplate', 'PACESCanvas');
@@ -562,7 +561,7 @@
 
       //wrap this in a function so it can be easily called to restart the loop somewhere else:
       function startLoop(){
-        masterLoop(rows+1, columns, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmThresholds, scaleMaxima, waffle, SHARCMonitor, DANTEMonitor, BAMBINOMonitor, SCEPTARMonitor, SPICEMonitor, DAQMonitor, ClockMonitor, 2*(SMnChannels*SMrows*SMcolumns + 2*16), SMHV, Math.ceil(nCollectors/4), masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, [MFtooltip, SubsystemTooltip] , 0);
+        masterLoop(rows+1, columns, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmThresholds, scaleMaxima, waffle, SHARCMonitor, HPGEMonitor, DANTEMonitor, BAMBINOMonitor, SCEPTARMonitor, SPICEMonitor, DAQMonitor, ClockMonitor, 2*(SMnChannels*SMrows*SMcolumns + 2*16), SMHV, Math.ceil(nCollectors/4), masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, [MFtooltip, SubsystemTooltip] , 0);
       }
       startLoop(); 
 

@@ -1,8 +1,9 @@
-function TIGRESS(monitor, canvas, detailCanvas){
+function HPGE(monitor, canvas, detailCanvas, enableBGO){
 
 	this.monitorID = monitor;		        //div ID of wrapper div
 	this.canvasID = canvas; 				//ID of canvas to draw top level TIGRESS view on
 	this.detailCanvasID = detailCanvas;		//ID of canvas to draw single HPGE view on
+    this.enableBGO = enableBGO;             //are BGO suppressors present?
 
 	this.monitor = document.getElementById(monitor);
 	this.canvas = document.getElementById(canvas);
@@ -34,8 +35,11 @@ function TIGRESS(monitor, canvas, detailCanvas){
     //summary view
     this.BGOouter = 0.08*this.canvasWidth;
     this.BGOinner = 2/3*this.BGOouter;
-    this.HPGEside = 0.4*this.BGOouter;
-    //establish coords of each detector summary; start array index at 1 to correspond to actual detector numbering:
+    if(this.enableBGO == 1)
+        this.HPGEside = 0.4*this.BGOouter;
+    else 
+        this.HPGEside = this.BGOouter;
+    //establish coords of each detector summary; start array index at 1 to correspond to actual detector numbering in TIGRESS:
     this.firstRow = this.canvasHeight*0.05;
     this.secondRow = this.canvasHeight*0.2;
     this.thirdRow = this.canvasHeight*0.35;
@@ -84,7 +88,7 @@ function TIGRESS(monitor, canvas, detailCanvas){
         var i;
         this.context.fillStyle = 'rgba(0,0,0,1)';
         for(i=1; i<17; i++){
-            this.BGOsummary(this.summaryCoord[i][0], this.summaryCoord[i][1]);
+            if(this.enableBGO == 1) this.BGOsummary(this.summaryCoord[i][0], this.summaryCoord[i][1]);
             this.HPGEsummary(this.summaryCoord[i][0], this.summaryCoord[i][1]);
         }
 
@@ -106,10 +110,10 @@ function TIGRESS(monitor, canvas, detailCanvas){
             split = true;
  
         if(split){
-            this.splitCrystal(this.centerX - this.crystalSide, this.centerY - this.crystalSide, '#00FF00');
-            this.splitCrystal(this.centerX + this.lineWeight, this.centerY - this.crystalSide, '#0000FF');
-            this.splitCrystal(this.centerX - this.crystalSide, this.centerY + this.lineWeight, '#FF0000');
-            this.splitCrystal(this.centerX + this.lineWeight, this.centerY + this.lineWeight, '#FFFFFF');
+            this.crystal(this.centerX - this.crystalSide, this.centerY - this.crystalSide, '#00FF00');
+            this.crystal(this.centerX + this.lineWeight, this.centerY - this.crystalSide, '#0000FF');
+            this.crystal(this.centerX - this.crystalSide, this.centerY + this.lineWeight, '#FF0000');
+            this.crystal(this.centerX + this.lineWeight, this.centerY + this.lineWeight, '#FFFFFF');
 
         } else{
         	//cores
@@ -207,6 +211,15 @@ function TIGRESS(monitor, canvas, detailCanvas){
     	this.detailContext.fillRect(x0, y0, this.crystalSide/3, this.crystalSide/3);
     	this.detailContext.stroke();
     };
+
+    //draw HV box for one cloverleaf:
+    this.crystal = function(x0, y0, border, fill){
+        this.detailContext.strokeStyle = border;
+        this.detailContext.fillStyle = '#4C4C4C';
+        this.detailContext.fillRect(x0, y0, this.crystalSide, this.crystalSide);
+        this.detailContext.strokeRect(x0, y0, this.crystalSide, this.crystalSide);
+        this.detailContext.stroke();
+    };    
 
     //draw split crystal for HV view
     this.splitCrystal = function(x0, y0, border, fill){
