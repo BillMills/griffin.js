@@ -1,24 +1,25 @@
-function PACES(monitor, canvas){
+function PACES(monitor){
 	this.monitorID = monitor;		        //div ID of wrapper div
-	this.canvasID = canvas; 				//ID of canvas to draw top level TIGRESS view on
-
-	this.monitor = document.getElementById(monitor);
-	this.canvas = document.getElementById(canvas);
-	this.context = this.canvas.getContext('2d');
+	this.canvasID = 'PACESCanvas'; 			//ID of canvas to draw top level TIGRESS view on
 
     //establish animation parameters////////////////////////////////////////////////////////////////////
     this.FPS = 30;
     this.duration = 0.5;
     this.nFrames = this.FPS*this.duration;
 
-    //scale canvas//////////////////////////////////////////////////////////////////////////////////////
+    //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
+    this.monitor = document.getElementById(monitor);
     this.canvasWidth = 0.48*$(this.monitor).width();
     this.canvasHeight = 0.8*$(this.monitor).height();
-    this.canvas.setAttribute('width', this.canvasWidth);
-    this.canvas.setAttribute('height', this.canvasHeight);
-
-    //position canvas
-    $('#'+canvas).css('top', $('#'+'SubsystemLinks').height() + 5 );
+    var newCanvas = document.createElement('canvas');
+    newCanvas.setAttribute('id', this.canvasID);
+    newCanvas.setAttribute('class', 'monitor');
+    newCanvas.setAttribute('style', 'top:' + ($('#SubsystemLinks').height() + 5) +'px;')
+    newCanvas.setAttribute('width', this.canvasWidth);
+    newCanvas.setAttribute('height', this.canvasHeight);
+    document.getElementById(monitor).appendChild(newCanvas);
+    this.canvas = document.getElementById(this.canvasID);
+    this.context = this.canvas.getContext('2d');
 
     //drawing parameters
     this.centerX = this.canvasWidth/2;

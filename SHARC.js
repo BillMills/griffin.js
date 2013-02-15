@@ -1,20 +1,16 @@
-function SHARC(monitor, orientation, cvas, rows, columns, nStrips, nRadialHoriz, nAzimuthalHoriz, nRadialVert, nAzimuthalVert, minima, maxima, prefix, postfix){
+function SHARC(monitor, orientation, rows, columns, nStrips, nRadialHoriz, nAzimuthalHoriz, nRadialVert, nAzimuthalVert, minima, maxima, prefix, postfix){
 
 	var i,j;
 
 	//argument member variables/////////////////////////////////////////////////////////////////////////////////
 	this.monitorID = monitor;		//div ID of wrapper div
 	this.orientation = orientation;	//'vertical' or 'horizontal', the direction of the strips for this instance.
-	this.canvasID = cvas;			//the canvas ID on which to draw the strip monitor
+	this.canvasID = 'SHARCCanvas';	//the canvas ID on which to draw the strip monitor
 	this.rows = rows;				//number of rows of detectors
 	this.columns = columns;			//number of columns of detectors
 	this.nStrips = nStrips;			//number of sense strips per detector
 	this.minima = minima;			//array of scale minima, one entry for each scalar option
 	this.maxima = maxima;			//array of scale maxima, one entry for each scalar option
-
-	this.canvas = document.getElementById(this.canvasID);
-	this.context = this.canvas.getContext('2d');
-	this.monitor = document.getElementById(this.monitorID);
 
 	that = this;
 
@@ -26,17 +22,23 @@ function SHARC(monitor, orientation, cvas, rows, columns, nStrips, nRadialHoriz,
     //which of the scalars are we tracking now? (corresponds to the index in this.maxima)
     this.trackingIndex = 0;
 
-    //scale canvas//////////////////////////////////////////////////////////////////////////////////////
+    //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
+	this.monitor = document.getElementById(this.monitorID);
     this.canvasWidth = 0.48*$(this.monitor).width();
     this.canvasHeight = 0.8*$(this.monitor).height();
-    this.canvas.setAttribute('width', this.canvasWidth);
-    this.canvas.setAttribute('height', this.canvasHeight);
+
+	var newCanvas = document.createElement('canvas');
+    newCanvas.setAttribute('id', this.canvasID);
+    newCanvas.setAttribute('class', 'monitor');
+    newCanvas.setAttribute('style', 'top:' + ($('#SubsystemLinks').height() + 5) +'px;')
+    newCanvas.setAttribute('width', this.canvasWidth);
+    newCanvas.setAttribute('height', this.canvasHeight);
+    document.getElementById(monitor).appendChild(newCanvas);
+	this.canvas = document.getElementById(this.canvasID);
+	this.context = this.canvas.getContext('2d');
 
     //half-width for drawing horizontal and vertical schema on same canvas:
     this.halfWidth = this.canvasWidth/2;
-
-    //position canvas
-    $('#'+cvas).css('top', $('#'+'SubsystemLinks').height() + 5 )
 
     //set up tooltip:
     this.tooltip = new Tooltip(this.canvasID, 'SHARCTipText', 'SHARCTT', this.monitorID, prefix, postfix);

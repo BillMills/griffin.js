@@ -10,7 +10,8 @@ function Clock(monitor){
     this.canvasHeight = 0.8*$(this.wrapper).height();
 	var newCanvas = document.createElement('canvas');
     newCanvas.setAttribute('id', this.canvasID);
-    newCanvas.setAttribute('style', 'position:absolute; left:24%; opacity:0; z-index:-10000; top:' + ($('#ClockLinks').height() + 5) +'px;')
+    newCanvas.setAttribute('class', 'monitor');
+    newCanvas.setAttribute('style', 'top:' + ($('#ClockLinks').height() + 5) +'px;')
     newCanvas.setAttribute('width', this.canvasWidth);
     newCanvas.setAttribute('height', this.canvasHeight);
     document.getElementById(monitor).appendChild(newCanvas);

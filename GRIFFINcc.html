@@ -155,36 +155,6 @@
         <h1 id='TriggerLinksBanner' style='display: inline; opacity: 0.3; font-family: "Orbitron", sans-serif; font-size: 275%; vertical-align:-20px;'>GRIFFIN Trigger Status</h1>        
       </div>
 
-
-      <!--Canvases for each central object///////////////////////////////////////////////////////-->
-      <!--Dashboard-->
-      <!--canvas id='DashboardCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas-->
-
-      <!--HV-->
-      <canvas id="TestWaffle" style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
-
-      <!--Subsystem-->
-      <canvas id='SHARCCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
-      <canvas id='HPGECanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
-      <canvas id='HPGEdetailCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
-      <canvas id='DESCANTCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
-      <canvas id='DESCANTTTCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
-      <canvas id='PACESCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
-      <canvas id='DANTECanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
-      <canvas id='BAMBINOCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
-      <canvas id='SCEPTARCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
-      <canvas id='SPICECanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
-
-      <!--DAQ-->
-      <canvas id='DAQcanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>  
-      <canvas id='DAQdetailCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas>
-
-      <!--Clock-->
-      <!--canvas id='ClockCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas-->
-
-      <!--Trigger-->
-      <!--canvas id='TriggerCanvas' style='position:absolute; left:24%; opacity:0; z-index:-10000;'></canvas-->       
-
       <!--Right Sidebars///////////////////////////////////////////////////-->
 
       <canvas id='waffleSidebarBKG' style='position:absolute; z-index:-1; right:0%'> </canvas>
@@ -454,29 +424,24 @@
       var currentMeter = new FillMeter('currentMeter', 'InputLayer', 0, minCurrent, maxCurrent, currentUnit, statusPrecision);
       var temperatureMeter = new FillMeter('temperatureMeter', 'InputLayer', 0, minTemperature, maxTemperature, temperatureUnit, statusPrecision);
 
-      //tooltips:
-      //var MFtooltip = new Tooltip('TestWaffle', 'MFTipText', 'MFTT', 'waffleplate', prefix, postfix);
-      //var SubsystemTooltip = new Tooltip('SHARCCanvas', 'SubsystemTipText', 'SubsystemTT', 'waffleplate', [], []);
-      //var DESCANTTooltip = new Tooltip('DESCANTCanvas', 'DESCANTTipText', 'DESCANTTT', 'waffleplate', [], []);
-
       //main elements
       var dashboard = new Dashboard('waffleplate');
 
       var waffle = new Waffle(rows,columns, alarmThresholds, scaleMaxima, "waffleplate", rowTitles, "InputLayer", ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleSizes, moduleLabels, sliderVoltage, sliderRamp, sliderRampDown, barChartPrecision, prefix, postfix);
 
-      var SHARCMonitor = new SHARC('waffleplate','horizontal', 'SHARCCanvas', SMrows, SMcolumns, SMnChannels, 4, 4, 1, 16, SMminima, SMmaxima, [],[]);
-      var HPGEMonitor = new HPGE('waffleplate', 'HPGECanvas', 'HPGECanvas', 0);
-      var DESCANTMonitor = new DESCANT('waffleplate', 'DESCANTCanvas', [],[]);
+      var SHARCMonitor = new SHARC('waffleplate','horizontal', SMrows, SMcolumns, SMnChannels, 4, 4, 1, 16, SMminima, SMmaxima, [],[]);
+      var HPGEMonitor = new HPGE('waffleplate', 0);
+      var DESCANTMonitor = new DESCANT('waffleplate', [],[]);
       DESCANTMonitor.wireframe();
-      var PACESMonitor = new PACES('waffleplate', 'PACESCanvas');
+      var PACESMonitor = new PACES('waffleplate');
       PACESMonitor.draw(PACESMonitor.nFrames);
-      var DANTEMonitor = new DANTE('waffleplate', 'DANTECanvas');
+      var DANTEMonitor = new DANTE('waffleplate');
       DANTEMonitor.draw(DANTEMonitor.nFrames);
-      var BAMBINOMonitor = new BAMBINO('waffleplate', 'BAMBINOCanvas');
+      var BAMBINOMonitor = new BAMBINO('waffleplate');
       BAMBINOMonitor.draw(BAMBINOMonitor.nFrames);
-      var SCEPTARMonitor = new SCEPTAR('waffleplate', 'SCEPTARCanvas');
+      var SCEPTARMonitor = new SCEPTAR('waffleplate');
       SCEPTARMonitor.draw(SCEPTARMonitor.nFrames);
-      var SPICEMonitor = new SPICE('waffleplate', 'SPICECanvas');
+      var SPICEMonitor = new SPICE('waffleplate');
       SPICEMonitor.draw(SPICEMonitor.nFrames);
 
       var DAQMonitor = new DAQ('waffleplate', 'DAQcanvas', 'DAQdetailCanvas', 0, DAQminima, DAQmaxima, configParameters);

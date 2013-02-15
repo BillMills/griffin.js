@@ -35,25 +35,26 @@ function Waffle(rows, cols, alarm, scaleMax, wrapperDiv, rowTitles, InputLayer, 
         //cell dimensions controlled by total width, since width more visually important here:
         this.cellSide = (this.totalWidth - 60) / Math.max(20, this.cols);
         this.totalHeight = 16*this.cellSide;
-/*
+
         //inject canvas into DOM for waffle to paint on:
         var newCanvas = document.createElement('canvas');
         newCanvas.setAttribute('id', this.canvasID);
-        newCanvas.setAttribute('style', 'position:absolute; left:24%; opacity:0; z-index:-10000; top:' + ($('#mainframeLinks').height() + 5) +'px;');
+        newCanvas.setAttribute('class', 'monitor');
         newCanvas.setAttribute('width', this.totalWidth);
         newCanvas.setAttribute('height', this.totalHeight);
         document.getElementById(wrapperDiv).appendChild(newCanvas);
-*/
+
         this.canvas = document.getElementById(this.canvasID);
         this.context = this.canvas.getContext('2d');
 
         //adjust height to accommodate card and module labels:
-        //this.context.font = Math.min(16, this.cellSide)+'px Raleway';
-        //this.longestModuleLabel = 0;
-        //for(i = 0; i<this.moduleLabels.length; i++){
-        //    this.longestModuleLabel = Math.max(this.longestModuleLabel, this.context.measureText(this.moduleLabels[i]).width);
-        //}
-        //this.totalHeight += this.longestModuleLabel + 50;
+        this.context.font = Math.min(16, this.cellSide)+'px Raleway';
+        this.longestModuleLabel = 0;
+        for(i = 0; i<this.moduleLabels.length; i++){
+            this.longestModuleLabel = Math.max(this.longestModuleLabel, this.context.measureText(this.moduleLabels[i]).width);
+        }
+        this.totalHeight += this.longestModuleLabel + 50;
+        newCanvas.setAttribute('height', this.totalHeight);
 
         //waffle dimensions; leave gutters for labels & title
         this.waffleWidth = this.cellSide*this.cols;
@@ -66,7 +67,7 @@ function Waffle(rows, cols, alarm, scaleMax, wrapperDiv, rowTitles, InputLayer, 
         this.tooltip = new Tooltip(this.canvasID, 'MFTipText', 'MFTT', this.wrapperDiv, prefix, postfix);
         //give the tooltip a pointer back to this object:
         this.tooltip.obj = that;
-        
+
         //establish animation parameters:
         this.FPS = 30;
         this.duration = 0.5;
@@ -98,7 +99,7 @@ function Waffle(rows, cols, alarm, scaleMax, wrapperDiv, rowTitles, InputLayer, 
         for(i=0; i<moduleSizes.length; i++){
             newCanvas = document.createElement('canvas');
             newCanvas.setAttribute('id', 'bar'+i);
-            newCanvas.setAttribute('style', 'position:absolute; left:24%; opacity:0; z-index:-10000;');
+            newCanvas.setAttribute('class', 'monitor');
             document.getElementById(wrapperDiv).appendChild(newCanvas);
             this.barCharts[i] = new BarGraph('bar'+i, i, Math.max(moduleSizes[i],1)*12, 'Slot '+i, 'Reported Voltage [V]', 0, scaleMax[0], barChartPrecision, that);
         }
@@ -298,12 +299,6 @@ function Waffle(rows, cols, alarm, scaleMax, wrapperDiv, rowTitles, InputLayer, 
             var color;
             var columns;
             var cornerX, cornerY;
-
-            //adjust canvas to fit:
-            $('#'+this.canvasID).attr('width', this.totalWidth);
-            $('#'+this.canvasID).attr('height', this.totalHeight);
-            var headerHeight = $('#'+this.headerDiv).height() + 10;
-            $(document.getElementById(this.canvasID)).css('top', this.headerHeight);
 
             //whiteout old canvas:
             this.context.globalAlpha = 1;

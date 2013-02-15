@@ -1,29 +1,41 @@
-function DESCANT(monitor, canvas, prefix, postfix){
+function DESCANT(monitor, prefix, postfix){
 
 	var i, j;
 
 	var that = this;
 
-	this.monitorID = monitor;		//div ID of wrapper div
-	this.canvasID = canvas;			//ID of canvas to draw DESCANT on
+	this.monitorID = monitor;				//div ID of wrapper div
+	this.canvasID = 'DESCANTCanvas';		//ID of canvas to draw DESCANT on
+	this.TTcanvasID = 'DESCANTTTCanvas';	//ID of hidden tooltip map canvas
 
-	this.canvas = document.getElementById(canvas);
-	this.context = this.canvas.getContext('2d');
+    //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
 	this.monitor = document.getElementById(this.monitorID);
-
-    //scale canvas//////////////////////////////////////////////////////////////////////////////////////
     this.canvasWidth = 0.48*$(this.monitor).width();
     this.canvasHeight = 0.8*$(this.monitor).height();
-    this.canvas.setAttribute('width', this.canvasWidth);
-    this.canvas.setAttribute('height', this.canvasHeight);
+    //detector view
+    var newCanvas = document.createElement('canvas');
+    newCanvas.setAttribute('id', this.canvasID);
+    newCanvas.setAttribute('class', 'monitor');
+    newCanvas.setAttribute('style', 'top:' + ($('#SubsystemLinks').height() + 5) +'px;')
+    newCanvas.setAttribute('width', this.canvasWidth);
+    newCanvas.setAttribute('height', this.canvasHeight);
+    document.getElementById(monitor).appendChild(newCanvas);
+    this.canvas = document.getElementById(this.canvasID);
+    this.context = this.canvas.getContext('2d');
+    //hidden Tooltip map layer
+    newCanvas = document.createElement('canvas');
+    newCanvas.setAttribute('id', this.TTcanvasID);
+    newCanvas.setAttribute('class', 'monitor');
+    newCanvas.setAttribute('style', 'top:' + ($('#SubsystemLinks').height() + 5) +'px;')
+    newCanvas.setAttribute('width', this.canvasWidth);
+    newCanvas.setAttribute('height', this.canvasHeight);
+    document.getElementById(monitor).appendChild(newCanvas);
+    this.TTcanvas = document.getElementById(this.TTcanvasID);
+    this.TTcontext = this.TTcanvas.getContext('2d');
 
     //Dirty trick to implement DESCANT's tooltip on its obnoxious geometry: make another canvas of the same size hidden beneath, with the 
     //detector drawn on it, but with each element filled in with rgba(0,0,n,1), where n is the channel number; fetching the color from the 
     //hidden canvas at point x,y will then return the appropriate channel index.
-    this.TTcanvas = document.getElementById('DESCANTTTCanvas');
-    this.TTcontext = this.TTcanvas.getContext('2d');
-    this.TTcanvas.setAttribute('width', this.canvasWidth);
-    this.TTcanvas.setAttribute('height', this.canvasHeight);
     //paint whole hidden canvas with R!=G!=B to trigger TT suppression:
     this.TTcontext.fillStyle = 'rgba(50,100,150,1)';
     this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
@@ -48,10 +60,6 @@ function DESCANT(monitor, canvas, prefix, postfix){
 	this.pentagonNormal = this.pentagonSide / 2 / Math.tan(36/180 * Math.PI);
 	//longest distance from center of pentagon to side
 	this.pentagonVertex = this.pentagonSide / 2 / Math.sin(36/180 * Math.PI);
-
-    //position canvas
-    $('#'+canvas).css('top', $('#'+'SubsystemLinks').height() + 5 )
-    $('#DESCANTTTCanvas').css('top', $('#'+'SubsystemLinks').height() + 5 )
 
 	//member functions
 	this.wireframe = function(){

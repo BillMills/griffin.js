@@ -1,32 +1,39 @@
-function HPGE(monitor, canvas, detailCanvas, enableBGO){
+function HPGE(monitor, enableBGO){
 
-	this.monitorID = monitor;		        //div ID of wrapper div
-	this.canvasID = canvas; 				//ID of canvas to draw top level TIGRESS view on
-	this.detailCanvasID = detailCanvas;		//ID of canvas to draw single HPGE view on
-    this.enableBGO = enableBGO;             //are BGO suppressors present?
-
-	this.monitor = document.getElementById(monitor);
-	this.canvas = document.getElementById(canvas);
-	this.detailCanvas = document.getElementById(detailCanvas);
-	this.context = this.canvas.getContext('2d');
-	this.detailContext = this.detailCanvas.getContext('2d');
+	this.monitorID = monitor;		                //div ID of wrapper div
+	this.canvasID = 'HPGECanvas'; 			        //ID of canvas to draw top level TIGRESS view on
+	this.detailCanvasID = 'HPGEdetailCanvas';		//ID of canvas to draw single HPGE view on
+    this.enableBGO = enableBGO;                     //are BGO suppressors present?
 
     //establish animation parameters////////////////////////////////////////////////////////////////////
     this.FPS = 30;
     this.duration = 0.5;
     this.nFrames = this.FPS*this.duration;
 
-    //scale canvas//////////////////////////////////////////////////////////////////////////////////////
+    //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
+    this.monitor = document.getElementById(monitor);
     this.canvasWidth = 0.48*$(this.monitor).width();
     this.canvasHeight = 0.8*$(this.monitor).height();
-    this.canvas.setAttribute('width', this.canvasWidth);
-    this.canvas.setAttribute('height', this.canvasHeight);
-    this.detailCanvas.setAttribute('width', this.canvasWidth);
-    this.detailCanvas.setAttribute('height', this.canvasHeight);
-
-    //position canvas
-    $('#'+canvas).css('top', $('#'+'SubsystemLinks').height() + 5 );
-    $('#'+detailCanvas).css('top', $('#'+'SubsystemLinks').height() + 5 );
+    //top level
+    var newCanvas = document.createElement('canvas');
+    newCanvas.setAttribute('id', this.canvasID);
+    newCanvas.setAttribute('class', 'monitor');
+    newCanvas.setAttribute('style', 'top:' + ($('#SubsystemLinks').height() + 5) +'px;')
+    newCanvas.setAttribute('width', this.canvasWidth);
+    newCanvas.setAttribute('height', this.canvasHeight);
+    document.getElementById(monitor).appendChild(newCanvas);
+    this.canvas = document.getElementById(this.canvasID);
+    this.context = this.canvas.getContext('2d');
+    //detail level
+    newCanvas = document.createElement('canvas');
+    newCanvas.setAttribute('id', this.detailCanvasID);
+    newCanvas.setAttribute('class', 'monitor');
+    newCanvas.setAttribute('style', 'top:' + ($('#SubsystemLinks').height() + 5) +'px;')
+    newCanvas.setAttribute('width', this.canvasWidth);
+    newCanvas.setAttribute('height', this.canvasHeight);
+    document.getElementById(monitor).appendChild(newCanvas);
+    this.detailCanvas = document.getElementById(this.detailCanvasID);
+    this.detailContext = this.detailCanvas.getContext('2d');
 
     //drawing parameters
     this.centerX = this.canvasWidth/2;

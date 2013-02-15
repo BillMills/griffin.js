@@ -3,13 +3,13 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
 
 	var that = this;
 
-	this.monitorID = monitor;		        //div ID of wrapper div
-	this.canvasID = canvas;			        //ID of canvas to draw DAQ on
-    this.detailCanvasID = detailCanvas;     //ID of canvas to draw detailed view on
-	//this.tooltip = tooltip;			    //tooltip associated with this object
-	this.minima = minima;			        //minima of element scalea: [master, master group, master link, collector, digi summary link, digi summary node, digi group link, digi transfer, digitizer]
-	this.maxima = maxima;			        //as minima.
-    this.config = config;                   //[nCollectorGroups, nCollectors, nDigitizerGroups, nDigitizers, nDigitizersPerCollector]
+	this.monitorID = monitor;		             //div ID of wrapper div
+	this.canvasID = 'DAQcanvas';			     //ID of canvas to draw DAQ on
+    this.detailCanvasID = 'DAQdetailCanvas';     //ID of canvas to draw detailed view on
+	//this.tooltip = tooltip;			         //tooltip associated with this object
+	this.minima = minima;			             //minima of element scalea: [master, master group, master link, collector, digi summary link, digi summary node, digi group link, digi transfer, digitizer]
+	this.maxima = maxima;			             //as minima.
+    this.config = config;                        //[nCollectorGroups, nCollectors, nDigitizerGroups, nDigitizers, nDigitizersPerCollector]
     this.nCollectorGroups = config[0];
     if(this.nCollectorGroups == 0)
         this.nCollectors = config[1];
@@ -22,19 +22,32 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
     	this.nDigitizers = this.nDigitizerGroups*4;
     this.nDigitizersPerCollector = config[4];
 
-	this.canvas = document.getElementById(canvas);
-	this.context = this.canvas.getContext('2d');
-    this.detailCanvas = document.getElementById(detailCanvas);
-    this.detailContext = this.detailCanvas.getContext('2d');
-	this.monitor = document.getElementById(this.monitorID);
-
-    //scale canvas//////////////////////////////////////////////////////////////////////////////////////
+    //scale & insert canvases//////////////////////////////////////////////////////////////////////////////////////
+    this.monitor = document.getElementById(this.monitorID);
     this.canvasWidth = 0.48*$(this.monitor).width();
     this.canvasHeight = 0.8*$(this.monitor).height();
-    this.canvas.setAttribute('width', this.canvasWidth);
-    this.canvas.setAttribute('height', this.canvasHeight);
-    this.detailCanvas.setAttribute('width', this.canvasWidth);
-    this.detailCanvas.setAttribute('height', this.canvasHeight);
+
+    //top view
+    var newCanvas = document.createElement('canvas');
+    newCanvas.setAttribute('id', this.canvasID);
+    newCanvas.setAttribute('class', 'monitor');
+    newCanvas.setAttribute('style', 'position:absolute; left:24%; top:' + ($('#DAQlinks').height() + 5) +'px;')
+    newCanvas.setAttribute('width', this.canvasWidth);
+    newCanvas.setAttribute('height', this.canvasHeight);
+    document.getElementById(monitor).appendChild(newCanvas);
+    //detailed view
+    var newCanvas = document.createElement('canvas');
+    newCanvas.setAttribute('id', this.detailCanvasID);
+    newCanvas.setAttribute('class', 'monitor');
+    newCanvas.setAttribute('style', 'position:absolute; left:24%; top:' + ($('#DAQlinks').height() + 5) +'px;')
+    newCanvas.setAttribute('width', this.canvasWidth);
+    newCanvas.setAttribute('height', this.canvasHeight);
+    document.getElementById(monitor).appendChild(newCanvas);
+
+    this.canvas = document.getElementById(canvas);
+    this.context = this.canvas.getContext('2d');
+    this.detailCanvas = document.getElementById(detailCanvas);
+    this.detailContext = this.detailCanvas.getContext('2d');
 
     //position canvas
     $('#'+canvas).css('top', $('#'+'DAQlinks').height() + 5 )
