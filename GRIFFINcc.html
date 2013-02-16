@@ -157,7 +157,7 @@
 
       <!--Right Sidebars///////////////////////////////////////////////////-->
 
-      <canvas id='waffleSidebarBKG' style='position:absolute; z-index:-1; right:0%'> </canvas>
+      <canvas id='SidebarBKG' style='position:absolute; z-index:-1; right:0%'> </canvas>
 
       <!--Sidebar for dashboard-->
       <div id='DashboardSidebar' class='Sidebar' style='opacity:1; z-index:1'>
@@ -336,7 +336,7 @@
       //url of MIDAS status page
       var statusURL = 'http://horus.triumf.ca:8081';
 
-      //Scalar Monitor/////////////////////////////////////////////////////////////////////////
+      //SHARC Monitor/////////////////////////////////////////////////////////////////////////
       //rows & columns of detectors:
       var SMrows = 2;
       var SMcolumns = 4;
@@ -398,10 +398,15 @@
       document.getElementById('currentAlarm').setAttribute('onclick',"javascript:alarmTransition('currentAlarm', alarmTop+170, alarmTop)");
       document.getElementById('tempAlarm').setAttribute('onclick',"javascript:alarmTransition('tempAlarm', alarmTop+340, alarmTop)");
 
+      //style the input sidebar background:
+      document.getElementById('SidebarBKG').width = parseInt(($('#InputLayer').css('width')).slice(0,3));
+      document.getElementById('SidebarBKG').height = parseInt($('#InputLayer').css('height').slice(0,3));
+      tabBKG('SidebarBKG', 'right');
+
       //position right sidebar nicely:
       var rightSidebarWhitespace = parseFloat(window.innerHeight*0.85) - parseFloat($('#InputLayer').height());
       $('.Sidebar').css('top', Math.min(alarmTop, 0.3*rightSidebarWhitespace) );
-      $('#waffleSidebarBKG').css('top', Math.min(alarmTop, 0.3*rightSidebarWhitespace) );
+      $('#SidebarBKG').css('top', Math.min(alarmTop, 0.3*rightSidebarWhitespace) );
 
       //Waffle onclick event will throw x and y positions up to these globals, so that
       //updateParameter() can use them to determine which channel to update.  TODO: fix
@@ -416,9 +421,9 @@
       //declare objects:
       //HV monitor control sidebar elements:
       var sliderWidth = parseFloat($(document.getElementById('InputLayer')).width())*0.5;
-      var sliderVoltage = new Slider('waffleSidebarBKG', 'volageSliderText', 'demandVoltage', 'voltageSlider', 'voltageSliderBKG', 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', minVoltage, maxVoltage, statusPrecision, voltUnit, sliderWidth );
-      var sliderRamp = new Slider('waffleSidebarBKG', 'rampSliderText', 'demandRampSpeed', 'rampSlider', 'rampSliderBKG', 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', minRampSpeed, maxRampSpeed, statusPrecision, rampUnit,  sliderWidth);
-      var sliderRampDown = new Slider('waffleSidebarBKG', 'rampDownSliderText', 'demandRampDownSpeed', 'rampDownSlider', 'rampDownSliderBKG', 'rampDownSliderKnob', 'rampDownKnobStyle', 'rampDownSliderText', minRampSpeed, maxRampSpeed, statusPrecision, rampUnit,  sliderWidth);
+      var sliderVoltage = new Slider('SidebarBKG', 'volageSliderText', 'demandVoltage', 'voltageSlider', 'voltageSliderBKG', 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', minVoltage, maxVoltage, statusPrecision, voltUnit, sliderWidth );
+      var sliderRamp = new Slider('SidebarBKG', 'rampSliderText', 'demandRampSpeed', 'rampSlider', 'rampSliderBKG', 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', minRampSpeed, maxRampSpeed, statusPrecision, rampUnit,  sliderWidth);
+      var sliderRampDown = new Slider('SidebarBKG', 'rampDownSliderText', 'demandRampDownSpeed', 'rampDownSlider', 'rampDownSliderBKG', 'rampDownSliderKnob', 'rampDownKnobStyle', 'rampDownSliderText', minRampSpeed, maxRampSpeed, statusPrecision, rampUnit,  sliderWidth);
 
       window.meter = new FillMeter('voltageMeter', 'InputLayer', 0, minVoltage, maxVoltage, voltUnit, statusPrecision);
       var currentMeter = new FillMeter('currentMeter', 'InputLayer', 0, minCurrent, maxCurrent, currentUnit, statusPrecision);

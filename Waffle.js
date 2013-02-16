@@ -169,11 +169,6 @@ function Waffle(rows, cols, alarm, scaleMax, wrapperDiv, rowTitles, InputLayer, 
         //also, draw the input sidebar for 0,0 on first call:
         channelSelect(that);
 
-        //style the input sidebar background:
-        document.getElementById('waffleSidebarBKG').width = parseInt(($('#InputLayer').css('width')).slice(0,3));
-        document.getElementById('waffleSidebarBKG').height = parseInt($('#InputLayer').css('height').slice(0,3));
-        tabBKG('waffleSidebarBKG', 'right');
-
         //que up new data:
         this.populate = function(demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit){
 

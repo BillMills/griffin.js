@@ -114,7 +114,7 @@ function AlarmSidebar(side, wrapperDiv, waffleHeight, prevAlarmStatus, alarmStat
         if(i==0) columns = moduleLabels.length;
         else columns = cols;
         for(j=0; j<columns; j++) {
-            if(i>0 || moduleSizes[j]!=1){  //don't look for alarms on the primary channels of cards that don't have primary channels
+            if(i>0 || (moduleSizes[j]!=1 && moduleSizes[j]!=0) ){  //don't look for alarms on the primary channels of cards that don't have primary channels
                 voltageAlarmArray[n] = [];  currentAlarmArray[n] = [];  temperatureAlarmArray[n] = [];
                 voltageAlarmArray[n][0] = i;  currentAlarmArray[n][0] = i;  temperatureAlarmArray[n][0] = i;
                 voltageAlarmArray[n][1] = j;  currentAlarmArray[n][1] = j;  temperatureAlarmArray[n][1] = j;
