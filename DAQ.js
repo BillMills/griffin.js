@@ -2,6 +2,8 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
 	var i, j, k, m;
 
 	var that = this;
+    //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
+    window.DAQpointer = that;
 
 	this.monitorID = monitor;		             //div ID of wrapper div
 	this.canvasID = 'DAQcanvas';			     //ID of canvas to draw DAQ on
@@ -22,27 +24,78 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
     	this.nDigitizers = this.nDigitizerGroups*4;
     this.nDigitizersPerCollector = config[4];
 
-    //scale & insert canvases//////////////////////////////////////////////////////////////////////////////////////
+    //scale & insert DAQ canvases & navigation//////////////////////////////////////////////////////////////////////////////////////
     this.monitor = document.getElementById(this.monitorID);
     this.canvasWidth = 0.48*$(this.monitor).width();
     this.canvasHeight = 0.8*$(this.monitor).height();
+
+    //navigation
+    //top level nav button
+    var newButton = document.createElement('button');
+    newButton.setAttribute('id', 'DAQbutton');
+    newButton.setAttribute('class', 'navLink');
+    newButton.setAttribute('type', 'button');
+    newButton.setAttribute('onclick', "javascript:swapView('DAQlinks', 'DAQcanvas', 'DAQsidebar', 'DAQbutton')");
+    document.getElementById('statusLink').appendChild(newButton);
+    document.getElementById('DAQbutton').innerHTML = 'DAQ';
+    //nav wrapper div
+    var newDiv = document.createElement('div');
+    newDiv.setAttribute('id', 'DAQlinks');
+    newDiv.setAttribute('class', 'navPanel');
+    this.monitor.appendChild(newDiv);
+    //nav header
+    var newHead = document.createElement('h1');
+    newHead.setAttribute('id', 'DAQlinksBanner');
+    newHead.setAttribute('class', 'navPanelHeader');
+    document.getElementById('DAQlinks').appendChild(newHead);
+    document.getElementById('DAQlinksBanner').innerHTML = 'GRIFFIN DAQ Status';
+    var br1 = document.createElement("br");
+    document.getElementById('DAQlinks').appendChild(br1);
+    //nav buttons
+    newButton = document.createElement('button');
+    newButton.setAttribute('id', 'DAQToplink');
+    newButton.setAttribute('class', 'navLinkDown');
+    newButton.setAttribute('type', 'button');
+    newButton.setAttribute('onclick', "javascript:swapFade('DAQcanvas', 'DAQToplink', window.DAQpointer, 'DAQbutton')");
+    document.getElementById('DAQlinks').appendChild(newButton);
+    document.getElementById('DAQToplink').innerHTML = 'Top Level';
+    var br2 = document.createElement("br");
+    document.getElementById('DAQlinks').appendChild(br2);
+    //p to label row of collector buttons
+    var newPara = document.createElement('p');
+    newPara.setAttribute('id', 'DAQcollectorTitle');
+    newPara.setAttribute('style', 'display:inline; color:#999999;')
+    document.getElementById('DAQlinks').appendChild(newPara);
+    document.getElementById('DAQcollectorTitle').innerHTML = 'Collector ';
+    //deploy collector buttons
+    for(i=0; i<this.nCollectors; i++){
+        newButton = document.createElement('button');
+        newButton.setAttribute('id', 'Collector'+i);
+        newButton.setAttribute('class', 'navLink');
+        newButton.setAttribute('type', 'button');
+        newButton.setAttribute('onclick', "javascript:swapFade('DAQdetailCanvas', 'Collector"+i+"', window.DAQpointer, 'DAQbutton')");
+        document.getElementById('DAQlinks').appendChild(newButton);
+        document.getElementById('Collector'+i).innerHTML = i;
+    }
+    //whichever button is active now:
+    this.activeButton = 'DAQToplink';
 
     //top view
     var newCanvas = document.createElement('canvas');
     newCanvas.setAttribute('id', this.canvasID);
     newCanvas.setAttribute('class', 'monitor');
-    newCanvas.setAttribute('style', 'position:absolute; left:24%; top:' + ($('#DAQlinks').height() + 5) +'px;')
+    newCanvas.setAttribute('style', ($('#DAQlinks').height() + 5) +'px;')
     newCanvas.setAttribute('width', this.canvasWidth);
     newCanvas.setAttribute('height', this.canvasHeight);
-    document.getElementById(monitor).appendChild(newCanvas);
+    this.monitor.appendChild(newCanvas);
     //detailed view
-    var newCanvas = document.createElement('canvas');
+    newCanvas = document.createElement('canvas');
     newCanvas.setAttribute('id', this.detailCanvasID);
     newCanvas.setAttribute('class', 'monitor');
-    newCanvas.setAttribute('style', 'position:absolute; left:24%; top:' + ($('#DAQlinks').height() + 5) +'px;')
+    newCanvas.setAttribute('style', 'top:' + ($('#DAQlinks').height() + 5) +'px;')
     newCanvas.setAttribute('width', this.canvasWidth);
     newCanvas.setAttribute('height', this.canvasHeight);
-    document.getElementById(monitor).appendChild(newCanvas);
+    this.monitor.appendChild(newCanvas);
 
     this.canvas = document.getElementById(canvas);
     this.context = this.canvas.getContext('2d');
@@ -58,7 +111,7 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
 
     //drawing parameters//////////////////////////////////////////////
     this.collectorWidth = 0.9*(this.canvasWidth-10) / 16;
-    this.collectorHeight = 1.5*this.collectorWidth; //100;
+    this.collectorHeight = 1.5*this.collectorWidth;
 
     this.cellColor = '#4C4C4C';
     this.lineweight = 2;
@@ -163,6 +216,8 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
         this.oldDigitizerColor[i] = '#000000';        
     }
 
+    //member functions///////////////////////////////////////////////
+
 	//update the info for each cell in the monitor
 	this.update = function(masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate){
 		var i,j,k,m;
@@ -239,6 +294,7 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
     		for(i=0; i<this.nCollectorGroups; i++){
                 //master group links
                 color = interpolateColor(parseHexColor(this.oldMasterGroupColor[i]), parseHexColor(this.masterGroupColor[i]), frame/this.nFrames);
+                //if(frame==this.nFrames)alert(color)
                 this.drawMasterGroupLink(i, color);
             }
         }
@@ -327,8 +383,8 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
         } else {  //TIGRESS mode:
             roundBox(this.context, this.margin + (index+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectors - this.collectorWidth/2, this.collectorTop, this.collectorWidth, this.collectorBottom - this.collectorTop, 5);
         }
+        this.context.fill();
 		this.context.stroke();
-		this.context.fill();
     };
 
     this.drawSummaryDigitizerNode = function(index, color){
@@ -347,15 +403,17 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
     this.drawMasterGroupLink = function(index, color){
     	this.context.strokeStyle = color;
     	this.context.fillStyle = color;
+        this.context.beginPath();
  		this.context.moveTo(this.margin + (index+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups, this.masterGroupLinkTop);
  		this.context.lineTo(this.margin + (index+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups, this.masterGroupLinkBottom);
+        this.context.closePath();
  		this.context.stroke();
     };
 
     this.drawMasterLink = function(index, color){
     	this.context.strokeStyle = color;
     	this.context.fillStyle = color;
-
+        this.context.beginPath();
         if(this.nCollectorGroups != 0) {  //GRIFFIN mode:
      		this.context.moveTo(this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups, this.masterLinkTop);
      	  	this.context.lineTo(this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups + (index%4 - 1.5)*(this.collectorWidth + this.collectorGutter), this.masterLinkBottom);
@@ -363,12 +421,14 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
             this.context.moveTo(this.margin + (index + 0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectors, this.masterGroupLinkTop );
             this.context.lineTo(this.margin + (index + 0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectors, this.masterLinkBottom );
         }
+        this.context.closePath();
  		this.context.stroke();
     };
 
     this.drawSummaryDigitizerNodeLink = function(index, color){
     	this.context.strokeStyle = color;
     	this.context.fillStyle = color;
+        this.context.beginPath();
         if(this.nCollectorGroups != 0){ //GRIFFIN mode:
         	this.context.moveTo(this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups + (index%4 - 1.5)*(this.collectorWidth + this.collectorGutter), this.digiSummaryLinkTop);
         	this.context.lineTo(this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups + (index%4 - 1.5)*(this.collectorWidth + this.collectorGutter), this.digiSummaryLinkBottom);
@@ -376,6 +436,7 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
             this.context.moveTo(this.margin + (index + 0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectors, this.digiSummaryLinkTop);
             this.context.lineTo(this.margin + (index + 0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectors, this.digiSummaryLinkBottom);
         }
+        this.context.closePath();
     	this.context.stroke();
     };
 

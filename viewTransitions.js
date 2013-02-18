@@ -58,16 +58,23 @@ function fadeDivIn(navDiv){
 }
 
 //swap two canvases:
-function swapFade(inbound, buttonID){
+function swapFade(inbound, buttonID, object, topButtonID){
 
 	//chrome
-	$('#'+window.lastTrip).css('background', '-webkit-gradient(linear, left top, left bottom, from(#999999), to(#DDDDDD));')
-	$('#'+buttonID).css('background', '-webkit-gradient(linear, left top, left bottom, from(#DDDDDD), to(#FFFFFF));')
+	//$('#'+window.lastTrip).css('background', '-webkit-gradient(linear, left top, left bottom, from(#999999), to(#DDDDDD));')
+	//$('#'+buttonID).css('background', '-webkit-gradient(linear, left top, left bottom, from(#DDDDDD), to(#FFFFFF));')
 	//FF
-	$('#'+window.lastTrip).css('background', '-moz-linear-gradient(top,  #DDDDDD,  #FFFFFF);')
-	$('#'+buttonID).css('background', '-moz-linear-gradient(top,  #999999,  #DDDDDD);')
+	//$('#'+window.lastTrip).css('background', '-moz-linear-gradient(top,  #DDDDDD,  #FFFFFF);')
+	//$('#'+buttonID).css('background', '-moz-linear-gradient(top,  #999999,  #DDDDDD);')
 
-	window.lastTrip = buttonID;
+	//document.getElementById(window.lastTrip).setAttribute('class', 'navLink');
+	//document.getElementById(buttonID).setAttribute('class', 'navLinkDown');
+	//window.lastTrip = buttonID;
+
+	document.getElementById(object.activeButton).setAttribute('class', 'navLink');
+	document.getElementById(buttonID).setAttribute('class','navLinkDown');
+	object.activeButton = buttonID;
+	document.getElementById(topButtonID).setAttribute('onclick', "javascript:swapView('DAQlinks', '"+inbound+"', 'DAQsidebar', 'DAQbutton')")
 
 	if(inbound != window.onDisplay){
 		fadeIn(inbound, 0);
@@ -77,7 +84,7 @@ function swapFade(inbound, buttonID){
 }
 
 //swap top level views
-function swapView(inboundNav, inboundCanvas, inboundSidebar){
+function swapView(inboundNav, inboundCanvas, inboundSidebar, buttonID){
 	if(inboundNav != window.navOnDisplay){
 
 		fadeIn(inboundCanvas, 0);
@@ -86,14 +93,17 @@ function swapView(inboundNav, inboundCanvas, inboundSidebar){
 
 		fadeDivIn(inboundNav);
 		fadeDivOut(window.navOnDisplay);
+		window.navOnDisplay = inboundNav;
 
 		fadeDivIn(inboundSidebar);
-		fadeDivOut(window.sidebarOnDisplay);		
+		fadeDivOut(window.sidebarOnDisplay);
+		window.sidebarOnDisplay = inboundSidebar;
+
+		document.getElementById(window.viewState).setAttribute('class', 'navLink');
+		document.getElementById(buttonID).setAttribute('class', 'navLinkDown');		
+		window.viewState = buttonID;
 
 		document.getElementById('youAreHere').innerHTML = document.getElementById(inboundNav+'Banner').innerHTML;
-
-		window.navOnDisplay = inboundNav;
-		window.sidebarOnDisplay = inboundSidebar;
 
 	}	
 }

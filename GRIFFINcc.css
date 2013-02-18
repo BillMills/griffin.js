@@ -21,10 +21,19 @@ canvas.monitor{
 	z-index:-10000;
 }
 
+canvas.navHeader{
+	position:absolute;
+	left: 24%;
+	opacity: :0;
+	z-index: -10000;
+}
+
 div.navPanel{
 	opacity:0;
 	z-index:-1;
 	display:inline;
+	position:absolute;
+	left:24%;
 	transition:opacity 0.5s, z-index 0.5s;
 	-moz-transition:opacity 0.5s, z-index 0.5s;
 	-webkit-transition:opacity 0.5s, z-index 0.5s;
@@ -139,6 +148,38 @@ button.MFlink{
 	-moz-border-radius: 5; 
 	border-radius: 5;
     display: inline;
+}
+
+button.navLink{
+	background: #4C4C4C; 
+	color: #999999;
+	border-color: #333333; 
+	-webkit-border-radius: 5; 
+	-moz-border-radius: 5; 
+	border-radius: 5;
+    display: inline;
+    font-family: 'Raleway', sans-serif;
+    font-size:14px;
+}
+
+button.navLinkDown{
+	background: #777777; 
+	color: #DDDDDD;
+	border-color: #333333; 
+	-webkit-border-radius: 5; 
+	-moz-border-radius: 5; 
+	border-radius: 5;
+    display: inline;
+    font-family: 'Raleway', sans-serif;
+    font-size:14px;	
+}
+
+h1.navPanelHeader{
+	display: inline; 
+	opacity: 0.3; 
+	font-family: "Orbitron", sans-serif; 
+	font-size: 275%; 
+	vertical-align:-20px;
 }
 
 input.link{
