@@ -4,7 +4,7 @@ function BAMBINO(monitor){
     this.linkWrapperID = 'SubsystemLinks';  //ID of div wrapping subsystem navigation links
     this.sidebarID = 'SubsystemSidebar';    //ID of right sidebar for this object
     this.topNavID = 'SubsystemsButton';     //ID of top level nav button
-    this.TTcanvasID = 'BAMBINOTTCanvas';      //ID of hidden tooltip map canvas
+    this.TTcanvasID = 'BAMBINOTTCanvas';    //ID of hidden tooltip map canvas
 
 	this.nRadial = 16;
 	this.nAzimuthal = 16;
