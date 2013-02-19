@@ -8,6 +8,9 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
 	this.monitorID = monitor;		             //div ID of wrapper div
 	this.canvasID = 'DAQcanvas';			     //ID of canvas to draw DAQ on
     this.detailCanvasID = 'DAQdetailCanvas';     //ID of canvas to draw detailed view on
+    this.linkWrapperID = 'DAQlinks'              //ID of wrapper div for DAQ links
+    this.topNavID = 'DAQbutton'                  //ID of button to navigate here in the top nav menu
+    this.sidebarID = 'DAQsidebar'                //ID of right sidebar to associate with this object
 	//this.tooltip = tooltip;			         //tooltip associated with this object
 	this.minima = minima;			             //minima of element scalea: [master, master group, master link, collector, digi summary link, digi summary node, digi group link, digi transfer, digitizer]
 	this.maxima = maxima;			             //as minima.
@@ -32,35 +35,35 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
     //navigation
     //top level nav button
     var newButton = document.createElement('button');
-    newButton.setAttribute('id', 'DAQbutton');
+    newButton.setAttribute('id', this.topNavID);
     newButton.setAttribute('class', 'navLink');
     newButton.setAttribute('type', 'button');
-    newButton.setAttribute('onclick', "javascript:swapView('DAQlinks', 'DAQcanvas', 'DAQsidebar', 'DAQbutton')");
+    newButton.setAttribute('onclick', "javascript:swapView('DAQlinks', 'DAQcanvas', 'DAQsidebar', '"+this.topNavID+"')");
     document.getElementById('statusLink').appendChild(newButton);
     document.getElementById('DAQbutton').innerHTML = 'DAQ';
     //nav wrapper div
     var newDiv = document.createElement('div');
-    newDiv.setAttribute('id', 'DAQlinks');
+    newDiv.setAttribute('id', this.linkWrapperID);
     newDiv.setAttribute('class', 'navPanel');
     this.monitor.appendChild(newDiv);
     //nav header
     var newHead = document.createElement('h1');
     newHead.setAttribute('id', 'DAQlinksBanner');
     newHead.setAttribute('class', 'navPanelHeader');
-    document.getElementById('DAQlinks').appendChild(newHead);
+    document.getElementById(this.linkWrapperID).appendChild(newHead);
     document.getElementById('DAQlinksBanner').innerHTML = 'GRIFFIN DAQ Status';
     var br1 = document.createElement("br");
-    document.getElementById('DAQlinks').appendChild(br1);
+    document.getElementById(this.linkWrapperID).appendChild(br1);
     //nav buttons
     newButton = document.createElement('button');
     newButton.setAttribute('id', 'DAQToplink');
     newButton.setAttribute('class', 'navLinkDown');
     newButton.setAttribute('type', 'button');
-    newButton.setAttribute('onclick', "javascript:swapFade('DAQcanvas', 'DAQToplink', window.DAQpointer, 'DAQbutton')");
+    newButton.setAttribute('onclick', "javascript:swapFade('DAQcanvas', 'DAQToplink', window.DAQpointer)");
     document.getElementById('DAQlinks').appendChild(newButton);
     document.getElementById('DAQToplink').innerHTML = 'Top Level';
     var br2 = document.createElement("br");
-    document.getElementById('DAQlinks').appendChild(br2);
+    document.getElementById(this.linkWrapperID).appendChild(br2);
     //p to label row of collector buttons
     var newPara = document.createElement('p');
     newPara.setAttribute('id', 'DAQcollectorTitle');
@@ -73,18 +76,23 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
         newButton.setAttribute('id', 'Collector'+i);
         newButton.setAttribute('class', 'navLink');
         newButton.setAttribute('type', 'button');
-        newButton.setAttribute('onclick', "javascript:swapFade('DAQdetailCanvas', 'Collector"+i+"', window.DAQpointer, 'DAQbutton')");
-        document.getElementById('DAQlinks').appendChild(newButton);
+        newButton.setAttribute('onclick', "javascript:swapFade('DAQdetailCanvas', 'Collector"+i+"', window.DAQpointer)");
+        document.getElementById(this.linkWrapperID).appendChild(newButton);
         document.getElementById('Collector'+i).innerHTML = i;
     }
-    //whichever button is active now:
-    this.activeButton = 'DAQToplink';
 
+    //right sidebar
+    newDiv = document.createElement('div');
+    newDiv.setAttribute('id', this.sidebarID);
+    newDiv.setAttribute('class', 'Sidebar');
+    this.monitor.appendChild(newDiv);
+
+    //display canvases
     //top view
     var newCanvas = document.createElement('canvas');
     newCanvas.setAttribute('id', this.canvasID);
     newCanvas.setAttribute('class', 'monitor');
-    newCanvas.setAttribute('style', ($('#DAQlinks').height() + 5) +'px;')
+    newCanvas.setAttribute('style', 'top: '+ ($('#DAQlinks').height() + 5) +'px;')
     newCanvas.setAttribute('width', this.canvasWidth);
     newCanvas.setAttribute('height', this.canvasHeight);
     this.monitor.appendChild(newCanvas);
@@ -96,15 +104,12 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
     newCanvas.setAttribute('width', this.canvasWidth);
     newCanvas.setAttribute('height', this.canvasHeight);
     this.monitor.appendChild(newCanvas);
+    //finished adding to the DOM////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     this.canvas = document.getElementById(canvas);
     this.context = this.canvas.getContext('2d');
     this.detailCanvas = document.getElementById(detailCanvas);
     this.detailContext = this.detailCanvas.getContext('2d');
-
-    //position canvas
-    $('#'+canvas).css('top', $('#'+'DAQlinks').height() + 5 )
-    $('#'+detailCanvas).css('top', $('#'+'DAQlinks').height() + 5 )
 
     //associate tooltip:
     //this.tooltip.obj = that;

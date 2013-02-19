@@ -53,11 +53,11 @@
       <div id='statusLink' style='display:inline; position:relative; left:1%;'>
         <button class='navLink' type="submit">MIDAS Status</button>
         <button id='DashboardButton' class='navLinkDown' type='button' onclick="javascript:swapView('DashboardLinks', 'DashboardCanvas', 'DashboardSidebar', 'DashboardButton')">Dashboard</button>
-        <button id='HVmonitorButton' class='navLink' type="button" onclick="javascript:swapView('mainframeLinks', 'TestWaffle', 'InputLayer', 'HVmonitorButton')">HV Monitor</button>
-        <button id='SubsystemsButton' class='navLink' type="button" onclick="javascript:swapView('SubsystemLinks', 'SHARCCanvas', 'SubsystemSidebar', 'SubsystemsButton')">Subsystem Monitor</button>
+        <!--button id='HVmonitorButton' class='navLink' type="button" onclick="javascript:swapView('mainframeLinks', 'TestWaffle', 'InputLayer', 'HVmonitorButton')">HV Monitor</button-->
+        <!--button id='SubsystemsButton' class='navLink' type="button" onclick="javascript:swapView('SubsystemLinks', 'SHARCCanvas', 'SubsystemSidebar', 'SubsystemsButton')">Subsystem Monitor</button-->
         <!--button id='DAQbutton' class='navLink' type='button' onclick="javascript:swapView('DAQlinks', 'DAQcanvas', 'DAQsidebar', 'DAQbutton')">DAQ</button-->
-        <button id='ClockButton' class='navLink' type='button' onclick="javascript:swapView('ClockLinks', 'ClockCanvas', 'ClockSidebar', 'ClockButton')">Clock</button>
-        <button id='TriggerButton' class='navLink' type='button' onclick="javascript:swapView('TriggerLinks', 'TriggerCanvas', 'TriggerSidebar', 'TriggerButton')">Trigger</button>
+        <!--button id='ClockButton' class='navLink' type='button' onclick="javascript:swapView('ClockLinks', 'ClockCanvas', 'ClockSidebar', 'ClockButton')">Clock</button-->
+        <!--button id='TriggerButton' class='navLink' type='button' onclick="javascript:swapView('TriggerLinks', 'TriggerCanvas', 'TriggerSidebar', 'TriggerButton')">Trigger</button-->
       </div>
       <p id="youAreHere" style='display: inline; color:rgba(255,255,255,0.3); font-size:24px; position:absolute; margin:0'></p>
     </div>
@@ -82,82 +82,6 @@
         <p id='temperatureText', style='color:white; margin-left:50px; margin-right:30px; position:relative; top:150px'></p>
       </div>
 
-      <!--Intra-view nav panels//////////////////////////////////////////////////////////-->
-      <!--Dashboard-->
-      <div id='DashboardLinks' class='navPanel', style='position:absolute; left:24%;  opacity:1; z-index:1;'>
-        <h1 id='DashboardLinksBanner' style='display: inline; opacity: 0.3; font-family: "Orbitron", sans-serif; font-size: 275%; vertical-align:-20px;'>GRIFFIN Dashboard</h1>        
-      </div>
-
-      <!--HV Mainframe-->
-      <div id="mainframeLinks" class='navPanel' style='position:absolute; left:24%;'>
-        <h1 id='mainframeLinksBanner'  style='display: inline; opacity: 0.3; font-family: "Orbitron", sans-serif; font-size: 275%; vertical-align:-20px;'>GRIFFIN HV Mainframes</h1>
-        <br>
-        <button id='Main1' class='navLink' type="button" onclick="javascript:swapFade('TestWaffle', 'Main1')">Mainframe 1</button>
-        <button id='Main2' class='navLink' type="button">Mainframe 2</button>
-        <button id='Main3' class='navLink' type="button">Mainframe 3</button>
-
-        <br>
-        <button id='card0' class='cardNav' type="button" style='display: inline; margin-bottom:5px;' onclick="javascript:swapFade('bar0', 'card0')">Slot 0</button>
-        <button id='card1' class='cardNav' type="button" style='display: inline; margin-bottom:5px;' onclick="javascript:swapFade('bar1', 'card1')">Slot 1</button>
-        <button id='card2' class='cardNav' type="button" style='display: inline; margin-bottom:5px;' onclick="javascript:swapFade('bar2', 'card2')">Slot 2</button>
-        <button id='card3' class='cardNav' type="button" style='display: inline; margin-bottom:5px;' onclick="javascript:swapFade('bar3', 'card3')">Slot 3</button>
-        <button id='card4' class='cardNav' type="button" style='display: inline; margin-bottom:5px;' onclick="javascript:swapFade('bar4', 'card4')">Slot 4</button>
-        <button id='card5' class='cardNav' type="button" style='display: inline; margin-bottom:5px;' onclick="javascript:swapFade('bar5', 'card5')">Slot 5</button>
-
-      </div>
-
-      <!--Subsystem Monitor-->
-      <div id='SubsystemLinks' class='navPanel' style='position:absolute; left:24%;'>
-        <h1 id='SubsystemLinksBanner' style='display: inline; opacity: 0.3; font-family: "Orbitron", sans-serif; font-size: 275%; vertical-align:-20px;'>GRIFFIN Subsystems</h1>
-
-        <br><button id='SHARClink' class='navLink' type="button" onclick="javascript:swapFade('SHARCCanvas', 'SHARClink')">SHARC</button>
-        <button id='HPGElink' class='navLink' type="button" onclick="javascript:swapFade('HPGECanvas', 'HPGElink')">HPGE</button>
-        <button id='DESCANTlink' class='navLink' type="button" onclick="javascript:swapFade('DESCANTCanvas', 'DESCANTlink')">DESCANT</button>
-        <button id='PACESlink' class='navLink' type="button" onclick="javascript:swapFade('PACESCanvas', 'PACESlink')">PACES</button>
-        <button id='DANTElink' class='navLink' type="button" onclick="javascript:swapFade('DANTECanvas', 'DANTElink')">DANTE</button>
-        <button id='BAMBINOlink' class='navLink' type="button" onclick="javascript:swapFade('BAMBINOCanvas', 'BAMBINOlink')">BAMBINO</button>
-        <button id='SCEPTARlink' class='navLink' type="button" onclick="javascript:swapFade('SCEPTARCanvas', 'SCEPTARlink')">SCEPTAR</button>
-        <button id='SPICElink' class='navLink' type="button" onclick="javascript:swapFade('SPICECanvas', 'SPICElink')">SPICE</button>
-
-        <br><button id='SMHVlink' class='navLink' type="button">HV</button>
-        <button id='SMThresholdsLink' class='navLink' type="button">Thresholds</button>
-        <button id='RateLink' class='navLink' type="button">Rate</button>
-
-      </div>
-
-      <!--DAQ-->
-      <!--div id='DAQlinks' class='navPanel', style='position:absolute; left:24%;'>
-        <h1 id='DAQlinksBanner' style='display: inline; opacity: 0.3; font-family: "Orbitron", sans-serif; font-size: 275%; vertical-align:-20px;'>GRIFFIN DAQ Status</h1> 
-
-        <br><button id='DAQToplink' class='navLinkDown' type="button" onclick="javascript:swapFade('DAQcanvas', 'DAQToplink')">Top Level</button>
-        <br><p style='display:inline; color:#999999'>Collector</p>
-        <button id='Collector0' class='navLink' type="button" onclick="javascript:swapFade('DAQdetailCanvas', 'Collector0')">0</button>
-        <button id='Collector1' class='navLink' type="button" onclick="javascript:swapFade('DAQdetailCanvas', 'Collector1')">1</button>
-        <button id='Collector2' class='navLink' type="button" onclick="javascript:swapFade('DAQdetailCanvas', 'Collector2')">2</button>
-        <button id='Collector3' class='navLink' type="button" onclick="javascript:swapFade('DAQdetailCanvas', 'Collector3')">3</button>
-        <button id='Collector4' class='navLink' type="button" onclick="javascript:swapFade('DAQdetailCanvas', 'Collector4')">4</button>
-        <button id='Collector5' class='navLink' type="button" onclick="javascript:swapFade('DAQdetailCanvas', 'Collector5')">5</button>
-        <button id='Collector6' class='navLink' type="button" onclick="javascript:swapFade('DAQdetailCanvas', 'Collector6')">6</button>
-        <button id='Collector7' class='navLink' type="button" onclick="javascript:swapFade('DAQdetailCanvas', 'Collector7')">7</button>
-        <button id='Collector8' class='navLink' type="button" onclick="javascript:swapFade('DAQdetailCanvas', 'Collector8')">8</button>
-        <button id='Collector9' class='navLink' type="button" onclick="javascript:swapFade('DAQdetailCanvas', 'Collector9')">9</button>
-        <button id='Collector10' class='navLink' type="button" onclick="javascript:swapFade('DAQdetailCanvas', 'Collector10')">10</button>
-        <button id='Collector11' class='navLink' type="button" onclick="javascript:swapFade('DAQdetailCanvas', 'Collector11')">11</button>
-        <button id='Collector12' class='navLink' type="button" onclick="javascript:swapFade('DAQdetailCanvas', 'Collector12')">12</button>
-        <button id='Collector13' class='navLink' type="button" onclick="javascript:swapFade('DAQdetailCanvas', 'Collector13')">13</button>
-        <button id='Collector14' class='navLink' type="button" onclick="javascript:swapFade('DAQdetailCanvas', 'Collector14')">14</button>
-        <button id='Collector15' class='navLink' type="button" onclick="javascript:swapFade('DAQdetailCanvas', 'Collector15')">15</button>
-      </div-->
-
-      <!--Clock-->
-      <div id='ClockLinks' class='navPanel', style='position:absolute; left:24%;'>
-        <h1 id='ClockLinksBanner' style='display: inline; opacity: 0.3; font-family: "Orbitron", sans-serif; font-size: 275%; vertical-align:-20px;'>GRIFFIN Clock Status</h1>        
-      </div>
-
-      <!--Trigger-->
-      <div id='TriggerLinks' class='navPanel', style='position:absolute; left:24%;'>
-        <h1 id='TriggerLinksBanner' style='display: inline; opacity: 0.3; font-family: "Orbitron", sans-serif; font-size: 275%; vertical-align:-20px;'>GRIFFIN Trigger Status</h1>        
-      </div>
 
       <!--Right Sidebars///////////////////////////////////////////////////-->
 
@@ -269,8 +193,8 @@
       </div>
 
       <!--Sidebar for DAQ-->
-      <div id='DAQsidebar' class='Sidebar'>
-      </div>
+      <!--div id='DAQsidebar' class='Sidebar'>
+      </div-->
 
       <!--Sidebar for Clock-->
       <div id='ClockSidebar' class='Sidebar'>
@@ -393,15 +317,6 @@
       $('#waffleplate').width(renderWidth);
       $('#waffleplate').height(renderHeight);
 
-      //position alarm stubs nicely:
-      var alarmTop = parseFloat($('#mainframeLinksBanner').height());
-      $('#voltAlarm').css('top', alarmTop);
-      $('#currentAlarm').css('top', alarmTop+170);
-      $('#tempAlarm').css('top', alarmTop+340);
-      document.getElementById('voltAlarm').setAttribute('onclick',"javascript:alarmTransition('voltAlarm', alarmTop, alarmTop)");
-      document.getElementById('currentAlarm').setAttribute('onclick',"javascript:alarmTransition('currentAlarm', alarmTop+170, alarmTop)");
-      document.getElementById('tempAlarm').setAttribute('onclick',"javascript:alarmTransition('tempAlarm', alarmTop+340, alarmTop)");
-
       //style the input sidebar background:
       document.getElementById('SidebarBKG').width = parseInt(($('#InputLayer').css('width')).slice(0,3));
       document.getElementById('SidebarBKG').height = parseInt($('#InputLayer').css('height').slice(0,3));
@@ -434,10 +349,37 @@
       var temperatureMeter = new FillMeter('temperatureMeter', 'InputLayer', 0, minTemperature, maxTemperature, temperatureUnit, statusPrecision);
 
       //main elements
+      //dashboard
       var dashboard = new Dashboard('waffleplate');
 
+      //HV monitor
       var waffle = new Waffle(rows,columns, alarmThresholds, scaleMaxima, "waffleplate", rowTitles, "InputLayer", ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleSizes, moduleLabels, sliderVoltage, sliderRamp, sliderRampDown, barChartPrecision, prefix, postfix);
 
+
+      //Subsystem menu; universal buttons declared outside of individual subsystems:
+      //add top level nav button:
+      var newButton = document.createElement('button');
+      newButton.setAttribute('id', 'SubsystemsButton');
+      newButton.setAttribute('class', 'navLink');
+      newButton.setAttribute('type', 'button');
+      newButton.setAttribute('onclick', "javascript:swapView('SubsystemLinks', 'SHARCCanvas', 'SubsystemSidebar', 'SubsystemsButton')");
+      document.getElementById('statusLink').appendChild(newButton);
+      document.getElementById('SubsystemsButton').innerHTML = 'Subsystem Monitor';
+      //create nav panel for subsystem view:
+      var newDiv = document.createElement('div');
+      newDiv.setAttribute('id', 'SubsystemLinks');
+      newDiv.setAttribute('class', 'navPanel');
+      document.getElementById('waffleplate').appendChild(newDiv);
+      //headline for nav panel
+      var newHead = document.createElement('h1');
+      newHead.setAttribute('id', 'SubsystemLinksBanner');
+      newHead.setAttribute('class', 'navPanelHeader');
+      document.getElementById('SubsystemLinks').appendChild(newHead);
+      document.getElementById('SubsystemLinksBanner').innerHTML = 'GRIFFIN Subsystem Monitor';
+      //linebreak:
+      var newBreak = document.createElement('br');
+      document.getElementById('SubsystemLinks').appendChild(newBreak);    
+      //subdetectors
       var SHARCMonitor = new SHARC('waffleplate','horizontal', SMrows, SMcolumns, SMnChannels, 4, 4, 1, 16, SMminima, SMmaxima, [],[]);
       var HPGEMonitor = new HPGE('waffleplate', 0);
       var DESCANTMonitor = new DESCANT('waffleplate', [],[]);
@@ -452,6 +394,32 @@
       SCEPTARMonitor.draw(SCEPTARMonitor.nFrames);
       var SPICEMonitor = new SPICE('waffleplate');
       SPICEMonitor.draw(SPICEMonitor.nFrames);
+      //linebreak
+      var newBreak2 = document.createElement('br');
+      document.getElementById('SubsystemLinks').appendChild(newBreak2);
+      //nav for different reported values:
+      //HV
+      newButton = document.createElement('button');
+      newButton.setAttribute('id', 'subsystemHV');
+      newButton.setAttribute('class', 'navLink');
+      newButton.setAttribute('type', 'button');
+      document.getElementById('SubsystemLinks').appendChild(newButton);
+      document.getElementById('subsystemHV').innerHTML = 'HV';
+      //Thresholds
+      newButton = document.createElement('button');
+      newButton.setAttribute('id', 'subsystemThresholds');
+      newButton.setAttribute('class', 'navLink');
+      newButton.setAttribute('type', 'button');
+      document.getElementById('SubsystemLinks').appendChild(newButton); 
+      document.getElementById('subsystemThresholds').innerHTML = 'Thresholds';
+      //Rate
+      newButton = document.createElement('button');
+      newButton.setAttribute('id', 'subsystemRate');
+      newButton.setAttribute('class', 'navLink');
+      newButton.setAttribute('type', 'button');
+      document.getElementById('SubsystemLinks').appendChild(newButton); 
+      document.getElementById('subsystemRate').innerHTML = 'Rate';
+
 
       var DAQMonitor = new DAQ('waffleplate', 'DAQcanvas', 'DAQdetailCanvas', 0, DAQminima, DAQmaxima, configParameters);
 
@@ -459,6 +427,15 @@
       ClockMonitor.draw(ClockMonitor.nFrames);
 
       var TriggerMonitor = new Trigger('waffleplate');
+
+      //position alarm stubs nicely after waffle has been declared:
+      var alarmTop = parseFloat($('#mainframeLinksBanner').height());
+      $('#voltAlarm').css('top', alarmTop);
+      $('#currentAlarm').css('top', alarmTop+170);
+      $('#tempAlarm').css('top', alarmTop+340);
+      document.getElementById('voltAlarm').setAttribute('onclick',"javascript:alarmTransition('voltAlarm', alarmTop, alarmTop)");
+      document.getElementById('currentAlarm').setAttribute('onclick',"javascript:alarmTransition('currentAlarm', alarmTop+170, alarmTop)");
+      document.getElementById('tempAlarm').setAttribute('onclick',"javascript:alarmTransition('tempAlarm', alarmTop+340, alarmTop)");
 
       //set up arrays:
       //HV monitor

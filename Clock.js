@@ -2,8 +2,32 @@ function Clock(monitor){
 
 	this.wrapperID = monitor;			//ID of wrapping div
 	this.canvasID = 'ClockCanvas';		//ID of canvas to paint clock on
+    this.linkWrapperID = 'ClockLinks'   //ID of div to contain clock view header
 
 	this.wrapper = document.getElementById(monitor);
+
+    //add top level nav button:
+    var newButton = document.createElement('button');
+    newButton.setAttribute('id', 'ClockButton');
+    newButton.setAttribute('class', 'navLink');
+    newButton.setAttribute('type', 'button');
+    newButton.setAttribute('onclick', "javascript:swapView('ClockLinks', 'ClockCanvas', 'ClockSidebar', 'ClockButton')");
+    document.getElementById('statusLink').appendChild(newButton);
+    document.getElementById('ClockButton').innerHTML = 'Clock';
+
+    //nav wrapper div
+    var newDiv = document.createElement('div');
+    newDiv.setAttribute('id', this.linkWrapperID);
+    newDiv.setAttribute('class', 'navPanel');
+    this.wrapper.appendChild(newDiv);
+    //nav header
+    var newHead = document.createElement('h1');
+    newHead.setAttribute('id', 'ClockLinksBanner');
+    newHead.setAttribute('class', 'navPanelHeader');
+    document.getElementById(this.linkWrapperID).appendChild(newHead);
+    document.getElementById('ClockLinksBanner').innerHTML = 'GRIFFIN Clock Status';
+    var br1 = document.createElement("br");
+    document.getElementById(this.linkWrapperID).appendChild(br1);
 
 	//deploy a canvas for the clock view:
     this.canvasWidth = 0.48*$(this.wrapper).width();

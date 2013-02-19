@@ -5,6 +5,8 @@ function Waffle(rows, cols, alarm, scaleMax, wrapperDiv, rowTitles, InputLayer, 
 
         //pointer voodoo:
         var that = this;
+        //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
+        window.HVpointer = that;
 
         //member data:
         this.rows = rows + 1;                       //number of rows in the waffle; +1 for primary row
@@ -29,12 +31,59 @@ function Waffle(rows, cols, alarm, scaleMax, wrapperDiv, rowTitles, InputLayer, 
         this.voltageSlider = voltageSlider;         //demand voltage slider associated with this waffle
         this.rampSlider = rampSlider;               //voltage ramp up speed slider associated with this waffle
         this.rampDownSlider = rampDownSlider;       //voltage ramp down speed slider associated with this waffle
+        this.linkWrapperID = 'mainframeLinks';      //ID of div containing nav links
+        this.topNavID = 'HVmonitorButton';
+        this.monitor = document.getElementById(this.wrapperDiv);
 
         //determine dimesions of canvas:
         this.totalWidth = Math.round(0.5*$('#'+this.wrapperDiv).width());
         //cell dimensions controlled by total width, since width more visually important here:
         this.cellSide = (this.totalWidth - 60) / Math.max(20, this.cols);
         this.totalHeight = 16*this.cellSide;
+
+    //navigation
+    //top level nav button
+    var newButton = document.createElement('button');
+    newButton.setAttribute('id', this.topNavID);
+    newButton.setAttribute('class', 'navLink');
+    newButton.setAttribute('type', 'button');
+    newButton.setAttribute('onclick', "javascript:swapView('mainframeLinks', 'TestWaffle', 'InputLayer', '"+this.topNavID+"')");
+    document.getElementById('statusLink').appendChild(newButton);
+    document.getElementById(this.topNavID).innerHTML = 'HV Monitor';
+
+    //nav wrapper div
+    var newDiv = document.createElement('div');
+    newDiv.setAttribute('id', this.linkWrapperID);
+    newDiv.setAttribute('class', 'navPanel');
+    this.monitor.appendChild(newDiv);
+    //nav header
+    var newHead = document.createElement('h1');
+    newHead.setAttribute('id', 'mainframeLinksBanner');
+    newHead.setAttribute('class', 'navPanelHeader');
+    document.getElementById(this.linkWrapperID).appendChild(newHead);
+    document.getElementById('mainframeLinksBanner').innerHTML = 'GRIFFIN HV Mainframes';
+    var br1 = document.createElement("br");
+    document.getElementById(this.linkWrapperID).appendChild(br1);
+    //nav buttons
+    newButton = document.createElement('button');
+    newButton.setAttribute('id', 'Main1');
+    newButton.setAttribute('class', 'navLinkDown');
+    newButton.setAttribute('type', 'button');
+    newButton.setAttribute('onclick', "javascript:swapFade('TestWaffle', 'Main1', window.HVpointer)");
+    document.getElementById('mainframeLinks').appendChild(newButton);
+    document.getElementById('Main1').innerHTML = 'Mainframe 1';
+    var br2 = document.createElement("br");
+    document.getElementById(this.linkWrapperID).appendChild(br2);
+    //deploy slot buttons
+    for(i=0; i<this.moduleSizes.length; i++){
+        newButton = document.createElement('button');
+        newButton.setAttribute('id', 'card'+i);
+        newButton.setAttribute('class', 'navLink');
+        newButton.setAttribute('type', 'button');
+        newButton.setAttribute('onclick', "javascript:swapFade('bar"+i+"', 'card"+i+"', window.HVpointer)");
+        document.getElementById(this.linkWrapperID).appendChild(newButton);
+        document.getElementById('card'+i).innerHTML = 'Slot '+i;
+    }
 
         //inject canvas into DOM for waffle to paint on:
         var newCanvas = document.createElement('canvas');

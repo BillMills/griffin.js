@@ -3,16 +3,21 @@ function SHARC(monitor, orientation, rows, columns, nStrips, nRadialHoriz, nAzim
 	var i,j;
 
 	//argument member variables/////////////////////////////////////////////////////////////////////////////////
-	this.monitorID = monitor;		//div ID of wrapper div
-	this.orientation = orientation;	//'vertical' or 'horizontal', the direction of the strips for this instance.
-	this.canvasID = 'SHARCCanvas';	//the canvas ID on which to draw the strip monitor
-	this.rows = rows;				//number of rows of detectors
-	this.columns = columns;			//number of columns of detectors
-	this.nStrips = nStrips;			//number of sense strips per detector
-	this.minima = minima;			//array of scale minima, one entry for each scalar option
-	this.maxima = maxima;			//array of scale maxima, one entry for each scalar option
+	this.monitorID = monitor;				//div ID of wrapper div
+	this.orientation = orientation;			//'vertical' or 'horizontal', the direction of the strips for this instance.
+	this.canvasID = 'SHARCCanvas';			//the canvas ID on which to draw the strip monitor
+	this.rows = rows;						//number of rows of detectors
+	this.columns = columns;					//number of columns of detectors
+	this.nStrips = nStrips;					//number of sense strips per detector
+	this.minima = minima;					//array of scale minima, one entry for each scalar option
+	this.maxima = maxima;					//array of scale maxima, one entry for each scalar option
+	this.linkWrapperID = 'SubsystemLinks';	//ID of div wrapping subsystem navigation links
+	this.sidebarID = 'SubsystemSidebar';	//ID of right sidebar for this object
+	this.topNavID = 'SubsystemsButton';		//ID of top level nav button
 
-	that = this;
+	var that = this;
+    //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
+    window.SHARCpointer = that;
 
     //establish animation parameters////////////////////////////////////////////////////////////////////
     this.FPS = 30;
@@ -22,6 +27,15 @@ function SHARC(monitor, orientation, rows, columns, nStrips, nRadialHoriz, nAzim
     //which of the scalars are we tracking now? (corresponds to the index in this.maxima)
     this.trackingIndex = 0;
 
+    //insert navigation/////////////////////////////////////////////////////////////////////////////////
+    var newButton = document.createElement('button');
+    newButton.setAttribute('id', 'SHARClink');
+    newButton.setAttribute('class', 'navLinkDown');
+    newButton.setAttribute('type', 'button');
+    newButton.setAttribute('onclick', "javascript:swapFade('SHARCCanvas', 'SHARClink', window.SHARCpointer)");
+    document.getElementById(this.linkWrapperID).appendChild(newButton);
+    document.getElementById('SHARClink').innerHTML = 'SHARC';
+
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
 	this.monitor = document.getElementById(this.monitorID);
     this.canvasWidth = 0.48*$(this.monitor).width();
@@ -30,7 +44,7 @@ function SHARC(monitor, orientation, rows, columns, nStrips, nRadialHoriz, nAzim
 	var newCanvas = document.createElement('canvas');
     newCanvas.setAttribute('id', this.canvasID);
     newCanvas.setAttribute('class', 'monitor');
-    newCanvas.setAttribute('style', 'top:' + ($('#SubsystemLinks').height() + 5) +'px;')
+    newCanvas.setAttribute('style', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;')
     newCanvas.setAttribute('width', this.canvasWidth);
     newCanvas.setAttribute('height', this.canvasHeight);
     document.getElementById(monitor).appendChild(newCanvas);
