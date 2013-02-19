@@ -1,18 +1,26 @@
-function Tooltip(ttCanvasID, ttTextID, ttDivID, wrapperID, prefix, postfix){
+function Tooltip(ttCanvasID, ttTextID, ttBKGcanvID, ttDivID, wrapperID, prefix, postfix){
 
     this.obj;                                       //the object that this tooltip is associated with
     this.canvasID = ttCanvasID;                     //target canvas
     this.ttTextID = ttTextID;                       //tooltip text
+    this.ttBKGcanvID = ttBKGcanvID;                 //tooltip's background canvas
     this.ttDivID = ttDivID;                         //tooltip div
     this.wrapperID = wrapperID;                     //ID of div which wraps the tooltip's canvas
     this.prefix = prefix;                           //prefixes to tooltip content lines
     this.postfix = postfix;                         //postfixes to tooltip content lines
 
     //inject the necessary DOM elements for this tooltip:
+    //wrapper div
     var newDiv = document.createElement('div');
     newDiv.setAttribute('id', ttDivID);
     newDiv.setAttribute('class', 'tooltip');
     document.body.appendChild(newDiv);
+    //background canvas
+    var newCanv = document.createElement('canvas');
+    newCanv.setAttribute('id', ttBKGcanvID);
+    newCanv.setAttribute('class', 'ttBKG');
+    document.getElementById(ttDivID).appendChild(newCanv);
+    //content paragraph
     var newPara = document.createElement('p');
     newPara.setAttribute('id', ttTextID);
     newPara.setAttribute('class', 'TTtext');
@@ -22,6 +30,11 @@ function Tooltip(ttCanvasID, ttTextID, ttDivID, wrapperID, prefix, postfix){
     this.context = this.canvas.getContext('2d'); 
     this.ttDiv = document.getElementById(this.ttDivID);
     this.ttParent = document.getElementById(this.wrapperID);
+    this.BKGcanvas = document.getElementById(this.ttBKGcanvID);
+    this.BKGcontext = this.BKGcanvas.getContext('2d');
+
+    //match the font here to the font declared in the css for the tooltip text, to get measurements made in defineText right
+    this.BKGcanvas.font = '14px "Raleway"';
 
     //old tt bin, for updates when the mouse is just sitting in the same place:
     this.oldCellIndex = -1;
@@ -45,14 +58,21 @@ function Tooltip(ttCanvasID, ttTextID, ttDivID, wrapperID, prefix, postfix){
         if(cellIndex != -1){
 
             //establish text:
-            var newWidth = that.obj.defineText(cellIndex);
+            var newWidth = Math.max(1.5*that.obj.defineText(cellIndex),200);
+            var newHeight = 200;
 
             //update the size of the tool tip to fit the text:
-            $(that.ttDiv).width(newWidth);
-            $(that.ttDiv).height(180);
+            that.ttDiv.setAttribute('width', newWidth);
+            that.ttDiv.setAttribute('height', newHeight);
+            $('#'+that.ttTextID).width(newWidth);
+
+            //repaint background canvas:
+            that.BKGcanvas.setAttribute('width', newWidth);
+            that.BKGcanvas.setAttribute('height', newHeight);
+            that.drawBKG(newWidth, newHeight);
 
             //make the tool tip follow the mouse:
-            that.ttDiv.style.top = event.pageY - 180 - 5;
+            that.ttDiv.style.top = event.pageY - newHeight - 5;
             that.ttDiv.style.left = event.pageX - newWidth - 5;
 
             //make the tool tip appear iff the waffle is showing:
@@ -74,12 +94,27 @@ function Tooltip(ttCanvasID, ttTextID, ttDivID, wrapperID, prefix, postfix){
     this.update = function(){
         if(this.allowUpdate){
             //establish text:
-            var newWidth = this.obj.defineText(this.oldCellIndex);            
+            var newWidth = Math.max(1.5*this.obj.defineText(this.oldCellIndex),200);            
 
             //update the size of the tool tip to fit the text:
-            $(this.ttDiv).width(newWidth);
-            $(this.ttDiv).height(180);
+            this.ttDiv.setAttribute('width', newWidth);
+            this.ttDiv.setAttribute('height', 200);
+            $('#'+this.ttTextID).width(newWidth);
+            this.BKGcanvas.setAttribute('width', newWidth);
+            this.BKGcanvas.setAttribute('height', 200);
+            this.drawBKG(newWidth, 200);
         }
+    };
+
+    //draw the tooltip background
+    this.drawBKG = function(width, height){
+        this.BKGcontext.clearRect(0,0,width, height);
+        this.BKGcontext.lineWidth = 5;
+        this.BKGcontext.strokeStyle = '#FFFFFF';
+        this.BKGcontext.fillStyle = 'rgba(0,0,0,0.85)';
+        roundBox(this.BKGcontext,5,5,width-10,height-10,10);
+        this.BKGcontext.fill();
+        this.BKGcontext.stroke();
     };
 
 }

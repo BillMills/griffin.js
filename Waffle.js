@@ -42,49 +42,50 @@ function Waffle(rows, cols, alarm, scaleMax, wrapperDiv, rowTitles, InputLayer, 
         this.cellSide = (this.totalWidth - 60) / Math.max(20, this.cols);
         this.totalHeight = 16*this.cellSide;
 
-    //navigation
-    //top level nav button
-    var newButton = document.createElement('button');
-    newButton.setAttribute('id', this.topNavID);
-    newButton.setAttribute('class', 'navLink');
-    newButton.setAttribute('type', 'button');
-    newButton.setAttribute('onclick', "javascript:swapView('mainframeLinks', 'TestWaffle', 'InputLayer', '"+this.topNavID+"')");
-    document.getElementById('statusLink').appendChild(newButton);
-    document.getElementById(this.topNavID).innerHTML = 'HV Monitor';
-
-    //nav wrapper div
-    var newDiv = document.createElement('div');
-    newDiv.setAttribute('id', this.linkWrapperID);
-    newDiv.setAttribute('class', 'navPanel');
-    this.monitor.appendChild(newDiv);
-    //nav header
-    var newHead = document.createElement('h1');
-    newHead.setAttribute('id', 'mainframeLinksBanner');
-    newHead.setAttribute('class', 'navPanelHeader');
-    document.getElementById(this.linkWrapperID).appendChild(newHead);
-    document.getElementById('mainframeLinksBanner').innerHTML = 'GRIFFIN HV Mainframes';
-    var br1 = document.createElement("br");
-    document.getElementById(this.linkWrapperID).appendChild(br1);
-    //nav buttons
-    newButton = document.createElement('button');
-    newButton.setAttribute('id', 'Main1');
-    newButton.setAttribute('class', 'navLinkDown');
-    newButton.setAttribute('type', 'button');
-    newButton.setAttribute('onclick', "javascript:swapFade('TestWaffle', 'Main1', window.HVpointer)");
-    document.getElementById('mainframeLinks').appendChild(newButton);
-    document.getElementById('Main1').innerHTML = 'Mainframe 1';
-    var br2 = document.createElement("br");
-    document.getElementById(this.linkWrapperID).appendChild(br2);
-    //deploy slot buttons
-    for(i=0; i<this.moduleSizes.length; i++){
-        newButton = document.createElement('button');
-        newButton.setAttribute('id', 'card'+i);
+        //DOM insertions///////////////////////////////////////////////////////////////////////
+        //navigation
+        //top level nav button
+        var newButton = document.createElement('button');
+        newButton.setAttribute('id', this.topNavID);
         newButton.setAttribute('class', 'navLink');
         newButton.setAttribute('type', 'button');
-        newButton.setAttribute('onclick', "javascript:swapFade('bar"+i+"', 'card"+i+"', window.HVpointer)");
-        document.getElementById(this.linkWrapperID).appendChild(newButton);
-        document.getElementById('card'+i).innerHTML = 'Slot '+i;
-    }
+        newButton.setAttribute('onclick', "javascript:swapView('mainframeLinks', 'TestWaffle', 'InputLayer', '"+this.topNavID+"')");
+        document.getElementById('statusLink').appendChild(newButton);
+        document.getElementById(this.topNavID).innerHTML = 'HV Monitor';
+
+        //nav wrapper div
+        var newDiv = document.createElement('div');
+        newDiv.setAttribute('id', this.linkWrapperID);
+        newDiv.setAttribute('class', 'navPanel');
+        this.monitor.appendChild(newDiv);
+        //nav header
+        var newHead = document.createElement('h1');
+        newHead.setAttribute('id', 'mainframeLinksBanner');
+        newHead.setAttribute('class', 'navPanelHeader');
+        document.getElementById(this.linkWrapperID).appendChild(newHead);
+        document.getElementById('mainframeLinksBanner').innerHTML = 'GRIFFIN HV Mainframes';
+        var br1 = document.createElement("br");
+        document.getElementById(this.linkWrapperID).appendChild(br1);
+        //nav buttons
+        newButton = document.createElement('button');
+        newButton.setAttribute('id', 'Main1');
+        newButton.setAttribute('class', 'navLinkDown');
+        newButton.setAttribute('type', 'button');
+        newButton.setAttribute('onclick', "javascript:swapFade('TestWaffle', 'Main1', window.HVpointer)");
+        document.getElementById('mainframeLinks').appendChild(newButton);
+        document.getElementById('Main1').innerHTML = 'Mainframe 1';
+        var br2 = document.createElement("br");
+        document.getElementById(this.linkWrapperID).appendChild(br2);
+        //deploy slot buttons
+        for(i=0; i<this.moduleSizes.length; i++){
+            newButton = document.createElement('button');
+            newButton.setAttribute('id', 'card'+i);
+            newButton.setAttribute('class', 'navLink');
+            newButton.setAttribute('type', 'button');
+            newButton.setAttribute('onclick', "javascript:swapFade('bar"+i+"', 'card"+i+"', window.HVpointer)");
+            document.getElementById(this.linkWrapperID).appendChild(newButton);
+            document.getElementById('card'+i).innerHTML = 'Slot '+i;
+        }
 
         //inject canvas into DOM for waffle to paint on:
         var newCanvas = document.createElement('canvas');
@@ -93,6 +94,7 @@ function Waffle(rows, cols, alarm, scaleMax, wrapperDiv, rowTitles, InputLayer, 
         newCanvas.setAttribute('width', this.totalWidth);
         newCanvas.setAttribute('height', this.totalHeight);
         document.getElementById(wrapperDiv).appendChild(newCanvas);
+        //finished DOM insertions///////////////////////////////////////////////////////////////
 
         this.canvas = document.getElementById(this.canvasID);
         this.context = this.canvas.getContext('2d');
@@ -114,7 +116,7 @@ function Waffle(rows, cols, alarm, scaleMax, wrapperDiv, rowTitles, InputLayer, 
         this.leftEdge = (this.totalWidth - (this.waffleWidth + this.context.measureText('Prim').width))/2;
 
         //make a tooltip for this object:
-        this.tooltip = new Tooltip(this.canvasID, 'MFTipText', 'MFTT', this.wrapperDiv, prefix, postfix);
+        this.tooltip = new Tooltip(this.canvasID, 'MFTipText', 'MFtipCanv', 'MFTT', this.wrapperDiv, prefix, postfix);
         //give the tooltip a pointer back to this object:
         this.tooltip.obj = that;
 
@@ -553,7 +555,7 @@ function Waffle(rows, cols, alarm, scaleMax, wrapperDiv, rowTitles, InputLayer, 
                 }
 
                 //keep track of longest line:
-                longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width);
+                longestLine = Math.max(longestLine, this.tooltip.BKGcontext.measureText(nextLine).width);
 
                 //append to tooltip:
                 toolTipContent += nextLine;

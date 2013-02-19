@@ -55,7 +55,7 @@ function SHARC(monitor, orientation, rows, columns, nStrips, nRadialHoriz, nAzim
     this.halfWidth = this.canvasWidth/2;
 
     //set up tooltip:
-    this.tooltip = new Tooltip(this.canvasID, 'SHARCTipText', 'SHARCTT', this.monitorID, prefix, postfix);
+    this.tooltip = new Tooltip(this.canvasID, 'SHARCTipText', 'SHARCttCanv', 'SHARCTT', this.monitorID, prefix, postfix);
     this.tooltip.obj = that;
 
     //define dimensions of each detector display/////////////////////////////////////////////////////////

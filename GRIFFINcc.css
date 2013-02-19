@@ -42,7 +42,7 @@ div.navPanel{
 div.tooltip{
 	display:none;
 	position:absolute;
-	background: rgba(0,0,0,0.7);
+	/*background: rgba(0,0,0,0.7);*/
 	width:100px;
 	height:60px;
 	color:#FFFFFF;
@@ -50,7 +50,15 @@ div.tooltip{
 	z-index: 20000;
 }
 
+canvas.ttBKG{
+	position:absolute;
+	left: 5px;
+	top: -15px;
+}
+
 p.TTtext{
+	font-family: 'Raleway', sans-serif;
+	font-size: 14px;
 	text-align: center;
 	position:relative;
 	left: 5px;

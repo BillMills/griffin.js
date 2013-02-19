@@ -55,7 +55,7 @@ function DESCANT(monitor, prefix, postfix){
     this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
 
     //set up tooltip:
-    this.tooltip = new Tooltip(this.canvasID, 'DESCANTTipText', 'DESCANTTT', this.monitorID, prefix, postfix);
+    this.tooltip = new Tooltip(this.canvasID, 'DESCANTTipText', 'DESCANTttCanv', 'DESCANTTT', this.monitorID, prefix, postfix);
     this.tooltip.obj = that;
 
 	//center of DESCANT
