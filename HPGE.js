@@ -1,12 +1,13 @@
-function HPGE(monitor, enableBGO){
+function HPGE(monitor, enableBGO, prefix, postfix){
 
 	this.monitorID = monitor;		                //div ID of wrapper div
 	this.canvasID = 'HPGECanvas'; 			        //ID of canvas to draw top level TIGRESS view on
 	this.detailCanvasID = 'HPGEdetailCanvas';		//ID of canvas to draw single HPGE view on
     this.enableBGO = enableBGO;                     //are BGO suppressors present?
     this.linkWrapperID = 'SubsystemLinks';          //ID of div wrapping subsystem navigation links
-    this.sidebarID = 'SubsystemSidebar';           //ID of right sidebar for this object
+    this.sidebarID = 'SubsystemSidebar';            //ID of right sidebar for this object
     this.topNavID = 'SubsystemsButton';             //ID of top level nav button
+    this.TTcanvasID = 'HPGETTCanvas';               //ID of hidden tooltip map canvas
 
     var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
@@ -50,6 +51,26 @@ function HPGE(monitor, enableBGO){
     document.getElementById(monitor).appendChild(newCanvas);
     this.detailCanvas = document.getElementById(this.detailCanvasID);
     this.detailContext = this.detailCanvas.getContext('2d');
+    //hidden Tooltip map layer
+    newCanvas = document.createElement('canvas');
+    newCanvas.setAttribute('id', this.TTcanvasID);
+    newCanvas.setAttribute('class', 'monitor');
+    newCanvas.setAttribute('style', 'top:' + ($('#SubsystemLinks').height() + 5)*1.25 +'px;')
+    newCanvas.setAttribute('width', this.canvasWidth);
+    newCanvas.setAttribute('height', this.canvasHeight);
+    document.getElementById(monitor).appendChild(newCanvas);
+    this.TTcanvas = document.getElementById(this.TTcanvasID);
+    this.TTcontext = this.TTcanvas.getContext('2d');
+
+    //Dirty trick to implement tooltip on obnoxious geometry: make another canvas of the same size hidden beneath, with the 
+    //detector drawn on it, but with each element filled in with rgba(0,0,n,1), where n is the channel number; fetching the color from the 
+    //hidden canvas at point x,y will then return the appropriate channel index.
+    //paint whole hidden canvas with R!=G!=B to trigger TT suppression:
+    this.TTcontext.fillStyle = 'rgba(50,100,150,1)';
+    this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
+    //set up tooltip:
+    this.tooltip = new Tooltip(this.canvasID, 'HPGETipText', 'HPGEttCanv', 'HPGETT', this.monitorID, prefix, postfix);
+    this.tooltip.obj = that;
 
     //drawing parameters
     this.centerX = this.canvasWidth/2;
@@ -109,10 +130,17 @@ function HPGE(monitor, enableBGO){
 
     this.draw = function(frame){
         var i;
+        //once for the display canvas...
         this.context.fillStyle = 'rgba(0,0,0,1)';
         for(i=1; i<17; i++){
-            if(this.enableBGO == 1) this.BGOsummary(this.summaryCoord[i][0], this.summaryCoord[i][1]);
-            this.HPGEsummary(this.summaryCoord[i][0], this.summaryCoord[i][1]);
+            if(this.enableBGO == 1) this.BGOsummary(this.context, this.summaryCoord[i][0], this.summaryCoord[i][1]);
+            this.HPGEsummary(this.context, this.summaryCoord[i][0], this.summaryCoord[i][1]);
+        }
+        //...and once again for the tooltip encoding
+        for(i=1; i<17; i++){
+            this.TTcontext.fillStyle = 'rgba('+i+','+i+','+i+',1)';
+            if(this.enableBGO == 1) this.BGOsummary(this.TTcontext, this.summaryCoord[i][0], this.summaryCoord[i][1]);
+            this.HPGEsummary(this.TTcontext, this.summaryCoord[i][0], this.summaryCoord[i][1]);
         }
 
         this.context.clearRect(0,0.65*this.canvasHeight,this.canvasWidth,0.35*this.canvasHeight);
@@ -266,20 +294,20 @@ function HPGE(monitor, enableBGO){
     };
 
     //draw BGO summary box
-    this.BGOsummary = function(x0,y0,fill){
-        this.context.strokeStyle = '#999999';
-        this.context.fillRect(x0,y0,this.BGOouter, this.BGOouter);
-        this.context.strokeRect(x0,y0,this.BGOouter, this.BGOouter);
+    this.BGOsummary = function(context, x0,y0,fill){
+        context.strokeStyle = '#999999';
+        context.fillRect(x0,y0,this.BGOouter, this.BGOouter);
+        context.strokeRect(x0,y0,this.BGOouter, this.BGOouter);
 
-        this.context.clearRect(x0 + (this.BGOouter-this.BGOinner)/2, y0 + (this.BGOouter-this.BGOinner)/2, this.BGOinner, this.BGOinner);
-        this.context.strokeRect(x0 + (this.BGOouter-this.BGOinner)/2, y0 + (this.BGOouter-this.BGOinner)/2, this.BGOinner, this.BGOinner);
+        context.clearRect(x0 + (this.BGOouter-this.BGOinner)/2, y0 + (this.BGOouter-this.BGOinner)/2, this.BGOinner, this.BGOinner);
+        context.strokeRect(x0 + (this.BGOouter-this.BGOinner)/2, y0 + (this.BGOouter-this.BGOinner)/2, this.BGOinner, this.BGOinner);
     };
 
     //draw HPGE summary
-    this.HPGEsummary = function(x0,y0){
-        this.context.strokeStyle = '#999999';
-        this.context.fillRect(x0 + (this.BGOouter-this.HPGEside)/2, y0 + (this.BGOouter-this.HPGEside)/2, this.HPGEside,this.HPGEside);
-        this.context.strokeRect(x0 + (this.BGOouter-this.HPGEside)/2, y0 + (this.BGOouter-this.HPGEside)/2, this.HPGEside, this.HPGEside);
+    this.HPGEsummary = function(context, x0,y0){
+        context.strokeStyle = '#999999';
+        context.fillRect(Math.round(x0 + (this.BGOouter-this.HPGEside)/2), Math.round(y0 + (this.BGOouter-this.HPGEside)/2), Math.round(this.HPGEside),Math.round(this.HPGEside));
+        if(context != this.TTcontext) context.strokeRect(x0 + (this.BGOouter-this.HPGEside)/2, y0 + (this.BGOouter-this.HPGEside)/2, this.HPGEside, this.HPGEside);
 
     };
 
@@ -351,7 +379,35 @@ function HPGE(monitor, enableBGO){
         this.detailContext.restore();
     };
 
+    this.findCell = function(x, y){
+        var imageData = this.TTcontext.getImageData(x,y,1,1);
+        var index = -1;
+        if(imageData.data[0] == imageData.data[1] && imageData.data[0] == imageData.data[2]) index = imageData.data[0];
+        return index;
+    };
 
+    this.defineText = function(cell){
+        var toolTipContent = '<br>';
+        var nextLine;
+        var longestLine = 0;
+        var cardIndex;
+        var i;
+
+        nextLine = 'Channel '+cell;
+
+        //keep track of the longest line of text:
+        longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
+        toolTipContent += nextLine;
+
+        document.getElementById(this.tooltip.ttTextID).innerHTML = toolTipContent;
+
+        //return length of longest line:
+        return longestLine;
+    };
+
+    this.update = function(){
+        this.tooltip.update();
+    }
 }
 
 

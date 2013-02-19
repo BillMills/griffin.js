@@ -79,38 +79,38 @@ function DESCANT(monitor, prefix, postfix){
 	this.wireframe = function(){
 		var i, j;
 		if(this.drawRules[i]!=0){
-		for(i=0; i<70; i++){
-			this.context.save();
-			this.context.translate(this.centerX, this.centerY);
-			this.context.rotate(this.drawRules[i][3]);
+			for(i=0; i<70; i++){
+				this.context.save();
+				this.context.translate(this.centerX, this.centerY);
+				this.context.rotate(this.drawRules[i][3]);
 
-			this.TTcontext.fillStyle = 'rgba(0,0,0,0)';
+				this.TTcontext.fillStyle = 'rgba(0,0,0,0)';
 
-			if(this.drawRules[i][0] == 'white')whiteDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, 0);
-			else if(this.drawRules[i][0] == 'red') redDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 0);
-			else if(this.drawRules[i][0] == 'blue') blueDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 0);
-			else if(this.drawRules[i][0] == 'greenLeft') greenLeftDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 0);
-			else if(this.drawRules[i][0] == 'greenRight') greenRightDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 0);
+				if(this.drawRules[i][0] == 'white')whiteDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, 0);
+				else if(this.drawRules[i][0] == 'red') redDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 0);
+				else if(this.drawRules[i][0] == 'blue') blueDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 0);
+				else if(this.drawRules[i][0] == 'greenLeft') greenLeftDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 0);
+				else if(this.drawRules[i][0] == 'greenRight') greenRightDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 0);
 
-			this.context.restore();
-		}
+				this.context.restore();
+			}
 
-		//and the same again for the hidden TT info canvas:
-		for(i=0; i<70; i++){
-			this.TTcontext.save();
-			this.TTcontext.translate(this.centerX, this.centerY);
-			this.TTcontext.rotate(this.drawRules[i][3]);
+			//and the same again for the hidden TT info canvas:
+			for(i=0; i<70; i++){
+				this.TTcontext.save();
+				this.TTcontext.translate(this.centerX, this.centerY);
+				this.TTcontext.rotate(this.drawRules[i][3]);
 
-			this.TTcontext.fillStyle = 'rgba('+i+','+i+','+i+',1)';
+				this.TTcontext.fillStyle = 'rgba('+i+','+i+','+i+',1)';
 
-			if(this.drawRules[i][0] == 'white')whiteDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, 1);
-			else if(this.drawRules[i][0] == 'red') redDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 1);
-			else if(this.drawRules[i][0] == 'blue') blueDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 1);
-			else if(this.drawRules[i][0] == 'greenLeft') greenLeftDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 1);
-			else if(this.drawRules[i][0] == 'greenRight') greenRightDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 1);
+				if(this.drawRules[i][0] == 'white')whiteDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, 1);
+				else if(this.drawRules[i][0] == 'red') redDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 1);
+				else if(this.drawRules[i][0] == 'blue') blueDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 1);
+				else if(this.drawRules[i][0] == 'greenLeft') greenLeftDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 1);
+				else if(this.drawRules[i][0] == 'greenRight') greenRightDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 1);
 
-			this.TTcontext.restore();
-		}
+				this.TTcontext.restore();
+			}
 		}
 
 	};
@@ -135,7 +135,7 @@ function DESCANT(monitor, prefix, postfix){
         var cardIndex;
         var i;
 
-        nextLine = cell;
+        nextLine = 'Channel '+cell;
 
         //keep track of the longest line of text:
         longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)

@@ -396,7 +396,7 @@ function SHARC(monitor, orientation, rows, columns, nStrips, nRadialHoriz, nAzim
         var cardIndex;
         var i;
 
-        nextLine = cell;
+        nextLine = 'Channel '+cell;
 
         //keep track of the longest line of text:
         longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)

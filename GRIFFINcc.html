@@ -363,7 +363,7 @@
       document.getElementById('SubsystemLinks').appendChild(newBreak);    
       //subdetectors
       var SHARCMonitor = new SHARC('waffleplate','horizontal', SMrows, SMcolumns, SMnChannels, 4, 4, 1, 16, SMminima, SMmaxima, [],[]);
-      var HPGEMonitor = new HPGE('waffleplate', 0);
+      var HPGEMonitor = new HPGE('waffleplate', 0, [], []);
       var DESCANTMonitor = new DESCANT('waffleplate', [],[]);
       DESCANTMonitor.wireframe();
       var PACESMonitor = new PACES('waffleplate');
