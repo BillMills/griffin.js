@@ -98,7 +98,14 @@ function swapView(inboundNav, inboundCanvas, inboundSidebar, buttonID){
 		document.getElementById(buttonID).setAttribute('class', 'navLinkDown');		
 		window.viewState = buttonID;
 
-		document.getElementById('youAreHere').innerHTML = document.getElementById(inboundNav+'Banner').innerHTML;
+
+	    //move local title around:
+	   	var context = document.getElementById(inboundCanvas).getContext('2d');
+    	context.font = '24px Raleway'
+    	var title = document.getElementById(inboundNav+'Banner').innerHTML;
+    	$('#youAreHere').css('width', context.measureText(title).width*1.1);
+    	$('#youAreHere').css('left', renderWidth - 50 - context.measureText(title).width);
+		document.getElementById('youAreHere').innerHTML = title;
 
 	}	
 }
