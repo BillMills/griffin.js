@@ -66,7 +66,7 @@ function swapFade(inbound, buttonID, object){
 		if(document.getElementById(object.linkWrapperID).children[i].type == 'button')
 			document.getElementById(object.linkWrapperID).children[i].setAttribute('class', 'navLink');
 	}
-	//highlight this button
+	//highlight this button:
 	document.getElementById(buttonID).setAttribute('class','navLinkDown');
 	//make sure the top level nav button navigates back to this config if user leaves & returns:
 	document.getElementById(object.topNavID).setAttribute('onclick', "javascript:swapView('"+object.linkWrapperID+"', '"+inbound+"', '"+object.sidebarID+"', '"+object.topNavID+"')")

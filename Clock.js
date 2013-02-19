@@ -2,7 +2,8 @@ function Clock(monitor){
 
 	this.wrapperID = monitor;			//ID of wrapping div
 	this.canvasID = 'ClockCanvas';		//ID of canvas to paint clock on
-    this.linkWrapperID = 'ClockLinks'   //ID of div to contain clock view header
+    this.linkWrapperID = 'ClockLinks';  //ID of div to contain clock view header
+    this.sidebarID = 'ClockSidebar';    //ID of div to contain clock sidebar
 
 	this.wrapper = document.getElementById(monitor);
 
@@ -42,6 +43,12 @@ function Clock(monitor){
 
     this.canvas = document.getElementById('ClockCanvas');
     this.context = this.canvas.getContext('2d');
+
+    //right sidebar
+    newDiv = document.createElement('div');
+    newDiv.setAttribute('id', this.sidebarID);
+    newDiv.setAttribute('class', 'Sidebar');
+    this.wrapper.appendChild(newDiv);
 
     //drawing parameters:
     this.margin = 5;
