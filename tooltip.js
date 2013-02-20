@@ -111,7 +111,7 @@ function Tooltip(ttCanvasID, ttTextID, ttBKGcanvID, ttDivID, wrapperID, prefix, 
         this.BKGcontext.clearRect(0,0,width, height);
         this.BKGcontext.lineWidth = 5;
         this.BKGcontext.strokeStyle = '#FFFFFF';
-        this.BKGcontext.fillStyle = 'rgba(0,0,0,0.85)';
+        this.BKGcontext.fillStyle = 'rgba(0,0,0,0.8)';
         roundBox(this.BKGcontext,5,5,width-10,height-10,10);
         this.BKGcontext.fill();
         this.BKGcontext.stroke();

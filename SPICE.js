@@ -4,6 +4,7 @@ function SPICE(monitor){
     this.linkWrapperID = 'SubsystemLinks';  //ID of div wrapping subsystem navigation links
     this.sidebarID = 'SubsystemSidebar';    //ID of right sidebar for this object
     this.topNavID = 'SubsystemsButton';     //ID of top level nav button
+    this.TTcanvasID = 'SPICETTCanvas';      //ID of hidden tooltip map canvas
 
     var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
@@ -40,6 +41,26 @@ function SPICE(monitor){
     this.canvas = document.getElementById(this.canvasID);
     this.context = this.canvas.getContext('2d');
 
+    //hidden Tooltip map layer
+    newCanvas = document.createElement('canvas');
+    newCanvas.setAttribute('id', this.TTcanvasID);
+    newCanvas.setAttribute('class', 'monitor');
+    newCanvas.setAttribute('style', 'top:' + ($('#SubsystemLinks').height() + 5)*1.25 +'px;')
+    newCanvas.setAttribute('width', this.canvasWidth);
+    newCanvas.setAttribute('height', this.canvasHeight);
+    document.getElementById(monitor).appendChild(newCanvas);
+    this.TTcanvas = document.getElementById(this.TTcanvasID);
+    this.TTcontext = this.TTcanvas.getContext('2d');
+    //Dirty trick to implement tooltip on obnoxious geometry: make another canvas of the same size hidden beneath, with the 
+    //detector drawn on it, but with each element filled in with rgba(0,0,n,1), where n is the channel number; fetching the color from the 
+    //hidden canvas at point x,y will then return the appropriate channel index.
+    //paint whole hidden canvas with R!=G!=B to trigger TT suppression:
+    this.TTcontext.fillStyle = 'rgba(50,100,150,1)';
+    this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
+    //set up tooltip:
+    this.tooltip = new Tooltip(this.canvasID, 'SPICETipText', 'SPICEttCanv', 'SPICETT', this.monitorID, prefix, postfix);
+    this.tooltip.obj = that;
+
     //drawing parameters
     this.centerX = this.canvasWidth/2;
     this.centerY = this.canvasHeight/2;
@@ -56,6 +77,7 @@ function SPICE(monitor){
 
     	this.context.strokeStyle = '#999999';
     	
+        //once for display canvas...
     	for(i=0; i<120; i++){
     		sector = i%12;
     		ring = Math.floor(i/12);
@@ -69,6 +91,22 @@ function SPICE(monitor){
     		this.context.fill();
     		this.context.stroke();
     	}
+        //...and again for tt encoding:
+        for(i=0; i<120; i++){
+            sector = i%12;
+            ring = Math.floor(i/12);
+
+            this.TTcontext.fillStyle = 'rgba('+i+','+i+','+i+',1)';
+            this.TTcontext.beginPath();
+            this.TTcontext.arc(this.centerX, this.centerY, this.innerRadius + ring*this.radialStep, -sector*this.azimuthalStep, -(sector+1)*this.azimuthalStep, true);
+            this.TTcontext.lineTo(this.centerX + (this.innerRadius + (ring+1)*this.radialStep)*Math.cos(2*Math.PI - (sector+1)*this.azimuthalStep), this.centerY + (this.innerRadius + (ring+1)*this.radialStep)*Math.sin(2*Math.PI - (sector+1)*this.azimuthalStep));
+            this.TTcontext.arc(this.centerX, this.centerY, this.innerRadius + (ring+1)*this.radialStep, - (sector+1)*this.azimuthalStep, - sector*this.azimuthalStep, false);
+            this.TTcontext.closePath();
+            this.TTcontext.fill();
+            //suppress antialiasing problems between cells:
+            this.TTcontext.strokeStyle = '#123456';
+            this.TTcontext.stroke();
+        }
 
 
 
@@ -84,5 +122,31 @@ function SPICE(monitor){
         this.context.clearRect(this.SCEPTARx0 + 5*this.cellSide+20, this.SCEPTARy0 + 2*this.cellSide + 2*this.ZDSradius+10, this.canvasWidth,this.canvasHeight);
         this.context.fillText('ZDS', this.ZDScenter - this.context.measureText('ZDS').width/2, this.SCEPTARy0 + 2*this.cellSide + 2*this.ZDSradius+50);
 */	
+    };
+
+    this.findCell = function(x, y){
+        var imageData = this.TTcontext.getImageData(x,y,1,1);
+        var index = -1;
+        if(imageData.data[0] == imageData.data[1] && imageData.data[0] == imageData.data[2]) index = imageData.data[0];
+        return index;
+    };
+
+    this.defineText = function(cell){
+        var toolTipContent = '<br>';
+        var nextLine;
+        var longestLine = 0;
+        var cardIndex;
+        var i;
+
+        nextLine = 'Channel '+cell;
+
+        //keep track of the longest line of text:
+        longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
+        toolTipContent += nextLine;
+
+        document.getElementById(this.tooltip.ttTextID).innerHTML = toolTipContent;
+
+        //return length of longest line:
+        return longestLine;
     };
 }
