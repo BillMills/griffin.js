@@ -1,4 +1,4 @@
-function HPGE(monitor, enableBGO, prefix, postfix){
+function HPGE(monitor, enableBGO, minima, maxima, prefix, postfix){
 
 	this.monitorID = monitor;		                //div ID of wrapper div
 	this.canvasID = 'HPGECanvas'; 			        //ID of canvas to draw top level TIGRESS view on
@@ -8,6 +8,8 @@ function HPGE(monitor, enableBGO, prefix, postfix){
     this.sidebarID = 'SubsystemSidebar';            //ID of right sidebar for this object
     this.topNavID = 'SubsystemsButton';             //ID of top level nav button
     this.TTcanvasID = 'HPGETTCanvas';               //ID of hidden tooltip map canvas
+    this.minima = minima;                           //array of scale minima: [HPGE HV, HPGE Thresholds, HPGE Rate...]
+    this.maxima = maxima;                           //array of scale maxima, arranged as minima.
 
     var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
@@ -72,9 +74,10 @@ function HPGE(monitor, enableBGO, prefix, postfix){
     this.tooltip = new Tooltip(this.canvasID, 'HPGETipText', 'HPGEttCanv', 'HPGETT', this.monitorID, prefix, postfix);
     this.tooltip.obj = that;
 
-    //drawing parameters
+    //drawing parameters/////////////////////////////////////////////////////////////////////////////////////////////
     this.centerX = this.canvasWidth/2;
     this.centerY = this.canvasHeight/2;
+    this.lineWeight = 2;
 
     //summary view
     this.BGOouter = 0.08*this.canvasWidth;
@@ -95,25 +98,24 @@ function HPGE(monitor, enableBGO, prefix, postfix){
     this.fifthCol = this.canvasWidth*0.685;
     this.sixthCol = this.canvasWidth*0.785;
     this.summaryCoord = [];
-    this.summaryCoord[1] = [this.thirdCol, this.secondRow];
-    this.summaryCoord[2] = [this.fourthCol, this.firstRow];
-    this.summaryCoord[3] = [this.fourthCol, this.thirdRow];
-    this.summaryCoord[4] = [this.thirdCol, this.fourthRow];
-    this.summaryCoord[5] = [this.secondCol, this.secondRow];
-    this.summaryCoord[6] = [this.secondCol, this.firstRow];
-    this.summaryCoord[7] = [this.fifthCol, this.firstRow];
-    this.summaryCoord[8] = [this.fifthCol, this.secondRow];
-    this.summaryCoord[9] = [this.fifthCol, this.thirdRow];
-    this.summaryCoord[10] = [this.fifthCol, this.fourthRow];
-    this.summaryCoord[11] = [this.secondCol, this.fourthRow];
-    this.summaryCoord[12] = [this.secondCol, this.thirdRow];
-    this.summaryCoord[13] = [this.firstCol, this.secondRow];
-    this.summaryCoord[14] = [this.sixthCol, this.firstRow];
-    this.summaryCoord[15] = [this.sixthCol, this.thirdRow];
-    this.summaryCoord[16] = [this.firstCol, this.fourthRow];
+    this.summaryCoord[1] = [this.thirdCol, this.secondRow, 'north'];
+    this.summaryCoord[2] = [this.fourthCol, this.firstRow, 'south'];
+    this.summaryCoord[3] = [this.fourthCol, this.thirdRow, 'south'];
+    this.summaryCoord[4] = [this.thirdCol, this.fourthRow, 'north'];
+    this.summaryCoord[5] = [this.secondCol, this.secondRow, 'north'];
+    this.summaryCoord[6] = [this.secondCol, this.firstRow, 'north'];
+    this.summaryCoord[7] = [this.fifthCol, this.firstRow, 'south'];
+    this.summaryCoord[8] = [this.fifthCol, this.secondRow, 'south'];
+    this.summaryCoord[9] = [this.fifthCol, this.thirdRow, 'south'];
+    this.summaryCoord[10] = [this.fifthCol, this.fourthRow, 'south'];
+    this.summaryCoord[11] = [this.secondCol, this.fourthRow, 'north'];
+    this.summaryCoord[12] = [this.secondCol, this.thirdRow, 'north'];
+    this.summaryCoord[13] = [this.firstCol, this.secondRow, 'north'];
+    this.summaryCoord[14] = [this.sixthCol, this.firstRow, 'south'];
+    this.summaryCoord[15] = [this.sixthCol, this.thirdRow, 'south'];
+    this.summaryCoord[16] = [this.firstCol, this.fourthRow, 'north'];
 
     //detail view
-    this.lineWeight = 1;
     this.crystalSide = this.canvasWidth*0.1;
     this.suppressorWidth = this.canvasWidth*0.03;
     this.suppressorSpacing = this.canvasWidth*0.04;
@@ -125,22 +127,32 @@ function HPGE(monitor, enableBGO, prefix, postfix){
     this.sideBGOouterWidth = this.sideBGOinnerWidth + 2*this.suppressorWidth;
     this.sideSpacer = 20;
 
+    //establish data buffers////////////////////////////////////////////////////////////////////////////
+    this.summaryHPGE = [];
+    this.summaryHPGEcolor = [];
+    this.oldSummaryHPGEcolor = [];
 
     //Member functions/////////////////////////////////////////////////////////////////////////////////
 
     this.draw = function(frame){
-        var i;
+        var i, j, HPGEcolors;
+        this.context.lineWidth = this.lineWeight;
+        HPGEcolors = [];
         //once for the display canvas...
-        this.context.fillStyle = 'rgba(0,0,0,1)';
         for(i=1; i<17; i++){
+            //fill an array with the appropriate colors:
+            for(j=0; j<4; j++){
+                HPGEcolors[j] = interpolateColor(parseHexColor(this.oldSummaryHPGEcolor[(i-1)*4+j]), parseHexColor(this.summaryHPGEcolor[(i-1)*4+j]), frame/this.nFrames)
+            }
+            this.context.fillStyle = '#000000';  //TODO: bgo colors
             if(this.enableBGO == 1) this.BGOsummary(this.context, this.summaryCoord[i][0], this.summaryCoord[i][1]);
-            this.HPGEsummary(this.context, this.summaryCoord[i][0], this.summaryCoord[i][1]);
+            this.HPGEsummary(this.context, this.summaryCoord[i][0], this.summaryCoord[i][1], this.summaryCoord[i][2], HPGEcolors);
         }
         //...and once again for the tooltip encoding
         for(i=1; i<17; i++){
             this.TTcontext.fillStyle = 'rgba('+i+','+i+','+i+',1)';
             if(this.enableBGO == 1) this.BGOsummary(this.TTcontext, this.summaryCoord[i][0], this.summaryCoord[i][1]);
-            this.HPGEsummary(this.TTcontext, this.summaryCoord[i][0], this.summaryCoord[i][1]);
+            this.HPGEsummary(this.TTcontext, this.summaryCoord[i][0], this.summaryCoord[i][1], this.summaryCoord[i][2]);
         }
 
         this.context.clearRect(0,0.65*this.canvasHeight,this.canvasWidth,0.35*this.canvasHeight);
@@ -255,6 +267,41 @@ function HPGE(monitor, enableBGO, prefix, postfix){
         this.drawHalfL(3*Math.PI/2, this.suppressorWidth, this.sideBGOouterWidth/2 - this.sideSpacer, this.centerX - this.sideBGOinnerWidth/2, this.centerY + this.sideBGOinnerWidth/2 + this.lineWeight - this.sideSpacer, 'right', split, '#FF0000');
     };
 
+    //drawing functions/////////////////////////////////////////////////////////
+    //summary view/////////////////////////
+
+    //draw HPGE summary
+    this.HPGEsummary = function(context, x0,y0, hemisphere, fillColor){
+        var i;
+        var colors 
+        //cloverleaves are oriented differently in north and south hemispheres in the blueprints, match here:
+        if(hemisphere == 'north') colors = ['#00FF00', '#0000FF', '#FF0000', '#FFFFFF'];
+        else if(hemisphere == 'south') colors = ['#FFFFFF', '#FF0000', '#0000FF', '#00FF00'];
+
+        for(i=0; i<4; i++){
+            //fill the crystal quarter with the appropriate color on the top view, or the tt encoding on the tt layer:
+            if(context != this.TTcontext) context.fillStyle = fillColor[i];
+            context.fillRect(Math.round(x0 + (this.BGOouter-this.HPGEside)/2 + (i%2)*(this.lineWeight + this.HPGEside/2)), Math.round(y0 + (this.BGOouter-this.HPGEside)/2 + (i>>1)/2*(2*this.lineWeight + this.HPGEside)), Math.round(this.HPGEside/2),Math.round(this.HPGEside/2));
+            //give the top view clovers an appropriately-colored outline:
+            if(context != this.TTcontext){
+                context.strokeStyle = colors[i];
+                context.strokeRect(x0 + (this.BGOouter-this.HPGEside)/2 + (i%2)*(this.lineWeight + this.HPGEside/2), y0 + (this.BGOouter-this.HPGEside)/2 + (i>>1)/2*(2*this.lineWeight + this.HPGEside), this.HPGEside/2, this.HPGEside/2);
+            }
+        }
+
+    };
+
+    //draw BGO summary box
+    this.BGOsummary = function(context, x0,y0,fill){
+        context.strokeStyle = '#999999';
+        context.fillRect(x0,y0,this.BGOouter, this.BGOouter);
+        context.strokeRect(x0,y0,this.BGOouter, this.BGOouter);
+
+        context.clearRect(x0 + (this.BGOouter-this.BGOinner)/2, y0 + (this.BGOouter-this.BGOinner)/2, this.BGOinner, this.BGOinner);
+        context.strokeRect(x0 + (this.BGOouter-this.BGOinner)/2, y0 + (this.BGOouter-this.BGOinner)/2, this.BGOinner, this.BGOinner);
+    };
+
+    //detail view///////////////////////////
     //draw crystal core
     this.crystalCore = function(x0, y0, border, fill){
     	this.detailContext.strokeStyle = border;
@@ -291,24 +338,6 @@ function HPGE(monitor, enableBGO, prefix, postfix){
         this.detailContext.closePath();
         this.detailContext.fill();
         this.detailContext.stroke();
-    };
-
-    //draw BGO summary box
-    this.BGOsummary = function(context, x0,y0,fill){
-        context.strokeStyle = '#999999';
-        context.fillRect(x0,y0,this.BGOouter, this.BGOouter);
-        context.strokeRect(x0,y0,this.BGOouter, this.BGOouter);
-
-        context.clearRect(x0 + (this.BGOouter-this.BGOinner)/2, y0 + (this.BGOouter-this.BGOinner)/2, this.BGOinner, this.BGOinner);
-        context.strokeRect(x0 + (this.BGOouter-this.BGOinner)/2, y0 + (this.BGOouter-this.BGOinner)/2, this.BGOinner, this.BGOinner);
-    };
-
-    //draw HPGE summary
-    this.HPGEsummary = function(context, x0,y0){
-        context.strokeStyle = '#999999';
-        context.fillRect(Math.round(x0 + (this.BGOouter-this.HPGEside)/2), Math.round(y0 + (this.BGOouter-this.HPGEside)/2), Math.round(this.HPGEside),Math.round(this.HPGEside));
-        if(context != this.TTcontext) context.strokeRect(x0 + (this.BGOouter-this.HPGEside)/2, y0 + (this.BGOouter-this.HPGEside)/2, this.HPGEside, this.HPGEside);
-
     };
 
     //draw L shape
@@ -378,6 +407,7 @@ function HPGE(monitor, enableBGO, prefix, postfix){
 
         this.detailContext.restore();
     };
+    //end drawing functions///////////////////////////////////////////////////////////////
 
     this.findCell = function(x, y){
         var imageData = this.TTcontext.getImageData(x,y,1,1);
@@ -405,9 +435,26 @@ function HPGE(monitor, enableBGO, prefix, postfix){
         return longestLine;
     };
 
-    this.update = function(){
+    this.update = function(HPGEsummaryInfo){
+        var i;
+        for(i=0; i<HPGEsummaryInfo.length; i++){
+            this.summaryHPGE[i] = HPGEsummaryInfo[i];
+            this.oldSummaryHPGEcolor[i] = this.summaryHPGEcolor[i];
+            this.summaryHPGEcolor[i] = this.parseColor(HPGEsummaryInfo[i]);
+        }
+
         this.tooltip.update();
-    }
+    };
+
+    //determine which color <scalar> corresponds to
+    this.parseColor = function(scalar){
+
+        //how far along the scale are we?
+        var scale = (scalar - this.minima[window.subdetectorView]) / (this.maxima[window.subdetectorView] - this.minima[window.subdetectorView]);
+
+        //different scales for different meters to aid visual recognition:
+        return colorScale(window.colorScales[window.subdetectorView],scale);
+    };
 }
 
 

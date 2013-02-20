@@ -269,6 +269,14 @@
       //---------------End Experiment-specific parameters--------------------------------------------------
       //---------------------------------------------------------------------------------------------------
 
+      //different color scales for use in colorScale function: [initial R,G,B, final R,G,B]
+      window.colorScales = [];
+      window.colorScales[0] = [76,76,76,142,237,48];    //grey->green
+      window.colorScales[1] = [255,255,0,255,51,00];    //sunburst
+      window.colorScales[2] = [107,0,178,255,102,204];  //horrible fuchia
+      //state variables for what the subdetector view is showing: 0->HV, 1->Thresholds, 2->Rate
+      window.subdetectorView = 2;  //Rate by default
+
       var i,j,k;
 
       //autodetect what size cards are plugged into what slot:
@@ -363,7 +371,7 @@
       document.getElementById('SubsystemLinks').appendChild(newBreak);    
       //subdetectors
       var SHARCMonitor = new SHARC('waffleplate','horizontal', SMrows, SMcolumns, SMnChannels, 4, 4, 1, 16, SMminima, SMmaxima, [],[]);
-      var HPGEMonitor = new HPGE('waffleplate', 0, [], []);
+      var HPGEMonitor = new HPGE('waffleplate', 0, [0,0,0], [1,1,1], [], []);
       var DESCANTMonitor = new DESCANT('waffleplate', [],[]);
       DESCANTMonitor.wireframe();
       var PACESMonitor = new PACES('waffleplate', [], []);
@@ -385,6 +393,7 @@
       newButton.setAttribute('id', 'subsystemHV');
       newButton.setAttribute('class', 'navLink');
       newButton.setAttribute('type', 'button');
+      newButton.setAttribute('onclick', "javascript:swapSubsystemView('subsystemHV', 'SubsystemLinks', 0)");
       document.getElementById('SubsystemLinks').appendChild(newButton);
       document.getElementById('subsystemHV').innerHTML = 'HV';
       //Thresholds
@@ -392,16 +401,19 @@
       newButton.setAttribute('id', 'subsystemThresholds');
       newButton.setAttribute('class', 'navLink');
       newButton.setAttribute('type', 'button');
+      newButton.setAttribute('onclick', "javascript:swapSubsystemView('subsystemThresholds', 'SubsystemLinks', 1)");
       document.getElementById('SubsystemLinks').appendChild(newButton); 
       document.getElementById('subsystemThresholds').innerHTML = 'Thresholds';
       //Rate
       newButton = document.createElement('button');
       newButton.setAttribute('id', 'subsystemRate');
-      newButton.setAttribute('class', 'navLink');
+      newButton.setAttribute('class', 'navLinkDown');  //default
       newButton.setAttribute('type', 'button');
+      newButton.setAttribute('onclick', "javascript:swapSubsystemView('subsystemRate', 'SubsystemLinks', 2)");
       document.getElementById('SubsystemLinks').appendChild(newButton); 
       document.getElementById('subsystemRate').innerHTML = 'Rate';
-
+      //count the subsystem scalars for proper navbar function:
+      window.subsystemScalars = 3;
 
       var DAQMonitor = new DAQ('waffleplate', 'DAQcanvas', 'DAQdetailCanvas', 0, DAQminima, DAQmaxima, configParameters);
 

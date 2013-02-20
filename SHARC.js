@@ -270,7 +270,7 @@ function SHARC(monitor, orientation, rows, columns, nStrips, nRadialHoriz, nAzim
 
 	//update the info for each cell in the monitor
 	this.update = function(newInfo){
-		var i, j;
+		var i;
 		for(i=0; i<newInfo.length; i++){
 			this.level[i] = newInfo[i];
 			this.oldColor[i] = this.color[i];
@@ -286,7 +286,8 @@ function SHARC(monitor, orientation, rows, columns, nStrips, nRadialHoriz, nAzim
 		//how far along the scale are we?
 		var scale = (scalar - this.minima[this.trackingIndex]) / (this.maxima[this.trackingIndex] - this.minima[this.trackingIndex]);
 
-		return colorScale(76,76,76,142,237,48,scale);
+        //different scales for different meters to aid visual recognition:
+        return colorScale(window.colorScales[window.subdetectorView],scale);
 	};
 
 	//determine which cell pixel x,y falls in, with 0,0 being the top left corner of the canvas; return -1 if no corresponding cell.

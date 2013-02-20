@@ -20,6 +20,11 @@ function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVolta
         fetchNewSHARCData(nSHARCchannels, HVdata);
         SHARC.update(HVdata);
 
+        //HPGE
+        var HPGEdata = [];
+        fetchNewHPGEData(HPGEdata);
+        HPGE.update(HPGEdata);
+
         //DESCANT
         DESCANT.update();
 
@@ -48,7 +53,7 @@ function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVolta
         else SPICE.draw(SPICE.nFrames);
         if(window.onDisplay == 'DAQcanvas' || !callMyself) animate(DAQ,0);
         else DAQ.draw(DAQ.nFrames);
-        if(window.onDisplay == 'DAQdetailCanvas' || !callMyself) animateDetail(DAQ,0) //do some animating
+        if(window.onDisplay == 'DAQdetailCanvas' || !callMyself) animateDetail(DAQ,0);
         else DAQ.drawDetail(DAQ.nFrames);
         if(window.onDisplay == 'ClockCanvas' || !callMyself) animate(Clock,0);
         else Clock.draw(Clock.nFrames);
@@ -192,6 +197,18 @@ function fetchNewSHARCData(nChannels, HVdata){
 
         //fake data for offline demo:
         HVdata[i] = Math.random();
+    }
+
+}
+
+//fetch new data for the HPGE:
+function fetchNewHPGEData(HPGEdata){
+    var i = 0;
+
+    //dummy data for offline dev:
+    //HPGE summary
+    for(i=0; i<64; i++){
+        HPGEdata[i] = Math.random();
     }
 
 }

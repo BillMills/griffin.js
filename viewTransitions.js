@@ -61,8 +61,8 @@ function fadeDivIn(navDiv){
 function swapFade(inbound, buttonID, object){
 	var i;
 
-	//turn off other buttons:
-	for(i=0; i<document.getElementById(object.linkWrapperID).children.length; i++){
+	//turn off other buttons, except for the scalar options:
+	for(i=0; i<document.getElementById(object.linkWrapperID).children.length - window.subsystemScalars; i++){
 		if(document.getElementById(object.linkWrapperID).children[i].type == 'button')
 			document.getElementById(object.linkWrapperID).children[i].setAttribute('class', 'navLink');
 	}
@@ -76,6 +76,22 @@ function swapFade(inbound, buttonID, object){
 		fadeOut(window.onDisplay, 0);
 		window.onDisplay = inbound;
 	}
+}
+
+//swap what values are being presented in the subsystem view:
+function swapSubsystemView(buttonID, navWrapperID, viewIndex){
+	var i;
+
+	//turn off the other view options:
+	for(i=document.getElementById(navWrapperID).children.length - window.subsystemScalars; i<document.getElementById(navWrapperID).children.length; i++){
+		if(document.getElementById(navWrapperID).children[i].type == 'button')
+			document.getElementById(navWrapperID).children[i].setAttribute('class', 'navLink');
+	}
+	//highlight this button:
+	document.getElementById(buttonID).setAttribute('class','navLinkDown');
+
+	//change the corresponding state variable:
+	window.subdetectorView = viewIndex;
 }
 
 //swap top level views
