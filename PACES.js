@@ -1,10 +1,12 @@
-function PACES(monitor, prefix, postfix){
+function PACES(monitor, minima, maxima, prefix, postfix){
 	this.monitorID = monitor;		        //div ID of wrapper div
 	this.canvasID = 'PACESCanvas'; 			//ID of canvas to draw top level TIGRESS view on
     this.linkWrapperID = 'SubsystemLinks';  //ID of div wrapping subsystem navigation links
     this.sidebarID = 'SubsystemSidebar';    //ID of right sidebar for this object
     this.topNavID = 'SubsystemsButton';     //ID of top level nav button
     this.TTcanvasID = 'PACESTTCanvas';      //ID of hidden tooltip map canvas
+    this.minima = minima;                   //array of meter minima [HV, thresholds, rate]
+    this.maxima = maxima;                   //array of meter maxima, arranged as minima
 
     var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
@@ -64,6 +66,11 @@ function PACES(monitor, prefix, postfix){
     this.arrayRadius = this.canvasHeight*0.3;
     this.SiLiRadius = this.canvasHeight*0.1;
 
+    //establish data buffers////////////////////////////////////////////////////////////////////////////
+    this.rate = [];
+    this.rateColor = [];
+    this.oldRateColor = [];
+
     //member functions///////////////////////////////////////////////////////////////////
     this.draw = function(frame){
 
@@ -72,12 +79,15 @@ function PACES(monitor, prefix, postfix){
 
         //once for the display canvas....
     	for(i=0; i<5; i++){
+            this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[i]), parseHexColor(this.rateColor[i]), frame/this.nFrames);
+
     		this.context.save();
     		this.context.translate(this.centerX, this.centerY);
     		this.context.rotate(i*Math.PI*72/180);
     		this.context.beginPath();
     		this.context.arc(0, -this.arrayRadius, this.SiLiRadius, 0, 2*Math.PI);
     		this.context.closePath();
+            this.context.fill();
     		this.context.stroke();
     		this.context.restore();
     	}
@@ -120,5 +130,26 @@ function PACES(monitor, prefix, postfix){
 
         //return length of longest line:
         return longestLine;
+    };
+
+    this.update = function(rateInfo){
+        var i;
+        for(i=0; i<rateInfo.length; i++){
+            this.rate[i] = rateInfo[i];
+            this.oldRateColor[i] = this.rateColor[i];
+            this.rateColor[i] = this.parseColor(rateInfo[i]);
+        }
+
+        this.tooltip.update();
+    };
+
+    //determine which color <scalar> corresponds to
+    this.parseColor = function(scalar){
+
+        //how far along the scale are we?
+        var scale = (scalar - this.minima[window.subdetectorView]) / (this.maxima[window.subdetectorView] - this.minima[window.subdetectorView]);
+
+        //different scales for different meters to aid visual recognition:
+        return colorScale(window.colorScales[window.subdetectorView],scale);
     };
 }

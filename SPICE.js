@@ -1,10 +1,12 @@
-function SPICE(monitor){
+function SPICE(monitor, minima, maxima){
 	this.monitorID = monitor;		        //div ID of wrapper div
 	this.canvasID = 'SPICECanvas'; 			//ID of canvas to draw top level TIGRESS view on
     this.linkWrapperID = 'SubsystemLinks';  //ID of div wrapping subsystem navigation links
     this.sidebarID = 'SubsystemSidebar';    //ID of right sidebar for this object
     this.topNavID = 'SubsystemsButton';     //ID of top level nav button
     this.TTcanvasID = 'SPICETTCanvas';      //ID of hidden tooltip map canvas
+    this.minima = minima;                   //array of meter minima [HV, thresholds, rate]
+    this.maxima = maxima;                   //array of meter maxima, arranged as minima
 
     var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
@@ -69,7 +71,10 @@ function SPICE(monitor){
     this.azimuthalStep = 2*Math.PI / this.nAzimuthal;
     this.radialStep = (this.outerRadius - this.innerRadius) / this.nRadial;
 
-
+    //establish data buffers////////////////////////////////////////////////////////////////////////////
+    this.rate = [];
+    this.rateColor = [];
+    this.oldRateColor = [];
 
     //member functions///////////////////////////////////////////////////////////////////
     this.draw = function(frame){
@@ -81,7 +86,7 @@ function SPICE(monitor){
     	for(i=0; i<120; i++){
     		sector = i%12;
     		ring = Math.floor(i/12);
-    		this.context.fillStyle = '#4C4C4C';
+    		this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[i]), parseHexColor(this.rateColor[i]), frame/this.nFrames);
 
 		    this.context.beginPath();
 		    this.context.arc(this.centerX, this.centerY, this.innerRadius + ring*this.radialStep, -sector*this.azimuthalStep, -(sector+1)*this.azimuthalStep, true);
@@ -148,5 +153,26 @@ function SPICE(monitor){
 
         //return length of longest line:
         return longestLine;
+    };
+
+    this.update = function(rateInfo){
+        var i;
+        for(i=0; i<rateInfo.length; i++){
+            this.rate[i] = rateInfo[i];
+            this.oldRateColor[i] = this.rateColor[i];
+            this.rateColor[i] = this.parseColor(rateInfo[i]);
+        }
+
+        this.tooltip.update();
+    };
+
+    //determine which color <scalar> corresponds to
+    this.parseColor = function(scalar){
+
+        //how far along the scale are we?
+        var scale = (scalar - this.minima[window.subdetectorView]) / (this.maxima[window.subdetectorView] - this.minima[window.subdetectorView]);
+
+        //different scales for different meters to aid visual recognition:
+        return colorScale(window.colorScales[window.subdetectorView],scale);
     };
 }

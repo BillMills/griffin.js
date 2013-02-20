@@ -1,4 +1,4 @@
-function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax, waffle, SHARC, HPGE, DESCANT, DANTE, BAMBINO, SCEPTAR, SPICE, DAQ, Clock, nSHARCchannels, HVdata, nCollectorGroups, masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, callMyself){
+function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax, waffle, SHARC, HPGE, DESCANT, PACES, DANTE, BAMBINO, SCEPTAR, SPICE, DAQ, Clock, nSHARCchannels, HVdata, nCollectorGroups, masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, callMyself){
 	if(!document.webkitHidden && !document.mozHidden){
         var i;
 
@@ -26,7 +26,34 @@ function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVolta
         HPGE.update(HPGEdata);
 
         //DESCANT
-        DESCANT.update();
+        var DESCANTrates = [];
+        fetchNewDESCANTdata(DESCANTrates);
+        DESCANT.update(DESCANTrates);
+
+        //PACES
+        var PACESrates = [];
+        fetchNewPACESdata(PACESrates);
+        PACES.update(PACESrates);        
+
+        //DANTE
+        var DANTErates = [];
+        fetchNewDANTEdata(DANTErates);
+        DANTE.update(DANTErates);        
+
+        //BAMBINO
+        var BAMBINOrates = [];
+        fetchNewBAMBINOdata(BAMBINOrates);
+        BAMBINO.update(BAMBINOrates);
+
+        //SCEPTAR
+        var SCEPTARrates = [];
+        fetchNewSCEPTARdata(SCEPTARrates);
+        SCEPTAR.update(SCEPTARrates);
+
+        //SPICE
+        var SPICErates = [];
+        fetchNewSPICEdata(SPICErates);
+        SPICE.update(SPICErates);
 
         //DAQ
         fetchNewDAQData(nCollectorGroups, masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate);
@@ -43,6 +70,10 @@ function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVolta
         else SHARC.draw(SHARC.nFrames);
         if(window.onDisplay == 'HPGECanvas' || !callMyself) animate(HPGE,0);
         else HPGE.draw(HPGE.nFrames);
+        if(window.onDisplay == 'DESCANTCanvas' || !callMyself) animate(DESCANT,0);
+        else DESCANT.draw(DESCANT.nFrames);
+        if(window.onDisplay == 'PACESCanvas' || !callMyself) animate(PACES,0);
+        else PACES.draw(PACES.nFrames);
         if(window.onDisplay == 'DANTECanvas' || !callMyself) animate(DANTE,0);
         else DANTE.draw(DANTE.nFrames);
         if(window.onDisplay == 'BAMBINOCanvas' || !callMyself) animate(BAMBINO,0);
@@ -60,7 +91,7 @@ function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVolta
     }
 
     //clearTimeout(window.loop);
-    window.loop = setTimeout(function(){masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax, waffle, SHARC, HPGE, DESCANT, DANTE, BAMBINO, SCEPTAR, SPICE, DAQ, Clock, nSHARCchannels, HVdata, nCollectorGroups, masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, 1)}, 3000);
+    window.loop = setTimeout(function(){masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax, waffle, SHARC, HPGE, DESCANT, PACES, DANTE, BAMBINO, SCEPTAR, SPICE, DAQ, Clock, nSHARCchannels, HVdata, nCollectorGroups, masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, 1)}, 3000);
 }
 
 //populate HV monitor rows by cols arrays with the appropriate information:
@@ -209,6 +240,78 @@ function fetchNewHPGEData(HPGEdata){
     //HPGE summary
     for(i=0; i<64; i++){
         HPGEdata[i] = Math.random();
+    }
+
+}
+
+//fetch new data for the HPGE:
+function fetchNewDESCANTdata(rates){
+    var i = 0;
+
+    //dummy data for offline dev:
+    //rates
+    for(i=0; i<70; i++){
+        rates[i] = Math.random();
+    }
+
+}
+
+//fetch new data for the HPGE:
+function fetchNewPACESdata(rates){
+    var i = 0;
+
+    //dummy data for offline dev:
+    //rates
+    for(i=0; i<5; i++){
+        rates[i] = Math.random();
+    }
+
+}
+
+//fetch new data for the HPGE:
+function fetchNewDANTEdata(rates){
+    var i = 0;
+
+    //dummy data for offline dev:
+    //rates
+    for(i=0; i<16; i++){
+        rates[i] = Math.random();
+    }
+
+}
+
+//fetch new data for the HPGE:
+function fetchNewBAMBINOdata(rates){
+    var i = 0;
+
+    //dummy data for offline dev:
+    //rates
+    for(i=0; i<64; i++){
+        rates[i] = Math.random();
+    }
+
+}
+
+//fetch new data for the HPGE:
+function fetchNewSCEPTARdata(rates){
+    var i = 0;
+
+    //dummy data for offline dev:
+    //rates
+    for(i=0; i<21; i++){
+        rates[i] = Math.random();
+    }
+
+}
+
+//fetch new data for the HPGE:
+function fetchNewSPICEdata(rates){
+    var i = 0;
+
+    //dummy data for offline dev:
+    //rates
+    for(i=0; i<120; i++){
+        rates[i] = Math.random();
     }
 
 }

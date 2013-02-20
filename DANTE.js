@@ -1,10 +1,12 @@
-function DANTE(monitor){
+function DANTE(monitor, minima, maxima){
 	this.monitorID = monitor;		        //div ID of wrapper div
 	this.canvasID = 'DANTECanvas'; 			//ID of canvas to draw top level TIGRESS view on
     this.linkWrapperID = 'SubsystemLinks';  //ID of div wrapping subsystem navigation links
     this.sidebarID = 'SubsystemSidebar';    //ID of right sidebar for this object
     this.topNavID = 'SubsystemsButton';     //ID of top level nav button
     this.TTcanvasID = 'DANTETTCanvas';      //ID of hidden tooltip map canvas
+    this.minima = minima;                   //array of meter minima [HV, thresholds, rate]
+    this.maxima = maxima;                   //array of meter maxima, arranged as minima
 
     var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
@@ -68,6 +70,11 @@ function DANTE(monitor){
     this.shieldInnerRadius = this.canvasWidth*0.05;
     this.shieldOuterRadius = this.canvasWidth*0.06;
 
+    //establish data buffers////////////////////////////////////////////////////////////////////////////
+    this.rate = [];
+    this.rateColor = [];
+    this.oldRateColor = [];
+
     //member functions///////////////////////////////////////////////////////////////////
     this.draw = function(frame){
 
@@ -89,7 +96,7 @@ function DANTE(monitor){
     		x0 = ringCenter + this.ringRadius*Math.cos(Math.PI/2*j);
     		y0 = this.canvasHeight*0.4 - this.ringRadius*Math.sin(Math.PI/2*j);
 
-    		this.context.fillStyle = '#4C4C4C';
+    		this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[j*2+1]), parseHexColor(this.rateColor[j*2+1]), frame/this.nFrames);
     		this.context.beginPath();
     		this.context.arc(x0,y0,this.shieldOuterRadius,0,2*Math.PI);
     		this.context.closePath();
@@ -103,7 +110,7 @@ function DANTE(monitor){
     		this.context.fill();
     		this.context.stroke();
 
-    		this.context.fillStyle = '#4C4C4C';
+    		this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[j]), parseHexColor(this.rateColor[j]), frame/this.nFrames);
     		this.context.beginPath();
     		this.context.arc(x0,y0,this.detectorRadius,0,2*Math.PI);
     		this.context.closePath();
@@ -177,5 +184,26 @@ function DANTE(monitor){
 
         //return length of longest line:
         return longestLine;
+    };
+
+    this.update = function(rateInfo){
+        var i;
+        for(i=0; i<rateInfo.length; i++){
+            this.rate[i] = rateInfo[i];
+            this.oldRateColor[i] = this.rateColor[i];
+            this.rateColor[i] = this.parseColor(rateInfo[i]);
+        }
+
+        this.tooltip.update();
+    };
+
+    //determine which color <scalar> corresponds to
+    this.parseColor = function(scalar){
+
+        //how far along the scale are we?
+        var scale = (scalar - this.minima[window.subdetectorView]) / (this.maxima[window.subdetectorView] - this.minima[window.subdetectorView]);
+
+        //different scales for different meters to aid visual recognition:
+        return colorScale(window.colorScales[window.subdetectorView],scale);
     };
 }

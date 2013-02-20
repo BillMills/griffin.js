@@ -273,9 +273,11 @@
       window.colorScales = [];
       window.colorScales[0] = [76,76,76,142,237,48];    //grey->green
       window.colorScales[1] = [255,255,0,255,51,00];    //sunburst
-      window.colorScales[2] = [107,0,178,255,102,204];  //horrible fuchia
+      window.colorScales[2] = [0,0,255,255,255,0]; //blue->yellow
+      window.colorScales[3] = [100,100,100,255,255,255];  //grey->white
+      window.colorScales[4] = [107,0,178,255,102,204];  //horrible fuchia
       //state variables for what the subdetector view is showing: 0->HV, 1->Thresholds, 2->Rate
-      window.subdetectorView = 2;  //Rate by default
+      window.subdetectorView = 1;  //Thresholds by default
 
       var i,j,k;
 
@@ -372,18 +374,13 @@
       //subdetectors
       var SHARCMonitor = new SHARC('waffleplate','horizontal', SMrows, SMcolumns, SMnChannels, 4, 4, 1, 16, SMminima, SMmaxima, [],[]);
       var HPGEMonitor = new HPGE('waffleplate', 0, [0,0,0], [1,1,1], [], []);
-      var DESCANTMonitor = new DESCANT('waffleplate', [],[]);
-      DESCANTMonitor.wireframe();
-      var PACESMonitor = new PACES('waffleplate', [], []);
-      PACESMonitor.draw(PACESMonitor.nFrames);
-      var DANTEMonitor = new DANTE('waffleplate');
-      DANTEMonitor.draw(DANTEMonitor.nFrames);
-      var BAMBINOMonitor = new BAMBINO('waffleplate');
-      BAMBINOMonitor.draw(BAMBINOMonitor.nFrames);
-      var SCEPTARMonitor = new SCEPTAR('waffleplate');
-      SCEPTARMonitor.draw(SCEPTARMonitor.nFrames);
-      var SPICEMonitor = new SPICE('waffleplate');
-      SPICEMonitor.draw(SPICEMonitor.nFrames);
+      var DESCANTMonitor = new DESCANT('waffleplate', [0,0,0], [1,1,1], [],[]);
+      var PACESMonitor = new PACES('waffleplate', [0,0,0], [1,1,1], [], []);
+      var DANTEMonitor = new DANTE('waffleplate', [0,0,0], [1,1,1]);
+      var BAMBINOMonitor = new BAMBINO('waffleplate', [0,0,0], [1,1,1]);
+      var SCEPTARMonitor = new SCEPTAR('waffleplate', [0,0,0], [1,1,1]);
+      var SPICEMonitor = new SPICE('waffleplate', [0,0,0], [1,1,1]);
+
       //linebreak
       var newBreak2 = document.createElement('br');
       document.getElementById('SubsystemLinks').appendChild(newBreak2);
@@ -505,7 +502,7 @@
 
       //wrap this in a function so it can be easily called to restart the loop somewhere else:
       function startLoop(){
-        masterLoop(rows+1, columns, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmThresholds, scaleMaxima, waffle, SHARCMonitor, HPGEMonitor, DESCANTMonitor, DANTEMonitor, BAMBINOMonitor, SCEPTARMonitor, SPICEMonitor, DAQMonitor, ClockMonitor, 2*(SMnChannels*SMrows*SMcolumns + 2*16), SMHV, Math.ceil(nCollectors/4), masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, 0);
+        masterLoop(rows+1, columns, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmThresholds, scaleMaxima, waffle, SHARCMonitor, HPGEMonitor, DESCANTMonitor, PACESMonitor, DANTEMonitor, BAMBINOMonitor, SCEPTARMonitor, SPICEMonitor, DAQMonitor, ClockMonitor, 2*(SMnChannels*SMrows*SMcolumns + 2*16), SMHV, Math.ceil(nCollectors/4), masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, 0);
       }
       startLoop(); 
 

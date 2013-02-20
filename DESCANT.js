@@ -1,4 +1,4 @@
-function DESCANT(monitor, prefix, postfix){
+function DESCANT(monitor, minima, maxima, prefix, postfix){
 
 	var i, j;
 
@@ -8,10 +8,17 @@ function DESCANT(monitor, prefix, postfix){
 	this.linkWrapperID = 'SubsystemLinks';	//ID of div wrapping subsystem navigation links
 	this.sidebarID = 'SubsystemSidebar';	//ID of right sidebar for this object
 	this.topNavID = 'SubsystemsButton';		//ID of top level nav button
+	this.minima = minima;					//array of meter minima [HV, thresholds, rate]
+	this.maxima = maxima;					//array of meter maxima, arranged as minima
 
 	var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
     window.DESCANTpointer = that;
+
+    //establish animation parameters////////////////////////////////////////////////////////////////////
+    this.FPS = 30;
+    this.duration = 0.5;
+    this.nFrames = this.FPS*this.duration;
 
     //insert navigation/////////////////////////////////////////////////////////////////////////////////
     var newButton = document.createElement('button');
@@ -51,13 +58,14 @@ function DESCANT(monitor, prefix, postfix){
     //detector drawn on it, but with each element filled in with rgba(0,0,n,1), where n is the channel number; fetching the color from the 
     //hidden canvas at point x,y will then return the appropriate channel index.
     //paint whole hidden canvas with R!=G!=B to trigger TT suppression:
-    this.TTcontext.fillStyle = 'rgba(50,100,150,1)';
+    this.TTcontext.fillStyle = '#123456';
     this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
 
     //set up tooltip:
     this.tooltip = new Tooltip(this.canvasID, 'DESCANTTipText', 'DESCANTttCanv', 'DESCANTTT', this.monitorID, prefix, postfix);
     this.tooltip.obj = that;
 
+    //drawing parameters//////////////////////////////////////////////////////////////////////////////////
 	//center of DESCANT
 	this.centerX = $(this.canvas).width() / 2;
 	this.centerY = $(this.canvas).height() / 2;
@@ -68,6 +76,9 @@ function DESCANT(monitor, prefix, postfix){
 	//pixels to explode DESCANT view by:
 	this.explode = 10;
 
+	//linewidth
+	this.context.lineWidth = 3;
+
 	//side length of pentagon hole:
 	this.pentagonSide = 83*this.scale;
 	//shortest distance from center of pentagon to side
@@ -75,16 +86,24 @@ function DESCANT(monitor, prefix, postfix){
 	//longest distance from center of pentagon to side
 	this.pentagonVertex = this.pentagonSide / 2 / Math.sin(36/180 * Math.PI);
 
-	//member functions
-	this.wireframe = function(){
+    //establish data buffers////////////////////////////////////////////////////////////////////////////
+    this.rate = [];
+    this.rateColor = [];
+    this.oldRateColor = [];
+
+	//member functions//////////////////////////////////////////////////////
+	this.draw = function(frame){
 		var i, j;
+		this.context.clearRect(0,0,this.canvasWidth, this.canvasHeight);
+		this.TTcontext.fillStyle = '#123456'
+		this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
 		if(this.drawRules[i]!=0){
 			for(i=0; i<70; i++){
 				this.context.save();
 				this.context.translate(this.centerX, this.centerY);
 				this.context.rotate(this.drawRules[i][3]);
 
-				this.TTcontext.fillStyle = 'rgba(0,0,0,0)';
+				this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[i]), parseHexColor(this.rateColor[i]), frame/this.nFrames);
 
 				if(this.drawRules[i][0] == 'white')whiteDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, 0);
 				else if(this.drawRules[i][0] == 'red') redDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 0);
@@ -174,9 +193,26 @@ function DESCANT(monitor, prefix, postfix){
         return longestLine;
 	};
 
-	this.update = function(){
+	this.update = function(rateInfo){
+        var i;
+        for(i=0; i<rateInfo.length; i++){
+            this.rate[i] = rateInfo[i];
+            this.oldRateColor[i] = this.rateColor[i];
+            this.rateColor[i] = this.parseColor(rateInfo[i]);
+        }
+
 		this.tooltip.update();
 	}
+
+    //determine which color <scalar> corresponds to
+    this.parseColor = function(scalar){
+
+        //how far along the scale are we?
+        var scale = (scalar - this.minima[window.subdetectorView]) / (this.maxima[window.subdetectorView] - this.minima[window.subdetectorView]);
+
+        //different scales for different meters to aid visual recognition:
+        return colorScale(window.colorScales[window.subdetectorView],scale);
+    };
 
 
 
