@@ -393,51 +393,6 @@
       document.getElementById('currentAlarm').setAttribute('onclick',"javascript:alarmTransition('currentAlarm', alarmTop+170, alarmTop)");
       document.getElementById('tempAlarm').setAttribute('onclick',"javascript:alarmTransition('tempAlarm', alarmTop+340, alarmTop)");
 
-      //set up arrays:
-      //HV monitor
-      var demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit;
-      demandVoltage = [];
-      reportVoltage = [];
-      reportCurrent = [];
-      demandVrampUp = [];
-      demandVrampDown = [];
-      reportTemperature = [];
-      channelMask = [];
-      alarmStatus = [];
-      rampStatus = [];
-      voltLimit = [];
-      currentLimit = [];
-      for(i=0; i<rows+1; i++){
-        demandVoltage[i] = [];
-        reportVoltage[i] = [];
-        reportCurrent[i] = [];
-        demandVrampUp[i] = [];
-        demandVrampDown[i] = [];
-        reportTemperature[i] = [];
-        channelMask[i] = [];
-        alarmStatus[i] = [];
-        rampStatus[i] = [];
-        voltLimit[i] = [];
-        currentLimit[i] = [];
-        for(j=0;j<columns;j++){
-          alarmStatus[i][j] = [];
-        }
-      }
-      //scalar monitor:
-      var SMHV;
-      SMHV = [];
-      //DAQ:
-      var masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate;
-      masterRate = [];
-      masterGroupRate = [];
-      masterLinkRate = [];
-      collectorRate = [];
-      collectorLinkRate = [];
-      digiSummaryRate = [];
-      digiGroupSummaryRate = [];
-      digitizerLinkRate = [];
-      digitizerRate = [];
-
       //which nav panel is on top?
       window.navOnDisplay = 'DashboardLinks';
       //which canvas is on top?
@@ -467,7 +422,7 @@
 
       //wrap this in a function so it can be easily called to restart the loop somewhere else:
       function startLoop(){
-        masterLoop(rows+1, columns, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmThresholds, scaleMaxima, waffle, SHARCMonitor, HPGEMonitor, DESCANTMonitor, PACESMonitor, DANTEMonitor, BAMBINOMonitor, SCEPTARMonitor, SPICEMonitor, DAQMonitor, ClockMonitor, 2*(SMnChannels*SMrows*SMcolumns + 2*16), SMHV, Math.ceil(nCollectors/4), masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, 0);
+        masterLoop(dashboard, waffle, SHARCMonitor, HPGEMonitor, DESCANTMonitor, PACESMonitor, DANTEMonitor, BAMBINOMonitor, SCEPTARMonitor, SPICEMonitor, DAQMonitor, ClockMonitor, TriggerMonitor, 0);
       }
       startLoop(); 
 

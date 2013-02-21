@@ -1,9 +1,37 @@
-function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax, waffle, SHARC, HPGE, DESCANT, PACES, DANTE, BAMBINO, SCEPTAR, SPICE, DAQ, Clock, nSHARCchannels, HVdata, nCollectorGroups, masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, callMyself){
+function masterLoop(dashboard, waffle, SHARC, HPGE, DESCANT, PACES, DANTE, BAMBINO, SCEPTAR, SPICE, DAQ, Clock, Trigger, callMyself){
 	if(!document.webkitHidden && !document.mozHidden){
-        var i;
+        var i,j;
 
         //HV monitor
-    	fetchNewData(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax);
+        var demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit;
+        demandVoltage = [];
+        reportVoltage = [];
+        reportCurrent = [];
+        demandVrampUp = [];
+        demandVrampDown = [];
+        reportTemperature = [];
+        channelMask = [];
+        alarmStatus = [];
+        rampStatus = [];
+        voltLimit = [];
+        currentLimit = [];
+        for(i=0; i<waffle.rows; i++){
+            demandVoltage[i] = [];
+            reportVoltage[i] = [];
+            reportCurrent[i] = [];
+            demandVrampUp[i] = [];
+            demandVrampDown[i] = [];
+            reportTemperature[i] = [];
+            channelMask[i] = [];
+            alarmStatus[i] = [];
+            rampStatus[i] = [];
+            voltLimit[i] = [];
+            currentLimit[i] = [];
+            for(j=0;j<waffle.cols;j++){
+              alarmStatus[i][j] = [];
+            }
+        }
+    	fetchNewData(waffle.rows, waffle.cols, waffle.moduleSizes, waffle.ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, waffle.alarm, waffle.scaleMax);
     	waffle.update(demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, alarmStatus, channelMask, rampStatus, voltLimit, currentLimit, callMyself);
         for(i=0; i<waffle.barCharts.length; i++){
             var barChartData = [];
@@ -17,8 +45,9 @@ function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVolta
         }
 
         //SHARC
-        fetchNewSHARCData(nSHARCchannels, HVdata);
-        SHARC.update(HVdata);
+        var SHARCrates = [];
+        fetchNewSHARCData(320, SHARCrates);
+        SHARC.update(SHARCrates);
 
         //HPGE
         var HPGEdata = [];
@@ -56,10 +85,22 @@ function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVolta
         SPICE.update(SPICErates);
 
         //DAQ
-        fetchNewDAQData(nCollectorGroups, masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate);
+        var masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate;
+        masterRate = [];
+        masterGroupRate = [];
+        masterLinkRate = [];
+        collectorRate = [];
+        collectorLinkRate = [];
+        digiSummaryRate = [];
+        digiGroupSummaryRate = [];
+        digitizerLinkRate = [];
+        digitizerRate = [];
+        fetchNewDAQData(DAQ.nCollectorGroups, masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate);
         DAQ.update(masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate);
 
         //animate whoever is showing on top, flat draw the rest; force animate for everyone on first pass, since Google fonts don't render in canvas on the first call to draw (investigate):
+        if(window.onDisplay == 'DashboardCanvas' || !callMyself) animate(dashboard,0);
+        else dashboard.draw(dashboard.nFrames);
         if(window.onDisplay == 'TestWaffle' || !callMyself) animate(waffle, 0);
         else waffle.draw(waffle.nFrames);
         for(i=0; i<waffle.barCharts.length; i++){
@@ -88,10 +129,12 @@ function masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVolta
         else DAQ.drawDetail(DAQ.nFrames);
         if(window.onDisplay == 'ClockCanvas' || !callMyself) animate(Clock,0);
         else Clock.draw(Clock.nFrames);
+        if(window.onDisplay == 'TriggerCanvas' || !callMyself) animate(Trigger,0);
+        else Trigger.draw(Trigger.nFrames);
     }
 
     //clearTimeout(window.loop);
-    window.loop = setTimeout(function(){masterLoop(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, alarmTripLevel, scaleMax, waffle, SHARC, HPGE, DESCANT, PACES, DANTE, BAMBINO, SCEPTAR, SPICE, DAQ, Clock, nSHARCchannels, HVdata, nCollectorGroups, masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate, 1)}, 3000);
+    window.loop = setTimeout(function(){masterLoop(waffle, SHARC, HPGE, DESCANT, PACES, DANTE, BAMBINO, SCEPTAR, SPICE, DAQ, Clock, 1)}, 3000);
 }
 
 //populate HV monitor rows by cols arrays with the appropriate information:
