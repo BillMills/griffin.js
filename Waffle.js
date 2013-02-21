@@ -78,9 +78,10 @@ function Waffle(rows, cols, alarm, scaleMax, wrapperDiv, rowTitles, InputLayer, 
         //waffle dimensions; leave gutters for labels & title
         this.waffleWidth = this.cellSide*this.cols;
         this.waffleHeight = this.totalHeight;
-
         //want waffle and navbar centered nicely:
         this.leftEdge = (this.totalWidth - (this.waffleWidth + this.context.measureText('Prim').width))/2;
+        //push navbar over to match:
+        document.getElementById(this.linkWrapperID).setAttribute('style', 'left:'+(24 + 100*this.leftEdge/$('#'+this.wrapperDiv).width() )+'%;')
 
         //make a tooltip for this object:
         this.tooltip = new Tooltip(this.canvasID, 'MFTipText', 'MFtipCanv', 'MFTT', this.wrapperDiv, prefix, postfix);
@@ -102,8 +103,11 @@ function Waffle(rows, cols, alarm, scaleMax, wrapperDiv, rowTitles, InputLayer, 
             //document.styleSheets[0].insertRule(newRule,0);
             if(moduleSizes[i] != 0)
                 newRule = "width:"+buttonWidth+"px; height:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; margin-top:"+0.05*this.cellSide+"px; float:left; -webkit-border-radius: 5;  -moz-border-radius: 5; border-radius: 5; display: inline; font-family: 'Raleway', sans-serif; font-size:"+this.cellSide/4+"px; padding:0px;";
-            else 
-                newRule = "width:"+buttonWidth+"px; height:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; margin-top:"+0.05*this.cellSide+"px; float:left; -webkit-border-radius: 5;  -moz-border-radius: 5; border-radius: 5; display: inline; font-family: 'Raleway', sans-serif; font-size:"+this.cellSide/4+"px; padding:0px;";
+            else{ 
+                newRule = "width:"+buttonWidth+"px; height:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; margin-top:"+0.05*this.cellSide+"px; float:left; -webkit-border-radius: 5;  -moz-border-radius: 5; border-radius: 5; display: inline; font-family: 'Raleway', sans-serif; font-size:"+this.cellSide/2+"px; padding:0px; color:#CC0000;";
+                document.getElementById('card'+i).setAttribute('onclick', '');
+                document.getElementById('card'+i).innerHTML = 'X'
+            }
             document.getElementById('card'+i).setAttribute('style', newRule);
         }
 
