@@ -34,76 +34,30 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
 
     //navigation
     //top level nav button
-    var newButton = document.createElement('button');
-    newButton.setAttribute('id', this.topNavID);
-    newButton.setAttribute('class', 'navLink');
-    newButton.setAttribute('type', 'button');
-    newButton.setAttribute('onclick', "javascript:swapView('DAQlinks', 'DAQcanvas', 'DAQsidebar', '"+this.topNavID+"')");
-    document.getElementById('statusLink').appendChild(newButton);
-    document.getElementById('DAQbutton').innerHTML = 'DAQ';
+    insertButton(this.topNavID, 'navLink', "javascript:swapView('DAQlinks', 'DAQcanvas', 'DAQsidebar', '"+this.topNavID+"')", 'statusLink', 'DAQ');
     //nav wrapper div
-    var newDiv = document.createElement('div');
-    newDiv.setAttribute('id', this.linkWrapperID);
-    newDiv.setAttribute('class', 'navPanel');
-    this.monitor.appendChild(newDiv);
+    insertDiv(this.linkWrapperID, 'navPanel', this.monitorID);
     //nav header
-    var newHead = document.createElement('h1');
-    newHead.setAttribute('id', 'DAQlinksBanner');
-    newHead.setAttribute('class', 'navPanelHeader');
-    document.getElementById(this.linkWrapperID).appendChild(newHead);
-    document.getElementById('DAQlinksBanner').innerHTML = 'GRIFFIN DAQ Status';
-    var br1 = document.createElement("br");
-    document.getElementById(this.linkWrapperID).appendChild(br1);
+    insertH1('DAQlinksBanner', 'navPanelHeader', this.linkWrapperID, 'GRIFFIN DAQ Status');
+    insertLinebreak(this.linkWrapperID);
     //nav buttons
-    newButton = document.createElement('button');
-    newButton.setAttribute('id', 'DAQToplink');
-    newButton.setAttribute('class', 'navLinkDown');
-    newButton.setAttribute('type', 'button');
-    newButton.setAttribute('onclick', "javascript:swapFade('DAQcanvas', 'DAQToplink', window.DAQpointer)");
-    document.getElementById('DAQlinks').appendChild(newButton);
-    document.getElementById('DAQToplink').innerHTML = 'Top Level';
-    var br2 = document.createElement("br");
-    document.getElementById(this.linkWrapperID).appendChild(br2);
+    insertButton('DAQToplink', 'navLinkDown', "javascript:swapFade('DAQcanvas', 'DAQToplink', window.DAQpointer)", 'DAQlinks', 'Top Level');
+    insertLinebreak(this.linkWrapperID);
     //p to label row of collector buttons
-    var newPara = document.createElement('p');
-    newPara.setAttribute('id', 'DAQcollectorTitle');
-    newPara.setAttribute('style', 'display:inline; color:#999999;')
-    document.getElementById('DAQlinks').appendChild(newPara);
-    document.getElementById('DAQcollectorTitle').innerHTML = 'Collector ';
+    insertParagraph('DAQcollectorTitle', '', 'display:inline; color:#999999;', 'DAQlinks', 'Collector ');
     //deploy collector buttons
     for(i=0; i<this.nCollectors; i++){
-        newButton = document.createElement('button');
-        newButton.setAttribute('id', 'Collector'+i);
-        newButton.setAttribute('class', 'navLink');
-        newButton.setAttribute('type', 'button');
-        newButton.setAttribute('onclick', "javascript:swapFade('DAQdetailCanvas', 'Collector"+i+"', window.DAQpointer)");
-        document.getElementById(this.linkWrapperID).appendChild(newButton);
-        document.getElementById('Collector'+i).innerHTML = i;
+        insertButton('Collector'+i, 'navLink', "javascript:swapFade('DAQdetailCanvas', 'Collector"+i+"', window.DAQpointer)", this.linkWrapperID, i);
     }
 
     //right sidebar
-    newDiv = document.createElement('div');
-    newDiv.setAttribute('id', this.sidebarID);
-    newDiv.setAttribute('class', 'Sidebar');
-    this.monitor.appendChild(newDiv);
+    insertDiv(this.sidebarID, 'Sidebar', this.monitorID);
 
     //display canvases
     //top view
-    var newCanvas = document.createElement('canvas');
-    newCanvas.setAttribute('id', this.canvasID);
-    newCanvas.setAttribute('class', 'monitor');
-    newCanvas.setAttribute('style', 'top: '+ ($('#DAQlinks').height() + 5) +'px;')
-    newCanvas.setAttribute('width', this.canvasWidth);
-    newCanvas.setAttribute('height', this.canvasHeight);
-    this.monitor.appendChild(newCanvas);
+    insertCanvas(this.canvasID, 'monitor', 'top: '+ ($('#DAQlinks').height() + 5) +'px;', this.canvasWidth, this.canvasHeight, this.monitorID);
     //detailed view
-    newCanvas = document.createElement('canvas');
-    newCanvas.setAttribute('id', this.detailCanvasID);
-    newCanvas.setAttribute('class', 'monitor');
-    newCanvas.setAttribute('style', 'top:' + ($('#DAQlinks').height() + 5) +'px;')
-    newCanvas.setAttribute('width', this.canvasWidth);
-    newCanvas.setAttribute('height', this.canvasHeight);
-    this.monitor.appendChild(newCanvas);
+    insertCanvas(this.detailCanvasID, 'monitor', 'top:' + ($('#DAQlinks').height() + 5) +'px;', this.canvasWidth, this.canvasHeight, this.monitorID);
     //finished adding to the DOM////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     this.canvas = document.getElementById(canvas);

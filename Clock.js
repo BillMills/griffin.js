@@ -8,47 +8,23 @@ function Clock(monitor){
 	this.wrapper = document.getElementById(monitor);
 
     //add top level nav button:
-    var newButton = document.createElement('button');
-    newButton.setAttribute('id', 'ClockButton');
-    newButton.setAttribute('class', 'navLink');
-    newButton.setAttribute('type', 'button');
-    newButton.setAttribute('onclick', "javascript:swapView('ClockLinks', 'ClockCanvas', 'ClockSidebar', 'ClockButton')");
-    document.getElementById('statusLink').appendChild(newButton);
-    document.getElementById('ClockButton').innerHTML = 'Clock';
+    insertButton('ClockButton', 'navLink', "javascript:swapView('ClockLinks', 'ClockCanvas', 'ClockSidebar', 'ClockButton')", 'statusLink', 'Clock')
 
     //nav wrapper div
-    var newDiv = document.createElement('div');
-    newDiv.setAttribute('id', this.linkWrapperID);
-    newDiv.setAttribute('class', 'navPanel');
-    this.wrapper.appendChild(newDiv);
+    insertDiv(this.linkWrapperID, 'navPanel', monitor);
     //nav header
-    var newHead = document.createElement('h1');
-    newHead.setAttribute('id', 'ClockLinksBanner');
-    newHead.setAttribute('class', 'navPanelHeader');
-    document.getElementById(this.linkWrapperID).appendChild(newHead);
-    document.getElementById('ClockLinksBanner').innerHTML = 'GRIFFIN Clock Status';
-    var br1 = document.createElement("br");
-    document.getElementById(this.linkWrapperID).appendChild(br1);
+    insertH1('ClockLinksBanner', 'navPanelHeader', this.linkWrapperID, 'GRIFFIN Clock Status');
+    insertLinebreak(this.linkWrapperID);
 
 	//deploy a canvas for the clock view:
     this.canvasWidth = 0.48*$(this.wrapper).width();
     this.canvasHeight = 0.8*$(this.wrapper).height();
-	var newCanvas = document.createElement('canvas');
-    newCanvas.setAttribute('id', this.canvasID);
-    newCanvas.setAttribute('class', 'monitor');
-    newCanvas.setAttribute('style', 'top:' + ($('#ClockLinks').height() + 5) +'px;')
-    newCanvas.setAttribute('width', this.canvasWidth);
-    newCanvas.setAttribute('height', this.canvasHeight);
-    document.getElementById(monitor).appendChild(newCanvas);
-
+    insertCanvas(this.canvasID, 'monitor', 'top:' + ($('#ClockLinks').height() + 5) +'px;', this.canvasWidth, this.canvasHeight, monitor);
     this.canvas = document.getElementById('ClockCanvas');
     this.context = this.canvas.getContext('2d');
 
     //right sidebar
-    newDiv = document.createElement('div');
-    newDiv.setAttribute('id', this.sidebarID);
-    newDiv.setAttribute('class', 'Sidebar');
-    this.wrapper.appendChild(newDiv);
+    insertDiv(this.sidebarID, 'Sidebar', monitor);
 
     //drawing parameters:
     this.margin = 5;

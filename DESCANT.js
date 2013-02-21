@@ -20,37 +20,19 @@ function DESCANT(monitor, minima, maxima, prefix, postfix){
     this.duration = 0.5;
     this.nFrames = this.FPS*this.duration;
 
-    //insert navigation/////////////////////////////////////////////////////////////////////////////////
-    var newButton = document.createElement('button');
-    newButton.setAttribute('id', 'DESCANTlink');
-    newButton.setAttribute('class', 'navLink');
-    newButton.setAttribute('type', 'button');
-    newButton.setAttribute('onclick', "javascript:swapFade('DESCANTCanvas', 'DESCANTlink', window.DESCANTpointer)");
-    document.getElementById(this.linkWrapperID).appendChild(newButton);
-    document.getElementById('DESCANTlink').innerHTML = 'DESCANT';
+    //insert nav link
+    insertButton('DESCANTlink', 'navLink', "javascript:swapFade('DESCANTCanvas', 'DESCANTlink', window.DESCANTpointer)", this.linkWrapperID, 'DESCANT');
 
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
 	this.monitor = document.getElementById(this.monitorID);
     this.canvasWidth = 0.48*$(this.monitor).width();
     this.canvasHeight = 0.8*$(this.monitor).height();
     //detector view
-    var newCanvas = document.createElement('canvas');
-    newCanvas.setAttribute('id', this.canvasID);
-    newCanvas.setAttribute('class', 'monitor');
-    newCanvas.setAttribute('style', 'top:' + ($('#SubsystemLinks').height() + 5)*1.25 +'px;')
-    newCanvas.setAttribute('width', this.canvasWidth);
-    newCanvas.setAttribute('height', this.canvasHeight);
-    document.getElementById(monitor).appendChild(newCanvas);
+    insertCanvas(this.canvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, monitor);
     this.canvas = document.getElementById(this.canvasID);
     this.context = this.canvas.getContext('2d');
     //hidden Tooltip map layer
-    newCanvas = document.createElement('canvas');
-    newCanvas.setAttribute('id', this.TTcanvasID);
-    newCanvas.setAttribute('class', 'monitor');
-    newCanvas.setAttribute('style', 'top:' + ($('#SubsystemLinks').height() + 5)*1.25 +'px;')
-    newCanvas.setAttribute('width', this.canvasWidth);
-    newCanvas.setAttribute('height', this.canvasHeight);
-    document.getElementById(monitor).appendChild(newCanvas);
+    insertCanvas(this.TTcanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, monitor);
     this.TTcanvas = document.getElementById(this.TTcanvasID);
     this.TTcontext = this.TTcanvas.getContext('2d');
 

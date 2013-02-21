@@ -20,47 +20,23 @@ function HPGE(monitor, enableBGO, minima, maxima, prefix, postfix){
     this.duration = 0.5;
     this.nFrames = this.FPS*this.duration;
 
-    //insert navigation/////////////////////////////////////////////////////////////////////////////////
-    var newButton = document.createElement('button');
-    newButton.setAttribute('id', 'HPGElink');
-    newButton.setAttribute('class', 'navLink');
-    newButton.setAttribute('type', 'button');
-    newButton.setAttribute('onclick', "javascript:swapFade('HPGECanvas', 'HPGElink', window.HPGEpointer)");
-    document.getElementById(this.linkWrapperID).appendChild(newButton);
-    document.getElementById('HPGElink').innerHTML = 'HPGE';
+    //insert nav link
+    insertButton('HPGElink', 'navLink', "javascript:swapFade('HPGECanvas', 'HPGElink', window.HPGEpointer)", this.linkWrapperID, 'HPGE');
 
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
     this.monitor = document.getElementById(monitor);
     this.canvasWidth = 0.48*$(this.monitor).width();
     this.canvasHeight = 0.8*$(this.monitor).height();
     //top level
-    var newCanvas = document.createElement('canvas');
-    newCanvas.setAttribute('id', this.canvasID);
-    newCanvas.setAttribute('class', 'monitor');
-    newCanvas.setAttribute('style', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;')
-    newCanvas.setAttribute('width', this.canvasWidth);
-    newCanvas.setAttribute('height', this.canvasHeight);
-    document.getElementById(monitor).appendChild(newCanvas);
+    insertCanvas(this.canvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, monitor);
     this.canvas = document.getElementById(this.canvasID);
     this.context = this.canvas.getContext('2d');
     //detail level
-    newCanvas = document.createElement('canvas');
-    newCanvas.setAttribute('id', this.detailCanvasID);
-    newCanvas.setAttribute('class', 'monitor');
-    newCanvas.setAttribute('style', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;')
-    newCanvas.setAttribute('width', this.canvasWidth);
-    newCanvas.setAttribute('height', this.canvasHeight);
-    document.getElementById(monitor).appendChild(newCanvas);
+    insertCanvas(this.detailCanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, monitor);
     this.detailCanvas = document.getElementById(this.detailCanvasID);
     this.detailContext = this.detailCanvas.getContext('2d');
     //hidden Tooltip map layer
-    newCanvas = document.createElement('canvas');
-    newCanvas.setAttribute('id', this.TTcanvasID);
-    newCanvas.setAttribute('class', 'monitor');
-    newCanvas.setAttribute('style', 'top:' + ($('#SubsystemLinks').height() + 5)*1.25 +'px;')
-    newCanvas.setAttribute('width', this.canvasWidth);
-    newCanvas.setAttribute('height', this.canvasHeight);
-    document.getElementById(monitor).appendChild(newCanvas);
+    insertCanvas(this.TTcanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, monitor);
     this.TTcanvas = document.getElementById(this.TTcanvasID);
     this.TTcontext = this.TTcanvas.getContext('2d');
 

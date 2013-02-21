@@ -27,27 +27,14 @@ function SHARC(monitor, orientation, rows, columns, nStrips, nRadialHoriz, nAzim
     //which of the scalars are we tracking now? (corresponds to the index in this.maxima)
     this.trackingIndex = 0;
 
-    //insert navigation/////////////////////////////////////////////////////////////////////////////////
-    var newButton = document.createElement('button');
-    newButton.setAttribute('id', 'SHARClink');
-    newButton.setAttribute('class', 'navLinkDown');
-    newButton.setAttribute('type', 'button');
-    newButton.setAttribute('onclick', "javascript:swapFade('SHARCCanvas', 'SHARClink', window.SHARCpointer)");
-    document.getElementById(this.linkWrapperID).appendChild(newButton);
-    document.getElementById('SHARClink').innerHTML = 'SHARC';
+    //insert nav link
+	insertButton('SHARClink', 'navLinkDown', "javascript:swapFade('SHARCCanvas', 'SHARClink', window.SHARCpointer)", this.linkWrapperID, 'SHARC');
 
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
 	this.monitor = document.getElementById(this.monitorID);
     this.canvasWidth = 0.48*$(this.monitor).width();
     this.canvasHeight = 0.8*$(this.monitor).height();
-
-	var newCanvas = document.createElement('canvas');
-    newCanvas.setAttribute('id', this.canvasID);
-    newCanvas.setAttribute('class', 'monitor');
-    newCanvas.setAttribute('style', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;')
-    newCanvas.setAttribute('width', this.canvasWidth);
-    newCanvas.setAttribute('height', this.canvasHeight);
-    document.getElementById(monitor).appendChild(newCanvas);
+	insertCanvas(this.canvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, monitor);
 	this.canvas = document.getElementById(this.canvasID);
 	this.context = this.canvas.getContext('2d');
 

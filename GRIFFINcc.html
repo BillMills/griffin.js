@@ -11,6 +11,7 @@
     <script src="masterControl.js" type="text/javascript"></script>
     <script src="viewTransitions.js" type="text/javascript"></script>
     <script src="drawing.js" type="text/javascript"></script>
+    <script src="DOMmanipulation.js" type="text/javascript"></script>
 
     <script src="Dashboard.js" type="text/javascript"></script>
     <script src="Waffle.js" type="text/javascript"></script>
@@ -344,33 +345,15 @@
       var waffle = new Waffle(rows,columns, alarmThresholds, scaleMaxima, "waffleplate", rowTitles, "InputLayer", ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleSizes, moduleLabels, sliderVoltage, sliderRamp, sliderRampDown, barChartPrecision, prefix, postfix);
 
       //Subsystem sidebar:
-      var newDiv = document.createElement('div');
-      newDiv.setAttribute('id', 'SubsystemSidebar');
-      newDiv.setAttribute('class', 'Sidebar');
-      document.getElementById('waffleplate').appendChild(newDiv);
+      insertDiv('SubsystemSidebar', 'Sidebar', 'waffleplate');
       //Subsystem menu; universal buttons declared outside of individual subsystems:
       //add top level nav button:
-      var newButton = document.createElement('button');
-      newButton.setAttribute('id', 'SubsystemsButton');
-      newButton.setAttribute('class', 'navLink');
-      newButton.setAttribute('type', 'button');
-      newButton.setAttribute('onclick', "javascript:swapView('SubsystemLinks', 'SHARCCanvas', 'SubsystemSidebar', 'SubsystemsButton')");
-      document.getElementById('statusLink').appendChild(newButton);
-      document.getElementById('SubsystemsButton').innerHTML = 'Subsystem Monitors';
+      insertButton('SubsystemsButton', 'navLink', "javascript:swapView('SubsystemLinks', 'SHARCCanvas', 'SubsystemSidebar', 'SubsystemsButton')", 'statusLink', 'Subsystem Monitors');
       //create nav panel for subsystem view:
-      newDiv = document.createElement('div');
-      newDiv.setAttribute('id', 'SubsystemLinks');
-      newDiv.setAttribute('class', 'navPanel');
-      document.getElementById('waffleplate').appendChild(newDiv);
+      insertDiv('SubsystemLinks', 'navPanel', 'waffleplate');
       //headline for nav panel
-      var newHead = document.createElement('h1');
-      newHead.setAttribute('id', 'SubsystemLinksBanner');
-      newHead.setAttribute('class', 'navPanelHeader');
-      document.getElementById('SubsystemLinks').appendChild(newHead);
-      document.getElementById('SubsystemLinksBanner').innerHTML = 'GRIFFIN Subsystem Monitors';
-      //linebreak:
-      var newBreak = document.createElement('br');
-      document.getElementById('SubsystemLinks').appendChild(newBreak);    
+      insertH1('SubsystemLinksBanner', 'navPanelHeader', 'SubsystemLinks', 'GRIFFIN Subsystem Monitors');
+      insertLinebreak('SubsystemLinks');    
       //subdetectors
       var SHARCMonitor = new SHARC('waffleplate','horizontal', SMrows, SMcolumns, SMnChannels, 4, 4, 1, 16, SMminima, SMmaxima, [],[]);
       var HPGEMonitor = new HPGE('waffleplate', 0, [0,0,0], [1,1,1], [], []);
@@ -380,37 +363,19 @@
       var BAMBINOMonitor = new BAMBINO('waffleplate', [0,0,0], [1,1,1]);
       var SCEPTARMonitor = new SCEPTAR('waffleplate', [0,0,0], [1,1,1]);
       var SPICEMonitor = new SPICE('waffleplate', [0,0,0], [1,1,1]);
-
-      //linebreak
-      var newBreak2 = document.createElement('br');
-      document.getElementById('SubsystemLinks').appendChild(newBreak2);
+      insertLinebreak('SubsystemLinks');
       //nav for different reported values:
-      //HV
-      newButton = document.createElement('button');
-      newButton.setAttribute('id', 'subsystemHV');
-      newButton.setAttribute('class', 'navLink');
-      newButton.setAttribute('type', 'button');
-      newButton.setAttribute('onclick', "javascript:swapSubsystemView('subsystemHV', 'SubsystemLinks', 0)");
-      document.getElementById('SubsystemLinks').appendChild(newButton);
-      document.getElementById('subsystemHV').innerHTML = 'HV';
-      //Thresholds
-      newButton = document.createElement('button');
-      newButton.setAttribute('id', 'subsystemThresholds');
-      newButton.setAttribute('class', 'navLink');
-      newButton.setAttribute('type', 'button');
-      newButton.setAttribute('onclick', "javascript:swapSubsystemView('subsystemThresholds', 'SubsystemLinks', 1)");
-      document.getElementById('SubsystemLinks').appendChild(newButton); 
-      document.getElementById('subsystemThresholds').innerHTML = 'Thresholds';
-      //Rate
-      newButton = document.createElement('button');
-      newButton.setAttribute('id', 'subsystemRate');
-      newButton.setAttribute('class', 'navLinkDown');  //default
-      newButton.setAttribute('type', 'button');
-      newButton.setAttribute('onclick', "javascript:swapSubsystemView('subsystemRate', 'SubsystemLinks', 2)");
-      document.getElementById('SubsystemLinks').appendChild(newButton); 
-      document.getElementById('subsystemRate').innerHTML = 'Rate';
-      //count the subsystem scalars for proper navbar function:
-      window.subsystemScalars = 3;
+      //values to report:
+      var monitorValues = ['HV', 'Thresholds', 'Rate'];
+      for(i=0; i<monitorValues.length; i++){
+        var classDef
+        //position 1 is default for now:
+        if(i==1) classDef = 'navLinkDown';
+        else classDef = 'navLink'; 
+        insertButton('subsystem'+monitorValues[i], classDef, "javascript:swapSubsystemView('subsystem"+monitorValues[i]+"', 'SubsystemLinks', "+i+")", 'SubsystemLinks', monitorValues[i]);
+
+      }
+      window.subsystemScalars = monitorValues.length;
 
       var DAQMonitor = new DAQ('waffleplate', 'DAQcanvas', 'DAQdetailCanvas', 0, DAQminima, DAQmaxima, configParameters);
 
