@@ -134,7 +134,7 @@ function masterLoop(dashboard, waffle, SHARC, HPGE, DESCANT, PACES, DANTE, BAMBI
     }
 
     //clearTimeout(window.loop);
-    window.loop = setTimeout(function(){masterLoop(waffle, SHARC, HPGE, DESCANT, PACES, DANTE, BAMBINO, SCEPTAR, SPICE, DAQ, Clock, 1)}, 3000);
+    window.loop = setTimeout(function(){masterLoop(dashboard, waffle, SHARC, HPGE, DESCANT, PACES, DANTE, BAMBINO, SCEPTAR, SPICE, DAQ, Clock, Trigger, 1)}, 3000);
 }
 
 //populate HV monitor rows by cols arrays with the appropriate information:
