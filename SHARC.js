@@ -28,7 +28,7 @@ function SHARC(monitor, orientation, rows, columns, nStrips, nRadialHoriz, nAzim
     this.trackingIndex = 0;
 
     //insert nav link
-	insertButton('SHARClink', 'navLinkDown', "javascript:swapFade('SHARCCanvas', 'SHARClink', window.SHARCpointer)", this.linkWrapperID, 'SHARC');
+	insertButton('SHARClink', 'navLinkDown', "javascript:swapFade('SHARCCanvas', 'SHARClink', window.SHARCpointer, window.subsystemScalars)", this.linkWrapperID, 'SHARC');
 
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
 	this.monitor = document.getElementById(this.monitorID);

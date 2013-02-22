@@ -18,7 +18,7 @@ function PACES(monitor, minima, maxima, prefix, postfix){
     this.nFrames = this.FPS*this.duration;
 
     //insert nav link
-    insertButton('PACESlink', 'navLink', "javascript:swapFade('PACESCanvas', 'PACESlink', window.PACESpointer)", this.linkWrapperID, 'PACES');
+    insertButton('PACESlink', 'navLink', "javascript:swapFade('PACESCanvas', 'PACESlink', window.PACESpointer, window.subsystemScalars)", this.linkWrapperID, 'PACES');
 
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
     this.monitor = document.getElementById(monitor);
@@ -32,7 +32,7 @@ function PACES(monitor, minima, maxima, prefix, postfix){
     insertCanvas(this.TTcanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, monitor);
     this.TTcanvas = document.getElementById(this.TTcanvasID);
     this.TTcontext = this.TTcanvas.getContext('2d');
-    
+
     //Dirty trick to implement tooltip on obnoxious geometry: make another canvas of the same size hidden beneath, with the 
     //detector drawn on it, but with each element filled in with rgba(0,0,n,1), where n is the channel number; fetching the color from the 
     //hidden canvas at point x,y will then return the appropriate channel index.

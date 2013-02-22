@@ -52,12 +52,12 @@ function Waffle(rows, cols, alarm, scaleMax, wrapperDiv, rowTitles, InputLayer, 
         insertH1('mainframeLinksBanner', 'navPanelHeader', this.linkWrapperID, 'GRIFFIN HV Mainframes');
         insertLinebreak(this.linkWrapperID);
         //nav buttons
-        insertButton('Main1', 'navLinkDown', "javascript:swapFade('TestWaffle', 'Main1', window.HVpointer)", 'mainframeLinks', 'Mainframe 1');
+        insertButton('Main1', 'navLinkDown', "javascript:swapFade('TestWaffle', 'Main1', window.HVpointer, 0)", 'mainframeLinks', 'Mainframe 1');
         insertLinebreak(this.linkWrapperID);
 
         //deploy slot buttons
         for(i=0; i<this.moduleSizes.length; i++){
-            insertButton('card'+i, 'navLink', "javascript:swapFade('bar"+i+"', 'card"+i+"', window.HVpointer)", this.linkWrapperID, 'Slot '+i);
+            insertButton('card'+i, 'navLink', "javascript:swapFade('bar"+i+"', 'card"+i+"', window.HVpointer, 0)", this.linkWrapperID, 'Slot '+i);
         }
 
         //inject canvas into DOM for waffle to paint on:

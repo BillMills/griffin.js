@@ -41,15 +41,15 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
     insertH1('DAQlinksBanner', 'navPanelHeader', this.linkWrapperID, 'GRIFFIN DAQ Status');
     insertLinebreak(this.linkWrapperID);
     //nav buttons
-    insertButton('DAQToplink', 'navLinkDown', "javascript:swapFade('DAQcanvas', 'DAQToplink', window.DAQpointer)", 'DAQlinks', 'Top Level');
+    insertButton('DAQToplink', 'navLinkDown', "javascript:swapFade('DAQcanvas', 'DAQToplink', window.DAQpointer, 0)", 'DAQlinks', 'Top Level');
     insertLinebreak(this.linkWrapperID);
     //p to label row of collector buttons
     insertParagraph('DAQcollectorTitle', '', 'display:inline; color:#999999;', 'DAQlinks', 'Collector ');
     //deploy collector buttons
     for(i=0; i<this.nCollectors; i++){
-        insertButton('Collector'+i, 'navLink', "javascript:swapFade('DAQdetailCanvas', 'Collector"+i+"', window.DAQpointer)", this.linkWrapperID, i);
+        insertButton('Collector'+i, 'navLink', "javascript:swapFade('DAQdetailCanvas', 'Collector"+i+"', window.DAQpointer, 0)", this.linkWrapperID, i);
+        $('#Collector'+i).width( ( 0.95*this.canvasWidth - $('#DAQcollectorTitle').width()) / this.nCollectors );
     }
-
     //right sidebar
     insertDiv(this.sidebarID, 'Sidebar', this.monitorID);
 

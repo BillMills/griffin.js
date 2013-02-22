@@ -21,7 +21,7 @@ function HPGE(monitor, enableBGO, minima, maxima, prefix, postfix){
     this.nFrames = this.FPS*this.duration;
 
     //insert nav link
-    insertButton('HPGElink', 'navLink', "javascript:swapFade('HPGECanvas', 'HPGElink', window.HPGEpointer)", this.linkWrapperID, 'HPGE');
+    insertButton('HPGElink', 'navLink', "javascript:swapFade('HPGECanvas', 'HPGElink', window.HPGEpointer, window.subsystemScalars)", this.linkWrapperID, 'HPGE');
 
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
     this.monitor = document.getElementById(monitor);

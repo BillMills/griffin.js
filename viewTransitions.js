@@ -58,11 +58,11 @@ function fadeDivIn(navDiv){
 }
 
 //swap two canvases:
-function swapFade(inbound, buttonID, object){
+function swapFade(inbound, buttonID, object, leaveOff){
 	var i;
 
-	//turn off other buttons, except for the scalar options:
-	for(i=0; i<document.getElementById(object.linkWrapperID).children.length - window.subsystemScalars; i++){
+	//turn off other buttons, except for some at the end:
+	for(i=0; i<document.getElementById(object.linkWrapperID).children.length - leaveOff; i++){
 		if(document.getElementById(object.linkWrapperID).children[i].type == 'button')
 			document.getElementById(object.linkWrapperID).children[i].setAttribute('class', 'navLink');
 	}

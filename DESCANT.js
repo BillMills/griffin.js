@@ -21,7 +21,7 @@ function DESCANT(monitor, minima, maxima, prefix, postfix){
     this.nFrames = this.FPS*this.duration;
 
     //insert nav link
-    insertButton('DESCANTlink', 'navLink', "javascript:swapFade('DESCANTCanvas', 'DESCANTlink', window.DESCANTpointer)", this.linkWrapperID, 'DESCANT');
+    insertButton('DESCANTlink', 'navLink', "javascript:swapFade('DESCANTCanvas', 'DESCANTlink', window.DESCANTpointer, window.subsystemScalars)", this.linkWrapperID, 'DESCANT');
 
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
 	this.monitor = document.getElementById(this.monitorID);
