@@ -251,7 +251,7 @@ function fetchNewData(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVol
 function detectCards(){
     var moduleSizes
     //insert ODB magic here
-    moduleSizes = [0,4,0,4,0,1];
+    moduleSizes = [0,4,0,4,0,4,0,4,0,4,0,4];
     return moduleSizes;
 }
 

@@ -197,9 +197,6 @@
       //cell labels; first entry decribes cell type
       var rowTitles = ['Ch.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
 
-      //module names:
-      var moduleLabels = ['Slot 0', 'Slot 1', 'Slot 2', 'Slot 3', 'Slot 4', 'Slot 5'];
-
       //alarm thresholds [voltage, current, temperature]:
       var alarmThresholds = [0.8,0.999,0.999];
 
@@ -293,6 +290,11 @@
         if (moduleSizes[i] == 0) columns++;
       }
 
+      moduleLabels = [];
+      for(i=0; i<moduleSizes.length; i++){
+        moduleLabels[i] = 'Slot '+i;
+      }
+
       //Insert branding & navigation:
       Banner('banner', 'youAreHere', 'navBar', 'GRIFFIN Dashboard');
 
@@ -342,7 +344,7 @@
       var dashboard = new Dashboard('waffleplate');
 
       //HV monitor
-      var waffle = new Waffle(rows,columns, alarmThresholds, scaleMaxima, "waffleplate", rowTitles, "InputLayer", ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleSizes, moduleLabels, sliderVoltage, sliderRamp, sliderRampDown, barChartPrecision, prefix, postfix);
+      var waffle = new Waffle(rows,columns, alarmThresholds, scaleMaxima, "waffleplate", rowTitles, "InputLayer", ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleSizes, sliderVoltage, sliderRamp, sliderRampDown, barChartPrecision, prefix, postfix);
 
       //Subsystem sidebar:
       insertDiv('SubsystemSidebar', 'Sidebar', 'waffleplate');

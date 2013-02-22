@@ -1,4 +1,4 @@
-function Waffle(rows, cols, alarm, scaleMax, wrapperDiv, rowTitles, InputLayer, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs, headerDiv, moduleSizes, moduleLabels, voltageSlider, rampSlider, rampDownSlider, barChartPrecision, prefix, postfix){
+function Waffle(rows, cols, alarm, scaleMax, wrapperDiv, rowTitles, InputLayer, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs, headerDiv, moduleSizes, voltageSlider, rampSlider, rampDownSlider, barChartPrecision, prefix, postfix){
 
         //if(!document.webkitHidden && !document.mozHidden){
     	var i, j, n, columns;
@@ -25,7 +25,6 @@ function Waffle(rows, cols, alarm, scaleMax, wrapperDiv, rowTitles, InputLayer, 
         this.alarmPanelCanvIDs = alarmPanelCanvIDs; //array containing IDs of alarm panel canvases
         this.headerDiv = headerDiv;                 //div ID of waffle header
         this.moduleSizes = moduleSizes;             //array containing sizes of modules in groups of 12 channels
-        this.moduleLabels = moduleLabels;           //array containing module labels
         this.chx = 1;                               //x channel of input sidebar focus
         this.chy = 1;                               //y channel of input sidebar focus
         this.voltageSlider = voltageSlider;         //demand voltage slider associated with this waffle
@@ -65,7 +64,13 @@ function Waffle(rows, cols, alarm, scaleMax, wrapperDiv, rowTitles, InputLayer, 
         this.canvas = document.getElementById(this.canvasID);
         this.context = this.canvas.getContext('2d');
         //finished DOM insertions///////////////////////////////////////////////////////////////
-        
+
+        //set up module labels
+        this.moduleLabels = [];
+        for(i=0; i<this.moduleSizes.length; i++){
+            this.moduleLabels[i] = 'Slot ' + i;
+        }
+
         //adjust height to accommodate card and module labels:
         this.context.font = Math.min(16, this.cellSide)+'px Raleway';
         this.longestModuleLabel = 0;
@@ -79,7 +84,7 @@ function Waffle(rows, cols, alarm, scaleMax, wrapperDiv, rowTitles, InputLayer, 
         this.waffleWidth = this.cellSide*this.cols;
         this.waffleHeight = this.totalHeight;
         //want waffle and navbar centered nicely:
-        this.leftEdge = (this.totalWidth - (this.waffleWidth + this.context.measureText('Prim').width))/2;
+        this.leftEdge = (this.totalWidth - (this.waffleWidth + 1.5*this.context.measureText('Prim').width))/2;
         //push navbar over to match:
         document.getElementById(this.linkWrapperID).setAttribute('style', 'left:'+(24 + 100*this.leftEdge/$('#'+this.wrapperDiv).width() )+'%;')
 
@@ -95,7 +100,7 @@ function Waffle(rows, cols, alarm, scaleMax, wrapperDiv, rowTitles, InputLayer, 
 
         //style card nav buttons
         var newRule;
-        for(i=0; i<moduleLabels.length; i++){
+        for(i=0; i<this.moduleLabels.length; i++){
             var buttonWidth;
             buttonWidth = Math.max(moduleSizes[i],1)*0.9*this.cellSide + (Math.max(moduleSizes[i],1)-1)*0.1*this.cellSide;
             //FF freaks out if you try and overwrite a styleSheet :(
