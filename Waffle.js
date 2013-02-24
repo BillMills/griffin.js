@@ -1,4 +1,4 @@
-function Waffle(rows, cols, alarm, scaleMax, wrapperDiv, rowTitles, InputLayer, ODBkeys, alarmPanelDivIDs, alarmPanelCanvIDs, headerDiv, moduleSizes, voltageSlider, rampSlider, rampDownSlider, barChartPrecision, prefix, postfix){
+function Waffle(rows, cols, wrapperDiv, rowTitles, InputLayer, ODBkeys, headerDiv, moduleSizes, voltageSlider, rampSlider, rampDownSlider, barChartPrecision, prefix, postfix, AlarmServices){
 
         //if(!document.webkitHidden && !document.mozHidden){
     	var i, j, n, columns;
@@ -12,17 +12,12 @@ function Waffle(rows, cols, alarm, scaleMax, wrapperDiv, rowTitles, InputLayer, 
         this.rows = rows + 1;                       //number of rows in the waffle; +1 for primary row
         this.cols = cols;                           //numver of columns in the waffle
         this.canvasID = 'TestWaffle';               //canvas ID to draw the waffle on
-        this.alarm = alarm;                         //array of alarm thresholds: [voltage, current, temperature]
-        this.scaleMax = scaleMax;                   //array of scale maxima: [voltage, current, temperature]
         this.prevAlarmStatus;                       //previous iteration's alarmStatus
         this.alarmStatus;                           //2D array containing the alarm level for each cell
-        this.side = ['left', 'right']               //TODO: depricate
         this.wrapperDiv = wrapperDiv;               //div ID of top level div
         this.rowTitles = rowTitles;                 //array of titles for rows
         this.InputLayer = InputLayer;               //div ID of wrapper for input fields
         this.ODBkeys = ODBkeys;                     //array of strings describing the locations of relevant info in ODB
-        this.alarmPanelDivIDs = alarmPanelDivIDs;   //array containing IDs of alarm panel divs
-        this.alarmPanelCanvIDs = alarmPanelCanvIDs; //array containing IDs of alarm panel canvases
         this.headerDiv = headerDiv;                 //div ID of waffle header
         this.moduleSizes = moduleSizes;             //array containing sizes of modules in groups of 12 channels
         this.chx = 1;                               //x channel of input sidebar focus
@@ -34,6 +29,7 @@ function Waffle(rows, cols, alarm, scaleMax, wrapperDiv, rowTitles, InputLayer, 
         this.topNavID = 'HVmonitorButton';
         this.sidebarID = 'InputLayer';
         this.monitor = document.getElementById(this.wrapperDiv);
+        this.AlarmServices = AlarmServices;         //Alarm serivce object the waffle will fire events at
 
         //determine dimesions of canvas:
         this.totalWidth = Math.round(0.5*$('#'+this.wrapperDiv).width());
@@ -107,7 +103,7 @@ function Waffle(rows, cols, alarm, scaleMax, wrapperDiv, rowTitles, InputLayer, 
             //newRule = "button#card"+i+"{width:"+buttonWidth+"px; height:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; margin-top:"+0.05*this.cellSide+"px; float:left; background: -webkit-gradient(linear, left top, left bottom, from(#DDDDDD), to(#FFFFFF)); background: -moz-linear-gradient(top,  #DDDDDD,  #FFFFFF); -webkit-border-radius: 5; -moz-border-radius: 5; border-radius: 5; font-size:"+this.cellSide/4+"px; padding:0px}";
             //document.styleSheets[0].insertRule(newRule,0);
             if(moduleSizes[i] != 0)
-                newRule = "width:"+buttonWidth+"px; height:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; margin-top:"+0.05*this.cellSide+"px; float:left; -webkit-border-radius: 5;  -moz-border-radius: 5; border-radius: 5; display: inline; font-family: 'Raleway', sans-serif; font-size:"+this.cellSide/4+"px; padding:0px;";
+                newRule = "width:"+buttonWidth+"px; height:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; margin-top:"+0.05*this.cellSide+"px; float:left; -webkit-border-radius: 5;  -moz-border-radius: 5; border-radius: 5; display: inline; font-family: 'Raleway', sans-serif; font-size:"+buttonWidth/8+"px; padding:0px;";
             else{ 
                 newRule = "width:"+buttonWidth+"px; height:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; margin-top:"+0.05*this.cellSide+"px; float:left; -webkit-border-radius: 5;  -moz-border-radius: 5; border-radius: 5; display: inline; font-family: 'Raleway', sans-serif; font-size:"+this.cellSide/2+"px; padding:0px; color:#CC0000;";
                 document.getElementById('card'+i).setAttribute('onclick', '');
@@ -126,7 +122,7 @@ function Waffle(rows, cols, alarm, scaleMax, wrapperDiv, rowTitles, InputLayer, 
         var newCanvas;
         for(i=0; i<moduleSizes.length; i++){
             insertCanvas('bar'+i, 'monitor', '', this.totalWidth, this.totalHeight, wrapperDiv);
-            this.barCharts[i] = new BarGraph('bar'+i, i, Math.max(moduleSizes[i],1)*12, 'Slot '+i, 'Reported Voltage [V]', 0, scaleMax[0], barChartPrecision, that);
+            this.barCharts[i] = new BarGraph('bar'+i, i, Math.max(moduleSizes[i],1)*12, 'Slot '+i, 'Reported Voltage [V]', 0, this.AlarmServices.scaleMaxima[0], barChartPrecision, that);
         }
 
         //set up arrays:
@@ -172,7 +168,7 @@ function Waffle(rows, cols, alarm, scaleMax, wrapperDiv, rowTitles, InputLayer, 
             for(j=0; j<columns; j++){
                 this.alarmStatus[i][j] = [];
                 this.prevAlarmStatus[i][j] = [];
-                for(var n=0; n<this.alarm.length; n++){
+                for(var n=0; n<3; n++){
                     this.alarmStatus[i][j][n] = 0;
                     this.prevAlarmStatus[i][j][n] = 0;
                 }
@@ -183,7 +179,7 @@ function Waffle(rows, cols, alarm, scaleMax, wrapperDiv, rowTitles, InputLayer, 
         this.reportedValues = [this.demandVoltage, this.reportVoltage, this.reportCurrent, this.demandVrampUp, this.demandVrampDown, this.reportTemperature, this.rampStatus];
 
         //do an initial populate of the waffle:
-        fetchNewData(this.rows, this.cols, moduleSizes, this.ODBkeys, this.demandVoltage, this.reportVoltage, this.reportCurrent, this.demandVrampUp, this.demandVrampDown, this.reportTemperature, this.channelMask, this.alarmStatus, this.rampStatus, this.voltLimit, this.currentLimit, this.alarm, this.scaleMax);
+        fetchNewData(this.rows, this.cols, moduleSizes, this.ODBkeys, this.demandVoltage, this.reportVoltage, this.reportCurrent, this.demandVrampUp, this.demandVrampDown, this.reportTemperature, this.channelMask, this.alarmStatus, this.rampStatus, this.voltLimit, this.currentLimit, this.AlarmServices);
 
         //make waffles clickable to set a variable for a channel:
         this.canvas.onclick = function(event){clickWaffle(event, that)};
@@ -456,7 +452,6 @@ function Waffle(rows, cols, alarm, scaleMax, wrapperDiv, rowTitles, InputLayer, 
             this.cellColorUpdate();
 
             //update peripherals:
-            AlarmSidebar(this.side[0], this.wrapperDiv, this.waffleHeight, this.prevAlarmStatus, this.alarmStatus, this.rows, this.cols, this.rowTitles, callMyself, this.alarmPanelDivIDs, this.alarmPanelCanvIDs, demandVoltage, reportVoltage, reportCurrent, reportTemperature, this.alarm, ['V', 'A', 'C'], this.moduleLabels, this.moduleSizes);
             channelSelect(that);
             this.tooltip.update();
 

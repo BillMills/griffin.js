@@ -189,4 +189,8 @@ function DANTE(monitor, minima, maxima){
         //different scales for different meters to aid visual recognition:
         return colorScale(window.colorScales[window.subdetectorView],scale);
     };
+
+    //do an initial populate:
+    fetchNewDANTEdata(this.rate);
+    this.update(this.rate);
 }

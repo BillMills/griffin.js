@@ -431,6 +431,10 @@ function HPGE(monitor, enableBGO, minima, maxima, prefix, postfix){
         //different scales for different meters to aid visual recognition:
         return colorScale(window.colorScales[window.subdetectorView],scale);
     };
+
+    //do an initial populate
+    fetchNewHPGEData(this.summaryHPGE);
+    this.update(this.summaryHPGE);
 }
 
 

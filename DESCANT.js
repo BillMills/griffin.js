@@ -217,6 +217,10 @@ function DESCANT(monitor, minima, maxima, prefix, postfix){
 		this.drawRules[57 + i*3] = ['blue',0, 0 - this.pentagonNormal - this.scale*(516.25 + this.explode), (i*72 - 36)/180*Math.PI, Math.PI*90/180]
 	}
 
+    //do an initial populate:
+    fetchNewDESCANTdata(this.rate);
+    this.update(this.rate);
+
 }
 
 

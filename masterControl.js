@@ -1,4 +1,4 @@
-function masterLoop(dashboard, waffle, SHARC, HPGE, DESCANT, PACES, DANTE, BAMBINO, SCEPTAR, SPICE, DAQ, Clock, Trigger, callMyself){
+function masterLoop(dashboard, AlarmServices, waffle, SHARC, HPGE, DESCANT, PACES, DANTE, BAMBINO, SCEPTAR, SPICE, DAQ, Clock, Trigger, callMyself){
 	if(!document.webkitHidden && !document.mozHidden){
         var i,j;
 
@@ -31,7 +31,7 @@ function masterLoop(dashboard, waffle, SHARC, HPGE, DESCANT, PACES, DANTE, BAMBI
               alarmStatus[i][j] = [];
             }
         }
-    	fetchNewData(waffle.rows, waffle.cols, waffle.moduleSizes, waffle.ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, waffle.alarm, waffle.scaleMax);
+    	fetchNewData(waffle.rows, waffle.cols, waffle.moduleSizes, waffle.ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit, AlarmServices);
     	waffle.update(demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, alarmStatus, channelMask, rampStatus, voltLimit, currentLimit, callMyself);
         for(i=0; i<waffle.barCharts.length; i++){
             var barChartData = [];
@@ -134,11 +134,11 @@ function masterLoop(dashboard, waffle, SHARC, HPGE, DESCANT, PACES, DANTE, BAMBI
     }
 
     //clearTimeout(window.loop);
-    window.loop = setTimeout(function(){masterLoop(dashboard, waffle, SHARC, HPGE, DESCANT, PACES, DANTE, BAMBINO, SCEPTAR, SPICE, DAQ, Clock, Trigger, 1)}, 3000);
+    window.loop = setTimeout(function(){masterLoop(dashboard, AlarmServices, waffle, SHARC, HPGE, DESCANT, PACES, DANTE, BAMBINO, SCEPTAR, SPICE, DAQ, Clock, Trigger, 1)}, 60000);
 }
 
 //populate HV monitor rows by cols arrays with the appropriate information:
-function fetchNewData(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, curLimit, alarmTripLevel, scaleMax){
+function fetchNewData(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, curLimit, AlarmServices){
 
     var testParameter, i, j, ODBindex, columns, slot;
 /*
@@ -211,6 +211,18 @@ function fetchNewData(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVol
                 voltLimit[i][j] = 0;
                 curLimit[i][j] = 0;
             }
+
+            //give the necessary information to the AlarmService, so it can report the state of any channel that trips an alarm below:
+            if(j==0){
+                AlarmServices.demandVoltage[i] = [];
+                AlarmServices.reportVoltage[i] = [];
+                AlarmServices.reportCurrent[i] = [];
+                AlarmServices.reportTemperature[i] = [];
+            }
+            AlarmServices.demandVoltage[i][j] = demandVoltage[i][j];
+            AlarmServices.reportVoltage[i][j] = reportVoltage[i][j];
+            AlarmServices.reportCurrent[i][j] = reportCurrent[i][j];
+            AlarmServices.reportTemperature[i][j] = reportTemperature[i][j];
         }
     }
 
@@ -226,25 +238,63 @@ function fetchNewData(rows, cols, moduleSizes, ODBkeys, demandVoltage, reportVol
             //determine alarm status for each cell, recorded as [i][j][voltage alarm, current alarm, temperature alarm]
             //alarmStatus == 0 indicates all clear, 0 < alarmStatus <= 1 indicates alarm intensity, alarmStatus = -1 indicates channel off,
             //and alarmStatus == -2 for the voltage alarm indicates voltage ramping.
-            if(testParameter < alarmTripLevel[0])  alarmStatus[i][j][0] = 0;
-            else  alarmStatus[i][j][0] = Math.min( (testParameter - alarmTripLevel[0]) / scaleMax[0], 1);
+            if(testParameter < AlarmServices.alarmThresholds[0])  alarmStatus[i][j][0] = 0;
+            else  alarmStatus[i][j][0] = Math.min( (testParameter - AlarmServices.alarmThresholds[0]) / AlarmServices.scaleMaxima[0], 1);
             if(rampStatus[i][j] == 3 || rampStatus[i][j] == 5){
                 alarmStatus[i][j][0] = -2;
             }
 
-            if(reportCurrent[i][j] < alarmTripLevel[1])  alarmStatus[i][j][1] = 0;
-            else  alarmStatus[i][j][1] = Math.min( (reportCurrent[i][j] - alarmTripLevel[1]) / scaleMax[1], 1);
+            if(reportCurrent[i][j] < AlarmServices.alarmThresholds[1])  alarmStatus[i][j][1] = 0;
+            else  alarmStatus[i][j][1] = Math.min( (reportCurrent[i][j] - AlarmServices.alarmThresholds[1]) / AlarmServices.scaleMaxima[1], 1);
 
-            if(reportTemperature[i][j] < alarmTripLevel[2])  alarmStatus[i][j][2] = 0;
-            else  alarmStatus[i][j][2] = Math.min( (reportTemperature[i][j] - alarmTripLevel[2]) / scaleMax[2], 1);
+            if(reportTemperature[i][j] < AlarmServices.alarmThresholds[2])  alarmStatus[i][j][2] = 0;
+            else  alarmStatus[i][j][2] = Math.min( (reportTemperature[i][j] - AlarmServices.alarmThresholds[2]) / AlarmServices.scaleMaxima[2], 1);
 
             if(channelMask[i][j] == 0){
                 alarmStatus[i][j][0] = -1;
                 alarmStatus[i][j][1] = -1;
                 alarmStatus[i][j][2] = -1;
             }
+
+            //fire an event at the AlarmServices object for every alarm:
+            //voltage alarms:
+            
+            if(alarmStatus[i][j][0] > 0){
+                var voltageAlarm = new  CustomEvent("alarmTrip", {
+                                            detail: {
+                                                alarmType: 'voltage',
+                                                alarmStatus: [i,j,alarmStatus[i][j][0]]        
+                                            }
+                                        });
+                AlarmServices.div.dispatchEvent(voltageAlarm);
+            }
+            //current alarms:
+            if(alarmStatus[i][j][1] > 0){
+                var currentAlarm = new  CustomEvent("alarmTrip", {
+                                            detail: {
+                                                alarmType: 'current',
+                                                alarmStatus: [i,j,alarmStatus[i][j][1]]        
+                                            }
+                                        });
+                AlarmServices.div.dispatchEvent(currentAlarm);
+            }
+            //temperature alarms:
+            if(alarmStatus[i][j][2] > 0){
+                var temperatureAlarm = new  CustomEvent("alarmTrip", {
+                                                detail: {
+                                                    alarmType: 'temperature',
+                                                    alarmStatus: [i,j,alarmStatus[i][j][2]]        
+                                                }
+                                            });
+                AlarmServices.div.dispatchEvent(temperatureAlarm);
+            }
         }
-    }   
+    }
+
+    //let the alarm services know the update is complete:
+    var allDone = new   CustomEvent("refreshComplete", {
+                        });
+    AlarmServices.div.dispatchEvent(allDone);   
 }
 
 //determine what size cards are in what slot:

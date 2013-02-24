@@ -19,8 +19,8 @@
     <script src="Clock.js" type="text/javascript"></script>
     <script src="Trigger.js" type="text/javascript"></script>
 
+    <script src="AlarmService.js" type="text/javascript"></script>
     <script src="tooltip.js" type="text/javascript"></script>
-    <script src="alarmSidebar.js" type="text/javascript"></script>
     <script src="formHandler.js" type="text/javascript"></script>
     <script src="slider.js" type="text/javascript"></script>
     <script src="fillMeter.js" type="text/javascript"></script>
@@ -43,7 +43,7 @@
   </head> 
 
 
-  <body style="font-family: 'Raleway', sans-serif; font-size:14px; background-color:#333333; color:#FFFFFF"> 
+  <body style="font-family: 'Raleway', sans-serif; font-size:14px; background-color:#333333; color:#FFFFFF; margin-left:0px"> 
 
     <!--Branding///////////////////////////////////////////////////////////-->
     <canvas id="banner"></canvas>
@@ -59,24 +59,15 @@
 
     <!--Waffleboard////////////////////////////////////////////////////////-->
 
-    <div id="waffleplate">
+    <div id="waffleplate">      
 
-      <!--Alarms//////////////////////////////////////////////////////-->
-      <div class='alarmDiv' id='voltAlarm'>
-        <canvas id='alarmIconV', style='position:absolute; height:150px'></canvas>
-        <p id='voltageText', style='color:white; margin-left:50px; margin-right:30px; position:relative; top:150px'></p>
+      <!--Left Sidebar: alarms, run control, etc-->
+      <!--background layer at z=0; summary level at z=1; detail hidden at z<0, called forward to z=2 onclick-->
+      <div id='leftSidebarDetail' class='leftSidebar' style='z-index:-1; opacity:0;'>
+        <canvas id='LeftSidebarDetailBKG' style='position:absolute; z-index:-1; left:0%;'> </canvas>  
       </div>
-
-      <div class='alarmDiv' id='currentAlarm'>
-        <canvas id='alarmIconI', style='position:absolute; height:150px'></canvas>
-        <p id='currentText', style='color:white; margin-left:50px; margin-right:30px; position:relative; top:150px'></p>
-      </div>
-
-      <div class='alarmDiv' id='tempAlarm'>
-        <canvas id='alarmIconT', style='position:absolute; height:150px'></canvas>
-        <p id='temperatureText', style='color:white; margin-left:50px; margin-right:30px; position:relative; top:150px'></p>
-      </div>
-
+      <canvas id='LeftSidebarBKG' style='position:absolute; z-index:0; left:0%;'> </canvas>
+      <div id='leftSidebar' class='leftSidebar' style='z-index:1;'></div>
 
       <!--Right Sidebars///////////////////////////////////////////////////-->
 
@@ -198,10 +189,10 @@
       var rowTitles = ['Ch.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
 
       //alarm thresholds [voltage, current, temperature]:
-      var alarmThresholds = [0.8,0.999,0.999];
+      var alarmThresholds = [0.8, 0.999, 0.999, 0];
 
       //scale maxima [voltage, current, temperature]:
-      var scaleMaxima = [1,1,1];
+      var scaleMaxima = [1,1,1,1];
 
       //tooltip info prefixes & postfixes:
       var prefix = ['Demand Voltage: ', 'Reported Voltage: ', 'Reported Current: ', 'Voltage Ramp Up Speed: ', 'Voltage Ramp Down Speed', 'Temperature: ', 'Status: '];
@@ -227,6 +218,8 @@
       var statusPrecision = 3;
       //number of decimal places to keep on the bar chart y-axis:
       var barChartPrecision = 1;
+      //number of decimal places to keep on the alarms:
+      var alarmPrecision = 3;
 
       //voltage unit:
       var voltUnit = 'V';
@@ -308,15 +301,21 @@
       $('#waffleplate').width(renderWidth);
       $('#waffleplate').height(renderHeight);
 
-      //style the input sidebar background:
+      //style the sidebar backgrounds:
+      document.getElementById('LeftSidebarBKG').width = parseInt(($('#leftSidebar').css('width')).slice(0,3));
+      document.getElementById('LeftSidebarBKG').height = renderHeight*0.9; //parseInt($('#InputLayer').css('height').slice(0,3));
+      tabBKG('LeftSidebarBKG', 'left');
+      document.getElementById('LeftSidebarDetailBKG').width = parseInt(($('#leftSidebar').css('width')).slice(0,3));
+      document.getElementById('LeftSidebarDetailBKG').height = renderHeight*0.9; //parseInt($('#InputLayer').css('height').slice(0,3));
+      tabBKG('LeftSidebarDetailBKG', 'left');
       document.getElementById('SidebarBKG').width = parseInt(($('#InputLayer').css('width')).slice(0,3));
-      document.getElementById('SidebarBKG').height = parseInt($('#InputLayer').css('height').slice(0,3));
+      document.getElementById('SidebarBKG').height = renderHeight*0.9; //parseInt($('#InputLayer').css('height').slice(0,3));
       tabBKG('SidebarBKG', 'right');
 
       //position right sidebar nicely:
       var rightSidebarWhitespace = parseFloat(window.innerHeight*0.85) - parseFloat($('#InputLayer').height());
-      $('.Sidebar').css('top', Math.min(alarmTop, 0.3*rightSidebarWhitespace) );
-      $('#SidebarBKG').css('top', Math.min(alarmTop, 0.3*rightSidebarWhitespace) );
+      $('.Sidebar').css('top', Math.min(0, 0.3*rightSidebarWhitespace) );
+      $('#SidebarBKG').css('top', Math.min(0, 0.3*rightSidebarWhitespace) );
 
       //Waffle onclick event will throw x and y positions up to these globals, so that
       //updateParameter() can use them to determine which channel to update.  TODO: fix
@@ -343,8 +342,11 @@
       //dashboard
       var dashboard = new Dashboard('waffleplate');
 
+      //Alarm Service
+      var AlarmServices = new AlarmService('leftSidebar', 'leftSidebarDetail', alarmThresholds, scaleMaxima, alarmPrecision);
+
       //HV monitor
-      var waffle = new Waffle(rows,columns, alarmThresholds, scaleMaxima, "waffleplate", rowTitles, "InputLayer", ODBkeys, ['voltAlarm', 'currentAlarm', 'tempAlarm'], ['alarmIconV', 'alarmIconI', 'alarmIconT'],  'mainframeLinks', moduleSizes, sliderVoltage, sliderRamp, sliderRampDown, barChartPrecision, prefix, postfix);
+      var waffle = new Waffle(rows,columns, "waffleplate", rowTitles, "InputLayer", ODBkeys,'mainframeLinks', moduleSizes, sliderVoltage, sliderRamp, sliderRampDown, barChartPrecision, prefix, postfix, AlarmServices);
 
       //Subsystem sidebar:
       insertDiv('SubsystemSidebar', 'Sidebar', 'waffleplate');
@@ -386,15 +388,6 @@
 
       var TriggerMonitor = new Trigger('waffleplate');
 
-      //position alarm stubs nicely after waffle has been declared:
-      var alarmTop = parseFloat($('#mainframeLinksBanner').height());
-      $('#voltAlarm').css('top', alarmTop);
-      $('#currentAlarm').css('top', alarmTop+170);
-      $('#tempAlarm').css('top', alarmTop+340);
-      document.getElementById('voltAlarm').setAttribute('onclick',"javascript:alarmTransition('voltAlarm', alarmTop, alarmTop)");
-      document.getElementById('currentAlarm').setAttribute('onclick',"javascript:alarmTransition('currentAlarm', alarmTop+170, alarmTop)");
-      document.getElementById('tempAlarm').setAttribute('onclick',"javascript:alarmTransition('tempAlarm', alarmTop+340, alarmTop)");
-
       //which nav panel is on top?
       window.navOnDisplay = 'DashboardLinks';
       //which canvas is on top?
@@ -424,7 +417,7 @@
 
       //wrap this in a function so it can be easily called to restart the loop somewhere else:
       function startLoop(){
-        masterLoop(dashboard, waffle, SHARCMonitor, HPGEMonitor, DESCANTMonitor, PACESMonitor, DANTEMonitor, BAMBINOMonitor, SCEPTARMonitor, SPICEMonitor, DAQMonitor, ClockMonitor, TriggerMonitor, 0);
+        masterLoop(dashboard, AlarmServices, waffle, SHARCMonitor, HPGEMonitor, DESCANTMonitor, PACESMonitor, DANTEMonitor, BAMBINOMonitor, SCEPTARMonitor, SPICEMonitor, DAQMonitor, ClockMonitor, TriggerMonitor, 0);
       }
       startLoop(); 
 

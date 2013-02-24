@@ -135,4 +135,8 @@ function PACES(monitor, minima, maxima, prefix, postfix){
         //different scales for different meters to aid visual recognition:
         return colorScale(window.colorScales[window.subdetectorView],scale);
     };
+
+    //do an initial populate:
+    fetchNewPACESdata(this.rate);
+    this.update(this.rate);
 }

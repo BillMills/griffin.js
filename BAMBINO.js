@@ -198,4 +198,8 @@ function BAMBINO(monitor, minima, maxima){
         return colorScale(window.colorScales[window.subdetectorView],scale);
     };
 
+    //do an initial populate:
+    fetchNewBAMBINOdata(this.rate);
+    this.update(this.rate);
+
 }
