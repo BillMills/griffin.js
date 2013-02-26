@@ -468,16 +468,6 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
 
 }
 
-//copy of animate from utilities, for use on a different animation process than the passive updates
-function animateDetail(thing, frame){
-
-    thing.drawDetail(frame);
-    if(frame < thing.nFrames){
-        frame++;
-        window.transAnimateLoop = setTimeout(function(){animateDetail(thing, frame)},thing.duration/thing.FPS*1000);
-    }
-}
-
 
 
 

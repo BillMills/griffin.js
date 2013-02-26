@@ -10,6 +10,7 @@ function HPGE(monitor, enableBGO, minima, maxima, prefix, postfix){
     this.TTcanvasID = 'HPGETTCanvas';               //ID of hidden tooltip map canvas
     this.minima = minima;                           //array of scale minima: [HPGE HV, HPGE Thresholds, HPGE Rate...]
     this.maxima = maxima;                           //array of scale maxima, arranged as minima.
+    this.cloverShowing = 1;                         //index of clover currently showing in detail view
 
     var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
@@ -20,25 +21,34 @@ function HPGE(monitor, enableBGO, minima, maxima, prefix, postfix){
     this.duration = 0.5;
     this.nFrames = this.FPS*this.duration;
 
+    //establish which canvas should be displayed when the subsystem is navigated to, as a function of which scalar button is active:
+    this.scalarViewCanvas = ['HPGECanvas', 'HPGECanvas', 'HPGECanvas'];
     //insert nav link
-    insertButton('HPGElink', 'navLink', "javascript:swapFade('HPGECanvas', 'HPGElink', window.HPGEpointer, window.subsystemScalars)", this.linkWrapperID, 'HPGE');
+    insertButton('HPGElink', 'navLink', "javascript:swapFade('HPGElink', window.HPGEpointer, window.subsystemScalars)", this.linkWrapperID, 'HPGE');
 
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
     this.monitor = document.getElementById(monitor);
     this.canvasWidth = 0.48*$(this.monitor).width();
     this.canvasHeight = 0.8*$(this.monitor).height();
     //top level
-    insertCanvas(this.canvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, monitor);
+    insertCanvas(this.canvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px; transition:opacity 0.5s, z-index 0.5s; -moz-transition:opacity 0.5s, z-index 0.5s; -webkit-transition:opacity 0.5s, z-index 0.5s;', this.canvasWidth, this.canvasHeight, monitor);
     this.canvas = document.getElementById(this.canvasID);
     this.context = this.canvas.getContext('2d');
     //detail level
-    insertCanvas(this.detailCanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, monitor);
+    insertCanvas(this.detailCanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px; transition:opacity 0.5s, z-index 0.5s; -moz-transition:opacity 0.5s, z-index 0.5s; -webkit-transition:opacity 0.5s, z-index 0.5s;', this.canvasWidth, this.canvasHeight, monitor);
     this.detailCanvas = document.getElementById(this.detailCanvasID);
     this.detailContext = this.detailCanvas.getContext('2d');
     //hidden Tooltip map layer
     insertCanvas(this.TTcanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, monitor);
     this.TTcanvas = document.getElementById(this.TTcanvasID);
     this.TTcontext = this.TTcanvas.getContext('2d');
+
+    //onclick switch between top and detail view:
+    this.detailCanvas.onclick = function(event){swapCanv(that.canvasID, that.detailCanvasID)};
+    this.canvas.onclick =   function(event){
+                                that.drawDetail(this.nFrames);
+                                swapCanv(that.detailCanvasID, that.canvasID)
+                            };
 
     //Dirty trick to implement tooltip on obnoxious geometry: make another canvas of the same size hidden beneath, with the 
     //detector drawn on it, but with each element filled in with rgba(0,0,n,1), where n is the channel number; fetching the color from the 
@@ -52,7 +62,7 @@ function HPGE(monitor, enableBGO, minima, maxima, prefix, postfix){
 
     //drawing parameters/////////////////////////////////////////////////////////////////////////////////////////////
     this.centerX = this.canvasWidth/2;
-    this.centerY = this.canvasHeight/2;
+    this.centerY = this.canvasHeight/2*0.9;
     this.lineWeight = 2;
 
     //summary view
@@ -138,15 +148,15 @@ function HPGE(monitor, enableBGO, minima, maxima, prefix, postfix){
         this.context.fillText('South Hemisphere', 0.725*this.canvasWidth - this.context.measureText('North Hemisphere').width/2, 0.7*this.canvasHeight);
     };
 
-    this.drawDetail = function(mode){
+    this.drawDetail = function(frame){
 
         var split;
     	this.detailContext.lineWidth = this.lineWeight;
 
-        if(mode == 'rate')
-            split = false;
-        else if(mode == 'HV')
+        if(window.subdetectorView == 0)
             split = true;
+        else if(window.subdetectorView == 1 || window.subdetectorView == 2)
+            split = false;
  
         if(split){
             this.crystal(this.centerX - this.crystalSide, this.centerY - this.crystalSide, '#00FF00');
@@ -420,6 +430,7 @@ function HPGE(monitor, enableBGO, minima, maxima, prefix, postfix){
         }
 
         this.tooltip.update();
+        this.displaySwitch();
     };
 
     //determine which color <scalar> corresponds to
@@ -431,6 +442,11 @@ function HPGE(monitor, enableBGO, minima, maxima, prefix, postfix){
         //different scales for different meters to aid visual recognition:
         return colorScale(window.colorScales[window.subdetectorView],scale);
     };
+
+    //decide which display version to show:
+    this.displaySwitch = function(){
+        this.drawDetail(this.cloverShowing, window.subdetectorView);
+    }
 
     //do an initial populate
     fetchNewHPGEData(this.summaryHPGE);

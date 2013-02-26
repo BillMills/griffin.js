@@ -20,8 +20,10 @@ function BAMBINO(monitor, minima, maxima){
     this.duration = 0.5;
     this.nFrames = this.FPS*this.duration;
 
+    //establish which canvas should be displayed when the subsystem is navigated to, as a function of which scalar button is active:
+    this.scalarViewCanvas = ['BAMBINOCanvas', 'BAMBINOCanvas', 'BAMBINOCanvas'];
     //insert nav link
-    insertButton('BAMBINOlink', 'navLink', "javascript:swapFade('BAMBINOCanvas', 'BAMBINOlink', window.BAMBINOpointer, window.subsystemScalars)", this.linkWrapperID, 'BAMBINO');
+    insertButton('BAMBINOlink', 'navLink', "javascript:swapFade('BAMBINOlink', window.BAMBINOpointer, window.subsystemScalars)", this.linkWrapperID, 'BAMBINO');
 
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
     this.monitor = document.getElementById(monitor);

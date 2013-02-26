@@ -58,8 +58,10 @@ function fadeDivIn(navDiv){
 }
 
 //swap two canvases:
-function swapFade(inbound, buttonID, object, leaveOff){
+function swapFade(buttonID, object, leaveOff){
 	var i;
+	//parse which view is requested, and fetch the corresponding canvas ID to bring to the front:
+	var inbound = object.scalarViewCanvas[window.subdetectorView];
 
 	//turn off other buttons, except for some at the end:
 	for(i=0; i<document.getElementById(object.linkWrapperID).children.length - leaveOff; i++){
@@ -92,6 +94,9 @@ function swapSubsystemView(buttonID, navWrapperID, viewIndex){
 
 	//change the corresponding state variable:
 	window.subdetectorView = viewIndex;
+
+	//imediately update the display:
+	forceUpdate();
 }
 
 //swap top level views
@@ -124,4 +129,16 @@ function swapView(inboundNav, inboundCanvas, inboundSidebar, buttonID){
 		document.getElementById('youAreHere').innerHTML = title;
 
 	}	
+}
+
+//simple canvas swap in / out:
+function swapCanv(inID, outID){
+    
+    $('#'+inID).css('z-index', '1');
+    $('#'+inID).css('opacity', '1');
+    $('#'+outID).css('z-index', '-1');
+    $('#'+outID).css('opacity', '0');
+
+    window.onDisplay = inID;
+    
 }

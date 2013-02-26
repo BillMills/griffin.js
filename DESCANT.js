@@ -20,8 +20,10 @@ function DESCANT(monitor, minima, maxima, prefix, postfix){
     this.duration = 0.5;
     this.nFrames = this.FPS*this.duration;
 
+    //establish which canvas should be displayed when the subsystem is navigated to, as a function of which scalar button is active:
+    this.scalarViewCanvas = ['DESCANTCanvas', 'DESCANTCanvas', 'DESCANTCanvas'];
     //insert nav link
-    insertButton('DESCANTlink', 'navLink', "javascript:swapFade('DESCANTCanvas', 'DESCANTlink', window.DESCANTpointer, window.subsystemScalars)", this.linkWrapperID, 'DESCANT');
+    insertButton('DESCANTlink', 'navLink', "javascript:swapFade('DESCANTlink', window.DESCANTpointer, window.subsystemScalars)", this.linkWrapperID, 'DESCANT');
 
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
 	this.monitor = document.getElementById(this.monitorID);
@@ -184,6 +186,7 @@ function DESCANT(monitor, minima, maxima, prefix, postfix){
         }
 
 		this.tooltip.update();
+        this.displaySwitch();
 	}
 
     //determine which color <scalar> corresponds to
@@ -196,7 +199,10 @@ function DESCANT(monitor, minima, maxima, prefix, postfix){
         return colorScale(window.colorScales[window.subdetectorView],scale);
     };
 
-
+    //decide which display version to show:
+    this.displaySwitch = function(){
+        //all views look the same, so do nothing.
+    }
 
 	//array of rules for drawing DESCANT channels.  Array index should correspond to real channel number; packed as [type, center x, center y, canvas rotation, element rotation]
 	this.drawRules = [];

@@ -267,6 +267,8 @@
       window.colorScales[2] = [0,0,255,255,255,0]; //blue->yellow
       window.colorScales[3] = [100,100,100,255,255,255];  //grey->white
       window.colorScales[4] = [107,0,178,255,102,204];  //horrible fuchia
+      //todo: black->purple->red->orange->yellow->white
+
       //state variables for what the subdetector view is showing: 0->HV, 1->Thresholds, 2->Rate
       window.subdetectorView = 1;  //Thresholds by default
 
@@ -338,7 +340,7 @@
       var currentMeter = new FillMeter('currentMeter', 'InputLayer', 0, minCurrent, maxCurrent, currentUnit, statusPrecision);
       var temperatureMeter = new FillMeter('temperatureMeter', 'InputLayer', 0, minTemperature, maxTemperature, temperatureUnit, statusPrecision);
 
-      //main elements
+      //main elements///////////////////////////////////////////////////
       //dashboard
       var dashboard = new Dashboard('waffleplate');
 
@@ -387,7 +389,9 @@
       ClockMonitor.draw(ClockMonitor.nFrames);
 
       var TriggerMonitor = new Trigger('waffleplate');
+      //end main elements////////////////////////////////////////////////////////////////////////////
 
+      //global variables todo: try and cut down on these/////////////////////////////////////////////
       //which nav panel is on top?
       window.navOnDisplay = 'DashboardLinks';
       //which canvas is on top?
@@ -414,12 +418,13 @@
       window.moduleSizes = moduleSizes;
       //hack so this is available to the alarms easily; will remove on alarm refactor
       window.precision = statusPrecision;
+      //end globals//////////////////////////////////////////////////////////////////////////////////
 
       //wrap this in a function so it can be easily called to restart the loop somewhere else:
-      function startLoop(){
-        masterLoop(dashboard, AlarmServices, waffle, SHARCMonitor, HPGEMonitor, DESCANTMonitor, PACESMonitor, DANTEMonitor, BAMBINOMonitor, SCEPTARMonitor, SPICEMonitor, DAQMonitor, ClockMonitor, TriggerMonitor, 0);
+      function startLoop(callMyself){
+        masterLoop(dashboard, AlarmServices, waffle, SHARCMonitor, HPGEMonitor, DESCANTMonitor, PACESMonitor, DANTEMonitor, BAMBINOMonitor, SCEPTARMonitor, SPICEMonitor, DAQMonitor, ClockMonitor, TriggerMonitor, callMyself);
       }
-      startLoop(); 
+      startLoop(0); 
 
       $('#setValues').on('change', function(event){highlight('submitParameters')})
 

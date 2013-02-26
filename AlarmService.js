@@ -24,6 +24,14 @@ function AlarmService(sidebarDivID, sidebarDetailDivID, alarmThresholds, scaleMa
 	this.temperatureAlarms = [];
 	this.rateAlarms = [];
 
+	//establish animation parameters:
+    this.FPS = 30;
+    this.duration = 0.3;
+    this.nFrames = this.FPS*this.duration;
+
+    //height of detail-level canvas in previous update:
+    this.bkgCanvasHeight = 695;
+
 	//DOM manipulation//////////////////////////////////////////////////////////
 
 	//insert canvas into alarm div:
@@ -124,10 +132,12 @@ function AlarmService(sidebarDivID, sidebarDetailDivID, alarmThresholds, scaleMa
     	if(alarmText != ''){
     		$('#alarmDetailButton').css('background-color', '#FF0000');
     	} else {
+    		alarmText = 'All Clear';
     		$('#alarmDetailButton').css('background-color', '#00FF00');
     	}
 
-    	document.getElementById(this.pID).innerHTML = alarmText;
+    	//document.getElementById(this.pID).innerHTML = alarmText;
+    	this.updateText(alarmText);
     };
 
     //dump alarm data in preperation for next update:
@@ -137,6 +147,29 @@ function AlarmService(sidebarDivID, sidebarDetailDivID, alarmThresholds, scaleMa
 		this.temperatureAlarms = [];
 		this.rateAlarms = [];
     };
+
+    //update the text with nice transitions:
+    this.updateText = function(content){
+    	$('#'+this.pID).css('opacity', '0');
+    	setTimeout(function(){
+	    	document.getElementById('alarmText').innerHTML = content;
+    		$('#alarmText').css('opacity', '1');
+    		//if($('#leftSidebarDetail').css('opacity') == 1){
+            //	showDetail();
+        	//}
+        	animate(that, 0);
+    	}, 500);
+
+    };
+
+    //animate the detail-level background's change in length:
+    this.draw = function(frame){
+    	var frameHeight = this.bkgCanvasHeight - frame/this.nFrames*(this.bkgCanvasHeight - Math.max($('#'+this.pID).height() + 150, 695))
+		document.getElementById('LeftSidebarDetailBKG').setAttribute('height', frameHeight);
+		tabBKG('LeftSidebarDetailBKG', 'left');	
+		if(frame == this.nFrames)
+			this.bkgCanvasHeight = Math.max($('#'+this.pID).height() + 150, 695);
+    }
 }
 
 
@@ -161,8 +194,8 @@ function publishAlarms(object){
 
 
 function showDetail(){
-	document.getElementById('LeftSidebarDetailBKG').setAttribute('height', Math.max($('#alarmText').height() + 150, 695) );
-	tabBKG('LeftSidebarDetailBKG', 'left');
+	//document.getElementById('LeftSidebarDetailBKG').setAttribute('height', Math.max($('#alarmText').height() + 150, 695) );
+	//tabBKG('LeftSidebarDetailBKG', 'left');
 	$('#leftSidebarDetail').css('z-index', '10');
 	$('#leftSidebarDetail').css('opacity', '1');
 }

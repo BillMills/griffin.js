@@ -111,9 +111,11 @@ function masterLoop(dashboard, AlarmServices, waffle, SHARC, HPGE, DESCANT, PACE
         else SHARC.draw(SHARC.nFrames);
         if(window.onDisplay == 'HPGECanvas' || !callMyself) animate(HPGE,0);
         else HPGE.draw(HPGE.nFrames);
+        if(window.onDisplay == 'HPGEdetailCanvas' || !callMyself) animateDetail(HPGE,0);
+        else HPGE.drawDetail(HPGE.nFrames);
         if(window.onDisplay == 'DESCANTCanvas' || !callMyself) animate(DESCANT,0);
         else DESCANT.draw(DESCANT.nFrames);
-        if(window.onDisplay == 'PACESCanvas' || !callMyself) animate(PACES,0);
+        if(window.onDisplay == 'PACESHVCanvas' || window.onDisplay == 'PACESrateCanvas' ||  !callMyself) animate(PACES,0);
         else PACES.draw(PACES.nFrames);
         if(window.onDisplay == 'DANTECanvas' || !callMyself) animate(DANTE,0);
         else DANTE.draw(DANTE.nFrames);
@@ -355,7 +357,7 @@ function fetchNewPACESdata(rates){
 
     //dummy data for offline dev:
     //rates
-    for(i=0; i<5; i++){
+    for(i=0; i<10; i++){
         rates[i] = Math.random();
     }
 
@@ -430,6 +432,12 @@ function fetchNewDAQData(nCollectorGroups, masterRate, masterGroupRate, masterLi
         digitizerLinkRate[i] = Math.random();
         digitizerRate[i] = Math.random();
     }
+}
+
+//force an immediate update, and set the master loop going again from there:
+function forceUpdate(){
+    clearTimeout(window.loop);
+    startLoop(1);
 }
 
 

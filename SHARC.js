@@ -27,8 +27,10 @@ function SHARC(monitor, orientation, rows, columns, nStrips, nRadialHoriz, nAzim
     //which of the scalars are we tracking now? (corresponds to the index in this.maxima)
     this.trackingIndex = 0;
 
+    //establish which canvas should be displayed when the subsystem is navigated to, as a function of which scalar button is active:
+    this.scalarViewCanvas = ['SHARCCanvas', 'SHARCCanvas', 'SHARCCanvas'];
     //insert nav link
-	insertButton('SHARClink', 'navLinkDown', "javascript:swapFade('SHARCCanvas', 'SHARClink', window.SHARCpointer, window.subsystemScalars)", this.linkWrapperID, 'SHARC');
+	insertButton('SHARClink', 'navLinkDown', "javascript:swapFade('SHARClink', window.SHARCpointer, window.subsystemScalars)", this.linkWrapperID, 'SHARC');
 
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
 	this.monitor = document.getElementById(this.monitorID);
@@ -265,6 +267,7 @@ function SHARC(monitor, orientation, rows, columns, nStrips, nRadialHoriz, nAzim
 		}
 
 		this.tooltip.update();
+		this.displaySwitch();
 	};
 
 	//determine which color <scalar> corresponds to
@@ -422,6 +425,11 @@ function SHARC(monitor, orientation, rows, columns, nStrips, nRadialHoriz, nAzim
         //return length of longest line:
         return longestLine;
 	};
+
+	//decide which display version to show:
+	this.displaySwitch = function(){
+		//all views look the same for SHARC, so do nothing.
+	}
 
 
     //do an initial populate:

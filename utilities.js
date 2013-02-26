@@ -27,6 +27,16 @@ function animate(thing, frame){
     }
 }
 
+//copy of animate, but for use on detail level view:  todo: combine with animate
+function animateDetail(thing, frame){
+
+    thing.drawDetail(frame);
+    if(frame < thing.nFrames){
+        frame++;
+        window.transAnimateLoop = setTimeout(function(){animateDetail(thing, frame)},thing.duration/thing.FPS*1000);
+    }
+}
+
 //styling functions to highlight / unhighlight submit button
 function unhighlight(buttonID){
     clearTimeout(window.commitBlink);
