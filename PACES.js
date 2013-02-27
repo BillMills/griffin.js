@@ -20,7 +20,6 @@ function PACES(monitor, minima, maxima, prefix, postfix){
     this.duration = 0.5;
     this.nFrames = this.FPS*this.duration;
 
-
     //establish which canvas should be displayed when the subsystem is navigated to, as a function of which scalar button is active:
     this.scalarViewCanvas = ['PACESHVCanvas', 'PACESrateCanvas', 'PACESrateCanvas'];
     insertButton('PACESlink', 'navLink', "javascript:swapFade('PACESlink', window.PACESpointer, window.subsystemScalars)", this.linkWrapperID, 'PACES');
@@ -38,10 +37,6 @@ function PACES(monitor, minima, maxima, prefix, postfix){
     this.RateCanvas = document.getElementById(this.RateCanvasID);
     this.RateContext = this.RateCanvas.getContext('2d');
     //hidden Tooltip map layer for Rate view:
-    insertCanvas(this.TTcanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, monitor);
-    this.TTcanvas = document.getElementById(this.TTcanvasID);
-    this.TTcontext = this.TTcanvas.getContext('2d');
-    //hidden Tooltip map layer for view:
     insertCanvas(this.TTcanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, monitor);
     this.TTcanvas = document.getElementById(this.TTcanvasID);
     this.TTcontext = this.TTcanvas.getContext('2d');

@@ -46,8 +46,18 @@ function HPGE(monitor, enableBGO, minima, maxima, prefix, postfix){
     //onclick switch between top and detail view:
     this.detailCanvas.onclick = function(event){swapCanv(that.canvasID, that.detailCanvasID)};
     this.canvas.onclick =   function(event){
-                                that.drawDetail(this.nFrames);
-                                swapCanv(that.detailCanvasID, that.canvasID)
+                                //decide which clover user clicked on
+                                var cloverClicked = -1;
+                                var x,y;
+                                x = event.pageX - that.canvas.offsetLeft - that.monitor.offsetLeft;
+                                y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;
+                                cloverClicked = that.findCell(x,y);
+                                //draw and swap out if user clicked on a valid clover
+                                if(cloverClicked != -1){
+                                    that.cloverShowing = cloverClicked
+                                    that.drawDetail(this.nFrames);
+                                    swapCanv(that.detailCanvasID, that.canvasID);
+                                }
                             };
 
     //Dirty trick to implement tooltip on obnoxious geometry: make another canvas of the same size hidden beneath, with the 
@@ -214,30 +224,30 @@ function HPGE(monitor, enableBGO, minima, maxima, prefix, postfix){
         }
 
         //front suppressors
-        this.drawHalfL(-Math.PI/2, this.suppressorWidth, this.frontBGOouterWidth/2, this.centerX - this.frontBGOinnerWidth/2, this.centerY - this.frontBGOinnerWidth/2, 'left', split, '#00FF00');
-        this.drawHalfL(0, this.suppressorWidth, this.frontBGOouterWidth/2, this.centerX - this.frontBGOinnerWidth/2, this.centerY - this.frontBGOinnerWidth/2, 'right', split, '#00FF00');
+        this.drawHalfL(-Math.PI/2, this.suppressorWidth, this.frontBGOouterWidth/2, this.centerX - this.frontBGOinnerWidth/2 - this.lineWeight, this.centerY - this.frontBGOinnerWidth/2, 'left', split, '#00FF00');
+        this.drawHalfL(0, this.suppressorWidth, this.frontBGOouterWidth/2, this.centerX - this.frontBGOinnerWidth/2, this.centerY - this.frontBGOinnerWidth/2 - this.lineWeight, 'right', split, '#00FF00');
 
-        this.drawHalfL(0, this.suppressorWidth, this.frontBGOouterWidth/2, this.centerX + this.frontBGOinnerWidth/2 + this.lineWeight, this.centerY - this.frontBGOinnerWidth/2, 'left', split, '#0000FF');
-        this.drawHalfL(Math.PI/2, this.suppressorWidth, this.frontBGOouterWidth/2, this.centerX + this.frontBGOinnerWidth/2 + this.lineWeight, this.centerY - this.frontBGOinnerWidth/2, 'right', split, '#0000FF');
+        this.drawHalfL(0, this.suppressorWidth, this.frontBGOouterWidth/2, this.centerX + this.frontBGOinnerWidth/2 + this.lineWeight, this.centerY - this.frontBGOinnerWidth/2 - this.lineWeight, 'left', split, '#0000FF');
+        this.drawHalfL(Math.PI/2, this.suppressorWidth, this.frontBGOouterWidth/2, this.centerX + this.frontBGOinnerWidth/2 + 2*this.lineWeight, this.centerY - this.frontBGOinnerWidth/2, 'right', split, '#0000FF');
 
-        this.drawHalfL(Math.PI/2, this.suppressorWidth, this.frontBGOouterWidth/2, this.centerX + this.frontBGOinnerWidth/2 + this.lineWeight, this.centerY + this.frontBGOinnerWidth/2 + this.lineWeight, 'left', split, '#FFFFFF');
-        this.drawHalfL(Math.PI, this.suppressorWidth, this.frontBGOouterWidth/2, this.centerX + this.frontBGOinnerWidth/2 + this.lineWeight, this.centerY + this.frontBGOinnerWidth/2 + this.lineWeight, 'right', split, '#FFFFFF');
+        this.drawHalfL(Math.PI/2, this.suppressorWidth, this.frontBGOouterWidth/2, this.centerX + this.frontBGOinnerWidth/2 + 2*this.lineWeight, this.centerY + this.frontBGOinnerWidth/2 + this.lineWeight, 'left', split, '#FFFFFF');
+        this.drawHalfL(Math.PI, this.suppressorWidth, this.frontBGOouterWidth/2, this.centerX + this.frontBGOinnerWidth/2 + this.lineWeight, this.centerY + this.frontBGOinnerWidth/2 + 2*this.lineWeight, 'right', split, '#FFFFFF');
 
-        this.drawHalfL(Math.PI, this.suppressorWidth, this.frontBGOouterWidth/2, this.centerX - this.frontBGOinnerWidth/2, this.centerY + this.frontBGOinnerWidth/2 + this.lineWeight, 'left', split, '#FF0000');
-        this.drawHalfL(3*Math.PI/2, this.suppressorWidth, this.frontBGOouterWidth/2, this.centerX - this.frontBGOinnerWidth/2, this.centerY + this.frontBGOinnerWidth/2 + this.lineWeight, 'right', split, '#FF0000');
+        this.drawHalfL(Math.PI, this.suppressorWidth, this.frontBGOouterWidth/2, this.centerX - this.frontBGOinnerWidth/2, this.centerY + this.frontBGOinnerWidth/2 + 2*this.lineWeight, 'left', split, '#FF0000');
+        this.drawHalfL(3*Math.PI/2, this.suppressorWidth, this.frontBGOouterWidth/2, this.centerX - this.frontBGOinnerWidth/2 - this.lineWeight, this.centerY + this.frontBGOinnerWidth/2 + this.lineWeight, 'right', split, '#FF0000');
 
         //back suppressors
-        this.drawHalfL(-Math.PI/2, this.suppressorWidth, this.backBGOouterWidth/2, this.centerX - this.backBGOinnerWidth/2, this.centerY - this.backBGOinnerWidth/2, 'left', split, '#00FF00');
-        this.drawHalfL(0, this.suppressorWidth, this.backBGOouterWidth/2, this.centerX - this.backBGOinnerWidth/2, this.centerY - this.backBGOinnerWidth/2, 'right', split, '#00FF00');
+        this.drawHalfL(-Math.PI/2, this.suppressorWidth, this.backBGOouterWidth/2, this.centerX - this.backBGOinnerWidth/2 - this.lineWeight, this.centerY - this.backBGOinnerWidth/2, 'left', split, '#00FF00');
+        this.drawHalfL(0, this.suppressorWidth, this.backBGOouterWidth/2, this.centerX - this.backBGOinnerWidth/2, this.centerY - this.backBGOinnerWidth/2 - this.lineWeight, 'right', split, '#00FF00');
 
-        this.drawHalfL(0, this.suppressorWidth, this.backBGOouterWidth/2, this.centerX + this.backBGOinnerWidth/2 + this.lineWeight, this.centerY - this.backBGOinnerWidth/2, 'left', split, '#0000FF');
-        this.drawHalfL(Math.PI/2, this.suppressorWidth, this.backBGOouterWidth/2, this.centerX + this.backBGOinnerWidth/2 + this.lineWeight, this.centerY - this.backBGOinnerWidth/2, 'right', split, '#0000FF');
+        this.drawHalfL(0, this.suppressorWidth, this.backBGOouterWidth/2, this.centerX + this.backBGOinnerWidth/2 + this.lineWeight, this.centerY - this.backBGOinnerWidth/2 - this.lineWeight, 'left', split, '#0000FF');
+        this.drawHalfL(Math.PI/2, this.suppressorWidth, this.backBGOouterWidth/2, this.centerX + this.backBGOinnerWidth/2 + 2*this.lineWeight, this.centerY - this.backBGOinnerWidth/2, 'right', split, '#0000FF');
 
-        this.drawHalfL(Math.PI/2, this.suppressorWidth, this.backBGOouterWidth/2, this.centerX + this.backBGOinnerWidth/2 + this.lineWeight, this.centerY + this.backBGOinnerWidth/2 + this.lineWeight, 'left', split, '#FFFFFF');
-        this.drawHalfL(Math.PI, this.suppressorWidth, this.backBGOouterWidth/2, this.centerX + this.backBGOinnerWidth/2 + this.lineWeight, this.centerY + this.backBGOinnerWidth/2 + this.lineWeight, 'right', split, '#FFFFFF');
+        this.drawHalfL(Math.PI/2, this.suppressorWidth, this.backBGOouterWidth/2, this.centerX + this.backBGOinnerWidth/2 + 2*this.lineWeight, this.centerY + this.backBGOinnerWidth/2 + this.lineWeight, 'left', split, '#FFFFFF');
+        this.drawHalfL(Math.PI, this.suppressorWidth, this.backBGOouterWidth/2, this.centerX + this.backBGOinnerWidth/2 + this.lineWeight, this.centerY + this.backBGOinnerWidth/2 + 2*this.lineWeight, 'right', split, '#FFFFFF');
 
-        this.drawHalfL(Math.PI, this.suppressorWidth, this.backBGOouterWidth/2, this.centerX - this.backBGOinnerWidth/2, this.centerY + this.backBGOinnerWidth/2 + this.lineWeight, 'left', split, '#FF0000');
-        this.drawHalfL(3*Math.PI/2, this.suppressorWidth, this.backBGOouterWidth/2, this.centerX - this.backBGOinnerWidth/2, this.centerY + this.backBGOinnerWidth/2 + this.lineWeight, 'right', split, '#FF0000');
+        this.drawHalfL(Math.PI, this.suppressorWidth, this.backBGOouterWidth/2, this.centerX - this.backBGOinnerWidth/2, this.centerY + this.backBGOinnerWidth/2 + 2*this.lineWeight, 'left', split, '#FF0000');
+        this.drawHalfL(3*Math.PI/2, this.suppressorWidth, this.backBGOouterWidth/2, this.centerX - this.backBGOinnerWidth/2 - this.lineWeight, this.centerY + this.backBGOinnerWidth/2 + this.lineWeight, 'right', split, '#FF0000');
 
         //side suppressors
         this.drawHalfL(-Math.PI/2, this.suppressorWidth, this.sideBGOouterWidth/2 - this.sideSpacer, this.centerX - this.sideBGOinnerWidth/2, this.centerY - this.sideBGOinnerWidth/2 + this.sideSpacer, 'left', split, '#00FF00');
@@ -251,6 +261,12 @@ function HPGE(monitor, enableBGO, minima, maxima, prefix, postfix){
 
         this.drawHalfL(Math.PI, this.suppressorWidth, this.sideBGOouterWidth/2 - this.sideSpacer, this.centerX - this.sideBGOinnerWidth/2 + this.sideSpacer, this.centerY + this.sideBGOinnerWidth/2 + this.lineWeight, 'left', split, '#FF0000');
         this.drawHalfL(3*Math.PI/2, this.suppressorWidth, this.sideBGOouterWidth/2 - this.sideSpacer, this.centerX - this.sideBGOinnerWidth/2, this.centerY + this.sideBGOinnerWidth/2 + this.lineWeight - this.sideSpacer, 'right', split, '#FF0000');
+
+        //title
+        this.detailContext.clearRect(0,0.85*this.canvasHeight,this.canvasWidth,0.15*this.canvasHeight);
+        this.detailContext.fillStyle = '#999999';
+        this.detailContext.font="24px 'Orbitron'";
+        this.detailContext.fillText('Clover '+this.cloverShowing, 0.5*this.canvasWidth - this.detailContext.measureText('Clover '+this.cloverShowing).width/2, 0.95*this.canvasHeight);
     };
 
     //drawing functions/////////////////////////////////////////////////////////
