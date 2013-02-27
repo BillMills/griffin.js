@@ -256,6 +256,20 @@ function roundBox(context, leftX, topY, width, height, cornerRadius){
     context.closePath();
 }
 
+function strokePolygon(context, nSides, x0, y0, spoke, phi){
+    var i;
+    context.save();
+    context.translate(x0, y0);
+    context.rotate(phi);
+    context.moveTo(0, -spoke);
+    for(i=0; i<nSides; i++){
+        context.rotate(2*Math.PI/nSides);
+        context.lineTo(0, -spoke);
+    }
+    context.stroke();
+    context.restore();
+}
+
 //take a hex color string '#012345' and parse it into [R,G,B]
 function parseHexColor(color){
     var R, G, B;

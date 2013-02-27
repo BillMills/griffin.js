@@ -1,3 +1,5 @@
+//DSC##XN000
+
 function DESCANT(monitor, minima, maxima, prefix, postfix){
 
 	var i, j;
@@ -138,7 +140,10 @@ function DESCANT(monitor, minima, maxima, prefix, postfix){
         var cardIndex;
         var i;
 
-        nextLine = 'Channel '+cell;
+        if(parseInt(cell) < 10)
+            nextLine = 'DSC0'+(parseInt(cell)+1)+'XN00X';
+        else
+            nextLine = 'DSC'+(parseInt(cell)+1)+'XN00X';
 
         //keep track of the longest line of text:
         longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)

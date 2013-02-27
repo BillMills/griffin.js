@@ -1,4 +1,4 @@
-function SCEPTAR(monitor, maxima, minima){
+function SCEPTAR(monitor, maxima, minima, config){
 	this.monitorID = monitor;		        //div ID of wrapper div
 	this.canvasID = 'SCEPTARCanvas'; 		//ID of canvas to draw top level TIGRESS view on
     this.linkWrapperID = 'SubsystemLinks';  //ID of div wrapping subsystem navigation links
@@ -7,6 +7,7 @@ function SCEPTAR(monitor, maxima, minima){
     this.TTcanvasID = 'SCEPTARTTCanvas';    //ID of hidden tooltip map canvas
     this.minima = minima;                   //array of meter minima [HV, thresholds, rate]
     this.maxima = maxima;                   //array of meter maxima, arranged as minima
+    this.config = config;                   //subsystems on: [upstream sceptar, downstream sceptar, downstream ZDS]
 
     var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
@@ -46,13 +47,17 @@ function SCEPTAR(monitor, maxima, minima){
     this.tooltip.obj = that;
 
     //drawing parameters
-    this.centerX = this.canvasWidth/2;
-    this.centerY = this.canvasHeight/2;
-    this.cellSide = this.canvasHeight*0.5 / 4;
-    this.ZDSradius = this.cellSide;
-    this.ZDScenter = this.canvasWidth*0.8;
+    this.ZDSradius = this.canvasHeight*0.5 / 4; 
+    this.ZDScenterX = this.canvasWidth*0.75;
+    this.ZDScenterY = 0.4*this.canvasHeight;
     this.SCEPTARx0 = this.canvasWidth*0.1;
     this.SCEPTARy0 = this.canvasHeight*0.1;
+
+    this.SCEPTARspoke = this.canvasHeight/5;
+    this.USSCx0 = 0.25*this.canvasWidth;
+    this.USSCy0 = 0.4*this.canvasHeight;
+    this.DSSCx0 = 0.75*this.canvasWidth;
+    this.DSSCy0 = 0.4*this.canvasHeight;
 
     //establish data buffers////////////////////////////////////////////////////////////////////////////
     this.rate = [];
@@ -64,56 +69,110 @@ function SCEPTAR(monitor, maxima, minima){
     	var i, row, col;
 
         //once for display view...
-    	//SCEPTAR
     	this.context.strokeStyle = '#999999';
-
-    	for(i=0; i<20; i++){
-            this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[i]), parseHexColor(this.rateColor[i]), frame/this.nFrames);
-    		row = Math.floor(i/5);
-    		col = i%5;
-    		this.context.fillRect(this.SCEPTARx0 + this.cellSide*col, this.SCEPTARy0 + this.cellSide*row, this.cellSide, this.cellSide);
-    		this.context.strokeRect(this.SCEPTARx0 + this.cellSide*col, this.SCEPTARy0 + this.cellSide*row, this.cellSide, this.cellSide);	
-    	}
+        //upstream SCEPTAR
+        if(this.config[0] == 1){
+            this.drawSceptar('upstream', frame, this.context);
+        }
+        //downstream SCEPTAR
+        if(this.config[1] == 1){
+            this.drawSceptar('downstream', frame, this.context);
+        }
     	//ZDS
-        this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[20]), parseHexColor(this.rateColor[20]), frame/this.nFrames);
-    	this.context.beginPath();
-    	this.context.arc(this.ZDScenter, this.SCEPTARy0 + 2*this.cellSide, this.ZDSradius, 0, 2*Math.PI);
-    	this.context.closePath();
-    	this.context.fill();
-    	this.context.stroke();
+        if(this.config[2] == 1){
+            this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[20]), parseHexColor(this.rateColor[20]), frame/this.nFrames);
+        	this.context.beginPath();
+    	    this.context.arc(this.ZDScenterX, this.ZDScenterY, this.ZDSradius, 0, 2*Math.PI);
+        	this.context.closePath();
+        	this.context.fill();
+    	    this.context.stroke();
+        }
 
         //...and again for tt encoding:
-        //SCEPTAR
-        for(i=0; i<20; i++){
-            row = Math.floor(i/5);
-            col = i%5;
-            this.TTcontext.fillStyle = 'rgba('+i+','+i+','+i+',1)';
-            this.TTcontext.fillRect(Math.round(this.SCEPTARx0 + this.cellSide*col), Math.round(this.SCEPTARy0 + this.cellSide*row), Math.round(this.cellSide), Math.round(this.cellSide));
+        //upstream SCEPTAR
+        if(this.config[0] == 1){
+            this.drawSceptar('upstream', frame, this.TTcontext);
+        }
+        //downstream SCEPTAR
+        if(this.config[1] == 1){
+            this.drawSceptar('downstream', frame, this.TTcontext);
         }
         //ZDS
-        //antialiasing hackaround:
-        this.TTcontext.beginPath();
-        this.TTcontext.arc(this.ZDScenter, this.SCEPTARy0 + 2*this.cellSide, 1.05*this.ZDSradius, 0, 2*Math.PI);
-        this.TTcontext.closePath();
-        this.TTcontext.fillStyle = '#123456';
-        this.TTcontext.fill();
-        //end hack around
-        this.TTcontext.beginPath();
-        this.TTcontext.arc(this.ZDScenter, this.SCEPTARy0 + 2*this.cellSide, this.ZDSradius, 0, 2*Math.PI);
-        this.TTcontext.closePath();
-        i++;
-        this.TTcontext.fillStyle = 'rgba('+i+','+i+','+i+',1)';
-        this.TTcontext.fill();
+        if(this.config[2] == 1){
+            //antialiasing hackaround:
+            this.TTcontext.beginPath();
+            this.TTcontext.arc(this.ZDScenterX, this.ZDScenterY, 1.05*this.ZDSradius, 0, 2*Math.PI);
+            this.TTcontext.closePath();
+            this.TTcontext.fillStyle = '#123456';
+            this.TTcontext.fill();
+            //end hack around
+            this.TTcontext.beginPath();
+            this.TTcontext.arc(this.ZDScenterX, this.ZDScenterY, this.ZDSradius, 0, 2*Math.PI);
+            this.TTcontext.closePath();
+            this.TTcontext.fillStyle = 'rgba('+21+','+21+','+21+',1)';
+            this.TTcontext.fill();
+        }
     
     	//titles
-        this.context.clearRect(0,this.SCEPTARy0 + 4*this.cellSide + 10,this.canvasWidth,this.canvasHeight);
+        this.context.clearRect(0,this.SCEPTARy0 + 2.5*this.SCEPTARspoke + 10,this.canvasWidth,this.canvasHeight);
         this.context.fillStyle = '#999999';
         this.context.font="24px 'Orbitron'";
-        this.context.fillText('SCEPTAR', this.SCEPTARx0 + 2.5*this.cellSide - this.context.measureText('SCEPTAR').width/2, this.SCEPTARy0 + 4*this.cellSide + 50);
-        this.context.clearRect(this.SCEPTARx0 + 5*this.cellSide+20, this.SCEPTARy0 + 2*this.cellSide + 2*this.ZDSradius+10, this.canvasWidth,this.canvasHeight);
-        this.context.fillText('ZDS', this.ZDScenter - this.context.measureText('ZDS').width/2, this.SCEPTARy0 + 2*this.cellSide + 2*this.ZDSradius+50);
+        if(this.config[0] == 1){
+            this.context.fillText('Upstream SCEPTAR', this.USSCx0 - this.context.measureText('Upstream SCEPTAR').width/2, this.USSCy0 + 1.4*this.SCEPTARspoke);
+        }
+        if(this.config[1] == 1){
+            this.context.fillText('Downstream SCEPTAR', this.DSSCx0 - this.context.measureText('Downstream SCEPTAR').width/2, this.DSSCy0 + 1.4*this.SCEPTARspoke);
+        }
+        if(this.config[2] == 1){
+            this.context.fillText('ZDS', this.ZDScenterX - this.context.measureText('ZDS').width/2, this.ZDScenterY + 1.4*this.SCEPTARspoke);    
+        }
 	
     };
+
+    this.drawSceptar = function(side, frame, context){
+        var x0, y0, i, indexStart;
+        if(side == 'upstream'){
+            x0 = this.USSCx0;
+            y0 = this.USSCy0;
+            indexStart = 0;
+        } else if(side == 'downstream'){
+            x0 = this.DSSCx0;
+            y0 = this.DSSCy0;
+            indexStart = 10;
+        }
+
+        for(i=0; i<10; i++){
+            if(context == this.context) context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[i+indexStart]), parseHexColor(this.rateColor[i+indexStart]), frame/this.nFrames);
+            else if(context == this.TTcontext) context.fillStyle = '#123456'; //anti-antialiasing
+            context.save();
+            context.translate(x0, y0);
+            context.rotate((i%5)*Math.PI/180*72);
+            context.beginPath();
+            context.moveTo(0,0);
+            context.lineTo(0, -this.SCEPTARspoke/2*( 2 - Math.floor(i/5) ) );
+            context.rotate(Math.PI/180*72);
+            context.lineTo(0, -this.SCEPTARspoke/2*( 2 - Math.floor(i/5) ) );
+            context.closePath();
+            context.fill();
+            if(context == this.context) context.stroke();
+            context.restore();
+
+            if(context == this.TTcontext){
+                context.fillStyle = 'rgba('+(indexStart+i)+','+(indexStart+i)+','+(indexStart+i)+',1)';
+                context.save();
+                context.translate(x0, y0);
+                context.rotate((i%5)*Math.PI/180*72);
+                context.beginPath();
+                context.moveTo(0,0);
+                context.lineTo(0, -this.SCEPTARspoke/2*( 2 - Math.floor(i/5) ) );
+                context.rotate(Math.PI/180*72);
+                context.lineTo(0, -this.SCEPTARspoke/2*( 2 - Math.floor(i/5) ) );
+                context.closePath();
+                context.fill();
+                context.restore();
+            }
+        }   
+    }
 
     this.findCell = function(x, y){
         var imageData = this.TTcontext.getImageData(x,y,1,1);
