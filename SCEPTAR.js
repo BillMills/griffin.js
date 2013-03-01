@@ -19,9 +19,9 @@ function SCEPTAR(monitor, maxima, minima, config){
     this.nFrames = this.FPS*this.duration;
 
     //establish which canvas should be displayed when the subsystem is navigated to, as a function of which scalar button is active:
-    this.scalarViewCanvas = ['SCEPTARCanvas', 'SCEPTARCanvas', 'SCEPTARCanvas'];
+    this.view = ['SCEPTARCanvas', 'SCEPTARCanvas', 'SCEPTARCanvas'];
     //insert nav link
-    insertButton('SCEPTARlink', 'navLink', "javascript:swapFade('SCEPTARlink', window.SCEPTARpointer, window.subsystemScalars)", this.linkWrapperID, 'SCEPTAR');
+    insertButton('SCEPTARlink', 'navLink', "javascript:swapFade('SCEPTARlink', window.SCEPTARpointer, window.subsystemScalars, window.subdetectorView)", this.linkWrapperID, 'SCEPTAR');
 
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
     this.monitor = document.getElementById(monitor);

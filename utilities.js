@@ -30,7 +30,7 @@ function animate(thing, frame){
 //copy of animate, but for use on detail level view:  todo: combine with animate
 function animateDetail(thing, frame){
 
-    thing.drawDetail(frame);
+    thing.drawDetail(thing.detailContext, frame);
     if(frame < thing.nFrames){
         frame++;
         window.transAnimateLoop = setTimeout(function(){animateDetail(thing, frame)},thing.duration/thing.FPS*1000);

@@ -28,9 +28,9 @@ function SHARC(monitor, orientation, rows, columns, nStrips, nRadialHoriz, nAzim
     this.trackingIndex = 0;
 
     //establish which canvas should be displayed when the subsystem is navigated to, as a function of which scalar button is active:
-    this.scalarViewCanvas = ['SHARCCanvas', 'SHARCCanvas', 'SHARCCanvas'];
+    this.view = ['SHARCCanvas', 'SHARCCanvas', 'SHARCCanvas'];
     //insert nav link
-	insertButton('SHARClink', 'navLinkDown', "javascript:swapFade('SHARClink', window.SHARCpointer, window.subsystemScalars)", this.linkWrapperID, 'SHARC');
+	insertButton('SHARClink', 'navLinkDown', "javascript:swapFade('SHARClink', window.SHARCpointer, window.subsystemScalars, window.subdetectorView)", this.linkWrapperID, 'SHARC');
 
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
 	this.monitor = document.getElementById(this.monitorID);

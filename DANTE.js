@@ -18,9 +18,9 @@ function DANTE(monitor, minima, maxima){
     this.nFrames = this.FPS*this.duration;
 
     //establish which canvas should be displayed when the subsystem is navigated to, as a function of which scalar button is active:
-    this.scalarViewCanvas = ['DANTECanvas', 'DANTECanvas', 'DANTECanvas'];
+    this.view = ['DANTECanvas', 'DANTECanvas', 'DANTECanvas'];
     //insert nav link
-    insertButton('DANTElink', 'navLink', "javascript:swapFade('DANTElink', window.DANTEpointer, window.subsystemScalars)", this.linkWrapperID, 'DANTE');
+    insertButton('DANTElink', 'navLink', "javascript:swapFade('DANTElink', window.DANTEpointer, window.subsystemScalars, window.subdetectorView)", this.linkWrapperID, 'DANTE');
     
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
     this.monitor = document.getElementById(monitor);

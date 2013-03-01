@@ -16,6 +16,7 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
 	this.maxima = maxima;			             //as minima.
     this.config = config;                        //[nCollectorGroups, nCollectors, nDigitizerGroups, nDigitizers, nDigitizersPerCollector]
     this.nCollectorGroups = config[0];
+    this.view = ['DAQcanvas', 'DAQdetailCanvas'];//pointers to map view ID's onto integers
     if(this.nCollectorGroups == 0)
         this.nCollectors = config[1];
     else
@@ -41,13 +42,13 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
     insertH1('DAQlinksBanner', 'navPanelHeader', this.linkWrapperID, 'GRIFFIN DAQ Status');
     insertLinebreak(this.linkWrapperID);
     //nav buttons
-    insertButton('DAQToplink', 'navLinkDown', "javascript:swapFade('DAQcanvas', 'DAQToplink', window.DAQpointer, 0)", 'DAQlinks', 'Top Level');
+    insertButton('DAQToplink', 'navLinkDown', "javascript:swapFade('DAQToplink', window.DAQpointer, 0, 0)", 'DAQlinks', 'Top Level');
     insertLinebreak(this.linkWrapperID);
     //p to label row of collector buttons
     insertParagraph('DAQcollectorTitle', '', 'display:inline; color:#999999;', 'DAQlinks', 'Collector ');
     //deploy collector buttons
     for(i=0; i<this.nCollectors; i++){
-        insertButton('Collector'+i, 'navLink', "javascript:swapFade('DAQdetailCanvas', 'Collector"+i+"', window.DAQpointer, 0)", this.linkWrapperID, i);
+        insertButton('Collector'+i, 'navLink', "javascript:swapFade('Collector"+i+"', window.DAQpointer, 0, 1)", this.linkWrapperID, i);
         $('#Collector'+i).width( ( 0.95*this.canvasWidth - $('#DAQcollectorTitle').width()) / this.nCollectors );
     }
     //right sidebar
@@ -399,7 +400,7 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
     	this.context.stroke();
     };
 
-    this.drawDetail = function(frame){
+    this.drawDetail = function(context, frame){
         var color, i;
 
         var topMargin = 30;

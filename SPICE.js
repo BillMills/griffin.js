@@ -21,9 +21,9 @@ function SPICE(monitor, minima, maxima){
     this.nFrames = this.FPS*this.duration;
 
     //establish which canvas should be displayed when the subsystem is navigated to, as a function of which scalar button is active:
-    this.scalarViewCanvas = ['SPICECanvas', 'SPICECanvas', 'SPICECanvas'];
+    this.view = ['SPICECanvas', 'SPICECanvas', 'SPICECanvas'];
     //insert nav link
-    insertButton('SPICElink', 'navLink', "javascript:swapFade('SPICElink', window.SPICEpointer, window.subsystemScalars)", this.linkWrapperID, 'SPICE');
+    insertButton('SPICElink', 'navLink', "javascript:swapFade('SPICElink', window.SPICEpointer, window.subsystemScalars, window.subdetectorView)", this.linkWrapperID, 'SPICE');
 
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
     this.monitor = document.getElementById(monitor);

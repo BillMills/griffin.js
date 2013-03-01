@@ -23,9 +23,9 @@ function DESCANT(monitor, minima, maxima, prefix, postfix){
     this.nFrames = this.FPS*this.duration;
 
     //establish which canvas should be displayed when the subsystem is navigated to, as a function of which scalar button is active:
-    this.scalarViewCanvas = ['DESCANTCanvas', 'DESCANTCanvas', 'DESCANTCanvas'];
+    this.view = ['DESCANTCanvas', 'DESCANTCanvas', 'DESCANTCanvas'];
     //insert nav link
-    insertButton('DESCANTlink', 'navLink', "javascript:swapFade('DESCANTlink', window.DESCANTpointer, window.subsystemScalars)", this.linkWrapperID, 'DESCANT');
+    insertButton('DESCANTlink', 'navLink', "javascript:swapFade('DESCANTlink', window.DESCANTpointer, window.subsystemScalars, window.subdetectorView)", this.linkWrapperID, 'DESCANT');
 
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
 	this.monitor = document.getElementById(this.monitorID);

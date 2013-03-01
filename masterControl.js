@@ -51,8 +51,10 @@ function masterLoop(dashboard, AlarmServices, waffle, SHARC, HPGE, DESCANT, PACE
 
         //HPGE
         var HPGEdata = [];
-        fetchNewHPGEData(HPGEdata);
-        HPGE.update(HPGEdata);
+        var BGOdata = [];
+        var detailData = [];
+        fetchNewHPGEData(HPGEdata, BGOdata, detailData);
+        HPGE.update(HPGEdata, BGOdata, detailData);
 
         //DESCANT
         var DESCANTrates = [];
@@ -112,7 +114,7 @@ function masterLoop(dashboard, AlarmServices, waffle, SHARC, HPGE, DESCANT, PACE
         if(window.onDisplay == 'HPGECanvas' || !callMyself) animate(HPGE,0);
         else HPGE.draw(HPGE.nFrames);
         if(window.onDisplay == 'HPGEdetailCanvas' || !callMyself) animateDetail(HPGE,0);
-        else HPGE.drawDetail(HPGE.nFrames);
+        else HPGE.drawDetail(HPGE.detailContext, HPGE.nFrames);
         if(window.onDisplay == 'DESCANTCanvas' || !callMyself) animate(DESCANT,0);
         else DESCANT.draw(DESCANT.nFrames);
         if(window.onDisplay == 'PACESHVCanvas' || window.onDisplay == 'PACESrateCanvas' ||  !callMyself) animate(PACES,0);
@@ -328,13 +330,18 @@ function fetchNewSHARCData(nChannels, HVdata){
 }
 
 //fetch new data for the HPGE:
-function fetchNewHPGEData(HPGEdata){
+function fetchNewHPGEData(HPGEdata, BGOdata, detailData){
     var i = 0;
 
     //dummy data for offline dev:
     //HPGE summary
     for(i=0; i<64; i++){
         HPGEdata[i] = Math.random();
+        BGOdata[i] = Math.random();
+    }
+
+    for(i=0; i<200; i++){
+        detailData[i] = Math.random();
     }
 
 }
@@ -381,7 +388,7 @@ function fetchNewBAMBINOdata(rates){
 
     //dummy data for offline dev:
     //rates
-    for(i=0; i<64; i++){
+    for(i=0; i<200; i++){
         rates[i] = Math.random();
     }
 

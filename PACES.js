@@ -21,8 +21,8 @@ function PACES(monitor, minima, maxima, prefix, postfix){
     this.nFrames = this.FPS*this.duration;
 
     //establish which canvas should be displayed when the subsystem is navigated to, as a function of which scalar button is active:
-    this.scalarViewCanvas = ['PACESHVCanvas', 'PACESrateCanvas', 'PACESrateCanvas'];
-    insertButton('PACESlink', 'navLink', "javascript:swapFade('PACESlink', window.PACESpointer, window.subsystemScalars)", this.linkWrapperID, 'PACES');
+    this.view = ['PACESHVCanvas', 'PACESrateCanvas', 'PACESrateCanvas'];
+    insertButton('PACESlink', 'navLink', "javascript:swapFade('PACESlink', window.PACESpointer, window.subsystemScalars, window.subdetectorView)", this.linkWrapperID, 'PACES');
 
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
     this.monitor = document.getElementById(monitor);

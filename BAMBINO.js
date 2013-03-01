@@ -1,5 +1,6 @@
-function BAMBINO(monitor, minima, maxima){
+function BAMBINO(monitor, mode, minima, maxima){
 	this.monitorID = monitor;		        //div ID of wrapper div
+    this.mode
 	this.canvasID = 'BAMBINOCanvas'; 		//ID of canvas to draw top level TIGRESS view on
     this.linkWrapperID = 'SubsystemLinks';  //ID of div wrapping subsystem navigation links
     this.sidebarID = 'SubsystemSidebar';    //ID of right sidebar for this object
@@ -8,8 +9,11 @@ function BAMBINO(monitor, minima, maxima){
     this.minima = minima;                   //array of meter minima [HV, thresholds, rate]
     this.maxima = maxima;                   //array of meter maxima, arranged as minima
 
-	this.nRadial = 16;
-	this.nAzimuthal = 16;
+    this.nRadial = 24;
+    if(mode=='S2')
+    	this.nAzimuthal = 16;
+    else
+        this.nAzimuthal = 32;
 
     var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
@@ -21,9 +25,9 @@ function BAMBINO(monitor, minima, maxima){
     this.nFrames = this.FPS*this.duration;
 
     //establish which canvas should be displayed when the subsystem is navigated to, as a function of which scalar button is active:
-    this.scalarViewCanvas = ['BAMBINOCanvas', 'BAMBINOCanvas', 'BAMBINOCanvas'];
+    this.view = ['BAMBINOCanvas', 'BAMBINOCanvas', 'BAMBINOCanvas'];
     //insert nav link
-    insertButton('BAMBINOlink', 'navLink', "javascript:swapFade('BAMBINOlink', window.BAMBINOpointer, window.subsystemScalars)", this.linkWrapperID, 'BAMBINO');
+    insertButton('BAMBINOlink', 'navLink', "javascript:swapFade('BAMBINOlink', window.BAMBINOpointer, window.subsystemScalars, window.subdetectorView)", this.linkWrapperID, 'BAMBINO');
 
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
     this.monitor = document.getElementById(monitor);

@@ -58,10 +58,11 @@ function fadeDivIn(navDiv){
 }
 
 //swap two canvases:
-function swapFade(buttonID, object, leaveOff){
+function swapFade(buttonID, object, leaveOff, representationIndex){
 	var i;
 	//parse which view is requested, and fetch the corresponding canvas ID to bring to the front:
-	var inbound = object.scalarViewCanvas[window.subdetectorView];
+	//var inbound = object.scalarViewCanvas[window.subdetectorView];
+	var inbound = object.view[representationIndex];
 
 	//turn off other buttons, except for some at the end:
 	for(i=0; i<document.getElementById(object.linkWrapperID).children.length - leaveOff; i++){

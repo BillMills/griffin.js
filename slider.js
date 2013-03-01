@@ -44,6 +44,18 @@ function Slider(wrapperID, titleID, inputBoxID, sliderContainerID, sliderBackgro
     this.sliderCanvID = sliderCanvID;
     this.sliderTextID = sliderTextID;
 
+    //DOM manipulation/////////////////////////////////////////////
+    //slider background canvas:
+    insertCanvas(sliderBackgroundID, 'sliderBKG', '', 0, 24, sliderContainerID);
+    //slider knob div
+    insertDiv(sliderKnobID, 'sliderKnob', sliderContainerID);
+    //knob style canvas
+    insertCanvas(sliderCanvID, 'knobStyle', '', 24, 16, sliderKnobID);
+    //position feedback paragraph
+    insertParagraph(sliderTextID, 'sliderText', '', sliderKnobID, '0%');
+
+    //finished DOM injections//////////////////////////////////////
+
     //pointers by ID:
     this.wrapper = document.getElementById(wrapperID);
     this.inputBox = document.getElementById(inputBoxID);

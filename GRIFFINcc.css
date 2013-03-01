@@ -230,6 +230,7 @@ div.slider{
 canvas.sliderBKG{
 	display: inline;
 	position:absolute;
+	z-index:-1;
 }
 div.sliderKnob{
 	display: inline;

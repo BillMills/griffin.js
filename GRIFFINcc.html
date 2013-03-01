@@ -112,39 +112,21 @@
           <input type="text" id="demandVoltage" name='textbox' value='default' style='margin-bottom:10px; margin-top: 5px; margin-left:10%; margin-right:5%;' size='6'>
 
           <!--Slider for demand voltage-->
-          <div class='slider' id='voltageSlider'>
-            <canvas class='sliderBKG' id='voltageSliderBKG' height=24></canvas>
-            <div class='sliderKnob' id='voltageSliderKnob'>
-              <canvas class='knobStyle' id='voltageKnobStyle' width=24 height=16> </canvas>
-              <p class='sliderText' id='voltageSliderText'><br>0%</p>
-            </div>
-          </div>
+          <div class='slider' id='voltageSlider'></div>
 
           <!--voltage ramp up speed input field-->
           <p id='RampText' width='200px' style='margin:0px; margin-left:10%; margin-top:20px;'>Voltage Ramp Up Speed [V/s]</p>
           <input type="text" id="demandRampSpeed" name='textbox' value='default' style='margin-bottom:10px; margin-top: 5px; margin-left:10%; margin-right:5%;' size='6'>
 
           <!--Slider for voltage ramp up speed-->
-          <div class='slider' id='rampSlider'>
-            <canvas class='sliderBKG' id='rampSliderBKG' height=24></canvas>
-            <div class='sliderKnob' id='rampSliderKnob'>
-              <canvas class='knobStyle' id='rampKnobStyle' width=24 height=16> </canvas>
-              <p class='sliderText' id='rampSliderText'><br>0%</p>
-            </div>
-          </div>
+          <div class='slider' id='rampSlider'></div>
 
           <!--voltage ramp down speed input field-->
           <p id='RampTextDown' width='200px' style='margin:0px; margin-left:10%; margin-top:20px;'>Voltage Ramp Down Speed [V/s]</p>
           <input type="text" id="demandRampDownSpeed" name='textbox' value='default' style='margin-bottom:30px; margin-top: 5px; margin-left:10%; margin-right:5%;' size='6'>
 
           <!--Slider for voltage ramp down speed-->
-          <div class='slider' id='rampDownSlider'>
-            <canvas class='sliderBKG' id='rampDownSliderBKG' height=24></canvas>
-            <div class='sliderKnob' id='rampDownSliderKnob'>
-              <canvas class='knobStyle' id='rampDownKnobStyle' width=24 height=16> </canvas>
-              <p class='sliderText' id='rampDownSliderText'><br>0%</p>
-            </div>
-          </div>
+          <div class='slider' id='rampDownSlider'></div>
 
         </form>
 
@@ -362,11 +344,11 @@
       insertLinebreak('SubsystemLinks');    
       //subdetectors
       var SHARCMonitor = new SHARC('waffleplate','horizontal', SMrows, SMcolumns, SMnChannels, 4, 4, 1, 16, SMminima, SMmaxima, [],[]);
-      var HPGEMonitor = new HPGE('waffleplate', 0, [0,0,0], [1,1,1], [], []);
+      var HPGEMonitor = new HPGE('waffleplate', 1, [0,0,0], [1,1,1], [], [], 'GRIFFIN');
       var DESCANTMonitor = new DESCANT('waffleplate', [0,0,0], [1,1,1], [],[]);
       var PACESMonitor = new PACES('waffleplate', [0,0,0], [1,1,1], [], []);
       var DANTEMonitor = new DANTE('waffleplate', [0,0,0], [1,1,1]);
-      var BAMBINOMonitor = new BAMBINO('waffleplate', [0,0,0], [1,1,1]);
+      var BAMBINOMonitor = new BAMBINO('waffleplate', 'S3', [0,0,0], [1,1,1]);
       var SCEPTARMonitor = new SCEPTAR('waffleplate', [0,0,0], [1,1,1], [1,0,1]);
       var SPICEMonitor = new SPICE('waffleplate', [0,0,0], [1,1,1]);
       insertLinebreak('SubsystemLinks');

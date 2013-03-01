@@ -535,7 +535,31 @@ function Waffle(rows, cols, wrapperDiv, rowTitles, InputLayer, ODBkeys, headerDi
             return longestLine;
         };
 
+        //deploy the sidebar
+        this.deploySidebar = function(){
+
+            //wrapper div
+            insertDiv(this.sidebarID, 'Sidebar', this.wrapperDiv);
+            document.getElementById(this.sidebarID).setAttribute('align', 'left');
+
+            //title
+            insertH2('inputTitle', '', this.sidebarID, 'Sin Titulo');
+            document.getElementById('inputTitle').setAttribute('align', 'left');
+
+            //input form
+            insertForm('setValues', 'margin-bottom:0px;', this.sidebarID);
+
+            
+
+        };
+
 }
+
+
+
+
+
+//some useful globals
 
 //define behavior of the change channel button:
 function changeChannelButton(event, obj){
