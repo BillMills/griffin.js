@@ -230,9 +230,17 @@ function HPGE(monitor, BGOenable, minima, maxima, prefix, postfix, mode){
     //detail view///////////////////////////
 
     this.drawDetail = function(context, frame){
+        var i, j;
 
-        var split;
+        //state variables select the segmentation state of HPGE and services of BGO 
+        var HPGEstate, BGOstate;
+
         this.detailContext.lineWidth = this.lineWeight;
+
+        //colorWheel enumerates the standard configuration of color sectors:
+        var colorWheel = ['#00FF00', '#0000FF', '#FFFFFF', '#FF0000'];
+        //orientation enumerates orientations of half-BGOs
+        var orientation = ['left', 'right'];
 
         //construct the color for each cell
         var fillColor = [];
@@ -243,104 +251,58 @@ function HPGE(monitor, BGOenable, minima, maxima, prefix, postfix, mode){
                 fillColor[i] = 'rgba('+i+', '+i+', '+i+', 1)';
         }
 
-        if(window.subdetectorView == 0)
-            split = true;
-        else if(window.subdetectorView == 1 || window.subdetectorView == 2)
-            split = false;
- 
-        if(split){
-            this.crystal(context, this.centerX - this.crystalSide, this.centerY - this.crystalSide, '#00FF00', fillColor[0]);
-            this.crystal(context, this.centerX + this.lineWeight, this.centerY - this.crystalSide, '#0000FF', fillColor[1]);
-            this.crystal(context, this.centerX - this.crystalSide, this.centerY + this.lineWeight, '#FF0000', fillColor[2]);
-            this.crystal(context, this.centerX + this.lineWeight, this.centerY + this.lineWeight, '#FFFFFF', fillColor[3]);
-
-        } else{
-            //cores
-            this.crystalCore(context, this.centerX - 2/3*this.crystalSide, this.centerY-2/3*this.crystalSide, '#00FF00', fillColor[4]);
-            this.crystalCore(context, this.centerX + 1/3*this.crystalSide + this.lineWeight, this.centerY-2/3*this.crystalSide, '#0000FF', fillColor[5]);
-            this.crystalCore(context, this.centerX - 2/3*this.crystalSide, this.centerY+1/3*this.crystalSide + this.lineWeight, '#FF0000', fillColor[6]);
-            this.crystalCore(context, this.centerX + 1/3*this.crystalSide + this.lineWeight, this.centerY+1/3*this.crystalSide + this.lineWeight, '#FFFFFF', fillColor[7]);
-            //front segs
-            this.drawL(context, 0, this.crystalSide/6, 1/3*this.crystalSide, this.centerX - 5*this.crystalSide/6, this.centerY - 5*this.crystalSide/6, '#00FF00', fillColor[8]);
-            this.drawL(context, Math.PI/2, this.crystalSide/6, 1/3*this.crystalSide, this.centerX - this.crystalSide/6, this.centerY - 5*this.crystalSide/6, '#00FF00', fillColor[9]);
-            this.drawL(context, Math.PI, this.crystalSide/6, 1/3*this.crystalSide, this.centerX - this.crystalSide/6, this.centerY - this.crystalSide/6, '#00FF00', fillColor[10]);
-            this.drawL(context, 3*Math.PI/2, this.crystalSide/6, 1/3*this.crystalSide, this.centerX - 5*this.crystalSide/6, this.centerY - this.crystalSide/6, '#00FF00', fillColor[11]);
-
-            this.drawL(context, 0, this.crystalSide/6, 1/3*this.crystalSide, this.centerX + this.crystalSide/6 + this.lineWeight, this.centerY - 5*this.crystalSide/6, '#0000FF', fillColor[12]);
-            this.drawL(context, Math.PI/2, this.crystalSide/6, 1/3*this.crystalSide, this.centerX + 5*this.crystalSide/6 + this.lineWeight, this.centerY - 5*this.crystalSide/6, '#0000FF', fillColor[13]);
-            this.drawL(context, Math.PI, this.crystalSide/6, 1/3*this.crystalSide, this.centerX + 5*this.crystalSide/6 + this.lineWeight, this.centerY - this.crystalSide/6, '#0000FF', fillColor[14]);
-            this.drawL(context, 3*Math.PI/2, this.crystalSide/6, 1/3*this.crystalSide, this.centerX + this.crystalSide/6 + this.lineWeight, this.centerY - this.crystalSide/6, '#0000FF', fillColor[15]);
-
-            this.drawL(context, 0, this.crystalSide/6, 1/3*this.crystalSide, this.centerX + this.crystalSide/6 + this.lineWeight, this.centerY + this.crystalSide/6 + this.lineWeight, '#FFFFFF', fillColor[16]);
-            this.drawL(context, Math.PI/2, this.crystalSide/6, 1/3*this.crystalSide, this.centerX + 5*this.crystalSide/6 + this.lineWeight, this.centerY + this.crystalSide/6 + this.lineWeight, '#FFFFFF', fillColor[17]);
-            this.drawL(context, Math.PI, this.crystalSide/6, 1/3*this.crystalSide, this.centerX + 5*this.crystalSide/6 + this.lineWeight, this.centerY + 5*this.crystalSide/6 + this.lineWeight, '#FFFFFF', fillColor[18]);
-            this.drawL(context, 3*Math.PI/2, this.crystalSide/6, 1/3*this.crystalSide, this.centerX + this.crystalSide/6 + this.lineWeight, this.centerY + 5*this.crystalSide/6 + this.lineWeight, '#FFFFFF', fillColor[19]);
-
-            this.drawL(context, 0, this.crystalSide/6, 1/3*this.crystalSide, this.centerX - 5*this.crystalSide/6, this.centerY + this.crystalSide/6 + this.lineWeight, '#FF0000', fillColor[20]);
-            this.drawL(context, Math.PI/2, this.crystalSide/6, 1/3*this.crystalSide, this.centerX - this.crystalSide/6, this.centerY + this.crystalSide/6 + this.lineWeight, '#FF0000', fillColor[21]);
-            this.drawL(context, Math.PI, this.crystalSide/6, 1/3*this.crystalSide, this.centerX - this.crystalSide/6, this.centerY + 5*this.crystalSide/6 + this.lineWeight, '#FF0000', fillColor[22]);
-            this.drawL(context, 3*Math.PI/2, this.crystalSide/6, 1/3*this.crystalSide, this.centerX - 5*this.crystalSide/6, this.centerY + 5*this.crystalSide/6 + this.lineWeight, '#FF0000', fillColor[23]);
-
-            //back segs
-            this.drawL(context, 0, this.crystalSide/6, this.crystalSide/2, this.centerX - this.crystalSide, this.centerY - this.crystalSide, '#00FF00', fillColor[24]);
-            this.drawL(context, Math.PI/2, this.crystalSide/6, this.crystalSide/2, this.centerX, this.centerY - this.crystalSide, '#00FF00', fillColor[25]);
-            this.drawL(context, Math.PI, this.crystalSide/6, this.crystalSide/2, this.centerX, this.centerY, '#00FF00', fillColor[26]);
-            this.drawL(context, 3*Math.PI/2, this.crystalSide/6, this.crystalSide/2, this.centerX - this.crystalSide, this.centerY, '#00FF00', fillColor[27]);        
-
-            this.drawL(context, 0, this.crystalSide/6, this.crystalSide/2, this.centerX + this.lineWeight, this.centerY - this.crystalSide, '#0000FF', fillColor[28]);
-            this.drawL(context, Math.PI/2, this.crystalSide/6, this.crystalSide/2, this.centerX + this.crystalSide + this.lineWeight, this.centerY - this.crystalSide, '#0000FF', fillColor[29]);
-            this.drawL(context, Math.PI, this.crystalSide/6, this.crystalSide/2, this.centerX + this.crystalSide + this.lineWeight, this.centerY, '#0000FF', fillColor[30]);
-            this.drawL(context, 3*Math.PI/2, this.crystalSide/6, this.crystalSide/2, this.centerX + this.lineWeight, this.centerY, '#0000FF', fillColor[31]);
-
-            this.drawL(context, 0, this.crystalSide/6, this.crystalSide/2, this.centerX + this.lineWeight, this.centerY + this.lineWeight, '#FFFFFF', fillColor[32]);
-            this.drawL(context, Math.PI/2, this.crystalSide/6, this.crystalSide/2, this.centerX + this.crystalSide + this.lineWeight, this.centerY + this.lineWeight, '#FFFFFF', fillColor[33]);
-            this.drawL(context, Math.PI, this.crystalSide/6, this.crystalSide/2, this.centerX + this.crystalSide + this.lineWeight, this.centerY + this.crystalSide + this.lineWeight, '#FFFFFF', fillColor[34]);
-            this.drawL(context, 3*Math.PI/2, this.crystalSide/6, this.crystalSide/2, this.centerX + this.lineWeight, this.centerY + this.crystalSide + this.lineWeight, '#FFFFFF', fillColor[35]);
-
-            this.drawL(context, 0, this.crystalSide/6, this.crystalSide/2, this.centerX - this.crystalSide, this.centerY + this.lineWeight, '#FF0000', fillColor[36]);
-            this.drawL(context, Math.PI/2, this.crystalSide/6, this.crystalSide/2, this.centerX, this.centerY + this.lineWeight, '#FF0000', fillColor[37]);
-            this.drawL(context, Math.PI, this.crystalSide/6, this.crystalSide/2, this.centerX, this.centerY + this.crystalSide + this.lineWeight, '#FF0000', fillColor[38]);
-            this.drawL(context, 3*Math.PI/2, this.crystalSide/6, this.crystalSide/2, this.centerX - this.crystalSide, this.centerY + this.crystalSide + this.lineWeight, '#FF0000', fillColor[39]);
+        if(window.subdetectorView == 0){
+            HPGEstate = 0; //no segmentation
+            BGOstate = 1;  //two services per sector per side per suppressor
+        }else if(window.subdetectorView == 1 || window.subdetectorView == 2){
+            HPGEstate = 1; //9-element segmentation
+            BGOstate = 0;  //one service per sector per side per suppressor
         }
+            
+        //loop over quadrents:
+        for(i=0; i<4; i++){
+            //useful switches:
+            var PBC = Math.ceil((i%3)/3);               //positive for i=1,2, 0 OW
+            var NAD = Math.ceil((i%3)/3) - 1;             //negative for i=0,3, 0 OW
+            var NAB = Math.floor(i/2) - 1;              //negative for i=0,1, 0 OW
+            var PCD = Math.floor(i/2);                  //positive for i=2,3, 0 OW
 
-        //front suppressors
-        this.drawHalfL(context, -Math.PI/2, this.suppressorWidth, this.frontBGOouterWidth/2, this.centerX - this.frontBGOinnerWidth/2 - this.lineWeight, this.centerY - this.frontBGOinnerWidth/2, 'left', split, '#00FF00', fillColor[40], fillColor[64]);
-        this.drawHalfL(context, 0, this.suppressorWidth, this.frontBGOouterWidth/2, this.centerX - this.frontBGOinnerWidth/2, this.centerY - this.frontBGOinnerWidth/2 - this.lineWeight, 'right', split, '#00FF00', fillColor[41], fillColor[65]);
+            //HPGE/////////////////////////////
+            if(HPGEstate == 0){
+                this.crystal(context, this.centerX + PBC*this.lineWeight + NAD*this.crystalSide, this.centerY + NAB*this.crystalSide + PCD*this.lineWeight, colorWheel[i], fillColor[0]);
+            } else if(HPGEstate == 1){
+                //cores
+                this.crystalCore(context, this.centerX + NAD*2/3*this.crystalSide + PBC*1/3*this.crystalSide + PBC*this.lineWeight, this.centerY + NAB*2/3*this.crystalSide + PCD*1/3*this.crystalSide + PCD*this.lineWeight, colorWheel[i], fillColor[4]);    
+                for(j=0; j<4; j++){
+                    //useful switches:
+                    var PBC2 = Math.ceil((j%3)/3);               //positive for i=1,2, 0 OW
+                    var NAD2 = Math.ceil((j%3)/3) - 1;             //negative for i=0,3, 0 OW
+                    var NAB2 = Math.floor(j/2) - 1;              //negative for i=0,1, 0 OW
+                    var PCD2 = Math.floor(j/2);                  //positive for i=2,3, 0 OW
+                    //front segs
+                    this.drawL(context, j*Math.PI/2, this.crystalSide/6, 1/3*this.crystalSide, this.centerX + PBC*this.lineWeight + NAD*(-NAD2)*5/6*this.crystalSide + NAD*PBC2*1/6*this.crystalSide + PBC*(-NAD2)*1/6*this.crystalSide + PBC*PBC2*5/6*this.crystalSide, this.centerY + NAB*(-NAB2)*5/6*this.crystalSide + NAB*PCD2*1/6*this.crystalSide + PCD*(-NAB2)*1/6*this.crystalSide + PCD*PCD2*5/6*this.crystalSide + PCD*this.lineWeight, colorWheel[i], fillColor[8]);
+                    //back segs
+                    this.drawL(context, j*Math.PI/2, this.crystalSide/6, this.crystalSide/2, this.centerX + (-NAD)*NAD2*this.crystalSide + PBC*PBC2*this.crystalSide + PBC*this.lineWeight, this.centerY + (-NAB)*NAB2*this.crystalSide + PCD*PCD2*this.crystalSide + PCD*this.lineWeight, colorWheel[i], fillColor[24]);
+                }
+            }
 
-        this.drawHalfL(context, 0, this.suppressorWidth, this.frontBGOouterWidth/2, this.centerX + this.frontBGOinnerWidth/2 + this.lineWeight, this.centerY - this.frontBGOinnerWidth/2 - this.lineWeight, 'left', split, '#0000FF', fillColor[42], fillColor[66]);
-        this.drawHalfL(context, Math.PI/2, this.suppressorWidth, this.frontBGOouterWidth/2, this.centerX + this.frontBGOinnerWidth/2 + 2*this.lineWeight, this.centerY - this.frontBGOinnerWidth/2, 'right', split, '#0000FF', fillColor[43], fillColor[67]);
+            //BGO//////////////////////////////
+            for(j=0; j<2; j++){
+                //useful switches
+                var NA = j-1;
+                var NB = (-1)*j;
+                var PA = (j+1)%2;
+                var PB = j;
 
-        this.drawHalfL(context, Math.PI/2, this.suppressorWidth, this.frontBGOouterWidth/2, this.centerX + this.frontBGOinnerWidth/2 + 2*this.lineWeight, this.centerY + this.frontBGOinnerWidth/2 + this.lineWeight, 'left', split, '#FFFFFF', fillColor[44], fillColor[68]);
-        this.drawHalfL(context, Math.PI, this.suppressorWidth, this.frontBGOouterWidth/2, this.centerX + this.frontBGOinnerWidth/2 + this.lineWeight, this.centerY + this.frontBGOinnerWidth/2 + 2*this.lineWeight, 'right', split, '#FFFFFF', fillColor[45], fillColor[69]);
+                //front suppressors
+                this.drawHalfL(context, (i-1+j)*(Math.PI/2), this.suppressorWidth, this.frontBGOouterWidth/2, this.centerX + NAD*this.frontBGOinnerWidth/2 + PBC*this.frontBGOinnerWidth/2 + PBC*2*this.lineWeight + (-NAB)*NA*this.lineWeight + PCD*NB*this.lineWeight, this.centerY + (NAB+PCD)*this.frontBGOinnerWidth/2 + PCD*2*this.lineWeight + (-NAD)*NB*this.lineWeight + PBC*NA*this.lineWeight, orientation[j], BGOstate, colorWheel[i], fillColor[40], fillColor[64]);
+                //back suppressors
+                this.drawHalfL(context, (i-1+j)*(Math.PI/2), this.suppressorWidth, this.backBGOouterWidth/2, this.centerX +NAD*this.backBGOinnerWidth/2 + PBC*this.backBGOinnerWidth/2 + PBC*2*this.lineWeight + (-NAB)*NA*this.lineWeight + PCD*NB*this.lineWeight     , this.centerY + (NAB+PCD)*this.backBGOinnerWidth/2 + PCD*2*this.lineWeight + (-NAD)*NB*this.lineWeight + PBC*NA*this.lineWeight, orientation[j], BGOstate, colorWheel[i], fillColor[48], fillColor[72]);
+                //side suppressors
+                this.drawHalfL(context, (i-1+j)*(Math.PI/2), this.suppressorWidth, this.sideBGOouterWidth/2 - this.sideSpacer, this.centerX + (PBC+NAD)*this.sideBGOinnerWidth/2 + PBC*this.lineWeight + (-NAB)*NA*this.sideSpacer + PCD*NB*this.sideSpacer + (-NAD)*this.sideSpacer, this.centerY + (NAB+PCD)*this.sideBGOinnerWidth/2 + PCD*this.lineWeight + (-NAB*PA + PBC*NA + PBC*PB + PCD*NB)*this.sideSpacer, orientation[j], BGOstate, colorWheel[i], fillColor[56], fillColor[80]);
+            }   
 
-        this.drawHalfL(context, Math.PI, this.suppressorWidth, this.frontBGOouterWidth/2, this.centerX - this.frontBGOinnerWidth/2, this.centerY + this.frontBGOinnerWidth/2 + 2*this.lineWeight, 'left', split, '#FF0000', fillColor[46], fillColor[70]);
-        this.drawHalfL(context, 3*Math.PI/2, this.suppressorWidth, this.frontBGOouterWidth/2, this.centerX - this.frontBGOinnerWidth/2 - this.lineWeight, this.centerY + this.frontBGOinnerWidth/2 + this.lineWeight, 'right', split, '#FF0000', fillColor[47], fillColor[71]);
-
-        //back suppressors
-        this.drawHalfL(context, -Math.PI/2, this.suppressorWidth, this.backBGOouterWidth/2, this.centerX - this.backBGOinnerWidth/2 - this.lineWeight, this.centerY - this.backBGOinnerWidth/2, 'left', split, '#00FF00', fillColor[48], fillColor[72]);
-        this.drawHalfL(context, 0, this.suppressorWidth, this.backBGOouterWidth/2, this.centerX - this.backBGOinnerWidth/2, this.centerY - this.backBGOinnerWidth/2 - this.lineWeight, 'right', split, '#00FF00', fillColor[49], fillColor[73]);
-
-        this.drawHalfL(context, 0, this.suppressorWidth, this.backBGOouterWidth/2, this.centerX + this.backBGOinnerWidth/2 + this.lineWeight, this.centerY - this.backBGOinnerWidth/2 - this.lineWeight, 'left', split, '#0000FF', fillColor[50], fillColor[74]);
-        this.drawHalfL(context, Math.PI/2, this.suppressorWidth, this.backBGOouterWidth/2, this.centerX + this.backBGOinnerWidth/2 + 2*this.lineWeight, this.centerY - this.backBGOinnerWidth/2, 'right', split, '#0000FF', fillColor[51], fillColor[75]);
-
-        this.drawHalfL(context, Math.PI/2, this.suppressorWidth, this.backBGOouterWidth/2, this.centerX + this.backBGOinnerWidth/2 + 2*this.lineWeight, this.centerY + this.backBGOinnerWidth/2 + this.lineWeight, 'left', split, '#FFFFFF', fillColor[52], fillColor[76]);
-        this.drawHalfL(context, Math.PI, this.suppressorWidth, this.backBGOouterWidth/2, this.centerX + this.backBGOinnerWidth/2 + this.lineWeight, this.centerY + this.backBGOinnerWidth/2 + 2*this.lineWeight, 'right', split, '#FFFFFF', fillColor[53], fillColor[77]);
-
-        this.drawHalfL(context, Math.PI, this.suppressorWidth, this.backBGOouterWidth/2, this.centerX - this.backBGOinnerWidth/2, this.centerY + this.backBGOinnerWidth/2 + 2*this.lineWeight, 'left', split, '#FF0000', fillColor[54], fillColor[78]);
-        this.drawHalfL(context, 3*Math.PI/2, this.suppressorWidth, this.backBGOouterWidth/2, this.centerX - this.backBGOinnerWidth/2 - this.lineWeight, this.centerY + this.backBGOinnerWidth/2 + this.lineWeight, 'right', split, '#FF0000', fillColor[55], fillColor[79]);
-
-        //side suppressors
-        this.drawHalfL(context, -Math.PI/2, this.suppressorWidth, this.sideBGOouterWidth/2 - this.sideSpacer, this.centerX - this.sideBGOinnerWidth/2, this.centerY - this.sideBGOinnerWidth/2 + this.sideSpacer, 'left', split, '#00FF00', fillColor[56], fillColor[80]);
-        this.drawHalfL(context, 0, this.suppressorWidth, this.sideBGOouterWidth/2 - this.sideSpacer, this.centerX - this.sideBGOinnerWidth/2 + this.sideSpacer, this.centerY - this.sideBGOinnerWidth/2, 'right', split, '#00FF00', fillColor[57], fillColor[81]);
-
-        this.drawHalfL(context, 0, this.suppressorWidth, this.sideBGOouterWidth/2 - this.sideSpacer, this.centerX + this.sideBGOinnerWidth/2 + this.lineWeight - this.sideSpacer, this.centerY - this.sideBGOinnerWidth/2, 'left', split, '#0000FF', fillColor[58], fillColor[82]);
-        this.drawHalfL(context, Math.PI/2, this.suppressorWidth, this.sideBGOouterWidth/2 - this.sideSpacer, this.centerX + this.sideBGOinnerWidth/2 + this.lineWeight, this.centerY - this.sideBGOinnerWidth/2 + this.sideSpacer, 'right', split, '#0000FF', fillColor[59], fillColor[83]);
-
-        this.drawHalfL(context, Math.PI/2, this.suppressorWidth, this.sideBGOouterWidth/2 - this.sideSpacer, this.centerX + this.sideBGOinnerWidth/2 + this.lineWeight, this.centerY + this.sideBGOinnerWidth/2 + this.lineWeight - this.sideSpacer, 'left', split, '#FFFFFF', fillColor[60], fillColor[84]);
-        this.drawHalfL(context, Math.PI, this.suppressorWidth, this.sideBGOouterWidth/2 - this.sideSpacer, this.centerX + this.sideBGOinnerWidth/2 + this.lineWeight - this.sideSpacer, this.centerY + this.sideBGOinnerWidth/2 + this.lineWeight, 'right', split, '#FFFFFF', fillColor[61], fillColor[85]); 
-
-        this.drawHalfL(context, Math.PI, this.suppressorWidth, this.sideBGOouterWidth/2 - this.sideSpacer, this.centerX - this.sideBGOinnerWidth/2 + this.sideSpacer, this.centerY + this.sideBGOinnerWidth/2 + this.lineWeight, 'left', split, '#FF0000', fillColor[62], fillColor[85]);
-        this.drawHalfL(context, 3*Math.PI/2, this.suppressorWidth, this.sideBGOouterWidth/2 - this.sideSpacer, this.centerX - this.sideBGOinnerWidth/2, this.centerY + this.sideBGOinnerWidth/2 + this.lineWeight - this.sideSpacer, 'right', split, '#FF0000', fillColor[63], fillColor[86]);
+        }
 
         //title
         this.detailContext.clearRect(0,0.85*this.canvasHeight,this.canvasWidth,0.15*this.canvasHeight);
