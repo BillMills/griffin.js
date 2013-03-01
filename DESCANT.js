@@ -12,6 +12,7 @@ function DESCANT(monitor, minima, maxima, prefix, postfix){
 	this.topNavID = 'SubsystemsButton';		//ID of top level nav button
 	this.minima = minima;					//array of meter minima [HV, thresholds, rate]
 	this.maxima = maxima;					//array of meter maxima, arranged as minima
+    this.dataBus = new DESCANTDS();
 
 	var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
@@ -71,7 +72,10 @@ function DESCANT(monitor, minima, maxima, prefix, postfix){
 	this.pentagonVertex = this.pentagonSide / 2 / Math.sin(36/180 * Math.PI);
 
     //establish data buffers////////////////////////////////////////////////////////////////////////////
-    this.rate = [];
+    this.HVcolor = [];
+    this.oldHVcolor = [];
+    this.thresholdColor = [];
+    this.oldThresholdColor = [];
     this.rateColor = [];
     this.oldRateColor = [];
 
@@ -81,7 +85,7 @@ function DESCANT(monitor, minima, maxima, prefix, postfix){
     this.view = function(){
         return this.canvasID;
     }
-    
+
 	this.draw = function(frame){
 		var i, j;
 		this.context.clearRect(0,0,this.canvasWidth, this.canvasHeight);
@@ -93,7 +97,9 @@ function DESCANT(monitor, minima, maxima, prefix, postfix){
 				this.context.translate(this.centerX, this.centerY);
 				this.context.rotate(this.drawRules[i][3]);
 
-				this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[i]), parseHexColor(this.rateColor[i]), frame/this.nFrames);
+                if(window.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[i]), parseHexColor(this.HVcolor[i]), frame/this.nFrames);
+                else if(window.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[i]), parseHexColor(this.thresholdColor[i]), frame/this.nFrames);
+				else if(window.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[i]), parseHexColor(this.rateColor[i]), frame/this.nFrames);
 
 				if(this.drawRules[i][0] == 'white')whiteDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, 0);
 				else if(this.drawRules[i][0] == 'red') redDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 0);
@@ -186,12 +192,24 @@ function DESCANT(monitor, minima, maxima, prefix, postfix){
         return longestLine;
 	};
 
-	this.update = function(rateInfo){
+	this.update = function(){
         var i;
-        for(i=0; i<rateInfo.length; i++){
-            this.rate[i] = rateInfo[i];
+
+        //get new data
+        this.fetchNewData();
+
+        //parse the new data into colors
+        for(i=0; i<this.dataBus.HV.length; i++){
+            this.oldHVcolor[i] = this.HVcolor[i];
+            this.HVcolor[i] = this.parseColor(this.dataBus.HV[i]);
+        }
+        for(i=0; i<this.dataBus.thresholds.length; i++){
+            this.oldThresholdColor[i] = this.thresholdColor[i];
+            this.thresholdColor[i] = this.parseColor(this.dataBus.thresholds[i]);
+        }
+        for(i=0; i<this.dataBus.rate.length; i++){
             this.oldRateColor[i] = this.rateColor[i];
-            this.rateColor[i] = this.parseColor(rateInfo[i]);
+            this.rateColor[i] = this.parseColor(this.dataBus.rate[i]);
         }
 
 		this.tooltip.update();
@@ -201,7 +219,7 @@ function DESCANT(monitor, minima, maxima, prefix, postfix){
     //determine which color <scalar> corresponds to
     this.parseColor = function(scalar){
 
-        //how far along the scale are we?
+        //how far along the scale are we?  Technically this will produce the wrong color for canvases not currently on display.
         var scale = (scalar - this.minima[window.subdetectorView]) / (this.maxima[window.subdetectorView] - this.minima[window.subdetectorView]);
 
         //different scales for different meters to aid visual recognition:
@@ -211,7 +229,16 @@ function DESCANT(monitor, minima, maxima, prefix, postfix){
     //decide which display version to show:
     this.displaySwitch = function(){
         //all views look the same, so do nothing.
-    }
+    };
+
+    this.fetchNewData = function(){
+        //dummy data:
+        for(i=0; i<70; i++){
+            this.dataBus.HV[i] = Math.random();
+            this.dataBus.thresholds[i] = Math.random();
+            this.dataBus.rate[i] = Math.random();
+        }
+    };
 
 	//array of rules for drawing DESCANT channels.  Array index should correspond to real channel number; packed as [type, center x, center y, canvas rotation, element rotation]
 	this.drawRules = [];
@@ -233,8 +260,7 @@ function DESCANT(monitor, minima, maxima, prefix, postfix){
 	}
 
     //do an initial populate:
-    fetchNewDESCANTdata(this.rate);
-    this.update(this.rate);
+    this.update();
 
 }
 

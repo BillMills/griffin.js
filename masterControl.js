@@ -57,9 +57,7 @@ function masterLoop(dashboard, AlarmServices, waffle, SHARC, HPGE, DESCANT, PACE
         HPGE.update(HPGEdata, BGOdata, detailData);
 
         //DESCANT
-        var DESCANTrates = [];
-        fetchNewDESCANTdata(DESCANTrates);
-        DESCANT.update(DESCANTrates);
+        DESCANT.update();
 
         //PACES
         var PACESrates = [];
@@ -342,18 +340,6 @@ function fetchNewHPGEData(HPGEdata, BGOdata, detailData){
 
     for(i=0; i<200; i++){
         detailData[i] = Math.random();
-    }
-
-}
-
-//fetch new data for the HPGE:
-function fetchNewDESCANTdata(rates){
-    var i = 0;
-
-    //dummy data for offline dev:
-    //rates
-    for(i=0; i<70; i++){
-        rates[i] = Math.random();
     }
 
 }
