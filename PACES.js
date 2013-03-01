@@ -20,8 +20,6 @@ function PACES(monitor, minima, maxima, prefix, postfix){
     this.duration = 0.5;
     this.nFrames = this.FPS*this.duration;
 
-    //establish which canvas should be displayed when the subsystem is navigated to, as a function of which scalar button is active:
-    this.view = ['PACESHVCanvas', 'PACESrateCanvas', 'PACESrateCanvas'];
     insertButton('PACESlink', 'navLink', "javascript:swapFade('PACESlink', window.PACESpointer, window.subsystemScalars, window.subdetectorView)", this.linkWrapperID, 'PACES');
 
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
@@ -63,6 +61,14 @@ function PACES(monitor, minima, maxima, prefix, postfix){
     this.oldRateColor = [];
 
     //member functions///////////////////////////////////////////////////////////////////
+    //decide which view to transition to when this object is navigated to
+    this.view = function(){
+        if(window.subdetectorView == 0)
+            return this.HVcanvasID;
+        else if(window.subdetectorView == 1 || window.subdetectorView == 2)
+            return this.RateCanvasID;
+    }
+
     this.draw = function(frame){
 
     	var i;

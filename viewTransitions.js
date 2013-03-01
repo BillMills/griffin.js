@@ -62,7 +62,7 @@ function swapFade(buttonID, object, leaveOff, representationIndex){
 	var i;
 	//parse which view is requested, and fetch the corresponding canvas ID to bring to the front:
 	//var inbound = object.scalarViewCanvas[window.subdetectorView];
-	var inbound = object.view[representationIndex];
+	var inbound = object.view(representationIndex);
 
 	//turn off other buttons, except for some at the end:
 	for(i=0; i<document.getElementById(object.linkWrapperID).children.length - leaveOff; i++){
@@ -70,9 +70,9 @@ function swapFade(buttonID, object, leaveOff, representationIndex){
 			document.getElementById(object.linkWrapperID).children[i].setAttribute('class', 'navLink');
 	}
 	//highlight this button:
-	document.getElementById(buttonID).setAttribute('class','navLinkDown');
+	if(buttonID != null) document.getElementById(buttonID).setAttribute('class','navLinkDown');
 	//make sure the top level nav button navigates back to this config if user leaves & returns:
-	document.getElementById(object.topNavID).setAttribute('onclick', "javascript:swapView('"+object.linkWrapperID+"', '"+inbound+"', '"+object.sidebarID+"', '"+object.topNavID+"')")
+	document.getElementById(object.topNavID).setAttribute('onclick', "javascript:swapView('"+object.linkWrapperID+"', '"+inbound+"', '"+object.sidebarID+"', '"+object.topNavID+"')");
 
 	if(inbound != window.onDisplay){
 		fadeIn(inbound, 0);

@@ -16,7 +16,8 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
 	this.maxima = maxima;			             //as minima.
     this.config = config;                        //[nCollectorGroups, nCollectors, nDigitizerGroups, nDigitizers, nDigitizersPerCollector]
     this.nCollectorGroups = config[0];
-    this.view = ['DAQcanvas', 'DAQdetailCanvas'];//pointers to map view ID's onto integers
+    this.detailShowing = 0;                      //is the detail canvas showing?
+
     if(this.nCollectorGroups == 0)
         this.nCollectors = config[1];
     else
@@ -42,13 +43,13 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
     insertH1('DAQlinksBanner', 'navPanelHeader', this.linkWrapperID, 'GRIFFIN DAQ Status');
     insertLinebreak(this.linkWrapperID);
     //nav buttons
-    insertButton('DAQToplink', 'navLinkDown', "javascript:swapFade('DAQToplink', window.DAQpointer, 0, 0)", 'DAQlinks', 'Top Level');
+    insertButton('DAQToplink', 'navLinkDown', "{swapFade('DAQToplink', window.DAQpointer, 0, 0)}; window.DAQpointer.detailShowing=0;", 'DAQlinks', 'Top Level');
     insertLinebreak(this.linkWrapperID);
     //p to label row of collector buttons
     insertParagraph('DAQcollectorTitle', '', 'display:inline; color:#999999;', 'DAQlinks', 'Collector ');
     //deploy collector buttons
     for(i=0; i<this.nCollectors; i++){
-        insertButton('Collector'+i, 'navLink', "javascript:swapFade('Collector"+i+"', window.DAQpointer, 0, 1)", this.linkWrapperID, i);
+        insertButton('Collector'+i, 'navLink', "{swapFade('Collector"+i+"', window.DAQpointer, 0, 1); window.DAQpointer.detailShowing=1;}", this.linkWrapperID, i);
         $('#Collector'+i).width( ( 0.95*this.canvasWidth - $('#DAQcollectorTitle').width()) / this.nCollectors );
     }
     //right sidebar
@@ -103,7 +104,7 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
     this.presentCollector = -1;
 
     //establish animation transition to detailed view:
-    this.canvas.onclick = function(event){that.swapDetail(event.pageX - that.canvas.offsetLeft - that.monitor.offsetLeft, event.pageY - that.canvas.offsetTop - that.monitor.offsetTop)};
+    //this.canvas.onclick = function(event){that.swapDetail(event.pageX - that.canvas.offsetLeft - that.monitor.offsetLeft, event.pageY - that.canvas.offsetTop - that.monitor.offsetTop)};
 
     //establish data buffers////////////////////////////////////////////////////////////////////////////
     //master
@@ -177,6 +178,14 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
     }
 
     //member functions///////////////////////////////////////////////
+
+    //decide which view to transition to when this object is navigated to
+    this.view = function(){
+        if(this.detailShowing == 0)
+            return this.detailCanvasID;
+        else if(this.detailShowing == 1)
+            return this.canvasID;
+    }
 
 	//update the info for each cell in the monitor
 	this.update = function(masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate){

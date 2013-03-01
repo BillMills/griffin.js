@@ -26,8 +26,6 @@ function HPGE(monitor, BGOenable, minima, maxima, prefix, postfix, mode){
     this.nFrames = this.FPS*this.duration;
 
     //subsystem navigation//////////////////////////////////////////////////////////////////////////////
-    //establish which canvas should be displayed when the subsystem is navigated to, as a function of which scalar button is active:
-    this.view = ['HPGECanvas', 'HPGECanvas', 'HPGECanvas'];
     //insert nav link
     insertButton('HPGElink', 'navLink', "javascript:swapFade('HPGElink', window.HPGEpointer, window.subsystemScalars, window.subdetectorView)", this.linkWrapperID, 'HPGE');
 
@@ -54,8 +52,8 @@ function HPGE(monitor, BGOenable, minima, maxima, prefix, postfix, mode){
 
     //onclick switch between top and detail view:
     this.detailCanvas.onclick = function(event){
-                                    swapCanv(that.canvasID, that.detailCanvasID);
                                     that.detailShowing = 0;
+                                    swapFade(null, that, 1000, 0);
                                 };
     this.canvas.onclick =   function(event){
                                 //use TT layer to decide which clover user clicked on
@@ -69,8 +67,8 @@ function HPGE(monitor, BGOenable, minima, maxima, prefix, postfix, mode){
                                     that.cloverShowing = cloverClicked
                                     that.drawDetail(that.detailContext, that.nFrames);
                                     that.drawDetail(that.TTdetailContext, that.nFrames);
-                                    swapCanv(that.detailCanvasID, that.canvasID);
                                     that.detailShowing = 1;
+                                    swapFade(null, that, 1000, 0)
                                 }
                             };
 
@@ -168,6 +166,13 @@ function HPGE(monitor, BGOenable, minima, maxima, prefix, postfix, mode){
     this.oldDetailDummyColor = [];
 
     //Member functions/////////////////////////////////////////////////////////////////////////////////
+    //decide which view to transition to when this object is navigated to
+    this.view = function(){
+        if(this.detailShowing == 0)
+            return this.canvasID;
+        else if(this.detailShowing == 1)
+            return this.detailCanvasID;
+    }
 
     this.draw = function(frame){
         var i;
@@ -518,8 +523,6 @@ function HPGE(monitor, BGOenable, minima, maxima, prefix, postfix, mode){
     fetchNewHPGEData(this.summaryHPGE, this.summaryHPGE, this.detailDummy);
     this.update(this.summaryHPGE, this.summaryHPGE, this.detailDummy);
 }
-
-
 
 
 

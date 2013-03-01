@@ -22,8 +22,6 @@ function DESCANT(monitor, minima, maxima, prefix, postfix){
     this.duration = 0.5;
     this.nFrames = this.FPS*this.duration;
 
-    //establish which canvas should be displayed when the subsystem is navigated to, as a function of which scalar button is active:
-    this.view = ['DESCANTCanvas', 'DESCANTCanvas', 'DESCANTCanvas'];
     //insert nav link
     insertButton('DESCANTlink', 'navLink', "javascript:swapFade('DESCANTlink', window.DESCANTpointer, window.subsystemScalars, window.subdetectorView)", this.linkWrapperID, 'DESCANT');
 
@@ -78,6 +76,12 @@ function DESCANT(monitor, minima, maxima, prefix, postfix){
     this.oldRateColor = [];
 
 	//member functions//////////////////////////////////////////////////////
+
+    //decide which view to transition to when this object is navigated to
+    this.view = function(){
+        return this.canvasID;
+    }
+    
 	this.draw = function(frame){
 		var i, j;
 		this.context.clearRect(0,0,this.canvasWidth, this.canvasHeight);

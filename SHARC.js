@@ -27,8 +27,6 @@ function SHARC(monitor, orientation, rows, columns, nStrips, nRadialHoriz, nAzim
     //which of the scalars are we tracking now? (corresponds to the index in this.maxima)
     this.trackingIndex = 0;
 
-    //establish which canvas should be displayed when the subsystem is navigated to, as a function of which scalar button is active:
-    this.view = ['SHARCCanvas', 'SHARCCanvas', 'SHARCCanvas'];
     //insert nav link
 	insertButton('SHARClink', 'navLinkDown', "javascript:swapFade('SHARClink', window.SHARCpointer, window.subsystemScalars, window.subdetectorView)", this.linkWrapperID, 'SHARC');
 
@@ -83,7 +81,10 @@ function SHARC(monitor, orientation, rows, columns, nStrips, nRadialHoriz, nAzim
     this.oldColor = [];
 
     //member functions/////////////////////////////////////////////////////////////////////////////////
-
+    //decide which view to transition to when this object is navigated to
+    this.view = function(){
+        return this.canvasID;
+    }
     //draw the empty wireframe
     this.wireframe = function(){
     	var i, j, n, xCorner, yCorner, half;
