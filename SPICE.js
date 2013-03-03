@@ -7,6 +7,7 @@ function SPICE(monitor, minima, maxima){
     this.TTcanvasID = 'SPICETTCanvas';      //ID of hidden tooltip map canvas
     this.minima = minima;                   //array of meter minima [HV, thresholds, rate]
     this.maxima = maxima;                   //array of meter maxima, arranged as minima
+    this.dataBus = new SPICEDS();
 
     var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
@@ -55,7 +56,10 @@ function SPICE(monitor, minima, maxima){
     this.radialStep = (this.outerRadius - this.innerRadius) / this.nRadial;
 
     //establish data buffers////////////////////////////////////////////////////////////////////////////
-    this.rate = [];
+    this.HVcolor = [];
+    this.oldHVcolor = [];
+    this.thresholdColor = [];
+    this.oldThresholdColor = [];
     this.rateColor = [];
     this.oldRateColor = [];
 
@@ -64,7 +68,7 @@ function SPICE(monitor, minima, maxima){
     this.view = function(){
         return this.canvasID;
     }
-    
+
     this.draw = function(frame){
     	var i, ring, sector;
 
@@ -74,7 +78,10 @@ function SPICE(monitor, minima, maxima){
     	for(i=0; i<120; i++){
     		sector = i%12;
     		ring = Math.floor(i/12);
-    		this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[i]), parseHexColor(this.rateColor[i]), frame/this.nFrames);
+
+            if(window.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[i]), parseHexColor(this.HVcolor[i]), frame/this.nFrames);
+            else if(window.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[i]), parseHexColor(this.thresholdColor[i]), frame/this.nFrames);
+            else if(window.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[i]), parseHexColor(this.rateColor[i]), frame/this.nFrames);
 
 		    this.context.beginPath();
 		    this.context.arc(this.centerX, this.centerY, this.innerRadius + ring*this.radialStep, -sector*this.azimuthalStep, -(sector+1)*this.azimuthalStep, true);
@@ -143,12 +150,24 @@ function SPICE(monitor, minima, maxima){
         return longestLine;
     };
 
-    this.update = function(rateInfo){
+    this.update = function(){
         var i;
-        for(i=0; i<rateInfo.length; i++){
-            this.rate[i] = rateInfo[i];
+
+        //get new data
+        this.fetchNewData();
+
+        //parse the new data into colors
+        for(i=0; i<this.dataBus.HV.length; i++){
+            this.oldHVcolor[i] = this.HVcolor[i];
+            this.HVcolor[i] = this.parseColor(this.dataBus.HV[i]);
+        }
+        for(i=0; i<this.dataBus.thresholds.length; i++){
+            this.oldThresholdColor[i] = this.thresholdColor[i];
+            this.thresholdColor[i] = this.parseColor(this.dataBus.thresholds[i]);
+        }
+        for(i=0; i<this.dataBus.rate.length; i++){
             this.oldRateColor[i] = this.rateColor[i];
-            this.rateColor[i] = this.parseColor(rateInfo[i]);
+            this.rateColor[i] = this.parseColor(this.dataBus.rate[i]);
         }
 
         this.tooltip.update();
@@ -164,7 +183,17 @@ function SPICE(monitor, minima, maxima){
         return colorScale(window.colorScales[window.subdetectorView],scale);
     };
 
+    this.fetchNewData = function(){
+        var i;
+
+        //dummy data:
+        for(i=0; i<120; i++){
+            this.dataBus.HV[i] = Math.random();
+            this.dataBus.thresholds[i] = Math.random();
+            this.dataBus.rate[i] = Math.random();
+        }
+    };
+
     //do an initial populate:
-    fetchNewSPICEdata(this.rate);
-    this.update(this.rate);
+    this.update();
 }

@@ -44,10 +44,7 @@ function masterLoop(dashboard, AlarmServices, waffle, SHARC, HPGE, DESCANT, PACE
             waffle.barCharts[i].update(barChartData, barChartAlarms);
         }
 
-        //SHARC
-        var SHARCrates = [];
-        fetchNewSHARCData(320, SHARCrates);
-        SHARC.update(SHARCrates);
+        SHARC.update();
 
         //HPGE
         var HPGEdata = [];
@@ -56,33 +53,12 @@ function masterLoop(dashboard, AlarmServices, waffle, SHARC, HPGE, DESCANT, PACE
         fetchNewHPGEData(HPGEdata, BGOdata, detailData);
         HPGE.update(HPGEdata, BGOdata, detailData);
 
-        //DESCANT
         DESCANT.update();
-
-        //PACES
-        var PACESrates = [];
-        fetchNewPACESdata(PACESrates);
-        PACES.update(PACESrates);        
-
-        //DANTE
-        var DANTErates = [];
-        fetchNewDANTEdata(DANTErates);
-        DANTE.update(DANTErates);        
-
-        //BAMBINO
-        var BAMBINOrates = [];
-        fetchNewBAMBINOdata(BAMBINOrates);
-        BAMBINO.update(BAMBINOrates);
-
-        //SCEPTAR
-        var SCEPTARrates = [];
-        fetchNewSCEPTARdata(SCEPTARrates);
-        SCEPTAR.update(SCEPTARrates);
-
-        //SPICE
-        var SPICErates = [];
-        fetchNewSPICEdata(SPICErates);
-        SPICE.update(SPICErates);
+        PACES.update();        
+        DANTE.update();        
+        BAMBINO.update();
+        SCEPTAR.update();
+        SPICE.update();
 
         //DAQ
         var masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate;
@@ -307,26 +283,6 @@ function detectCards(){
     return moduleSizes;
 }
 
-//fetch new data for the scalar monitor
-function fetchNewSHARCData(nChannels, HVdata){
-    var i = 0;
-
-    //var variablesRecord = ODBGetRecord(SM_ODBkeys[0]);
-    //var settingsRecord  = ODBGetRecord(SM_ODBkeys[1]);
-
-    //var HV              = ODBExtractRecord(variablesRecord, SM_ODBkeys[2]);
-
-    //dummy data for offline dev:
-    for(i=0; i<nChannels; i++){
-
-        //HVdata[i] = parseFloat(HV[i]);
-
-        //fake data for offline demo:
-        HVdata[i] = Math.random();
-    }
-
-}
-
 //fetch new data for the HPGE:
 function fetchNewHPGEData(HPGEdata, BGOdata, detailData){
     var i = 0;
@@ -340,66 +296,6 @@ function fetchNewHPGEData(HPGEdata, BGOdata, detailData){
 
     for(i=0; i<200; i++){
         detailData[i] = Math.random();
-    }
-
-}
-
-//fetch new data for the HPGE:
-function fetchNewPACESdata(rates){
-    var i = 0;
-
-    //dummy data for offline dev:
-    //rates
-    for(i=0; i<10; i++){
-        rates[i] = Math.random();
-    }
-
-}
-
-//fetch new data for the HPGE:
-function fetchNewDANTEdata(rates){
-    var i = 0;
-
-    //dummy data for offline dev:
-    //rates
-    for(i=0; i<16; i++){
-        rates[i] = Math.random();
-    }
-
-}
-
-//fetch new data for the HPGE:
-function fetchNewBAMBINOdata(rates){
-    var i = 0;
-
-    //dummy data for offline dev:
-    //rates
-    for(i=0; i<200; i++){
-        rates[i] = Math.random();
-    }
-
-}
-
-//fetch new data for the HPGE:
-function fetchNewSCEPTARdata(rates){
-    var i = 0;
-
-    //dummy data for offline dev:
-    //rates
-    for(i=0; i<21; i++){
-        rates[i] = Math.random();
-    }
-
-}
-
-//fetch new data for the HPGE:
-function fetchNewSPICEdata(rates){
-    var i = 0;
-
-    //dummy data for offline dev:
-    //rates
-    for(i=0; i<120; i++){
-        rates[i] = Math.random();
     }
 
 }

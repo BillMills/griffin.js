@@ -14,6 +14,7 @@ function SHARC(monitor, orientation, rows, columns, nStrips, nRadialHoriz, nAzim
 	this.linkWrapperID = 'SubsystemLinks';	//ID of div wrapping subsystem navigation links
 	this.sidebarID = 'SubsystemSidebar';	//ID of right sidebar for this object
 	this.topNavID = 'SubsystemsButton';		//ID of top level nav button
+	this.dataBus = new SHARCDS();
 
 	var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
@@ -76,9 +77,12 @@ function SHARC(monitor, orientation, rows, columns, nStrips, nRadialHoriz, nAzim
     this.bottomPhase = 0;
 
     //establish data buffers////////////////////////////////////////////////////////////////////////////
-    this.level = [];
-    this.color = [];
-    this.oldColor = [];
+    this.HVcolor = [];
+    this.oldHVcolor = [];
+    this.thresholdColor = [];
+    this.oldThresholdColor = [];
+    this.rateColor = [];
+    this.oldRateColor = [];
 
     //member functions/////////////////////////////////////////////////////////////////////////////////
     //decide which view to transition to when this object is navigated to
@@ -165,15 +169,14 @@ function SHARC(monitor, orientation, rows, columns, nStrips, nRadialHoriz, nAzim
 	//draw the monitor at a particular frame in its current transition
 	this.draw = function(frame){
 		var i, j, xCorner, yCorner, boxRow, boxCol, boxNum, half;
-
+		var index;
 		//number of channels per half, for index offset purposes:
-		var totalChannels = this.color.length / 2;
+		var totalChannels = this.HVcolor.length / 2;
 
 		//repeat for each half:
 		for(half=0; half<2; half++){
 			//loop for the rectangular displays:
-			for(i=0+half*totalChannels; i<half*totalChannels + this.color.length/2 - this.nEllipticalChannelsHoriz - this.nEllipticalChannelsVert; i++){
-
+			for(i=0+half*totalChannels; i<half*totalChannels + this.HVcolor.length/2 - this.nEllipticalChannelsHoriz - this.nEllipticalChannelsVert; i++){
 				//index modulo half channels:
 				j = i%totalChannels;
 
@@ -193,7 +196,9 @@ function SHARC(monitor, orientation, rows, columns, nStrips, nRadialHoriz, nAzim
 	    			xCorner += (j%this.nStrips)*this.vertStripWidth;
     			}
 
-				this.context.fillStyle = interpolateColor(parseHexColor(this.oldColor[i]), parseHexColor(this.color[i]), frame/this.nFrames);
+                if(window.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[i]), parseHexColor(this.HVcolor[i]), frame/this.nFrames);
+                else if(window.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[i]), parseHexColor(this.thresholdColor[i]), frame/this.nFrames);
+				else if(window.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[i]), parseHexColor(this.rateColor[i]), frame/this.nFrames);
 				if(half == 0){
 					this.context.fillRect(xCorner, yCorner, this.detectorWidth, this.horizStripWidth);
 				} else{ 
@@ -203,7 +208,9 @@ function SHARC(monitor, orientation, rows, columns, nStrips, nRadialHoriz, nAzim
 
 			//loop for top elliptical wheels:
 			for(i=half*totalChannels + this.rows*this.columns*this.nStrips; i<half*totalChannels + this.rows*this.columns*this.nStrips + this.nEllipticalChannelsHoriz; i++){
-				this.context.fillStyle = interpolateColor(parseHexColor(this.oldColor[i]), parseHexColor(this.color[i]), frame/this.nFrames);
+                if(window.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[i]), parseHexColor(this.HVcolor[i]), frame/this.nFrames);
+                else if(window.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[i]), parseHexColor(this.thresholdColor[i]), frame/this.nFrames);
+				else if(window.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[i]), parseHexColor(this.rateColor[i]), frame/this.nFrames);
 
 				//index modulo half channels:
 				j = i%totalChannels;
@@ -228,7 +235,9 @@ function SHARC(monitor, orientation, rows, columns, nStrips, nRadialHoriz, nAzim
 
 			//loop for bottom elliptical wheels:
 			for(i=half*totalChannels + this.rows*this.columns*this.nStrips + this.nEllipticalChannelsHoriz; i<half*totalChannels + totalChannels; i++){
-				this.context.fillStyle = interpolateColor(parseHexColor(this.oldColor[i]), parseHexColor(this.color[i]), frame/this.nFrames);
+                if(window.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[i]), parseHexColor(this.HVcolor[i]), frame/this.nFrames);
+                else if(window.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[i]), parseHexColor(this.thresholdColor[i]), frame/this.nFrames);
+				else if(window.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[i]), parseHexColor(this.rateColor[i]), frame/this.nFrames);
 
 				//index modulo half channels:
 				j = i%totalChannels;
@@ -259,13 +268,25 @@ function SHARC(monitor, orientation, rows, columns, nStrips, nRadialHoriz, nAzim
 	};
 
 	//update the info for each cell in the monitor
-	this.update = function(newInfo){
+	this.update = function(){
 		var i;
-		for(i=0; i<newInfo.length; i++){
-			this.level[i] = newInfo[i];
-			this.oldColor[i] = this.color[i];
-			this.color[i] = this.parseColor(newInfo[i]);
-		}
+
+        //get new data
+        this.fetchNewData();
+
+        //parse the new data into colors
+        for(i=0; i<this.dataBus.HV.length; i++){
+            this.oldHVcolor[i] = this.HVcolor[i];
+            this.HVcolor[i] = this.parseColor(this.dataBus.HV[i]);
+        }
+        for(i=0; i<this.dataBus.thresholds.length; i++){
+            this.oldThresholdColor[i] = this.thresholdColor[i];
+            this.thresholdColor[i] = this.parseColor(this.dataBus.thresholds[i]);
+        }
+        for(i=0; i<this.dataBus.rate.length; i++){
+            this.oldRateColor[i] = this.rateColor[i];
+            this.rateColor[i] = this.parseColor(this.dataBus.rate[i]);
+        }
 
 		this.tooltip.update();
 		this.displaySwitch();
@@ -328,7 +349,7 @@ function SHARC(monitor, orientation, rows, columns, nStrips, nRadialHoriz, nAzim
 			}
 
 			//add on all the cells in the corresponding strip arrays:
-			if(cell != -1) cell += this.color.length / 2 - this.nEllipticalChannelsHoriz - this.nEllipticalChannelsVert;
+			if(cell != -1) cell += this.HVcolor.length / 2 - this.nEllipticalChannelsHoriz - this.nEllipticalChannelsVert;
 
 		} else if (y <= this.canvasHeight - this.canvasHeight*(1-this.boxElementFraction)/2){ //strips
 			//measure from the top of where we start drawing the boxes, and the left edge of the appropriate half of the canvas:
@@ -369,14 +390,13 @@ function SHARC(monitor, orientation, rows, columns, nStrips, nRadialHoriz, nAzim
 				cell = phiBin*nRadial + radBin;
 			}
 
-			//if(cell!=-1) cell += (half+1)*this.color.length/2 - this.nEllipticalChannelsVert
 			//add on all the cells in the corresponding strip arrays and upper disk:
-			if(cell != -1) cell += this.color.length / 2 - this.nEllipticalChannelsHoriz;
+			if(cell != -1) cell += this.HVcolor.length / 2 - this.nEllipticalChannelsHoriz;
 
 		}
 
 		//add channels from the left half back on if we're in the right half to undo modulo above:
-		if(cell!=-1 && half == 1) cell += this.color.length/2;
+		if(cell!=-1 && half == 1) cell += this.HVcolor.length/2;
 		return cell;
 	};
 
@@ -432,10 +452,19 @@ function SHARC(monitor, orientation, rows, columns, nStrips, nRadialHoriz, nAzim
 		//all views look the same for SHARC, so do nothing.
 	}
 
+    this.fetchNewData = function(){
+    	var i;
+
+        //dummy data:
+        for(i=0; i<320; i++){
+            this.dataBus.HV[i] = Math.random();
+            this.dataBus.thresholds[i] = Math.random();
+            this.dataBus.rate[i] = Math.random();
+        }
+    };
 
     //do an initial populate:
-    fetchNewSHARCData( 2*(rows*columns+2)*nStrips, this.level);
-    this.update(this.level);
+    this.update();
 }
 
 

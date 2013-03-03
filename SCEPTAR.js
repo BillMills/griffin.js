@@ -8,6 +8,7 @@ function SCEPTAR(monitor, maxima, minima, config){
     this.minima = minima;                   //array of meter minima [HV, thresholds, rate]
     this.maxima = maxima;                   //array of meter maxima, arranged as minima
     this.config = config;                   //subsystems on: [upstream sceptar, downstream sceptar, downstream ZDS]
+    this.dataBus = new SCEPTARDS();
 
     var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
@@ -58,7 +59,10 @@ function SCEPTAR(monitor, maxima, minima, config){
     this.DSSCy0 = 0.4*this.canvasHeight;
 
     //establish data buffers////////////////////////////////////////////////////////////////////////////
-    this.rate = [];
+    this.HVcolor = [];
+    this.oldHVcolor = [];
+    this.thresholdColor = [];
+    this.oldThresholdColor = [];
     this.rateColor = [];
     this.oldRateColor = [];
 
@@ -67,7 +71,7 @@ function SCEPTAR(monitor, maxima, minima, config){
     this.view = function(){
         return this.canvasID;
     }
-    
+
     this.draw = function(frame){
     	var i, row, col;
 
@@ -83,7 +87,9 @@ function SCEPTAR(monitor, maxima, minima, config){
         }
     	//ZDS
         if(this.config[2] == 1){
-            this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[20]), parseHexColor(this.rateColor[20]), frame/this.nFrames);
+            if(window.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[20]), parseHexColor(this.HVcolor[20]), frame/this.nFrames);
+            else if(window.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[20]), parseHexColor(this.thresholdColor[20]), frame/this.nFrames);
+            else if(window.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[20]), parseHexColor(this.rateColor[20]), frame/this.nFrames);
         	this.context.beginPath();
     	    this.context.arc(this.ZDScenterX, this.ZDScenterY, this.ZDSradius, 0, 2*Math.PI);
         	this.context.closePath();
@@ -145,7 +151,11 @@ function SCEPTAR(monitor, maxima, minima, config){
         }
 
         for(i=0; i<10; i++){
-            if(context == this.context) context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[i+indexStart]), parseHexColor(this.rateColor[i+indexStart]), frame/this.nFrames);
+            if(context == this.context){
+                if(window.subdetectorView == 0) context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[i+indexStart]), parseHexColor(this.HVcolor[i+indexStart]), frame/this.nFrames);
+                else if(window.subdetectorView == 1) context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[i+indexStart]), parseHexColor(this.thresholdColor[i+indexStart]), frame/this.nFrames);
+                else if(window.subdetectorView == 2) context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[i+indexStart]), parseHexColor(this.rateColor[i+indexStart]), frame/this.nFrames);
+            }
             else if(context == this.TTcontext) context.fillStyle = '#123456'; //anti-antialiasing
             context.save();
             context.translate(x0, y0);
@@ -203,12 +213,24 @@ function SCEPTAR(monitor, maxima, minima, config){
         return longestLine;
     };
 
-    this.update = function(rateInfo){
+    this.update = function(){
         var i;
-        for(i=0; i<rateInfo.length; i++){
-            this.rate[i] = rateInfo[i];
+
+        //get new data
+        this.fetchNewData();
+
+        //parse the new data into colors
+        for(i=0; i<this.dataBus.HV.length; i++){
+            this.oldHVcolor[i] = this.HVcolor[i];
+            this.HVcolor[i] = this.parseColor(this.dataBus.HV[i]);
+        }
+        for(i=0; i<this.dataBus.thresholds.length; i++){
+            this.oldThresholdColor[i] = this.thresholdColor[i];
+            this.thresholdColor[i] = this.parseColor(this.dataBus.thresholds[i]);
+        }
+        for(i=0; i<this.dataBus.rate.length; i++){
             this.oldRateColor[i] = this.rateColor[i];
-            this.rateColor[i] = this.parseColor(rateInfo[i]);
+            this.rateColor[i] = this.parseColor(this.dataBus.rate[i]);
         }
 
         this.tooltip.update();
@@ -224,7 +246,17 @@ function SCEPTAR(monitor, maxima, minima, config){
         return colorScale(window.colorScales[window.subdetectorView],scale);
     };
 
+    this.fetchNewData = function(){
+        var i;
+
+        //dummy data:
+        for(i=0; i<21; i++){
+            this.dataBus.HV[i] = Math.random();
+            this.dataBus.thresholds[i] = Math.random();
+            this.dataBus.rate[i] = Math.random();
+        }
+    };
+
     //do an initial populate:
-    fetchNewSCEPTARdata(this.rate);
-    this.update(this.rate);
+    this.update();
 }

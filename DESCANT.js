@@ -232,6 +232,8 @@ function DESCANT(monitor, minima, maxima, prefix, postfix){
     };
 
     this.fetchNewData = function(){
+        var i;
+
         //dummy data:
         for(i=0; i<70; i++){
             this.dataBus.HV[i] = Math.random();

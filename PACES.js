@@ -10,6 +10,7 @@ function PACES(monitor, minima, maxima, prefix, postfix){
     this.maxima = maxima;                   //array of meter maxima, arranged as minima
     this.prefix = prefix;                   //array of tooltip prefixes
     this.postfix = postfix;                 //array of tooltip suffixes.
+    this.dataBus = new PACESDS();           
 
     var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
@@ -56,7 +57,10 @@ function PACES(monitor, minima, maxima, prefix, postfix){
     this.SiLiRadius = this.canvasHeight*0.1;
 
     //establish data buffers////////////////////////////////////////////////////////////////////////////
-    this.rate = [];
+    this.HVcolor = [];
+    this.oldHVcolor = [];
+    this.thresholdColor = [];
+    this.oldThresholdColor = [];
     this.rateColor = [];
     this.oldRateColor = [];
 
@@ -74,7 +78,7 @@ function PACES(monitor, minima, maxima, prefix, postfix){
     	var i;
     	this.RateContext.strokeStyle = '#999999'
 
-        //Rate view///////////////////////////////////////
+        //Thresholds & Rate view///////////////////////////////////////
         //once for the display canvas....
     	for(i=0; i<5; i++){
 
@@ -82,14 +86,16 @@ function PACES(monitor, minima, maxima, prefix, postfix){
     		this.RateContext.translate(this.centerX, this.centerY);
     		this.RateContext.rotate(i*Math.PI*72/180);
 
-            this.RateContext.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[2*i]), parseHexColor(this.rateColor[2*i]), frame/this.nFrames);
+            if(window.subdetectorView == 1) this.RateContext.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[2*i]), parseHexColor(this.thresholdColor[2*i]), frame/this.nFrames);
+            else if(window.subdetectorView == 2) this.RateContext.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[2*i]), parseHexColor(this.rateColor[2*i]), frame/this.nFrames);
     		this.RateContext.beginPath();
     		this.RateContext.arc(0, -this.arrayRadius, this.SiLiRadius, 0, Math.PI);
     		this.RateContext.closePath();
             this.RateContext.fill();
     		this.RateContext.stroke();
 
-            this.RateContext.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[2*i+1]), parseHexColor(this.rateColor[2*i+1]), frame/this.nFrames);
+            if(window.subdetectorView == 1) this.RateContext.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[2*i+1]), parseHexColor(this.thresholdColor[2*i+1]), frame/this.nFrames);
+            else if(window.subdetectorView == 2) this.RateContext.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[2*i+1]), parseHexColor(this.rateColor[2*i+1]), frame/this.nFrames);
             this.RateContext.beginPath();
             this.RateContext.arc(0, -this.arrayRadius, this.SiLiRadius, Math.PI, 0);
             this.RateContext.closePath();
@@ -122,8 +128,7 @@ function PACES(monitor, minima, maxima, prefix, postfix){
 
         //HV view///////////////////////////////////////////
         for(i=0; i<5; i++){
-            this.HVcontext.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[i]), parseHexColor(this.rateColor[i]), frame/this.nFrames);
-
+            this.HVcontext.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[i]), parseHexColor(this.HVcolor[i]), frame/this.nFrames);
             this.HVcontext.save();
             this.HVcontext.translate(this.centerX, this.centerY);
             this.HVcontext.rotate(i*Math.PI*72/180);
@@ -168,12 +173,25 @@ function PACES(monitor, minima, maxima, prefix, postfix){
         return longestLine;
     };
 
-    this.update = function(rateInfo){
+    this.update = function(){
         var i;
-        for(i=0; i<rateInfo.length; i++){
-            this.rate[i] = rateInfo[i];
+
+        //get new data
+        this.fetchNewData();
+
+        //parse the new data into colors
+        for(i=0; i<this.dataBus.HV.length; i++){
+            this.oldHVcolor[i] = this.HVcolor[i];
+            this.HVcolor[i] = this.parseColor(this.dataBus.HV[i]);
+        }
+        for(i=0; i<this.dataBus.thresholds.length; i++){
+            this.oldThresholdColor[i] = this.thresholdColor[i];
+            this.thresholdColor[i] = this.parseColor(this.dataBus.thresholds[i]);
+        }
+
+        for(i=0; i<this.dataBus.rate.length; i++){
             this.oldRateColor[i] = this.rateColor[i];
-            this.rateColor[i] = this.parseColor(rateInfo[i]);
+            this.rateColor[i] = this.parseColor(this.dataBus.rate[i]);
         }
 
         this.tooltip.update();
@@ -207,9 +225,22 @@ function PACES(monitor, minima, maxima, prefix, postfix){
             this.tooltip = new Tooltip(this.RateCanvasID, 'PACESTipText', 'PACESttCanv', 'PACESTT', this.monitorID, this.prefix, this.postfix);
 
             this.tooltip.obj = that;
-    }
+    };
+
+    this.fetchNewData = function(){
+        var i;
+
+        //dummy data:
+        for(i=0; i<5; i++){
+            this.dataBus.HV[i] = Math.random();
+        }
+        for(i=0; i<10; i++){
+            this.dataBus.thresholds[i] = Math.random();
+            this.dataBus.rate[i] = Math.random();
+        }
+
+    };
 
     //do an initial populate:
-    fetchNewPACESdata(this.rate);
-    this.update(this.rate);
+    this.update();
 }

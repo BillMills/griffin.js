@@ -1,6 +1,6 @@
 function BAMBINO(monitor, mode, minima, maxima){
 	this.monitorID = monitor;		        //div ID of wrapper div
-    this.mode
+    this.mode = mode;                       //'S2' or 'S3'
 	this.canvasID = 'BAMBINOCanvas'; 		//ID of canvas to draw top level TIGRESS view on
     this.linkWrapperID = 'SubsystemLinks';  //ID of div wrapping subsystem navigation links
     this.sidebarID = 'SubsystemSidebar';    //ID of right sidebar for this object
@@ -8,6 +8,7 @@ function BAMBINO(monitor, mode, minima, maxima){
     this.TTcanvasID = 'BAMBINOTTCanvas';    //ID of hidden tooltip map canvas
     this.minima = minima;                   //array of meter minima [HV, thresholds, rate]
     this.maxima = maxima;                   //array of meter maxima, arranged as minima
+    this.dataBus = new BAMBINODS();
 
     this.nRadial = 24;
     if(mode=='S2')
@@ -63,7 +64,10 @@ function BAMBINO(monitor, mode, minima, maxima){
     this.azimuthalArc = 2*Math.PI / this.nAzimuthal;
 
     //establish data buffers////////////////////////////////////////////////////////////////////////////
-    this.rate = [];
+    this.HVcolor = [];
+    this.oldHVcolor = [];
+    this.thresholdColor = [];
+    this.oldThresholdColor = [];
     this.rateColor = [];
     this.oldRateColor = [];
 
@@ -72,7 +76,7 @@ function BAMBINO(monitor, mode, minima, maxima){
     this.view = function(){
         return this.canvasID;
     }
-    
+
     this.draw = function(frame){
 
     	var i, j, m, x0, y0;
@@ -91,66 +95,87 @@ function BAMBINO(monitor, mode, minima, maxima){
 	    		x0 = this.centerRight; y0 = this.centerBottom; //upstream azimuthal
 	    	}
 	    	if(i == 0 || i == 2){
-	    		for(j=0; j<this.nRadial+1; j++){
+	    		for(j=0; j<this.nRadial; j++){
     				this.context.beginPath()
-    				this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[i*this.nRadial+j]), parseHexColor(this.rateColor[i*this.nRadial+j]), frame/this.nFrames);
+                    if(window.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[i/2*(this.nRadial+this.nAzimuthal)+j]), parseHexColor(this.HVcolor[i/2*(this.nRadial+this.nAzimuthal)+j]), frame/this.nFrames);
+                    else if(window.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[i/2*(this.nRadial+this.nAzimuthal)+j]), parseHexColor(this.thresholdColor[i/2*(this.nRadial+this.nAzimuthal)+j]), frame/this.nFrames);
+                    else if(window.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[i/2*(this.nRadial+this.nAzimuthal)+j]), parseHexColor(this.rateColor[i/2*(this.nRadial+this.nAzimuthal)+j]), frame/this.nFrames);
 	    			this.context.arc(x0, y0, this.CDradius - j*this.radialWidth, 0, 2*Math.PI);
 	    			this.context.closePath();
     				this.context.fill();
 	    			this.context.stroke();
     			}
+                //clear inner circle:
+                this.context.fillStyle = '#333333';
+                this.context.beginPath();
+                this.context.arc(x0, y0, this.CDradius - j*this.radialWidth, 0, 2*Math.PI);
+                this.context.closePath();
+                this.context.fill();   
     			
     		} else {
     
 	    		for(j=0; j<this.nAzimuthal; j++){
     				this.context.beginPath()
-    				this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[i*this.nAzimuthal+j]), parseHexColor(this.rateColor[i*this.nAzimuthal+j]), frame/this.nFrames);
-    				this.context.moveTo(x0, y0);
-    				this.context.lineTo(x0 + this.CDradius*Math.cos(j*this.azimuthalArc), y0 - this.CDradius*Math.sin(j*this.azimuthalArc));
-    				this.context.arc(x0,y0, this.CDradius, -j*this.azimuthalArc, -(j+1)*this.azimuthalArc, true);
+                    if(window.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[this.nRadial+(i-1)/2*(this.nRadial+this.nAzimuthal)+j]), parseHexColor(this.HVcolor[this.nRadial+(i-1)/2*(this.nRadial+this.nAzimuthal)+j]), frame/this.nFrames);
+                    else if(window.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[this.nRadial+(i-1)/2*(this.nRadial+this.nAzimuthal)+j]), parseHexColor(this.thresholdColor[this.nRadial+(i-1)/2*(this.nRadial+this.nAzimuthal)+j]), frame/this.nFrames);
+                    else if(window.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[this.nRadial+(i-1)/2*(this.nRadial+this.nAzimuthal)+j]), parseHexColor(this.rateColor[this.nRadial+(i-1)/2*(this.nRadial+this.nAzimuthal)+j]), frame/this.nFrames);
+                    this.context.moveTo(x0 + this.CDinnerRadius*Math.cos(j*this.azimuthalArc), y0 - this.CDinnerRadius*Math.sin(j*this.azimuthalArc));
+                    this.context.arc(x0,y0, this.CDinnerRadius, -j*this.azimuthalArc, -(j+1)*this.azimuthalArc, true);
+                    this.context.lineTo(x0 + this.CDradius*Math.cos((j+1)*this.azimuthalArc), y0 - this.CDradius*Math.sin((j+1)*this.azimuthalArc));
+                    this.context.arc(x0,y0, this.CDradius, -(j+1)*this.azimuthalArc, -j*this.azimuthalArc, false);
     				this.context.closePath();
     				this.context.fill();
 	    			this.context.stroke();
     			}
     		}
     	}
-        //...and again for TT encoding:
-        m=0;
-        for(i=0; i<4; i++){
-            if(i == 0){
-                x0 = this.centerLeft; y0 = this.centerTop;  //downstream radial
-            } else if(i == 1){
-                x0 = this.centerLeft; y0 = this.centerBottom; //downstream azimuthal
-            } else if(i == 2){
-                x0 = this.centerRight; y0 = this.centerTop; //upstream radial
-            } else if(i == 3){
-                x0 = this.centerRight; y0 = this.centerBottom; //upstream azimuthal
-            }
-            if(i == 0 || i == 2){
-                for(j=0; j<this.nRadial+1; j++){
-                    this.TTcontext.beginPath()
-                    this.TTcontext.fillStyle = 'rgba('+m+','+m+','+m+',1)';
+        //...and again for TT encoding; loop twice to suppress antialiasing:
+        for(var aa=0; aa<2; aa++){
+            m=0;
+            for(i=0; i<4; i++){
+                if(i == 0){
+                    x0 = this.centerLeft; y0 = this.centerTop;  //downstream radial
+                } else if(i == 1){
+                    x0 = this.centerLeft; y0 = this.centerBottom; //downstream azimuthal
+                } else if(i == 2){
+                    x0 = this.centerRight; y0 = this.centerTop; //upstream radial
+                } else if(i == 3){
+                    x0 = this.centerRight; y0 = this.centerBottom; //upstream azimuthal
+                }
+                if(i == 0 || i == 2){
+                    for(j=0; j<this.nRadial; j++){
+                        this.TTcontext.beginPath()
+                        if(aa==0) this.TTcontext.fillStyle = '#123456';
+                        else this.TTcontext.fillStyle = 'rgba('+m+','+m+','+m+',1)';
+                        this.TTcontext.arc(x0, y0, this.CDradius - j*this.radialWidth, 0, 2*Math.PI);
+                        this.TTcontext.closePath();
+                        this.TTcontext.fill();
+                        m++;
+                    }
+                    //clear inner circle:
+                    this.TTcontext.fillStyle = '#123456';
+                    this.TTcontext.beginPath();
                     this.TTcontext.arc(x0, y0, this.CDradius - j*this.radialWidth, 0, 2*Math.PI);
                     this.TTcontext.closePath();
                     this.TTcontext.fill();
-                    m++;
-                }
                 
-            } else {
+                } else {
     
-                for(j=0; j<this.nAzimuthal; j++){
-                    this.TTcontext.beginPath()
-                    this.TTcontext.fillStyle = 'rgba('+m+','+m+','+m+',1)';
-                    this.TTcontext.moveTo(x0, y0);
-                    this.TTcontext.lineTo(x0 + this.CDradius*Math.cos(j*this.azimuthalArc), y0 - this.CDradius*Math.sin(j*this.azimuthalArc));
-                    this.TTcontext.arc(x0,y0, this.CDradius, -j*this.azimuthalArc, -(j+1)*this.azimuthalArc, true);
-                    this.TTcontext.closePath();
-                    this.TTcontext.fill();
-                    m++;
+                    for(j=0; j<this.nAzimuthal; j++){
+                        this.TTcontext.beginPath()
+                        if(aa==0) this.TTcontext.fillStyle = '#123456';
+                        else this.TTcontext.fillStyle = 'rgba('+m+','+m+','+m+',1)';
+                        this.TTcontext.moveTo(x0 + this.CDinnerRadius*Math.cos(j*this.azimuthalArc), y0 - this.CDinnerRadius*Math.sin(j*this.azimuthalArc));
+                        this.TTcontext.arc(x0,y0, this.CDinnerRadius, -j*this.azimuthalArc, -(j+1)*this.azimuthalArc, true);
+                        this.TTcontext.lineTo(x0 + this.CDradius*Math.cos((j+1)*this.azimuthalArc), y0 - this.CDradius*Math.sin((j+1)*this.azimuthalArc));
+                        this.TTcontext.arc(x0,y0, this.CDradius, -(j+1)*this.azimuthalArc, -j*this.azimuthalArc, false);
+                        this.TTcontext.closePath();
+                        this.TTcontext.fill();
+                        m++;
+                    }
                 }
-            }
-        }    
-		
+            }    
+		}
     	//titles
         this.context.clearRect(0,0.85*this.canvasHeight,this.canvasWidth,0.15*this.canvasHeight);
         this.context.fillStyle = '#999999';
@@ -186,12 +211,24 @@ function BAMBINO(monitor, mode, minima, maxima){
         return longestLine;
     };
 
-    this.update = function(rateInfo){
+    this.update = function(){
         var i;
-        for(i=0; i<rateInfo.length; i++){
-            this.rate[i] = rateInfo[i];
+
+        //get new data
+        this.fetchNewData();
+
+        //parse the new data into colors
+        for(i=0; i<this.dataBus.HV.length; i++){
+            this.oldHVcolor[i] = this.HVcolor[i];
+            this.HVcolor[i] = this.parseColor(this.dataBus.HV[i]);
+        }
+        for(i=0; i<this.dataBus.thresholds.length; i++){
+            this.oldThresholdColor[i] = this.thresholdColor[i];
+            this.thresholdColor[i] = this.parseColor(this.dataBus.thresholds[i]);
+        }
+        for(i=0; i<this.dataBus.rate.length; i++){
             this.oldRateColor[i] = this.rateColor[i];
-            this.rateColor[i] = this.parseColor(rateInfo[i]);
+            this.rateColor[i] = this.parseColor(this.dataBus.rate[i]);
         }
 
         this.tooltip.update();
@@ -207,8 +244,19 @@ function BAMBINO(monitor, mode, minima, maxima){
         return colorScale(window.colorScales[window.subdetectorView],scale);
     };
 
+    this.fetchNewData = function(){
+        var i;
+        var nChannels = 2*this.nRadial + 2*this.nAzimuthal;
+
+        //dummy data:
+        for(i=0; i<nChannels; i++){
+            this.dataBus.HV[i] = Math.random();
+            this.dataBus.thresholds[i] = Math.random();
+            this.dataBus.rate[i] = Math.random();
+        }
+    };
+
     //do an initial populate:
-    fetchNewBAMBINOdata(this.rate);
-    this.update(this.rate);
+    this.update();
 
 }
