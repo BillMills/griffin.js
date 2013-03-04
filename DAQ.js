@@ -17,6 +17,7 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
     this.config = config;                        //[nCollectorGroups, nCollectors, nDigitizerGroups, nDigitizers, nDigitizersPerCollector]
     this.nCollectorGroups = config[0];
     this.detailShowing = 0;                      //is the detail canvas showing?
+    this.dataBus = new DAQDS();
 
     if(this.nCollectorGroups == 0)
         this.nCollectors = config[1];
@@ -108,71 +109,54 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
 
     //establish data buffers////////////////////////////////////////////////////////////////////////////
     //master
-    this.masterRate = [0];
     this.masterColor = '#000000';
     this.oldMasterColor = '#000000';
     //master group links
-    this.masterGroupRate = [];
     this.masterGroupColor = [];
     this.oldMasterGroupColor = [];
     //links from collectors to master
-    this.masterLinkRate = [];
     this.masterLinkColor = [];
     this.oldMasterLinkColor = [];
     //collectors
-    this.collectorRate = [];
     this.collectorColor = [];
     this.oldCollectorColor = [];
     //links from digitizer summary node to collector
-    this.collectorLinkRate = [];
     this.collectorLinkColor = [];
     this.oldCollectorLinkColor = [];
     //digitizer summary node
-    this.digiSummaryRate = [];
     this.digiSummaryColor = [];
     this.oldDigiSummaryColor = [];
     //links from digitizer group to digitizer summary node
-    this.digiGroupSummaryRate = [];
     this.digiGroupSummaryColor = [];
     this.oldDigiGroupSummaryColor = [];
     //links from digitizers to digitizer group
-    this.digitizerLinkRate = [];
     this.digitizerLinkColor = [];
     this.oldDigitizerLinkColor = [];
     //digitizers
-    this.digitizerRate = [];
     this.digitizerColor = [];
     this.oldDigitizerColor = [];
 
     for(i=0; i<Math.ceil(this.nCollectors/4); i++){
-        this.masterGroupRate[i] = 0;
         this.masterGroupColor[i] = '#000000';
         this.oldMasterGroupColor[i] = '#000000';        
     }
     for(i=0; i<4*Math.ceil(this.nCollectors/4); i++){
-        this.masterLinkRate[i] = 0;
         this.masterLinkColor[i] = '#000000';
         this.oldMasterLinkColor[i] = '#000000';
-        this.collectorRate[i] = 0;
         this.collectorColor[i] = '#000000';
         this.oldCollectorColor[i] = '#000000';
-        this.collectorLinkRate[i] = 0;
         this.collectorLinkColor[i] = '#000000';
         this.oldCollectorLinkColor[i] = '#000000';
-        this.digiSummaryRate[i] = 0;
         this.digiSummaryColor[i] = '#000000';
         this.oldDigiSummaryColor[i] = '#000000';        
     }
     for(i=0; i<4*4*Math.ceil(this.nCollectors/4); i++){
-        this.digiGroupSummaryRate[i] = 0;
         this.digiGroupSummaryColor[i] = '#000000';
         this.oldDigiGroupSummaryColor[i] = '#000000';        
     }
     for(i=0; i<4*4*4*Math.ceil(this.nCollectors/4); i++){
-        this.digitizerLinkRate[i] = 0;
         this.digitizerLinkColor[i] = '#000000';
         this.oldDigitizerLinkColor[i] = '#000000';
-        this.digitizerRate[i] = 0;
         this.digitizerColor[i] = '#000000';
         this.oldDigitizerColor[i] = '#000000';        
     }
@@ -188,56 +172,37 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
     }
 
 	//update the info for each cell in the monitor
-	this.update = function(masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate){
-		var i,j,k,m;
+	this.update = function(){
+		var i;
 
-		//master
-    	this.masterRate[0] = masterRate;
-    	this.oldMasterColor = this.masterColor;
-    	this.masterColor = this.parseColor(masterRate[0], 0);
+        this.fetchNewData();
 
-        //master groups
-        for(i=0; i<Math.ceil(nCollectors/4); i++){
-            this.masterGroupRate[i] = masterGroupRate[i];  
+        //parse the new data into colors
+        this.oldMasterColor = this.masterColor;
+        this.masterColor = this.parseColor(this.dataBus.master[0], 0)
+    
+        for(i=0; i<this.nCollectorGroups; i++)
             this.oldMasterGroupColor[i] = this.masterGroupColor[i];
-            this.masterGroupColor[i] = this.parseColor(this.masterGroupRate[i],1)    
+            this.masterGroupColor[i] = this.parseColor(this.dataBus.collectorGroups[i],1)            
+        for(i=0; i<this.nCollectors; i++){
+            this.oldMasterLinkColor[i] = this.masterLinkColor[i];
+            this.oldCollectorColor[i] = this.collectorColor[i];
+            this.oldCollectorLinkColor[i] = this.collectorLinkColor[i];
+            this.oldDigiSummaryColor[i] = this.digiSummaryColor[i];
+            this.masterLinkColor[i] = this.parseColor(this.dataBus.collectorLinks[i], 2);
+            this.collectorColor[i] = this.parseColor(this.dataBus.collectors[i], 3);
+            this.collectorLinkColor[i] = this.parseColor(this.dataBus.digitizerGroupSummaryLinks[i],4);
+            this.digiSummaryColor[i] = this.parseColor(this.dataBus.digitizerSummaries[i],5);
         }
-
-		//links from collectors to master, collectors, links from digitizer summary node to collector, digitizer summary nodes
-    	for(i=0; i<4*Math.ceil(nCollectors/4); i++){
-    		this.masterLinkRate[i] = masterLinkRate[i];
-	    	this.collectorRate[i] = collectorRate[i];
-	   		this.collectorLinkRate[i] = collectorLinkRate[i];
-    		this.digiSummaryRate[i] = digiSummaryRate[i];
-
-    		this.oldMasterLinkColor[i] = this.masterLinkColor[i];
-    		this.oldCollectorColor[i] = this.collectorColor[i];
-	   		this.oldCollectorLinkColor[i] = this.collectorLinkColor[i];
-	 		this.oldDigiSummaryColor[i] = this.digiSummaryColor[i];
-
-    		this.masterLinkColor[i] = this.parseColor(masterLinkRate[i], 2);
-		  	this.collectorColor[i] = this.parseColor(collectorRate[i], 3);
-    		this.collectorLinkColor[i] = this.parseColor(collectorLinkRate[i],4);
-			this.digiSummaryColor[i] = this.parseColor(digiSummaryRate[i],5);
+        for(i=0; i<this.nDigitizerGroups; i++)
+            this.oldDigiGroupSummaryColor[i] = this.digiGroupSummaryColor[i];
+            this.digiGroupSummaryColor[i] = this.parseColor(this.dataBus.digitizerGroupLinks[i], 6);
+        for(i=0; i<this.nDigitizers; i++){
+            this.oldDigitizerLinkColor[i] = this.digitizerLinkColor[i];
+            this.oldDigitizerColor[i] = this.digitizerColor[i]; 
+            this.digitizerLinkColor[i] = this.parseColor(this.dataBus.digitizerLinks[i], 7);
+            this.digitizerColor[i] = this.parseColor(this.dataBus.digitizers[i], 8); 
         }
-	    //links from digitizer group to digitizer summary node
-	    for(i=0; i<4*4*Math.ceil(nCollectors/4); i++){	
-    		this.digiGroupSummaryRate[i] = digiGroupSummaryRate[i];
-    		this.oldDigiGroupSummaryColor[i] = this.digiGroupSummaryColor[i];
-			this.digiGroupSummaryColor[i] = this.parseColor(digiGroupSummaryRate[i], 6);
-        }
-
-    	//individual digitizers and links:
-    	for(i=0; i<4*4*4*Math.ceil(nCollectors/4); i++){
-    		this.digitizerLinkRate[i] = digitizerLinkRate[i];
-		    this.digitizerRate[i] = digitizerRate[i];
-       		this.oldDigitizerLinkColor[i] = this.digitizerLinkColor[i];
-    		this.oldDigitizerColor[i] = this.digitizerColor[i];	
-	   		this.digitizerLinkColor[i] = this.parseColor(digitizerLinkRate[i], 7);
-			this.digitizerColor[i] = this.parseColor(digitizerRate[i], 8);    				
-		}	
-    	//animate(this,0);
-
 	};
 
 	//parse scalar into a color on a color scale bounded by the entries in this.minima[index] and this.maxima[index] 
@@ -473,6 +438,28 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
         roundBox(this.detailContext, this.canvasWidth/2 - this.collectorWidth/2, topMargin, this.collectorWidth, this.collectorHeight, 5);
         this.detailContext.fill();
         this.detailContext.stroke();
+
+    };
+
+    this.fetchNewData = function(){
+        var i;
+
+        //fake demo data
+        this.dataBus.master[0] = Math.random();
+        for(i=0; i<this.nCollectorGroups; i++)
+            this.dataBus.collectorGroups[i] = Math.random();
+        for(i=0; i<this.nCollectors; i++){
+            this.dataBus.collectorLinks[i] = Math.random();
+            this.dataBus.collectors[i] = Math.random();
+            this.dataBus.digitizerGroupSummaryLinks[i] = Math.random();
+            this.dataBus.digitizerSummaries[i] = Math.random();
+        }
+        for(i=0; i<this.nDigitizerGroups; i++)
+            this.dataBus.digitizerGroupLinks[i] = Math.random();
+        for(i=0; i<this.nDigitizers; i++){
+            this.dataBus.digitizerLinks[i] = Math.random();
+            this.dataBus.digitizers[i] = Math.random();
+        }
 
     };
 

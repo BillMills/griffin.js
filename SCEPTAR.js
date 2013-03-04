@@ -118,7 +118,7 @@ function SCEPTAR(monitor, maxima, minima, config){
             this.TTcontext.beginPath();
             this.TTcontext.arc(this.ZDScenterX, this.ZDScenterY, this.ZDSradius, 0, 2*Math.PI);
             this.TTcontext.closePath();
-            this.TTcontext.fillStyle = 'rgba('+21+','+21+','+21+',1)';
+            this.TTcontext.fillStyle = 'rgba('+20+','+20+','+20+',1)';
             this.TTcontext.fill();
         }
     

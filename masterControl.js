@@ -45,34 +45,14 @@ function masterLoop(dashboard, AlarmServices, waffle, SHARC, HPGE, DESCANT, PACE
         }
 
         SHARC.update();
-
-        //HPGE
-        var HPGEdata = [];
-        var BGOdata = [];
-        var detailData = [];
-        fetchNewHPGEData(HPGEdata, BGOdata, detailData);
-        HPGE.update(HPGEdata, BGOdata, detailData);
-
+        HPGE.update();
         DESCANT.update();
         PACES.update();        
         DANTE.update();        
         BAMBINO.update();
         SCEPTAR.update();
         SPICE.update();
-
-        //DAQ
-        var masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate;
-        masterRate = [];
-        masterGroupRate = [];
-        masterLinkRate = [];
-        collectorRate = [];
-        collectorLinkRate = [];
-        digiSummaryRate = [];
-        digiGroupSummaryRate = [];
-        digitizerLinkRate = [];
-        digitizerRate = [];
-        fetchNewDAQData(DAQ.nCollectorGroups, masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate);
-        DAQ.update(masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate);
+        DAQ.update();
 
         //animate whoever is showing on top, flat draw the rest; force animate for everyone on first pass, since Google fonts don't render in canvas on the first call to draw (investigate):
         if(window.onDisplay == 'DashboardCanvas' || !callMyself) animate(dashboard,0);
@@ -281,46 +261,6 @@ function detectCards(){
     //insert ODB magic here
     moduleSizes = [0,4,0,4,0,4,0,4,0,4,0,4];
     return moduleSizes;
-}
-
-//fetch new data for the HPGE:
-function fetchNewHPGEData(HPGEdata, BGOdata, detailData){
-    var i = 0;
-
-    //dummy data for offline dev:
-    //HPGE summary
-    for(i=0; i<64; i++){
-        HPGEdata[i] = Math.random();
-        BGOdata[i] = Math.random();
-    }
-
-    for(i=0; i<200; i++){
-        detailData[i] = Math.random();
-    }
-
-}
-
-//fetch new data for the DAQ:
-function fetchNewDAQData(nCollectorGroups, masterRate, masterGroupRate, masterLinkRate, collectorRate, collectorLinkRate, digiSummaryRate, digiGroupSummaryRate, digitizerLinkRate, digitizerRate){
-    var i,j,k,m;
-
-    masterRate[0] = Math.random();
-    for(i=0; i<nCollectorGroups; i++){
-        masterGroupRate[i] = Math.random();
-    }
-    for(i=0; i<4*nCollectorGroups; i++){
-        masterLinkRate[i] = Math.random();
-        collectorRate[i] = Math.random();
-        collectorLinkRate[i] = Math.random();
-        digiSummaryRate[i] = Math.random();
-    }
-    for(i=0; i<4*4*nCollectorGroups; i++){
-        digiGroupSummaryRate[i] = Math.random();
-    }
-    for(i=0; i<4*4*4*nCollectorGroups; i++){
-        digitizerLinkRate[i] = Math.random();
-        digitizerRate[i] = Math.random();
-    }
 }
 
 //force an immediate update, and set the master loop going again from there:
