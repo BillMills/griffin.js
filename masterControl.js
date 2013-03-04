@@ -1,4 +1,4 @@
-function masterLoop(dashboard, AlarmServices, waffle, SHARC, HPGE, DESCANT, PACES, DANTE, BAMBINO, SCEPTAR, SPICE, DAQ, Clock, Trigger, callMyself){
+function masterLoop(dashboard, AlarmServices, waffle, SHARC, HPGE, DESCANT, PACES, DANTE, BAMBINO, SCEPTAR, SPICE, TIP, DAQ, Clock, Trigger, callMyself){
 	if(!document.webkitHidden && !document.mozHidden){
         var i,j;
 
@@ -52,6 +52,7 @@ function masterLoop(dashboard, AlarmServices, waffle, SHARC, HPGE, DESCANT, PACE
         BAMBINO.update();
         SCEPTAR.update();
         SPICE.update();
+        TIP.update();
         DAQ.update();
 
         //animate whoever is showing on top, flat draw the rest; force animate for everyone on first pass, since Google fonts don't render in canvas on the first call to draw (investigate):
@@ -81,6 +82,8 @@ function masterLoop(dashboard, AlarmServices, waffle, SHARC, HPGE, DESCANT, PACE
         else SCEPTAR.draw(SCEPTAR.nFrames);
         if(window.onDisplay == 'SPICECanvas' || !callMyself) animate(SPICE,0);
         else SPICE.draw(SPICE.nFrames);
+        if(window.onDisplay == 'TIPCanvas' || !callMyself) animate(TIP,0);
+        else TIP.draw(TIP.nFrames);
         if(window.onDisplay == 'DAQcanvas' || !callMyself) animate(DAQ,0);
         else DAQ.draw(DAQ.nFrames);
         if(window.onDisplay == 'DAQdetailCanvas' || !callMyself) animateDetail(DAQ,0);
@@ -92,7 +95,7 @@ function masterLoop(dashboard, AlarmServices, waffle, SHARC, HPGE, DESCANT, PACE
     }
 
     //clearTimeout(window.loop);
-    window.loop = setTimeout(function(){masterLoop(dashboard, AlarmServices, waffle, SHARC, HPGE, DESCANT, PACES, DANTE, BAMBINO, SCEPTAR, SPICE, DAQ, Clock, Trigger, 1)}, 60000);
+    window.loop = setTimeout(function(){masterLoop(dashboard, AlarmServices, waffle, SHARC, HPGE, DESCANT, PACES, DANTE, BAMBINO, SCEPTAR, SPICE, TIP, DAQ, Clock, Trigger, 1)}, 60000);
 }
 
 //populate HV monitor rows by cols arrays with the appropriate information:
