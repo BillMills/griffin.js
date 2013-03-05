@@ -1,5 +1,7 @@
 function BarGraph(cvas, moduleNumber, nBars, title, yAxisTitle, scaleMin, scaleMax, barChartPrecision, masterWaffle){
 
+	this.dataBus = new HVBarDS();
+
 	//bar chart levels:
 	this.oldLevels = [];
 	this.levels = [];

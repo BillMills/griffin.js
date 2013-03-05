@@ -412,6 +412,15 @@ function Waffle(rows, cols, wrapperDiv, rowTitles, InputLayer, ODBkeys, headerDi
             }
 
             //update peripherals:
+            for(i=0; i<this.barCharts.length; i++){
+                for(j=0; j<this.barCharts[i].nBars; j++){
+                    var arrayCoords = getPointer(i, j, that);
+                    this.barCharts[i].dataBus.barChartData[j] = this.dataBus.reportVoltage[arrayCoords[0]][arrayCoords[1]];
+                    this.barCharts[i].dataBus.barChartAlarms[j] = this.dataBus.alarmStatus[arrayCoords[0]][arrayCoords[1]];
+                }
+                this.barCharts[i].update(this.barCharts[i].dataBus.barChartData, this.barCharts[i].dataBus.barChartAlarms);
+            }
+
             channelSelect(that);
             this.tooltip.update();
 

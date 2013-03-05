@@ -7,33 +7,38 @@
 HVDS = function(rows, cols){
 	var i,j;
 	//data arrays:
-        this.demandVoltage = [];
-        this.reportVoltage = [];
-        this.reportCurrent = [];
-        this.demandVrampUp = [];
-        this.demandVrampDown = [];
-        this.reportTemperature = [];
-        this.channelMask = [];
-        this.alarmStatus = [];
-        this.rampStatus = [];
-        this.voltLimit = [];
-        this.currentLimit = [];
-        for(i=0; i<rows; i++){
-            this.demandVoltage[i] = [];
-            this.reportVoltage[i] = [];
-            this.reportCurrent[i] = [];
-            this.demandVrampUp[i] = [];
-            this.demandVrampDown[i] = [];
-            this.reportTemperature[i] = [];
-            this.channelMask[i] = [];
-            this.alarmStatus[i] = [];
-            this.rampStatus[i] = [];
-            this.voltLimit[i] = [];
-            this.currentLimit[i] = [];
-            for(j=0;j<cols;j++){
-              this.alarmStatus[i][j] = [];
-            }
+    this.demandVoltage = [];
+    this.reportVoltage = [];
+    this.reportCurrent = [];
+    this.demandVrampUp = [];
+    this.demandVrampDown = [];
+    this.reportTemperature = [];
+    this.channelMask = [];
+    this.alarmStatus = [];
+    this.rampStatus = [];
+    this.voltLimit = [];
+    this.currentLimit = [];
+    for(i=0; i<rows; i++){
+        this.demandVoltage[i] = [];
+        this.reportVoltage[i] = [];
+        this.reportCurrent[i] = [];
+        this.demandVrampUp[i] = [];
+        this.demandVrampDown[i] = [];
+        this.reportTemperature[i] = [];
+        this.channelMask[i] = [];
+        this.alarmStatus[i] = [];
+        this.rampStatus[i] = [];
+        this.voltLimit[i] = [];
+        this.currentLimit[i] = [];
+        for(j=0;j<cols;j++){
+        	this.alarmStatus[i][j] = [];
         }
+    }
+}
+
+HVBarDS = function(){
+    this.barChartData = [];
+    this.barChartAlarms = [];
 }
 
 SHARCDS = function(){

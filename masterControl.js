@@ -3,18 +3,6 @@ function masterLoop(dashboard, AlarmServices, waffle, SHARC, HPGE, DESCANT, PACE
         var i,j;
 
     	waffle.update();
-
-        for(i=0; i<waffle.barCharts.length; i++){
-            var barChartData = [];
-            var barChartAlarms = [];
-            for(var j=0; j<waffle.barCharts[i].nBars; j++){
-                var arrayCoords = getPointer(i, j, waffle)
-                barChartData[j] = waffle.dataBus.reportVoltage[arrayCoords[0]][arrayCoords[1]];
-                barChartAlarms[j] = waffle.dataBus.alarmStatus[arrayCoords[0]][arrayCoords[1]];
-            }
-            waffle.barCharts[i].update(barChartData, barChartAlarms);
-        }
-
         SHARC.update();
         HPGE.update();
         DESCANT.update();
@@ -56,7 +44,7 @@ function masterLoop(dashboard, AlarmServices, waffle, SHARC, HPGE, DESCANT, PACE
         if(window.onDisplay == 'TIPCanvas' || !callMyself) animate(TIP,0);
         else TIP.draw(TIP.nFrames);
         if(window.onDisplay == 'TIPdetailCanvas' || !callMyself) animateDetail(TIP,0);
-        else TIP.drawDetail(TIP.nFrames);
+        else TIP.drawDetail(TIP.detailContext, TIP.nFrames);
         if(window.onDisplay == 'DAQcanvas' || !callMyself) animate(DAQ,0);
         else DAQ.draw(DAQ.nFrames);
         if(window.onDisplay == 'DAQdetailCanvas' || !callMyself) animateDetail(DAQ,0);
@@ -68,7 +56,7 @@ function masterLoop(dashboard, AlarmServices, waffle, SHARC, HPGE, DESCANT, PACE
     }
 
     //clearTimeout(window.loop);
-    window.loop = setTimeout(function(){masterLoop(dashboard, AlarmServices, waffle, SHARC, HPGE, DESCANT, PACES, DANTE, BAMBINO, SCEPTAR, SPICE, TIP, DAQ, Clock, Trigger, 1)}, 60000);
+    window.loop = setTimeout(function(){masterLoop(dashboard, AlarmServices, waffle, SHARC, HPGE, DESCANT, PACES, DANTE, BAMBINO, SCEPTAR, SPICE, TIP, DAQ, Clock, Trigger, 1)}, 3000);
 }
 
 //determine what size cards are in what slot:
