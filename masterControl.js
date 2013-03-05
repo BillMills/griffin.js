@@ -84,6 +84,8 @@ function masterLoop(dashboard, AlarmServices, waffle, SHARC, HPGE, DESCANT, PACE
         else SPICE.draw(SPICE.nFrames);
         if(window.onDisplay == 'TIPCanvas' || !callMyself) animate(TIP,0);
         else TIP.draw(TIP.nFrames);
+        if(window.onDisplay == 'TIPdetailCanvas' || !callMyself) animateDetail(TIP,0);
+        else TIP.drawDetail(TIP.nFrames);
         if(window.onDisplay == 'DAQcanvas' || !callMyself) animate(DAQ,0);
         else DAQ.draw(DAQ.nFrames);
         if(window.onDisplay == 'DAQdetailCanvas' || !callMyself) animateDetail(DAQ,0);
