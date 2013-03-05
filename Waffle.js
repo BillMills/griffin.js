@@ -1,6 +1,5 @@
 function Waffle(rows, cols, wrapperDiv, rowTitles, InputLayer, ODBkeys, headerDiv, moduleSizes, voltageSlider, rampSlider, rampDownSlider, barChartPrecision, prefix, postfix, AlarmServices){
 
-        //if(!document.webkitHidden && !document.mozHidden){
     	var i, j, n, columns;
 
         //pointer voodoo:
@@ -30,6 +29,8 @@ function Waffle(rows, cols, wrapperDiv, rowTitles, InputLayer, ODBkeys, headerDi
         this.sidebarID = 'InputLayer';
         this.monitor = document.getElementById(this.wrapperDiv);
         this.AlarmServices = AlarmServices;         //Alarm serivce object the waffle will fire events at
+        this.dataBus = new HVDS(this.rows, this.cols);  //data structure to manage info.
+        this.viewStatus = -1;                       //indicates which view is on top: -1=summary, n>-1=bar chart n.
 
         //determine dimesions of canvas:
         this.totalWidth = Math.round(0.5*$('#'+this.wrapperDiv).width());
@@ -47,12 +48,12 @@ function Waffle(rows, cols, wrapperDiv, rowTitles, InputLayer, ODBkeys, headerDi
         insertH1('mainframeLinksBanner', 'navPanelHeader', this.linkWrapperID, 'GRIFFIN HV Mainframes');
         insertLinebreak(this.linkWrapperID);
         //nav buttons
-        insertButton('Main1', 'navLinkDown', "javascript:swapFade('TestWaffle', 'Main1', window.HVpointer, 0)", 'mainframeLinks', 'Mainframe 1');
+        insertButton('Main1', 'navLinkDown', "{window.HVpointer.viewStatus=-1; swapFade('Main1', window.HVpointer, 0, 0)}", 'mainframeLinks', 'Mainframe 1');
         insertLinebreak(this.linkWrapperID);
 
         //deploy slot buttons
         for(i=0; i<this.moduleSizes.length; i++){
-            insertButton('card'+i, 'navLink', "javascript:swapFade('bar"+i+"', 'card"+i+"', window.HVpointer, 0)", this.linkWrapperID, 'Slot '+i);
+            insertButton('card'+i, 'navLink', "{window.HVpointer.viewStatus="+i+"; swapFade('card"+i+"', window.HVpointer, 0, 0);}", this.linkWrapperID, 'Slot '+i);
         }
 
         //inject canvas into DOM for waffle to paint on:
@@ -126,32 +127,9 @@ function Waffle(rows, cols, wrapperDiv, rowTitles, InputLayer, ODBkeys, headerDi
         }
 
         //set up arrays:
-        //ODB info:
-        this.demandVoltage = [];
-        this.reportVoltage = [];
-        this.reportCurrent = [];
-        this.demandVrampUp = [];
-        this.demandVrampDown = [];
-        this.reportTemperature = [];
-        this.channelMask = [];
-        this.rampStatus = [];
-        this.voltLimit = [];
-        this.currentLimit = [];
-        //computed values:
         this.startColor = [];
         this.endColor = [];
-        //second dimension:
         for(i=0; i<this.rows; i++){
-            this.demandVoltage[i] = [];
-            this.reportVoltage[i] = [];
-            this.reportCurrent[i] = [];
-            this.demandVrampUp[i] = [];
-            this.demandVrampDown[i] = [];
-            this.reportTemperature[i] = [];
-            this.channelMask[i] = [];
-            this.rampStatus[i] = [];
-            this.voltLimit[i] = [];
-            this.currentLimit[i] = [];
     	    this.startColor[i] = [];
         	this.endColor[i] = [];
         }
@@ -176,55 +154,21 @@ function Waffle(rows, cols, wrapperDiv, rowTitles, InputLayer, ODBkeys, headerDi
         }
 
         //array of values from the waffle to report in the tooltip
-        this.reportedValues = [this.demandVoltage, this.reportVoltage, this.reportCurrent, this.demandVrampUp, this.demandVrampDown, this.reportTemperature, this.rampStatus];
-
-        //do an initial populate of the waffle:
-        fetchNewData(this.rows, this.cols, moduleSizes, this.ODBkeys, this.demandVoltage, this.reportVoltage, this.reportCurrent, this.demandVrampUp, this.demandVrampDown, this.reportTemperature, this.channelMask, this.alarmStatus, this.rampStatus, this.voltLimit, this.currentLimit, this.AlarmServices);
+        this.reportedValues = [this.dataBus.demandVoltage, this.dataBus.reportVoltage, this.dataBus.reportCurrent, this.dataBus.demandVrampUp, this.dataBus.demandVrampDown, this.dataBus.reportTemperature, this.dataBus.rampStatus];
 
         //make waffles clickable to set a variable for a channel:
         this.canvas.onclick = function(event){clickWaffle(event, that)};
 
         //make the get channel button do its job:
         document.getElementById('getChannelButton').onclick = function(event){changeChannelButton(event, that)};
-
-        //also, draw the input sidebar for 0,0 on first call:
-        channelSelect(that);
-
-        //que up new data:
-        this.populate = function(demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit){
-
-            var columns, i, j;
-
-            //populate new data:
-            for(i=0; i<this.rows; i++){
-                //primary row spans multi-columns:
-                if(i==0) columns = this.moduleSizes.length;
-                else columns = this.cols;
-                for(j=0; j<columns; j++){
-
-                    this.demandVoltage[i][j] = demandVoltage[i][j];
-                    this.reportVoltage[i][j] = reportVoltage[i][j];
-                    this.reportCurrent[i][j] = reportCurrent[i][j];
-                    this.demandVrampUp[i][j] = demandVrampUp[i][j];
-                    this.demandVrampDown[i][j] = demandVrampDown[i][j];
-                    this.reportTemperature[i][j] = reportTemperature[i][j];
-                    this.channelMask[i][j] = channelMask[i][j];
-                    this.rampStatus[i][j] = rampStatus[i][j];
-                    this.voltLimit[i][j] = voltLimit[i][j];
-                    this.currentLimit[i][j] = currentLimit[i][j];
-
-                    this.prevAlarmStatus[i][j][0] = this.alarmStatus[i][j][0];
-                    this.prevAlarmStatus[i][j][1] = this.alarmStatus[i][j][1];
-                    this.prevAlarmStatus[i][j][2] = this.alarmStatus[i][j][2];
-
-                    this.alarmStatus[i][j][0] = alarmStatus[i][j][0];
-                    this.alarmStatus[i][j][1] = alarmStatus[i][j][1];
-                    this.alarmStatus[i][j][2] = alarmStatus[i][j][2];
-                }
-            }
-
-        };
         
+        //decide which canvas to present:
+        this.view = function(){
+            if(this.viewStatus == -1)
+                return this.canvasID;
+            else return 'bar'+this.viewStatus;
+        };
+
         //determine per cell color info for start and finish.
         //Color info is packed as four numbers: red, green, blue, alpha
         this.cellColorUpdate = function(){
@@ -445,11 +389,27 @@ function Waffle(rows, cols, wrapperDiv, rowTitles, InputLayer, ODBkeys, headerDi
         };        
 
         //wrapper for transition from old state to new state via this.animate:
-        this.update = function(demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, alarmStatus, channelMask, rampStatus, voltLimit, currentLimit, callMyself){
+        this.update = function(){
+            var i,j,columns;
 
-            //update all parameters to prepare for animation transition:
-            this.populate(demandVoltage, reportVoltage, reportCurrent, demandVrampUp, demandVrampDown, reportTemperature, channelMask, alarmStatus, rampStatus, voltLimit, currentLimit);
-            this.cellColorUpdate();
+            this.fetchNewData();
+ 
+            //update alarms & colors to prepare for animation transition:
+            for(i=0; i<this.rows; i++){
+                //primary row spans multi-columns:
+                if(i==0) columns = this.moduleSizes.length;
+                else columns = this.cols;
+                for(j=0; j<columns; j++){
+
+                    this.prevAlarmStatus[i][j][0] = this.alarmStatus[i][j][0];
+                    this.prevAlarmStatus[i][j][1] = this.alarmStatus[i][j][1];
+                    this.prevAlarmStatus[i][j][2] = this.alarmStatus[i][j][2];
+                    this.alarmStatus[i][j][0] = this.dataBus.alarmStatus[i][j][0];
+                    this.alarmStatus[i][j][1] = this.dataBus.alarmStatus[i][j][1];
+                    this.alarmStatus[i][j][2] = this.dataBus.alarmStatus[i][j][2];
+                    this.cellColorUpdate();
+                }
+            }
 
             //update peripherals:
             channelSelect(that);
@@ -553,6 +513,175 @@ function Waffle(rows, cols, wrapperDiv, rowTitles, InputLayer, ODBkeys, headerDi
 
         };
 
+        //get new data:
+        this.fetchNewData = function(){
+            var testParameter, i, j, ODBindex, columns, slot;
+            /*
+            //batch fetch all in one big lump:
+            var variablesRecord = ODBGetRecord(ODBkeys[0]);
+            var settingsRecord  = ODBGetRecord(ODBkeys[1]);
+    
+            var reqVoltage      = ODBExtractRecord(variablesRecord, ODBkeys[2]);
+            var measVoltage     = ODBExtractRecord(variablesRecord, ODBkeys[3]);
+            var measCurrent     = ODBExtractRecord(variablesRecord, ODBkeys[4]);
+            var rampUp          = ODBExtractRecord(settingsRecord,  ODBkeys[5]);
+            var rampDown        = ODBExtractRecord(settingsRecord,  ODBkeys[6]);
+            var measTemperature = ODBExtractRecord(variablesRecord, ODBkeys[7]);
+            var repoChState     = ODBExtractRecord(settingsRecord,  ODBkeys[8]);
+            var repoChStatus    = ODBExtractRecord(variablesRecord, ODBkeys[9]);
+            var voltageLimit    = ODBExtractRecord(settingsRecord,  ODBkeys[10]);
+            var currentLimit    = ODBExtractRecord(settingsRecord,  ODBkeys[11]);
+            */          
+            for(i=0; i<this.rows; i++){
+                //primary row spans multi-columns, only has entries for 48 channel cards:        
+                if(i==0) columns = this.moduleSizes.length;
+                else columns = this.cols;
+
+                for(j=0; j<columns; j++){
+                    if (i>0) slot = primaryBin(this.moduleSizes, j);
+                    else slot = j;
+                    //don't populate the primary of a 12 channel card, or any channel corresponding to an empty slot:
+                    if( (i!=0 || this.moduleSizes[j]==4) && this.moduleSizes[slot]!=0 ){
+                    /*
+                        ODBindex = getMIDASindex(i, j);
+                        demandVoltage[i][j]     = parseFloat(reqVoltage[ODBindex]);
+                        reportVoltage[i][j]     = parseFloat(measVoltage[ODBindex]);   
+                        reportCurrent[i][j]     = parseFloat(measCurrent[ODBindex]);
+                        demandVrampUp[i][j]     = parseFloat(rampUp[ODBindex]);
+                        demandVrampDown[i][j]   = parseFloat(rampDown[ODBindex]);
+                        reportTemperature[i][j] = parseFloat(measTemperature[ODBindex]);
+                        channelMask[i][j]       = parseFloat(repoChState[ODBindex]);
+                        rampStatus[i][j]        = parseFloat(repoChStatus[ODBindex]);
+                        voltLimit[i][j]         = parseFloat(voltageLimit[ODBindex]);
+                        curLimit[i][j]          = parseFloat(currentLimit[ODBindex]);
+                        //48ch cards report the currents in mA, convert to uA:
+                        if(i==0){
+                            reportCurrent[i][j] = reportCurrent[i][j]*1000;
+                            curLimit[i][j] = curLimit[i][j]*1000;
+                        }
+
+                    */
+                    //fake data for offline demo
+                        this.dataBus.demandVoltage[i][j] = Math.random();
+                        this.dataBus.reportVoltage[i][j] = Math.random();
+                        this.dataBus.reportCurrent[i][j] = Math.random();
+                        this.dataBus.demandVrampUp[i][j] = Math.random();
+                        this.dataBus.demandVrampDown[i][j] = Math.random();
+                        this.dataBus.reportTemperature[i][j] = Math.random();
+                        this.dataBus.channelMask[i][j] = Math.random();
+                        if (this.dataBus.channelMask[i][j] < 0.1) this.dataBus.channelMask[i][j] = 0;
+                        else this.dataBus.channelMask[i][j] = 1;
+                        this.dataBus.rampStatus[i][j] = Math.floor(10*Math.random());
+                        this.dataBus.voltLimit[i][j] = 1+Math.random();
+                        this.dataBus.currentLimit[i][j] = 1+Math.random();
+                    } else if (i!=0 || this.moduleSizes[j]==4){  //keep the array filled, even for empty slots to avoid unpredictable behavior
+                        this.dataBus.demandVoltage[i][j] = 0;
+                        this.dataBus.reportVoltage[i][j] = 0;
+                        this.dataBus.reportCurrent[i][j] = 0;
+                        this.dataBus.demandVrampUp[i][j] = 0;
+                        this.dataBus.demandVrampDown[i][j] = 0;
+                        this.dataBus.reportTemperature[i][j] = 0;
+                        this.dataBus.channelMask[i][j] = 0;
+                        this.dataBus.rampStatus[i][j] = 0;
+                        this.dataBus.voltLimit[i][j] = 0;
+                        this.dataBus.currentLimit[i][j] = 0;
+                    }
+
+                    //give the necessary information to the AlarmService, so it can report the state of any channel that trips an alarm below:
+                    if(j==0){
+                        this.AlarmServices.demandVoltage[i] = [];
+                        this.AlarmServices.reportVoltage[i] = [];
+                        this.AlarmServices.reportCurrent[i] = [];
+                        this.AlarmServices.reportTemperature[i] = [];
+                    }
+                    this.AlarmServices.demandVoltage[i][j] = this.dataBus.demandVoltage[i][j];
+                    this.AlarmServices.reportVoltage[i][j] = this.dataBus.reportVoltage[i][j];
+                    this.AlarmServices.reportCurrent[i][j] = this.dataBus.reportCurrent[i][j];
+                    this.AlarmServices.reportTemperature[i][j] = this.dataBus.reportTemperature[i][j];
+                }
+            }
+
+            //see if any of the new data raises any alarms:
+            this.raiseAlarm();
+        };
+
+        //push problems out to the alarm service
+        this.raiseAlarm = function(){
+            //determine alarm status
+            for(i=0; i<this.rows; i++){
+                //primary row spans multi-columns:
+                if(i==0) columns = this.moduleSizes.length;
+                else columns = this.cols;
+                for(j=0; j<columns; j++){
+                    //construct the parameter to be tested against the voltage alarm:
+                    testParameter = Math.abs(this.dataBus.demandVoltage[i][j] - this.dataBus.reportVoltage[i][j]); 
+
+                    //determine alarm status for each cell, recorded as [i][j][voltage alarm, current alarm, temperature alarm]
+                    //alarmStatus == 0 indicates all clear, 0 < alarmStatus <= 1 indicates alarm intensity, alarmStatus = -1 indicates channel off,
+                    //and alarmStatus == -2 for the voltage alarm indicates voltage ramping.
+                    if(testParameter < AlarmServices.alarmThresholds[0])  this.dataBus.alarmStatus[i][j][0] = 0;
+                    else  this.dataBus.alarmStatus[i][j][0] = Math.min( (testParameter - AlarmServices.alarmThresholds[0]) / AlarmServices.scaleMaxima[0], 1);
+                    if(this.dataBus.rampStatus[i][j] == 3 || this.dataBus.rampStatus[i][j] == 5){
+                        this.dataBus.alarmStatus[i][j][0] = -2;
+                    }
+
+                    if(this.dataBus.reportCurrent[i][j] < AlarmServices.alarmThresholds[1])  this.dataBus.alarmStatus[i][j][1] = 0;
+                    else  this.dataBus.alarmStatus[i][j][1] = Math.min( (this.dataBus.reportCurrent[i][j] - AlarmServices.alarmThresholds[1]) / AlarmServices.scaleMaxima[1], 1);
+
+                    if(this.dataBus.reportTemperature[i][j] < AlarmServices.alarmThresholds[2])  this.dataBus.alarmStatus[i][j][2] = 0;
+                    else  this.dataBus.alarmStatus[i][j][2] = Math.min( (this.dataBus.reportTemperature[i][j] - AlarmServices.alarmThresholds[2]) / AlarmServices.scaleMaxima[2], 1);
+
+                    if(this.dataBus.channelMask[i][j] == 0){
+                        this.dataBus.alarmStatus[i][j][0] = -1;
+                        this.dataBus.alarmStatus[i][j][1] = -1;
+                        this.dataBus.alarmStatus[i][j][2] = -1;
+                    }
+
+                    //fire an event at the AlarmServices object for every alarm:
+                    //voltage alarms:
+            
+                    if(this.dataBus.alarmStatus[i][j][0] > 0){
+                        var voltageAlarm = new  CustomEvent("alarmTrip", {
+                                                    detail: {
+                                                        alarmType: 'voltage',
+                                                        alarmStatus: [i,j,this.dataBus.alarmStatus[i][j][0]]        
+                                                    }
+                                                });
+                        AlarmServices.div.dispatchEvent(voltageAlarm);
+                    }
+                    //current alarms:
+                    if(this.dataBus.alarmStatus[i][j][1] > 0){
+                        var currentAlarm = new  CustomEvent("alarmTrip", {
+                                                    detail: {
+                                                        alarmType: 'current',
+                                                        alarmStatus: [i,j,this.dataBus.alarmStatus[i][j][1]]        
+                                                    }
+                                                });
+                        AlarmServices.div.dispatchEvent(currentAlarm);
+                    }
+                    //temperature alarms:
+                    if(this.dataBus.alarmStatus[i][j][2] > 0){
+                        var temperatureAlarm = new  CustomEvent("alarmTrip", {
+                                                        detail: {
+                                                            alarmType: 'temperature',
+                                                            alarmStatus: [i,j,this.dataBus.alarmStatus[i][j][2]]        
+                                                        }
+                                                    });
+                        AlarmServices.div.dispatchEvent(temperatureAlarm);
+                    }
+                }
+            }
+
+            //let the alarm services know the update is complete:
+            var allDone = new   CustomEvent("refreshComplete", {
+                                });
+            AlarmServices.div.dispatchEvent(allDone);
+        };
+
+        //do an initial populate of the waffle:
+        this.fetchNewData();
+        //also, draw the input sidebar for 0,0 on first call:
+        channelSelect(that);
 }
 
 

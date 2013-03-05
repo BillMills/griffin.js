@@ -115,13 +115,13 @@ function channelSelect(waffle){
 
     if(window.refreshInput){
         //set defaults
-        if (waffle.channelMask[waffle.chy][xIndex] == 1) document.getElementById('onButton').checked = true;
+        if (waffle.dataBus.channelMask[waffle.chy][xIndex] == 1) document.getElementById('onButton').checked = true;
         else document.getElementById('offButton').checked = true;
 
         //manage sliders
-        waffle.voltageSlider.update(Math.round(waffle.demandVoltage[waffle.chy][xIndex]*10000)/10000);
-        waffle.rampSlider.update(Math.round(waffle.demandVrampUp[waffle.chy][xIndex]*10000)/10000);
-        waffle.rampDownSlider.update(Math.round(waffle.demandVrampDown[waffle.chy][xIndex]*10000)/10000);
+        waffle.voltageSlider.update(Math.round(waffle.dataBus.demandVoltage[waffle.chy][xIndex]*10000)/10000);
+        waffle.rampSlider.update(Math.round(waffle.dataBus.demandVrampUp[waffle.chy][xIndex]*10000)/10000);
+        waffle.rampDownSlider.update(Math.round(waffle.dataBus.demandVrampDown[waffle.chy][xIndex]*10000)/10000);
         window.refreshInput = 0;
 
         //set the module
@@ -143,23 +143,24 @@ function channelSelect(waffle){
 
     //these objects get updated every masterLoop:
     //report status word:
-    document.getElementById('status').innerHTML = 'Status: '+parseStatusWord(waffle.rampStatus[waffle.chy][xIndex]);
+    document.getElementById('status').innerHTML = 'Status: '+parseStatusWord(waffle.dataBus.rampStatus[waffle.chy][xIndex]);
     //report current & update voltage slider and meter maximum:
     if(waffle.chy == 0 || waffle.moduleSizes[primaryBin(waffle.moduleSizes, waffle.chx)]==1){
-        waffle.voltageSlider.max = waffle.voltLimit[waffle.chy][xIndex];
-        meter.max = waffle.voltLimit[waffle.chy][xIndex];
-        currentMeter.max = waffle.currentLimit[waffle.chy][xIndex];
-        currentMeter.update(Math.round(waffle.reportCurrent[waffle.chy][xIndex]*10000)/10000)
+        waffle.voltageSlider.max = waffle.dataBus.voltLimit[waffle.chy][xIndex];
+        meter.max = waffle.dataBus.voltLimit[waffle.chy][xIndex];
+        currentMeter.max = waffle.dataBus.currentLimit[waffle.chy][xIndex];
+        currentMeter.update(Math.round(waffle.dataBus.reportCurrent[waffle.chy][xIndex]*10000)/10000)
     }
     else{
-        waffle.voltageSlider.max = waffle.voltLimit[0][primaryBin(waffle.moduleSizes, waffle.chx)];
-        meter.max = waffle.voltLimit[0][primaryBin(waffle.moduleSizes, waffle.chx)];
-        currentMeter.max = waffle.currentLimit[0][primaryBin(waffle.moduleSizes, waffle.chx)];
+        waffle.voltageSlider.max = waffle.dataBus.voltLimit[0][primaryBin(waffle.moduleSizes, waffle.chx)];
+        meter.max = waffle.dataBus.voltLimit[0][primaryBin(waffle.moduleSizes, waffle.chx)];
+        currentMeter.max = waffle.dataBus.currentLimit[0][primaryBin(waffle.moduleSizes, waffle.chx)];
         currentMeter.update('--');
     }
+
     //update meter position after maximum has been adjusted:
-    meter.update(Math.round(waffle.reportVoltage[waffle.chy][xIndex]*10000)/10000);
-    temperatureMeter.update(Math.round(waffle.reportTemperature[waffle.chy][xIndex]*100)/100);
+    meter.update(Math.round(waffle.dataBus.reportVoltage[waffle.chy][xIndex]*10000)/10000);
+    temperatureMeter.update(Math.round(waffle.dataBus.reportTemperature[waffle.chy][xIndex]*100)/100);
 
 }
 
