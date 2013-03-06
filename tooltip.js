@@ -45,8 +45,8 @@ function Tooltip(ttCanvasID, ttTextID, ttBKGcanvID, ttDivID, wrapperID, prefix, 
         //turn mouse coords into the index pointing to where the relevant info is stored in obj's info arrays:
         var cellIndex = that.obj.findCell(x, y);
 
-        //only continue if the cursor is actually on a valid channel:
-        if(cellIndex != -1){
+        //only continue if the cursor is actually on a valid channel; x and y>0 suppresses an antialiasing bug:
+        if(cellIndex != -1 && x>1 && y>0){
 
             //establish text:
             var newWidth = Math.max(1.5*that.obj.defineText(cellIndex),200);

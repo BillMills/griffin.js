@@ -46,6 +46,8 @@ function PACES(monitor, minima, maxima, prefix, postfix){
     //paint whole hidden canvas with R!=G!=B to trigger TT suppression:
     this.TTcontext.fillStyle = 'rgba(50,100,150,1)';
     this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
+    this.TTcontext.strokeStyle = 'rgba(50,100,150,1)'
+    this.TTcontext.strokeRect(0,0,this.canvasWidth, this.canvasHeight);
     //set up tooltip:
     this.tooltip = new Tooltip(this.RateCanvasID, 'PACESTipText', 'PACESttCanv', 'PACESTT', this.monitorID, prefix, postfix);
     this.tooltip.obj = that;
@@ -139,8 +141,7 @@ function PACES(monitor, minima, maxima, prefix, postfix){
             this.HVcontext.stroke();
             this.HVcontext.restore();
         }
-        //...and again for the tooltip encoding
-        //TODO
+
     };
 
     this.findCell = function(x, y){
@@ -161,7 +162,7 @@ function PACES(monitor, minima, maxima, prefix, postfix){
         var cardIndex;
         var i;
 
-        nextLine = 'Channel '+cell;
+        nextLine = this.RateCanvasID; //'Channel '+cell;
 
         //keep track of the longest line of text:
         longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)

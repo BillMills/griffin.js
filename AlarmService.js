@@ -29,8 +29,10 @@ function AlarmService(sidebarDivID, sidebarDetailDivID, alarmThresholds, scaleMa
     this.duration = 0.3;
     this.nFrames = this.FPS*this.duration;
 
+    //minimum height of detail-level canvas:
+    this.minBKGheight = document.getElementById('LeftSidebarBKG').height;
     //height of detail-level canvas in previous update:
-    this.bkgCanvasHeight = 695;
+    this.bkgCanvasHeight = this.minBKGheight;
 
 	//DOM manipulation//////////////////////////////////////////////////////////
 
@@ -164,11 +166,11 @@ function AlarmService(sidebarDivID, sidebarDetailDivID, alarmThresholds, scaleMa
 
     //animate the detail-level background's change in length:
     this.draw = function(frame){
-    	var frameHeight = this.bkgCanvasHeight - frame/this.nFrames*(this.bkgCanvasHeight - Math.max($('#'+this.pID).height() + 150, 695))
+    	var frameHeight = this.bkgCanvasHeight - frame/this.nFrames*(this.bkgCanvasHeight - Math.max($('#'+this.pID).height() + 150, this.minBKGheight))
 		document.getElementById('LeftSidebarDetailBKG').setAttribute('height', frameHeight);
 		tabBKG('LeftSidebarDetailBKG', 'left');	
 		if(frame == this.nFrames)
-			this.bkgCanvasHeight = Math.max($('#'+this.pID).height() + 150, 695);
+			this.bkgCanvasHeight = Math.max($('#'+this.pID).height() + 150, this.minBKGheight);
     }
 }
 
@@ -194,7 +196,7 @@ function publishAlarms(object){
 
 
 function showDetail(){
-	//document.getElementById('LeftSidebarDetailBKG').setAttribute('height', Math.max($('#alarmText').height() + 150, 695) );
+	//document.getElementById('LeftSidebarDetailBKG').setAttribute('height', Math.max($('#alarmText').height() + 150, this.minBKGheight) );
 	//tabBKG('LeftSidebarDetailBKG', 'left');
 	$('#leftSidebarDetail').css('z-index', '10');
 	$('#leftSidebarDetail').css('opacity', '1');
