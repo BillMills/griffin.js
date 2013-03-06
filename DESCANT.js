@@ -150,11 +150,7 @@ function DESCANT(monitor, minima, maxima, prefix, postfix){
         var cardIndex;
         var i;
 
-        if(parseInt(cell) < 10)
-            nextLine = 'DSC0'+(parseInt(cell)+1)+'XN00X';
-        else
-            nextLine = 'DSC'+(parseInt(cell)+1)+'XN00X';
-
+        nextLine = this.dataBus.key[cell][0];
         //keep track of the longest line of text:
         longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
         toolTipContent += nextLine;
@@ -232,7 +228,7 @@ function DESCANT(monitor, minima, maxima, prefix, postfix){
     };
 
     this.fetchNewData = function(){
-        var i;
+        var i, j;
 
         //dummy data:
         for(i=0; i<70; i++){
@@ -240,6 +236,18 @@ function DESCANT(monitor, minima, maxima, prefix, postfix){
             this.dataBus.thresholds[i] = Math.random();
             this.dataBus.rate[i] = Math.random();
         }
+        /*
+        //get the data out of the ODB in whatever order its packed in:
+        var rawHV = ODBGet(this.dataBus.HVpath+'[*]');
+        var rawThresholds = ODBGet(this.dataBus.thresholdsPath+'[*]');
+        var rawRate = ODBGet(this.dataBus.ratePath+'[*]');
+        //re-sort the data in the order we expect it in:
+        for(i=0; i<70; i++){
+            this.dataBus.HV[i] = rawHV[ this.dataBus.key[i][1] ];
+            this.dataBus.thresholds[i] = rawThresholds[ this.dataBus.key[i][1] ];
+            this.dataBus.rate[i] = rawRate[ this.dataBus.key[i][1] ];
+        }
+        */
     };
 
 	//array of rules for drawing DESCANT channels.  Array index should correspond to real channel number; packed as [type, center x, center y, canvas rotation, element rotation]

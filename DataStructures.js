@@ -73,22 +73,38 @@ HPGEDS = function(){
 }
 
 DESCANTDS = function(){
-	var i = 0;
+	var i,j;
 
 	//data arrays:
 	this.HV = [];
 	this.thresholds = [];
 	this.rate = [];
 
+	//ODB paths & keys for each type of info:
+	this.HVpath = 'some/path';
+	this.thresholdsPath = 'need/a/function';
+	this.ratePath = 'to/determine/these';
+
 	//key map
 	this.key = [];
 	for(i=0; i<70; i++){
 		this.key[i] = [];
+		//generate names
 		if(i<10)
 			this.key[i][0] = 'DSC0' +i+ 'XN00X';
 		else
 			this.key[i][0] = 'DSC' +i+ 'XN00X';
+		/*
+		//use the codex to find out what the ODB index for each name is:
+		for(j=0; j<window.codex.table.length; j++){
+			if(window.codex.table[j][0] == this.key[i][0]){
+				this.key[i][1] = window.codex.table[j][1];
+				break;
+			}
+		}
+		*/
 	}
+
 }
 
 PACESDS = function(){

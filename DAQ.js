@@ -181,9 +181,10 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
         this.oldMasterColor = this.masterColor;
         this.masterColor = this.parseColor(this.dataBus.master[0], 0)
     
-        for(i=0; i<this.nCollectorGroups; i++)
+        for(i=0; i<this.nCollectorGroups; i++){
             this.oldMasterGroupColor[i] = this.masterGroupColor[i];
-            this.masterGroupColor[i] = this.parseColor(this.dataBus.collectorGroups[i],1)            
+            this.masterGroupColor[i] = this.parseColor(this.dataBus.collectorGroups[i],1);
+        }
         for(i=0; i<this.nCollectors; i++){
             this.oldMasterLinkColor[i] = this.masterLinkColor[i];
             this.oldCollectorColor[i] = this.collectorColor[i];
@@ -194,9 +195,10 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
             this.collectorLinkColor[i] = this.parseColor(this.dataBus.digitizerGroupSummaryLinks[i],4);
             this.digiSummaryColor[i] = this.parseColor(this.dataBus.digitizerSummaries[i],5);
         }
-        for(i=0; i<this.nDigitizerGroups; i++)
+        for(i=0; i<this.nDigitizerGroups; i++){
             this.oldDigiGroupSummaryColor[i] = this.digiGroupSummaryColor[i];
             this.digiGroupSummaryColor[i] = this.parseColor(this.dataBus.digitizerGroupLinks[i], 6);
+        }
         for(i=0; i<this.nDigitizers; i++){
             this.oldDigitizerLinkColor[i] = this.digitizerLinkColor[i];
             this.oldDigitizerColor[i] = this.digitizerColor[i]; 
@@ -228,7 +230,6 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
     		for(i=0; i<this.nCollectorGroups; i++){
                 //master group links
                 color = interpolateColor(parseHexColor(this.oldMasterGroupColor[i]), parseHexColor(this.masterGroupColor[i]), frame/this.nFrames);
-                //if(frame==this.nFrames)alert(color)
                 this.drawMasterGroupLink(i, color);
             }
         }
@@ -462,7 +463,6 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
         }
 
     };
-
 }
 
 

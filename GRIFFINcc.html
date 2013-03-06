@@ -19,6 +19,7 @@
     <script src="Clock.js" type="text/javascript"></script>
     <script src="Trigger.js" type="text/javascript"></script>
 
+    <script src="masterCodex.js" type="text/javascript"></script>
     <script src="DataStructures.js" type="text/javascript"></script>
     <script src="AlarmService.js" type="text/javascript"></script>
     <script src="tooltip.js" type="text/javascript"></script>
@@ -314,6 +315,10 @@
       document.getElementById('CardList').onblur = function(event){reconfigureChannelList(moduleLabels, moduleSizes, 'ChannelList')};
 
       //declare objects:
+
+      //master codex for finding data:
+      //window.codex = new masterCodex();
+
       //HV monitor control sidebar elements:
       var sliderWidth = parseFloat($(document.getElementById('InputLayer')).width())*0.5;
       var sliderVoltage = new Slider('SidebarBKG', 'volageSliderText', 'demandVoltage', 'voltageSlider', 'voltageSliderBKG', 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', minVoltage, maxVoltage, statusPrecision, voltUnit, sliderWidth );
