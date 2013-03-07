@@ -46,8 +46,7 @@ function PACES(monitor, minima, maxima, prefix, postfix){
     //paint whole hidden canvas with R!=G!=B to trigger TT suppression:
     this.TTcontext.fillStyle = 'rgba(50,100,150,1)';
     this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
-    this.TTcontext.strokeStyle = 'rgba(50,100,150,1)'
-    this.TTcontext.strokeRect(0,0,this.canvasWidth, this.canvasHeight);
+
     //set up tooltip:
     this.tooltip = new Tooltip(this.RateCanvasID, 'PACESTipText', 'PACESttCanv', 'PACESTT', this.monitorID, prefix, postfix);
     this.tooltip.obj = that;

@@ -1,4 +1,4 @@
-function Waffle(rows, cols, wrapperDiv, rowTitles, InputLayer, ODBkeys, headerDiv, moduleSizes, voltageSlider, rampSlider, rampDownSlider, barChartPrecision, prefix, postfix, AlarmServices){
+function Waffle(rows, cols, wrapperDiv, rowTitles, InputLayer, ODBkeys, headerDiv, moduleSizes, barChartPrecision, prefix, postfix, AlarmServices){
 
     	var i, j, n, columns;
 
@@ -21,9 +21,6 @@ function Waffle(rows, cols, wrapperDiv, rowTitles, InputLayer, ODBkeys, headerDi
         this.moduleSizes = moduleSizes;             //array containing sizes of modules in groups of 12 channels
         this.chx = 1;                               //x channel of input sidebar focus
         this.chy = 1;                               //y channel of input sidebar focus
-        this.voltageSlider = voltageSlider;         //demand voltage slider associated with this waffle
-        this.rampSlider = rampSlider;               //voltage ramp up speed slider associated with this waffle
-        this.rampDownSlider = rampDownSlider;       //voltage ramp down speed slider associated with this waffle
         this.linkWrapperID = 'mainframeLinks';      //ID of div containing nav links
         this.topNavID = 'HVmonitorButton';
         this.sidebarID = 'InputLayer';
@@ -31,6 +28,102 @@ function Waffle(rows, cols, wrapperDiv, rowTitles, InputLayer, ODBkeys, headerDi
         this.AlarmServices = AlarmServices;         //Alarm serivce object the waffle will fire events at
         this.dataBus = new HVDS(this.rows, this.cols);  //data structure to manage info.
         this.viewStatus = -1;                       //indicates which view is on top: -1=summary, n>-1=bar chart n.
+
+        //deploy the sidebar
+        this.deploySidebar = function(){
+
+            //wrapper div
+            insertDiv(this.sidebarID, 'Sidebar', this.wrapperDiv);
+            document.getElementById(this.sidebarID).setAttribute('align', 'left');
+
+            //title
+            insertH2('inputTitle', '', this.sidebarID, 'Sin Titulo');
+            document.getElementById('inputTitle').setAttribute('align', 'left');
+            document.getElementById('inputTitle').setAttribute('style','margin-left:10%; margin-top:25px; font-family: "Orbitron", sans-serif;');
+
+            //input form
+            insertForm('setValues', 'margin-bottom:0px;', this.sidebarID);
+
+            //on/off radios:
+            insertInput('offButton', 'margin-left:10%; margin-bottom:10px', 'radio', 'HVswitch', 'off', 'setValues');
+            insertParagraph('offSwitch', '', 'display:inline;', 'setValues', 'Off');
+            insertInput('onButton', 'margin-left:10px; margin-bottom:10px; display:inline;', 'radio', 'HVswitch', 'on', 'setValues');
+            insertParagraph('onSwtich', '', 'display:inline;', 'setValues', 'On');
+            //submit updates:
+            insertInput('submitParameters', '', 'button', '', 'Commit', 'setValues');
+           
+            //status report:
+            insertParagraph('status', '', 'margin-left:10%;', 'setValues', 'Status:');
+
+            //voltage fill meter
+            insertParagraph('voltageMeterTitle', '', 'margin-left:10%; margin-bottom:0px; display:inline; position:relative; top:-18px;', 'setValues', 'Voltage [V]');
+            insertCanvas('voltageMeter', '', 'margin-left:2px;', '', '', 'setValues');
+            document.getElementById('voltageMeter').setAttribute('align', 'right');
+            //current fill meter
+            insertParagraph('currentMeterTitle', '', 'margin-left:10%; margin-bottom:0px; display:inline; position:relative; top:-18px;', 'setValues', 'Current [uA]');
+            insertCanvas('currentMeter', '', 'margin-left:2px;', '', '', 'setValues');
+            document.getElementById('currentMeter').setAttribute('align', 'right');
+            //temperature fill meter
+            insertParagraph('temperatureMeterTitle', '', 'margin-left:10%; margin-bottom:0px; display:inline; position:relative; top:-18px;', 'setValues', 'Temperature [C]');
+            insertCanvas('temperatureMeter', '', 'margin-left:2px;', '', '', 'setValues');
+            document.getElementById('temperatureMeter').setAttribute('align', 'right');                        
+
+            //demand voltage
+            insertParagraph('FieldText', '', 'margin-left:10%', 'setValues', 'Demand Voltage [V]');
+            insertInput('demandVoltage', 'margin-bottom:10px; margin-top: 5px; margin-left:10%; margin-right:5%;', 'text', 'textbox', 'default', 'setValues')
+            document.getElementById('demandVoltage').setAttribute('size', '6');
+            insertDiv('voltageSlider', 'slider', 'setValues');
+            //demand voltage ramp up
+            insertParagraph('RampText', '', 'margin:0px; margin-left:10%; margin-top:20px;', 'setValues', 'Voltage Ramp Up Speed [V/s]');
+            insertInput('demandRampSpeed', 'margin-bottom:10px; margin-top: 5px; margin-left:10%; margin-right:5%;', 'text', 'textbox', 'default', 'setValues')
+            document.getElementById('demandRampSpeed').setAttribute('size', '6');
+            insertDiv('rampSlider', 'slider', 'setValues');
+            //demand voltage ramp down
+            insertParagraph('RampTextDown', '', 'margin:0px; margin-left:10%; margin-top:20px;', 'setValues', 'Demand Ramp Down Speed [V/s]');
+            insertInput('demandRampDownSpeed', 'margin-bottom:10px; margin-top: 5px; margin-left:10%; margin-right:5%;', 'text', 'textbox', 'default', 'setValues')
+            document.getElementById('demandRampDownSpeed').setAttribute('size', '6');
+            insertDiv('rampDownSlider', 'slider', 'setValues');
+
+            //space canvas:
+            insertCanvas('inputSpacer', '', 'margin-left:10%; margin-top:5%;', '200px', '5px', this.sidebarID);
+            //draw on the canvas:
+            var ILcanvas = document.getElementById('inputSpacer');
+            var ILcontext = ILcanvas.getContext('2d');
+            ILcontext.strokeStyle = 'rgba(255,255,255,0.9)'
+            ILcontext.beginPath();
+            ILcontext.moveTo(0,0);
+            ILcontext.lineTo(200,0);
+            ILcontext.stroke();
+
+            //channel changing form:
+            insertForm('changeChannel', '', this.sidebarID);
+            //title
+            insertH4('ccTitle', '', 'changeChannel', 'Change Channel:');
+            document.getElementById('ccTitle').setAttribute('style', 'margin-left:10%; margin-bottom:10px;');
+            //cards:
+            insertParagraph('cardTitle', '', 'display:inline; margin-left:10%; margin-right:1%', 'changeChannel', 'Card');
+            insertSelect('CardList', 'width:80px;', 'changeChannel');
+            insertLinebreak('changeChannel');
+            //channels:
+            insertParagraph('channelTitle', '', 'display:inline; margin-left:10%; position:relative; top:-20px; margin-right:1%;', 'changeChannel', 'Channel');
+            insertSelect('ChannelList', 'width:75px; position:relative; top:-20px;', 'changeChannel');
+            //submit button:
+            insertInput('getChannelButton', 'position:relative; top:-30px; width: 50px; height:50px; font-size:24px; margin-left:3%; margin-top:10px; border-color:black', 'button', '', 'Go', 'changeChannel');
+        };
+
+        //deploy a sidebar to interact with this element:
+        this.deploySidebar();
+
+        //deploy some sliders in the sidebar
+        var sliderWidth = parseFloat($(document.getElementById('InputLayer')).width())*0.5;
+        this.voltageSlider = new Slider('SidebarBKG', 'volageSliderText', 'demandVoltage', 'voltageSlider', 'voltageSliderBKG', 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', minVoltage, maxVoltage, statusPrecision, voltUnit, sliderWidth );
+        this.rampSlider = new Slider('SidebarBKG', 'rampSliderText', 'demandRampSpeed', 'rampSlider', 'rampSliderBKG', 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', minRampSpeed, maxRampSpeed, statusPrecision, rampUnit,  sliderWidth);
+        this.rampDownSlider = new Slider('SidebarBKG', 'rampDownSliderText', 'demandRampDownSpeed', 'rampDownSlider', 'rampDownSliderBKG', 'rampDownSliderKnob', 'rampDownKnobStyle', 'rampDownSliderText', minRampSpeed, maxRampSpeed, statusPrecision, rampUnit,  sliderWidth);
+
+        //fill meters
+        window.meter = new FillMeter('voltageMeter', 'InputLayer', 0, minVoltage, maxVoltage, voltUnit, statusPrecision);
+        window.currentMeter = new FillMeter('currentMeter', 'InputLayer', 0, minCurrent, maxCurrent, currentUnit, statusPrecision);
+        window.temperatureMeter = new FillMeter('temperatureMeter', 'InputLayer', 0, minTemperature, maxTemperature, temperatureUnit, statusPrecision);
 
         //determine dimesions of canvas:
         this.totalWidth = Math.round(0.5*$('#'+this.wrapperDiv).width());
@@ -502,24 +595,6 @@ function Waffle(rows, cols, wrapperDiv, rowTitles, InputLayer, ODBkeys, headerDi
 
             //return length of longest line:
             return longestLine;
-        };
-
-        //deploy the sidebar
-        this.deploySidebar = function(){
-
-            //wrapper div
-            insertDiv(this.sidebarID, 'Sidebar', this.wrapperDiv);
-            document.getElementById(this.sidebarID).setAttribute('align', 'left');
-
-            //title
-            insertH2('inputTitle', '', this.sidebarID, 'Sin Titulo');
-            document.getElementById('inputTitle').setAttribute('align', 'left');
-
-            //input form
-            insertForm('setValues', 'margin-bottom:0px;', this.sidebarID);
-
-            
-
         };
 
         //get new data:

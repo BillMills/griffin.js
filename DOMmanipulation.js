@@ -44,6 +44,14 @@ function insertH2(id, classTag, wrapperID, content){
     document.getElementById(id).innerHTML = content;
 }
 
+function insertH4(id, classTag, wrapperID, content){
+    var newHead = document.createElement('h4');
+    newHead.setAttribute('id', id);
+    newHead.setAttribute('class', classTag);
+    document.getElementById(wrapperID).appendChild(newHead);
+    document.getElementById(id).innerHTML = content;
+}
+
 function insertLinebreak(wrapperID){
     var br = document.createElement("br");
     document.getElementById(wrapperID).appendChild(br);
@@ -63,4 +71,21 @@ function insertForm(id, style, wrapperID){
     newForm.setAttribute('id', id);
     newForm.setAttribute('style', style);
     document.getElementById(wrapperID).appendChild(newForm);
+}
+
+function insertInput(id, style, type, name, value, wrapperID){
+    var newInput = document.createElement('input');
+    newInput.setAttribute('id', id);
+    newInput.setAttribute('style', style);
+    newInput.setAttribute('type', type);
+    newInput.setAttribute('name', name);
+    newInput.setAttribute('value', value);
+    document.getElementById(wrapperID).appendChild(newInput);
+}
+
+function insertSelect(id, style, wrapperID){
+    var newInput = document.createElement('select');
+    newInput.setAttribute('id', id);
+    newInput.setAttribute('style', style);
+    document.getElementById(wrapperID).appendChild(newInput);
 }

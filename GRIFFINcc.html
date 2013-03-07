@@ -80,85 +80,6 @@
       <div id='DashboardSidebar' class='Sidebar' style='opacity:1; z-index:1'>
       </div>
 
-      <!--Sidebar for HV monitor//////////////////////////////////////////////////////-->
-      <div align='left' id='InputLayer' class='Sidebar'>
-
-        <!--title-->
-        <h2 id='inputTitle' align='left' style='margin-left:10%; margin-top:25px; font-family: "Orbitron", sans-serif;'>sintitulo</h2>
-
-        <!--Form for channel reporting and input-->
-        <form id='setValues' style='margin-bottom:0px;'>
-          <!--Channel on off & status:-->
-          <input type='radio' id='offButton' name='HVswitch' value='off' style='margin-left:10%; margin-bottom:10px'>Off
-          <input type='radio' id='onButton' name='HVswitch' value='on' style='margin-left:10px; margin-bottom:10px; display:inline;'>On
-
-          <!--Submit updates to channel settings-->
-          <input id='submitParameters' type="button" value="Commit" onclick="javascript:updateParameter()">
-
-          <!--status:-->
-          <p id='status' style='margin-left:10%;'>Status:</p>
-
-          <!--voltage fill meter-->
-          <p id='voltageMeterTitle' style='margin-left:10%; margin-bottom:0px; display:inline; position:relative; top:-18px;'>Voltage [V]</p>
-          <canvas id='voltageMeter' style='margin-left:2px;' align='right'></canvas>
-
-          <!--current fill meter-->
-          <p id='currentMeterTitle' style='margin-left:10%; margin-bottom:0px; display:inline; position:relative; top:-18px;'>Current [uA]</p>
-          <canvas id='currentMeter' style='margin-left:2%;' align='right'></canvas>
-
-          <!--temperature fill meter-->
-          <p id='temperatureMeterTitle' style='margin-left:10%; margin-bottom:0px; display:inline; position:relative; top:-18px;'>Temperature [C]</p>
-          <canvas id='temperatureMeter' style='margin-left:2%;' align='right'></canvas>
-
-          <!--Demand voltage input field-->
-          <p id='FieldText' width='200px' style='margin-left:10%'>Demand Voltage [V]</p>
-          <input type="text" id="demandVoltage" name='textbox' value='default' style='margin-bottom:10px; margin-top: 5px; margin-left:10%; margin-right:5%;' size='6'>
-
-          <!--Slider for demand voltage-->
-          <div class='slider' id='voltageSlider'></div>
-
-          <!--voltage ramp up speed input field-->
-          <p id='RampText' width='200px' style='margin:0px; margin-left:10%; margin-top:20px;'>Voltage Ramp Up Speed [V/s]</p>
-          <input type="text" id="demandRampSpeed" name='textbox' value='default' style='margin-bottom:10px; margin-top: 5px; margin-left:10%; margin-right:5%;' size='6'>
-
-          <!--Slider for voltage ramp up speed-->
-          <div class='slider' id='rampSlider'></div>
-
-          <!--voltage ramp down speed input field-->
-          <p id='RampTextDown' width='200px' style='margin:0px; margin-left:10%; margin-top:20px;'>Voltage Ramp Down Speed [V/s]</p>
-          <input type="text" id="demandRampDownSpeed" name='textbox' value='default' style='margin-bottom:30px; margin-top: 5px; margin-left:10%; margin-right:5%;' size='6'>
-
-          <!--Slider for voltage ramp down speed-->
-          <div class='slider' id='rampDownSlider'></div>
-
-        </form>
-
-        <canvas id='inputSpacer' height=5px width=200px style='margin-left:10%'></canvas>
-        <script type="text/JavaScript">
-          //style the input layer a bit:  TODO: factor out?
-          var ILcanvas = document.getElementById('inputSpacer');
-          var ILcontext = ILcanvas.getContext('2d');
-          ILcontext.strokeStyle = 'rgba(255,255,255,0.9)'
-          ILcontext.beginPath();
-          ILcontext.moveTo(0,0);
-          ILcontext.lineTo(200,0);
-          ILcontext.stroke();
-        </script>
-
-        <!--Form for channel selecting-->
-        <form id='changeChannel'>
-          <h4 style='margin-left:10%; margin-bottom:10px;'>Change Channel:</h4>
-          <p style='display:inline; margin-left:10%'>Card</p>
-          <!--input type="text" id="newCol" name='newCol' style='margin-bottom:10px; margin-left:5px; display:inline;' size='6' value='0'-->
-          <select id='CardList' style='width:80px;'> </select>
-          <br><p style='display:inline; margin-left:10%; position:relative; top:-20px;'>Channel</p>
-          <!--input type="text" id="newRow" name='newRow' style='margin-bottom:10px; margin-left:5px; display:inline;' size='6' value='0'-->
-          <select id='ChannelList' style='width:75px; position:relative; top:-20px;'> </select>
-          <input type="button" value="Go" class='link' style='position:relative; top:-30px; width: 50px; height:50px; font-size:24px; margin-left:3%; margin-top:10px; border-color:black' id='getChannelButton'>       
-        </form>
-
-      </div>
-
     </div>
   <!--End Waffleboard////////////////////////////////////////////////////-->
 
@@ -288,46 +209,16 @@
       $('#waffleplate').width(renderWidth);
       $('#waffleplate').height(renderHeight);
 
-      //style the sidebar backgrounds:
-      document.getElementById('LeftSidebarBKG').width = parseInt(($('#leftSidebar').css('width')).slice(0,3));
-      document.getElementById('LeftSidebarBKG').height = renderHeight*0.9; //parseInt($('#InputLayer').css('height').slice(0,3));
-      tabBKG('LeftSidebarBKG', 'left');
-      document.getElementById('LeftSidebarDetailBKG').width = parseInt(($('#leftSidebar').css('width')).slice(0,3));
-      document.getElementById('LeftSidebarDetailBKG').height = renderHeight*0.9; //parseInt($('#InputLayer').css('height').slice(0,3));
-      tabBKG('LeftSidebarDetailBKG', 'left');
-      document.getElementById('SidebarBKG').width = parseInt(($('#InputLayer').css('width')).slice(0,3));
-      document.getElementById('SidebarBKG').height = renderHeight*0.9; //parseInt($('#InputLayer').css('height').slice(0,3));
-      tabBKG('SidebarBKG', 'right');
-
-      //position right sidebar nicely:
-      var rightSidebarWhitespace = parseFloat(window.innerHeight*0.85) - parseFloat($('#InputLayer').height());
-      $('.Sidebar').css('top', Math.min(0, 0.3*rightSidebarWhitespace) );
-      $('#SidebarBKG').css('top', Math.min(0, 0.3*rightSidebarWhitespace) );
-
       //Waffle onclick event will throw x and y positions up to these globals, so that
       //updateParameter() can use them to determine which channel to update.  TODO: fix
       //without globals.
       window.griffinDialogX;
       window.griffinDialogY;
 
-      //set up channel navigation dropdowns:
-      configureDropdowns('ChannelList', 'CardList', moduleLabels, moduleSizes);
-      document.getElementById('CardList').onblur = function(event){reconfigureChannelList(moduleLabels, moduleSizes, 'ChannelList')};
-
       //declare objects:
 
       //master codex for finding data:
       //window.codex = new masterCodex();
-
-      //HV monitor control sidebar elements:
-      var sliderWidth = parseFloat($(document.getElementById('InputLayer')).width())*0.5;
-      var sliderVoltage = new Slider('SidebarBKG', 'volageSliderText', 'demandVoltage', 'voltageSlider', 'voltageSliderBKG', 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', minVoltage, maxVoltage, statusPrecision, voltUnit, sliderWidth );
-      var sliderRamp = new Slider('SidebarBKG', 'rampSliderText', 'demandRampSpeed', 'rampSlider', 'rampSliderBKG', 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', minRampSpeed, maxRampSpeed, statusPrecision, rampUnit,  sliderWidth);
-      var sliderRampDown = new Slider('SidebarBKG', 'rampDownSliderText', 'demandRampDownSpeed', 'rampDownSlider', 'rampDownSliderBKG', 'rampDownSliderKnob', 'rampDownKnobStyle', 'rampDownSliderText', minRampSpeed, maxRampSpeed, statusPrecision, rampUnit,  sliderWidth);
-
-      window.meter = new FillMeter('voltageMeter', 'InputLayer', 0, minVoltage, maxVoltage, voltUnit, statusPrecision);
-      var currentMeter = new FillMeter('currentMeter', 'InputLayer', 0, minCurrent, maxCurrent, currentUnit, statusPrecision);
-      var temperatureMeter = new FillMeter('temperatureMeter', 'InputLayer', 0, minTemperature, maxTemperature, temperatureUnit, statusPrecision);
 
       //main elements///////////////////////////////////////////////////
       //dashboard
@@ -337,7 +228,7 @@
       var AlarmServices = new AlarmService('leftSidebar', 'leftSidebarDetail', alarmThresholds, scaleMaxima, alarmPrecision);
 
       //HV monitor
-      var waffle = new Waffle(rows,columns, "waffleplate", rowTitles, "InputLayer", ODBkeys,'mainframeLinks', moduleSizes, sliderVoltage, sliderRamp, sliderRampDown, barChartPrecision, prefix, postfix, AlarmServices);
+      var waffle = new Waffle(rows,columns, "waffleplate", rowTitles, "InputLayer", ODBkeys,'mainframeLinks', moduleSizes, barChartPrecision, prefix, postfix, AlarmServices);
 
       //Subsystem sidebar:
       insertDiv('SubsystemSidebar', 'Sidebar', 'waffleplate');
@@ -380,6 +271,26 @@
 
       var TriggerMonitor = new Trigger('waffleplate');
       //end main elements////////////////////////////////////////////////////////////////////////////
+
+      //style the sidebar backgrounds:
+      document.getElementById('LeftSidebarBKG').width = parseInt(($('#leftSidebar').css('width')).slice(0,3));
+      document.getElementById('LeftSidebarBKG').height = renderHeight*0.9; //parseInt($('#InputLayer').css('height').slice(0,3));
+      tabBKG('LeftSidebarBKG', 'left');
+      document.getElementById('LeftSidebarDetailBKG').width = parseInt(($('#leftSidebar').css('width')).slice(0,3));
+      document.getElementById('LeftSidebarDetailBKG').height = renderHeight*0.9; //parseInt($('#InputLayer').css('height').slice(0,3));
+      tabBKG('LeftSidebarDetailBKG', 'left');
+      document.getElementById('SidebarBKG').width = parseInt(($('#InputLayer').css('width')).slice(0,3));
+      document.getElementById('SidebarBKG').height = renderHeight*0.9; //parseInt($('#InputLayer').css('height').slice(0,3));
+      tabBKG('SidebarBKG', 'right');
+
+      //position right sidebar nicely:
+      var rightSidebarWhitespace = parseFloat(window.innerHeight*0.85) - parseFloat($('#InputLayer').height());
+      $('.Sidebar').css('top', Math.min(0, 0.3*rightSidebarWhitespace) );
+      $('#SidebarBKG').css('top', Math.min(0, 0.3*rightSidebarWhitespace) );
+
+      //set up channel navigation dropdowns:
+      configureDropdowns('ChannelList', 'CardList', moduleLabels, moduleSizes);
+      document.getElementById('CardList').onblur = function(event){reconfigureChannelList(moduleLabels, moduleSizes, 'ChannelList')};
 
       //global variables todo: try and cut down on these/////////////////////////////////////////////
       //which nav panel is on top?
