@@ -94,15 +94,6 @@ DESCANTDS = function(){
 			this.key[i][0] = 'DSC0' +i+ 'XN00X';
 		else
 			this.key[i][0] = 'DSC' +i+ 'XN00X';
-		/*
-		//use the codex to find out what the ODB index for each name is:
-		for(j=0; j<window.codex.table.length; j++){
-			if(window.codex.table[j][0] == this.key[i][0]){
-				this.key[i][1] = window.codex.table[j][1];
-				break;
-			}
-		}
-		*/
 	}
 
 }
@@ -233,7 +224,14 @@ DAQDS = function(){
 	this.digitizerLinks = [];
 	this.digitizers = [];
 
-
 	//key map
-	//todo
+	/*
+	//use the codex to find out what the ODB index for each name is:
+	for(j=0; j<window.codex.table.length; j++){
+		if(window.codex.table[j][0] == this.key[i][0]){
+			this.key[i][1] = window.codex.table[j][1];
+			break;
+		}
+	}
+	*/
 }

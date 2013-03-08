@@ -30,7 +30,7 @@ function AlarmService(sidebarDivID, sidebarDetailDivID, alarmThresholds, scaleMa
     this.nFrames = this.FPS*this.duration;
 
     //minimum height of detail-level canvas:
-    this.minBKGheight = document.getElementById('LeftSidebarBKG').height;
+    this.minBKGheight = $('#waffleplate').height()*0.9;
     //height of detail-level canvas in previous update:
     this.bkgCanvasHeight = this.minBKGheight;
 

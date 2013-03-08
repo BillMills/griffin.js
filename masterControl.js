@@ -54,8 +54,7 @@ function masterLoop(dashboard, AlarmServices, waffle, SHARC, HPGE, DESCANT, PACE
         if(window.onDisplay == 'TriggerCanvas' || !callMyself) animate(Trigger,0);
         else Trigger.draw(Trigger.nFrames);
     }
-
-    //clearTimeout(window.loop);
+    
     window.loop = setTimeout(function(){masterLoop(dashboard, AlarmServices, waffle, SHARC, HPGE, DESCANT, PACES, DANTE, BAMBINO, SCEPTAR, SPICE, TIP, DAQ, Clock, Trigger, 1)}, 3000);
 }
 

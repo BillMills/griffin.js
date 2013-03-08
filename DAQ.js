@@ -1,4 +1,4 @@
-function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config, prefix, postifx){
+function DAQ(monitor, canvas, detailCanvas, minima, maxima, prefix, postifx){
 	var i, j, k, m;
 
 	var that = this;
@@ -11,24 +11,25 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config, pre
     this.linkWrapperID = 'DAQlinks'              //ID of wrapper div for DAQ links
     this.topNavID = 'DAQbutton'                  //ID of button to navigate here in the top nav menu
     this.sidebarID = 'DAQsidebar'                //ID of right sidebar to associate with this object
-	//this.tooltip = tooltip;			         //tooltip associated with this object
 	this.minima = minima;			             //minima of element scalea: [master, master group, master link, collector, digi summary link, digi summary node, digi group link, digi transfer, digitizer]
 	this.maxima = maxima;			             //as minima.
-    this.config = config;                        //[nCollectorGroups, nCollectors, nDigitizerGroups, nDigitizers, nDigitizersPerCollector, nDigitizerSubgroups]
-    this.nCollectorGroups = config[0];
     this.detailShowing = 0;                      //is the detail canvas showing?
     this.dataBus = new DAQDS();
 
-    if(this.nCollectorGroups == 0)
-        this.nCollectors = config[1];
-    else
-    	this.nCollectors = this.nCollectorGroups*4;
-    this.nDigitizerGroups = config[2];
-    if(this.nDigitizerGroups == 0)
-        this.nDigitizers = config[3];
-    else
-    	this.nDigitizers = this.nDigitizerGroups*4;
-    this.nDigitizersPerCollector = config[4];
+    this.nCollectorGroups = 0;  //fixed for now
+    this.nCollectors = window.codex.nCollectors;
+    this.nDigitizerGroups = 0;  //fixed for now
+    this.nDigitizers = window.codex.nDigitizers;
+    this.nDigitizersPerCollector = [];
+    for(i=0; i<this.nCollectors; i++){
+        this.nDigitizersPerCollector[i] = window.codex.nDigitizersPerCollector[i];
+    }
+    //how many digitizers came before the ith collector?
+    this.prevDigi = [];
+    this.prevDigi[0] = 0;
+    for(i=1; i<this.nCollectors; i++){
+        this.prevDigi[i] = this.prevDigi[i-1] + this.nDigitizersPerCollector[i-1];
+    }
 
     //scale & insert DAQ canvases & navigation//////////////////////////////////////////////////////////////////////////////////////
     this.monitor = document.getElementById(this.monitorID);
@@ -447,6 +448,10 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config, pre
         var topMargin = 30;
         var leftMargin = 5;
 
+        if(frame == 0){
+            this.detailContext.clearRect(0,0,this.canvasWidth, this.canvasHeight - this.scaleHeight);
+        }
+
         if(frame == this.nFrames){
             this.drawScale(this.detailContext);
         }
@@ -476,40 +481,40 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config, pre
             }
             
             //digitizer connecters:
-            for(i=this.nDigitizersPerCollector*clctr; i<this.nDigitizersPerCollector*clctr+this.nDigitizersPerCollector; i++){
+            for(i=this.prevDigi[clctr]; i<this.prevDigi[clctr]+this.nDigitizersPerCollector[clctr]; i++){
                 this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.oldDigitizerLinkColor[i]), parseHexColor(this.digitizerLinkColor[i]), frame/this.nFrames);
                 this.detailContext.beginPath();
-                this.detailContext.moveTo( Math.floor( (i - this.nDigitizersPerCollector*clctr)/4 )*0.76/3*this.canvasWidth + 0.12*this.canvasWidth, this.canvasHeight*0.4 + topMargin );
-                this.detailContext.lineTo( Math.floor( (i - this.nDigitizersPerCollector*clctr)/4 )*0.76/3*this.canvasWidth + 0.12*this.canvasWidth - this.canvasWidth*0.09 + (i%4)*this.canvasWidth*0.06, this.canvasHeight*0.6 + topMargin );
+                this.detailContext.moveTo( Math.floor( (i - this.prevDigi[clctr])/4 )*0.76/3*this.canvasWidth + 0.12*this.canvasWidth, this.canvasHeight*0.4 + topMargin );
+                this.detailContext.lineTo( Math.floor( (i - this.prevDigi[clctr])/4 )*0.76/3*this.canvasWidth + 0.12*this.canvasWidth - this.canvasWidth*0.09 + (i%4)*this.canvasWidth*0.06, this.canvasHeight*0.6 + topMargin );
                 this.detailContext.closePath();
                 this.detailContext.stroke();   
             }
 
             //digitizers:
-            for(i=this.nDigitizersPerCollector*clctr; i<this.nDigitizersPerCollector*clctr+this.nDigitizersPerCollector; i++){
+            for(i=this.prevDigi[clctr]; i<this.nDigitizersPerCollector[clctr]*clctr+this.nDigitizersPerCollector[clctr]; i++){
                 this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.oldDigitizerColor[i]), parseHexColor(this.digitizerColor[i]), frame/this.nFrames);
-                roundBox(this.detailContext, Math.floor( (i - this.nDigitizersPerCollector*clctr)/4 )*0.76/3*this.canvasWidth + 0.12*this.canvasWidth - this.canvasWidth*0.09 + (i%4)*this.canvasWidth*0.06 - 0.02*this.canvasWidth , this.canvasHeight*0.6 + topMargin, 0.04*this.canvasWidth, 0.04*this.canvasWidth, 5);
+                roundBox(this.detailContext, Math.floor( (i - this.prevDigi[clctr])/4 )*0.76/3*this.canvasWidth + 0.12*this.canvasWidth - this.canvasWidth*0.09 + (i%4)*this.canvasWidth*0.06 - 0.02*this.canvasWidth , this.canvasHeight*0.6 + topMargin, 0.04*this.canvasWidth, 0.04*this.canvasWidth, 5);
                 this.detailContext.fill();
                 this.detailContext.stroke();
                 //tooltip layer:
-                this.TTdetailContext.fillStyle = 'rgba('+(i-this.nDigitizersPerCollector*clctr)+','+(i-this.nDigitizersPerCollector*clctr)+','+(i-this.nDigitizersPerCollector*clctr)+',1)';
-                this.TTdetailContext.fillRect(Math.floor(Math.floor( (i - this.nDigitizersPerCollector*clctr)/4 )*0.76/3*this.canvasWidth + 0.12*this.canvasWidth - this.canvasWidth*0.09 + (i%4)*this.canvasWidth*0.06 - 0.02*this.canvasWidth), Math.floor(this.canvasHeight*0.6 + topMargin), Math.floor(0.04*this.canvasWidth), Math.floor(0.04*this.canvasWidth));
+                this.TTdetailContext.fillStyle = 'rgba('+(i-this.prevDigi[clctr])+','+(i-this.prevDigi[clctr])+','+(i-this.prevDigi[clctr])+',1)';
+                this.TTdetailContext.fillRect(Math.floor(Math.floor( (i - this.prevDigi[clctr])/4 )*0.76/3*this.canvasWidth + 0.12*this.canvasWidth - this.canvasWidth*0.09 + (i%4)*this.canvasWidth*0.06 - 0.02*this.canvasWidth), Math.floor(this.canvasHeight*0.6 + topMargin), Math.floor(0.04*this.canvasWidth), Math.floor(0.04*this.canvasWidth));
             }
         } else {  //TIGRESS mode:
-            for(i=this.nDigitizersPerCollector*clctr; i<this.nDigitizersPerCollector*clctr + this.nDigitizersPerCollector; i++){
+            for(i=this.prevDigi[clctr]; i<this.prevDigi[clctr] + this.nDigitizersPerCollector[clctr]; i++){
                 //digitizers:
                 this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.oldDigitizerColor[i]), parseHexColor(this.digitizerColor[i]), frame/this.nFrames);
-                roundBox(this.detailContext, this.margin + (i+0.5)*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector - 0.02*this.canvasWidth , this.canvasHeight*0.6 + topMargin, 0.04*this.canvasWidth, 0.04*this.canvasWidth, 5);
+                roundBox(this.detailContext, this.margin + ((i-this.prevDigi[clctr])+0.5)*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector[clctr] - 0.02*this.canvasWidth , this.canvasHeight*0.6 + topMargin, 0.04*this.canvasWidth, 0.04*this.canvasWidth, 5);
                 this.detailContext.fill();
                 this.detailContext.stroke();
                 //tooltip layer:
-                this.TTdetailContext.fillStyle = 'rgba('+(i-this.nDigitizersPerCollector*clctr)+','+(i-this.nDigitizersPerCollector*clctr)+','+(i-this.nDigitizersPerCollector*clctr)+',1)';
-                this.TTdetailContext.fillRect(Math.round(this.margin + (i+0.5)*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector - 0.02*this.canvasWidth), Math.round(this.canvasHeight*0.6 + topMargin), Math.round(0.04*this.canvasWidth), Math.round(0.04*this.canvasWidth));
+                this.TTdetailContext.fillStyle = 'rgba('+(i-this.prevDigi[clctr])+','+(i-this.prevDigi[clctr])+','+(i-this.prevDigi[clctr])+',1)';
+                this.TTdetailContext.fillRect(Math.round(this.margin + ((i-this.prevDigi[clctr])+0.5)*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector[clctr] - 0.02*this.canvasWidth), Math.round(this.canvasHeight*0.6 + topMargin), Math.round(0.04*this.canvasWidth), Math.round(0.04*this.canvasWidth));
 
                 //digitizer to collector link:
                 this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.oldDigitizerLinkColor[i]), parseHexColor(this.digitizerLinkColor[i]), frame/this.nFrames);
-                this.detailContext.moveTo(this.margin + (i+0.5)*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector, this.canvasHeight*0.6 + topMargin);
-                this.detailContext.lineTo( this.canvasWidth/2 - this.collectorWidth/2 + (i+0.5)*this.collectorWidth/this.nDigitizersPerCollector, topMargin + this.collectorHeight);
+                this.detailContext.moveTo(this.margin + ((i-this.prevDigi[clctr])+0.5)*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector[clctr], this.canvasHeight*0.6 + topMargin);
+                this.detailContext.lineTo( this.canvasWidth/2 - this.collectorWidth/2 + ((i-this.prevDigi[clctr])+0.5)*this.collectorWidth/this.nDigitizersPerCollector[clctr], topMargin + this.collectorHeight);
                 this.detailContext.stroke();
             }
         }

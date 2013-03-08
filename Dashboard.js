@@ -3,8 +3,17 @@ function Dashboard(monitor){
 	this.wrapperID = monitor;			    //ID of wrapping div
 	this.canvasID = 'DashboardCanvas';	    //ID of canvas to paint dashboard on
     this.linkWrapperID = 'DashboardLinks';  //ID of div to contain clock view header
+    this.sidebarID = 'DashboardSidebar';    //ID of dashboard sidebar div
 
 	this.wrapper = document.getElementById(monitor);
+
+    //deploy the sidebar
+    this.deploySidebar = function(){
+        //wrapper div
+        insertDiv(this.sidebarID, 'Sidebar', this.wrapperID);
+        document.getElementById(this.sidebarID).setAttribute('align', 'left');
+    }
+    this.deploySidebar();
 
     //add top level nav button:
     insertButton('DashboardButton', 'navLinkDown', "javascript:swapView('DashboardLinks', 'DashboardCanvas', 'DashboardSidebar', 'DashboardButton')", 'statusLink', 'Dashboard');

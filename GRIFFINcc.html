@@ -60,7 +60,7 @@
       <p id="youAreHere" style='display: inline; color:rgba(255,255,255,0.3); font-size:24px; margin:0; position:absolute; right:0; width:;'></p>
     </div>
 
-    <!--Waffleboard////////////////////////////////////////////////////////-->
+    <!--Waffleplate////////////////////////////////////////////////////////-->
 
     <div id="waffleplate">      
 
@@ -76,12 +76,8 @@
 
       <canvas id='SidebarBKG' style='position:absolute; z-index:-1; right:0%'> </canvas>
 
-      <!--Sidebar for dashboard-->
-      <div id='DashboardSidebar' class='Sidebar' style='opacity:1; z-index:1'>
-      </div>
-
     </div>
-  <!--End Waffleboard////////////////////////////////////////////////////-->
+  <!--End Waffleplate////////////////////////////////////////////////////-->
 
   <script type="text/JavaScript">
 
@@ -155,13 +151,8 @@
       var SMmaxima = [1];
 
       //DAQ//////////////////////////////////////////////////////////////////////////////////
-      var nCollectors = 16;
-      var nDigitizers = 256;
-
       var DAQminima = [0,0,0,0,0,0,0,0,0];
       var DAQmaxima = [1,1,1,1,1,1,1,1,1];
-
-      var configParameters = [4, 16, 4*16, 16*16, 16];
 
       //---------------End Experiment-specific parameters--------------------------------------------------
       //---------------------------------------------------------------------------------------------------
@@ -218,7 +209,7 @@
       //declare objects:
 
       //master codex for finding data:
-      //window.codex = new masterCodex();
+      window.codex = new masterCodex();
 
       //main elements///////////////////////////////////////////////////
       //dashboard
@@ -264,7 +255,7 @@
       }
       window.subsystemScalars = monitorValues.length;
 
-      var DAQMonitor = new DAQ('waffleplate', 'DAQcanvas', 'DAQdetailCanvas', 0, DAQminima, DAQmaxima, configParameters, [], []);
+      var DAQMonitor = new DAQ('waffleplate', 'DAQcanvas', 'DAQdetailCanvas', DAQminima, DAQmaxima, [], []);
 
       var ClockMonitor = new Clock('waffleplate');
       ClockMonitor.draw(ClockMonitor.nFrames);
@@ -328,7 +319,13 @@
       startLoop(0); 
 
       $('#setValues').on('change', function(event){highlight('submitParameters')})
-
+/*
+      xmlhttp = new XMLHttpRequest();
+      xmlhttp.open("GET","note.xml",false);
+      xmlhttp.send();
+      xmlDoc=xmlhttp.responseXML;
+      alert(xmlDoc.getElementsByTagName("to")[0].childNodes[0].nodeValue);
+*/
 
   </script> 
   
