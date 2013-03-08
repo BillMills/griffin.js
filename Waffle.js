@@ -19,7 +19,7 @@ function Waffle(rows, cols, wrapperDiv, rowTitles, InputLayer, ODBkeys, headerDi
         this.ODBkeys = ODBkeys;                     //array of strings describing the locations of relevant info in ODB
         this.headerDiv = headerDiv;                 //div ID of waffle header
         this.moduleSizes = moduleSizes;             //array containing sizes of modules in groups of 12 channels
-        this.chx = 1;                               //x channel of input sidebar focus
+        this.chx = 0;                               //x channel of input sidebar focus
         this.chy = 1;                               //y channel of input sidebar focus
         this.linkWrapperID = 'mainframeLinks';      //ID of div containing nav links
         this.topNavID = 'HVmonitorButton';
@@ -28,6 +28,11 @@ function Waffle(rows, cols, wrapperDiv, rowTitles, InputLayer, ODBkeys, headerDi
         this.AlarmServices = AlarmServices;         //Alarm serivce object the waffle will fire events at
         this.dataBus = new HVDS(this.rows, this.cols);  //data structure to manage info.
         this.viewStatus = -1;                       //indicates which view is on top: -1=summary, n>-1=bar chart n.
+
+        //make sure the waffle is pointing at a channel that actually has something in it before the initial populate:
+        i=0;
+        while(this.moduleSizes[i] == 0) i++;
+        this.chx = i;
 
         //deploy the sidebar
         this.deploySidebar = function(){
@@ -109,6 +114,7 @@ function Waffle(rows, cols, wrapperDiv, rowTitles, InputLayer, ODBkeys, headerDi
             insertSelect('ChannelList', 'width:75px; position:relative; top:-20px;', 'changeChannel');
             //submit button:
             insertInput('getChannelButton', 'position:relative; top:-30px; width: 50px; height:50px; font-size:24px; margin-left:3%; margin-top:10px; border-color:black', 'button', '', 'Go', 'changeChannel');
+            document.getElementById('getChannelButton').setAttribute('class', 'link');
         };
 
         //deploy a sidebar to interact with this element:

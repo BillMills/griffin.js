@@ -127,14 +127,21 @@ DANTEDS = function(){
 	//todo
 }
 
-BAMBINODS = function(){
+BAMBINODS = function(mode){
 	//data arrays:
 	this.HV = [];
 	this.thresholds = [];
 	this.rate = [];
 
 	//key map
-	//todo
+	/*
+	this.key = [];
+	if(mode == 'S2'){
+
+	} else if(mode == 'S3'){
+
+	}
+	*/
 }
 
 SCEPTARDS = function(){
@@ -144,20 +151,44 @@ SCEPTARDS = function(){
 	this.rate = [];
 
 	//key map
-	//todo
+	this.key = [];
+	for(i=0; i<20; i++){
+		this.key[i] = [];
+		//generate names
+		if(i<10)
+			this.key[i][0] = 'SEP0'+i+'XN00X';
+		else
+			this.key[i][0] = 'SEP'+i+'XN00X';
+	}	
+	this.key[20] = [];
+	this.key[20][0] = 'ZDS01XN00X';
 }
 
 SPICEDS = function(){
+	var i;
+
 	//data arrays:
 	this.HV = [];
 	this.thresholds = [];
 	this.rate = [];
 
 	//key map
-	//todo
+	this.key = [];
+	for(i=0; i<120; i++){
+		this.key[i] = [];
+		//generate names
+		if(i<10)
+			this.key[i][0] = 'SPI00XN00'+i;
+		else if(i<100)
+			this.key[i][0] = 'SPI00XN0'+i;
+		else 
+			this.key[i][0] = 'SPI00XN'+i;
+	}
 }
 
 TIPDS = function(){
+	var i;
+
 	//data arrays:
 	this.CsIHV = [];
 	this.CsIthresholds = [];
@@ -178,7 +209,16 @@ TIPDS = function(){
 	this.detailBGOrate = [];
 	
 	//key map
-	//todo
+	this.key = [];
+	//CsI Wall
+	for(i=0; i<24; i++){
+		this.key[i] = [];
+		//generate names
+		if(i<10)
+			this.key[i][0] = 'TPW00' +i+ 'P00X';
+		else
+			this.key[i][0] = 'TPW0' +i+ 'P00X';
+	}
 }
 
 DAQDS = function(){

@@ -1,4 +1,4 @@
-function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
+function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config, prefix, postifx){
 	var i, j, k, m;
 
 	var that = this;
@@ -14,7 +14,7 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
 	//this.tooltip = tooltip;			         //tooltip associated with this object
 	this.minima = minima;			             //minima of element scalea: [master, master group, master link, collector, digi summary link, digi summary node, digi group link, digi transfer, digitizer]
 	this.maxima = maxima;			             //as minima.
-    this.config = config;                        //[nCollectorGroups, nCollectors, nDigitizerGroups, nDigitizers, nDigitizersPerCollector]
+    this.config = config;                        //[nCollectorGroups, nCollectors, nDigitizerGroups, nDigitizers, nDigitizersPerCollector, nDigitizerSubgroups]
     this.nCollectorGroups = config[0];
     this.detailShowing = 0;                      //is the detail canvas showing?
     this.dataBus = new DAQDS();
@@ -50,7 +50,7 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
     insertParagraph('DAQcollectorTitle', '', 'display:inline; color:#999999;', 'DAQlinks', 'Collector ');
     //deploy collector buttons
     for(i=0; i<this.nCollectors; i++){
-        insertButton('Collector'+i, 'navLink', "{swapFade('Collector"+i+"', window.DAQpointer, 0, 1); window.DAQpointer.detailShowing=1;}", this.linkWrapperID, i);
+        insertButton('Collector'+i, 'navLink', "{swapFade('Collector"+i+"', window.DAQpointer, 0, 1); window.DAQpointer.detailShowing=1; animateDetail(window.DAQpointer, 0); window.DAQdetail="+i+";}", this.linkWrapperID, i);
         $('#Collector'+i).width( ( 0.95*this.canvasWidth - $('#DAQcollectorTitle').width()) / this.nCollectors );
     }
     //right sidebar
@@ -59,17 +59,40 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
     //display canvases
     //top view
     insertCanvas(this.canvasID, 'monitor', 'top: '+ ($('#DAQlinks').height() + 5) +'px;', this.canvasWidth, this.canvasHeight, this.monitorID);
-    //detailed view
-    insertCanvas(this.detailCanvasID, 'monitor', 'top:' + ($('#DAQlinks').height() + 5) +'px;', this.canvasWidth, this.canvasHeight, this.monitorID);
-    //finished adding to the DOM////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     this.canvas = document.getElementById(canvas);
     this.context = this.canvas.getContext('2d');
+    //detailed view
+    insertCanvas(this.detailCanvasID, 'monitor', 'top:' + ($('#DAQlinks').height() + 5) +'px;', this.canvasWidth, this.canvasHeight, this.monitorID);
     this.detailCanvas = document.getElementById(detailCanvas);
     this.detailContext = this.detailCanvas.getContext('2d');
+    //Tooltip for summary level
+    insertCanvas(this.TTcanvasID, 'monitor', 'top:' + ($('#DAQlinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, this.monitorID);
+    this.TTcanvas = document.getElementById(this.TTcanvasID);
+    this.TTcontext = this.TTcanvas.getContext('2d');
+    //hidden Tooltip map layer for detail
+    insertCanvas(this.TTdetailCanvasID, 'monitor', 'top:' + ($('#DAQlinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, this.monitorID);
+    this.TTdetailCanvas = document.getElementById(this.TTdetailCanvasID);
+    this.TTdetailContext = this.TTdetailCanvas.getContext('2d');
+    //finished adding to the DOM////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    //associate tooltip:
-    //this.tooltip.obj = that;
+    //Dirty trick to implement tooltip on obnoxious geometry: make another canvas of the same size hidden beneath, with the 
+    //detector drawn on it, but with each element filled in with rgba(0,0,n,1), where n is the channel number; fetching the color from the 
+    //hidden canvas at point x,y will then return the appropriate channel index.
+    //summary level:
+    //paint whole hidden canvas with R!=G!=B to trigger TT suppression:
+    this.TTcontext.fillStyle = 'rgba(50,100,150,1)';
+    this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
+    //set up summary tooltip:
+    this.tooltip = new Tooltip(this.canvasID, 'DAQTipText', 'DAQttCanv', 'DAQTT', this.monitorID, prefix, postfix);
+    this.tooltip.obj = that;
+    //detail level tt:
+    //paint whole hidden canvas with R!=G!=B to trigger TT suppression:
+    this.TTdetailContext.fillStyle = 'rgba(50,100,150,1)';
+    this.TTdetailContext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
+    //set up detail tooltip:
+    this.detailTooltip = new Tooltip(this.detailCanvasID, 'DAQdetailTipText', 'DAQttDetailCanv', 'DAQTTdetail', this.monitorID, prefix, postfix);
+    this.detailTooltip.obj = that;
+
 
     //drawing parameters//////////////////////////////////////////////
     this.collectorWidth = 0.9*(this.canvasWidth-10) / 16;
@@ -164,10 +187,10 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
     //member functions///////////////////////////////////////////////
 
     //decide which view to transition to when this object is navigated to
-    this.view = function(){
-        if(this.detailShowing == 0)
+    this.view = function(index){
+        if(index == 1)
             return this.detailCanvasID;
-        else if(this.detailShowing == 1)
+        else if(index == 0)
             return this.canvasID;
     }
 
@@ -205,6 +228,9 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
             this.digitizerLinkColor[i] = this.parseColor(this.dataBus.digitizerLinks[i], 7);
             this.digitizerColor[i] = this.parseColor(this.dataBus.digitizers[i], 8); 
         }
+
+        this.tooltip.update();
+        this.detailTooltip.update();
 	};
 
 	//parse scalar into a color on a color scale bounded by the entries in this.minima[index] and this.maxima[index] 
@@ -307,6 +333,10 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
 		roundBox(this.context, this.margin, this.masterTop, this.canvasWidth-2*this.margin, this.masterBottom - this.masterTop, 5);
 		this.context.fill();
         this.context.stroke();
+
+        //tooltip encoding level:
+        this.TTcontext.fillStyle = 'rgba(0, 0, 0, 1)';
+        this.TTcontext.fillRect(Math.round(this.margin), Math.round(this.masterTop), Math.round(this.canvasWidth-2*this.margin), Math.round(this.masterBottom - this.masterTop));
     };
 
     this.drawCollectorNode = function(index, color){
@@ -320,6 +350,13 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
         }
         this.context.fill();
 		this.context.stroke();
+
+        //tooltip encoding level:
+        this.TTcontext.fillStyle = 'rgba('+(1+index)+', '+(1+index)+', '+(1+index)+', 1)';
+        if(this.nCollectorGroups != 0) //GRIFFIN mode
+            this.TTcontext.fillRect(Math.round(this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups + (index%4 - 1.5)*(this.collectorWidth + this.collectorGutter) - this.collectorWidth/2), Math.round(this.collectorTop), Math.round(this.collectorWidth), Math.round(this.collectorBottom - this.collectorTop));  
+        else //TIGRESS mode:
+            this.TTcontext.fillRect(Math.round(this.margin + (index+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectors - this.collectorWidth/2), Math.round(this.collectorTop), Math.round(this.collectorWidth), Math.round(this.collectorBottom - this.collectorTop));
     };
 
     this.drawSummaryDigitizerNode = function(index, color){
@@ -333,6 +370,14 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
         }
 		this.context.fill();
         this.context.stroke();
+
+        //tooltip encoding level:
+        this.TTcontext.fillStyle = 'rgba('+(1+this.nCollectors+index)+', '+(1+this.nCollectors+index)+', '+(1+this.nCollectors+index)+', 1)';
+        if(this.nCollectorGroups != 0) //GRIFFIN mode
+            this.TTcontext.fillRect(Math.round(this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups + (index%4 - 1.5)*(this.collectorWidth + this.collectorGutter) - this.collectorWidth/2), Math.round(this.digiSummaryTop), Math.round(this.collectorWidth), Math.round(this.digiSummaryBottom - this.digiSummaryTop));  
+        else //TIGRESS mode:
+            this.TTcontext.fillRect(Math.round(this.margin + (index+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectors - this.collectorWidth/2), Math.round(this.digiSummaryTop), Math.round(this.collectorWidth), Math.round(this.digiSummaryBottom - this.digiSummaryTop));
+
     };
 
     this.drawMasterGroupLink = function(index, color){
@@ -376,7 +421,7 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
     };
 
     this.drawDetail = function(context, frame){
-        var color, i;
+        var color, i, j;
 
         var topMargin = 30;
         var leftMargin = 5;
@@ -388,20 +433,27 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
         this.detailContext.fillStyle = this.cellColor;
         this.detailContext.lineWidth = this.lineweight;
 
+        //clear the tt
+        this.TTdetailContext.fillStyle = 'rgba(50,100,150,1)';
+        this.TTdetailContext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
+
         //collector index:
         var clctr = window.DAQdetail;
 
         if(this.nDigitizerGroups != 0){  //GRIFFIN mode:
             //group connecters:
+            
+            j=0;
             for(i=4*clctr; i<4*clctr + 4; i++){
                 this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.oldDigiGroupSummaryColor[i]), parseHexColor(this.digiGroupSummaryColor[i]), frame/this.nFrames);
                 this.detailContext.beginPath();
-                this.detailContext.moveTo(this.canvasWidth/2 - this.collectorWidth*0.3 + this.collectorWidth*0.2*i, topMargin+this.collectorHeight);
-                this.detailContext.lineTo( 0.12*this.canvasWidth + 0.76/3*this.canvasWidth*i, this.canvasHeight*0.4 + topMargin);
+                this.detailContext.moveTo(this.canvasWidth/2 - this.collectorWidth*0.3 + this.collectorWidth*0.2*j, topMargin+this.collectorHeight);
+                this.detailContext.lineTo( 0.12*this.canvasWidth + 0.76/3*this.canvasWidth*j, this.canvasHeight*0.4 + topMargin);
                 this.detailContext.closePath();
                 this.detailContext.stroke();
+                j++
             }
-
+            
             //digitizer connecters:
             for(i=this.nDigitizersPerCollector*clctr; i<this.nDigitizersPerCollector*clctr+this.nDigitizersPerCollector; i++){
                 this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.oldDigitizerLinkColor[i]), parseHexColor(this.digitizerLinkColor[i]), frame/this.nFrames);
@@ -439,6 +491,9 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
         roundBox(this.detailContext, this.canvasWidth/2 - this.collectorWidth/2, topMargin, this.collectorWidth, this.collectorHeight, 5);
         this.detailContext.fill();
         this.detailContext.stroke();
+        //tooltip layer:
+        this.TTdetailContext.fillStyle = 'rgba('+(clctr+1)+','+(clctr+1)+','+(clctr+1)+',1)';
+        this.TTdetailContext.fillRect(Math.round(this.canvasWidth/2 - this.collectorWidth/2), Math.round(topMargin), Math.round(this.collectorWidth), Math.round(this.collectorHeight));
 
     };
 
@@ -462,6 +517,42 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config){
             this.dataBus.digitizers[i] = Math.random();
         }
 
+    };
+
+    this.findCell = function(x, y){
+        var imageData 
+        if(this.detailShowing == 1){
+            imageData = this.TTdetailContext.getImageData(x,y,1,1);
+        } else{
+            imageData = this.TTcontext.getImageData(x,y,1,1);
+        }
+        var index = -1;
+        if(imageData.data[0] == imageData.data[1] && imageData.data[0] == imageData.data[2]) index = imageData.data[0];
+
+        return index;
+    };
+
+    this.defineText = function(cell){
+        var toolTipContent = '<br>';
+        var nextLine;
+        var longestLine = 0;
+        var cardIndex;
+        var i;
+
+        nextLine = 'Channel '+cell;
+
+        //keep track of the longest line of text:
+        longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
+        toolTipContent += nextLine;
+
+        if(this.detailShowing){
+            document.getElementById(this.detailTooltip.ttTextID).innerHTML = toolTipContent;
+        } else{
+            document.getElementById(this.tooltip.ttTextID).innerHTML = toolTipContent;
+        }
+
+        //return length of longest line:
+        return longestLine;
     };
 }
 

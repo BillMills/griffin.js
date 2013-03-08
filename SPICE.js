@@ -138,7 +138,7 @@ function SPICE(monitor, minima, maxima){
         var cardIndex;
         var i;
 
-        nextLine = 'Channel '+cell;
+        nextLine = this.dataBus.key[cell][0];
 
         //keep track of the longest line of text:
         longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)

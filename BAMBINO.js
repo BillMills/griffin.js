@@ -8,13 +8,13 @@ function BAMBINO(monitor, mode, minima, maxima){
     this.TTcanvasID = 'BAMBINOTTCanvas';    //ID of hidden tooltip map canvas
     this.minima = minima;                   //array of meter minima [HV, thresholds, rate]
     this.maxima = maxima;                   //array of meter maxima, arranged as minima
-    this.dataBus = new BAMBINODS();
 
     this.nRadial = 24;
     if(mode=='S2')
     	this.nAzimuthal = 16;
     else
         this.nAzimuthal = 32;
+    this.dataBus = new BAMBINODS(mode);
 
     var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick

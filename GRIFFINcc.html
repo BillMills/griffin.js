@@ -161,7 +161,7 @@
       var DAQminima = [0,0,0,0,0,0,0,0,0];
       var DAQmaxima = [1,1,1,1,1,1,1,1,1];
 
-      var configParameters = [4, 16, 16, 16*16, 16];
+      var configParameters = [4, 16, 4*16, 16*16, 16];
 
       //---------------End Experiment-specific parameters--------------------------------------------------
       //---------------------------------------------------------------------------------------------------
@@ -264,7 +264,7 @@
       }
       window.subsystemScalars = monitorValues.length;
 
-      var DAQMonitor = new DAQ('waffleplate', 'DAQcanvas', 'DAQdetailCanvas', 0, DAQminima, DAQmaxima, configParameters);
+      var DAQMonitor = new DAQ('waffleplate', 'DAQcanvas', 'DAQdetailCanvas', 0, DAQminima, DAQmaxima, configParameters, [], []);
 
       var ClockMonitor = new Clock('waffleplate');
       ClockMonitor.draw(ClockMonitor.nFrames);
@@ -328,6 +328,7 @@
       startLoop(0); 
 
       $('#setValues').on('change', function(event){highlight('submitParameters')})
+
 
   </script> 
   
