@@ -75,6 +75,27 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config, pre
     this.TTdetailContext = this.TTdetailCanvas.getContext('2d');
     //finished adding to the DOM////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    //onclick switch between top and detail view:
+    this.detailCanvas.onclick = function(event){
+                                    that.detailShowing = 0;
+                                    swapFade('DAQToplink', that, 0, 0);
+                                };
+    this.canvas.onclick =   function(event){
+                                //use TT layer to decide which clover user clicked on
+                                var digiGroupClicked = -1;
+                                var x,y;
+                                x = event.pageX - that.canvas.offsetLeft - that.monitor.offsetLeft;
+                                y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;
+                                digiGroupClicked = that.findCell(x,y);
+                                //draw and swap out if user clicked on a valid clover
+                                if(digiGroupClicked > that.nCollectors){
+                                    window.DAQdetail = digiGroupClicked - that.nCollectors - 1;
+                                    that.drawDetail(that.detailContext, that.nFrames);
+                                    that.detailShowing = 1;
+                                    swapFade('Collector'+(digiGroupClicked - that.nCollectors - 1), that, 0, 1)
+                                }
+                            };
+
     //Dirty trick to implement tooltip on obnoxious geometry: make another canvas of the same size hidden beneath, with the 
     //detector drawn on it, but with each element filled in with rgba(0,0,n,1), where n is the channel number; fetching the color from the 
     //hidden canvas at point x,y will then return the appropriate channel index.
@@ -246,7 +267,7 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config, pre
 
 		this.context.clearRect(0,0, this.canvasWidth, this.canvasHeight - this.scaleHeight);
 
-        if(frame == this.nFrames){
+        if(frame == 0){
             this.drawScale(this.context);
         }
         this.context.lineWidth = this.lineweight;
@@ -470,6 +491,9 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config, pre
                 roundBox(this.detailContext, Math.floor( (i - this.nDigitizersPerCollector*clctr)/4 )*0.76/3*this.canvasWidth + 0.12*this.canvasWidth - this.canvasWidth*0.09 + (i%4)*this.canvasWidth*0.06 - 0.02*this.canvasWidth , this.canvasHeight*0.6 + topMargin, 0.04*this.canvasWidth, 0.04*this.canvasWidth, 5);
                 this.detailContext.fill();
                 this.detailContext.stroke();
+                //tooltip layer:
+                this.TTdetailContext.fillStyle = 'rgba('+(i-this.nDigitizersPerCollector*clctr)+','+(i-this.nDigitizersPerCollector*clctr)+','+(i-this.nDigitizersPerCollector*clctr)+',1)';
+                this.TTdetailContext.fillRect(Math.floor(Math.floor( (i - this.nDigitizersPerCollector*clctr)/4 )*0.76/3*this.canvasWidth + 0.12*this.canvasWidth - this.canvasWidth*0.09 + (i%4)*this.canvasWidth*0.06 - 0.02*this.canvasWidth), Math.floor(this.canvasHeight*0.6 + topMargin), Math.floor(0.04*this.canvasWidth), Math.floor(0.04*this.canvasWidth));
             }
         } else {  //TIGRESS mode:
             for(i=this.nDigitizersPerCollector*clctr; i<this.nDigitizersPerCollector*clctr + this.nDigitizersPerCollector; i++){
@@ -478,6 +502,9 @@ function DAQ(monitor, canvas, detailCanvas, tooltip, minima, maxima, config, pre
                 roundBox(this.detailContext, this.margin + (i+0.5)*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector - 0.02*this.canvasWidth , this.canvasHeight*0.6 + topMargin, 0.04*this.canvasWidth, 0.04*this.canvasWidth, 5);
                 this.detailContext.fill();
                 this.detailContext.stroke();
+                //tooltip layer:
+                this.TTdetailContext.fillStyle = 'rgba('+(i-this.nDigitizersPerCollector*clctr)+','+(i-this.nDigitizersPerCollector*clctr)+','+(i-this.nDigitizersPerCollector*clctr)+',1)';
+                this.TTdetailContext.fillRect(Math.round(this.margin + (i+0.5)*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector - 0.02*this.canvasWidth), Math.round(this.canvasHeight*0.6 + topMargin), Math.round(0.04*this.canvasWidth), Math.round(0.04*this.canvasWidth));
 
                 //digitizer to collector link:
                 this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.oldDigitizerLinkColor[i]), parseHexColor(this.digitizerLinkColor[i]), frame/this.nFrames);

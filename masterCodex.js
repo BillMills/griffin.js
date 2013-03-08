@@ -24,9 +24,7 @@ masterCodex = function(){
 
     //slice up <name> to return just the 10 character string describing the element
     this.parseName = function(name){
-    	var codename;
-    	//do magic
-    	return codename;
+    	return name.slice(0,10);
     };
 
     //turn the FSCP number into an ODB index for the corresponding element
