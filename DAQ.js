@@ -45,10 +45,10 @@ function DAQ(monitor, canvas, detailCanvas, minima, maxima, prefix, postifx){
     insertH1('DAQlinksBanner', 'navPanelHeader', this.linkWrapperID, 'GRIFFIN DAQ Status');
     insertLinebreak(this.linkWrapperID);
     //nav buttons
-    insertButton('DAQToplink', 'navLinkDown', "{swapFade('DAQToplink', window.DAQpointer, 0, 0)}; window.DAQpointer.detailShowing=0;", 'DAQlinks', 'Top Level');
+    insertButton('DAQToplink', 'navLinkDown', "{window.DAQpointer.detailShowing=0; window.DAQdetail=-1; swapFade('DAQToplink', window.DAQpointer, 0, 0);}", 'DAQlinks', 'Master');
     insertLinebreak(this.linkWrapperID);
     //p to label row of collector buttons
-    insertParagraph('DAQcollectorTitle', '', 'display:inline; color:#999999;', 'DAQlinks', 'Collector ');
+    insertParagraph('DAQcollectorTitle', '', 'display:inline; color:#999999;', 'DAQlinks', 'Slave ');
     //deploy collector buttons
     for(i=0; i<this.nCollectors; i++){
         insertButton('Collector'+i, 'navLink', "{swapFade('Collector"+i+"', window.DAQpointer, 0, 1); window.DAQpointer.detailShowing=1; animateDetail(window.DAQpointer, 0); window.DAQdetail="+i+";}", this.linkWrapperID, i);
@@ -253,6 +253,7 @@ function DAQ(monitor, canvas, detailCanvas, minima, maxima, prefix, postifx){
 
         this.tooltip.update();
         this.detailTooltip.update();
+
 	};
 
 	//parse scalar into a color on a color scale bounded by the entries in this.minima[index] and this.maxima[index] 
@@ -266,9 +267,9 @@ function DAQ(monitor, canvas, detailCanvas, minima, maxima, prefix, postifx){
 	this.draw = function(frame){
 		var color, i, j, k;
 
-		this.context.clearRect(0,0, this.canvasWidth, this.canvasHeight - this.scaleHeight);
+		if(frame==0)this.context.clearRect(0,0, this.canvasWidth, this.canvasHeight - this.scaleHeight);
 
-        if(frame == 0){
+        if(frame == 1){
             this.drawScale(this.context);
         }
         this.context.lineWidth = this.lineweight;
