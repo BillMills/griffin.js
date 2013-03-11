@@ -271,7 +271,7 @@ function DAQ(monitor, canvas, detailCanvas, minima, maxima, prefix, postifx){
 
 		if(frame==0)this.context.clearRect(0,0, this.canvasWidth, this.canvasHeight - this.scaleHeight);
 
-        if(frame == 1){
+        if(frame == 15){
             this.drawScale(this.context);
         }
         this.context.lineWidth = this.lineweight;

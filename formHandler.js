@@ -182,7 +182,7 @@ function gotoNewChannel(event, waffle){
         if(waffle.moduleLabels[i] == xName) xVal = i;
     }
     waffle.chx = 0;
-    for(i=0; i<xVal; i++) waffle.chx += waffle.moduleSizes[i];
+    for(i=0; i<xVal; i++) waffle.chx += Math.max(waffle.moduleSizes[i], 1);
     if(yVal != 'Primary') waffle.chx += Math.floor(yVal/(waffle.rows-1));
 
     channelSelect(waffle);

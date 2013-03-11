@@ -115,6 +115,7 @@ function Waffle(rows, cols, wrapperDiv, rowTitles, InputLayer, ODBkeys, headerDi
             //submit button:
             insertInput('getChannelButton', 'position:relative; top:-30px; width: 50px; height:50px; font-size:24px; margin-left:3%; margin-top:10px; border-color:black', 'button', '', 'Go', 'changeChannel');
             document.getElementById('getChannelButton').setAttribute('class', 'link');
+            document.getElementById('getChannelButton').setAttribute('onclick', '{window.refreshInput = 1; gotoNewChannel(event, window.HVpointer);}');
         };
 
         //deploy a sidebar to interact with this element:
@@ -257,9 +258,6 @@ function Waffle(rows, cols, wrapperDiv, rowTitles, InputLayer, ODBkeys, headerDi
 
         //make waffles clickable to set a variable for a channel:
         this.canvas.onclick = function(event){clickWaffle(event, that)};
-
-        //make the get channel button do its job:
-        document.getElementById('getChannelButton').onclick = function(event){changeChannelButton(event, that)};
         
         //decide which canvas to present:
         this.view = function(){
@@ -779,12 +777,6 @@ function Waffle(rows, cols, wrapperDiv, rowTitles, InputLayer, ODBkeys, headerDi
 
 
 //some useful globals
-
-//define behavior of the change channel button:
-function changeChannelButton(event, obj){
-    window.refreshInput = 1;
-    gotoNewChannel(event, obj);
-}
 
 //define the onclick behavior of the waffle:
 function clickWaffle(event, obj){
