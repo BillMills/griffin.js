@@ -27,7 +27,6 @@
     <script src="slider.js" type="text/javascript"></script>
     <script src="fillMeter.js" type="text/javascript"></script>
     <script src="branding.js" type="text/javascript"></script>
-    <!--script src="navigation.js" type="text/javascript"></script-->
 
     <script src="BarGraph.js" type="text/javascript"></script>
     <script src="SHARC.js" type="text/javascript"></script>
@@ -40,7 +39,6 @@
     <script src="SPICE.js" type="text/javascript"></script>
     <script src="TIP.js" type="text/javascript"></script>
 
-    <!--link rel="stylesheet" type="text/css" href="cssreset.css"-->
     <link rel="stylesheet" type="text/css" href="GRIFFINcc.css" />
 
   </head> 
@@ -152,10 +150,10 @@
       var dashboard = new Dashboard('waffleplate');
 
       //Alarm Service
-      var AlarmServices = new AlarmService('leftSidebar', 'leftSidebarDetail', window.parameters.alarmThresholds, window.parameters.scaleMaxima, window.parameters.alarmPrecision);
+      var AlarmServices = new AlarmService('leftSidebar', 'leftSidebarDetail');
 
       //HV monitor
-      var waffle = new Waffle(rows,columns, "waffleplate", window.parameters.rowTitles, "InputLayer", window.parameters.ODBkeys,'mainframeLinks', moduleSizes, window.parameters.barChartPrecision, window.parameters.prefix, window.parameters.postfix, AlarmServices);
+      var waffle = new Waffle(rows,columns, "waffleplate", "InputLayer",'mainframeLinks', moduleSizes, AlarmServices);
 
       //Subsystem sidebar:
       insertDiv('SubsystemSidebar', 'Sidebar', 'waffleplate');
@@ -168,7 +166,7 @@
       insertH1('SubsystemLinksBanner', 'navPanelHeader', 'SubsystemLinks', 'GRIFFIN Subsystem Monitors');
       insertLinebreak('SubsystemLinks');    
       //subdetectors
-      var SHARCMonitor = new SHARC('waffleplate','horizontal', window.parameters.SMrows, window.parameters.SMcolumns, window.parameters.SMnChannels, 4, 4, 1, 16, window.parameters.SMminima, window.parameters.SMmaxima, [],[]);
+      var SHARCMonitor = new SHARC('waffleplate','horizontal', 4, 4, 1, 16, [],[]);
       var HPGEMonitor = new HPGE('waffleplate', 1, [0,0,0], [1,1,1], [], [], 'GRIFFIN');
       var DESCANTMonitor = new DESCANT('waffleplate', [0,0,0], [1,1,1], [],[]);
       var PACESMonitor = new PACES('waffleplate', [0,0,0], [1,1,1], [], []);
@@ -191,7 +189,7 @@
       }
       window.subsystemScalars = monitorValues.length;
 
-      var DAQMonitor = new DAQ('waffleplate', 'DAQcanvas', 'DAQdetailCanvas', window.parameters.DAQminima, window.parameters.DAQmaxima, [], []);
+      var DAQMonitor = new DAQ('waffleplate', 'DAQcanvas', 'DAQdetailCanvas', [], []);
 
       var ClockMonitor = new Clock('waffleplate');
       ClockMonitor.draw(ClockMonitor.nFrames);

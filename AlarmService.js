@@ -1,11 +1,8 @@
-function AlarmService(sidebarDivID, sidebarDetailDivID, alarmThresholds, scaleMaxima, precision){
+function AlarmService(sidebarDivID, sidebarDetailDivID){
 	this.sidebarDivID = sidebarDivID;					//ID of div wrapping left sidebar
 	this.sidebarDetailDivID = sidebarDetailDivID;		//ID of div wrapping detail level sidebar elements
 	this.canvasID = 'alarmCanvas';						//ID of canvas to draw alarms on
 	this.pID = 'alarmText';								//ID of <p> to write alarm text in
-	this.alarmThresholds = alarmThresholds;				//array containing threshold for alarms: [voltage, current, temperature, rate]
-	this.scaleMaxima = scaleMaxima;						//array containing upper scale limit for alarm reporting, as alarmThresholds.
-	this.precision = precision;							//number of decimals to keep in alarm reporting
 
 	//arrays of info for state reporting - repopulated every loop
 	this.demandVoltage = [];
@@ -99,8 +96,8 @@ function AlarmService(sidebarDivID, sidebarDetailDivID, alarmThresholds, scaleMa
     			alarmText += 'Slot ' + slot + ' Primary' + '<br>';	
     		} else
 	    		alarmText += 'Slot ' + slot + ', Ch. ' + channel + '<br>';
-    		alarmText += 'Demand Voltage: ' + (this.demandVoltage[this.voltageAlarms[i][0]][this.voltageAlarms[i][1]]).toFixed(this.precision) + ' V<br>';
-    		alarmText += 'Report Voltage: ' + (this.reportVoltage[this.voltageAlarms[i][0]][this.voltageAlarms[i][1]]).toFixed(this.precision) + ' V<br><br>';
+    		alarmText += 'Demand Voltage: ' + (this.demandVoltage[this.voltageAlarms[i][0]][this.voltageAlarms[i][1]]).toFixed(window.parameters.alarmPrecision) + ' V<br>';
+    		alarmText += 'Report Voltage: ' + (this.reportVoltage[this.voltageAlarms[i][0]][this.voltageAlarms[i][1]]).toFixed(window.parameters.alarmPrecision) + ' V<br><br>';
 
     	}
 
@@ -112,7 +109,7 @@ function AlarmService(sidebarDivID, sidebarDetailDivID, alarmThresholds, scaleMa
     			alarmText += 'Slot ' + slot + ' Primary' + '<br>';	
     		} else
 	    		alarmText += 'Slot ' + slot + ', Ch. ' + channel + '<br>';
-    		alarmText += (this.reportCurrent[this.currentAlarms[i][0]][this.currentAlarms[i][1]]).toFixed(this.precision) + ' uA<br><br>';
+    		alarmText += (this.reportCurrent[this.currentAlarms[i][0]][this.currentAlarms[i][1]]).toFixed(window.parameters.alarmPrecision) + ' uA<br><br>';
     	}
 
     	if(this.temperatureAlarms.length != 0) alarmText += '<br>Temperature Alarms<br>'
@@ -123,7 +120,7 @@ function AlarmService(sidebarDivID, sidebarDetailDivID, alarmThresholds, scaleMa
     			alarmText += 'Slot ' + slot + ' Primary' + '<br>';	
     		} else
 	    		alarmText += 'Slot ' + slot + ', Ch. ' + channel + '<br>';
-    		alarmText += (this.reportTemperature[this.temperatureAlarms[i][0]][this.temperatureAlarms[i][1]]).toFixed(this.precision) + ' C<br><br>';
+    		alarmText += (this.reportTemperature[this.temperatureAlarms[i][0]][this.temperatureAlarms[i][1]]).toFixed(window.parameters.alarmPrecision) + ' C<br><br>';
     	}
 
     	if(this.rateAlarms.length != 0) alarmText += '<br>Rate Alarms<br>'

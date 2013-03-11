@@ -1,4 +1,4 @@
-function Waffle(rows, cols, wrapperDiv, rowTitles, InputLayer, ODBkeys, headerDiv, moduleSizes, barChartPrecision, prefix, postfix, AlarmServices){
+function Waffle(rows, cols, wrapperDiv, InputLayer, headerDiv, moduleSizes, AlarmServices){
 
     	var i, j, n, columns;
 
@@ -14,9 +14,7 @@ function Waffle(rows, cols, wrapperDiv, rowTitles, InputLayer, ODBkeys, headerDi
         this.prevAlarmStatus;                       //previous iteration's alarmStatus
         this.alarmStatus;                           //2D array containing the alarm level for each cell
         this.wrapperDiv = wrapperDiv;               //div ID of top level div
-        this.rowTitles = rowTitles;                 //array of titles for rows
         this.InputLayer = InputLayer;               //div ID of wrapper for input fields
-        this.ODBkeys = ODBkeys;                     //array of strings describing the locations of relevant info in ODB
         this.headerDiv = headerDiv;                 //div ID of waffle header
         this.moduleSizes = moduleSizes;             //array containing sizes of modules in groups of 12 channels
         this.chx = 0;                               //x channel of input sidebar focus
@@ -186,7 +184,7 @@ function Waffle(rows, cols, wrapperDiv, rowTitles, InputLayer, ODBkeys, headerDi
         document.getElementById(this.linkWrapperID).setAttribute('style', 'left:'+(24 + 100*this.leftEdge/$('#'+this.wrapperDiv).width() )+'%;')
 
         //make a tooltip for this object:
-        this.tooltip = new Tooltip(this.canvasID, 'MFTipText', 'MFtipCanv', 'MFTT', this.wrapperDiv, prefix, postfix);
+        this.tooltip = new Tooltip(this.canvasID, 'MFTipText', 'MFtipCanv', 'MFTT', this.wrapperDiv, window.parameters.prefix, window.parameters.postfix);
         //give the tooltip a pointer back to this object:
         this.tooltip.obj = that;
 
@@ -223,7 +221,7 @@ function Waffle(rows, cols, wrapperDiv, rowTitles, InputLayer, ODBkeys, headerDi
         var newCanvas;
         for(i=0; i<moduleSizes.length; i++){
             insertCanvas('bar'+i, 'monitor', '', this.totalWidth, this.totalHeight, wrapperDiv);
-            this.barCharts[i] = new BarGraph('bar'+i, i, Math.max(moduleSizes[i],1)*12, 'Slot '+i, 'Reported Voltage [V]', 0, this.AlarmServices.scaleMaxima[0], barChartPrecision, that);
+            this.barCharts[i] = new BarGraph('bar'+i, i, Math.max(moduleSizes[i],1)*12, 'Slot '+i, 'Reported Voltage [V]', 0, window.parameters.scaleMaxima[0], window.parameters.barChartPrecision, that);
         }
 
         //set up arrays:
@@ -561,7 +559,7 @@ function Waffle(rows, cols, wrapperDiv, rowTitles, InputLayer, ODBkeys, headerDi
             else cardIndex = primaryBin(this.moduleSizes, col);
 
             //Title for normal channels:
-            if(row != 0) nextLine = this.moduleLabels[cardIndex]+', '+this.rowTitles[0]+' '+channelMap(col, row, this.moduleSizes, this.rows)+'<br>';
+            if(row != 0) nextLine = this.moduleLabels[cardIndex]+', '+window.parameters.rowTitles[0]+' '+channelMap(col, row, this.moduleSizes, this.rows)+'<br>';
             //Title for primary channels:
             else nextLine = this.moduleLabels[cardIndex]+' Primary <br>';
 
@@ -606,19 +604,19 @@ function Waffle(rows, cols, wrapperDiv, rowTitles, InputLayer, ODBkeys, headerDi
             var testParameter, i, j, ODBindex, columns, slot;
             /*
             //batch fetch all in one big lump:
-            var variablesRecord = ODBGetRecord(ODBkeys[0]);
-            var settingsRecord  = ODBGetRecord(ODBkeys[1]);
+            var variablesRecord = ODBGetRecord(window.parameters.ODBkeys[0]);
+            var settingsRecord  = ODBGetRecord(window.parameters.ODBkeys[1]);
     
-            var reqVoltage      = ODBExtractRecord(variablesRecord, ODBkeys[2]);
-            var measVoltage     = ODBExtractRecord(variablesRecord, ODBkeys[3]);
-            var measCurrent     = ODBExtractRecord(variablesRecord, ODBkeys[4]);
-            var rampUp          = ODBExtractRecord(settingsRecord,  ODBkeys[5]);
-            var rampDown        = ODBExtractRecord(settingsRecord,  ODBkeys[6]);
-            var measTemperature = ODBExtractRecord(variablesRecord, ODBkeys[7]);
-            var repoChState     = ODBExtractRecord(settingsRecord,  ODBkeys[8]);
-            var repoChStatus    = ODBExtractRecord(variablesRecord, ODBkeys[9]);
-            var voltageLimit    = ODBExtractRecord(settingsRecord,  ODBkeys[10]);
-            var currentLimit    = ODBExtractRecord(settingsRecord,  ODBkeys[11]);
+            var reqVoltage      = ODBExtractRecord(variablesRecord, window.parameters.ODBkeys[2]);
+            var measVoltage     = ODBExtractRecord(variablesRecord, window.parameters.ODBkeys[3]);
+            var measCurrent     = ODBExtractRecord(variablesRecord, window.parameters.ODBkeys[4]);
+            var rampUp          = ODBExtractRecord(settingsRecord,  window.parameters.ODBkeys[5]);
+            var rampDown        = ODBExtractRecord(settingsRecord,  window.parameters.ODBkeys[6]);
+            var measTemperature = ODBExtractRecord(variablesRecord, window.parameters.ODBkeys[7]);
+            var repoChState     = ODBExtractRecord(settingsRecord,  window.parameters.ODBkeys[8]);
+            var repoChStatus    = ODBExtractRecord(variablesRecord, window.parameters.ODBkeys[9]);
+            var voltageLimit    = ODBExtractRecord(settingsRecord,  window.parameters.ODBkeys[10]);
+            var currentLimit    = ODBExtractRecord(settingsRecord,  window.parameters.ODBkeys[11]);
             */          
             for(i=0; i<this.rows; i++){
                 //primary row spans multi-columns, only has entries for 48 channel cards:        
@@ -707,17 +705,17 @@ function Waffle(rows, cols, wrapperDiv, rowTitles, InputLayer, ODBkeys, headerDi
                     //determine alarm status for each cell, recorded as [i][j][voltage alarm, current alarm, temperature alarm]
                     //alarmStatus == 0 indicates all clear, 0 < alarmStatus <= 1 indicates alarm intensity, alarmStatus = -1 indicates channel off,
                     //and alarmStatus == -2 for the voltage alarm indicates voltage ramping.
-                    if(testParameter < AlarmServices.alarmThresholds[0])  this.dataBus.alarmStatus[i][j][0] = 0;
-                    else  this.dataBus.alarmStatus[i][j][0] = Math.min( (testParameter - AlarmServices.alarmThresholds[0]) / AlarmServices.scaleMaxima[0], 1);
+                    if(testParameter < window.parameters.alarmThresholds[0])  this.dataBus.alarmStatus[i][j][0] = 0;
+                    else  this.dataBus.alarmStatus[i][j][0] = Math.min( (testParameter - window.parameters.alarmThresholds[0]) / window.parameters.scaleMaxima[0], 1);
                     if(this.dataBus.rampStatus[i][j] == 3 || this.dataBus.rampStatus[i][j] == 5){
                         this.dataBus.alarmStatus[i][j][0] = -2;
                     }
 
-                    if(this.dataBus.reportCurrent[i][j] < AlarmServices.alarmThresholds[1])  this.dataBus.alarmStatus[i][j][1] = 0;
-                    else  this.dataBus.alarmStatus[i][j][1] = Math.min( (this.dataBus.reportCurrent[i][j] - AlarmServices.alarmThresholds[1]) / AlarmServices.scaleMaxima[1], 1);
+                    if(this.dataBus.reportCurrent[i][j] < window.parameters.alarmThresholds[1])  this.dataBus.alarmStatus[i][j][1] = 0;
+                    else  this.dataBus.alarmStatus[i][j][1] = Math.min( (this.dataBus.reportCurrent[i][j] - window.parameters.alarmThresholds[1]) / window.parameters.scaleMaxima[1], 1);
 
-                    if(this.dataBus.reportTemperature[i][j] < AlarmServices.alarmThresholds[2])  this.dataBus.alarmStatus[i][j][2] = 0;
-                    else  this.dataBus.alarmStatus[i][j][2] = Math.min( (this.dataBus.reportTemperature[i][j] - AlarmServices.alarmThresholds[2]) / AlarmServices.scaleMaxima[2], 1);
+                    if(this.dataBus.reportTemperature[i][j] < window.parameters.alarmThresholds[2])  this.dataBus.alarmStatus[i][j][2] = 0;
+                    else  this.dataBus.alarmStatus[i][j][2] = Math.min( (this.dataBus.reportTemperature[i][j] - window.parameters.alarmThresholds[2]) / window.parameters.scaleMaxima[2], 1);
 
                     if(this.dataBus.channelMask[i][j] == 0){
                         this.dataBus.alarmStatus[i][j][0] = -1;

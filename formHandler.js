@@ -109,7 +109,7 @@ function channelSelect(waffle){
     var inputDiv = document.getElementById(waffle.InputLayer);
 
     //set text in dialog box:
-    if(waffle.chy != 0) inputTitle = 'Parameters for <br>'+waffle.moduleLabels[primaryBin(waffle.moduleSizes, waffle.chx)]+', '+waffle.rowTitles[0]+' '+channelMap(waffle.chx, waffle.chy, waffle.moduleSizes, waffle.rows);
+    if(waffle.chy != 0) inputTitle = 'Parameters for <br>'+waffle.moduleLabels[primaryBin(waffle.moduleSizes, waffle.chx)]+', '+window.parameters.rowTitles[0]+' '+channelMap(waffle.chx, waffle.chy, waffle.moduleSizes, waffle.rows);
     else inputTitle = 'Parameters for <br>'+waffle.moduleLabels[primaryBin(waffle.moduleSizes, waffle.chx)]+' Primary';
     document.getElementById('inputTitle').innerHTML = inputTitle;
 

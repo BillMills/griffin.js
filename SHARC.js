@@ -1,19 +1,19 @@
-function SHARC(monitor, orientation, rows, columns, nStrips, nRadialHoriz, nAzimuthalHoriz, nRadialVert, nAzimuthalVert, minima, maxima, prefix, postfix){
+function SHARC(monitor, orientation, nRadialHoriz, nAzimuthalHoriz, nRadialVert, nAzimuthalVert, prefix, postfix){
 
 	var i,j;
 
 	//argument member variables/////////////////////////////////////////////////////////////////////////////////
-	this.monitorID = monitor;				//div ID of wrapper div
-	this.orientation = orientation;			//'vertical' or 'horizontal', the direction of the strips for this instance.
-	this.canvasID = 'SHARCCanvas';			//the canvas ID on which to draw the strip monitor
-	this.rows = rows;						//number of rows of detectors
-	this.columns = columns;					//number of columns of detectors
-	this.nStrips = nStrips;					//number of sense strips per detector
-	this.minima = minima;					//array of scale minima, one entry for each scalar option
-	this.maxima = maxima;					//array of scale maxima, one entry for each scalar option
-	this.linkWrapperID = 'SubsystemLinks';	//ID of div wrapping subsystem navigation links
-	this.sidebarID = 'SubsystemSidebar';	//ID of right sidebar for this object
-	this.topNavID = 'SubsystemsButton';		//ID of top level nav button
+	this.monitorID = monitor;						//div ID of wrapper div
+	this.orientation = orientation;					//'vertical' or 'horizontal', the direction of the strips for this instance.
+	this.canvasID = 'SHARCCanvas';					//the canvas ID on which to draw the strip monitor
+	this.rows = window.parameters.SMrows;			//number of rows of detectors
+	this.columns = window.parameters.SMcolumns;		//number of columns of detectors
+	this.nStrips = window.parameters.SMnChannels;	//number of sense strips per detector
+	this.minima = window.parameters.SMminima;		//array of scale minima, one entry for each scalar option
+	this.maxima = window.parameters.SMmaxima;		//array of scale maxima, one entry for each scalar option
+	this.linkWrapperID = 'SubsystemLinks';			//ID of div wrapping subsystem navigation links
+	this.sidebarID = 'SubsystemSidebar';			//ID of right sidebar for this object
+	this.topNavID = 'SubsystemsButton';				//ID of top level nav button
 	this.dataBus = new SHARCDS();
 
 	var that = this;

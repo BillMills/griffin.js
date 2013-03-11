@@ -1,4 +1,4 @@
-function DAQ(monitor, canvas, detailCanvas, minima, maxima, prefix, postfix){
+function DAQ(monitor, canvas, detailCanvas, prefix, postfix){
 	var i, j, k, m;
 
 	var that = this;
@@ -13,8 +13,8 @@ function DAQ(monitor, canvas, detailCanvas, minima, maxima, prefix, postfix){
     this.sidebarID = 'DAQsidebar'                //ID of right sidebar to associate with this object
     this.TTcanvasID = 'DAQTTcanvas'
     this.TTdetailCanvasID = 'DAQdetailTTcanvas'
-	this.minima = minima;			             //minima of element scalea: [master, master group, master link, collector, digi summary link, digi summary node, digi group link, digi transfer, digitizer]
-	this.maxima = maxima;			             //as minima.
+	this.minima = window.parameters.DAQminima;   //minima of element scalea: [master, master group, master link, collector, digi summary link, digi summary node, digi group link, digi transfer, digitizer]
+	this.maxima = window.parameters.DAQmaxima;   //as minima.
     this.detailShowing = 0;                      //is the detail canvas showing?
     this.dataBus = new DAQDS();
 
