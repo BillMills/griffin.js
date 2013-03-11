@@ -123,14 +123,14 @@ function Waffle(rows, cols, wrapperDiv, rowTitles, InputLayer, ODBkeys, headerDi
 
         //deploy some sliders in the sidebar
         var sliderWidth = parseFloat($(document.getElementById('InputLayer')).width())*0.5;
-        this.voltageSlider = new Slider('SidebarBKG', 'volageSliderText', 'demandVoltage', 'voltageSlider', 'voltageSliderBKG', 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', minVoltage, maxVoltage, statusPrecision, voltUnit, sliderWidth );
-        this.rampSlider = new Slider('SidebarBKG', 'rampSliderText', 'demandRampSpeed', 'rampSlider', 'rampSliderBKG', 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', minRampSpeed, maxRampSpeed, statusPrecision, rampUnit,  sliderWidth);
-        this.rampDownSlider = new Slider('SidebarBKG', 'rampDownSliderText', 'demandRampDownSpeed', 'rampDownSlider', 'rampDownSliderBKG', 'rampDownSliderKnob', 'rampDownKnobStyle', 'rampDownSliderText', minRampSpeed, maxRampSpeed, statusPrecision, rampUnit,  sliderWidth);
+        this.voltageSlider = new Slider('SidebarBKG', 'volageSliderText', 'demandVoltage', 'voltageSlider', 'voltageSliderBKG', 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', window.parameters.minVoltage, window.parameters.maxVoltage, window.parameters.statusPrecision, window.parameters.voltUnit, sliderWidth );
+        this.rampSlider = new Slider('SidebarBKG', 'rampSliderText', 'demandRampSpeed', 'rampSlider', 'rampSliderBKG', 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', window.parameters.minRampSpeed, window.parameters.maxRampSpeed, window.parameters.statusPrecision, window.parameters.rampUnit,  sliderWidth);
+        this.rampDownSlider = new Slider('SidebarBKG', 'rampDownSliderText', 'demandRampDownSpeed', 'rampDownSlider', 'rampDownSliderBKG', 'rampDownSliderKnob', 'rampDownKnobStyle', 'rampDownSliderText', window.parameters.minRampSpeed, window.parameters.maxRampSpeed, window.parameters.statusPrecision, window.parameters.rampUnit,  sliderWidth);
 
         //fill meters
-        window.meter = new FillMeter('voltageMeter', 'InputLayer', 0, minVoltage, maxVoltage, voltUnit, statusPrecision);
-        window.currentMeter = new FillMeter('currentMeter', 'InputLayer', 0, minCurrent, maxCurrent, currentUnit, statusPrecision);
-        window.temperatureMeter = new FillMeter('temperatureMeter', 'InputLayer', 0, minTemperature, maxTemperature, temperatureUnit, statusPrecision);
+        window.meter = new FillMeter('voltageMeter', 'InputLayer', 0, window.parameters.minVoltage, window.parameters.maxVoltage, window.parameters.voltUnit, window.parameters.statusPrecision);
+        window.currentMeter = new FillMeter('currentMeter', 'InputLayer', 0, window.parameters.minCurrent, window.parameters.maxCurrent, window.parameters.currentUnit, window.parameters.statusPrecision);
+        window.temperatureMeter = new FillMeter('temperatureMeter', 'InputLayer', 0, window.parameters.minTemperature, window.parameters.maxTemperature, window.parameters.temperatureUnit, window.parameters.statusPrecision);
 
         //determine dimesions of canvas:
         this.totalWidth = Math.round(0.5*$('#'+this.wrapperDiv).width());

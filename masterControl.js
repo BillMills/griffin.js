@@ -1,5 +1,6 @@
 function masterLoop(dashboard, AlarmServices, waffle, SHARC, HPGE, DESCANT, PACES, DANTE, BAMBINO, SCEPTAR, SPICE, TIP, DAQ, Clock, Trigger, callMyself){
 	if(!document.webkitHidden && !document.mozHidden){
+
         var i,j;
 
     	waffle.update();

@@ -79,83 +79,21 @@
     </div>
   <!--End Waffleplate////////////////////////////////////////////////////-->
 
-  <script type="text/JavaScript">
+  <script id='parameterLoad' type="text/JavaScript">
+      window.parameters = {};
+      function loadParameters(dataWeGotViaJsonp){
+        for (var key in dataWeGotViaJsonp) {
+          if (dataWeGotViaJsonp.hasOwnProperty(key)) {
+            window.parameters[key] = dataWeGotViaJsonp[key];
+          }
+        }
+      } 
+  </script>
+  <script src='parameters.json'>//experimental parameters loaded here//</script>
 
-      //--------------Experiment-specific Parameters Here--------------------------------------------------
-      //---------------------------------------------------------------------------------------------------
- 
-      //HV Monitor//////////////////////////////////////////////////////////////////////////////////////////////////
-      var ODBkeys = ['/Location/Of/Device/Varibles', '/Location/Of/Device/Settings', 'Demand Voltage Key', 'Measured Voltage Key', 'Measured Current Key', 'Voltage Ramp Up Key', 'Voltage Ramp Down Key', 'Temperature Key', 'ChState Key', 'ChStatus Key', 'Voltage Limit Key', 'Current Limit Key'];
+  <script id='main' type="text/JavaScript">
 
-      //cell labels; first entry decribes cell type
-      var rowTitles = ['Ch.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
-
-      //alarm thresholds [voltage, current, temperature]:
-      var alarmThresholds = [0.8, 0.999, 0.999, 0];
-
-      //scale maxima [voltage, current, temperature]:
-      var scaleMaxima = [1,1,1,1];
-
-      //tooltip info prefixes & postfixes:
-      var prefix = ['Demand Voltage: ', 'Reported Voltage: ', 'Reported Current: ', 'Voltage Ramp Up Speed: ', 'Voltage Ramp Down Speed', 'Temperature: ', 'Status: '];
-      var postfix = ['V', 'V', 'A', 'V/s', 'V/s', 'C', ''];
-
-      //demand voltage range:
-      var minVoltage = 0;
-      var maxVoltage = 1;
-
-      //current meter range:
-      var minCurrent = 0;
-      var maxCurrent = 1;
-
-      //temperature meter range:
-      var minTemperature = 0;
-      var maxTemperature = 1;
-
-      //voltage ramp speed range:
-      var minRampSpeed = 0;
-      var maxRampSpeed = 1;
-
-      //number of decimal places to keep on the sliders and status pane:
-      var statusPrecision = 3;
-      //number of decimal places to keep on the bar chart y-axis:
-      var barChartPrecision = 1;
-      //number of decimal places to keep on the alarms:
-      var alarmPrecision = 3;
-
-      //voltage unit:
-      var voltUnit = 'V';
-      //ramp speed unit:
-      var rampUnit = 'V/s';
-      //current unit:
-      var currentUnit = 'uA';
-      //temperature unit:
-      var temperatureUnit = 'C';
-
-      //url of MIDAS status page
-      var statusURL = 'http://horus.triumf.ca:8081';
-
-      //SHARC Monitor/////////////////////////////////////////////////////////////////////////
-      //rows & columns of detectors:
-      var SMrows = 2;
-      var SMcolumns = 4;
-
-      //odb keys
-      var SM_ODBkeys = ['/Location/Of/Device/Varibles', '/Location/Of/Device/Settings', 'HV Key'];
-
-      //number of channels per detector:
-      var SMnChannels = 16;
-
-      //arrays of scale minima and maxima:
-      var SMminima = [0];
-      var SMmaxima = [1];
-
-      //DAQ//////////////////////////////////////////////////////////////////////////////////
-      var DAQminima = [0,0,0,0,0,0,0,0,0];
-      var DAQmaxima = [1,1,1,1,1,1,1,1,1];
-
-      //---------------End Experiment-specific parameters--------------------------------------------------
-      //---------------------------------------------------------------------------------------------------
+      var i,j,k;
 
       //different color scales for use in colorScale function: [initial R,G,B, final R,G,B]
       window.colorScales = [];
@@ -168,8 +106,6 @@
 
       //state variables for what the subdetector view is showing: 0->HV, 1->Thresholds, 2->Rate
       window.subdetectorView = 1;  //Thresholds by default
-
-      var i,j,k;
 
       //autodetect what size cards are plugged into what slot:
       var moduleSizes = detectCards();
@@ -192,7 +128,7 @@
 
       //plug in links:
       statusLink = document.getElementById('statusLink');
-      statusLink.setAttribute('action', statusURL);
+      statusLink.setAttribute('action', window.parameters.statusURL);
 
       //set up wrapper div dimensions; minimum rendering width = 1440px, height 900px:
       var renderWidth = Math.max(1440, window.innerWidth);
@@ -216,10 +152,10 @@
       var dashboard = new Dashboard('waffleplate');
 
       //Alarm Service
-      var AlarmServices = new AlarmService('leftSidebar', 'leftSidebarDetail', alarmThresholds, scaleMaxima, alarmPrecision);
+      var AlarmServices = new AlarmService('leftSidebar', 'leftSidebarDetail', window.parameters.alarmThresholds, window.parameters.scaleMaxima, window.parameters.alarmPrecision);
 
       //HV monitor
-      var waffle = new Waffle(rows,columns, "waffleplate", rowTitles, "InputLayer", ODBkeys,'mainframeLinks', moduleSizes, barChartPrecision, prefix, postfix, AlarmServices);
+      var waffle = new Waffle(rows,columns, "waffleplate", window.parameters.rowTitles, "InputLayer", window.parameters.ODBkeys,'mainframeLinks', moduleSizes, window.parameters.barChartPrecision, window.parameters.prefix, window.parameters.postfix, AlarmServices);
 
       //Subsystem sidebar:
       insertDiv('SubsystemSidebar', 'Sidebar', 'waffleplate');
@@ -232,14 +168,14 @@
       insertH1('SubsystemLinksBanner', 'navPanelHeader', 'SubsystemLinks', 'GRIFFIN Subsystem Monitors');
       insertLinebreak('SubsystemLinks');    
       //subdetectors
-      var SHARCMonitor = new SHARC('waffleplate','horizontal', SMrows, SMcolumns, SMnChannels, 4, 4, 1, 16, SMminima, SMmaxima, [],[]);
+      var SHARCMonitor = new SHARC('waffleplate','horizontal', window.parameters.SMrows, window.parameters.SMcolumns, window.parameters.SMnChannels, 4, 4, 1, 16, window.parameters.SMminima, window.parameters.SMmaxima, [],[]);
       var HPGEMonitor = new HPGE('waffleplate', 1, [0,0,0], [1,1,1], [], [], 'GRIFFIN');
       var DESCANTMonitor = new DESCANT('waffleplate', [0,0,0], [1,1,1], [],[]);
       var PACESMonitor = new PACES('waffleplate', [0,0,0], [1,1,1], [], []);
-      var DANTEMonitor = new DANTE('waffleplate', [0,0,0], [1,1,1]);
-      var BAMBINOMonitor = new BAMBINO('waffleplate', 'S3', [0,0,0], [1,1,1]);
-      var SCEPTARMonitor = new SCEPTAR('waffleplate', [0,0,0], [1,1,1], [1,0,1]);
-      var SPICEMonitor = new SPICE('waffleplate', [0,0,0], [1,1,1]);
+      var DANTEMonitor = new DANTE('waffleplate', [0,0,0], [1,1,1], [], []);
+      var BAMBINOMonitor = new BAMBINO('waffleplate', 'S3', [0,0,0], [1,1,1], [],[]);
+      var SCEPTARMonitor = new SCEPTAR('waffleplate', [0,0,0], [1,1,1], [1,0,1], [],[]);
+      var SPICEMonitor = new SPICE('waffleplate', [0,0,0], [1,1,1], [],[]);
       var TIPMonitor = new TIP('waffleplate', [0,0,0], [1,1,1], [], []);
       insertLinebreak('SubsystemLinks');
       //nav for different reported values:
@@ -255,7 +191,7 @@
       }
       window.subsystemScalars = monitorValues.length;
 
-      var DAQMonitor = new DAQ('waffleplate', 'DAQcanvas', 'DAQdetailCanvas', DAQminima, DAQmaxima, [], []);
+      var DAQMonitor = new DAQ('waffleplate', 'DAQcanvas', 'DAQdetailCanvas', window.parameters.DAQminima, window.parameters.DAQmaxima, [], []);
 
       var ClockMonitor = new Clock('waffleplate');
       ClockMonitor.draw(ClockMonitor.nFrames);
@@ -308,8 +244,6 @@
       //hack so getMIDASindex can access these from anywhere.  TODO: fix
       window.rows = rows;
       window.moduleSizes = moduleSizes;
-      //hack so this is available to the alarms easily; will remove on alarm refactor
-      window.precision = statusPrecision;
       //end globals//////////////////////////////////////////////////////////////////////////////////
 
       //wrap this in a function so it can be easily called to restart the loop somewhere else:
@@ -319,29 +253,7 @@
       startLoop(0); 
 
       $('#setValues').on('change', function(event){highlight('submitParameters')})
-
-      window.rawData = {'RF':99};
       
-      function JSONPfunc(dataWeGotViaJsonp){
-        for (var key in dataWeGotViaJsonp) {
-          if (dataWeGotViaJsonp.hasOwnProperty(key)) {
-            window.rawData[key] = dataWeGotViaJsonp[key];
-          }
-        }
-        
-      }
-      var script = document.createElement('script');
-      script.setAttribute('src', 'test.json');
-      document.body.appendChild(script);
-      
-      /*
-      function derp(){
-        var key = 'RF';
-        window.rawData[key] = 100;
-      }
-      derp();
-      */
-      alert(window.rawData['RF']);
 
   </script> 
 

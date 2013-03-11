@@ -1,4 +1,4 @@
-function SCEPTAR(monitor, maxima, minima, config){
+function SCEPTAR(monitor, maxima, minima, config, prefix, postfix){
 	this.monitorID = monitor;		        //div ID of wrapper div
 	this.canvasID = 'SCEPTARCanvas'; 		//ID of canvas to draw top level TIGRESS view on
     this.linkWrapperID = 'SubsystemLinks';  //ID of div wrapping subsystem navigation links

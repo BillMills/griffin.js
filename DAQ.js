@@ -1,4 +1,4 @@
-function DAQ(monitor, canvas, detailCanvas, minima, maxima, prefix, postifx){
+function DAQ(monitor, canvas, detailCanvas, minima, maxima, prefix, postfix){
 	var i, j, k, m;
 
 	var that = this;

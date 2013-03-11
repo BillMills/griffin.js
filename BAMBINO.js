@@ -1,4 +1,4 @@
-function BAMBINO(monitor, mode, minima, maxima){
+function BAMBINO(monitor, mode, minima, maxima, prefix, postfix){
 	this.monitorID = monitor;		        //div ID of wrapper div
     this.mode = mode;                       //'S2' or 'S3'
 	this.canvasID = 'BAMBINOCanvas'; 		//ID of canvas to draw top level TIGRESS view on

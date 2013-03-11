@@ -1,4 +1,4 @@
-function SPICE(monitor, minima, maxima){
+function SPICE(monitor, minima, maxima, prefix, postfix){
 	this.monitorID = monitor;		        //div ID of wrapper div
 	this.canvasID = 'SPICECanvas'; 			//ID of canvas to draw top level TIGRESS view on
     this.linkWrapperID = 'SubsystemLinks';  //ID of div wrapping subsystem navigation links
