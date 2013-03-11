@@ -319,16 +319,32 @@
       startLoop(0); 
 
       $('#setValues').on('change', function(event){highlight('submitParameters')})
-/*
-      xmlhttp = new XMLHttpRequest();
-      xmlhttp.open("GET","note.xml",false);
-      xmlhttp.send();
-      xmlDoc=xmlhttp.responseXML;
-      alert(xmlDoc.getElementsByTagName("to")[0].childNodes[0].nodeValue);
-*/
+
+      window.rawData = {'RF':99};
+      
+      function JSONPfunc(dataWeGotViaJsonp){
+        for (var key in dataWeGotViaJsonp) {
+          if (dataWeGotViaJsonp.hasOwnProperty(key)) {
+            window.rawData[key] = dataWeGotViaJsonp[key];
+          }
+        }
+        
+      }
+      var script = document.createElement('script');
+      script.setAttribute('src', 'test.json');
+      document.body.appendChild(script);
+      
+      /*
+      function derp(){
+        var key = 'RF';
+        window.rawData[key] = 100;
+      }
+      derp();
+      */
+      alert(window.rawData['RF']);
 
   </script> 
-  
+
   </body>
  
 </html>

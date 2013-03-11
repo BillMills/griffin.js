@@ -35,7 +35,7 @@ function PACES(monitor, minima, maxima, prefix, postfix){
     insertCanvas(this.RateCanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, monitor);
     this.RateCanvas = document.getElementById(this.RateCanvasID);
     this.RateContext = this.RateCanvas.getContext('2d');
-    //hidden Tooltip map layer for Rate view:
+    //hidden Tooltip map layer
     insertCanvas(this.TTcanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, monitor);
     this.TTcanvas = document.getElementById(this.TTcanvasID);
     this.TTcontext = this.TTcanvas.getContext('2d');
@@ -48,8 +48,11 @@ function PACES(monitor, minima, maxima, prefix, postfix){
     this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
 
     //set up tooltip:
-    this.tooltip = new Tooltip(this.RateCanvasID, 'PACESTipText', 'PACESttCanv', 'PACESTT', this.monitorID, prefix, postfix);
-    this.tooltip.obj = that;
+    this.RateTooltip = new Tooltip(this.RateCanvasID, 'PACESTipText', 'PACESttCanv', 'PACESTT', this.monitorID, prefix, postfix);
+    this.HVTooltip =  new Tooltip(this.HVcanvasID, 'PACESTipTextHV', 'PACESttCanvHV', 'PACESTTHV', this.monitorID, prefix, postfix);
+    this.RateTooltip.obj = that;
+    this.HVTooltip.obj = that;
+    this.tooltip = this.RateTooltip;
 
     //drawing parameters
     this.centerX = this.canvasWidth/2;
@@ -161,7 +164,7 @@ function PACES(monitor, minima, maxima, prefix, postfix){
         var cardIndex;
         var i;
 
-        nextLine = this.RateCanvasID; //'Channel '+cell;
+        nextLine = 'Channel '+cell;
 
         //keep track of the longest line of text:
         longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
@@ -212,19 +215,17 @@ function PACES(monitor, minima, maxima, prefix, postfix){
     this.displaySwitch = function(){
         //handle putting the right canvas on top:
         if(window.subdetectorView == 0){
-            if($('#'+this.RateCanvasID).css('opacity') > 0)
+            if($('#'+this.RateCanvasID).css('opacity') > 0){
                 swapCanv(this.HVcanvasID, this.RateCanvasID);
+                this.tooltip = this.HVTooltip;
+            }
         } else{
-            if($('#'+this.HVcanvasID).css('opacity') > 0)
+            if($('#'+this.HVcanvasID).css('opacity') > 0){
                 swapCanv(this.RateCanvasID, this.HVcanvasID);
+                this.tooltip = this.RateTooltip;
+            }
         }
-        //redeclare tooltip so it's pointing at the visible canvas:
-        if(window.subdetectorView == 0)
-            this.tooltip = new Tooltip(this.HVcanvasID, 'PACESTipText', 'PACESttCanv', 'PACESTT', this.monitorID, this.prefix, this.postfix);
-        else if(window.subdetectorView == 1 || window.subdetectorView == 2)
-            this.tooltip = new Tooltip(this.RateCanvasID, 'PACESTipText', 'PACESttCanv', 'PACESTT', this.monitorID, this.prefix, this.postfix);
 
-            this.tooltip.obj = that;
     };
 
     this.fetchNewData = function(){
