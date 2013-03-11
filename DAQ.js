@@ -11,6 +11,8 @@ function DAQ(monitor, canvas, detailCanvas, minima, maxima, prefix, postifx){
     this.linkWrapperID = 'DAQlinks'              //ID of wrapper div for DAQ links
     this.topNavID = 'DAQbutton'                  //ID of button to navigate here in the top nav menu
     this.sidebarID = 'DAQsidebar'                //ID of right sidebar to associate with this object
+    this.TTcanvasID = 'DAQTTcanvas'
+    this.TTdetailCanvasID = 'DAQdetailTTcanvas'
 	this.minima = minima;			             //minima of element scalea: [master, master group, master link, collector, digi summary link, digi summary node, digi group link, digi transfer, digitizer]
 	this.maxima = maxima;			             //as minima.
     this.detailShowing = 0;                      //is the detail canvas showing?
@@ -444,6 +446,7 @@ function DAQ(monitor, canvas, detailCanvas, minima, maxima, prefix, postifx){
     };
 
     this.drawDetail = function(context, frame){
+        
         var color, i, j;
 
         var topMargin = 30;
@@ -519,6 +522,7 @@ function DAQ(monitor, canvas, detailCanvas, minima, maxima, prefix, postifx){
                 this.detailContext.stroke();
             }
         }
+
         //parent collector:
         this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.oldCollectorColor[clctr]), parseHexColor(this.collectorColor[clctr]), frame/this.nFrames);
         roundBox(this.detailContext, this.canvasWidth/2 - this.collectorWidth/2, topMargin, this.collectorWidth, this.collectorHeight, 5);
@@ -527,7 +531,7 @@ function DAQ(monitor, canvas, detailCanvas, minima, maxima, prefix, postifx){
         //tooltip layer:
         this.TTdetailContext.fillStyle = 'rgba('+(clctr+1)+','+(clctr+1)+','+(clctr+1)+',1)';
         this.TTdetailContext.fillRect(Math.round(this.canvasWidth/2 - this.collectorWidth/2), Math.round(topMargin), Math.round(this.collectorWidth), Math.round(this.collectorHeight));
-
+        
     };
 
     this.fetchNewData = function(){
