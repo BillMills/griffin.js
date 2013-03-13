@@ -1,8 +1,22 @@
+function loadJSONP(callback) {
+    var i;
+
+    for(i=0; i<window.parameters.JSONPrepos.length; i++){
+        var script  = document.createElement('script');
+        script.setAttribute('src', window.parameters.JSONPrepos[i]);    //fetch the ith repo
+        script.setAttribute('id', 'tempScript'+i);
+        if(i == window.parameters.JSONPrepos.length-1)
+            script.setAttribute('onload', callback);                    //attach the callback to masterLoop to the last data store to load
+        document.head.appendChild(script);
+    }
+
+}
+
 function masterLoop(dashboard, AlarmServices, waffle, SHARC, HPGE, DESCANT, PACES, DANTE, BAMBINO, SCEPTAR, SPICE, TIP, DAQ, Clock, Trigger, callMyself){
+    var i,j;
 	if(!document.webkitHidden && !document.mozHidden){
 
-        var i,j;
-
+        //update all assets
     	waffle.update();
         SHARC.update();
         HPGE.update();
@@ -56,7 +70,14 @@ function masterLoop(dashboard, AlarmServices, waffle, SHARC, HPGE, DESCANT, PACE
         else Trigger.draw(Trigger.nFrames);
     }
     
-    window.loop = setTimeout(function(){masterLoop(dashboard, AlarmServices, waffle, SHARC, HPGE, DESCANT, PACES, DANTE, BAMBINO, SCEPTAR, SPICE, TIP, DAQ, Clock, Trigger, 1)}, 3000);
+    //remove all temporary scripts from the head so they don't accrue:
+    for(i=0; i<window.parameters.JSONPrepos.length; i++){
+        var element = document.getElementById('tempScript'+i);
+        element.parentNode.removeChild(element);
+    }
+
+    //next iteration:
+    window.loop = setTimeout(function(){loadJSONP('masterLoop(window.dashboard, window.AlarmServices, window.waffle, window.SHARC, window.HPGE, window.DESCANT, window.PACES, window.DANTE, window.BAMBINO, window.SCEPTAR, window.SPICE, window.TIP, window.DAQ, window.Clock, window.Trigger, 1)')}, 3000);
 }
 
 //determine what size cards are in what slot:

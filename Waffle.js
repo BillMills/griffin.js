@@ -1,4 +1,4 @@
-function Waffle(rows, cols, wrapperDiv, InputLayer, headerDiv, moduleSizes, AlarmServices){
+function Waffle(rows, cols, wrapperDiv, InputLayer, headerDiv, AlarmServices){
 
     	var i, j, n, columns;
 
@@ -16,7 +16,6 @@ function Waffle(rows, cols, wrapperDiv, InputLayer, headerDiv, moduleSizes, Alar
         this.wrapperDiv = wrapperDiv;               //div ID of top level div
         this.InputLayer = InputLayer;               //div ID of wrapper for input fields
         this.headerDiv = headerDiv;                 //div ID of waffle header
-        this.moduleSizes = moduleSizes;             //array containing sizes of modules in groups of 12 channels
         this.chx = 0;                               //x channel of input sidebar focus
         this.chy = 1;                               //y channel of input sidebar focus
         this.linkWrapperID = 'mainframeLinks';      //ID of div containing nav links
@@ -29,7 +28,7 @@ function Waffle(rows, cols, wrapperDiv, InputLayer, headerDiv, moduleSizes, Alar
 
         //make sure the waffle is pointing at a channel that actually has something in it before the initial populate:
         i=0;
-        while(this.moduleSizes[i] == 0) i++;
+        while(window.parameters.moduleSizes[i] == 0) i++;
         this.chx = i;
 
         //deploy the sidebar
@@ -150,7 +149,7 @@ function Waffle(rows, cols, wrapperDiv, InputLayer, headerDiv, moduleSizes, Alar
         insertLinebreak(this.linkWrapperID);
 
         //deploy slot buttons
-        for(i=0; i<this.moduleSizes.length; i++){
+        for(i=0; i<window.parameters.moduleSizes.length; i++){
             insertButton('card'+i, 'navLink', "{window.HVpointer.viewStatus="+i+"; swapFade('card"+i+"', window.HVpointer, 0, 0);}", this.linkWrapperID, 'Slot '+i);
         }
 
@@ -162,7 +161,7 @@ function Waffle(rows, cols, wrapperDiv, InputLayer, headerDiv, moduleSizes, Alar
 
         //set up module labels
         this.moduleLabels = [];
-        for(i=0; i<this.moduleSizes.length; i++){
+        for(i=0; i<window.parameters.moduleSizes.length; i++){
             this.moduleLabels[i] = 'Slot ' + i;
         }
 
@@ -197,11 +196,11 @@ function Waffle(rows, cols, wrapperDiv, InputLayer, headerDiv, moduleSizes, Alar
         var newRule;
         for(i=0; i<this.moduleLabels.length; i++){
             var buttonWidth;
-            buttonWidth = Math.max(moduleSizes[i],1)*0.9*this.cellSide + (Math.max(moduleSizes[i],1)-1)*0.1*this.cellSide;
+            buttonWidth = Math.max(window.parameters.moduleSizes[i],1)*0.9*this.cellSide + (Math.max(window.parameters.moduleSizes[i],1)-1)*0.1*this.cellSide;
             //FF freaks out if you try and overwrite a styleSheet :(
             //newRule = "button#card"+i+"{width:"+buttonWidth+"px; height:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; margin-top:"+0.05*this.cellSide+"px; float:left; background: -webkit-gradient(linear, left top, left bottom, from(#DDDDDD), to(#FFFFFF)); background: -moz-linear-gradient(top,  #DDDDDD,  #FFFFFF); -webkit-border-radius: 5; -moz-border-radius: 5; border-radius: 5; font-size:"+this.cellSide/4+"px; padding:0px}";
             //document.styleSheets[0].insertRule(newRule,0);
-            if(moduleSizes[i] != 0)
+            if(window.parameters.moduleSizes[i] != 0)
                 newRule = "width:"+buttonWidth+"px; height:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; margin-top:"+0.05*this.cellSide+"px; float:left; -webkit-border-radius: 5;  -moz-border-radius: 5; border-radius: 5; display: inline; font-family: 'Raleway', sans-serif; font-size:"+buttonWidth/8+"px; padding:0px;";
             else{ 
                 newRule = "width:"+buttonWidth+"px; height:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; margin-top:"+0.05*this.cellSide+"px; float:left; -webkit-border-radius: 5;  -moz-border-radius: 5; border-radius: 5; display: inline; font-family: 'Raleway', sans-serif; font-size:"+this.cellSide/2+"px; padding:0px; color:#CC0000;";
@@ -219,9 +218,9 @@ function Waffle(rows, cols, wrapperDiv, InputLayer, headerDiv, moduleSizes, Alar
         //declare bar charts & canvases to paint them on:
         this.barCharts = [];
         var newCanvas;
-        for(i=0; i<moduleSizes.length; i++){
+        for(i=0; i<window.parameters.moduleSizes.length; i++){
             insertCanvas('bar'+i, 'monitor', '', this.totalWidth, this.totalHeight, wrapperDiv);
-            this.barCharts[i] = new BarGraph('bar'+i, i, Math.max(moduleSizes[i],1)*12, 'Slot '+i, 'Reported Voltage [V]', 0, window.parameters.scaleMaxima[0], window.parameters.barChartPrecision, that);
+            this.barCharts[i] = new BarGraph('bar'+i, i, Math.max(window.parameters.moduleSizes[i],1)*12, 'Slot '+i, 'Reported Voltage [V]', 0, window.parameters.scaleMaxima[0], window.parameters.barChartPrecision, that);
         }
 
         //set up arrays:
@@ -239,7 +238,7 @@ function Waffle(rows, cols, wrapperDiv, InputLayer, headerDiv, moduleSizes, Alar
             this.alarmStatus[i] = [];
             this.prevAlarmStatus[i] = [];
             //primary row spans multi-columns:
-            if(i==0) columns = this.moduleSizes.length;
+            if(i==0) columns = window.parameters.moduleSizes.length;
             else columns = this.cols;
             for(j=0; j<columns; j++){
                 this.alarmStatus[i][j] = [];
@@ -270,11 +269,11 @@ function Waffle(rows, cols, wrapperDiv, InputLayer, headerDiv, moduleSizes, Alar
             var R, G, B, A, color, primary;
             for(var i=0; i<this.rows; i++){
                 //primary row spans multi-columns:
-                if(i==0) columns = this.moduleSizes.length;
+                if(i==0) columns = window.parameters.moduleSizes.length;
                 else columns = this.cols;
             	for(var j=0; j<columns; j++){
                     if(i > 0)
-                        primary = primaryBin(this.moduleSizes,j);
+                        primary = primaryBin(window.parameters.moduleSizes,j);
                     else primary = j;
 
     	         	//start values:
@@ -305,7 +304,7 @@ function Waffle(rows, cols, wrapperDiv, InputLayer, headerDiv, moduleSizes, Alar
                         if(A>1) {A = 1;}
     	            }
                     //12-channel cards don't have primary channels, show black (also empty slots):
-                    if( (i==0 && this.moduleSizes[j] == 1) || this.moduleSizes[primary] == 0 ){
+                    if( (i==0 && window.parameters.moduleSizes[j] == 1) || window.parameters.moduleSizes[primary] == 0 ){
                         R = 0;
                         G = 0;
                         B = 0;
@@ -336,7 +335,7 @@ function Waffle(rows, cols, wrapperDiv, InputLayer, headerDiv, moduleSizes, Alar
                         A = Math.max(this.alarmStatus[i][j][0], this.alarmStatus[i][j][1], this.alarmStatus[i][j][2])*0.7 + 0.3;  //enforce minimum 0.3 to make it clearly red
                         if(A>1) {A = 1;}
                     }
-                    if( (i==0 && this.moduleSizes[j] == 1) || this.moduleSizes[primary] == 0 ){
+                    if( (i==0 && window.parameters.moduleSizes[j] == 1) || window.parameters.moduleSizes[primary] == 0 ){
                         R = 0;
                         G = 0;
                         B = 0;
@@ -363,7 +362,7 @@ function Waffle(rows, cols, wrapperDiv, InputLayer, headerDiv, moduleSizes, Alar
 
             for(i=0; i<this.rows; i++){
                 //primary row spans multi-columns:
-                if(i==0) columns = this.moduleSizes.length;
+                if(i==0) columns = window.parameters.moduleSizes.length;
                 else columns = this.cols;
                 for(var j=0; j<columns; j++){
                     R = this.startColor[i][j][0] + (this.endColor[i][j][0] - this.startColor[i][j][0])*frame/this.nFrames;
@@ -382,10 +381,10 @@ function Waffle(rows, cols, wrapperDiv, InputLayer, headerDiv, moduleSizes, Alar
                     else{
                         cornerX = 0;
                         for(var sum=0; sum<j; sum++){
-                            cornerX = cornerX + Math.max(this.moduleSizes[sum],1);
+                            cornerX = cornerX + Math.max(window.parameters.moduleSizes[sum],1);
                         }
                         cornerX = this.leftEdge + cornerX*this.cellSide;
-                        this.context.fillRect(cornerX, cornerY,this.cellSide*Math.max(this.moduleSizes[j],1),this.cellSide);
+                        this.context.fillRect(cornerX, cornerY,this.cellSide*Math.max(window.parameters.moduleSizes[j],1),this.cellSide);
                     }
                 }
             }
@@ -399,8 +398,8 @@ function Waffle(rows, cols, wrapperDiv, InputLayer, headerDiv, moduleSizes, Alar
             var i, j;
 
             var modDivCopy = [0];
-            for(i=0; i < this.moduleSizes.length; i++){
-                modDivCopy[i+1] = modDivCopy[i] + Math.max(this.moduleSizes[i],1);
+            for(i=0; i < window.parameters.moduleSizes.length; i++){
+                modDivCopy[i+1] = modDivCopy[i] + Math.max(window.parameters.moduleSizes[i],1);
             }
             modDivCopy.shift();
 
@@ -457,8 +456,8 @@ function Waffle(rows, cols, wrapperDiv, InputLayer, headerDiv, moduleSizes, Alar
             //module labels:
             var moduleDivisions = [0];
             var vertOffset;
-            for(i=0; i < this.moduleSizes.length; i++){
-                moduleDivisions[i+1] = moduleDivisions[i] + Math.max(this.moduleSizes[i],1);
+            for(i=0; i < window.parameters.moduleSizes.length; i++){
+                moduleDivisions[i+1] = moduleDivisions[i] + Math.max(window.parameters.moduleSizes[i],1);
             }
             for(j=1; j<moduleDivisions.length; j++){
                 var moduleWidth = moduleDivisions[j] - moduleDivisions[j-1];
@@ -492,7 +491,7 @@ function Waffle(rows, cols, wrapperDiv, InputLayer, headerDiv, moduleSizes, Alar
             //update alarms & colors to prepare for animation transition:
             for(i=0; i<this.rows; i++){
                 //primary row spans multi-columns:
-                if(i==0) columns = this.moduleSizes.length;
+                if(i==0) columns = window.parameters.moduleSizes.length;
                 else columns = this.cols;
                 for(j=0; j<columns; j++){
 
@@ -527,7 +526,7 @@ function Waffle(rows, cols, wrapperDiv, InputLayer, headerDiv, moduleSizes, Alar
 
             var chx = Math.floor((x-this.leftEdge) / this.cellSide);
             var chy = Math.floor(y / this.cellSide);
-            slot = primaryBin(this.moduleSizes, chx)
+            slot = primaryBin(window.parameters.moduleSizes, chx)
 
             if(chx < this.cols && chx > -1 && chy < this.rows && chy > -1){
                 cell = [];
@@ -536,7 +535,7 @@ function Waffle(rows, cols, wrapperDiv, InputLayer, headerDiv, moduleSizes, Alar
                 }
                 cell[0] = chy;
                 cell[1] = chx;
-                if( (chy == 0 && this.moduleSizes[chx] == 1) || this.moduleSizes[slot] == 0 ) cell = -1;
+                if( (chy == 0 && window.parameters.moduleSizes[chx] == 1) || window.parameters.moduleSizes[slot] == 0 ) cell = -1;
             } else 
                 cell = -1;
 
@@ -556,10 +555,10 @@ function Waffle(rows, cols, wrapperDiv, InputLayer, headerDiv, moduleSizes, Alar
 
             //decide which card we're pointing at:
             if(row == 0) cardIndex = col;
-            else cardIndex = primaryBin(this.moduleSizes, col);
+            else cardIndex = primaryBin(window.parameters.moduleSizes, col);
 
             //Title for normal channels:
-            if(row != 0) nextLine = this.moduleLabels[cardIndex]+', '+window.parameters.rowTitles[0]+' '+channelMap(col, row, this.moduleSizes, this.rows)+'<br>';
+            if(row != 0) nextLine = this.moduleLabels[cardIndex]+', '+window.parameters.rowTitles[0]+' '+channelMap(col, row, window.parameters.moduleSizes, this.rows)+'<br>';
             //Title for primary channels:
             else nextLine = this.moduleLabels[cardIndex]+' Primary <br>';
 
@@ -580,7 +579,7 @@ function Waffle(rows, cols, wrapperDiv, InputLayer, headerDiv, moduleSizes, Alar
                 }
                 //current:
                 else if(i == 2){
-                        if(this.moduleSizes[cardIndex]==4 && row!=0) nextLine += '--';
+                        if(window.parameters.moduleSizes[cardIndex]==4 && row!=0) nextLine += '--';
                         else nextLine += Math.round( this.reportedValues[i][row][col]*1000)/1000 + ' ' + this.tooltip.postfix[i];                
                 } else {
                     nextLine += Math.round( this.reportedValues[i][row][col]*1000)/1000 + ' ' + this.tooltip.postfix[i];
@@ -620,14 +619,14 @@ function Waffle(rows, cols, wrapperDiv, InputLayer, headerDiv, moduleSizes, Alar
             */          
             for(i=0; i<this.rows; i++){
                 //primary row spans multi-columns, only has entries for 48 channel cards:        
-                if(i==0) columns = this.moduleSizes.length;
+                if(i==0) columns = window.parameters.moduleSizes.length;
                 else columns = this.cols;
 
                 for(j=0; j<columns; j++){
-                    if (i>0) slot = primaryBin(this.moduleSizes, j);
+                    if (i>0) slot = primaryBin(window.parameters.moduleSizes, j);
                     else slot = j;
                     //don't populate the primary of a 12 channel card, or any channel corresponding to an empty slot:
-                    if( (i!=0 || this.moduleSizes[j]==4) && this.moduleSizes[slot]!=0 ){
+                    if( (i!=0 || window.parameters.moduleSizes[j]==4) && window.parameters.moduleSizes[slot]!=0 ){
                     /*
                         ODBindex = getMIDASindex(i, j);
                         demandVoltage[i][j]     = parseFloat(reqVoltage[ODBindex]);
@@ -660,7 +659,7 @@ function Waffle(rows, cols, wrapperDiv, InputLayer, headerDiv, moduleSizes, Alar
                         this.dataBus.rampStatus[i][j] = Math.floor(10*Math.random());
                         this.dataBus.voltLimit[i][j] = 1+Math.random();
                         this.dataBus.currentLimit[i][j] = 1+Math.random();
-                    } else if (i!=0 || this.moduleSizes[j]==4){  //keep the array filled, even for empty slots to avoid unpredictable behavior
+                    } else if (i!=0 || window.parameters.moduleSizes[j]==4){  //keep the array filled, even for empty slots to avoid unpredictable behavior
                         this.dataBus.demandVoltage[i][j] = 0;
                         this.dataBus.reportVoltage[i][j] = 0;
                         this.dataBus.reportCurrent[i][j] = 0;
@@ -696,7 +695,7 @@ function Waffle(rows, cols, wrapperDiv, InputLayer, headerDiv, moduleSizes, Alar
             //determine alarm status
             for(i=0; i<this.rows; i++){
                 //primary row spans multi-columns:
-                if(i==0) columns = this.moduleSizes.length;
+                if(i==0) columns = window.parameters.moduleSizes.length;
                 else columns = this.cols;
                 for(j=0; j<columns; j++){
                     //construct the parameter to be tested against the voltage alarm:
@@ -791,8 +790,8 @@ function clickWaffle(event, obj){
 
             //are we on the primary of a card that doesn't have a primary, or an empty slot??
             var suppressClick = 0;
-            var cardIndex = primaryBin(obj.moduleSizes, chx);
-            if( (chy==0 && obj.moduleSizes[cardIndex] == 1) || obj.moduleSizes[cardIndex] == 0 ) suppressClick = 1;
+            var cardIndex = primaryBin(window.parameters.moduleSizes, chx);
+            if( (chy==0 && window.parameters.moduleSizes[cardIndex] == 1) || window.parameters.moduleSizes[cardIndex] == 0 ) suppressClick = 1;
 
             if(chx<obj.cols && chx>=0 && chy<obj.rows && chy>=0 && window.onDisplay == obj.canvasID && suppressClick==0){
                 obj.chx = chx;
@@ -812,16 +811,16 @@ function getMIDASindex(row, col){
         //count up regular channels
         MIDASindex += (window.rows-1 +1)*col + row-1;
         //add on primary channels
-        moduleNumber = primaryBin(window.moduleSizes, col);
+        moduleNumber = primaryBin(window.parameters.moduleSizes, col);
         for(i=0; i<moduleNumber+1; i++){
-            if(window.moduleSizes[i] == 4) MIDASindex++;
+            if(window.parameters.moduleSizes[i] == 4) MIDASindex++;
         }
     } else{
         moduleNumber = col;
         //add up all the channels from previous cards; recall empty slots occupy a 12-channel card in the arrays:
         for(i=0; i<moduleNumber; i++){
-            if( (window.moduleSizes[i] == 1) || (window.moduleSizes[i] == 0) ) MIDASindex += 12;
-            if(window.moduleSizes[i] == 4) MIDASindex += 49;
+            if( (window.parameters.moduleSizes[i] == 1) || (window.parameters.moduleSizes[i] == 0) ) MIDASindex += 12;
+            if(window.parameters.moduleSizes[i] == 4) MIDASindex += 49;
         }
         //MIDASindex++;
     }
@@ -837,7 +836,7 @@ function getPointer(module, channel, waffle){
 
     //column:
     for(i=0; i<module; i++){
-        col += Math.max(waffle.moduleSizes[i],1);
+        col += Math.max(window.parameters.moduleSizes[i],1);
     }
     col += Math.floor(channel/(waffle.rows-1));
 

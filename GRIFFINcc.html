@@ -75,8 +75,8 @@
       <canvas id='SidebarBKG' style='position:absolute; z-index:-1; right:0%'> </canvas>
 
     </div>
-  <!--End Waffleplate////////////////////////////////////////////////////-->
 
+  <!--Load static parameters from JSONP DB////////////////////////////////////////////////////-->
   <script id='parameterLoad' type="text/JavaScript">
       window.parameters = {};
       function loadParameters(dataWeGotViaJsonp){
@@ -89,7 +89,27 @@
   </script>
   <script src='parameters.json'>//experimental parameters loaded here//</script>
 
+  <!--Main routine/////////////////////////////////////////////////////////////////////-->
   <script id='main' type="text/JavaScript">
+
+      //define function to fetch from JSONP service
+      window.JSONPstore = {};
+      function parseResponse(dataWeGotViaJsonp){
+        var i;
+        for (var key in dataWeGotViaJsonp) {
+          if (dataWeGotViaJsonp.hasOwnProperty(key)) {
+            window.JSONPstore[key] = [];
+            for(i=0; i<dataWeGotViaJsonp[key].length; i++){
+              window.JSONPstore[key][window.JSONPstore[key].length] = {};
+              for(var subkey in dataWeGotViaJsonp[key][i]){
+                if(dataWeGotViaJsonp[key][i].hasOwnProperty(subkey)){
+                  window.JSONPstore[key][i][subkey] = dataWeGotViaJsonp[key][i][subkey];
+                }
+              }
+            }
+          }
+        }
+      }
 
       var i,j,k;
 
@@ -106,18 +126,18 @@
       window.subdetectorView = 1;  //Thresholds by default
 
       //autodetect what size cards are plugged into what slot:
-      var moduleSizes = detectCards();
+      window.parameters.moduleSizes = detectCards();
 
       //rows & columns:
       var rows = 12;
       var columns = 0;
-      for(i=0; i<moduleSizes.length; i++){
-        columns += moduleSizes[i];
-        if (moduleSizes[i] == 0) columns++;
+      for(i=0; i<window.parameters.moduleSizes.length; i++){
+        columns += window.parameters.moduleSizes[i];
+        if (window.parameters.moduleSizes[i] == 0) columns++;
       }
 
       moduleLabels = [];
-      for(i=0; i<moduleSizes.length; i++){
+      for(i=0; i<window.parameters.moduleSizes.length; i++){
         moduleLabels[i] = 'Slot '+i;
       }
 
@@ -147,13 +167,13 @@
 
       //main elements///////////////////////////////////////////////////
       //dashboard
-      var dashboard = new Dashboard('waffleplate');
+      window.dashboard = new Dashboard('waffleplate');
 
       //Alarm Service
-      var AlarmServices = new AlarmService('leftSidebar', 'leftSidebarDetail');
+      window.AlarmServices = new AlarmService('leftSidebar', 'leftSidebarDetail');
 
       //HV monitor
-      var waffle = new Waffle(rows,columns, "waffleplate", "InputLayer",'mainframeLinks', moduleSizes, AlarmServices);
+      window.waffle = new Waffle(rows,columns, "waffleplate", "InputLayer",'mainframeLinks', AlarmServices);
 
       //Subsystem sidebar:
       insertDiv('SubsystemSidebar', 'Sidebar', 'waffleplate');
@@ -166,15 +186,15 @@
       insertH1('SubsystemLinksBanner', 'navPanelHeader', 'SubsystemLinks', 'GRIFFIN Subsystem Monitors');
       insertLinebreak('SubsystemLinks');    
       //subdetectors
-      var SHARCMonitor = new SHARC('waffleplate','horizontal', 4, 4, 1, 16, [],[]);
-      var HPGEMonitor = new HPGE('waffleplate', 1, [0,0,0], [1,1,1], [], [], 'GRIFFIN');
-      var DESCANTMonitor = new DESCANT('waffleplate', [0,0,0], [1,1,1], [],[]);
-      var PACESMonitor = new PACES('waffleplate', [0,0,0], [1,1,1], [], []);
-      var DANTEMonitor = new DANTE('waffleplate', [0,0,0], [1,1,1], [], []);
-      var BAMBINOMonitor = new BAMBINO('waffleplate', 'S3', [0,0,0], [1,1,1], [],[]);
-      var SCEPTARMonitor = new SCEPTAR('waffleplate', [0,0,0], [1,1,1], [1,0,1], [],[]);
-      var SPICEMonitor = new SPICE('waffleplate', [0,0,0], [1,1,1], [],[]);
-      var TIPMonitor = new TIP('waffleplate', [0,0,0], [1,1,1], [], []);
+      window.SHARC   = new SHARC('waffleplate','horizontal', 4, 4, 1, 16, [],[]);
+      window.HPGE    = new HPGE('waffleplate', 1, [0,0,0], [1,1,1], [], [], 'GRIFFIN');
+      window.DESCANT = new DESCANT('waffleplate', [0,0,0], [1,1,1], [],[]);
+      window.PACES   = new PACES('waffleplate', [0,0,0], [1,1,1], [], []);
+      window.DANTE   = new DANTE('waffleplate', [0,0,0], [1,1,1], [], []);
+      window.BAMBINO = new BAMBINO('waffleplate', 'S3', [0,0,0], [1,1,1], [],[]);
+      window.SCEPTAR = new SCEPTAR('waffleplate', [0,0,0], [1,1,1], [1,0,1], [],[]);
+      window.SPICE   = new SPICE('waffleplate', [0,0,0], [1,1,1], [],[]);
+      window.TIP     = new TIP('waffleplate', [0,0,0], [1,1,1], [], []);
       insertLinebreak('SubsystemLinks');
       //nav for different reported values:
       //values to report:
@@ -189,12 +209,12 @@
       }
       window.subsystemScalars = monitorValues.length;
 
-      var DAQMonitor = new DAQ('waffleplate', 'DAQcanvas', 'DAQdetailCanvas', [], []);
+      window.DAQ = new DAQ('waffleplate', 'DAQcanvas', 'DAQdetailCanvas', [], []);
 
-      var ClockMonitor = new Clock('waffleplate');
-      ClockMonitor.draw(ClockMonitor.nFrames);
+      window.Clock = new Clock('waffleplate');
+      window.Clock.draw(window.Clock.nFrames);
 
-      var TriggerMonitor = new Trigger('waffleplate');
+      window.Trigger = new Trigger('waffleplate');
       //end main elements////////////////////////////////////////////////////////////////////////////
 
       //style the sidebar backgrounds:
@@ -214,8 +234,8 @@
       $('#SidebarBKG').css('top', Math.min(0, 0.3*rightSidebarWhitespace) );
 
       //set up channel navigation dropdowns:
-      configureDropdowns('ChannelList', 'CardList', moduleLabels, moduleSizes);
-      document.getElementById('CardList').onblur = function(event){reconfigureChannelList(moduleLabels, moduleSizes, 'ChannelList')};
+      configureDropdowns('ChannelList', 'CardList', moduleLabels, window.parameters.moduleSizes);
+      document.getElementById('CardList').onblur = function(event){reconfigureChannelList(moduleLabels, window.parameters.moduleSizes, 'ChannelList')};
 
       //global variables todo: try and cut down on these/////////////////////////////////////////////
       //which nav panel is on top?
@@ -241,14 +261,13 @@
       window.commitBlink = 0;
       //hack so getMIDASindex can access these from anywhere.  TODO: fix
       window.rows = rows;
-      window.moduleSizes = moduleSizes;
       //end globals//////////////////////////////////////////////////////////////////////////////////
 
       //wrap this in a function so it can be easily called to restart the loop somewhere else:
-      function startLoop(callMyself){
-        masterLoop(dashboard, AlarmServices, waffle, SHARCMonitor, HPGEMonitor, DESCANTMonitor, PACESMonitor, DANTEMonitor, BAMBINOMonitor, SCEPTARMonitor, SPICEMonitor, TIPMonitor, DAQMonitor, ClockMonitor, TriggerMonitor, callMyself);
+      function startLoop(){
+        loadJSONP('masterLoop(window.dashboard, window.AlarmServices, window.waffle, window.SHARC, window.HPGE, window.DESCANT, window.PACES, window.DANTE, window.BAMBINO, window.SCEPTAR, window.SPICE, window.TIP, window.DAQ, window.Clock, window.Trigger, 0)');
       }
-      startLoop(0); 
+      startLoop(); 
 
       $('#setValues').on('change', function(event){highlight('submitParameters')})
       

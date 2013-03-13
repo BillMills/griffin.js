@@ -20,6 +20,7 @@ loadParameters({"ODBkeys" : ["/Location/Of/Device/Varibles", "/Location/Of/Devic
 				"currentUnit" : "uA",
 				"temperatureUnit" : "C",
 				"statusURL" : "http://horus.triumf.ca:8081",
+				"moduleSizes" : 0,
 
 				"SMrows" : 2,
 				"SMcolumns" : 4,
@@ -29,7 +30,9 @@ loadParameters({"ODBkeys" : ["/Location/Of/Device/Varibles", "/Location/Of/Devic
 				"SMmaxima" : [1],
 
 				"DAQminima" : [0,0,0,0,0,0,0,0,0],
-				"DAQmaxima" : [1,1,1,1,1,1,1,1,1]
+				"DAQmaxima" : [1,1,1,1,1,1,1,1,1],
+
+				"JSONPrepos" : ["dummy.json"]//["http://midtig03.triumf.ca:8091/scalar?jsonp=parseResponse"]
 				})
 
 /*Parameter Dictionary//////////////////////////////////////
@@ -56,6 +59,7 @@ rampUnit:						""
 currentUnit:					""
 temperatureUnit:				""
 statusURL:						String containing the url of the MIDAS status page
+moduleSizes:                    Array containing a size code for each slot in the HV crate: 0=empty, 1=12 ch card, 4=48 ch card.
 
 //SHARC
 SMrows:							number of rows of strip diplays
@@ -69,5 +73,8 @@ SMmaxima:						""
 DAQminima:						array containing minima of DAQ rate reporting scale: [master, collector groups, collector links, collectors, digitizer summary links, digitizer summaries, digitizer groups, digitizer links, digitizers]
 DAQmaxima:						""
 
+
+//JSONP
+JSONPrepos						array containing URLs of all JSONP data to be pulled in at each update
 
 *//////////////////////////////////////////////////////////
