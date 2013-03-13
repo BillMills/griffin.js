@@ -9,7 +9,6 @@ function loadJSONP(callback) {
             script.setAttribute('onload', callback);                    //attach the callback to masterLoop to the last data store to load
         document.head.appendChild(script);
     }
-
 }
 
 function masterLoop(dashboard, AlarmServices, waffle, SHARC, HPGE, DESCANT, PACES, DANTE, BAMBINO, SCEPTAR, SPICE, TIP, DAQ, Clock, Trigger, callMyself){

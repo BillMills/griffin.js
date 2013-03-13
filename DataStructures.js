@@ -178,7 +178,7 @@ SPICEDS = function(){
 }
 
 TIPDS = function(){
-	var i;
+	var i, j;
 
 	//data arrays:
 	this.CsIHV = [];
@@ -199,17 +199,27 @@ TIPDS = function(){
 	this.detailBGOthreshold = [];
 	this.detailBGOrate = [];
 	
+	
 	//key map
 	this.key = [];
 	//CsI Wall
+	//generate names
 	for(i=0; i<24; i++){
 		this.key[i] = [];
-		//generate names
-		if(i<10)
-			this.key[i][0] = 'TPW00' +i+ 'P00X';
+		if(i<9)
+			this.key[i][0] = 'TPW00' +(i+1)+ 'P00X';
 		else
-			this.key[i][0] = 'TPW0' +i+ 'P00X';
+			this.key[i][0] = 'TPW0' +(i+1)+ 'P00X';
 	}
+	//figure out where this name is sitting in the JSON arrays
+	for(i=0; i<24; i++){
+		this.key[i][1] = -1;
+        for(j=0; j<window.JSONPstore['scalar'].length; j++){
+            if(window.JSONPstore['scalar'][j].fName == this.key[i][0])
+              	this.key[i][1] = j;
+        }
+    }
+
 }
 
 DAQDS = function(){

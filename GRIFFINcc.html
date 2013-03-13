@@ -100,6 +100,11 @@
     </script>
     <script src='parameters.json'>//experimental parameters loaded here//</script>
 
+    <!--Establish JSONP links////////////////////////////////////////////////////////////-->
+    <script type="text.JavaScript">
+
+    </script>
+
     <!--Main routine/////////////////////////////////////////////////////////////////////-->
     <script id='main' type="text/JavaScript">
       var i,j,k;
@@ -122,156 +127,159 @@
           }
         }
       }
+      //fetch the JSONP once so the data structures can traverse its arrays and make the necessary mapping:
+      loadJSONP("main()");
 
-      //different color scales for use in colorScale function: [initial R,G,B, final R,G,B]
-      window.colorScales = [];
-      window.colorScales[0] = [76,76,76,142,237,48];    //grey->green
-      window.colorScales[1] = [255,255,0,255,51,00];    //sunburst
-      window.colorScales[2] = [0,0,255,255,255,0]; //blue->yellow
-      window.colorScales[3] = [100,100,100,255,255,255];  //grey->white
-      window.colorScales[4] = [107,0,178,255,102,204];  //horrible fuchia
-      //todo: black->purple->red->orange->yellow->white
+      function main(){
+        //different color scales for use in colorScale function: [initial R,G,B, final R,G,B]
+        window.colorScales = [];
+        window.colorScales[0] = [76,76,76,142,237,48];    //grey->green
+        window.colorScales[1] = [255,255,0,255,51,00];    //sunburst
+        window.colorScales[2] = [0,0,255,255,255,0]; //blue->yellow
+        window.colorScales[3] = [100,100,100,255,255,255];  //grey->white
+        window.colorScales[4] = [107,0,178,255,102,204];  //horrible fuchia
+        //todo: black->purple->red->orange->yellow->white
 
-      //state variables for what the subdetector view is showing: 0->HV, 1->Thresholds, 2->Rate
-      window.subdetectorView = 1;  //Thresholds by default
+        //state variables for what the subdetector view is showing: 0->HV, 1->Thresholds, 2->Rate
+        window.subdetectorView = 1;  //Thresholds by default
 
-      //autodetect what size cards are plugged into what slot:
-      window.parameters.moduleSizes = detectCards();
+        //autodetect what size cards are plugged into what slot:
+        window.parameters.moduleSizes = detectCards();
 
-      //columns for HV monitor:
-      for(i=0; i<window.parameters.moduleSizes.length; i++){
-        window.parameters.columns += window.parameters.moduleSizes[i];
-        if (window.parameters.moduleSizes[i] == 0) window.parameters.columns++;
+        //columns for HV monitor:
+        for(i=0; i<window.parameters.moduleSizes.length; i++){
+          window.parameters.columns += window.parameters.moduleSizes[i];
+          if (window.parameters.moduleSizes[i] == 0) window.parameters.columns++;
+        }
+        //establish module labels for HV display
+        moduleLabels = [];
+        for(i=0; i<window.parameters.moduleSizes.length; i++){
+          moduleLabels[i] = 'Slot '+i;
+        }
+
+        //Insert branding & navigation:
+        Banner('banner', 'youAreHere', 'navBar', 'GRIFFIN Dashboard');
+
+        //plug in links:
+        statusLink = document.getElementById('statusLink');
+        statusLink.setAttribute('action', window.parameters.statusURL);
+
+        //set up wrapper div dimensions; minimum rendering width = 1440px, height 900px:
+        window.renderWidth = Math.max(1440, window.innerWidth);
+        window.renderHeight = Math.max(900*0.85,window.innerHeight*0.85)
+        $('#'+window.parameters.wrapper).width(window.renderWidth);
+        $('#'+window.parameters.wrapper).height(window.renderHeight);
+
+        //Waffle onclick event will throw x and y positions up to these globals, so that
+        //updateParameter() can use them to determine which channel to update.
+        window.griffinDialogX;
+        window.griffinDialogY;
+
+        //declare objects:
+
+        //master codex for finding data:
+        window.codex = new masterCodex();
+
+        //main elements///////////////////////////////////////////////////
+        //dashboard
+        window.dashboard = new Dashboard();
+
+        //Alarm Service
+        window.AlarmServices = new AlarmService('leftSidebar', 'leftSidebarDetail');
+
+        //HV monitor
+        window.waffle = new Waffle("InputLayer",'mainframeLinks', AlarmServices);
+
+        //Subsystem sidebar:
+        insertDiv('SubsystemSidebar', 'Sidebar', window.parameters.wrapper);
+        //Subsystem menu; universal buttons declared outside of individual subsystems:
+        //add top level nav button:
+        insertButton('SubsystemsButton', 'navLink', "javascript:swapView('SubsystemLinks', 'SHARCCanvas', 'SubsystemSidebar', 'SubsystemsButton')", 'statusLink', 'Subsystem Monitors');
+        //create nav panel for subsystem view:
+        insertDiv('SubsystemLinks', 'navPanel', window.parameters.wrapper);
+        //headline for nav panel
+        insertH1('SubsystemLinksBanner', 'navPanelHeader', 'SubsystemLinks', 'GRIFFIN Subsystem Monitors');
+        insertLinebreak('SubsystemLinks');    
+        //subdetectors
+        window.SHARC   = new SHARC();
+        window.HPGE    = new HPGE();
+        window.DESCANT = new DESCANT();
+        window.PACES   = new PACES();
+        window.DANTE   = new DANTE();
+        window.BAMBINO = new BAMBINO();
+        window.SCEPTAR = new SCEPTAR();
+        window.SPICE   = new SPICE();
+        window.TIP     = new TIP();
+        insertLinebreak('SubsystemLinks');
+        //nav for different reported values:
+        //values to report:
+        var monitorValues = ['HV', 'Thresholds', 'Rate'];
+        for(i=0; i<monitorValues.length; i++){
+          var classDef
+          //position 1 is default for now:
+          if(i==1) classDef = 'navLinkDown';
+          else classDef = 'navLink'; 
+          insertButton('subsystem'+monitorValues[i], classDef, "javascript:swapSubsystemView('subsystem"+monitorValues[i]+"', 'SubsystemLinks', "+i+")", 'SubsystemLinks', monitorValues[i]);
+
+        }
+        window.subsystemScalars = monitorValues.length;
+        window.DAQ = new DAQ('DAQcanvas', 'DAQdetailCanvas', [], []);
+        window.Clock = new Clock();
+        window.Trigger = new Trigger();
+        //end main elements////////////////////////////////////////////////////////////////////////////
+
+        //style the sidebar backgrounds:
+        document.getElementById('LeftSidebarBKG').width = parseInt(($('#leftSidebar').css('width')).slice(0,3));
+        document.getElementById('LeftSidebarBKG').height = renderHeight*0.9; //parseInt($('#InputLayer').css('height').slice(0,3));
+        tabBKG('LeftSidebarBKG', 'left');
+        document.getElementById('LeftSidebarDetailBKG').width = parseInt(($('#leftSidebar').css('width')).slice(0,3));
+        document.getElementById('LeftSidebarDetailBKG').height = renderHeight*0.9; //parseInt($('#InputLayer').css('height').slice(0,3));
+        tabBKG('LeftSidebarDetailBKG', 'left');
+        document.getElementById('SidebarBKG').width = parseInt(($('#InputLayer').css('width')).slice(0,3));
+        document.getElementById('SidebarBKG').height = renderHeight*0.9; //parseInt($('#InputLayer').css('height').slice(0,3));
+        tabBKG('SidebarBKG', 'right');
+
+        //position right sidebar nicely:
+        var rightSidebarWhitespace = parseFloat(window.innerHeight*0.85) - parseFloat($('#InputLayer').height());
+        $('.Sidebar').css('top', Math.min(0, 0.3*rightSidebarWhitespace) );
+        $('#SidebarBKG').css('top', Math.min(0, 0.3*rightSidebarWhitespace) );
+
+        //set up channel navigation dropdowns:
+        configureDropdowns('ChannelList', 'CardList', moduleLabels, window.parameters.moduleSizes);
+        document.getElementById('CardList').onblur = function(event){reconfigureChannelList(moduleLabels, window.parameters.moduleSizes, 'ChannelList')};
+
+        //global variables todo: try and cut down on these/////////////////////////////////////////////
+        //which nav panel is on top?
+        window.navOnDisplay = 'DashboardLinks';
+        //which canvas is on top?
+        window.onDisplay = 'DashboardCanvas';
+        //which sidebar is on top?
+        window.sidebarOnDisplay = 'DashboardSidebar';
+        //which view state button is depressed?
+        window.viewState = 'DashboardButton';
+        //which was the last nav button pushed?
+        window.lastTrip = 'Main1';
+        //should the input sidebar be refreshed?
+        window.refreshInput = 1;
+        //which DAQ detail is on display in the DAQ view?
+        window.DAQdetail = -1;
+        //something to hold the settimeout loop so it can be stopped from anywhere:
+        window.loop;
+        //...and similar for animation loops:
+        window.animateLoop;
+        window.transAnimateLoop;
+        //status flag for if the Commit button is blinking on loop:
+        window.commitBlink = 0;
+        //end globals//////////////////////////////////////////////////////////////////////////////////
+
+        startLoop(); 
+
+        $('#setValues').on('change', function(event){highlight('submitParameters')})
       }
-      //establish module labels for HV display
-      moduleLabels = [];
-      for(i=0; i<window.parameters.moduleSizes.length; i++){
-        moduleLabels[i] = 'Slot '+i;
-      }
 
-      //Insert branding & navigation:
-      Banner('banner', 'youAreHere', 'navBar', 'GRIFFIN Dashboard');
-
-      //plug in links:
-      statusLink = document.getElementById('statusLink');
-      statusLink.setAttribute('action', window.parameters.statusURL);
-
-      //set up wrapper div dimensions; minimum rendering width = 1440px, height 900px:
-      var renderWidth = Math.max(1440, window.innerWidth);
-      var renderHeight = Math.max(900*0.85,window.innerHeight*0.85)
-      $('#'+window.parameters.wrapper).width(renderWidth);
-      $('#'+window.parameters.wrapper).height(renderHeight);
-
-      //Waffle onclick event will throw x and y positions up to these globals, so that
-      //updateParameter() can use them to determine which channel to update.
-      window.griffinDialogX;
-      window.griffinDialogY;
-
-      //declare objects:
-
-      //master codex for finding data:
-      window.codex = new masterCodex();
-
-      //main elements///////////////////////////////////////////////////
-      //dashboard
-      window.dashboard = new Dashboard();
-
-      //Alarm Service
-      window.AlarmServices = new AlarmService('leftSidebar', 'leftSidebarDetail');
-
-      //HV monitor
-      window.waffle = new Waffle("InputLayer",'mainframeLinks', AlarmServices);
-
-      //Subsystem sidebar:
-      insertDiv('SubsystemSidebar', 'Sidebar', window.parameters.wrapper);
-      //Subsystem menu; universal buttons declared outside of individual subsystems:
-      //add top level nav button:
-      insertButton('SubsystemsButton', 'navLink', "javascript:swapView('SubsystemLinks', 'SHARCCanvas', 'SubsystemSidebar', 'SubsystemsButton')", 'statusLink', 'Subsystem Monitors');
-      //create nav panel for subsystem view:
-      insertDiv('SubsystemLinks', 'navPanel', window.parameters.wrapper);
-      //headline for nav panel
-      insertH1('SubsystemLinksBanner', 'navPanelHeader', 'SubsystemLinks', 'GRIFFIN Subsystem Monitors');
-      insertLinebreak('SubsystemLinks');    
-      //subdetectors
-      window.SHARC   = new SHARC();
-      window.HPGE    = new HPGE();
-      window.DESCANT = new DESCANT();
-      window.PACES   = new PACES();
-      window.DANTE   = new DANTE();
-      window.BAMBINO = new BAMBINO();
-      window.SCEPTAR = new SCEPTAR();
-      window.SPICE   = new SPICE();
-      window.TIP     = new TIP();
-      insertLinebreak('SubsystemLinks');
-      //nav for different reported values:
-      //values to report:
-      var monitorValues = ['HV', 'Thresholds', 'Rate'];
-      for(i=0; i<monitorValues.length; i++){
-        var classDef
-        //position 1 is default for now:
-        if(i==1) classDef = 'navLinkDown';
-        else classDef = 'navLink'; 
-        insertButton('subsystem'+monitorValues[i], classDef, "javascript:swapSubsystemView('subsystem"+monitorValues[i]+"', 'SubsystemLinks', "+i+")", 'SubsystemLinks', monitorValues[i]);
-
-      }
-      window.subsystemScalars = monitorValues.length;
-      window.DAQ = new DAQ('DAQcanvas', 'DAQdetailCanvas', [], []);
-      window.Clock = new Clock();
-      window.Trigger = new Trigger();
-      //end main elements////////////////////////////////////////////////////////////////////////////
-
-      //style the sidebar backgrounds:
-      document.getElementById('LeftSidebarBKG').width = parseInt(($('#leftSidebar').css('width')).slice(0,3));
-      document.getElementById('LeftSidebarBKG').height = renderHeight*0.9; //parseInt($('#InputLayer').css('height').slice(0,3));
-      tabBKG('LeftSidebarBKG', 'left');
-      document.getElementById('LeftSidebarDetailBKG').width = parseInt(($('#leftSidebar').css('width')).slice(0,3));
-      document.getElementById('LeftSidebarDetailBKG').height = renderHeight*0.9; //parseInt($('#InputLayer').css('height').slice(0,3));
-      tabBKG('LeftSidebarDetailBKG', 'left');
-      document.getElementById('SidebarBKG').width = parseInt(($('#InputLayer').css('width')).slice(0,3));
-      document.getElementById('SidebarBKG').height = renderHeight*0.9; //parseInt($('#InputLayer').css('height').slice(0,3));
-      tabBKG('SidebarBKG', 'right');
-
-      //position right sidebar nicely:
-      var rightSidebarWhitespace = parseFloat(window.innerHeight*0.85) - parseFloat($('#InputLayer').height());
-      $('.Sidebar').css('top', Math.min(0, 0.3*rightSidebarWhitespace) );
-      $('#SidebarBKG').css('top', Math.min(0, 0.3*rightSidebarWhitespace) );
-
-      //set up channel navigation dropdowns:
-      configureDropdowns('ChannelList', 'CardList', moduleLabels, window.parameters.moduleSizes);
-      document.getElementById('CardList').onblur = function(event){reconfigureChannelList(moduleLabels, window.parameters.moduleSizes, 'ChannelList')};
-
-      //global variables todo: try and cut down on these/////////////////////////////////////////////
-      //which nav panel is on top?
-      window.navOnDisplay = 'DashboardLinks';
-      //which canvas is on top?
-      window.onDisplay = 'DashboardCanvas';
-      //which sidebar is on top?
-      window.sidebarOnDisplay = 'DashboardSidebar';
-      //which view state button is depressed?
-      window.viewState = 'DashboardButton';
-      //which was the last nav button pushed?
-      window.lastTrip = 'Main1';
-      //should the input sidebar be refreshed?
-      window.refreshInput = 1;
-      //which DAQ detail is on display in the DAQ view?
-      window.DAQdetail = -1;
-      //something to hold the settimeout loop so it can be stopped from anywhere:
-      window.loop;
-      //...and similar for animation loops:
-      window.animateLoop;
-      window.transAnimateLoop;
-      //status flag for if the Commit button is blinking on loop:
-      window.commitBlink = 0;
-      //end globals//////////////////////////////////////////////////////////////////////////////////
-
-      //wrap this in a function so it can be easily called to restart the loop somewhere else:
       function startLoop(){
         loadJSONP('masterLoop(window.dashboard, window.AlarmServices, window.waffle, window.SHARC, window.HPGE, window.DESCANT, window.PACES, window.DANTE, window.BAMBINO, window.SCEPTAR, window.SPICE, window.TIP, window.DAQ, window.Clock, window.Trigger, 0)');
       }
-      startLoop(); 
-
-      $('#setValues').on('change', function(event){highlight('submitParameters')})
-
     </script> 
   </body>
 </html>

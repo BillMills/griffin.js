@@ -79,7 +79,7 @@ loadParameters({"wrapper" : "waffleplate",
 				"SPICEpostfix" : [],
 
 				"TIPminima" : [0,0,0],
-				"TIPmaxima" : [1,1,1],
+				"TIPmaxima" : [1,1,100],
 				"TIPprefix" : [],
 				"TIPpostfix" : [],
 
