@@ -1,6 +1,6 @@
-function HPGE(monitor, BGOenable, minima, maxima, prefix, postfix, mode){
+function HPGE(){
 
-	this.monitorID = monitor;		                //div ID of wrapper div
+	this.monitorID = window.parameters.wrapper;		//div ID of wrapper div
 	this.canvasID = 'HPGECanvas'; 			        //ID of canvas to draw top level TIGRESS view on
 	this.detailCanvasID = 'HPGEdetailCanvas';		//ID of canvas to draw single HPGE view on
     this.linkWrapperID = 'SubsystemLinks';          //ID of div wrapping subsystem navigation links
@@ -8,10 +8,10 @@ function HPGE(monitor, BGOenable, minima, maxima, prefix, postfix, mode){
     this.topNavID = 'SubsystemsButton';             //ID of top level nav button
     this.TTcanvasID = 'HPGETTCanvas';               //ID of hidden tooltip map canvas for summary level
     this.TTdetailCanvasID = 'HPGETTdetailCanvas';   //ID of hidden tooltip map canvas for detail level
-    this.minima = minima;                           //array of scale minima: [HPGE HV, HPGE Thresholds, HPGE Rate...]
-    this.maxima = maxima;                           //array of scale maxima, arranged as minima.
-    this.mode = mode;                               //mode to run in, either 'TIGRESS' or 'GRIFFIN'
-    this.BGOenable = BGOenable;                     //are the suppresors present?
+    this.minima = window.parameters.HPGEminima;     //array of scale minima: [HPGE HV, HPGE Thresholds, HPGE Rate...]
+    this.maxima = window.parameters.HPGEmaxima;     //array of scale maxima, arranged as minima.
+    this.mode = window.parameters.HPGEmode;         //mode to run in, either 'TIGRESS' or 'GRIFFIN'
+    this.BGOenable = window.parameters.BGOenable;   //are the suppresors present?
     this.dataBus = new HPGEDS();
 
     this.cloverShowing = 1;                         //index of clover currently showing in detail view
@@ -37,23 +37,23 @@ function HPGE(monitor, BGOenable, minima, maxima, prefix, postfix, mode){
     insertButton('HPGElink', 'navLink', "javascript:swapFade('HPGElink', window.HPGEpointer, window.subsystemScalars, window.subdetectorView)", this.linkWrapperID, 'HPGE');
 
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
-    this.monitor = document.getElementById(monitor);
+    this.monitor = document.getElementById(this.monitorID);
     this.canvasWidth = 0.48*$(this.monitor).width();
     this.canvasHeight = 0.8*$(this.monitor).height();
     //top level
-    insertCanvas(this.canvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px; transition:opacity 0.5s, z-index 0.5s; -moz-transition:opacity 0.5s, z-index 0.5s; -webkit-transition:opacity 0.5s, z-index 0.5s;', this.canvasWidth, this.canvasHeight, monitor);
+    insertCanvas(this.canvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px; transition:opacity 0.5s, z-index 0.5s; -moz-transition:opacity 0.5s, z-index 0.5s; -webkit-transition:opacity 0.5s, z-index 0.5s;', this.canvasWidth, this.canvasHeight, this.monitorID);
     this.canvas = document.getElementById(this.canvasID);
     this.context = this.canvas.getContext('2d');
     //detail level
-    insertCanvas(this.detailCanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px; transition:opacity 0.5s, z-index 0.5s; -moz-transition:opacity 0.5s, z-index 0.5s; -webkit-transition:opacity 0.5s, z-index 0.5s;', this.canvasWidth, this.canvasHeight, monitor);
+    insertCanvas(this.detailCanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px; transition:opacity 0.5s, z-index 0.5s; -moz-transition:opacity 0.5s, z-index 0.5s; -webkit-transition:opacity 0.5s, z-index 0.5s;', this.canvasWidth, this.canvasHeight, this.monitorID);
     this.detailCanvas = document.getElementById(this.detailCanvasID);
     this.detailContext = this.detailCanvas.getContext('2d');
     //hidden Tooltip map layer for summary
-    insertCanvas(this.TTcanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, monitor);
+    insertCanvas(this.TTcanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, this.monitorID);
     this.TTcanvas = document.getElementById(this.TTcanvasID);
     this.TTcontext = this.TTcanvas.getContext('2d');
     //hidden Tooltip map layer for detail
-    insertCanvas(this.TTdetailCanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, monitor);
+    insertCanvas(this.TTdetailCanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, this.monitorID);
     this.TTdetailCanvas = document.getElementById(this.TTdetailCanvasID);
     this.TTdetailContext = this.TTdetailCanvas.getContext('2d');
 
@@ -87,14 +87,14 @@ function HPGE(monitor, BGOenable, minima, maxima, prefix, postfix, mode){
     this.TTcontext.fillStyle = 'rgba(50,100,150,1)';
     this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
     //set up summary tooltip:
-    this.tooltip = new Tooltip(this.canvasID, 'HPGETipText', 'HPGEttCanv', 'HPGETT', this.monitorID, prefix, postfix);
+    this.tooltip = new Tooltip(this.canvasID, 'HPGETipText', 'HPGEttCanv', 'HPGETT', this.monitorID, window.parameters.HPGEprefix, window.parameters.HPGEpostfix);
     this.tooltip.obj = that;
     //detail level tt:
     //paint whole hidden canvas with R!=G!=B to trigger TT suppression:
     this.TTdetailContext.fillStyle = 'rgba(50,100,150,1)';
     this.TTdetailContext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
     //set up detail tooltip:
-    this.detailTooltip = new Tooltip(this.detailCanvasID, 'HPGEdetailTipText', 'HPGEttDetailCanv', 'HPGETTdetail', this.monitorID, prefix, postfix);
+    this.detailTooltip = new Tooltip(this.detailCanvasID, 'HPGEdetailTipText', 'HPGEttDetailCanv', 'HPGETTdetail', this.monitorID, window.parameters.HPGEprefix, window.parameters.HPGEpostfix);
     this.detailTooltip.obj = that;
 
     //drawing parameters/////////////////////////////////////////////////////////////////////////////////////////////

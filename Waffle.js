@@ -1,4 +1,4 @@
-function Waffle(rows, cols, wrapperDiv, InputLayer, headerDiv, AlarmServices){
+function Waffle(InputLayer, headerDiv, AlarmServices){
 
     	var i, j, n, columns;
 
@@ -8,12 +8,12 @@ function Waffle(rows, cols, wrapperDiv, InputLayer, headerDiv, AlarmServices){
         window.HVpointer = that;
 
         //member data:
-        this.rows = rows + 1;                       //number of rows in the waffle; +1 for primary row
-        this.cols = cols;                           //numver of columns in the waffle
+        this.rows = window.parameters.rows + 1;     //number of rows in the waffle; +1 for primary row
+        this.cols = window.parameters.columns;      //numver of columns in the waffle
         this.canvasID = 'TestWaffle';               //canvas ID to draw the waffle on
         this.prevAlarmStatus;                       //previous iteration's alarmStatus
         this.alarmStatus;                           //2D array containing the alarm level for each cell
-        this.wrapperDiv = wrapperDiv;               //div ID of top level div
+        this.wrapperDiv = window.parameters.wrapper;//div ID of top level div
         this.InputLayer = InputLayer;               //div ID of wrapper for input fields
         this.headerDiv = headerDiv;                 //div ID of waffle header
         this.chx = 0;                               //x channel of input sidebar focus
@@ -140,7 +140,7 @@ function Waffle(rows, cols, wrapperDiv, InputLayer, headerDiv, AlarmServices){
         //top level nav button
         insertButton(this.topNavID, 'navLink', "javascript:swapView('mainframeLinks', 'TestWaffle', 'InputLayer', '"+this.topNavID+"')", 'statusLink', 'HV Monitor');
         //nav wrapper div
-        insertDiv(this.linkWrapperID, 'navPanel', wrapperDiv);
+        insertDiv(this.linkWrapperID, 'navPanel', this.wrapperDiv);
         //nav header
         insertH1('mainframeLinksBanner', 'navPanelHeader', this.linkWrapperID, 'GRIFFIN HV Mainframes');
         insertLinebreak(this.linkWrapperID);
@@ -154,7 +154,7 @@ function Waffle(rows, cols, wrapperDiv, InputLayer, headerDiv, AlarmServices){
         }
 
         //inject canvas into DOM for waffle to paint on:
-        insertCanvas(this.canvasID, 'monitor', '', this.totalWidth, this.totalHeight, wrapperDiv);
+        insertCanvas(this.canvasID, 'monitor', '', this.totalWidth, this.totalHeight, this.wrapperDiv);
         this.canvas = document.getElementById(this.canvasID);
         this.context = this.canvas.getContext('2d');
         //finished DOM insertions///////////////////////////////////////////////////////////////
@@ -219,7 +219,7 @@ function Waffle(rows, cols, wrapperDiv, InputLayer, headerDiv, AlarmServices){
         this.barCharts = [];
         var newCanvas;
         for(i=0; i<window.parameters.moduleSizes.length; i++){
-            insertCanvas('bar'+i, 'monitor', '', this.totalWidth, this.totalHeight, wrapperDiv);
+            insertCanvas('bar'+i, 'monitor', '', this.totalWidth, this.totalHeight, this.wrapperDiv);
             this.barCharts[i] = new BarGraph('bar'+i, i, Math.max(window.parameters.moduleSizes[i],1)*12, 'Slot '+i, 'Reported Voltage [V]', 0, window.parameters.scaleMaxima[0], window.parameters.barChartPrecision, that);
         }
 
@@ -809,7 +809,7 @@ function getMIDASindex(row, col){
 
     if(row != 0){
         //count up regular channels
-        MIDASindex += (window.rows-1 +1)*col + row-1;
+        MIDASindex += (window.parameters.rows-1 +1)*col + row-1;
         //add on primary channels
         moduleNumber = primaryBin(window.parameters.moduleSizes, col);
         for(i=0; i<moduleNumber+1; i++){

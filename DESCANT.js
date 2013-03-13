@@ -1,17 +1,15 @@
-//DSC##XN000
-
-function DESCANT(monitor, minima, maxima, prefix, postfix){
+function DESCANT(){
 
 	var i, j;
 
-	this.monitorID = monitor;				//div ID of wrapper div
-	this.canvasID = 'DESCANTCanvas';		//ID of canvas to draw DESCANT on
-	this.TTcanvasID = 'DESCANTTTCanvas';	//ID of hidden tooltip map canvas
-	this.linkWrapperID = 'SubsystemLinks';	//ID of div wrapping subsystem navigation links
-	this.sidebarID = 'SubsystemSidebar';	//ID of right sidebar for this object
-	this.topNavID = 'SubsystemsButton';		//ID of top level nav button
-	this.minima = minima;					//array of meter minima [HV, thresholds, rate]
-	this.maxima = maxima;					//array of meter maxima, arranged as minima
+	this.monitorID = window.parameters.wrapper;		//div ID of wrapper div
+	this.canvasID = 'DESCANTCanvas';		        //ID of canvas to draw DESCANT on
+	this.TTcanvasID = 'DESCANTTTCanvas';	        //ID of hidden tooltip map canvas
+	this.linkWrapperID = 'SubsystemLinks';	        //ID of div wrapping subsystem navigation links
+	this.sidebarID = 'SubsystemSidebar';	        //ID of right sidebar for this object
+	this.topNavID = 'SubsystemsButton';		        //ID of top level nav button
+	this.minima = window.parameters.DESCANTminima;  //array of meter minima [HV, thresholds, rate]
+	this.maxima = window.parameters.DESCANTmaxima;  //array of meter maxima, arranged as minima
     this.dataBus = new DESCANTDS();
 
 	var that = this;
@@ -31,11 +29,11 @@ function DESCANT(monitor, minima, maxima, prefix, postfix){
     this.canvasWidth = 0.48*$(this.monitor).width();
     this.canvasHeight = 0.8*$(this.monitor).height();
     //detector view
-    insertCanvas(this.canvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, monitor);
+    insertCanvas(this.canvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, this.monitorID);
     this.canvas = document.getElementById(this.canvasID);
     this.context = this.canvas.getContext('2d');
     //hidden Tooltip map layer
-    insertCanvas(this.TTcanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, monitor);
+    insertCanvas(this.TTcanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, this.monitorID);
     this.TTcanvas = document.getElementById(this.TTcanvasID);
     this.TTcontext = this.TTcanvas.getContext('2d');
 
@@ -47,7 +45,7 @@ function DESCANT(monitor, minima, maxima, prefix, postfix){
     this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
 
     //set up tooltip:
-    this.tooltip = new Tooltip(this.canvasID, 'DESCANTTipText', 'DESCANTttCanv', 'DESCANTTT', this.monitorID, prefix, postfix);
+    this.tooltip = new Tooltip(this.canvasID, 'DESCANTTipText', 'DESCANTttCanv', 'DESCANTTT', this.monitorID, window.parameters.DESCANTprefix, window.parameters.DESCANTpostfix);
     this.tooltip.obj = that;
 
     //drawing parameters//////////////////////////////////////////////////////////////////////////////////

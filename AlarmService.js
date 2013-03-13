@@ -27,7 +27,7 @@ function AlarmService(sidebarDivID, sidebarDetailDivID){
     this.nFrames = this.FPS*this.duration;
 
     //minimum height of detail-level canvas:
-    this.minBKGheight = $('#waffleplate').height()*0.9;
+    this.minBKGheight = $('#'+window.parameters.wrapper).height()*0.9;
     //height of detail-level canvas in previous update:
     this.bkgCanvasHeight = this.minBKGheight;
 
@@ -91,7 +91,7 @@ function AlarmService(sidebarDivID, sidebarDetailDivID){
     	if(this.voltageAlarms.length != 0) alarmText += 'Voltage Alarms<br>'
     	for(i=0; i<Math.min(this.voltageAlarms.length, this.nAlarms); i++){
     		slot = primaryBin(window.parameters.moduleSizes, this.voltageAlarms[i][1]);
-    		channel = channelMap(this.voltageAlarms[i][1], this.voltageAlarms[i][0], window.parameters.moduleSizes, window.rows + 1);
+    		channel = channelMap(this.voltageAlarms[i][1], this.voltageAlarms[i][0], window.parameters.moduleSizes, window.parameters.rows + 1);
     		if(channel == -1){
     			alarmText += 'Slot ' + slot + ' Primary' + '<br>';	
     		} else
@@ -104,7 +104,7 @@ function AlarmService(sidebarDivID, sidebarDetailDivID){
     	if(this.currentAlarms.length != 0) alarmText += '<br>Current Alarms<br>'
     	for(i=0; i<Math.min(this.currentAlarms.length, this.nAlarms); i++){
     		slot = primaryBin(window.parameters.moduleSizes, this.currentAlarms[i][1]);
-    		channel = channelMap(this.currentAlarms[i][1], this.currentAlarms[i][0], window.parameters.moduleSizes, window.rows + 1);
+    		channel = channelMap(this.currentAlarms[i][1], this.currentAlarms[i][0], window.parameters.moduleSizes, window.parameters.rows + 1);
     		if(channel == -1){
     			alarmText += 'Slot ' + slot + ' Primary' + '<br>';	
     		} else
@@ -115,7 +115,7 @@ function AlarmService(sidebarDivID, sidebarDetailDivID){
     	if(this.temperatureAlarms.length != 0) alarmText += '<br>Temperature Alarms<br>'
     	for(i=0; i<Math.min(this.temperatureAlarms.length, this.nAlarms); i++){
 	   		slot = primaryBin(window.parameters.moduleSizes, this.temperatureAlarms[i][1]);
-    		channel = channelMap(this.temperatureAlarms[i][1], this.temperatureAlarms[i][0], window.parameters.moduleSizes, window.rows + 1);
+    		channel = channelMap(this.temperatureAlarms[i][1], this.temperatureAlarms[i][0], window.parameters.moduleSizes, window.parameters.rows + 1);
     		if(channel == -1){
     			alarmText += 'Slot ' + slot + ' Primary' + '<br>';	
     		} else

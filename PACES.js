@@ -1,15 +1,13 @@
-function PACES(monitor, minima, maxima, prefix, postfix){
-	this.monitorID = monitor;		        //div ID of wrapper div
-	this.HVcanvasID = 'PACESHVCanvas'; 	    //ID of canvas to draw HV view
-    this.RateCanvasID = 'PACESrateCanvas';  //ID of canvas to draw rate / threshold view
-    this.linkWrapperID = 'SubsystemLinks';  //ID of div wrapping subsystem navigation links
-    this.sidebarID = 'SubsystemSidebar';    //ID of right sidebar for this object
-    this.topNavID = 'SubsystemsButton';     //ID of top level nav button
-    this.TTcanvasID = 'PACESTTCanvas';      //ID of hidden tooltip map canvas
-    this.minima = minima;                   //array of meter minima [HV, thresholds, rate]
-    this.maxima = maxima;                   //array of meter maxima, arranged as minima
-    this.prefix = prefix;                   //array of tooltip prefixes
-    this.postfix = postfix;                 //array of tooltip suffixes.
+function PACES(){
+	this.monitorID = window.parameters.wrapper; //div ID of wrapper div
+	this.HVcanvasID = 'PACESHVCanvas'; 	        //ID of canvas to draw HV view
+    this.RateCanvasID = 'PACESrateCanvas';      //ID of canvas to draw rate / threshold view
+    this.linkWrapperID = 'SubsystemLinks';      //ID of div wrapping subsystem navigation links
+    this.sidebarID = 'SubsystemSidebar';        //ID of right sidebar for this object
+    this.topNavID = 'SubsystemsButton';         //ID of top level nav button
+    this.TTcanvasID = 'PACESTTCanvas';          //ID of hidden tooltip map canvas
+    this.minima = window.parameters.PACESminima;//array of meter minima [HV, thresholds, rate]
+    this.maxima = window.parameters.PACESmaxima;//array of meter maxima, arranged as minima
     this.dataBus = new PACESDS();           
 
     var that = this;
@@ -24,19 +22,19 @@ function PACES(monitor, minima, maxima, prefix, postfix){
     insertButton('PACESlink', 'navLink', "javascript:swapFade('PACESlink', window.PACESpointer, window.subsystemScalars, window.subdetectorView)", this.linkWrapperID, 'PACES');
 
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
-    this.monitor = document.getElementById(monitor);
+    this.monitor = document.getElementById(this.monitorID);
     this.canvasWidth = 0.48*$(this.monitor).width();
     this.canvasHeight = 0.8*$(this.monitor).height();
     //HV view
-    insertCanvas(this.HVcanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, monitor);
+    insertCanvas(this.HVcanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, this.monitorID);
     this.HVcanvas = document.getElementById(this.HVcanvasID);
     this.HVcontext = this.HVcanvas.getContext('2d');
     //Rate view
-    insertCanvas(this.RateCanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, monitor);
+    insertCanvas(this.RateCanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, this.monitorID);
     this.RateCanvas = document.getElementById(this.RateCanvasID);
     this.RateContext = this.RateCanvas.getContext('2d');
     //hidden Tooltip map layer
-    insertCanvas(this.TTcanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, monitor);
+    insertCanvas(this.TTcanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, this.monitorID);
     this.TTcanvas = document.getElementById(this.TTcanvasID);
     this.TTcontext = this.TTcanvas.getContext('2d');
 
@@ -48,8 +46,8 @@ function PACES(monitor, minima, maxima, prefix, postfix){
     this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
 
     //set up tooltip:
-    this.RateTooltip = new Tooltip(this.RateCanvasID, 'PACESTipText', 'PACESttCanv', 'PACESTT', this.monitorID, prefix, postfix);
-    this.HVTooltip =  new Tooltip(this.HVcanvasID, 'PACESTipTextHV', 'PACESttCanvHV', 'PACESTTHV', this.monitorID, prefix, postfix);
+    this.RateTooltip = new Tooltip(this.RateCanvasID, 'PACESTipText', 'PACESttCanv', 'PACESTT', this.monitorID, window.parameters.PACESprefix, window.parameters.PACESpostfix);
+    this.HVTooltip =  new Tooltip(this.HVcanvasID, 'PACESTipTextHV', 'PACESttCanvHV', 'PACESTTHV', this.monitorID, window.parameters.PACESprefix, window.parameters.PACESpostfix);
     this.RateTooltip.obj = that;
     this.HVTooltip.obj = that;
     this.tooltip = this.RateTooltip;

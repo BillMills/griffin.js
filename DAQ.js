@@ -1,11 +1,11 @@
-function DAQ(monitor, canvas, detailCanvas, prefix, postfix){
+function DAQ(canvas, detailCanvas, prefix, postfix){
 	var i, j, k, m;
 
 	var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
     window.DAQpointer = that;
 
-	this.monitorID = monitor;		             //div ID of wrapper div
+	this.monitorID = window.parameters.wrapper;  //div ID of wrapper div
 	this.canvasID = 'DAQcanvas';			     //ID of canvas to draw DAQ on
     this.detailCanvasID = 'DAQdetailCanvas';     //ID of canvas to draw detailed view on
     this.linkWrapperID = 'DAQlinks'              //ID of wrapper div for DAQ links

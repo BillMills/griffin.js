@@ -46,6 +46,19 @@
 
   <body style="font-family: 'Raleway', sans-serif; font-size:14px; background-color:#333333; color:#FFFFFF; margin-left:0px"> 
 
+    <!--Load static parameters from JSONP DB////////////////////////////////////////////////////-->
+    <script id='parameterLoad' type="text/JavaScript">
+      window.parameters = {};
+      function loadParameters(dataWeGotViaJsonp){
+        for (var key in dataWeGotViaJsonp) {
+          if (dataWeGotViaJsonp.hasOwnProperty(key)) {
+            window.parameters[key] = dataWeGotViaJsonp[key];
+          }
+        }
+      } 
+    </script>
+    <script src='parameters.json'>//experimental parameters loaded here//</script>
+
     <!--Branding///////////////////////////////////////////////////////////-->
     <canvas id="banner"></canvas>
 
@@ -61,7 +74,6 @@
     <!--Waffleplate////////////////////////////////////////////////////////-->
 
     <div id="waffleplate">      
-
       <!--Left Sidebar: alarms, run control, etc-->
       <!--background layer at z=0; summary level at z=1; detail hidden at z<0, called forward to z=2 onclick-->
       <div id='leftSidebarDetail' class='leftSidebar' style='z-index:-1; opacity:0;'>
@@ -73,24 +85,24 @@
       <!--Right Sidebars///////////////////////////////////////////////////-->
 
       <canvas id='SidebarBKG' style='position:absolute; z-index:-1; right:0%'> </canvas>
-
     </div>
 
-  <!--Load static parameters from JSONP DB////////////////////////////////////////////////////-->
-  <script id='parameterLoad' type="text/JavaScript">
+    <!--Load static parameters from JSONP DB////////////////////////////////////////////////////-->
+    <script id='parameterLoad' type="text/JavaScript">
       window.parameters = {};
-      function loadParameters(dataWeGotViaJsonp){
-        for (var key in dataWeGotViaJsonp) {
-          if (dataWeGotViaJsonp.hasOwnProperty(key)) {
-            window.parameters[key] = dataWeGotViaJsonp[key];
+        function loadParameters(dataWeGotViaJsonp){
+          for (var key in dataWeGotViaJsonp) {
+            if (dataWeGotViaJsonp.hasOwnProperty(key)) {
+              window.parameters[key] = dataWeGotViaJsonp[key];
+            }
           }
-        }
-      } 
-  </script>
-  <script src='parameters.json'>//experimental parameters loaded here//</script>
+        } 
+    </script>
+    <script src='parameters.json'>//experimental parameters loaded here//</script>
 
-  <!--Main routine/////////////////////////////////////////////////////////////////////-->
-  <script id='main' type="text/JavaScript">
+    <!--Main routine/////////////////////////////////////////////////////////////////////-->
+    <script id='main' type="text/JavaScript">
+      var i,j,k;
 
       //define function to fetch from JSONP service
       window.JSONPstore = {};
@@ -111,8 +123,6 @@
         }
       }
 
-      var i,j,k;
-
       //different color scales for use in colorScale function: [initial R,G,B, final R,G,B]
       window.colorScales = [];
       window.colorScales[0] = [76,76,76,142,237,48];    //grey->green
@@ -128,14 +138,12 @@
       //autodetect what size cards are plugged into what slot:
       window.parameters.moduleSizes = detectCards();
 
-      //rows & columns:
-      var rows = 12;
-      var columns = 0;
+      //columns for HV monitor:
       for(i=0; i<window.parameters.moduleSizes.length; i++){
-        columns += window.parameters.moduleSizes[i];
-        if (window.parameters.moduleSizes[i] == 0) columns++;
+        window.parameters.columns += window.parameters.moduleSizes[i];
+        if (window.parameters.moduleSizes[i] == 0) window.parameters.columns++;
       }
-
+      //establish module labels for HV display
       moduleLabels = [];
       for(i=0; i<window.parameters.moduleSizes.length; i++){
         moduleLabels[i] = 'Slot '+i;
@@ -151,12 +159,11 @@
       //set up wrapper div dimensions; minimum rendering width = 1440px, height 900px:
       var renderWidth = Math.max(1440, window.innerWidth);
       var renderHeight = Math.max(900*0.85,window.innerHeight*0.85)
-      $('#waffleplate').width(renderWidth);
-      $('#waffleplate').height(renderHeight);
+      $('#'+window.parameters.wrapper).width(renderWidth);
+      $('#'+window.parameters.wrapper).height(renderHeight);
 
       //Waffle onclick event will throw x and y positions up to these globals, so that
-      //updateParameter() can use them to determine which channel to update.  TODO: fix
-      //without globals.
+      //updateParameter() can use them to determine which channel to update.
       window.griffinDialogX;
       window.griffinDialogY;
 
@@ -167,34 +174,34 @@
 
       //main elements///////////////////////////////////////////////////
       //dashboard
-      window.dashboard = new Dashboard('waffleplate');
+      window.dashboard = new Dashboard();
 
       //Alarm Service
       window.AlarmServices = new AlarmService('leftSidebar', 'leftSidebarDetail');
 
       //HV monitor
-      window.waffle = new Waffle(rows,columns, "waffleplate", "InputLayer",'mainframeLinks', AlarmServices);
+      window.waffle = new Waffle("InputLayer",'mainframeLinks', AlarmServices);
 
       //Subsystem sidebar:
-      insertDiv('SubsystemSidebar', 'Sidebar', 'waffleplate');
+      insertDiv('SubsystemSidebar', 'Sidebar', window.parameters.wrapper);
       //Subsystem menu; universal buttons declared outside of individual subsystems:
       //add top level nav button:
       insertButton('SubsystemsButton', 'navLink', "javascript:swapView('SubsystemLinks', 'SHARCCanvas', 'SubsystemSidebar', 'SubsystemsButton')", 'statusLink', 'Subsystem Monitors');
       //create nav panel for subsystem view:
-      insertDiv('SubsystemLinks', 'navPanel', 'waffleplate');
+      insertDiv('SubsystemLinks', 'navPanel', window.parameters.wrapper);
       //headline for nav panel
       insertH1('SubsystemLinksBanner', 'navPanelHeader', 'SubsystemLinks', 'GRIFFIN Subsystem Monitors');
       insertLinebreak('SubsystemLinks');    
       //subdetectors
-      window.SHARC   = new SHARC('waffleplate','horizontal', 4, 4, 1, 16, [],[]);
-      window.HPGE    = new HPGE('waffleplate', 1, [0,0,0], [1,1,1], [], [], 'GRIFFIN');
-      window.DESCANT = new DESCANT('waffleplate', [0,0,0], [1,1,1], [],[]);
-      window.PACES   = new PACES('waffleplate', [0,0,0], [1,1,1], [], []);
-      window.DANTE   = new DANTE('waffleplate', [0,0,0], [1,1,1], [], []);
-      window.BAMBINO = new BAMBINO('waffleplate', 'S3', [0,0,0], [1,1,1], [],[]);
-      window.SCEPTAR = new SCEPTAR('waffleplate', [0,0,0], [1,1,1], [1,0,1], [],[]);
-      window.SPICE   = new SPICE('waffleplate', [0,0,0], [1,1,1], [],[]);
-      window.TIP     = new TIP('waffleplate', [0,0,0], [1,1,1], [], []);
+      window.SHARC   = new SHARC();
+      window.HPGE    = new HPGE();
+      window.DESCANT = new DESCANT();
+      window.PACES   = new PACES();
+      window.DANTE   = new DANTE();
+      window.BAMBINO = new BAMBINO();
+      window.SCEPTAR = new SCEPTAR();
+      window.SPICE   = new SPICE();
+      window.TIP     = new TIP();
       insertLinebreak('SubsystemLinks');
       //nav for different reported values:
       //values to report:
@@ -208,13 +215,9 @@
 
       }
       window.subsystemScalars = monitorValues.length;
-
-      window.DAQ = new DAQ('waffleplate', 'DAQcanvas', 'DAQdetailCanvas', [], []);
-
-      window.Clock = new Clock('waffleplate');
-      window.Clock.draw(window.Clock.nFrames);
-
-      window.Trigger = new Trigger('waffleplate');
+      window.DAQ = new DAQ('DAQcanvas', 'DAQdetailCanvas', [], []);
+      window.Clock = new Clock();
+      window.Trigger = new Trigger();
       //end main elements////////////////////////////////////////////////////////////////////////////
 
       //style the sidebar backgrounds:
@@ -259,8 +262,6 @@
       window.transAnimateLoop;
       //status flag for if the Commit button is blinking on loop:
       window.commitBlink = 0;
-      //hack so getMIDASindex can access these from anywhere.  TODO: fix
-      window.rows = rows;
       //end globals//////////////////////////////////////////////////////////////////////////////////
 
       //wrap this in a function so it can be easily called to restart the loop somewhere else:
@@ -270,10 +271,7 @@
       startLoop(); 
 
       $('#setValues').on('change', function(event){highlight('submitParameters')})
-      
 
-  </script> 
-
+    </script> 
   </body>
- 
 </html>

@@ -1,13 +1,13 @@
-function SCEPTAR(monitor, maxima, minima, config, prefix, postfix){
-	this.monitorID = monitor;		        //div ID of wrapper div
-	this.canvasID = 'SCEPTARCanvas'; 		//ID of canvas to draw top level TIGRESS view on
-    this.linkWrapperID = 'SubsystemLinks';  //ID of div wrapping subsystem navigation links
-    this.sidebarID = 'SubsystemSidebar';    //ID of right sidebar for this object
-    this.topNavID = 'SubsystemsButton';     //ID of top level nav button
-    this.TTcanvasID = 'SCEPTARTTCanvas';    //ID of hidden tooltip map canvas
-    this.minima = minima;                   //array of meter minima [HV, thresholds, rate]
-    this.maxima = maxima;                   //array of meter maxima, arranged as minima
-    this.config = config;                   //subsystems on: [upstream sceptar, downstream sceptar, downstream ZDS]
+function SCEPTAR(){
+	this.monitorID = window.parameters.wrapper;     //div ID of wrapper div
+	this.canvasID = 'SCEPTARCanvas'; 		        //ID of canvas to draw top level TIGRESS view on
+    this.linkWrapperID = 'SubsystemLinks';          //ID of div wrapping subsystem navigation links
+    this.sidebarID = 'SubsystemSidebar';            //ID of right sidebar for this object
+    this.topNavID = 'SubsystemsButton';             //ID of top level nav button
+    this.TTcanvasID = 'SCEPTARTTCanvas';            //ID of hidden tooltip map canvas
+    this.minima = window.parameters.SCEPTARminima;  //array of meter minima [HV, thresholds, rate]
+    this.maxima = window.parameters.SCEPTARmaxima;  //array of meter maxima, arranged as minima
+    this.config = window.parameters.SCEPTARconfig;  //subsystems on: [upstream sceptar, downstream sceptar, downstream ZDS]
     this.dataBus = new SCEPTARDS();
 
     var that = this;
@@ -23,15 +23,15 @@ function SCEPTAR(monitor, maxima, minima, config, prefix, postfix){
     insertButton('SCEPTARlink', 'navLink', "javascript:swapFade('SCEPTARlink', window.SCEPTARpointer, window.subsystemScalars, window.subdetectorView)", this.linkWrapperID, 'SCEPTAR');
 
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
-    this.monitor = document.getElementById(monitor);
+    this.monitor = document.getElementById(this.monitorID);
     this.canvasWidth = 0.48*$(this.monitor).width();
     this.canvasHeight = 0.8*$(this.monitor).height();
     //detector view
-    insertCanvas(this.canvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, monitor);
+    insertCanvas(this.canvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, this.monitorID);
     this.canvas = document.getElementById(this.canvasID);
     this.context = this.canvas.getContext('2d');
     //hidden Tooltip map layer
-    insertCanvas(this.TTcanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, monitor);
+    insertCanvas(this.TTcanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, this.monitorID);
     this.TTcanvas = document.getElementById(this.TTcanvasID);
     this.TTcontext = this.TTcanvas.getContext('2d');
 
@@ -42,7 +42,7 @@ function SCEPTAR(monitor, maxima, minima, config, prefix, postfix){
     this.TTcontext.fillStyle = 'rgba(50,100,150,1)';
     this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
     //set up tooltip:
-    this.tooltip = new Tooltip(this.canvasID, 'SCEPTARTipText', 'SCEPTARttCanv', 'SCEPTARTT', this.monitorID, prefix, postfix);
+    this.tooltip = new Tooltip(this.canvasID, 'SCEPTARTipText', 'SCEPTARttCanv', 'SCEPTARTT', this.monitorID, window.parameters.SCEPTARprefix, window.parameters.SCEPTARpostfix);
     this.tooltip.obj = that;
 
     //drawing parameters

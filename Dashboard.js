@@ -1,11 +1,11 @@
-function Dashboard(monitor){
+function Dashboard(){
 
-	this.wrapperID = monitor;			    //ID of wrapping div
-	this.canvasID = 'DashboardCanvas';	    //ID of canvas to paint dashboard on
-    this.linkWrapperID = 'DashboardLinks';  //ID of div to contain clock view header
-    this.sidebarID = 'DashboardSidebar';    //ID of dashboard sidebar div
+	this.wrapperID = window.parameters.wrapper;    //ID of wrapping div
+	this.canvasID = 'DashboardCanvas';	           //ID of canvas to paint dashboard on
+    this.linkWrapperID = 'DashboardLinks';         //ID of div to contain clock view header
+    this.sidebarID = 'DashboardSidebar';           //ID of dashboard sidebar div
 
-	this.wrapper = document.getElementById(monitor);
+	this.wrapper = document.getElementById(this.wrapperID);
 
     //deploy the sidebar
     this.deploySidebar = function(){
@@ -31,7 +31,7 @@ function Dashboard(monitor){
 	//deploy a canvas for the dashboard view:
     this.canvasWidth = 0.48*$(this.wrapper).width();
     this.canvasHeight = 0.8*$(this.wrapper).height();
-    insertCanvas(this.canvasID, 'monitor', 'position:absolute; left:24%; top:' + ($('#DashboardLinks').height() + 5) +'px;', this.canvasWidth, this.canvasHeight, monitor)
+    insertCanvas(this.canvasID, 'monitor', 'position:absolute; left:24%; top:' + ($('#DashboardLinks').height() + 5) +'px;', this.canvasWidth, this.canvasHeight, this.wrapperID)
     this.canvas = document.getElementById('DashboardCanvas');
     this.context = this.canvas.getContext('2d');
 

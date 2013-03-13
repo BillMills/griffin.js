@@ -1,4 +1,8 @@
-loadParameters({"ODBkeys" : ["/Location/Of/Device/Varibles", "/Location/Of/Device/Settings", "Demand Voltage Key", "Measured Voltage Key", "Measured Current Key", "Voltage Ramp Up Key", "Voltage Ramp Down Key", "Temperature Key", "ChState Key", "ChStatus Key", "Voltage Limit Key", "Current Limit Key"],
+loadParameters({"wrapper" : "waffleplate",
+
+				"ODBkeys" : ["/Location/Of/Device/Varibles", "/Location/Of/Device/Settings", "Demand Voltage Key", "Measured Voltage Key", "Measured Current Key", "Voltage Ramp Up Key", "Voltage Ramp Down Key", "Temperature Key", "ChState Key", "ChStatus Key", "Voltage Limit Key", "Current Limit Key"],
+				"rows" : 12,
+				"columns": 0,
 				"rowTitles" : ["Ch.", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"],
 				"alarmThresholds" : [0.8, 0.999, 0.999, 0],
 				"scaleMaxima" : [1,1,1,1],
@@ -28,6 +32,56 @@ loadParameters({"ODBkeys" : ["/Location/Of/Device/Varibles", "/Location/Of/Devic
 				"SMnChannels" : 16,
 				"SMminima" : [0],
 				"SMmaxima" : [1],
+				"nRadialHoriz" : 4, 
+				"nAzimuthalHoriz" : 4, 
+				"nRadialVert" : 1, 
+				"nAzimuthalVert" : 16,
+				"SHARCprefix" : [],
+				"SHARCpostfix" : [],
+
+				"HPGEmode" : "GRIFFIN",
+				"BGOenable" : 1,
+				"HPGEminima" : [0,0,0],
+				"HPGEmaxima" : [1,1,1],
+				"HPGEprefix" : [],
+				"HPGEpostfix" : [],
+
+				"DESCANTminima" : [0,0,0],
+				"DESCANTmaxima" : [1,1,1],
+				"DESCANTprefix" : [],
+				"DESCANTpostfix" : [],
+
+				"PACESminima" : [0,0,0],
+				"PACESmaxima" : [1,1,1],
+				"PACESprefix" : [],
+				"PACESpostfix" : [],
+
+				"DANTEminima" : [0,0,0],
+				"DANTEmaxima" : [1,1,1],
+				"DANTEprefix" : [],
+				"DANTEpostfix" : [],
+
+				"BAMBINOmode" : "S3",
+				"BAMBINOminima" : [0,0,0],
+				"BAMBINOmaxima" : [1,1,1],
+				"BAMBINOprefix" : [],
+				"BAMBINOpostfix" : [],
+
+				"SCEPTARminima" : [0,0,0],
+				"SCEPTARmaxima" : [1,1,1],
+				"SCEPTARprefix" : [],
+				"SCEPTARpostfix" : [],
+				"SCEPTARconfig" : [1,0,1],
+
+				"SPICEminima" : [0,0,0],
+				"SPICEmaxima" : [1,1,1],
+				"SPICEprefix" : [],
+				"SPICEpostfix" : [],
+
+				"TIPminima" : [0,0,0],
+				"TIPmaxima" : [1,1,1],
+				"TIPprefix" : [],
+				"TIPpostfix" : [],
 
 				"DAQminima" : [0,0,0,0,0,0,0,0,0],
 				"DAQmaxima" : [1,1,1,1,1,1,1,1,1],
@@ -36,8 +90,13 @@ loadParameters({"ODBkeys" : ["/Location/Of/Device/Varibles", "/Location/Of/Devic
 				})
 
 /*Parameter Dictionary//////////////////////////////////////
+//Global
+wrapper							ID of div that wraps all both sidebars + main display region
+
 //HV monitor
 ODBkeys: 						["/Location/Of/Device/Varibles", "/Location/Of/Device/Settings", "Demand Voltage Key", "Measured Voltage Key", "Measured Current Key", "Voltage Ramp Up Key", "Voltage Ramp Down Key", "Temperature Key", "ChState Key", "ChStatus Key", "Voltage Limit Key", "Current Limit Key"]
+rows:							number of rows in the HV monitor, not counting the primary row
+columns:						number of columns in HV monitor.
 rowTitles:						Array of strings descrbing the row titles
 alarmThresholds:				Maximum values before an alarm is tripped [abs(demand-measured voltage), current, temperature, rate]
 scaleMaxima:					Saturation point for color scale
@@ -68,6 +127,51 @@ SM_ODBkeys:						["/Location/Of/Device/Varibles", "/Location/Of/Device/Settings"
 SMnChannels:					number of channels per display
 SMminima:						array containing scale minima
 SMmaxima:						""
+nRadialHoriz					number of radial bins in the disks corresponding to the horizontal strip display 
+nAzimuthalHoriz					number of azimuthal bins "" 
+nRadialVert						number of radial bins in disks associated with the vertical strip display 
+nAzimuthalVert					number of azimuthal bins ""
+SHARCprefix                     array of strings to use as prefixes in SHARC tooltip
+SHARCpostfix                    as SHARCprefix
+
+//HPGE
+HPGEmode						'GRIFFIN' or 'TIGRESS'
+BGOenable						are the suppressors present?
+HPGEminima						array of scale minima: [HPGE HV, HPGE Thresholds, HPGE Rate...]
+HPGEmaxima						""
+HPGEprefix                      array of strings to use as prefixes in HPGE tooltip
+HPGEpostfix                     as HPGEprefix
+
+DESACNTminima					array of scale minima: [HV, Thresholds, Rate...]
+DESCANTmaxima					""
+DESCANTprefix                   array of strings to use as prefixes in DESCANT tooltip
+DESCANTpostfix                  as prefix
+
+PACESminima						array of scale minima: [HV, Thresholds, Rate...]
+PACESmaxima						""
+PACESprefix                     array of strings to use as prefixes in PACES tooltip
+PACESpostfix                    as prefix
+
+DANTEminima						array of scale minima: [HV, Thresholds, Rate...]
+DANTEmaxima						""
+DANTEprefix                     array of strings to use as prefixes in DANTE tooltip
+DANTEpostfix                    as prefix
+
+SPICEminima						array of scale minima: [HV, Thresholds, Rate...]
+SPICEmaxima						""
+SPICEprefix                     array of strings to use as prefixes in SPICE tooltip
+SPICEpostfix                    as prefix
+
+SCEPTARminima					array of scale minima: [HV, Thresholds, Rate...]
+SCEPTARmaxima					""
+SCEPTARprefix                   array of strings to use as prefixes in SCEPTAR tooltip
+SCEPTARpostfix                  as prefix
+SCEPTARconfig                   subsystems on: [upstream sceptar, downstream sceptar, downstream ZDS]
+
+TIPminima						array of scale minima: [HV, Thresholds, Rate...]
+TIPmaxima						""
+TIPprefix                       array of strings to use as prefixes in TIP tooltip
+TIPpostfix                      as prefix
 
 //DAQ
 DAQminima:						array containing minima of DAQ rate reporting scale: [master, collector groups, collector links, collectors, digitizer summary links, digitizer summaries, digitizer groups, digitizer links, digitizers]

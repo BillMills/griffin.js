@@ -1,10 +1,9 @@
-function SHARC(monitor, orientation, nRadialHoriz, nAzimuthalHoriz, nRadialVert, nAzimuthalVert, prefix, postfix){
+function SHARC(){
 
 	var i,j;
 
 	//argument member variables/////////////////////////////////////////////////////////////////////////////////
-	this.monitorID = monitor;						//div ID of wrapper div
-	this.orientation = orientation;					//'vertical' or 'horizontal', the direction of the strips for this instance.
+	this.monitorID = window.parameters.wrapper;		//div ID of wrapper div
 	this.canvasID = 'SHARCCanvas';					//the canvas ID on which to draw the strip monitor
 	this.rows = window.parameters.SMrows;			//number of rows of detectors
 	this.columns = window.parameters.SMcolumns;		//number of columns of detectors
@@ -35,7 +34,7 @@ function SHARC(monitor, orientation, nRadialHoriz, nAzimuthalHoriz, nRadialVert,
 	this.monitor = document.getElementById(this.monitorID);
     this.canvasWidth = 0.48*$(this.monitor).width();
     this.canvasHeight = 0.8*$(this.monitor).height();
-	insertCanvas(this.canvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, monitor);
+	insertCanvas(this.canvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, this.monitorID);
 	this.canvas = document.getElementById(this.canvasID);
 	this.context = this.canvas.getContext('2d');
 
@@ -43,7 +42,7 @@ function SHARC(monitor, orientation, nRadialHoriz, nAzimuthalHoriz, nRadialVert,
     this.halfWidth = this.canvasWidth/2;
 
     //set up tooltip:
-    this.tooltip = new Tooltip(this.canvasID, 'SHARCTipText', 'SHARCttCanv', 'SHARCTT', this.monitorID, prefix, postfix);
+    this.tooltip = new Tooltip(this.canvasID, 'SHARCTipText', 'SHARCttCanv', 'SHARCTT', this.monitorID, window.parameters.SHARCprefix, window.parameters.SHARCpostfix);
     this.tooltip.obj = that;
 
     //define dimensions of each detector display/////////////////////////////////////////////////////////
@@ -61,12 +60,12 @@ function SHARC(monitor, orientation, nRadialHoriz, nAzimuthalHoriz, nRadialVert,
     this.centerRightX = this.centerLeftX + this.halfWidth;
     this.centerTopY = (1 - this.boxElementFraction) / 2 * this.canvasHeight / 2;
     this.centerBottomY = this.canvasHeight - (1 - this.boxElementFraction) / 2 * this.canvasHeight / 2;
-    this.nAzimuthalHoriz = nAzimuthalHoriz;
-    this.nAzimuthalVert = nAzimuthalVert;
-    this.nRadialHoriz = nRadialHoriz;
-    this.nRadialVert = nRadialVert;
-    this.nEllipticalChannelsHoriz = nAzimuthalHoriz*nRadialHoriz;
-    this.nEllipticalChannelsVert = nAzimuthalVert*nRadialVert;
+    this.nAzimuthalHoriz = window.parameters.nAzimuthalHoriz;
+    this.nAzimuthalVert = window.parameters.nAzimuthalVert;
+    this.nRadialHoriz = window.parameters.nRadialHoriz;
+    this.nRadialVert = window.parameters.nRadialVert;
+    this.nEllipticalChannelsHoriz = this.nAzimuthalHoriz*this.nRadialHoriz;
+    this.nEllipticalChannelsVert = this.nAzimuthalVert*this.nRadialVert;
     this.minRadius = 10;
     this.maxRadius = 170;
     this.radiusStepHoriz = (this.maxRadius - this.minRadius) / this.nRadialHoriz;
@@ -136,7 +135,7 @@ function SHARC(monitor, orientation, nRadialHoriz, nAzimuthalHoriz, nRadialVert,
 	    	//draw elliptical wheels:
     		//draw disks
     		if(half == 0){
-	    		for(i=0; i<nRadialHoriz + 1; i++){
+	    		for(i=0; i<this.nRadialHoriz + 1; i++){
 	    			this.context.beginPath();
 	    			ellipse(this.context, this.centerLeftX, this.centerTopY, this.minRadius+i*this.radiusStepHoriz, 0, 2*Math.PI);
     				this.context.beginPath();
