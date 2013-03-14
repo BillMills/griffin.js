@@ -299,7 +299,10 @@ function SHARC(){
 		var scale = (scalar - this.minima[this.trackingIndex]) / (this.maxima[this.trackingIndex] - this.minima[this.trackingIndex]);
 
         //different scales for different meters to aid visual recognition:
-        return colorScale(window.colorScales[window.subdetectorView],scale);
+        if(window.subdetectorView==0) return scalepickr(scale, 'rainbow');
+        else if(window.subdetectorView==1) return scalepickr(scale, 'twighlight');
+        else if(window.subdetectorView==2) return scalepickr(scale, 'thermalScope');
+        
 	};
 
 	//determine which cell pixel x,y falls in, with 0,0 being the top left corner of the canvas; return -1 if no corresponding cell.

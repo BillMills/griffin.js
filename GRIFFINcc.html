@@ -135,7 +135,7 @@
         //todo: black->purple->red->orange->yellow->white
 
         //state variables for what the subdetector view is showing: 0->HV, 1->Thresholds, 2->Rate
-        window.subdetectorView = 1;  //threshold by default
+        window.subdetectorView = 2;  //rate by default
 
         //autodetect what size cards are plugged into what slot:
         window.parameters.moduleSizes = detectCards();
@@ -212,8 +212,8 @@
         var monitorValues = ['HV', 'Thresholds', 'Rate'];
         for(i=0; i<monitorValues.length; i++){
           var classDef
-          //position 1 is default for now:
-          if(i==1) classDef = 'navLinkDown';
+          //position 2 is default for now:
+          if(i==2) classDef = 'navLinkDown';
           else classDef = 'navLink'; 
           insertButton('subsystem'+monitorValues[i], classDef, "javascript:swapSubsystemView('subsystem"+monitorValues[i]+"', 'SubsystemLinks', "+i+")", 'SubsystemLinks', monitorValues[i]);
 

@@ -659,7 +659,9 @@ function HPGE(){
         var scale = (scalar - this.minima[window.subdetectorView]) / (this.maxima[window.subdetectorView] - this.minima[window.subdetectorView]);
 
         //different scales for different meters to aid visual recognition:
-        return colorScale(window.colorScales[window.subdetectorView],scale);
+        if(window.subdetectorView==0) return scalepickr(scale, 'rainbow');
+        else if(window.subdetectorView==1) return scalepickr(scale, 'twighlight');
+        else if(window.subdetectorView==2) return scalepickr(scale, 'thermalScope');
     };
 
     //decide which display version to show:
