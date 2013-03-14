@@ -83,7 +83,6 @@
       <div id='leftSidebar' class='leftSidebar' style='z-index:1;'></div>
 
       <!--Right Sidebars///////////////////////////////////////////////////-->
-
       <canvas id='SidebarBKG' style='position:absolute; z-index:-1; right:0%'> </canvas>
     </div>
 
@@ -99,11 +98,6 @@
         } 
     </script>
     <script src='parameters.json'>//experimental parameters loaded here//</script>
-
-    <!--Establish JSONP links////////////////////////////////////////////////////////////-->
-    <script type="text.JavaScript">
-
-    </script>
 
     <!--Main routine/////////////////////////////////////////////////////////////////////-->
     <script id='main' type="text/JavaScript">
@@ -141,7 +135,7 @@
         //todo: black->purple->red->orange->yellow->white
 
         //state variables for what the subdetector view is showing: 0->HV, 1->Thresholds, 2->Rate
-        window.subdetectorView = 1;  //Thresholds by default
+        window.subdetectorView = 1;  //threshold by default
 
         //autodetect what size cards are plugged into what slot:
         window.parameters.moduleSizes = detectCards();
@@ -194,22 +188,24 @@
         insertDiv('SubsystemSidebar', 'Sidebar', window.parameters.wrapper);
         //Subsystem menu; universal buttons declared outside of individual subsystems:
         //add top level nav button:
-        insertButton('SubsystemsButton', 'navLink', "javascript:swapView('SubsystemLinks', 'SHARCCanvas', 'SubsystemSidebar', 'SubsystemsButton')", 'statusLink', 'Subsystem Monitors');
+        insertButton('SubsystemsButton', 'navLink', "", 'statusLink', 'Subsystem Monitors');
         //create nav panel for subsystem view:
         insertDiv('SubsystemLinks', 'navPanel', window.parameters.wrapper);
         //headline for nav panel
         insertH1('SubsystemLinksBanner', 'navPanelHeader', 'SubsystemLinks', 'GRIFFIN Subsystem Monitors');
         insertLinebreak('SubsystemLinks');    
         //subdetectors
-        window.SHARC   = new SHARC();
-        window.HPGE    = new HPGE();
-        window.DESCANT = new DESCANT();
-        window.PACES   = new PACES();
-        window.DANTE   = new DANTE();
-        window.BAMBINO = new BAMBINO();
-        window.SCEPTAR = new SCEPTAR();
-        window.SPICE   = new SPICE();
-        window.TIP     = new TIP();
+        window.Subdetectors = [];
+        if(window.parameters.deployment["SHARC"]) window.Subdetectors[window.Subdetectors.length] = new SHARC();
+        if(window.parameters.deployment["HPGE"]) window.Subdetectors[window.Subdetectors.length] = new HPGE();
+        if(window.parameters.deployment["DESCANT"]) window.Subdetectors[window.Subdetectors.length] = new DESCANT();
+        if(window.parameters.deployment["PACES"]) window.Subdetectors[window.Subdetectors.length] = new PACES();
+        if(window.parameters.deployment["DANTE"]) window.Subdetectors[window.Subdetectors.length] = new DANTE();
+        if(window.parameters.deployment["BAMBINO"]) window.Subdetectors[window.Subdetectors.length] = new BAMBINO();
+        if(window.parameters.deployment["SCEPTAR"]) window.Subdetectors[window.Subdetectors.length] = new SCEPTAR();
+        if(window.parameters.deployment["SPICE"]) window.Subdetectors[window.Subdetectors.length] = new SPICE();
+        if(window.parameters.deployment["TIP"]) window.Subdetectors[window.Subdetectors.length] = new TIP();
+
         insertLinebreak('SubsystemLinks');
         //nav for different reported values:
         //values to report:
@@ -223,6 +219,10 @@
 
         }
         window.subsystemScalars = monitorValues.length;
+
+        //make the top level nav button default to the first subdetector in the list:
+        document.getElementById('SubsystemsButton').setAttribute('onclick', "javascript:swapView('SubsystemLinks', '"+window.Subdetectors[0].canvasID+"', 'SubsystemSidebar', 'SubsystemsButton')")
+
         window.DAQ = new DAQ('DAQcanvas', 'DAQdetailCanvas', [], []);
         window.Clock = new Clock();
         window.Trigger = new Trigger();
@@ -278,7 +278,7 @@
       }
 
       function startLoop(){
-        loadJSONP('masterLoop(window.dashboard, window.AlarmServices, window.waffle, window.SHARC, window.HPGE, window.DESCANT, window.PACES, window.DANTE, window.BAMBINO, window.SCEPTAR, window.SPICE, window.TIP, window.DAQ, window.Clock, window.Trigger, 0)');
+        loadJSONP('masterLoop(0)');
       }
     </script> 
   </body>

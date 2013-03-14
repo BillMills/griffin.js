@@ -250,14 +250,9 @@ function BarGraph(cvas, moduleNumber, nBars, title, yAxisTitle, scaleMin, scaleM
 		return 'rgba('+R+', '+G+', '+B+', '+A+')'
 	};
 
-	//bring this bar graph into the limelight:
-	this.wake = function(){
-
-	};
-
-	//dismiss this graph:
-	this.sleep = function(){
-
-	};
+    this.animate = function(force){
+        if(window.onDisplay == this.cvas || !force) animate(this, 0);
+        else this.draw(this.nFrames);
+    };
 
 }

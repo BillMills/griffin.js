@@ -240,6 +240,11 @@ function PACES(){
 
     };
 
+    this.animate = function(force){
+        if(window.onDisplay == this.RateCanvasID || window.onDisplay == this.HVcanvasID || !force) animate(this, 0);
+        else this.draw(this.nFrames);
+    };
+
     //do an initial populate:
     this.update();
 }

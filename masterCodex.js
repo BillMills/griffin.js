@@ -1,5 +1,4 @@
-//masterCodex imports a table which matches detector element name to ODB path and index.  The objects
-//in DataStructures.js can then populate their keys from the codex.
+//masterCodex imports a table from which DAQ and (eventually) HV information can be parsed and mapped.
 
 masterCodex = function(){
 	var i, j, k;

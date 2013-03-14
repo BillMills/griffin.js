@@ -194,6 +194,11 @@ function SPICE(){
         }
     };
 
+    this.animate = function(force){
+        if(window.onDisplay == this.canvasID || !force) animate(this, 0);
+        else this.draw(this.nFrames);
+    };
+
     //do an initial populate:
     this.update();
 }

@@ -248,6 +248,11 @@ function DESCANT(){
         */
     };
 
+    this.animate = function(force){
+        if(window.onDisplay == this.canvasID || !force) animate(this, 0);
+        else this.draw(this.nFrames);
+    };
+
 	//array of rules for drawing DESCANT channels.  Array index should correspond to real channel number; packed as [type, center x, center y, canvas rotation, element rotation]
 	this.drawRules = [];
 	for(i=0; i<5; i++){

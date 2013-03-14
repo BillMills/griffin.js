@@ -167,6 +167,7 @@ function SHARC(){
 
 	//draw the monitor at a particular frame in its current transition
 	this.draw = function(frame){
+
 		var i, j, xCorner, yCorner, boxRow, boxCol, boxNum, half;
 		var index;
 		//number of channels per half, for index offset purposes:
@@ -449,7 +450,7 @@ function SHARC(){
 	//decide which display version to show:
 	this.displaySwitch = function(){
 		//all views look the same for SHARC, so do nothing.
-	}
+	};
 
     this.fetchNewData = function(){
     	var i;
@@ -460,6 +461,11 @@ function SHARC(){
             this.dataBus.thresholds[i] = Math.random();
             this.dataBus.rate[i] = Math.random();
         }
+    };
+
+    this.animate = function(force){
+        if(window.onDisplay == this.canvasID || !force) animate(this, 0);
+        else this.draw(this.nFrames);
     };
 
     //do an initial populate:

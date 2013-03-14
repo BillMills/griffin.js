@@ -763,6 +763,11 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
             AlarmServices.div.dispatchEvent(allDone);
         };
 
+        this.animate = function(force){
+            if(window.onDisplay == this.canvasID || !force) animate(this, 0);
+            else this.draw(this.nFrames);
+        };
+
         //do an initial populate of the waffle:
         this.fetchNewData();
         //also, draw the input sidebar for 0,0 on first call:

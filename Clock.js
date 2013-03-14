@@ -83,4 +83,9 @@ function Clock(){
         this.context.fillText('Slaves', this.slavesLeft, this.slavesTop - 10);
 
     };
+
+    this.animate = function(force){
+        if(window.onDisplay == this.canvasID || !force) animate(this, 0);
+        else this.draw(this.nFrames);
+    };
 }
