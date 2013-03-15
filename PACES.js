@@ -259,8 +259,8 @@ function PACES(){
 
         var title, minTick, maxTick;
         title = window.parameters.monitorValues[window.subdetectorView];
-        minTick = window.parameters.BAMBINOminima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
-        maxTick = window.parameters.BAMBINOmaxima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
+        minTick = window.parameters.PACESminima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
+        maxTick = window.parameters.PACESmaxima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
 
         //titles
         context.fillStyle = '#999999';

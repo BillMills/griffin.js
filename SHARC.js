@@ -8,8 +8,8 @@ function SHARC(){
 	this.rows = window.parameters.SMrows;			//number of rows of detectors
 	this.columns = window.parameters.SMcolumns;		//number of columns of detectors
 	this.nStrips = window.parameters.SMnChannels;	//number of sense strips per detector
-	this.minima = window.parameters.SMminima;		//array of scale minima, one entry for each scalar option
-	this.maxima = window.parameters.SMmaxima;		//array of scale maxima, one entry for each scalar option
+	this.minima = window.parameters.SHARCminima;		//array of scale minima, one entry for each scalar option
+	this.maxima = window.parameters.SHARCmaxima;		//array of scale maxima, one entry for each scalar option
 	this.linkWrapperID = 'SubsystemLinks';			//ID of div wrapping subsystem navigation links
 	this.sidebarID = 'SubsystemSidebar';			//ID of right sidebar for this object
 	this.topNavID = 'SubsystemsButton';				//ID of top level nav button
@@ -483,8 +483,8 @@ function SHARC(){
 
         var title, minTick, maxTick;
         title = window.parameters.monitorValues[window.subdetectorView];
-        minTick = window.parameters.BAMBINOminima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
-        maxTick = window.parameters.BAMBINOmaxima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
+        minTick = window.parameters.SHARCminima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
+        maxTick = window.parameters.SHARCmaxima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
 
         //titles
         context.fillStyle = '#999999';

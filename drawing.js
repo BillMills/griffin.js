@@ -83,7 +83,7 @@ hex = function(context, centerX, centerY, side, phi){
 }
 
 whiteDetector = function(context, centerX, centerY, scale, phi, bkg){
-    context.strokeStyle = 'rgba(255,255,255,1)';
+    context.strokeStyle = '#999999';//'rgba(255,255,255,1)';
     context.save();
     context.translate(centerX, centerY);
     context.beginPath();
@@ -100,7 +100,7 @@ whiteDetector = function(context, centerX, centerY, scale, phi, bkg){
 }
 
 redDetector = function(context, centerX, centerY, scale, phi, rotation, bkg){
-    context.strokeStyle = 'rgba(255,0,0,1)'
+    context.strokeStyle = '#999999'; //'rgba(255,0,0,1)'
     context.save();
     context.translate(centerX, centerY);
     context.rotate(rotation);
@@ -118,7 +118,7 @@ redDetector = function(context, centerX, centerY, scale, phi, rotation, bkg){
 }
 
 blueDetector = function(context, centerX, centerY, scale, phi, rotation, bkg){
-    context.strokeStyle = 'rgba(0,150,255,1)'
+    context.strokeStyle = '#999999';//'rgba(0,150,255,1)'
     context.save();
     context.translate(centerX, centerY);
     context.rotate(rotation);
@@ -136,7 +136,7 @@ blueDetector = function(context, centerX, centerY, scale, phi, rotation, bkg){
 }
 
 greenLeftDetector = function(context, centerX, centerY, scale, phi, rotation, bkg){
-    context.strokeStyle = 'rgba(0,255,0,1)'
+    context.strokeStyle = '#999999';//'rgba(0,255,0,1)'
     context.save();
     context.translate(centerX, centerY);
     context.rotate(-1*Math.PI/2 + rotation);
@@ -154,7 +154,7 @@ greenLeftDetector = function(context, centerX, centerY, scale, phi, rotation, bk
 }
 
 greenRightDetector = function(context, centerX, centerY, scale, phi, rotation, bkg){
-    context.strokeStyle = 'rgba(0,255,0,1)'
+    context.strokeStyle = '#999999';//'rgba(0,255,0,1)'
     context.save();
     context.translate(centerX, centerY);
     context.rotate(Math.PI/2 + rotation);

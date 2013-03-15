@@ -8,8 +8,6 @@ function HPGE(){
     this.topNavID = 'SubsystemsButton';             //ID of top level nav button
     this.TTcanvasID = 'HPGETTCanvas';               //ID of hidden tooltip map canvas for summary level
     this.TTdetailCanvasID = 'HPGETTdetailCanvas';   //ID of hidden tooltip map canvas for detail level
-    this.minima = window.parameters.HPGEminima;     //array of scale minima: [HPGE HV, HPGE Thresholds, HPGE Rate...]
-    this.maxima = window.parameters.HPGEmaxima;     //array of scale maxima, arranged as minima.
     this.mode = window.parameters.HPGEmode;         //mode to run in, either 'TIGRESS' or 'GRIFFIN'
     this.BGOenable = window.parameters.BGOenable;   //are the suppresors present?
     this.dataBus = new HPGEDS();
@@ -100,7 +98,7 @@ function HPGE(){
     //drawing parameters/////////////////////////////////////////////////////////////////////////////////////////////
     this.centerX = this.canvasWidth/2;
     this.centerY = this.canvasHeight*0.4;
-    this.lineWeight = 2;
+    this.lineWeight = 1;
     this.scaleHeight = 80;
 
     //summary view
@@ -227,8 +225,8 @@ function HPGE(){
         var i;
         var colors 
         //cloverleaves are oriented differently in north and south hemispheres in the blueprints, match here:
-        if(hemisphere == 'north') colors = ['#00FF00', '#0000FF', '#FF0000', '#FFFFFF'];
-        else if(hemisphere == 'south') colors = ['#FFFFFF', '#FF0000', '#0000FF', '#00FF00'];
+        if(hemisphere == 'north') colors = ['#999999','#999999','#999999','#999999'];//['#00FF00', '#0000FF', '#FF0000', '#FFFFFF'];
+        else if(hemisphere == 'south') colors = ['#999999','#999999','#999999','#999999'];//['#FFFFFF', '#FF0000', '#0000FF', '#00FF00'];
 
         for(i=0; i<4; i++){
 
@@ -272,7 +270,7 @@ function HPGE(){
         this.detailContext.lineWidth = this.lineWeight;
 
         //colorWheel enumerates the standard configuration of color sectors:
-        var colorWheel = ['#00FF00', '#0000FF', '#FFFFFF', '#FF0000'];
+        var colorWheel =  ['#999999','#999999','#999999','#999999'];//['#00FF00', '#0000FF', '#FFFFFF', '#FF0000'];
         //orientation enumerates orientations of half-BGOs
         var orientation = ['left', 'right'];
 
@@ -433,7 +431,7 @@ function HPGE(){
 
         if(frame==this.nFrames || frame==0){
             //scale
-            this.detailContext.clearRect(0,this.canvasHeight*0.75, this.canvasWidth, this.canvasHeight*0.25-this.scaleHeight);
+            this.detailContext.clearRect(0,this.canvasHeight*0.80, this.canvasWidth, this.canvasHeight*0.2-this.scaleHeight);
             this.drawScale(this.detailContext);
             //title
             this.detailContext.fillStyle = '#999999';
@@ -618,40 +616,40 @@ function HPGE(){
         //parse colors
         for(i=0; i<16*4; i++){
             this.oldSummaryHPGEHVcolor[i] = this.summaryHPGEHVcolor[i];
-            this.summaryHPGEHVcolor[i] = this.parseColor(this.dataBus.summaryHPGEHV[i]);
+            this.summaryHPGEHVcolor[i] = this.parseColor(this.dataBus.summaryHPGEHV[i], 'HPGE');
             this.oldSummaryHPGEthresholdColor[i] = this.summaryHPGEthresholdColor[i];
-            this.summaryHPGEthresholdColor[i] = this.parseColor(this.dataBus.summaryHPGEthreshold[i]);
+            this.summaryHPGEthresholdColor[i] = this.parseColor(this.dataBus.summaryHPGEthreshold[i], 'HPGE');
             this.oldSummaryHPGErateColor[i] = this.summaryHPGErateColor[i];
-            this.summaryHPGErateColor[i] = this.parseColor(this.dataBus.summaryHPGErate[i]);
+            this.summaryHPGErateColor[i] = this.parseColor(this.dataBus.summaryHPGErate[i], 'HPGE');
 
             this.oldSummaryBGOHVcolor[i] = this.summaryBGOHVcolor[i];
-            this.summaryBGOHVcolor[i] = this.parseColor(this.dataBus.summaryBGOHV[i]);
+            this.summaryBGOHVcolor[i] = this.parseColor(this.dataBus.summaryBGOHV[i], 'BGO');
             this.oldSummaryBGOthresholdColor[i] = this.summaryBGOthresholdColor[i];
-            this.summaryBGOthresholdColor[i] = this.parseColor(this.dataBus.summaryBGOthreshold[i]);
+            this.summaryBGOthresholdColor[i] = this.parseColor(this.dataBus.summaryBGOthreshold[i], 'BGO');
             this.oldSummaryBGOrateColor[i] = this.summaryBGOrateColor[i];
-            this.summaryBGOrateColor[i] = this.parseColor(this.dataBus.summaryBGOrate[i]);
+            this.summaryBGOrateColor[i] = this.parseColor(this.dataBus.summaryBGOrate[i], 'BGO');
         }
 
         //detail level
         for(i=0; i<16*this.nHPGEsegments; i++){
             this.oldDetailHPGEthresholdColor[i] = this.detailHPGEthresholdColor[i];
-            this.detailHPGEthresholdColor[i] = this.parseColor(this.dataBus.detailHPGEthreshold[i]);
+            this.detailHPGEthresholdColor[i] = this.parseColor(this.dataBus.detailHPGEthreshold[i], 'HPGE');
             this.oldDetailHPGErateColor[i] = this.detailHPGErateColor[i];
-            this.detailHPGErateColor[i] = this.parseColor(this.dataBus.detailHPGErate[i]);
+            this.detailHPGErateColor[i] = this.parseColor(this.dataBus.detailHPGErate[i], 'HPGE');
         }
         for(i=0; i<16*4; i++){
             this.oldDetailHPGEHVcolor[i] = this.detailHPGEHVcolor[i];
-            this.detailHPGEHVcolor[i] = this.parseColor(this.dataBus.detailHPGEHV[i]);
+            this.detailHPGEHVcolor[i] = this.parseColor(this.dataBus.detailHPGEHV[i], 'HPGE');
         }
         for(i=0; i<16*20; i++){
             this.oldDetailBGOthresholdColor[i] = this.detailBGOthresholdColor[i];
-            this.detailBGOthresholdColor[i] = this.parseColor(this.dataBus.detailBGOthreshold[i]);
+            this.detailBGOthresholdColor[i] = this.parseColor(this.dataBus.detailBGOthreshold[i], 'BGO');
             this.oldDetailBGOrateColor[i] = this.detailBGOrateColor[i];
-            this.detailBGOrateColor[i] = this.parseColor(this.dataBus.detailBGOrate[i]);
+            this.detailBGOrateColor[i] = this.parseColor(this.dataBus.detailBGOrate[i], 'BGO');
         }
         for(i=0; i<16*40; i++){
             this.oldDetailBGOHVcolor[i] = this.detailBGOHVcolor[i];
-            this.detailBGOHVcolor[i] = this.parseColor(this.dataBus.detailBGOHV[i]);
+            this.detailBGOHVcolor[i] = this.parseColor(this.dataBus.detailBGOHV[i], 'BGO');
         }
 
         this.tooltip.update();
@@ -660,11 +658,14 @@ function HPGE(){
     };
 
     //determine which color <scalar> corresponds to
-    this.parseColor = function(scalar){
+    this.parseColor = function(scalar, detectorType){
 
         //how far along the scale are we?
-        var scale = (scalar - this.minima[window.subdetectorView]) / (this.maxima[window.subdetectorView] - this.minima[window.subdetectorView]);
-
+        var scale;
+        if(detectorType == 'HPGE')
+            scale = (scalar - window.parameters.HPGEminima[window.subdetectorView]) / (window.parameters.HPGEmaxima[window.subdetectorView] - window.parameters.HPGEminima[window.subdetectorView]);
+        if(detectorType == 'BGO')
+            scale = (scalar - window.parameters.BGOminima[window.subdetectorView]) / (window.parameters.BGOmaxima[window.subdetectorView] - window.parameters.BGOminima[window.subdetectorView]);
         //different scales for different meters to aid visual recognition:
         if(window.subdetectorView==0) return scalepickr(scale, 'rainbow');
         else if(window.subdetectorView==1) return scalepickr(scale, 'twighlight');
@@ -722,10 +723,12 @@ function HPGE(){
         var i, j; 
         context.clearRect(0, this.canvasHeight - this.scaleHeight, this.canvasWidth, this.canvasHeight);
 
-        var title, minTick, maxTick;
+        var title, HPGEminTick, HPGEmaxTick, BGOminTick, BGOmaxTick;
         title = window.parameters.monitorValues[window.subdetectorView];
-        minTick = window.parameters.BAMBINOminima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
-        maxTick = window.parameters.BAMBINOmaxima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
+        HPGEminTick = 'HPGE: ' + window.parameters.HPGEminima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
+        HPGEmaxTick = 'HPGE: ' + window.parameters.HPGEmaxima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
+        BGOminTick = 'BGO: ' + window.parameters.BGOminima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
+        BGOmaxTick = 'BGO: ' +window.parameters.BGOmaxima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
 
         //titles
         context.fillStyle = '#999999';
@@ -741,13 +744,15 @@ function HPGE(){
         context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - 40);
         context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - 30);
         context.stroke();
-        context.fillText(minTick, this.canvasWidth*0.05 - context.measureText(minTick).width/2, this.canvasHeight-15);
+        context.fillText(HPGEminTick, this.canvasWidth*0.05 - context.measureText(HPGEminTick).width/2, this.canvasHeight-15);
+        context.fillText(BGOminTick, this.canvasWidth*0.05 - context.measureText(BGOminTick).width/2, this.canvasHeight-3);
 
         context.beginPath();
         context.moveTo(this.canvasWidth*0.95-1, this.canvasHeight - 40);
         context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - 30); 
         context.stroke();      
-        context.fillText(maxTick, this.canvasWidth*0.95 - context.measureText(maxTick).width/2, this.canvasHeight-15);
+        context.fillText(HPGEmaxTick, this.canvasWidth*0.95 - context.measureText(HPGEmaxTick).width/2, this.canvasHeight-15);
+        context.fillText(BGOmaxTick, this.canvasWidth*0.95 - context.measureText(BGOmaxTick).width/2, this.canvasHeight-3);
 
         for(i=0; i<3000; i++){
             if(window.subdetectorView == 0) context.fillStyle = scalepickr(0.001*(i%1000), 'rainbow');

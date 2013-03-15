@@ -5,8 +5,6 @@ function DANTE(){
     this.sidebarID = 'SubsystemSidebar';         //ID of right sidebar for this object
     this.topNavID = 'SubsystemsButton';          //ID of top level nav button
     this.TTcanvasID = 'DANTETTCanvas';           //ID of hidden tooltip map canvas
-    this.minima = window.parameters.DANTEminima; //array of meter minima [HV, thresholds, rate]
-    this.maxima = window.parameters.DANTEmaxima; //array of meter maxima, arranged as minima
     this.dataBus = new DANTEDS();
 
     var that = this;
@@ -195,18 +193,17 @@ function DANTE(){
         //get new data
         this.fetchNewData();
 
+        var detectorType;
         //parse the new data into colors
         for(i=0; i<this.dataBus.HV.length; i++){
+            if(i%2 == 0) detectorType = 'BaF';
+            else detectorType = 'BGO';
             this.oldHVcolor[i] = this.HVcolor[i];
-            this.HVcolor[i] = this.parseColor(this.dataBus.HV[i]);
-        }
-        for(i=0; i<this.dataBus.thresholds.length; i++){
+            this.HVcolor[i] = this.parseColor(this.dataBus.HV[i], detectorType);
             this.oldThresholdColor[i] = this.thresholdColor[i];
-            this.thresholdColor[i] = this.parseColor(this.dataBus.thresholds[i]);
-        }
-        for(i=0; i<this.dataBus.rate.length; i++){
+            this.thresholdColor[i] = this.parseColor(this.dataBus.thresholds[i], detectorType);
             this.oldRateColor[i] = this.rateColor[i];
-            this.rateColor[i] = this.parseColor(this.dataBus.rate[i]);
+            this.rateColor[i] = this.parseColor(this.dataBus.rate[i], detectorType);
         }
 
         this.tooltip.update();
@@ -225,10 +222,14 @@ function DANTE(){
     };
 
     //determine which color <scalar> corresponds to
-    this.parseColor = function(scalar){
+    this.parseColor = function(scalar, detectorType){
 
         //how far along the scale are we?
-        var scale = (scalar - this.minima[window.subdetectorView]) / (this.maxima[window.subdetectorView] - this.minima[window.subdetectorView]);
+        var scale;
+        if(detectorType == 'BaF')
+            scale = (scalar - window.parameters.DANTEBaFminima[window.subdetectorView]) / (window.parameters.DANTEBaFmaxima[window.subdetectorView] - window.parameters.DANTEBaFminima[window.subdetectorView]);
+        if(detectorType == 'BGO')
+            scale = (scalar - window.parameters.DANTEBGOminima[window.subdetectorView]) / (window.parameters.DANTEBGOmaxima[window.subdetectorView] - window.parameters.DANTEBGOminima[window.subdetectorView]);
 
         //different scales for different meters to aid visual recognition:
         if(window.subdetectorView==0) return scalepickr(scale, 'rainbow');
@@ -245,10 +246,12 @@ function DANTE(){
         var i, j; 
         context.clearRect(0, this.canvasHeight - this.scaleHeight, this.canvasWidth, this.canvasHeight);
 
-        var title, minTick, maxTick;
+        var title, BaFminTick, BaFmaxTick, BGOminTick, BGOmaxTick;
         title = window.parameters.monitorValues[window.subdetectorView];
-        minTick = window.parameters.BAMBINOminima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
-        maxTick = window.parameters.BAMBINOmaxima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
+        BaFminTick = 'BaF: ' + window.parameters.DANTEBaFminima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
+        BaFmaxTick = 'BaF: ' + window.parameters.DANTEBaFmaxima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
+        BGOminTick = 'BGO: ' + window.parameters.DANTEBGOminima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
+        BGOmaxTick = 'BGO: ' + window.parameters.DANTEBGOmaxima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
 
         //titles
         context.fillStyle = '#999999';
@@ -264,13 +267,15 @@ function DANTE(){
         context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - 40);
         context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - 30);
         context.stroke();
-        context.fillText(minTick, this.canvasWidth*0.05 - context.measureText(minTick).width/2, this.canvasHeight-15);
+        context.fillText(BaFminTick, this.canvasWidth*0.05 - context.measureText(BaFminTick).width/2, this.canvasHeight-15);
+        context.fillText(BGOminTick, this.canvasWidth*0.05 - context.measureText(BGOminTick).width/2, this.canvasHeight-3);
 
         context.beginPath();
         context.moveTo(this.canvasWidth*0.95-1, this.canvasHeight - 40);
         context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - 30); 
         context.stroke();      
-        context.fillText(maxTick, this.canvasWidth*0.95 - context.measureText(maxTick).width/2, this.canvasHeight-15);
+        context.fillText(BaFmaxTick, this.canvasWidth*0.95 - context.measureText(BaFmaxTick).width/2, this.canvasHeight-15);
+        context.fillText(BGOmaxTick, this.canvasWidth*0.95 - context.measureText(BGOmaxTick).width/2, this.canvasHeight-3);
 
         for(i=0; i<3000; i++){
             if(window.subdetectorView == 0) context.fillStyle = scalepickr(0.001*(i%1000), 'rainbow');

@@ -34,8 +34,8 @@ loadParameters({
 				"SMcolumns" : 4,
 				"SM_ODBkeys" : ["/Location/Of/Device/Varibles", "/Location/Of/Device/Settings", "HV Key"],
 				"SMnChannels" : 16,
-				"SMminima" : [0],
-				"SMmaxima" : [1],
+				"SHARCminima" : [0,0,0],
+				"SHARCmaxima" : [1,1,1],
 				"nRadialHoriz" : 4, 
 				"nAzimuthalHoriz" : 4, 
 				"nRadialVert" : 1, 
@@ -47,6 +47,8 @@ loadParameters({
 				"BGOenable" : 1,
 				"HPGEminima" : [0,0,0],
 				"HPGEmaxima" : [1,1,1],
+				"BGOminima" : [0,0,0],
+				"BGOmaxima" : [100,100,100],
 				"HPGEprefix" : [],
 				"HPGEpostfix" : [],
 
@@ -60,8 +62,10 @@ loadParameters({
 				"PACESprefix" : [],
 				"PACESpostfix" : [],
 
-				"DANTEminima" : [0,0,0],
-				"DANTEmaxima" : [1,1,1],
+				"DANTEBaFminima" : [0,0,0],
+				"DANTEBaFmaxima" : [1,1,1],
+				"DANTEBGOminima" : [0,0,0],
+				"DANTEBGOmaxima" : [2,3,4],
 				"DANTEprefix" : [],
 				"DANTEpostfix" : [],
 
@@ -73,6 +77,8 @@ loadParameters({
 
 				"SCEPTARminima" : [0,0,0],
 				"SCEPTARmaxima" : [1,1,1],
+				"ZDSminima" : [0,0,0],
+				"ZDSmaxima" : [2,3,4],
 				"SCEPTARprefix" : [],
 				"SCEPTARpostfix" : [],
 				"SCEPTARconfig" : [1,0,1],

@@ -5,8 +5,6 @@ function SCEPTAR(){
     this.sidebarID = 'SubsystemSidebar';            //ID of right sidebar for this object
     this.topNavID = 'SubsystemsButton';             //ID of top level nav button
     this.TTcanvasID = 'SCEPTARTTCanvas';            //ID of hidden tooltip map canvas
-    this.minima = window.parameters.SCEPTARminima;  //array of meter minima [HV, thresholds, rate]
-    this.maxima = window.parameters.SCEPTARmaxima;  //array of meter maxima, arranged as minima
     this.config = window.parameters.SCEPTARconfig;  //subsystems on: [upstream sceptar, downstream sceptar, downstream ZDS]
     this.dataBus = new SCEPTARDS();
 
@@ -48,7 +46,7 @@ function SCEPTAR(){
     //drawing parameters
     this.scaleHeight = 80;
     this.ZDSradius = this.canvasHeight*0.5 / 4; 
-    this.ZDScenterX = this.canvasWidth*0.75;
+    this.ZDScenterX = this.canvasWidth*0.5 + Math.max(this.config[0], this.config[1])*this.canvasWidth*0.25;
     this.ZDScenterY = 0.4*this.canvasHeight;
     this.SCEPTARx0 = this.canvasWidth*0.1;
     this.SCEPTARy0 = this.canvasHeight*0.1;
@@ -226,25 +224,38 @@ function SCEPTAR(){
         //parse the new data into colors
         for(i=0; i<this.dataBus.HV.length; i++){
             this.oldHVcolor[i] = this.HVcolor[i];
-            this.HVcolor[i] = this.parseColor(this.dataBus.HV[i]);
+            if(i==20)
+                this.HVcolor[i] = this.parseColor(this.dataBus.HV[i], 'ZDS');
+            else 
+                this.HVcolor[i] = this.parseColor(this.dataBus.HV[i], 'SCEPTAR');
         }
         for(i=0; i<this.dataBus.thresholds.length; i++){
             this.oldThresholdColor[i] = this.thresholdColor[i];
-            this.thresholdColor[i] = this.parseColor(this.dataBus.thresholds[i]);
+            if(i==20)  
+                this.thresholdColor[i] = this.parseColor(this.dataBus.thresholds[i], 'ZDS');
+            else 
+                this.thresholdColor[i] = this.parseColor(this.dataBus.thresholds[i], 'SCEPTAR');
         }
         for(i=0; i<this.dataBus.rate.length; i++){
             this.oldRateColor[i] = this.rateColor[i];
-            this.rateColor[i] = this.parseColor(this.dataBus.rate[i]);
+            if(i==20)
+                this.rateColor[i] = this.parseColor(this.dataBus.rate[i], 'ZDS');
+            else
+                this.rateColor[i] = this.parseColor(this.dataBus.rate[i], 'SCEPTAR');
         }
 
         this.tooltip.update();
     };
 
     //determine which color <scalar> corresponds to
-    this.parseColor = function(scalar){
+    this.parseColor = function(scalar, detectorType){
 
         //how far along the scale are we?
-        var scale = (scalar - this.minima[window.subdetectorView]) / (this.maxima[window.subdetectorView] - this.minima[window.subdetectorView]);
+        var scale;
+        if(detectorType == 'SCEPTAR')
+            scale = (scalar - window.parameters.SCEPTARminima[window.subdetectorView]) / (window.parameters.SCEPTARmaxima[window.subdetectorView] - window.parameters.SCEPTARminima[window.subdetectorView]);
+        else if(detectorType == 'ZDS')
+            scale = (scalar - window.parameters.ZDSminima[window.subdetectorView]) / (window.parameters.ZDSmaxima[window.subdetectorView] - window.parameters.ZDSminima[window.subdetectorView]);
 
         //different scales for different meters to aid visual recognition:
         if(window.subdetectorView==0) return scalepickr(scale, 'rainbow');
@@ -272,10 +283,12 @@ function SCEPTAR(){
         var i, j; 
         context.clearRect(0, this.canvasHeight - this.scaleHeight, this.canvasWidth, this.canvasHeight);
 
-        var title, minTick, maxTick;
+        var title, SCEPTARminTick, SCEPTARmaxTick, ZDSminTick, ZDSmaxTick;
         title = window.parameters.monitorValues[window.subdetectorView];
-        minTick = window.parameters.SPICEminima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
-        maxTick = window.parameters.SPICEmaxima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
+        SCEPTARminTick = 'SCEPTAR: ' + window.parameters.SCEPTARminima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
+        SCEPTARmaxTick = 'SCEPTAR: ' + window.parameters.SCEPTARmaxima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
+        ZDSminTick = 'ZDS: ' + window.parameters.ZDSminima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
+        ZDSmaxTick = 'ZDS: ' + window.parameters.ZDSmaxima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
 
         //titles
         context.fillStyle = '#999999';
@@ -291,13 +304,15 @@ function SCEPTAR(){
         context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - 40);
         context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - 30);
         context.stroke();
-        context.fillText(minTick, this.canvasWidth*0.05 - context.measureText(minTick).width/2, this.canvasHeight-15);
+        if(this.config[0] || this.config[1]) context.fillText(SCEPTARminTick, this.canvasWidth*0.05 - context.measureText(SCEPTARminTick).width/2, this.canvasHeight-15);
+        if(this.config[2]) context.fillText(ZDSminTick, this.canvasWidth*0.05 - context.measureText(ZDSminTick).width/2, this.canvasHeight-15+12*Math.max(this.config[0],this.config[1]));
 
         context.beginPath();
         context.moveTo(this.canvasWidth*0.95-1, this.canvasHeight - 40);
         context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - 30); 
         context.stroke();      
-        context.fillText(maxTick, this.canvasWidth*0.95 - context.measureText(maxTick).width/2, this.canvasHeight-15);
+        if(this.config[0] || this.config[1]) context.fillText(SCEPTARmaxTick, this.canvasWidth*0.95 - context.measureText(SCEPTARmaxTick).width/2, this.canvasHeight-15);
+        if(this.config[2]) context.fillText(ZDSmaxTick, this.canvasWidth*0.95 - context.measureText(ZDSmaxTick).width/2, this.canvasHeight-15+12*Math.max(this.config[0],this.config[1]));
 
         for(i=0; i<3000; i++){
             if(window.subdetectorView == 0) context.fillStyle = scalepickr(0.001*(i%1000), 'rainbow');
