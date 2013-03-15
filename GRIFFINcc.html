@@ -27,6 +27,7 @@
     <script src="slider.js" type="text/javascript"></script>
     <script src="fillMeter.js" type="text/javascript"></script>
     <script src="branding.js" type="text/javascript"></script>
+    <script src="StatusBar.js" type="text/javascript"></script>
 
     <script src="BarGraph.js" type="text/javascript"></script>
     <script src="SHARC.js" type="text/javascript"></script>
@@ -125,14 +126,6 @@
       loadJSONP("main()");
 
       function main(){
-        //different color scales for use in colorScale function: [initial R,G,B, final R,G,B]
-        window.colorScales = [];
-        window.colorScales[0] = [76,76,76,142,237,48];    //grey->green
-        window.colorScales[1] = [255,255,0,255,51,00];    //sunburst
-        window.colorScales[2] = [0,0,255,255,255,0]; //blue->yellow
-        window.colorScales[3] = [100,100,100,255,255,255];  //grey->white
-        window.colorScales[4] = [107,0,178,255,102,204];  //horrible fuchia
-        //todo: black->purple->red->orange->yellow->white
 
         //state variables for what the subdetector view is showing: 0->HV, 1->Thresholds, 2->Rate
         window.subdetectorView = 2;  //rate by default
@@ -178,8 +171,8 @@
         //dashboard
         window.dashboard = new Dashboard();
 
-        //Alarm Service
-        window.AlarmServices = new AlarmService('leftSidebar', 'leftSidebarDetail');
+        //status bar
+        window.statusBar = new StatusBar('leftSidebar');
 
         //HV monitor
         window.waffle = new Waffle("InputLayer",'mainframeLinks', AlarmServices);

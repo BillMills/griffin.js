@@ -16,6 +16,7 @@ function masterLoop(callMyself){
 	if(!document.webkitHidden && !document.mozHidden){
 
         //update all assets
+        window.statusBar.update();
     	window.waffle.update();
         window.DAQ.update();
         for(i=0; i<window.Subdetectors.length; i++)
