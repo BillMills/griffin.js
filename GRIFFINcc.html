@@ -275,6 +275,7 @@
         $('#setValues').on('change', function(event){highlight('submitParameters')})
       }
 
+      window.freshLoad = 1;
       function startLoop(){
         loadJSONP('masterLoop(0)');
       }

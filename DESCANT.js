@@ -257,8 +257,8 @@ function DESCANT(){
         */
     };
 
-    this.animate = function(force){
-        if(window.onDisplay == this.canvasID || !force) animate(this, 0);
+    this.animate = function(){
+        if(window.onDisplay == this.canvasID || window.freshLoad) animate(this, 0);
         else this.draw(this.nFrames);
     };
 

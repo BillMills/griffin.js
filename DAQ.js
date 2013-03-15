@@ -592,11 +592,11 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         return longestLine;
     };
 
-    this.animate = function(force){
-        if(window.onDisplay == this.canvasID || !force) animate(this, 0);
+    this.animate = function(){
+        if(window.onDisplay == this.canvasID || window.freshLoad) animate(this, 0);
         else this.draw(this.nFrames);
 
-        if(window.onDisplay == this.detailCanvasID || !force) animateDetail(this, 0);
+        if(window.onDisplay == this.detailCanvasID || window.freshLoad) animateDetail(this, 0);
         else this.drawDetail(this.nFrames);
     };
 }

@@ -82,8 +82,12 @@ loadParameters({
 				"SPICEprefix" : [],
 				"SPICEpostfix" : [],
 
-				"TIPminima" : [0,0,0],
-				"TIPmaxima" : [1,1,100],
+				"TIPCsIminima" : [0,0,0],
+				"TIPCsImaxima" : [1,1,100],
+				"TIPHPGEminima" : [0,0,0],
+				"TIPHPGEmaxima" : [1,1,1],
+				"TIPBGOminima" : [0,0,0],
+				"TIPBGOmaxima" : [1,1,2],
 				"TIPprefix" : [],
 				"TIPpostfix" : [],
 
