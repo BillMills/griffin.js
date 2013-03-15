@@ -51,10 +51,10 @@ function DESCANT(){
     //drawing parameters//////////////////////////////////////////////////////////////////////////////////
 	//center of DESCANT
 	this.centerX = $(this.canvas).width() / 2;
-	this.centerY = $(this.canvas).height() / 2;
+	this.centerY = $(this.canvas).height()*0.45;
 
 	//scale at which to draw DESCANT in pixels relative mm in blueprint:
-	this.scale = 0.35;
+	this.scale = 0.3;
 
 	//pixels to explode DESCANT view by:
 	this.explode = 10;
@@ -68,6 +68,8 @@ function DESCANT(){
 	this.pentagonNormal = this.pentagonSide / 2 / Math.tan(36/180 * Math.PI);
 	//longest distance from center of pentagon to side
 	this.pentagonVertex = this.pentagonSide / 2 / Math.sin(36/180 * Math.PI);
+
+    this.scaleHeight = 80;
 
     //establish data buffers////////////////////////////////////////////////////////////////////////////
     this.HVcolor = [];
@@ -86,7 +88,7 @@ function DESCANT(){
 
 	this.draw = function(frame){
 		var i, j;
-		this.context.clearRect(0,0,this.canvasWidth, this.canvasHeight);
+		this.context.clearRect(0,0,this.canvasWidth, this.canvasHeight-this.scaleHeight);
 		this.TTcontext.fillStyle = '#123456'
 		this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
 		if(this.drawRules[i]!=0){
@@ -125,6 +127,11 @@ function DESCANT(){
 				this.TTcontext.restore();
 			}
 		}
+
+        if(frame==this.nFrames || frame==0) {
+            //scale
+            this.drawScale(this.context);
+        }
 
 	};
 
@@ -253,6 +260,46 @@ function DESCANT(){
     this.animate = function(force){
         if(window.onDisplay == this.canvasID || !force) animate(this, 0);
         else this.draw(this.nFrames);
+    };
+
+    this.drawScale = function(context){
+        var i, j; 
+        context.clearRect(0, this.canvasHeight - this.scaleHeight, this.canvasWidth, this.canvasHeight);
+
+        var title, minTick, maxTick;
+        title = window.parameters.monitorValues[window.subdetectorView];
+        minTick = window.parameters.BAMBINOminima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
+        maxTick = window.parameters.BAMBINOmaxima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
+
+        //titles
+        context.fillStyle = '#999999';
+        context.font="24px 'Orbitron'";
+        context.fillText(title, this.canvasWidth/2 - context.measureText(title).width/2, this.canvasHeight-8);
+
+        //tickmark;
+        context.strokeStyle = '#999999';
+        context.lineWidth = 1;
+        context.font="12px 'Raleway'";
+
+        context.beginPath();
+        context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - 40);
+        context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - 30);
+        context.stroke();
+        context.fillText(minTick, this.canvasWidth*0.05 - context.measureText(minTick).width/2, this.canvasHeight-15);
+
+        context.beginPath();
+        context.moveTo(this.canvasWidth*0.95-1, this.canvasHeight - 40);
+        context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - 30); 
+        context.stroke();      
+        context.fillText(maxTick, this.canvasWidth*0.95 - context.measureText(maxTick).width/2, this.canvasHeight-15);
+
+        for(i=0; i<3000; i++){
+            if(window.subdetectorView == 0) context.fillStyle = scalepickr(0.001*(i%1000), 'rainbow');
+            if(window.subdetectorView == 1) context.fillStyle = scalepickr(0.001*(i%1000), 'twighlight');
+            if(window.subdetectorView == 2) context.fillStyle = scalepickr(0.001*(i%1000), 'thermalScope');
+            context.fillRect(this.canvasWidth*0.05 + this.canvasWidth*0.9/1000*(i%1000), this.canvasHeight-60, this.canvasWidth*0.9/1000, 20);
+        }
+
     };
 
 	//array of rules for drawing DESCANT channels.  Array index should correspond to real channel number; packed as [type, center x, center y, canvas rotation, element rotation]

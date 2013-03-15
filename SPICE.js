@@ -49,11 +49,12 @@ function SPICE(){
 
     //drawing parameters
     this.centerX = this.canvasWidth/2;
-    this.centerY = this.canvasHeight/2;
+    this.centerY = this.canvasHeight/2-20;
     this.innerRadius = this.canvasHeight*0.02;
     this.outerRadius = this.canvasHeight*0.4;
     this.azimuthalStep = 2*Math.PI / this.nAzimuthal;
     this.radialStep = (this.outerRadius - this.innerRadius) / this.nRadial;
+    this.scaleHeight = 80;
 
     //establish data buffers////////////////////////////////////////////////////////////////////////////
     this.HVcolor = [];
@@ -108,20 +109,8 @@ function SPICE(){
             this.TTcontext.stroke();
         }
 
-
-
-    
-
-/*
-		
-    	//titles
-        this.context.clearRect(0,this.SCEPTARy0 + 4*this.cellSide + 10,this.canvasWidth,this.canvasHeight);
-        this.context.fillStyle = '#999999';
-        this.context.font="24px 'Orbitron'";
-        this.context.fillText('SCEPTAR', this.SCEPTARx0 + 2.5*this.cellSide - this.context.measureText('SCEPTAR').width/2, this.SCEPTARy0 + 4*this.cellSide + 50);
-        this.context.clearRect(this.SCEPTARx0 + 5*this.cellSide+20, this.SCEPTARy0 + 2*this.cellSide + 2*this.ZDSradius+10, this.canvasWidth,this.canvasHeight);
-        this.context.fillText('ZDS', this.ZDScenter - this.context.measureText('ZDS').width/2, this.SCEPTARy0 + 2*this.cellSide + 2*this.ZDSradius+50);
-*/	
+        //scale
+        if(frame==this.nFrames || frame==0) this.drawScale(this.context);
     };
 
     this.findCell = function(x, y){
@@ -199,6 +188,46 @@ function SPICE(){
     this.animate = function(force){
         if(window.onDisplay == this.canvasID || !force) animate(this, 0);
         else this.draw(this.nFrames);
+    };
+
+    this.drawScale = function(context){
+        var i, j; 
+        context.clearRect(0, this.canvasHeight - this.scaleHeight, this.canvasWidth, this.canvasHeight);
+
+        var title, minTick, maxTick;
+        title = window.parameters.monitorValues[window.subdetectorView];
+        minTick = window.parameters.SPICEminima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
+        maxTick = window.parameters.SPICEmaxima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
+
+        //titles
+        context.fillStyle = '#999999';
+        context.font="24px 'Orbitron'";
+        context.fillText(title, this.canvasWidth/2 - context.measureText(title).width/2, this.canvasHeight-8);
+
+        //tickmark;
+        context.strokeStyle = '#999999';
+        context.lineWidth = 1;
+        context.font="12px 'Raleway'";
+
+        context.beginPath();
+        context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - 40);
+        context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - 30);
+        context.stroke();
+        context.fillText(minTick, this.canvasWidth*0.05 - context.measureText(minTick).width/2, this.canvasHeight-15);
+
+        context.beginPath();
+        context.moveTo(this.canvasWidth*0.95-1, this.canvasHeight - 40);
+        context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - 30); 
+        context.stroke();      
+        context.fillText(maxTick, this.canvasWidth*0.95 - context.measureText(maxTick).width/2, this.canvasHeight-15);
+
+        for(i=0; i<3000; i++){
+            if(window.subdetectorView == 0) context.fillStyle = scalepickr(0.001*(i%1000), 'rainbow');
+            if(window.subdetectorView == 1) context.fillStyle = scalepickr(0.001*(i%1000), 'twighlight');
+            if(window.subdetectorView == 2) context.fillStyle = scalepickr(0.001*(i%1000), 'thermalScope');
+            context.fillRect(this.canvasWidth*0.05 + this.canvasWidth*0.9/1000*(i%1000), this.canvasHeight-60, this.canvasWidth*0.9/1000, 20);
+        }
+
     };
 
     //do an initial populate:

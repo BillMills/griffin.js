@@ -49,17 +49,18 @@ function SHARC(){
     //gutter width as fraction of detector width:
     this.gutterWidth = 0.1;
     //fraction of canvas height to alocate to box elements (rest is for disk elements):
-    this.boxElementFraction = 0.6;
+    this.boxElementFraction = 0.4;
     this.detectorWidth = this.halfWidth / (this.columns + (this.columns+1)*this.gutterWidth);
     this.detectorHeight = (this.canvasHeight*this.boxElementFraction - this.rows*this.gutterWidth*this.detectorWidth) / this.rows;
     this.vertStripWidth = this.detectorWidth / this.nStrips;
     this.horizStripWidth = this.detectorHeight / this.nStrips;
+    this.scaleHeight = 80;
 
     //geometry variables for elliptical displays:
     this.centerLeftX = (5*this.gutterWidth + 4)*this.detectorWidth/2;
     this.centerRightX = this.centerLeftX + this.halfWidth;
-    this.centerTopY = (1 - this.boxElementFraction) / 2 * this.canvasHeight / 2;
-    this.centerBottomY = this.canvasHeight - (1 - this.boxElementFraction) / 2 * this.canvasHeight / 2;
+    this.centerTopY = (1 - this.boxElementFraction) / 2 * this.canvasHeight / 2 - this.scaleHeight/2;
+    this.centerBottomY = this.canvasHeight - (1 - this.boxElementFraction) / 2 * this.canvasHeight / 2 - this.scaleHeight;
     this.nAzimuthalHoriz = window.parameters.nAzimuthalHoriz;
     this.nAzimuthalVert = window.parameters.nAzimuthalVert;
     this.nRadialHoriz = window.parameters.nRadialHoriz;
@@ -67,7 +68,7 @@ function SHARC(){
     this.nEllipticalChannelsHoriz = this.nAzimuthalHoriz*this.nRadialHoriz;
     this.nEllipticalChannelsVert = this.nAzimuthalVert*this.nRadialVert;
     this.minRadius = 10;
-    this.maxRadius = 170;
+    this.maxRadius = 150;
     this.radiusStepHoriz = (this.maxRadius - this.minRadius) / this.nRadialHoriz;
     this.radiusStepVert = (this.maxRadius - this.minRadius) / this.nRadialVert;
     this.azimuthalStepHoriz = 2*Math.PI / this.nAzimuthalHoriz;
@@ -100,7 +101,7 @@ function SHARC(){
 
     				//where is the top left hand corner of this box supposed to go?
     				xCorner = this.halfWidth*half + (1+this.gutterWidth)*this.detectorWidth*i + this.gutterWidth*this.detectorWidth;
-	    			yCorner = this.canvasHeight*(1-this.boxElementFraction)/2 + (this.detectorHeight + this.gutterWidth*this.detectorWidth)*j;
+	    			yCorner = this.canvasHeight*(1-this.boxElementFraction)/2 + (this.detectorHeight + this.gutterWidth*this.detectorWidth)*j - this.scaleHeight*0.75;
 
     				//draw the outer frames
     				this.context.beginPath();
@@ -187,7 +188,7 @@ function SHARC(){
 
     			//where is the top left hand corner of this box supposed to go?
     			xCorner = half*this.halfWidth + (1+this.gutterWidth)*this.detectorWidth*boxCol + this.gutterWidth*this.detectorWidth;
-    			yCorner = this.canvasHeight*(1-this.boxElementFraction)/2 + (this.detectorHeight + this.gutterWidth*this.detectorWidth)*boxRow;
+    			yCorner = this.canvasHeight*(1-this.boxElementFraction)/2 + (this.detectorHeight + this.gutterWidth*this.detectorWidth)*boxRow - this.scaleHeight*0.75;
 
 	    		//where is the top left hand corner of the ith cell?
     			if(half == 0){
@@ -264,6 +265,11 @@ function SHARC(){
 
 		//redraw frame:
 		this.wireframe();
+
+        if(frame==this.nFrames || frame==0) {
+            //scale
+            this.drawScale(this.context);
+        }
 
 	};
 
@@ -469,6 +475,46 @@ function SHARC(){
     this.animate = function(force){
         if(window.onDisplay == this.canvasID || !force) animate(this, 0);
         else this.draw(this.nFrames);
+    };
+
+    this.drawScale = function(context){
+        var i, j; 
+        context.clearRect(0, this.canvasHeight - this.scaleHeight, this.canvasWidth, this.canvasHeight);
+
+        var title, minTick, maxTick;
+        title = window.parameters.monitorValues[window.subdetectorView];
+        minTick = window.parameters.BAMBINOminima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
+        maxTick = window.parameters.BAMBINOmaxima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
+
+        //titles
+        context.fillStyle = '#999999';
+        context.font="24px 'Orbitron'";
+        context.fillText(title, this.canvasWidth/2 - context.measureText(title).width/2, this.canvasHeight-8);
+
+        //tickmark;
+        context.strokeStyle = '#999999';
+        context.lineWidth = 1;
+        context.font="12px 'Raleway'";
+
+        context.beginPath();
+        context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - 40);
+        context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - 30);
+        context.stroke();
+        context.fillText(minTick, this.canvasWidth*0.05 - context.measureText(minTick).width/2, this.canvasHeight-15);
+
+        context.beginPath();
+        context.moveTo(this.canvasWidth*0.95-1, this.canvasHeight - 40);
+        context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - 30); 
+        context.stroke();      
+        context.fillText(maxTick, this.canvasWidth*0.95 - context.measureText(maxTick).width/2, this.canvasHeight-15);
+
+        for(i=0; i<3000; i++){
+            if(window.subdetectorView == 0) context.fillStyle = scalepickr(0.001*(i%1000), 'rainbow');
+            if(window.subdetectorView == 1) context.fillStyle = scalepickr(0.001*(i%1000), 'twighlight');
+            if(window.subdetectorView == 2) context.fillStyle = scalepickr(0.001*(i%1000), 'thermalScope');
+            context.fillRect(this.canvasWidth*0.05 + this.canvasWidth*0.9/1000*(i%1000), this.canvasHeight-60, this.canvasWidth*0.9/1000, 20);
+        }
+
     };
 
     //do an initial populate:

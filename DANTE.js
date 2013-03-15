@@ -53,6 +53,7 @@ function DANTE(){
     this.detectorRadius = this.canvasWidth*0.03;
     this.shieldInnerRadius = this.canvasWidth*0.05;
     this.shieldOuterRadius = this.canvasWidth*0.06;
+    this.scaleHeight = 80;
 
     //establish data buffers////////////////////////////////////////////////////////////////////////////
     this.HVcolor = [];
@@ -149,12 +150,16 @@ function DANTE(){
             this.TTcontext.fill();            
         }
 		
-    	//titles
-        this.context.clearRect(0,0.75*this.canvasHeight,this.canvasWidth,0.35*this.canvasHeight);
-        this.context.fillStyle = '#999999';
-        this.context.font="24px 'Orbitron'";
-        this.context.fillText('West Ring', this.leftRingCenter - this.context.measureText('West Ring').width/2, 0.8*this.canvasHeight);
-        this.context.fillText('East Ring', this.rightRingCenter - this.context.measureText('East Ring').width/2, 0.8*this.canvasHeight);
+        if(frame==this.nFrames || frame==0) {
+            //scale
+            this.drawScale(this.context);
+    	    //titles
+            this.context.clearRect(0,0.75*this.canvasHeight,this.canvasWidth,0.25*this.canvasHeight - this.scaleHeight);
+            this.context.fillStyle = '#999999';
+            this.context.font="24px 'Orbitron'";
+            this.context.fillText('West Ring', this.leftRingCenter - this.context.measureText('West Ring').width/2, 0.8*this.canvasHeight);
+            this.context.fillText('East Ring', this.rightRingCenter - this.context.measureText('East Ring').width/2, 0.8*this.canvasHeight);
+        }
 
     };
 
@@ -234,6 +239,46 @@ function DANTE(){
     this.animate = function(force){
         if(window.onDisplay == this.canvasID || !force) animate(this, 0);
         else this.draw(this.nFrames);
+    };
+
+    this.drawScale = function(context){
+        var i, j; 
+        context.clearRect(0, this.canvasHeight - this.scaleHeight, this.canvasWidth, this.canvasHeight);
+
+        var title, minTick, maxTick;
+        title = window.parameters.monitorValues[window.subdetectorView];
+        minTick = window.parameters.BAMBINOminima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
+        maxTick = window.parameters.BAMBINOmaxima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
+
+        //titles
+        context.fillStyle = '#999999';
+        context.font="24px 'Orbitron'";
+        context.fillText(title, this.canvasWidth/2 - context.measureText(title).width/2, this.canvasHeight-8);
+
+        //tickmark;
+        context.strokeStyle = '#999999';
+        context.lineWidth = 1;
+        context.font="12px 'Raleway'";
+
+        context.beginPath();
+        context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - 40);
+        context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - 30);
+        context.stroke();
+        context.fillText(minTick, this.canvasWidth*0.05 - context.measureText(minTick).width/2, this.canvasHeight-15);
+
+        context.beginPath();
+        context.moveTo(this.canvasWidth*0.95-1, this.canvasHeight - 40);
+        context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - 30); 
+        context.stroke();      
+        context.fillText(maxTick, this.canvasWidth*0.95 - context.measureText(maxTick).width/2, this.canvasHeight-15);
+
+        for(i=0; i<3000; i++){
+            if(window.subdetectorView == 0) context.fillStyle = scalepickr(0.001*(i%1000), 'rainbow');
+            if(window.subdetectorView == 1) context.fillStyle = scalepickr(0.001*(i%1000), 'twighlight');
+            if(window.subdetectorView == 2) context.fillStyle = scalepickr(0.001*(i%1000), 'thermalScope');
+            context.fillRect(this.canvasWidth*0.05 + this.canvasWidth*0.9/1000*(i%1000), this.canvasHeight-60, this.canvasWidth*0.9/1000, 20);
+        }
+
     };
 
     //do an initial populate:

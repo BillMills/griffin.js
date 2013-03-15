@@ -208,17 +208,15 @@
 
         insertLinebreak('SubsystemLinks');
         //nav for different reported values:
-        //values to report:
-        var monitorValues = ['HV', 'Thresholds', 'Rate'];
-        for(i=0; i<monitorValues.length; i++){
+        for(i=0; i<window.parameters.monitorValues.length; i++){
           var classDef
           //position 2 is default for now:
           if(i==2) classDef = 'navLinkDown';
           else classDef = 'navLink'; 
-          insertButton('subsystem'+monitorValues[i], classDef, "javascript:swapSubsystemView('subsystem"+monitorValues[i]+"', 'SubsystemLinks', "+i+")", 'SubsystemLinks', monitorValues[i]);
+          insertButton('subsystem'+window.parameters.monitorValues[i], classDef, "javascript:swapSubsystemView('subsystem"+window.parameters.monitorValues[i]+"', 'SubsystemLinks', "+i+")", 'SubsystemLinks', window.parameters.monitorValues[i]);
 
         }
-        window.subsystemScalars = monitorValues.length;
+        window.subsystemScalars = window.parameters.monitorValues.length;
 
         //make the top level nav button default to the first subdetector in the list:
         document.getElementById('SubsystemsButton').setAttribute('onclick', "javascript:swapView('SubsystemLinks', '"+window.Subdetectors[0].canvasID+"', 'SubsystemSidebar', 'SubsystemsButton')")

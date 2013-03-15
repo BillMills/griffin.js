@@ -46,6 +46,7 @@ function SCEPTAR(){
     this.tooltip.obj = that;
 
     //drawing parameters
+    this.scaleHeight = 80;
     this.ZDSradius = this.canvasHeight*0.5 / 4; 
     this.ZDScenterX = this.canvasWidth*0.75;
     this.ZDScenterY = 0.4*this.canvasHeight;
@@ -123,7 +124,7 @@ function SCEPTAR(){
         }
     
     	//titles
-        this.context.clearRect(0,this.SCEPTARy0 + 2.5*this.SCEPTARspoke + 10,this.canvasWidth,this.canvasHeight);
+        this.context.clearRect(0,this.SCEPTARy0 + 2.5*this.SCEPTARspoke + 10,this.canvasWidth,this.canvasHeight - (this.scaleHeight+this.SCEPTARy0 + 2.5*this.SCEPTARspoke + 10));
         this.context.fillStyle = '#999999';
         this.context.font="24px 'Orbitron'";
         if(this.config[0] == 1){
@@ -135,6 +136,9 @@ function SCEPTAR(){
         if(this.config[2] == 1){
             this.context.fillText('ZDS', this.ZDScenterX - this.context.measureText('ZDS').width/2, this.ZDScenterY + 1.4*this.SCEPTARspoke);    
         }
+
+        //scale
+        if(frame==this.nFrames || frame==0) this.drawScale(this.context);
 	
     };
 
@@ -262,6 +266,46 @@ function SCEPTAR(){
     this.animate = function(force){
         if(window.onDisplay == this.canvasID || !force) animate(this, 0);
         else this.draw(this.nFrames);
+    };
+
+    this.drawScale = function(context){
+        var i, j; 
+        context.clearRect(0, this.canvasHeight - this.scaleHeight, this.canvasWidth, this.canvasHeight);
+
+        var title, minTick, maxTick;
+        title = window.parameters.monitorValues[window.subdetectorView];
+        minTick = window.parameters.SPICEminima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
+        maxTick = window.parameters.SPICEmaxima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
+
+        //titles
+        context.fillStyle = '#999999';
+        context.font="24px 'Orbitron'";
+        context.fillText(title, this.canvasWidth/2 - context.measureText(title).width/2, this.canvasHeight-8);
+
+        //tickmark;
+        context.strokeStyle = '#999999';
+        context.lineWidth = 1;
+        context.font="12px 'Raleway'";
+
+        context.beginPath();
+        context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - 40);
+        context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - 30);
+        context.stroke();
+        context.fillText(minTick, this.canvasWidth*0.05 - context.measureText(minTick).width/2, this.canvasHeight-15);
+
+        context.beginPath();
+        context.moveTo(this.canvasWidth*0.95-1, this.canvasHeight - 40);
+        context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - 30); 
+        context.stroke();      
+        context.fillText(maxTick, this.canvasWidth*0.95 - context.measureText(maxTick).width/2, this.canvasHeight-15);
+
+        for(i=0; i<3000; i++){
+            if(window.subdetectorView == 0) context.fillStyle = scalepickr(0.001*(i%1000), 'rainbow');
+            if(window.subdetectorView == 1) context.fillStyle = scalepickr(0.001*(i%1000), 'twighlight');
+            if(window.subdetectorView == 2) context.fillStyle = scalepickr(0.001*(i%1000), 'thermalScope');
+            context.fillRect(this.canvasWidth*0.05 + this.canvasWidth*0.9/1000*(i%1000), this.canvasHeight-60, this.canvasWidth*0.9/1000, 20);
+        }
+
     };
 
     //do an initial populate:
