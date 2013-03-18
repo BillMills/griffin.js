@@ -4,11 +4,10 @@ function StatusBar(wrapper){
 	this.runInfoID = 'runInfo';
 
     //experiment title
-    insertH2(this.titleID, '', this.wrapperID, 'Experiment Title');
-	document.getElementById(this.titleID).setAttribute('style','margin-left:10%; margin-top:25px; font-family: "Orbitron", sans-serif;');
+    insertDOM('h2', this.titleID, '', 'margin-left:10%; margin-top:25px; font-family: "Orbitron", sans-serif;', this.wrapperID, '', 'Experiment Title')
 
     //run info
-    insertParagraph(this.runInfoID, '', 'margin-top:10px; margin-left:auto; margin-right:auto; text-align:center; font-size:16px;', this.wrapperID, 'Run Info');
+	insertDOM('p', this.runInfoID, '', 'margin-top:10px; margin-left:auto; margin-right:auto; text-align:center; font-size:16px;', this.wrapperID, '', 'Run Info');
 
     //Alarm Service
     window.AlarmServices = new AlarmService('leftSidebar', 'leftSidebarDetail');

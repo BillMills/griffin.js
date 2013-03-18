@@ -32,28 +32,36 @@ function HPGE(){
 
     //subsystem navigation//////////////////////////////////////////////////////////////////////////////
     //insert nav link
-    insertButton('HPGElink', 'navLink', "javascript:swapFade('HPGElink', window.HPGEpointer, window.subsystemScalars, window.subdetectorView)", this.linkWrapperID, 'HPGE');
+    insertDOM('button', 'HPGElink', 'navLink', '', this.linkWrapperID, "javascript:swapFade('HPGElink', window.HPGEpointer, window.subsystemScalars, window.subdetectorView)", 'HPGE', '', 'button')
 
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
     this.monitor = document.getElementById(this.monitorID);
     this.canvasWidth = 0.48*$(this.monitor).width();
     this.canvasHeight = 0.8*$(this.monitor).height();
     //top level
-    insertCanvas(this.canvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px; transition:opacity 0.5s, z-index 0.5s; -moz-transition:opacity 0.5s, z-index 0.5s; -webkit-transition:opacity 0.5s, z-index 0.5s;', this.canvasWidth, this.canvasHeight, this.monitorID);
+    insertDOM('canvas', this.canvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px; transition:opacity 0.5s, z-index 0.5s; -moz-transition:opacity 0.5s, z-index 0.5s; -webkit-transition:opacity 0.5s, z-index 0.5s;', this.monitorID, '', '')
     this.canvas = document.getElementById(this.canvasID);
     this.context = this.canvas.getContext('2d');
+    this.canvas.setAttribute('width', this.canvasWidth);
+    this.canvas.setAttribute('height', this.canvasHeight);
     //detail level
-    insertCanvas(this.detailCanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px; transition:opacity 0.5s, z-index 0.5s; -moz-transition:opacity 0.5s, z-index 0.5s; -webkit-transition:opacity 0.5s, z-index 0.5s;', this.canvasWidth, this.canvasHeight, this.monitorID);
+    insertDOM('canvas', this.detailCanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px; transition:opacity 0.5s, z-index 0.5s; -moz-transition:opacity 0.5s, z-index 0.5s; -webkit-transition:opacity 0.5s, z-index 0.5s;', this.monitorID, '', '')
     this.detailCanvas = document.getElementById(this.detailCanvasID);
     this.detailContext = this.detailCanvas.getContext('2d');
+    this.detailCanvas.setAttribute('width', this.canvasWidth);
+    this.detailCanvas.setAttribute('height', this.canvasHeight);
     //hidden Tooltip map layer for summary
-    insertCanvas(this.TTcanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, this.monitorID);
+    insertDOM('canvas', this.TTcanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.monitorID, '', '')    
     this.TTcanvas = document.getElementById(this.TTcanvasID);
     this.TTcontext = this.TTcanvas.getContext('2d');
+    this.TTcanvas.setAttribute('width', this.canvasWidth);
+    this.TTcanvas.setAttribute('height', this.canvasHeight);
     //hidden Tooltip map layer for detail
-    insertCanvas(this.TTdetailCanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, this.monitorID);
+    insertDOM('canvas', this.TTdetailCanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.monitorID, '', '')
     this.TTdetailCanvas = document.getElementById(this.TTdetailCanvasID);
     this.TTdetailContext = this.TTdetailCanvas.getContext('2d');
+    this.TTdetailCanvas.setAttribute('width', this.canvasWidth);
+    this.TTdetailCanvas.setAttribute('height', this.canvasHeight);
 
     //onclick switch between top and detail view:
     this.detailCanvas.onclick = function(event){

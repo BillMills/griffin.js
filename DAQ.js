@@ -40,42 +40,50 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 
     //navigation
     //top level nav button
-    insertButton(this.topNavID, 'navLink', "javascript:swapView('DAQlinks', 'DAQcanvas', 'DAQsidebar', '"+this.topNavID+"')", 'statusLink', 'DAQ');
+    insertDOM('button', this.topNavID, 'navLink', '', 'statusLink', "javascript:swapView('DAQlinks', 'DAQcanvas', 'DAQsidebar', '"+this.topNavID+"')", 'DAQ', '', 'button')
     //nav wrapper div
-    insertDiv(this.linkWrapperID, 'navPanel', this.monitorID);
+    insertDOM('div', this.linkWrapperID, 'navPanel', '', this.monitorID, '', '')
     //nav header
-    insertH1('DAQlinksBanner', 'navPanelHeader', this.linkWrapperID, 'GRIFFIN DAQ Status');
-    insertLinebreak(this.linkWrapperID);
+    insertDOM('h1', 'DAQlinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', 'GRIFFIN DAQ Status')
+    insertDOM('br', 'break', '', '', this.linkWrapperID, '', '')
     //nav buttons
-    insertButton('DAQToplink', 'navLinkDown', "{window.DAQpointer.detailShowing=0; window.DAQdetail=-1; swapFade('DAQToplink', window.DAQpointer, 0, 0);}", 'DAQlinks', 'Master');
-    insertLinebreak(this.linkWrapperID);
+    insertDOM('button', 'DAQToplink', 'navLinkDown', '', 'DAQlinks', "{window.DAQpointer.detailShowing=0; window.DAQdetail=-1; swapFade('DAQToplink', window.DAQpointer, 0, 0);}", 'Master', '', 'button')
+    insertDOM('br', 'break', '', '', this.linkWrapperID, '', '')
     //p to label row of collector buttons
-    insertParagraph('DAQcollectorTitle', '', 'display:inline; color:#999999;', 'DAQlinks', 'Slave ');
+    insertDOM('p', 'DAQcollectorTitle', '', 'display:inline; color:#999999; margin-right:5px;', 'DAQlinks', '', 'Slave')
     //deploy collector buttons
     for(i=0; i<this.nCollectors; i++){
-        insertButton('Collector'+i, 'navLink', "{swapFade('Collector"+i+"', window.DAQpointer, 0, 1); window.DAQpointer.detailShowing=1; animateDetail(window.DAQpointer, 0); window.DAQdetail="+i+";}", this.linkWrapperID, i);
+        insertDOM('button', 'Collector'+i, 'navLink', '', this.linkWrapperID, "{swapFade('Collector"+i+"', window.DAQpointer, 0, 1); window.DAQpointer.detailShowing=1; animateDetail(window.DAQpointer, 0); window.DAQdetail="+i+";}", i, '', 'button')
         $('#Collector'+i).width( ( 0.95*this.canvasWidth - $('#DAQcollectorTitle').width()) / this.nCollectors );
     }
     //right sidebar
-    insertDiv(this.sidebarID, 'Sidebar', this.monitorID);
+    insertDOM('div', this.sidebarID, 'Sidebar', '', this.monitorID, '', '')
 
     //display canvases
     //top view
-    insertCanvas(this.canvasID, 'monitor', 'top: '+ ($('#DAQlinks').height() + 5) +'px;', this.canvasWidth, this.canvasHeight, this.monitorID);
+    insertDOM('canvas', this.canvasID, 'monitor', 'top: '+ ($('#DAQlinks').height() + 5) +'px;', this.monitorID, '', '')
     this.canvas = document.getElementById(canvas);
     this.context = this.canvas.getContext('2d');
+    this.canvas.setAttribute('width', this.canvasWidth);
+    this.canvas.setAttribute('height', this.canvasHeight);
     //detailed view
-    insertCanvas(this.detailCanvasID, 'monitor', 'top:' + ($('#DAQlinks').height() + 5) +'px;', this.canvasWidth, this.canvasHeight, this.monitorID);
+    insertDOM('canvas', this.detailCanvasID, 'monitor', 'top: '+ ($('#DAQlinks').height() + 5) +'px;', this.monitorID, '', '')
     this.detailCanvas = document.getElementById(detailCanvas);
     this.detailContext = this.detailCanvas.getContext('2d');
+    this.detailCanvas.setAttribute('width', this.canvasWidth);
+    this.detailCanvas.setAttribute('height', this.canvasHeight);
     //Tooltip for summary level
-    insertCanvas(this.TTcanvasID, 'monitor', 'top:' + ($('#DAQlinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, this.monitorID);
+    insertDOM('canvas', this.TTcanvasID, 'monitor', 'top:' + ($('#DAQlinks').height()*1.25 + 5) +'px;', this.monitorID, '', '')
     this.TTcanvas = document.getElementById(this.TTcanvasID);
     this.TTcontext = this.TTcanvas.getContext('2d');
+    this.TTcanvas.setAttribute('width', this.canvasWidth);
+    this.TTcanvas.setAttribute('height', this.canvasHeight);    
     //hidden Tooltip map layer for detail
-    insertCanvas(this.TTdetailCanvasID, 'monitor', 'top:' + ($('#DAQlinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, this.monitorID);
+    insertDOM('canvas', this.TTdetailCanvasID, 'monitor', 'top:' + ($('#DAQlinks').height()*1.25 + 5) +'px;', this.monitorID, '', '')    
     this.TTdetailCanvas = document.getElementById(this.TTdetailCanvasID);
     this.TTdetailContext = this.TTdetailCanvas.getContext('2d');
+    this.TTdetailCanvas.setAttribute('width', this.canvasWidth);
+    this.TTdetailCanvas.setAttribute('height', this.canvasHeight);    
     //finished adding to the DOM////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     //onclick switch between top and detail view:

@@ -28,13 +28,16 @@ function SHARC(){
     this.trackingIndex = 0;
 
     //insert nav link
-	insertButton('SHARClink', 'navLinkDown', "javascript:swapFade('SHARClink', window.SHARCpointer, window.subsystemScalars, window.subdetectorView)", this.linkWrapperID, 'SHARC');
+	insertDOM('button', 'SHARClink', 'navLink', '', this.linkWrapperID, "javascript:swapFade('SHARClink', window.SHARCpointer, window.subsystemScalars, window.subdetectorView)", 'SHARC', '', 'button')
 
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
 	this.monitor = document.getElementById(this.monitorID);
     this.canvasWidth = 0.48*$(this.monitor).width();
     this.canvasHeight = 0.8*$(this.monitor).height();
-	insertCanvas(this.canvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, this.monitorID);
+	insertDOM('canvas', this.canvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.monitorID, '', '')
+    document.getElementById(this.canvasID).setAttribute('width', this.canvasWidth);
+    document.getElementById(this.canvasID).setAttribute('height', this.canvasHeight);
+
 	this.canvas = document.getElementById(this.canvasID);
 	this.context = this.canvas.getContext('2d');
 

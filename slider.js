@@ -46,13 +46,17 @@ function Slider(wrapperID, titleID, inputBoxID, sliderContainerID, sliderBackgro
 
     //DOM manipulation/////////////////////////////////////////////
     //slider background canvas:
-    insertCanvas(sliderBackgroundID, 'sliderBKG', '', 0, 24, sliderContainerID);
+    insertDOM('canvas', this.sliderBackgroundID, 'sliderBKG', '', this.sliderContainerID, '', '')
+    document.getElementById(this.sliderBackgroundID).setAttribute('width', '0');
+    document.getElementById(this.sliderBackgroundID).setAttribute('height', '24');
     //slider knob div
-    insertDiv(sliderKnobID, 'sliderKnob', sliderContainerID);
+    insertDOM('div', this.sliderKnobID, 'sliderKnob', '', this.sliderContainerID, '', '')
     //knob style canvas
-    insertCanvas(sliderCanvID, 'knobStyle', '', 24, 16, sliderKnobID);
+    insertDOM('canvas', this.sliderCanvID, 'knobStyle', '', this.sliderKnobID, '', '')
+    document.getElementById(this.sliderCanvID).setAttribute('width', '24');
+    document.getElementById(this.sliderCanvID).setAttribute('height', '16');
     //position feedback paragraph
-    insertParagraph(sliderTextID, 'sliderText', '', sliderKnobID, '0%');
+    insertDOM('p', this.sliderTextID, 'sliderText', '', this.sliderKnobID, '', '0%')
 
     //finished DOM injections//////////////////////////////////////
 

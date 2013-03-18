@@ -43,11 +43,11 @@ function AlarmService(sidebarDivID, sidebarDetailDivID){
 	this.context = this.canvas.getContext('2d');
 	*/
 	//insert <p> into detail-level left div:
-	insertParagraph(this.pID, 'alarmPara', 'width:'+this.canvasWidth+'px;', this.sidebarDetailDivID, '');
+    insertDOM('p', this.pID, 'alarmPara', 'width:'+this.canvasWidth+'px;', this.sidebarDetailDivID, '', '')
 	//make detail paragraph disappear onclick:
 	document.getElementById(this.pID).setAttribute('onclick', 'javascript:hideDetail()');
 	//insert button to call out alarm detail:
-	insertButton('alarmDetailButton', 'alarmButton', 'javascript:showDetail()', this.sidebarDivID, 'Alarms');
+    insertDOM('button', 'alarmDetailButton', 'alarmButton', '', this.sidebarDivID, 'javascript:showDetail()', 'Alarms')
 	//end DOM manipulation//////////////////////////////////////////////////////
 
 	//event listeners///////////////////////////////////////////////////////////

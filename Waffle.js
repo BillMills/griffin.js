@@ -35,59 +35,60 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         this.deploySidebar = function(){
 
             //wrapper div
-            insertDiv(this.sidebarID, 'Sidebar', this.wrapperDiv);
+            insertDOM('div', this.sidebarID, 'Sidebar', '', this.wrapperDiv, '', '');
             document.getElementById(this.sidebarID).setAttribute('align', 'left');
 
             //title
-            insertH2('inputTitle', '', this.sidebarID, 'Sin Titulo');
+            insertDOM('h2', 'inputTitle', '', 'margin-left:10%; margin-top:25px; font-family: "Orbitron", sans-serif;', this.sidebarID, '', 'Sin Titulo');
             document.getElementById('inputTitle').setAttribute('align', 'left');
-            document.getElementById('inputTitle').setAttribute('style','margin-left:10%; margin-top:25px; font-family: "Orbitron", sans-serif;');
 
             //input form
-            insertForm('setValues', 'margin-bottom:0px;', this.sidebarID);
+            insertDOM('form', 'setValues', '', 'margin-bottom:0px;', this.sidebarID, '', '');
 
             //on/off radios:
-            insertInput('offButton', 'margin-left:10%; margin-bottom:10px', 'radio', 'HVswitch', 'off', 'setValues');
-            insertParagraph('offSwitch', '', 'display:inline;', 'setValues', 'Off');
-            insertInput('onButton', 'margin-left:10px; margin-bottom:10px; display:inline;', 'radio', 'HVswitch', 'on', 'setValues');
-            insertParagraph('onSwtich', '', 'display:inline;', 'setValues', 'On');
+            insertDOM('input', 'offButton', '', 'margin-left:10%; margin-bottom:10px', 'setValues', '', '', 'HVswitch', 'radio', 'off');
+            insertDOM('p', 'offSwitch', '', 'display:inline', 'setValues', '', 'Off');
+            insertDOM('input', 'onButton', '', 'margin-left:2%; margin-bottom:10px; display:inline;', 'setValues', '', '', 'HVswitch', 'radio', 'on');
+            insertDOM('p', 'onSwitch', '', 'display:inline', 'setValues', '', 'On');
             //submit updates:
-            insertInput('submitParameters', '', 'button', '', 'Commit', 'setValues');
+            insertDOM('input', 'submitParameters', '', '', 'setValues', '', '', '', 'button', 'Commit')
            
             //status report:
-            insertParagraph('status', '', 'margin-left:10%;', 'setValues', 'Status:');
+            insertDOM('p', 'status', '', 'margin-left:10%;', 'setValues', '', 'Status:')
 
             //voltage fill meter
-            insertParagraph('voltageMeterTitle', '', 'margin-left:10%; margin-bottom:0px; display:inline; position:relative; top:-18px;', 'setValues', 'Voltage [V]');
-            insertCanvas('voltageMeter', '', 'margin-left:2px;', '', '', 'setValues');
+            insertDOM('p', 'voltageMeterTitle', '', 'margin-left:10%; margin-bottom:0px; display:inline; position:relative; top:-18px;', 'setValues', '', 'Voltage [V]')
+            insertDOM('canvas', 'voltageMeter', '', 'margin-left:2px;', 'setValues', '', '')
             document.getElementById('voltageMeter').setAttribute('align', 'right');
             //current fill meter
-            insertParagraph('currentMeterTitle', '', 'margin-left:10%; margin-bottom:0px; display:inline; position:relative; top:-18px;', 'setValues', 'Current [uA]');
-            insertCanvas('currentMeter', '', 'margin-left:2px;', '', '', 'setValues');
+            insertDOM('p', 'currentMeterTitle', '', 'margin-left:10%; margin-bottom:0px; display:inline; position:relative; top:-18px;', 'setValues', '', 'Current [uA]')
+            insertDOM('canvas', 'currentMeter', '', 'margin-left:2px;', 'setValues', '', '')
             document.getElementById('currentMeter').setAttribute('align', 'right');
             //temperature fill meter
-            insertParagraph('temperatureMeterTitle', '', 'margin-left:10%; margin-bottom:0px; display:inline; position:relative; top:-18px;', 'setValues', 'Temperature [C]');
-            insertCanvas('temperatureMeter', '', 'margin-left:2px;', '', '', 'setValues');
+            insertDOM('p', 'temperatureMeterTitle', '', 'margin-left:10%; margin-bottom:0px; display:inline; position:relative; top:-18px;', 'setValues', '', 'Temperature [C]')
+            insertDOM('canvas', 'temperatureMeter', '', 'margin-left:2px;', 'setValues', '', '')
             document.getElementById('temperatureMeter').setAttribute('align', 'right');                        
 
             //demand voltage
-            insertParagraph('FieldText', '', 'margin-left:10%', 'setValues', 'Demand Voltage [V]');
-            insertInput('demandVoltage', 'margin-bottom:10px; margin-top: 5px; margin-left:10%; margin-right:5%;', 'text', 'textbox', 'default', 'setValues')
+            insertDOM('p', 'FieldText', '', 'margin-left:10%', 'setValues', '', 'Demand Voltage [V]')
+            insertDOM('input', 'demandVoltage', '', 'margin-bottom:10px; margin-top: 5px; margin-left:10%; margin-right:5%;', 'setValues', '', '', 'textbox', 'text', 'default')
             document.getElementById('demandVoltage').setAttribute('size', '6');
-            insertDiv('voltageSlider', 'slider', 'setValues');
+            insertDOM('div', 'voltageSlider', 'slider', '', 'setValues', '', '');
             //demand voltage ramp up
-            insertParagraph('RampText', '', 'margin:0px; margin-left:10%; margin-top:20px;', 'setValues', 'Voltage Ramp Up Speed [V/s]');
-            insertInput('demandRampSpeed', 'margin-bottom:10px; margin-top: 5px; margin-left:10%; margin-right:5%;', 'text', 'textbox', 'default', 'setValues')
+            insertDOM('p', 'RampText', '', 'margin:0px; margin-left:10%; margin-top:20px;', 'setValues', '', 'Voltage Ramp Up Speed [V/s]')
+            insertDOM('input', 'demandRampSpeed', '', 'margin-bottom:10px; margin-top: 5px; margin-left:10%; margin-right:5%;', 'setValues', '', '', 'textbox', 'text', 'default')
             document.getElementById('demandRampSpeed').setAttribute('size', '6');
-            insertDiv('rampSlider', 'slider', 'setValues');
+            insertDOM('div', 'rampSlider', 'slider', '', 'setValues', '', '');
             //demand voltage ramp down
-            insertParagraph('RampTextDown', '', 'margin:0px; margin-left:10%; margin-top:20px;', 'setValues', 'Demand Ramp Down Speed [V/s]');
-            insertInput('demandRampDownSpeed', 'margin-bottom:10px; margin-top: 5px; margin-left:10%; margin-right:5%;', 'text', 'textbox', 'default', 'setValues')
+            insertDOM('p', 'RampTextDown', '', 'margin:0px; margin-left:10%; margin-top:20px;', 'setValues', '', 'Demand Ramp Down Speed [V/s]')
+            insertDOM('input', 'demandRampDownSpeed', '', 'margin-bottom:10px; margin-top: 5px; margin-left:10%; margin-right:5%;', 'setValues', '', '', 'textbox', 'text', 'default')
             document.getElementById('demandRampDownSpeed').setAttribute('size', '6');
-            insertDiv('rampDownSlider', 'slider', 'setValues');
+            insertDOM('div', 'rampDownSlider', 'slider', '', 'setValues', '', '');
 
             //space canvas:
-            insertCanvas('inputSpacer', '', 'margin-left:10%; margin-top:5%;', '200px', '5px', this.sidebarID);
+            insertDOM('canvas', 'inputSpacer', '', 'margin-left:10%; margin-top:5%;', this.sidebarID, '', '');
+            document.getElementById('inputSpacer').setAttribute('width', '200px');
+            document.getElementById('inputSpacer').setAttribute('height', '5px');
             //draw on the canvas:
             var ILcanvas = document.getElementById('inputSpacer');
             var ILcontext = ILcanvas.getContext('2d');
@@ -98,21 +99,18 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
             ILcontext.stroke();
 
             //channel changing form:
-            insertForm('changeChannel', '', this.sidebarID);
+            insertDOM('form', 'changeChannel', '', '', this.sidebarID, '', '')
             //title
-            insertH4('ccTitle', '', 'changeChannel', 'Change Channel:');
-            document.getElementById('ccTitle').setAttribute('style', 'margin-left:10%; margin-bottom:10px;');
+            insertDOM('h4', 'ccTitle', '', 'margin-left:10%; margin-bottom:10px;', 'changeChannel', '', 'Change Channel:')
             //cards:
-            insertParagraph('cardTitle', '', 'display:inline; margin-left:10%; margin-right:1%', 'changeChannel', 'Card');
-            insertSelect('CardList', 'width:80px;', 'changeChannel');
-            insertLinebreak('changeChannel');
+            insertDOM('p', 'cardTitle', '', 'display:inline; margin-left:10%; margin-right:1%', 'changeChannel', '', 'Card')
+            insertDOM('select', 'CardList', '', 'width:80px;', 'changeChannel', '', '')
+            insertDOM('br', 'break', '', '', 'changeChannel', '', '')
             //channels:
-            insertParagraph('channelTitle', '', 'display:inline; margin-left:10%; position:relative; top:-20px; margin-right:1%;', 'changeChannel', 'Channel');
-            insertSelect('ChannelList', 'width:75px; position:relative; top:-20px;', 'changeChannel');
+            insertDOM('p', 'channelTitle', '', 'display:inline; margin-left:10%; position:relative; top:-20px; margin-right:1%;', 'changeChannel', '', 'Channel')
+            insertDOM('select', 'ChannelList', '', 'width:80px; position:relative; top:-20px;', 'changeChannel', '', '')
             //submit button:
-            insertInput('getChannelButton', 'position:relative; top:-30px; width: 50px; height:50px; font-size:24px; margin-left:3%; margin-top:10px; border-color:black', 'button', '', 'Go', 'changeChannel');
-            document.getElementById('getChannelButton').setAttribute('class', 'link');
-            document.getElementById('getChannelButton').setAttribute('onclick', '{window.refreshInput = 1; gotoNewChannel(event, window.HVpointer);}');
+            insertDOM('input', 'getChannelButton', 'link', 'position:relative; top:-30px; width: 50px; height:50px; font-size:24px; margin-left:3%; margin-top:10px; border-color:black', 'changeChannel', '{window.refreshInput = 1; gotoNewChannel(event, window.HVpointer);}', '', '', 'button', 'Go')
         };
 
         //deploy a sidebar to interact with this element:
@@ -138,23 +136,26 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         //DOM insertions///////////////////////////////////////////////////////////////////////
         //navigation
         //top level nav button
-        insertButton(this.topNavID, 'navLink', "javascript:swapView('mainframeLinks', 'TestWaffle', 'InputLayer', '"+this.topNavID+"')", 'statusLink', 'HV Monitor');
+        insertDOM('button', this.topNavID, 'navLink', '', 'statusLink', "javascript:swapView('mainframeLinks', 'TestWaffle', 'InputLayer', '"+this.topNavID+"')", 'HV Monitor')
         //nav wrapper div
-        insertDiv(this.linkWrapperID, 'navPanel', this.wrapperDiv);
+        insertDOM('div', this.linkWrapperID, 'navPanel', '', this.wrapperDiv, '', '')
         //nav header
-        insertH1('mainframeLinksBanner', 'navPanelHeader', this.linkWrapperID, 'GRIFFIN HV Mainframes');
-        insertLinebreak(this.linkWrapperID);
+        insertDOM('h1', 'mainframeLinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', 'GRIFFIN HV Mainframes')
+        insertDOM('br', 'break', '', '', this.linkWrapperID, '', '')
         //nav buttons
-        insertButton('Main1', 'navLinkDown', "{window.HVpointer.viewStatus=-1; swapFade('Main1', window.HVpointer, 0, 0)}", 'mainframeLinks', 'Mainframe 1');
-        insertLinebreak(this.linkWrapperID);
+        insertDOM('button', 'Main1', 'navLinkDown', '', 'mainframeLinks', "{window.HVpointer.viewStatus=-1; swapFade('Main1', window.HVpointer, 0, 0)}", 'Mainframe 1')
+        insertDOM('br', 'break', '', '', this.linkWrapperID, '', '')
 
         //deploy slot buttons
         for(i=0; i<window.parameters.moduleSizes.length; i++){
-            insertButton('card'+i, 'navLink', "{window.HVpointer.viewStatus="+i+"; swapFade('card"+i+"', window.HVpointer, 0, 0);}", this.linkWrapperID, 'Slot '+i);
+            insertDOM('button', 'card'+i, 'navLink', '', this.linkWrapperID, "{window.HVpointer.viewStatus="+i+"; swapFade('card"+i+"', window.HVpointer, 0, 0);}", 'Slot '+i, '', 'button')
         }
 
         //inject canvas into DOM for waffle to paint on:
-        insertCanvas(this.canvasID, 'monitor', '', this.totalWidth, this.totalHeight, this.wrapperDiv);
+        insertDOM('canvas', this.canvasID, 'monitor', '', this.wrapperDiv, '', '')
+        document.getElementById(this.canvasID).setAttribute('width', this.totalWidth);
+        document.getElementById(this.canvasID).setAttribute('height', this.totalHeight);
+
         this.canvas = document.getElementById(this.canvasID);
         this.context = this.canvas.getContext('2d');
         //finished DOM insertions///////////////////////////////////////////////////////////////
@@ -219,7 +220,9 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         this.barCharts = [];
         var newCanvas;
         for(i=0; i<window.parameters.moduleSizes.length; i++){
-            insertCanvas('bar'+i, 'monitor', '', this.totalWidth, this.totalHeight, this.wrapperDiv);
+            insertDOM('canvas', 'bar'+i, 'monitor', '', this.wrapperDiv, '', '')
+            document.getElementById('bar'+i).setAttribute('width', this.totalWidth);
+            document.getElementById('bar'+i).setAttribute('height', this.totalHeight);
             this.barCharts[i] = new BarGraph('bar'+i, i, Math.max(window.parameters.moduleSizes[i],1)*12, 'Slot '+i, 'Reported Voltage [V]', 0, window.parameters.scaleMaxima[0], window.parameters.barChartPrecision, that);
         }
 

@@ -19,24 +19,30 @@ function PACES(){
     this.duration = 0.5;
     this.nFrames = this.FPS*this.duration;
 
-    insertButton('PACESlink', 'navLink', "javascript:swapFade('PACESlink', window.PACESpointer, window.subsystemScalars, window.subdetectorView)", this.linkWrapperID, 'PACES');
+    insertDOM('button', 'PACESlink', 'navLink', '', this.linkWrapperID, "javascript:swapFade('PACESlink', window.PACESpointer, window.subsystemScalars, window.subdetectorView)", 'PACES', '', 'button')
 
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
     this.monitor = document.getElementById(this.monitorID);
     this.canvasWidth = 0.48*$(this.monitor).width();
     this.canvasHeight = 0.8*$(this.monitor).height();
     //HV view
-    insertCanvas(this.HVcanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, this.monitorID);
+    insertDOM('canvas', this.HVcanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.monitorID, '', '')
     this.HVcanvas = document.getElementById(this.HVcanvasID);
     this.HVcontext = this.HVcanvas.getContext('2d');
+    this.HVcanvas.setAttribute('width', this.canvasWidth);
+    this.HVcanvas.setAttribute('height', this.canvasHeight);
     //Rate view
-    insertCanvas(this.RateCanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, this.monitorID);
+    insertDOM('canvas', this.RateCanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.monitorID, '', '')
     this.RateCanvas = document.getElementById(this.RateCanvasID);
     this.RateContext = this.RateCanvas.getContext('2d');
+    this.RateCanvas.setAttribute('width', this.canvasWidth);
+    this.RateCanvas.setAttribute('height', this.canvasHeight);
     //hidden Tooltip map layer
-    insertCanvas(this.TTcanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, this.monitorID);
+    insertDOM('canvas', this.TTcanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.monitorID, '', '')    
     this.TTcanvas = document.getElementById(this.TTcanvasID);
     this.TTcontext = this.TTcanvas.getContext('2d');
+    this.TTcanvas.setAttribute('width', this.canvasWidth);
+    this.TTcanvas.setAttribute('height', this.canvasHeight);
 
     //Dirty trick to implement tooltip on obnoxious geometry: make another canvas of the same size hidden beneath, with the 
     //detector drawn on it, but with each element filled in with rgba(0,0,n,1), where n is the channel number; fetching the color from the 

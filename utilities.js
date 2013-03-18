@@ -59,8 +59,21 @@ function highlight(buttonID){
 
 }
 
-
-
+function insertDOM(element, id, classTag, style, wrapperID, onclick, content, name, type, value){
+    var newElement = document.createElement(element);
+    newElement.setAttribute('id', id);
+    newElement.setAttribute('class', classTag);
+    newElement.setAttribute('style', style);
+    newElement.setAttribute('onclick', onclick);
+    newElement.setAttribute('name', name);
+    newElement.setAttribute('type', type);
+    newElement.setAttribute('value', value);
+    if(wrapperID == 'body')
+        document.body.appendChild(newElement)
+    else
+        document.getElementById(wrapperID).appendChild(newElement);
+    document.getElementById(id).innerHTML = content;
+}
 
 
 

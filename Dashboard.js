@@ -10,30 +10,31 @@ function Dashboard(){
     //deploy the sidebar
     this.deploySidebar = function(){
         //wrapper div
-        insertDiv(this.sidebarID, 'Sidebar', this.wrapperID);
+        insertDOM('div', this.sidebarID, 'Sidebar', '', this.wrapperID, '', '')
         document.getElementById(this.sidebarID).setAttribute('align', 'left');
     }
     this.deploySidebar();
 
     //add top level nav button:
-    insertButton('DashboardButton', 'navLinkDown', "javascript:swapView('DashboardLinks', 'DashboardCanvas', 'DashboardSidebar', 'DashboardButton')", 'statusLink', 'Dashboard');
+    insertDOM('button', 'DashboardButton', 'navLinkDown', '', 'statusLink', "javascript:swapView('DashboardLinks', 'DashboardCanvas', 'DashboardSidebar', 'DashboardButton')", 'Dashboard', '', 'button')
 
     //nav wrapper div
-    insertDiv(this.linkWrapperID, 'navPanel', this.wrapperID);
+    insertDOM('div', this.linkWrapperID, 'navPanel', '', this.wrapperID, '', '')
     //dashboard is the initial view, put the navbar on top:
     document.getElementById(this.linkWrapperID).setAttribute('style', 'z-index:1; opacity:1;')
 
     //nav header
-    insertH1('DashboardLinksBanner', 'navPanelHeader', this.linkWrapperID, 'GRIFFIN Dashboard');
-
-    insertLinebreak(this.linkWrapperID);
+    insertDOM('h1', 'DashboardLinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', 'GRIFFIN Dashboard')
+    insertDOM('br', 'break', '', '', this.linkWrapperID, '', '')
 
 	//deploy a canvas for the dashboard view:
     this.canvasWidth = 0.48*$(this.wrapper).width();
     this.canvasHeight = 0.8*$(this.wrapper).height();
-    insertCanvas(this.canvasID, 'monitor', 'position:absolute; left:24%; top:' + ($('#DashboardLinks').height() + 5) +'px;', this.canvasWidth, this.canvasHeight, this.wrapperID)
+    insertDOM('canvas', this.canvasID, 'monitor', 'position:absolute; left:24%; top:' + ($('#DashboardLinks').height() + 5) +'px;', this.wrapperID, '', '')
     this.canvas = document.getElementById('DashboardCanvas');
     this.context = this.canvas.getContext('2d');
+    this.canvas.setAttribute('width', this.canvasWidth)
+    this.canvas.setAttribute('height', this.canvasHeight)
 
     //drawing parameters:
 

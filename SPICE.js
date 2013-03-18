@@ -22,20 +22,24 @@ function SPICE(){
     this.nFrames = this.FPS*this.duration;
 
     //insert nav link
-    insertButton('SPICElink', 'navLink', "javascript:swapFade('SPICElink', window.SPICEpointer, window.subsystemScalars, window.subdetectorView)", this.linkWrapperID, 'SPICE');
+    insertDOM('button', 'SPICElink', 'navLink', '', this.linkWrapperID, "javascript:swapFade('SPICElink', window.SPICEpointer, window.subsystemScalars, window.subdetectorView)", 'SPICE', '', 'button')
 
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
     this.monitor = document.getElementById(this.monitorID);
     this.canvasWidth = 0.48*$(this.monitor).width();
     this.canvasHeight = 0.8*$(this.monitor).height();
     //detector view
-    insertCanvas(this.canvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, this.monitorID);
+    insertDOM('canvas', this.canvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.monitorID, '', '')
     this.canvas = document.getElementById(this.canvasID);
     this.context = this.canvas.getContext('2d');
+    this.canvas.setAttribute('width', this.canvasWidth);
+    this.canvas.setAttribute('height', this.canvasHeight);
     //hidden Tooltip map layer
-    insertCanvas(this.TTcanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.canvasWidth, this.canvasHeight, this.monitorID);
+    insertDOM('canvas', this.TTcanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.monitorID, '', '')    
     this.TTcanvas = document.getElementById(this.TTcanvasID);
     this.TTcontext = this.TTcanvas.getContext('2d');
+    this.TTcanvas.setAttribute('width', this.canvasWidth);
+    this.TTcanvas.setAttribute('height', this.canvasHeight);
 
     //Dirty trick to implement tooltip on obnoxious geometry: make another canvas of the same size hidden beneath, with the 
     //detector drawn on it, but with each element filled in with rgba(0,0,n,1), where n is the channel number; fetching the color from the 

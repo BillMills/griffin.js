@@ -8,23 +8,25 @@ function Trigger(){
 	this.wrapper = document.getElementById(this.wrapperID);
 
     //add top level nav button:
-    insertButton('TriggerButton', 'navLink', "javascript:swapView('TriggerLinks', 'TriggerCanvas', 'TriggerSidebar', 'TriggerButton')", 'statusLink', 'Trigger');
+    insertDOM('button', 'TriggerButton', 'navLink', '', 'statusLink', "javascript:swapView('TriggerLinks', 'TriggerCanvas', 'TriggerSidebar', 'TriggerButton')", 'Trigger', '', 'button')
 
     //nav wrapper div
-    insertDiv(this.linkWrapperID, 'navPanel', this.wrapperID);
+    insertDOM('div', this.linkWrapperID, 'navPanel', '', this.wrapperID, '', '')
     //nav header
-    insertH1('TriggerLinksBanner', 'navPanelHeader', this.linkWrapperID, 'GRIFFIN Trigger Status');
-    insertLinebreak(this.linkWrapperID);
+    insertDOM('h1', 'TriggerLinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', 'GRIFFIN Trigger Status')
+    insertDOM('br', 'break', '', '', this.linkWrapperID, '', '')
 
 	//deploy a canvas for the trigger view:
     this.canvasWidth = 0.48*$(this.wrapper).width();
     this.canvasHeight = 0.8*$(this.wrapper).height();
-    insertCanvas(this.canvasID, 'monitor', 'top:' + ($('#TriggerLinks').height() + 5) +'px;', this.canvasWidth, this.canvasHeight, this.wrapperID);
+    insertDOM('canvas', this.canvasID, 'monitor', 'top:' + ($('#TriggerLinks').height() + 5) +'px;', this.wrapperID, '', '')
     this.canvas = document.getElementById('TriggerCanvas');
     this.context = this.canvas.getContext('2d');
+    this.canvas.setAttribute('width', this.canvasWidth)
+    this.canvas.setAttribute('height', this.canvasHeight)
 
     //right sidebar
-    insertDiv(this.sidebarID, 'Sidebar', this.wrapperID);
+    insertDOM('div', this.sidebarID, 'Sidebar', '', this.wrapperID, '', '')
 
     //drawing parameters:
 

@@ -8,23 +8,25 @@ function Clock(){
 	this.wrapper = document.getElementById(this.wrapperID);
 
     //add top level nav button:
-    insertButton('ClockButton', 'navLink', "javascript:swapView('ClockLinks', 'ClockCanvas', 'ClockSidebar', 'ClockButton')", 'statusLink', 'Clock')
+    insertDOM('button', 'ClockButton', 'navLink', '', 'statusLink', "javascript:swapView('ClockLinks', 'ClockCanvas', 'ClockSidebar', 'ClockButton')", 'Clock')
 
     //nav wrapper div
-    insertDiv(this.linkWrapperID, 'navPanel', this.wrapperID);
+    insertDOM('div', this.linkWrapperID, 'navPanel', '', this.wrapperID, '', '')
     //nav header
-    insertH1('ClockLinksBanner', 'navPanelHeader', this.linkWrapperID, 'GRIFFIN Clock Status');
-    insertLinebreak(this.linkWrapperID);
+    insertDOM('h1', 'ClockLinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', 'GRIFFIN Clock Status')
+    insertDOM('br', 'break', '', '', this.linkWrapperID, '', '')
 
 	//deploy a canvas for the clock view:
     this.canvasWidth = 0.48*$(this.wrapper).width();
     this.canvasHeight = 0.8*$(this.wrapper).height();
-    insertCanvas(this.canvasID, 'monitor', 'top:' + ($('#ClockLinks').height() + 5) +'px;', this.canvasWidth, this.canvasHeight, this.wrapperID);
+    insertDOM('canvas', this.canvasID, 'monitor', 'top:' + ($('#ClockLinks').height() + 5) +'px;', this.wrapperID, '', '')
     this.canvas = document.getElementById('ClockCanvas');
     this.context = this.canvas.getContext('2d');
+    this.canvas.setAttribute('width', this.canvasWidth);
+    this.canvas.setAttribute('height', this.canvasHeight);
 
     //right sidebar
-    insertDiv(this.sidebarID, 'Sidebar', this.wrapperID);
+    insertDOM('div', this.sidebarID, 'Sidebar', '', this.wrapperID, '', '')
 
     //drawing parameters:
     this.margin = 5;

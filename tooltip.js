@@ -11,11 +11,11 @@ function Tooltip(ttCanvasID, ttTextID, ttBKGcanvID, ttDivID, wrapperID, prefix, 
 
     //inject the necessary DOM elements for this tooltip:
     //wrapper div
-    insertDiv(ttDivID, 'tooltip', 'body');
+    insertDOM('div', this.ttDivID, 'tooltip', '', 'body', '', '')
     //background canvas
-    insertCanvas(ttBKGcanvID, 'ttBKG', '', 0, 0, ttDivID);
+    insertDOM('canvas', this.ttBKGcanvID, 'ttBKG', '', this.ttDivID, '', '')
     //content paragraph
-    insertParagraph(ttTextID, 'TTtext', '', ttDivID, '');
+    insertDOM('p', this.ttTextID, 'TTtext', '', this.ttDivID, '', '')
 
     this.canvas = document.getElementById(this.canvasID);
     this.context = this.canvas.getContext('2d'); 

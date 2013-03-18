@@ -11,7 +11,6 @@
     <script src="masterControl.js" type="text/javascript"></script>
     <script src="viewTransitions.js" type="text/javascript"></script>
     <script src="drawing.js" type="text/javascript"></script>
-    <script src="DOMmanipulation.js" type="text/javascript"></script>
 
     <script src="Dashboard.js" type="text/javascript"></script>
     <script src="Waffle.js" type="text/javascript"></script>
@@ -178,15 +177,15 @@
         window.waffle = new Waffle("InputLayer",'mainframeLinks', AlarmServices);
 
         //Subsystem sidebar:
-        insertDiv('SubsystemSidebar', 'Sidebar', window.parameters.wrapper);
+        insertDOM('div', 'SubsystemSidebar', 'Sidebar', '', window.parameters.wrapper, '', '');
         //Subsystem menu; universal buttons declared outside of individual subsystems:
         //add top level nav button:
-        insertButton('SubsystemsButton', 'navLink', "", 'statusLink', 'Subsystem Monitors');
+        insertDOM('button', 'SubsystemsButton', 'navLink', '', 'statusLink', '', 'Subsystem Monitors', '', '');
         //create nav panel for subsystem view:
-        insertDiv('SubsystemLinks', 'navPanel', window.parameters.wrapper);
+        insertDOM('div', 'SubsystemLinks', 'navPanel', '', window.parameters.wrapper, '', '');
         //headline for nav panel
-        insertH1('SubsystemLinksBanner', 'navPanelHeader', 'SubsystemLinks', 'GRIFFIN Subsystem Monitors');
-        insertLinebreak('SubsystemLinks');    
+        insertDOM('h1', 'SubsystemLinksBanner', 'navPanelHeader', '', 'SubsystemLinks', '', 'GRIFFIN Subsystem Monitors');
+        insertDOM('br', 'break', '', '', 'SubsystemLinks', '', '');    
         //subdetectors
         window.Subdetectors = [];
         if(window.parameters.deployment["SHARC"]) window.Subdetectors[window.Subdetectors.length] = new SHARC();
@@ -199,15 +198,14 @@
         if(window.parameters.deployment["SPICE"]) window.Subdetectors[window.Subdetectors.length] = new SPICE();
         if(window.parameters.deployment["TIP"]) window.Subdetectors[window.Subdetectors.length] = new TIP();
 
-        insertLinebreak('SubsystemLinks');
+        insertDOM('br', 'break', '', '', 'SubsystemLinks');
         //nav for different reported values:
         for(i=0; i<window.parameters.monitorValues.length; i++){
           var classDef
           //position 2 is default for now:
           if(i==2) classDef = 'navLinkDown';
           else classDef = 'navLink'; 
-          insertButton('subsystem'+window.parameters.monitorValues[i], classDef, "javascript:swapSubsystemView('subsystem"+window.parameters.monitorValues[i]+"', 'SubsystemLinks', "+i+")", 'SubsystemLinks', window.parameters.monitorValues[i]);
-
+          insertDOM('button', 'subsystem'+window.parameters.monitorValues[i], classDef, '', 'SubsystemLinks', "javascript:swapSubsystemView('subsystem"+window.parameters.monitorValues[i]+"', 'SubsystemLinks', "+i+")", window.parameters.monitorValues[i], '', 'button')
         }
         window.subsystemScalars = window.parameters.monitorValues.length;
 
