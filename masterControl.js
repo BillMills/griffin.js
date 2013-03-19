@@ -51,7 +51,8 @@ function masterLoop(callMyself){
 function detectCards(){
     var moduleSizes
     //insert ODB magic here
-    moduleSizes = [0,4,0,4,0,4,0,4,0,4,0,4];
+    //moduleSizes = [0,4,0,4,0,4,0,4,0,4,0,4];
+    moduleSizes = [0,4,0,0,0,0,0,0,0,0,0,0];
     return moduleSizes;
 }
 

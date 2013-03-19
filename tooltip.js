@@ -24,9 +24,6 @@ function Tooltip(ttCanvasID, ttTextID, ttBKGcanvID, ttDivID, wrapperID, prefix, 
     this.BKGcanvas = document.getElementById(this.ttBKGcanvID);
     this.BKGcontext = this.BKGcanvas.getContext('2d');
 
-    //match the font here to the font declared in the css for the tooltip text, to get measurements made in defineText right
-    this.BKGcanvas.font = '14px "Raleway"';
-
     //old tt bin, for updates when the mouse is just sitting in the same place:
     this.oldCellIndex = -1;
     this.allowUpdate = 0;
@@ -64,7 +61,7 @@ function Tooltip(ttCanvasID, ttTextID, ttBKGcanvID, ttDivID, wrapperID, prefix, 
 
             //make the tool tip follow the mouse:
             that.ttDiv.style.top = event.pageY - newHeight - 5;
-            that.ttDiv.style.left = event.pageX - newWidth - 5;
+            that.ttDiv.style.left = event.pageX  - 5;
 
             //make the tool tip appear iff the waffle is showing:
             that.ttDiv.style.display = 'block';

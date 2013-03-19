@@ -6,6 +6,7 @@ function DANTE(){
     this.topNavID = 'SubsystemsButton';          //ID of top level nav button
     this.TTcanvasID = 'DANTETTCanvas';           //ID of hidden tooltip map canvas
     this.dataBus = new DANTEDS();
+    this.subviewLink = 'DANTElink';                   //ID of inter-subsystem nav button
 
     var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick

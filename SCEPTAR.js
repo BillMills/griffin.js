@@ -7,6 +7,7 @@ function SCEPTAR(){
     this.TTcanvasID = 'SCEPTARTTCanvas';            //ID of hidden tooltip map canvas
     this.config = window.parameters.SCEPTARconfig;  //subsystems on: [upstream sceptar, downstream sceptar, downstream ZDS]
     this.dataBus = new SCEPTARDS();
+    this.subviewLink = 'SCEPTARlink';                   //ID of inter-subsystem nav button
 
     var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
@@ -19,7 +20,7 @@ function SCEPTAR(){
 
     //insert nav link
     insertDOM('button', 'SCEPTARlink', 'navLink', '', this.linkWrapperID, "javascript:swapFade('SCEPTARlink', window.SCEPTARpointer, window.subsystemScalars, window.subdetectorView)", 'SCEPTAR', '', 'button')
-    
+
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
     this.monitor = document.getElementById(this.monitorID);
     this.canvasWidth = 0.48*$(this.monitor).width();

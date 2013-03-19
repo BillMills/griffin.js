@@ -3,6 +3,15 @@ function StatusBar(wrapper){
 	this.titleID = 'experimentTitle';
 	this.runInfoID = 'runInfo';
 
+	var that = this;
+
+	//deploy tooltip:
+    this.tooltip = new Tooltip('LeftSidebarBKG', 'leftSidebarTTipText', 'leftSidebarTTCanv', 'leftSidebarTT', this.wrapperID, [], []);
+    this.tooltip.obj = that;
+    //tooltip actually attaches to a canvas - attach it to the background canvas, but then pull the event listners up to the top-level div:
+    document.getElementById(this.wrapperID).onmousemove = document.getElementById('LeftSidebarBKG').onmousemove
+    document.getElementById(this.wrapperID).onmouseout = document.getElementById('LeftSidebarBKG').onmouseout
+
     //experiment title
     insertDOM('h2', this.titleID, '', 'margin-left:10%; margin-top:25px; font-family: "Orbitron", sans-serif;', this.wrapperID, '', 'Experiment Title')
 
@@ -28,6 +37,12 @@ function StatusBar(wrapper){
     	else if (runstate == 3) runInfo += 'Live';
     	else runInfo += 'State Unknown';
 
+    	//restart?  TODO
+    	this.restart = '???';
+
+    	//data dir:
+    	this.dataDir = '/dummy/directory/path/' //ODBGet('/Logger/Data dir')
+
     	//run time
     	var startInfo = 'Start: ';
     	startInfo += '00:00:00 January 1, 1970'//ODBGet('/Runinfo/Start time');
@@ -48,6 +63,38 @@ function StatusBar(wrapper){
   		}
   		document.getElementById(this.runInfoID).innerHTML = runInfo + '<br>' + startInfo + '<br>' + elapsed;
 
+    };
+
+    this.findCell = function(event){
+    	return 1;
+    };
+
+    this.defineText = function(cell){
+        var toolTipContent = '<br>';
+        var nextLine;
+        var longestLine = 0;
+        var cardIndex;
+        var i;
+
+        nextLine = '<u>Run Config Details</u>'
+        //keep track of the longest line of text:
+        longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
+        toolTipContent += nextLine + '<br><br>';
+
+        nextLine = 'Restart: ' + this.restart 
+        //keep track of the longest line of text:
+        longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
+        toolTipContent += nextLine + '<br>';
+
+        nextLine = 'Data dir: ' + this.dataDir
+        //keep track of the longest line of text:
+        longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
+        toolTipContent += nextLine + '<br>';
+
+        document.getElementById(this.tooltip.ttTextID).innerHTML = toolTipContent;
+
+        //return length of longest line:
+        return longestLine;
     };
 
     this.update();

@@ -8,6 +8,7 @@ function SPICE(){
     this.minima = window.parameters.SPICEminima; //array of meter minima [HV, thresholds, rate]
     this.maxima = window.parameters.SPICEmaxima; //array of meter maxima, arranged as minima
     this.dataBus = new SPICEDS();
+    this.subviewLink = 'SPICElink';                   //ID of inter-subsystem nav button
 
     var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick

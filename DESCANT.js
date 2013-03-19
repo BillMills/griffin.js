@@ -11,6 +11,7 @@ function DESCANT(){
 	this.minima = window.parameters.DESCANTminima;  //array of meter minima [HV, thresholds, rate]
 	this.maxima = window.parameters.DESCANTmaxima;  //array of meter maxima, arranged as minima
     this.dataBus = new DESCANTDS();
+    this.subviewLink = 'DESCANTlink';                   //ID of inter-subsystem nav button
 
 	var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick

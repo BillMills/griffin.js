@@ -9,6 +9,7 @@ function PACES(){
     this.minima = window.parameters.PACESminima;//array of meter minima [HV, thresholds, rate]
     this.maxima = window.parameters.PACESmaxima;//array of meter maxima, arranged as minima
     this.dataBus = new PACESDS();           
+    this.subviewLink = 'PACESlink';                   //ID of inter-subsystem nav button
 
     var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick

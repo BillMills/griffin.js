@@ -65,7 +65,7 @@
     <!--Top Level Navigation////////////////////////////////////////////////////////////-->
     <div id="navBar" style='margin:none;'>
       <div id='statusLink' style='display:inline; position:relative; left:1%;'>
-        <button class='navLink' type="submit">MIDAS Status</button>
+        <button id='MIDASstatusLink' class='navLink' type="submit">MIDAS Status</button>
         <!--All other objects will insert their nav buttons here-->
       </div>
       <p id="youAreHere" style='display: inline; color:rgba(255,255,255,0.3); font-size:24px; margin:0; position:absolute; right:0; width:;'></p>
@@ -126,6 +126,9 @@
 
       function main(){
 
+        //plug in MIDAS status page link:
+        document.getElementById('MIDASstatusLink').setAttribute('onclick', "window.location='"+window.parameters.statusURL+"';")
+
         //state variables for what the subdetector view is showing: 0->HV, 1->Thresholds, 2->Rate
         window.subdetectorView = 2;  //rate by default
 
@@ -144,7 +147,7 @@
         }
 
         //Insert branding & navigation:
-        Banner('banner', 'youAreHere', 'navBar', 'GRIFFIN Dashboard');
+        Banner('banner', 'youAreHere', 'navBar', window.parameters.ExpName+' Dashboard');
 
         //plug in links:
         statusLink = document.getElementById('statusLink');
@@ -184,10 +187,15 @@
         //create nav panel for subsystem view:
         insertDOM('div', 'SubsystemLinks', 'navPanel', '', window.parameters.wrapper, '', '');
         //headline for nav panel
-        insertDOM('h1', 'SubsystemLinksBanner', 'navPanelHeader', '', 'SubsystemLinks', '', 'GRIFFIN Subsystem Monitors');
+        insertDOM('h1', 'SubsystemLinksBanner', 'navPanelHeader', '', 'SubsystemLinks', '', window.parameters.ExpName+' Subsystem Monitors');
         insertDOM('br', 'break', '', '', 'SubsystemLinks', '', '');    
         //subdetectors
         window.Subdetectors = [];
+        //determine number of subdetectors deployed:
+        window.nDetectors = 0;
+        for(var key in window.parameters.deployment){
+          window.nDetectors+=window.parameters.deployment[key]
+        }
         if(window.parameters.deployment["SHARC"]) window.Subdetectors[window.Subdetectors.length] = new SHARC();
         if(window.parameters.deployment["HPGE"]) window.Subdetectors[window.Subdetectors.length] = new HPGE();
         if(window.parameters.deployment["DESCANT"]) window.Subdetectors[window.Subdetectors.length] = new DESCANT();
@@ -211,6 +219,9 @@
 
         //make the top level nav button default to the first subdetector in the list:
         document.getElementById('SubsystemsButton').setAttribute('onclick', "javascript:swapView('SubsystemLinks', '"+window.Subdetectors[0].canvasID+"', 'SubsystemSidebar', 'SubsystemsButton')")
+
+        //make the nav button of the first subdetector in the list pressed by default:
+        document.getElementById(window.Subdetectors[0].subviewLink).setAttribute('class', 'navLinkDown');
 
         window.DAQ = new DAQ('DAQcanvas', 'DAQdetailCanvas', [], []);
         window.Clock = new Clock();

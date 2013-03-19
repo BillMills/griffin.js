@@ -24,7 +24,7 @@ function Dashboard(){
     document.getElementById(this.linkWrapperID).setAttribute('style', 'z-index:1; opacity:1;')
 
     //nav header
-    insertDOM('h1', 'DashboardLinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', 'GRIFFIN Dashboard')
+    insertDOM('h1', 'DashboardLinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', window.parameters.ExpName+' Dashboard')
     insertDOM('br', 'break', '', '', this.linkWrapperID, '', '')
 
 	//deploy a canvas for the dashboard view:

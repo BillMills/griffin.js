@@ -200,7 +200,10 @@ TIPDS = function(){
 	this.detailBGOrate = [];
 	
 	
-	//key map
+	//key map, format: key[griffin.js index number][pointer]
+	//pointer == 0: Greg's name
+	//pointer == 1: index in scalar rate json object
+	//pointer == 2: FSCP index
 	this.key = [];
 	//CsI Wall
 	//generate names
@@ -211,12 +214,19 @@ TIPDS = function(){
 		else
 			this.key[i][0] = 'TPW0' +(i+1)+ 'P00X';
 	}
-	//figure out where this name is sitting in the JSON arrays
+	//figure out where this name is sitting in the JSON scalar rate array and in the FSCP table
 	for(i=0; i<24; i++){
 		this.key[i][1] = -1;
-        for(j=0; j<window.JSONPstore['scalar'].length; j++){
-            if(window.JSONPstore['scalar'][j].fName == this.key[i][0])
-              	this.key[i][1] = j;
+		this.key[i][2] = -1;
+		if(window.JSONPstore['scalar']){
+	        for(j=0; j<window.JSONPstore['scalar'].length; j++){
+    	        if(window.JSONPstore['scalar'][j].fName == this.key[i][0])
+        	      	this.key[i][1] = j;
+        	}
+        }
+        for(j=0; j<window.codex.Name.length; j++){
+        	if(window.codex.Name[j] == this.key[i][0])
+        		this.key[i][2] = j;
         }
     }
     

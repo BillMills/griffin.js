@@ -13,7 +13,7 @@ function Clock(){
     //nav wrapper div
     insertDOM('div', this.linkWrapperID, 'navPanel', '', this.wrapperID, '', '')
     //nav header
-    insertDOM('h1', 'ClockLinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', 'GRIFFIN Clock Status')
+    insertDOM('h1', 'ClockLinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', window.parameters.ExpName+' Clock Status')
     insertDOM('br', 'break', '', '', this.linkWrapperID, '', '')
 
 	//deploy a canvas for the clock view:
@@ -52,6 +52,7 @@ function Clock(){
 
     //member functions/////////////////////////////////////////////
     this.draw = function(frame){
+        /*
     	var i, j, secondAngle;
 
     	this.context.clearRect(0,0,this.canvasWidth, this.canvasHeight);
@@ -83,7 +84,7 @@ function Clock(){
         this.context.font="24px 'Orbitron'";
         this.context.fillText('Master', this.margin, this.topMargin - 10);
         this.context.fillText('Slaves', this.slavesLeft, this.slavesTop - 10);
-
+        */
     };
 
     this.animate = function(){

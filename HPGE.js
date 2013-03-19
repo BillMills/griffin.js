@@ -11,6 +11,7 @@ function HPGE(){
     this.mode = window.parameters.HPGEmode;         //mode to run in, either 'TIGRESS' or 'GRIFFIN'
     this.BGOenable = window.parameters.BGOenable;   //are the suppresors present?
     this.dataBus = new HPGEDS();
+    this.subviewLink = 'HPGElink';                   //ID of inter-subsystem nav button
 
     this.cloverShowing = 1;                         //index of clover currently showing in detail view
     this.detailShowing = 0;                         //is the detail canvas showing?

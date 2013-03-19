@@ -8,6 +8,7 @@ function BAMBINO(){
     this.TTcanvasID = 'BAMBINOTTCanvas';            //ID of hidden tooltip map canvas
     this.minima = window.parameters.BAMBINOminima;  //array of meter minima [HV, thresholds, rate]
     this.maxima = window.parameters.BAMBINOmaxima;  //array of meter maxima, arranged as minima
+    this.subviewLink = 'BAMBINOlink';                   //ID of inter-subsystem nav button
 
     this.nRadial = 24;
     if(this.mode=='S2')
@@ -38,7 +39,7 @@ function BAMBINO(){
     this.context = this.canvas.getContext('2d');
     this.canvas.setAttribute('width', this.canvasWidth);
     this.canvas.setAttribute('height', this.canvasHeight);
-    
+
     //hidden Tooltip map layer
     insertDOM('canvas', this.TTcanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.monitorID, '', '')    
     this.TTcanvas = document.getElementById(this.TTcanvasID);

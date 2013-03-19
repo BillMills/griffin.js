@@ -14,6 +14,7 @@ function SHARC(){
 	this.sidebarID = 'SubsystemSidebar';			//ID of right sidebar for this object
 	this.topNavID = 'SubsystemsButton';				//ID of top level nav button
 	this.dataBus = new SHARCDS();
+    this.subviewLink = 'SHARClink';                   //ID of inter-subsystem nav button
 
 	var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick

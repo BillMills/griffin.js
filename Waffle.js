@@ -140,7 +140,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         //nav wrapper div
         insertDOM('div', this.linkWrapperID, 'navPanel', '', this.wrapperDiv, '', '')
         //nav header
-        insertDOM('h1', 'mainframeLinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', 'GRIFFIN HV Mainframes')
+        insertDOM('h1', 'mainframeLinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', window.parameters.ExpName+' HV Mainframes')
         insertDOM('br', 'break', '', '', this.linkWrapperID, '', '')
         //nav buttons
         insertDOM('button', 'Main1', 'navLinkDown', '', 'mainframeLinks', "{window.HVpointer.viewStatus=-1; swapFade('Main1', window.HVpointer, 0, 0)}", 'Mainframe 1')
@@ -650,6 +650,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
 
                     */
                     //fake data for offline demo
+                    /*
                         this.dataBus.demandVoltage[i][j] = Math.random();
                         this.dataBus.reportVoltage[i][j] = Math.random();
                         this.dataBus.reportCurrent[i][j] = Math.random();
@@ -662,6 +663,18 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                         this.dataBus.rampStatus[i][j] = Math.floor(10*Math.random());
                         this.dataBus.voltLimit[i][j] = 1+Math.random();
                         this.dataBus.currentLimit[i][j] = 1+Math.random();
+                    */
+                    //no randoms in live experimental tests:
+                        this.dataBus.demandVoltage[i][j] = -9999;
+                        this.dataBus.reportVoltage[i][j] = -9999;
+                        this.dataBus.reportCurrent[i][j] = -9999;
+                        this.dataBus.demandVrampUp[i][j] = -9999;
+                        this.dataBus.demandVrampDown[i][j] = -9999;
+                        this.dataBus.reportTemperature[i][j] = -9999;
+                        this.dataBus.channelMask[i][j] = 1;
+                        this.dataBus.rampStatus[i][j] = 7;
+                        this.dataBus.voltLimit[i][j] = -9999;
+                        this.dataBus.currentLimit[i][j] = -9999;
                     } else if (i!=0 || window.parameters.moduleSizes[j]==4){  //keep the array filled, even for empty slots to avoid unpredictable behavior
                         this.dataBus.demandVoltage[i][j] = 0;
                         this.dataBus.reportVoltage[i][j] = 0;

@@ -44,7 +44,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     //nav wrapper div
     insertDOM('div', this.linkWrapperID, 'navPanel', '', this.monitorID, '', '')
     //nav header
-    insertDOM('h1', 'DAQlinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', 'GRIFFIN DAQ Status')
+    insertDOM('h1', 'DAQlinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', window.parameters.ExpName+' DAQ Status')
     insertDOM('br', 'break', '', '', this.linkWrapperID, '', '')
     //nav buttons
     insertDOM('button', 'DAQToplink', 'navLinkDown', '', 'DAQlinks', "{window.DAQpointer.detailShowing=0; window.DAQdetail=-1; swapFade('DAQToplink', window.DAQpointer, 0, 0);}", 'Master', '', 'button')
@@ -270,6 +270,8 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 	this.parseColor = function(scalar, index){
 		//how far along the scale are we?
 		var scale = (scalar - this.minima[index]) / (this.maxima[index] - this.minima[index]);
+        if(scale<0) scale = 0;
+        if(scale>1) scale = 1;
 
 		return redScale(scale);
 	};
@@ -546,20 +548,20 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         var i;
 
         //fake demo data
-        this.dataBus.master[0] = Math.random();
+        this.dataBus.master[0] = -9999//Math.random();
         for(i=0; i<this.nCollectorGroups; i++)
-            this.dataBus.collectorGroups[i] = Math.random();
+            this.dataBus.collectorGroups[i] = -9999//Math.random();
         for(i=0; i<this.nCollectors; i++){
-            this.dataBus.collectorLinks[i] = Math.random();
-            this.dataBus.collectors[i] = Math.random();
-            this.dataBus.digitizerGroupSummaryLinks[i] = Math.random();
-            this.dataBus.digitizerSummaries[i] = Math.random();
+            this.dataBus.collectorLinks[i] = -9999//Math.random();
+            this.dataBus.collectors[i] = -9999//Math.random();
+            this.dataBus.digitizerGroupSummaryLinks[i] = -9999//Math.random();
+            this.dataBus.digitizerSummaries[i] = -9999//Math.random();
         }
         for(i=0; i<this.nDigitizerGroups; i++)
-            this.dataBus.digitizerGroupLinks[i] = Math.random();
+            this.dataBus.digitizerGroupLinks[i] = -9999//Math.random();
         for(i=0; i<this.nDigitizers; i++){
-            this.dataBus.digitizerLinks[i] = Math.random();
-            this.dataBus.digitizers[i] = Math.random();
+            this.dataBus.digitizerLinks[i] = -9999//Math.random();
+            this.dataBus.digitizers[i] = -9999//Math.random();
         }
 
     };
