@@ -201,21 +201,60 @@ TIPDS = function(){
 	
 	
 	//key map, format: key[griffin.js index number][pointer]
+	//index 0-23: CsI wall elements TPW001P00X - TPW023P00X
+	//index 24-35: HPGE crystal summaries, GBWR x3
+	//index 36-47: BGO summaries, GBWR x3
+	//index 48-55: HPGE detail (rate view), G(a)G(b)B(a)B(b)W(a)W(b)R(a)R(b) clover 0
+	//index 56-59: BGO back detail (rate view), GBRW clover 0
+	//index 60-67: BGO side detail (rate view), G(a)G(b)B(a)B(b)W(a)W(b)R(a)R(b) clover 0
+	//index 68-75: BGO front detail (rate view), G(a)G(b)B(a)B(b)W(a)W(b)R(a)R(b) clover 0
+	//index 76-103: As 48-75, for clover 1
+	//index 104-131: As 48-75, for clover 2
+	//index 132-135: HPGE detail (HV), GBWR clover 0
+	//index 136-143: BGO back detail (HV), G(a)G(b)B(a)B(b)W(a)W(b)R(a)R(b) clover 0
+	//index 144-159: BGO side detail (HV), G(a)G(b)B(a)B(b)W(a)W(b)R(a)R(b) clover 0
+	//index 160-175: BGO front detail (HV), G(a)G(b)B(a)B(b)W(a)W(b)R(a)R(b) clover 0
+	//index 176-219: As 132-175, for clover 1
+	//index 220-263: As 132-175, for clover 2
+
 	//pointer == 0: Greg's name
 	//pointer == 1: index in scalar rate json object
 	//pointer == 2: FSCP index
 	this.key = [];
-	//CsI Wall
-	//generate names
-	for(i=0; i<24; i++){
+	for(i=0; i<264; i++)
 		this.key[i] = [];
+	//generate names//////////////////////////////////////
+	//CsI wall:
+	for(i=0; i<24; i++){
 		if(i<9)
 			this.key[i][0] = 'TPW00' +(i+1)+ 'P00X';
 		else
 			this.key[i][0] = 'TPW0' +(i+1)+ 'P00X';
 	}
+	//HPGE + BGO summaries: todo
+	//HPGE + BGO rate detail:
+	var color = ['G', 'B', 'W', 'R'];
+	var half = ['A', 'B'];
+	var chIndex;
+	for(j=0; j<3; j++){
+		//HPGE
+		for(i=0; i<8; i++){
+			chIndex = 48+28*j+i;
+			this.key[chIndex][0] = 'GRG0'+ (j+1) + color[Math.floor(i/2)] + 'N00' + half[i%2];
+		}
+		//BGO
+		for(i=0; i<20; i++){
+			chIndex = 56+28*j+i;
+			if(i<4) this.key[chIndex][0] = 'GRS0' + (j+1) + color[i] + 'XXXX'
+			else this.key[chIndex][0] = 'GRS0' + (j+1) + color[Math.floor((i-4)/2)%4] + 'XXXX'
+		}
+
+	}
+	//HPGE + BGO HV detail: todo
+
 	//figure out where this name is sitting in the JSON scalar rate array and in the FSCP table
-	for(i=0; i<24; i++){
+	//for(i=0; i<24; i++){
+	for(i=0; i<this.key.length; i++){
 		this.key[i][1] = -1;
 		this.key[i][2] = -1;
 		if(window.JSONPstore['scalar']){
@@ -228,6 +267,7 @@ TIPDS = function(){
         	if(window.codex.Name[j] == this.key[i][0])
         		this.key[i][2] = j;
         }
+//if(this.key[i][0] == 'GRG02WN00B') alert(this.key[i][2])
     }
     
 }

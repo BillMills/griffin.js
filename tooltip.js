@@ -69,6 +69,7 @@ function Tooltip(ttCanvasID, ttTextID, ttBKGcanvID, ttDivID, wrapperID, prefix, 
             //keep track of tooltip position
             that.oldCellIndex = cellIndex;
             that.allowUpdate = 1;
+
         } else that.allowUpdate = 0;
 
     }
@@ -76,12 +77,14 @@ function Tooltip(ttCanvasID, ttTextID, ttBKGcanvID, ttDivID, wrapperID, prefix, 
     //turn the tool tip off if it's outside the canvas:
     this.canvas.onmouseout = function(event){
         that.ttDiv.style.display = 'none';
+        that.allowUpdate = 0;
     }
 
     //updater for if the tooltip is stationary on the waffle during a master loop transition:
     this.update = function(){
         if(this.allowUpdate){
             //establish text:
+            alert(this.oldCellIndex)
             var newWidth = Math.max(1.5*this.obj.defineText(this.oldCellIndex),200);            
 
             //update the size of the tool tip to fit the text:
