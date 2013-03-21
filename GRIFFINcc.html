@@ -86,19 +86,6 @@
       <canvas id='SidebarBKG' style='position:absolute; z-index:-1; right:0%'> </canvas>
     </div>
 
-    <!--Load static parameters from JSONP DB////////////////////////////////////////////////////-->
-    <script id='parameterLoad' type="text/JavaScript">
-      window.parameters = {};
-        function loadParameters(dataWeGotViaJsonp){
-          for (var key in dataWeGotViaJsonp) {
-            if (dataWeGotViaJsonp.hasOwnProperty(key)) {
-              window.parameters[key] = dataWeGotViaJsonp[key];
-            }
-          }
-        } 
-    </script>
-    <script src='parameters.json'>//experimental parameters loaded here//</script>
-
     <!--Main routine/////////////////////////////////////////////////////////////////////-->
     <script id='main' type="text/JavaScript">
       var i,j,k;
@@ -177,55 +164,65 @@
         window.statusBar = new StatusBar('leftSidebar');
 
         //HV monitor
-        window.waffle = new Waffle("InputLayer",'mainframeLinks', AlarmServices);
+        if(window.parameters.topDeployment['HV'])
+          window.waffle = new Waffle("InputLayer",'mainframeLinks', AlarmServices);
 
-        //Subsystem sidebar:
-        insertDOM('div', 'SubsystemSidebar', 'Sidebar', '', window.parameters.wrapper, '', '');
-        //Subsystem menu; universal buttons declared outside of individual subsystems:
-        //add top level nav button:
-        insertDOM('button', 'SubsystemsButton', 'navLink', '', 'statusLink', '', 'Subsystem Monitors', '', '');
-        //create nav panel for subsystem view:
-        insertDOM('div', 'SubsystemLinks', 'navPanel', '', window.parameters.wrapper, '', '');
-        //headline for nav panel
-        insertDOM('h1', 'SubsystemLinksBanner', 'navPanelHeader', '', 'SubsystemLinks', '', window.parameters.ExpName+' Subsystem Monitors');
-        insertDOM('br', 'break', '', '', 'SubsystemLinks', '', '');    
-        //subdetectors
-        window.Subdetectors = [];
-        //determine number of subdetectors deployed:
-        window.nDetectors = 0;
-        for(var key in window.parameters.deployment){
-          window.nDetectors+=window.parameters.deployment[key]
-        }
-        if(window.parameters.deployment["SHARC"]) window.Subdetectors[window.Subdetectors.length] = new SHARC();
-        if(window.parameters.deployment["HPGE"]) window.Subdetectors[window.Subdetectors.length] = new HPGE();
-        if(window.parameters.deployment["DESCANT"]) window.Subdetectors[window.Subdetectors.length] = new DESCANT();
-        if(window.parameters.deployment["PACES"]) window.Subdetectors[window.Subdetectors.length] = new PACES();
-        if(window.parameters.deployment["DANTE"]) window.Subdetectors[window.Subdetectors.length] = new DANTE();
-        if(window.parameters.deployment["BAMBINO"]) window.Subdetectors[window.Subdetectors.length] = new BAMBINO();
-        if(window.parameters.deployment["SCEPTAR"]) window.Subdetectors[window.Subdetectors.length] = new SCEPTAR();
-        if(window.parameters.deployment["SPICE"]) window.Subdetectors[window.Subdetectors.length] = new SPICE();
-        if(window.parameters.deployment["TIP"]) window.Subdetectors[window.Subdetectors.length] = new TIP();
+        //Subsystems:
+        if(window.parameters.topDeployment['Subsystems']){
+          //Subsystem sidebar:
+          insertDOM('div', 'SubsystemSidebar', 'Sidebar', '', window.parameters.wrapper, '', '');
+          //Subsystem menu; universal buttons declared outside of individual subsystems:
+          //add top level nav button:
+          insertDOM('button', 'SubsystemsButton', 'navLink', '', 'statusLink', '', 'Subsystem Monitors', '', '');
+          //create nav panel for subsystem view:
+          insertDOM('div', 'SubsystemLinks', 'navPanel', '', window.parameters.wrapper, '', '');
+          //headline for nav panel
+          insertDOM('h1', 'SubsystemLinksBanner', 'navPanelHeader', '', 'SubsystemLinks', '', window.parameters.ExpName+' Subsystem Monitors');
+          insertDOM('br', 'break', '', '', 'SubsystemLinks', '', '');    
+          //subdetectors
+          window.Subdetectors = [];
+          //determine number of subdetectors deployed:
+          window.nDetectors = 0;
+          for(var key in window.parameters.deployment){
+            window.nDetectors+=window.parameters.deployment[key]
+          }
+          if(window.parameters.deployment["SHARC"]) window.Subdetectors[window.Subdetectors.length] = new SHARC();
+          if(window.parameters.deployment["HPGE"]) window.Subdetectors[window.Subdetectors.length] = new HPGE();
+          if(window.parameters.deployment["DESCANT"]) window.Subdetectors[window.Subdetectors.length] = new DESCANT();
+          if(window.parameters.deployment["PACES"]) window.Subdetectors[window.Subdetectors.length] = new PACES();
+          if(window.parameters.deployment["DANTE"]) window.Subdetectors[window.Subdetectors.length] = new DANTE();
+          if(window.parameters.deployment["BAMBINO"]) window.Subdetectors[window.Subdetectors.length] = new BAMBINO();
+          if(window.parameters.deployment["SCEPTAR"]) window.Subdetectors[window.Subdetectors.length] = new SCEPTAR();
+          if(window.parameters.deployment["SPICE"]) window.Subdetectors[window.Subdetectors.length] = new SPICE();
+          if(window.parameters.deployment["TIP"]) window.Subdetectors[window.Subdetectors.length] = new TIP();
 
-        insertDOM('br', 'break', '', '', 'SubsystemLinks');
-        //nav for different reported values:
-        for(i=0; i<window.parameters.monitorValues.length; i++){
-          var classDef
-          //position 2 is default for now:
-          if(i==2) classDef = 'navLinkDown';
-          else classDef = 'navLink'; 
-          insertDOM('button', 'subsystem'+window.parameters.monitorValues[i], classDef, '', 'SubsystemLinks', "javascript:swapSubsystemView('subsystem"+window.parameters.monitorValues[i]+"', 'SubsystemLinks', "+i+")", window.parameters.monitorValues[i], '', 'button')
-        }
-        window.subsystemScalars = window.parameters.monitorValues.length;
+          insertDOM('br', 'break', '', '', 'SubsystemLinks');
+          //nav for different reported values:
+          for(i=0; i<window.parameters.monitorValues.length; i++){
+            var classDef
+            //position 2 is default for now:
+            if(i==2) classDef = 'navLinkDown';
+            else classDef = 'navLink'; 
+            insertDOM('button', 'subsystem'+window.parameters.monitorValues[i], classDef, '', 'SubsystemLinks', "javascript:swapSubsystemView('subsystem"+window.parameters.monitorValues[i]+"', 'SubsystemLinks', "+i+")", window.parameters.monitorValues[i], '', 'button')
+          }
+          window.subsystemScalars = window.parameters.monitorValues.length;
 
-        //make the top level nav button default to the first subdetector in the list:
-        document.getElementById('SubsystemsButton').setAttribute('onclick', "javascript:swapView('SubsystemLinks', '"+window.Subdetectors[0].canvasID+"', 'SubsystemSidebar', 'SubsystemsButton')")
+          //make the top level nav button default to the first subdetector in the list:
+          document.getElementById('SubsystemsButton').setAttribute('onclick', "javascript:swapView('SubsystemLinks', '"+window.Subdetectors[0].canvasID+"', 'SubsystemSidebar', 'SubsystemsButton')")
 
-        //make the nav button of the first subdetector in the list pressed by default:
-        document.getElementById(window.Subdetectors[0].subviewLink).setAttribute('class', 'navLinkDown');
+          //make the nav button of the first subdetector in the list pressed by default:
+          document.getElementById(window.Subdetectors[0].subviewLink).setAttribute('class', 'navLinkDown');
+        } //end subsystem deployment
 
-        window.DAQ = new DAQ('DAQcanvas', 'DAQdetailCanvas', [], []);
-        window.Clock = new Clock();
-        window.Trigger = new Trigger();
+        //DAQ
+        if(window.parameters.topDeployment['DAQ'])
+          window.DAQ = new DAQ('DAQcanvas', 'DAQdetailCanvas', [], []);
+        //Clock
+        if(window.parameters.topDeployment['Clock'])
+          window.Clock = new Clock();
+        //Trigger
+        if(window.parameters.topDeployment['Trigger'])
+          window.Trigger = new Trigger();
         //end main elements////////////////////////////////////////////////////////////////////////////
 
         //style the sidebar backgrounds:
@@ -235,18 +232,23 @@
         document.getElementById('LeftSidebarDetailBKG').width = parseInt(($('#leftSidebar').css('width')).slice(0,3));
         document.getElementById('LeftSidebarDetailBKG').height = renderHeight*0.9; //parseInt($('#InputLayer').css('height').slice(0,3));
         tabBKG('LeftSidebarDetailBKG', 'left');
-        document.getElementById('SidebarBKG').width = parseInt(($('#InputLayer').css('width')).slice(0,3));
+        if(document.getElementById('InputLayer'))
+          document.getElementById('SidebarBKG').width = parseInt(($('#InputLayer').css('width')).slice(0,3));
+        else
+          document.getElementById('SidebarBKG').width = document.getElementById('LeftSidebarBKG').width; 
         document.getElementById('SidebarBKG').height = renderHeight*0.9; //parseInt($('#InputLayer').css('height').slice(0,3));
         tabBKG('SidebarBKG', 'right');
 
         //position right sidebar nicely:
         var rightSidebarWhitespace = parseFloat(window.innerHeight*0.85) - parseFloat($('#InputLayer').height());
-        $('.Sidebar').css('top', Math.min(0, 0.3*rightSidebarWhitespace) );
-        $('#SidebarBKG').css('top', Math.min(0, 0.3*rightSidebarWhitespace) );
+        //$('.Sidebar').css('top', Math.min(0, 0.3*rightSidebarWhitespace) );
+        //$('#SidebarBKG').css('top', Math.min(0, 0.3*rightSidebarWhitespace) );
 
         //set up channel navigation dropdowns:
-        configureDropdowns('ChannelList', 'CardList', moduleLabels, window.parameters.moduleSizes);
-        document.getElementById('CardList').onblur = function(event){reconfigureChannelList(moduleLabels, window.parameters.moduleSizes, 'ChannelList')};
+        if(window.parameters.topDeployment['HV']){
+          configureDropdowns('ChannelList', 'CardList', moduleLabels, window.parameters.moduleSizes);
+          document.getElementById('CardList').onblur = function(event){reconfigureChannelList(moduleLabels, window.parameters.moduleSizes, 'ChannelList')};
+        }
 
         //global variables todo: try and cut down on these/////////////////////////////////////////////
         //which nav panel is on top?
@@ -271,6 +273,9 @@
         //status flag for if the Commit button is blinking on loop:
         window.commitBlink = 0;
         //end globals//////////////////////////////////////////////////////////////////////////////////
+
+        //hack to put subsystems on top for TIP deploy
+        if(window.parameters.topDeployment['Subsystems']) swapView('SubsystemLinks', window.Subdetectors[0].canvasID, 'SubsystemSidebar', 'SubsystemsButton')
 
         startLoop(); 
 

@@ -132,7 +132,7 @@ function AlarmService(sidebarDivID, sidebarDetailDivID){
     		$('#alarmDetailButton').css('background-color', '#FF0000');
     	} else {
     		alarmText = 'All Clear';
-    		$('#alarmDetailButton').css('background-color', '#00FF00');
+    		$('#alarmDetailButton').css('background-color', '#999999');
     	}
 
     	//document.getElementById(this.pID).innerHTML = alarmText;

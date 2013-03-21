@@ -13,25 +13,28 @@ function StatusBar(wrapper){
     document.getElementById(this.wrapperID).onmouseout = document.getElementById('LeftSidebarBKG').onmouseout
 
     //experiment title
-    insertDOM('h2', this.titleID, '', 'margin-left:10%; margin-top:25px; font-family: "Orbitron", sans-serif;', this.wrapperID, '', 'Experiment Title')
+    insertDOM('h2', this.titleID, '', 'margin-top:25px; font-family: "Orbitron", sans-serif;', this.wrapperID, '', 'Experiment Title')
 
     //run info
-	insertDOM('p', this.runInfoID, '', 'margin-top:10px; margin-left:auto; margin-right:auto; text-align:center; font-size:16px;', this.wrapperID, '', 'Run Info');
+	insertDOM('p', this.runInfoID, '', 'margin-top:10px; margin-left:auto; margin-right:auto; padding-left:5%; padding-right:5%; text-align:center; font-size:16px;', this.wrapperID, '', 'Run Info');
 
     //Alarm Service
     window.AlarmServices = new AlarmService('leftSidebar', 'leftSidebarDetail');
 
     this.update = function(){
     	//experiment title
-    	this.expTitle = 'Offline Demo Experiment'; //ODBGet('/Experiment/Name') + ' Experiment';
+    	this.expTitle = 'Offline Demo Experiment'; 
+        //this.expTitle = ODBGet('/Experiment/Name') + ' Experiment';
     	document.getElementById(this.titleID).innerHTML = this.expTitle;
 
     	//run #
-    	var runInfo = 'Run #1337'; // 'Run # '+ODBGet('/Runinfo/Run number');
+    	var runInfo = 'Run #1337'; 
+        //var runInfo = 'Run # '+ODBGet('/Runinfo/Run number');
 
     	//run state
     	runInfo += ': ';
-    	var runstate = 3; //ODBGet('/Runinfo/State');
+    	var runstate = 3; 
+        //var runstate = ODBGet('/Runinfo/State');
     	if(runstate == 1) runInfo += 'Stopped';
     	else if(runstate == 2) runInfo += 'Paused';
     	else if (runstate == 3) runInfo += 'Live';
@@ -41,18 +44,22 @@ function StatusBar(wrapper){
     	this.restart = '???';
 
     	//data dir:
-    	this.dataDir = '/dummy/directory/path/' //ODBGet('/Logger/Data dir')
+    	this.dataDir = '/dummy/directory/path/' 
+        //this.dataDir = ODBGet('/Logger/Data dir')
 
     	//run time
     	var startInfo = 'Start: ';
-    	startInfo += '00:00:00 January 1, 1970'//ODBGet('/Runinfo/Start time');
+    	startInfo += '00:00:00 January 1, 1970'
+        //startInfo += ODBGet('/Runinfo/Start time');
     	var elapsed;
     	if(runstate == 1){
     		elapsed = 'Stop: '
-    		elapsed += '00:00:00 January 1, 1970'; //ODBGet('Runinfo/Stop time');
+    		elapsed += '00:00:00 January 1, 1970'; 
+            //elapsed += ODBGet('Runinfo/Stop time');
     	} else {
     		elapsed = 'Up: ';
-    		var binaryStart = 0; //ODBGet('Runinfo/Start time binary');
+    		var binaryStart = 0; 
+            //var binaryStart = ODBGet('Runinfo/Start time binary');
     		var date = new Date(); 
     		var now = date.getTime() / 1000;
     		var uptime = now - binaryStart;
@@ -61,7 +68,13 @@ function StatusBar(wrapper){
     		var seconds = Math.floor(uptime%60);
     		elapsed += hours + ' h, ' + minutes + ' m, ' + seconds +' s'
   		}
-  		document.getElementById(this.runInfoID).innerHTML = runInfo + '<br>' + startInfo + '<br>' + elapsed;
+
+        //run comment
+        var comment = 'No Comment'//ODBGet('/Experiment/Run Parameters/Comment');
+
+
+
+  		document.getElementById(this.runInfoID).innerHTML = runInfo + '<br>' + startInfo + '<br>' + elapsed + '<br><br>' + comment;
 
     };
 

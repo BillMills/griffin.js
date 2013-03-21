@@ -16,23 +16,38 @@ function masterLoop(callMyself){
 	if(!document.webkitHidden && !document.mozHidden){
 
         //update all assets
+        //status bar
         window.statusBar.update();
-    	window.waffle.update();
-        window.DAQ.update();
-        for(i=0; i<window.Subdetectors.length; i++)
-            window.Subdetectors[i].update();
+        //HV
+    	if(window.parameters.topDeployment['HV']) window.waffle.update();
+        //DAQ
+        if(window.parameters.topDeployment['DAQ']) window.DAQ.update();
+        //Subsystems
+        if(window.parameters.topDeployment['Subsystems']){
+            for(i=0; i<window.Subdetectors.length; i++)
+                window.Subdetectors[i].update();
+        }
 
         //animate whoever is showing on top, flat draw the rest; force animate for everyone on first pass, since Google fonts don't render in canvas on the first call to draw (investigate):
+        //Dashboard
         window.dashboard.animate(callMyself);
-        window.waffle.animate(callMyself);
-        for(i=0; i<window.waffle.barCharts.length; i++)
-            window.waffle.barCharts[i].animate(callMyself);
-        window.DAQ.animate(callMyself);
-        window.Clock.animate(callMyself);
-        window.Trigger.animate(callMyself);
-
-        for(i=0; i<window.Subdetectors.length; i++){
-            window.Subdetectors[i].animate(callMyself);
+        //HV
+        if(window.parameters.topDeployment['HV']){
+            window.waffle.animate(callMyself);
+            for(i=0; i<window.waffle.barCharts.length; i++)
+                window.waffle.barCharts[i].animate(callMyself);
+        }
+        //DAQ
+        if(window.parameters.topDeployment['DAQ']) window.DAQ.animate(callMyself);
+        //Clock
+        if(window.parameters.topDeployment['Clock']) window.Clock.animate(callMyself);
+        //Trigger
+        if(window.parameters.topDeployment['Trigger']) window.Trigger.animate(callMyself);
+        //Subsystems
+        if(window.parameters.topDeployment['Subsystems']){
+            for(i=0; i<window.Subdetectors.length; i++){
+                window.Subdetectors[i].animate(callMyself);
+            }
         }
     }
     
@@ -51,8 +66,8 @@ function masterLoop(callMyself){
 function detectCards(){
     var moduleSizes
     //insert ODB magic here
-    //moduleSizes = [0,4,0,4,0,4,0,4,0,4,0,4];
-    moduleSizes = [0,4,0,0,0,0,0,0,0,0,0,0];
+    moduleSizes = [0,4,0,4,0,4,0,4,0,4,0,4];
+    //moduleSizes = [1,0,0,0,0,0];
     return moduleSizes;
 }
 

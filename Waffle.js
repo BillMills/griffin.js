@@ -52,7 +52,8 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
             insertDOM('p', 'onSwitch', '', 'display:inline', 'setValues', '', 'On');
             //submit updates:
             insertDOM('input', 'submitParameters', '', '', 'setValues', '', '', '', 'button', 'Commit')
-           
+            document.getElementById('submitParameters').setAttribute('disabled', 'true');
+
             //status report:
             insertDOM('p', 'status', '', 'margin-left:10%;', 'setValues', '', 'Status:')
 

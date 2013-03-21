@@ -72,6 +72,7 @@ div.leftSidebar{
 	height: 695px;
 	left:0%;
 	display:inline;
+	text-align: center;
 }
 
 div#leftSidebarDetail{
@@ -256,7 +257,6 @@ p.sliderText{
 button.alarmButton{
 	position:relative;
 	width: 40%;
-	left: 30%;
 	height: 30px;  
 	margin: 0px; 
 	background-color: #FFFFFF;

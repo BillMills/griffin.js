@@ -1,7 +1,8 @@
 loadParameters({
-				"ExpName" : "TIP",
+				"ExpName" : "DEVELOPMENT",
 				"statusURL" : "http://midtig03.triumf.ca:8081/",
-				"deployment" : {"SHARC":0, "HPGE":0, "DESCANT":0, "PACES":0, "DANTE":0, "BAMBINO":0, "SCEPTAR":0, "SPICE":0, "TIP":1},
+				"topDeployment" : {"HV":1, "Subsystems":1, "DAQ":1, "Clock":1, "Trigger":1},
+				"deployment" : {"SHARC":1, "HPGE":1, "DESCANT":1, "PACES":1, "DANTE":1, "BAMBINO":1, "SCEPTAR":1, "SPICE":1, "TIP":1},
 				"wrapper" : "waffleplate",
 				"subdetectorUnit" : ["V", "V", "Hz"],
 				"monitorValues" : ["HV", "Thresholds", "Rate"],
@@ -101,13 +102,14 @@ loadParameters({
 				"DAQminima" : [0,0,0,0,0,0,0,0,0],
 				"DAQmaxima" : [1,1,1,1,1,1,1,1,1],
 
-				"JSONPrepos" : ["http://midtig03.triumf.ca:8092/parameters?jsonp=parseResponse"/*, "http://midtig03.triumf.ca:8091/scalar?jsonp=parseResponse"*/]
+				"JSONPrepos" : ["dummy.json"/*"http://midtig03.triumf.ca:8092/parameters?jsonp=parseResponse"/*, "http://midtig03.triumf.ca:8091/scalar?jsonp=parseResponse"*/]
 				})
 
 /*Parameter Dictionary//////////////////////////////////////
 //Global
 statusURL:						String containing the url of the MIDAS status page
-deployment						what assets should we deploy? [DAQ, Clock, Trigger, SHARC, HPGE, DESCANT, PACES, DANTE, BAMBINO, SCEPTAR, SPICE, TIP]
+topDeployment:                  switches to turn top level assets on/off
+deployment						switches to turn subsystems on/off
 wrapper							ID of div that wraps all both sidebars + main display region
 subdetectorUnit                 units for the scale in each of the subdetector views [HV, thresholds, rates]
 monitorValues					monitoring options on the subdetector pages

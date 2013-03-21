@@ -3,6 +3,9 @@
 function Banner(canvas, location, navbar, title) {
 	'use strict'
 
+    //mode TRIUMF, GRIFFIN
+    var mode = 'TRIUMF';
+
     //fetch canvas
     var canvas = document.getElementById(canvas);
     var context = canvas.getContext('2d');
@@ -31,14 +34,18 @@ function Banner(canvas, location, navbar, title) {
 
     //insert logo
     var imageObj = new Image();
+    if(mode == 'GRIFFIN') imageObj.src = 'logo.gif';
+    else imageObj.src = 'triumf.gif';
     imageObj.onload = function() {
-      context.drawImage(imageObj, 20, 0, context.canvas.height*0.7*.9/.8, context.canvas.height*0.9);   //70,80
+      context.drawImage(imageObj, 20, 0, imageObj.width/imageObj.height*context.canvas.height*0.8, context.canvas.height*0.8);
     };
-    imageObj.src = 'logo.gif';
 
     //write title
-    context.font= context.canvas.height*0.75+'px Times New Roman';
-    context.fillText('GRIFFIN', context.canvas.height*0.7*.9/.8+20, 0.65*context.canvas.height);
+    if(mode == 'TRIUMF')
+        context.font= context.canvas.height*0.75+'px Raleway';
+    else       
+        context.font= context.canvas.height*0.75+'px Times New Roman';
+    context.fillText(mode, context.canvas.height*0.7*.9/.8+20, 0.65*context.canvas.height);
 
     //set navbar width:
     var navigation = document.getElementById(navbar);
