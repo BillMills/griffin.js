@@ -84,7 +84,6 @@ function Tooltip(ttCanvasID, ttTextID, ttBKGcanvID, ttDivID, wrapperID, prefix, 
     this.update = function(){
         if(this.allowUpdate){
             //establish text:
-            alert(this.oldCellIndex)
             var newWidth = Math.max(1.5*this.obj.defineText(this.oldCellIndex),200);            
 
             //update the size of the tool tip to fit the text:
