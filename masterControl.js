@@ -5,8 +5,15 @@ function loadJSONP(callback) {
         var script  = document.createElement('script');
         script.setAttribute('src', window.parameters.JSONPrepos[i]);    //fetch the ith repo
         script.setAttribute('id', 'tempScript'+i);
+        //recover if the JSON bounces:
+        script.onerror = function(){
+            alert('JSONP service\n\n' + window.parameters.JSONPrepos.splice(i-1,i-1) + '\n\nhas dropped.  Suppressing further requests.' )
+            //window.parameters.JSONPrepos.splice(i-1,i-1);
+            loadJSONP(callback);
+            i=window.parameters.JSONPrepos.length
+        }
         if(i == window.parameters.JSONPrepos.length-1)
-            script.setAttribute('onload', callback);                    //attach the callback to masterLoop to the last data store to load
+            script.setAttribute('onload', callback);                    //attach the callback to the last data store to load
         document.head.appendChild(script);
     }
 }

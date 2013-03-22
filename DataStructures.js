@@ -253,7 +253,7 @@ TIPDS = function(){
 	//HPGE + BGO HV detail: todo
 
 	//figure out where this name is sitting in the JSON scalar rate array and in the FSCP table
-	//for(i=0; i<24; i++){
+	
 	for(i=0; i<this.key.length; i++){
 		this.key[i][1] = -1;
 		this.key[i][2] = -1;
@@ -263,11 +263,13 @@ TIPDS = function(){
         	      	this.key[i][1] = j;
         	}
         }
-        for(j=0; j<window.codex.Name.length; j++){
-        	if(window.codex.Name[j] == this.key[i][0])
-        		this.key[i][2] = j;
+        if(window.JSONPstore['parameters']){
+	        for(j=0; j<window.codex.Name.length; j++){
+    	    	if(window.codex.Name[j] == this.key[i][0])
+        			this.key[i][2] = j;
+        	}
         }
-//if(this.key[i][0] == 'GRG02WN00B') alert(this.key[i][2])
+
     }
     
 }
