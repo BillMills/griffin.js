@@ -93,7 +93,7 @@ loadParameters({
 				"TIPCsIminima" : [0,0,0],
 				"TIPCsImaxima" : [1,200,200],
 				"TIPHPGEminima" : [0,0,0],
-				"TIPHPGEmaxima" : [1,1,1],
+				"TIPHPGEmaxima" : [1,1000,1000],
 				"TIPBGOminima" : [0,0,0],
 				"TIPBGOmaxima" : [1,1,2],
 				"TIPprefix" : ["HV: ", "Thresholds: ", "Rate: "],

@@ -153,7 +153,7 @@ div#tempAlarm
 	left:3%;
 }
 
-input#submitParameters{
+input.bigButton{
 	width: 40%; 
 	height: 30px;  
 	margin-left: 5%; 

@@ -50,8 +50,8 @@ function Tooltip(ttCanvasID, ttTextID, ttBKGcanvID, ttDivID, wrapperID, prefix, 
             var newHeight = 200;
 
             //update the size of the tool tip to fit the text:
-            that.ttDiv.setAttribute('width', newWidth);
-            that.ttDiv.setAttribute('height', newHeight);
+            //that.ttDiv.setAttribute('width', newWidth);
+            //that.ttDiv.setAttribute('height', newHeight);
             $('#'+that.ttTextID).width(newWidth);
 
             //repaint background canvas:
