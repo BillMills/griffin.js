@@ -354,6 +354,24 @@ function tabBKG(canvasID, side){
 
 }
 
+//draw a bracket framing a canvas
+function drawBracket(canvasID){
+    var canvas = document.getElementById(canvasID);
+    var context = canvas.getContext('2d');
+
+    var lineWeight = 5
+    var wingLength = 0.1*canvas.width;
+
+    context.lineWidth = lineWeight;
+    context.strokeStyle = '#999999';
+
+    context.beginPath();
+    context.moveTo(wingLength, lineWeight);
+    context.lineTo(lineWeight, lineWeight);
+    context.lineTo(lineWeight, canvas.height-lineWeight);
+    context.lineTo(wingLength, canvas.height-lineWeight);
+    context.stroke();
+}
 
 
 

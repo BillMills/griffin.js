@@ -1,5 +1,5 @@
 loadParameters({
-				"ExpName" : "DEVELOPMENT",
+				"ExpName" : "SR2",
 				"statusURL" : "http://midtig03.triumf.ca:8081/",
 				"topDeployment" : {"HV":1, "Subsystems":1, "DAQ":1, "Clock":1, "Trigger":1},
 				"deployment" : {"SHARC":0, "HPGE":0, "DESCANT":0, "PACES":0, "DANTE":0, "BAMBINO":0, "SCEPTAR":0, "SPICE":0, "TIP":1},
