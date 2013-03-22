@@ -12,11 +12,14 @@ function StatusBar(wrapper){
     document.getElementById(this.wrapperID).onmousemove = document.getElementById('LeftSidebarBKG').onmousemove
     document.getElementById(this.wrapperID).onmouseout = document.getElementById('LeftSidebarBKG').onmouseout
 
+    //header info
+    insertDOM('div', 'statusHeader', '', 'background:rgba(0,0,0,0.7); border: 5px solid; border-radius:10px; width:80%; margin-top:5%; margin-bottom:5%; margin-left:auto; margin-right:auto; padding-left:5%; padding-right:5%; transition:border-color 0.5s; -moz-transition:border-color 0.5s; -webkit-transition:border-color 0.5s;', this.wrapperID, '', '')
+
     //experiment title
-    insertDOM('h2', this.titleID, '', 'margin-top:25px; font-family: "Orbitron", sans-serif;', this.wrapperID, '', 'Experiment Title')
+    insertDOM('h2', this.titleID, '', 'margin-top:25px; font-family: "Orbitron", sans-serif;', 'statusHeader', '', 'Experiment Title')
 
     //run info
-	insertDOM('p', this.runInfoID, '', 'margin-top:10px; margin-left:auto; margin-right:auto; padding-left:5%; padding-right:5%; text-align:center; font-size:16px;', this.wrapperID, '', 'Run Info');
+	insertDOM('p', this.runInfoID, '', 'position:relative; margin-top:10px; margin-left:auto; margin-right:auto; padding-left:5%; padding-right:5%; text-align:center; font-size:16px; width: 80%;', 'statusHeader', '', 'Run Info');
 
     //Alarm Service
     window.AlarmServices = new AlarmService('leftSidebar', 'leftSidebarDetail');
@@ -35,9 +38,18 @@ function StatusBar(wrapper){
     	runInfo += ': ';
     	var runstate = 3; 
         //var runstate = ODBGet('/Runinfo/State');
-    	if(runstate == 1) runInfo += 'Stopped';
-    	else if(runstate == 2) runInfo += 'Paused';
-    	else if (runstate == 3) runInfo += 'Live';
+    	if(runstate == 1){ 
+            runInfo += 'Stopped';
+            $('#statusHeader').css('border-color', '#FF3333');
+        }
+    	else if(runstate == 2){
+            runInfo += 'Paused';
+            $('#statusHeader').css('border-color', '#FFFF33');   
+        }
+    	else if (runstate == 3){
+            runInfo += 'Live';
+            $('#statusHeader').css('border-color', '#66FF66');
+        }
     	else runInfo += 'State Unknown';
 
     	//restart?  TODO
@@ -72,9 +84,7 @@ function StatusBar(wrapper){
         //run comment
         var comment = 'No Comment'//ODBGet('/Experiment/Run Parameters/Comment');
 
-
-
-  		document.getElementById(this.runInfoID).innerHTML = runInfo + '<br>' + startInfo + '<br>' + elapsed + '<br><br>' + comment;
+  		document.getElementById(this.runInfoID).innerHTML = '<br>' + runInfo + '<br>' + startInfo + '<br>' + elapsed + '<br><br>' + comment + '<br><br>';
 
     };
 

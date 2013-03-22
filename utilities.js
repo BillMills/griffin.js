@@ -113,9 +113,11 @@ function parameterDialogue(scales){
         insertDOM('p', 'title'+i, '', 'font-size:16px; margin-top:3%;', 'tempDiv', '', scales[i][0]+'<br>');
         insertDOM('p', 'minlabel'+i, '', 'display:inline;', 'tempDiv', '', 'Minimum: ');
         insertDOM('input', 'minfield'+i, '', 'display:inline;', 'tempDiv', '', '', 'textbox', 'text', scales[i][1][window.subdetectorView])
+        document.getElementById('minfield'+i).setAttribute('size', 6);
         insertDOM('p', 'minunit'+i, '', 'display:inline; margin-right:3%', 'tempDiv', '', window.parameters.subdetectorUnit[window.subdetectorView]);
         insertDOM('p', 'maxlabel'+i, '', 'display:inline', 'tempDiv', '', 'Maximum: ');
         insertDOM('input', 'maxfield'+i, '', 'display:inline;', 'tempDiv', '', '', 'textbox', 'text', scales[i][2][window.subdetectorView])
+        document.getElementById('maxfield'+i).setAttribute('size', 6);
         insertDOM('p', 'maxunit'+i, '', 'display:inline;', 'tempDiv', '', window.parameters.subdetectorUnit[window.subdetectorView] + '<br>');
     }
 
