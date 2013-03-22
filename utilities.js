@@ -77,14 +77,14 @@ function insertDOM(element, id, classTag, style, wrapperID, onclick, content, na
 }
 
 
-//summon a dialog to change scale minima and maxima:
-function adjustScale(scales){
+//summon a dialogue to change some parameter values.  mostly hardcoded for scale min/max, todo: generalize
+function parameterDialogue(scales){
     var i;
 
     //insert div and title
-    insertDOM('div', 'tempDiv', '', 'z-index:10; position:absolute; text-align:center;', 'waffleplate', '', '', '');
+    insertDOM('div', 'tempDiv', '', 'z-index:10; position:absolute; text-align:center; opacity:0; transition:opacity 0.5s; -moz-transition:opacity 0.5s; -webkit-transition:opacity 0.5s;', 'waffleplate', '', '', '');
     var dialogue = document.getElementById('tempDiv');
-    insertDOM('h2', 'dialogHeader', '', 'position:relative; font:24px Orbitron; top:10px', 'tempDiv', '', 'Adjust Scale');
+    insertDOM('h2', 'dialogHeader', '', 'position:relative; font:24px Orbitron; top:10px; margin-bottom:6%', 'tempDiv', '', 'Adjust Scale');
 
     //insert canvas
     insertDOM('canvas', 'dialogBKG', '', 'z-index:-10; position:absolute; top:0', 'tempDiv', '', '');
@@ -110,32 +110,44 @@ function adjustScale(scales){
     //insert form fields
     insertDOM('form', 'dialogueValues', '', '', 'tempDiv', '', '');
     for(i=0; i<scales.length; i++){
-        insertDOM('p', 'title'+i, '', '', 'tempDiv', '', '<br>'+scales[i][0]+'<br>');
+        insertDOM('p', 'title'+i, '', 'font-size:16px; margin-top:3%;', 'tempDiv', '', scales[i][0]+'<br>');
         insertDOM('p', 'minlabel'+i, '', 'display:inline;', 'tempDiv', '', 'Minimum: ');
         insertDOM('input', 'minfield'+i, '', 'display:inline;', 'tempDiv', '', '', 'textbox', 'text', scales[i][1][window.subdetectorView])
         insertDOM('p', 'minunit'+i, '', 'display:inline; margin-right:3%', 'tempDiv', '', window.parameters.subdetectorUnit[window.subdetectorView]);
         insertDOM('p', 'maxlabel'+i, '', 'display:inline', 'tempDiv', '', 'Maximum: ');
         insertDOM('input', 'maxfield'+i, '', 'display:inline;', 'tempDiv', '', '', 'textbox', 'text', scales[i][2][window.subdetectorView])
-        insertDOM('p', 'maxunit'+i, '', 'display:inline;', 'tempDiv', '', window.parameters.subdetectorUnit[window.subdetectorView] + '<br><br>');
+        insertDOM('p', 'maxunit'+i, '', 'display:inline;', 'tempDiv', '', window.parameters.subdetectorUnit[window.subdetectorView] + '<br>');
     }
 
     //insert submit button
-    insertDOM('input', 'updateParameters', 'bigButton', 'width:20%; margin-right:2%', 'tempDiv', 'submitDialog("dialogueValues", 1)', '', '', 'button', 'Commit')
-    insertDOM('input', 'dismiss', 'bigButton', 'width:20%', 'tempDiv', 'submitDialog("dialogueValues", 0)', '', '', 'button', 'Dismiss')
+    insertDOM('input', 'updateParameters', 'bigButton', 'width:20%; margin-right:2%; margin-top:6%', 'tempDiv', '', '', '', 'button', 'Commit')
+    insertDOM('input', 'dismiss', 'bigButton', 'width:20%; margin-top:6%', 'tempDiv', '', '', '', 'button', 'Dismiss')
 
-
-
-    
-
-}
-
-function submitDialog(formID, commit){
-    if(commit){
-        alert(document.getElementById('minfield0').value)
+    document.getElementById('updateParameters').onclick = function(event){
+        var i;
+        
+        for(i=0; i<scales.length; i++){
+            scales[i][1][window.subdetectorView] = parseFloat(document.getElementById('minfield'+i).value);
+            scales[i][2][window.subdetectorView] = parseFloat(document.getElementById('maxfield'+i).value);
+        }
+        document.getElementById('tempDiv').style.opacity = 0;
+        setTimeout(function(){
+            var element = document.getElementById('tempDiv');
+            element.parentNode.removeChild(element);            
+        }, 500);
+        forceUpdate();
     }
 
-    var element = document.getElementById("tempDiv");
-    element.parentNode.removeChild(element);
+    document.getElementById('dismiss').onclick = function(event){
+        document.getElementById('tempDiv').style.opacity = 0;
+        setTimeout(function(){
+            var element = document.getElementById('tempDiv');
+            element.parentNode.removeChild(element);            
+        }, 500);
+    }
+
+    //fade the div in:
+    dialogue.style.opacity = 1
 }
 
 
