@@ -225,12 +225,31 @@ TIPDS = function(){
 		this.key[i] = [];
 	//generate names//////////////////////////////////////
 	//CsI wall:
-	for(i=0; i<24; i++){
-		if(i<9)
-			this.key[i][0] = 'TPW00' +(i+1)+ 'P00X';
-		else
-			this.key[i][0] = 'TPW0' +(i+1)+ 'P00X';
-	}
+	this.key[0][0]  = 'TPW011P00X';
+	this.key[1][0]  = 'TPW012P00X';
+	this.key[2][0]  = 'TPW013P00X';
+	this.key[3][0]  = 'TPW014P00X';
+	this.key[4][0]  = 'TPW015P00X';
+	this.key[5][0]  = 'TPW010P00X';
+	this.key[6][0]  = 'TPW002P00X';
+	this.key[7][0]  = 'TPW003P00X';
+	this.key[8][0]  = 'TPW004P00X';
+	this.key[9][0]  = 'TPW016P00X';
+	this.key[10][0] = 'TPW009P00X';
+	this.key[11][0] = 'TPW001P00X';
+	this.key[12][0] = 'TPW005P00X';
+	this.key[13][0] = 'TPW017P00X';
+	this.key[14][0] = 'TPW024P00X';
+	this.key[15][0] = 'TPW008P00X';
+	this.key[16][0] = 'TPW007P00X';
+	this.key[17][0] = 'TPW006P00X';
+	this.key[18][0] = 'TPW018P00X';
+	this.key[19][0] = 'TPW023P00X';
+	this.key[20][0] = 'TPW022P00X';
+	this.key[21][0] = 'TPW021P00X';
+	this.key[22][0] = 'TPW020P00X';
+	this.key[23][0] = 'TPW019P00X';		
+
 	//HPGE + BGO summaries: todo
 	//HPGE + BGO rate detail:
 	var color = ['G', 'B', 'W', 'R'];
@@ -253,7 +272,7 @@ TIPDS = function(){
 	//HPGE + BGO HV detail: todo
 
 	//figure out where this name is sitting in the JSON scalar rate array and in the FSCP table
-	
+
 	for(i=0; i<this.key.length; i++){
 		this.key[i][1] = -1;
 		this.key[i][2] = -1;
