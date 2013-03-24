@@ -6,7 +6,7 @@ function StatusBar(wrapper){
 	var that = this;
 
 	//deploy tooltip:
-    this.tooltip = new Tooltip('LeftSidebarBKG', 'leftSidebarTTipText', 'leftSidebarTTCanv', 'leftSidebarTT', this.wrapperID, [], []);
+    this.tooltip = new Tooltip('LeftSidebarBKG', 'leftSidebarTTipText', 'leftSidebarTT', this.wrapperID, [], []);
     this.tooltip.obj = that;
     //tooltip actually attaches to a canvas - attach it to the background canvas, but then pull the event listners up to the top-level div:
     document.getElementById(this.wrapperID).onmousemove = document.getElementById('LeftSidebarBKG').onmousemove

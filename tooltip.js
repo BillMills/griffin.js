@@ -1,9 +1,8 @@
-function Tooltip(ttCanvasID, ttTextID, ttBKGcanvID, ttDivID, wrapperID, prefix, postfix){
+function Tooltip(ttCanvasID, ttTextID, ttDivID, wrapperID, prefix, postfix){
 
     this.obj;                                       //the object that this tooltip is associated with
     this.canvasID = ttCanvasID;                     //target canvas
     this.ttTextID = ttTextID;                       //tooltip text
-    this.ttBKGcanvID = ttBKGcanvID;                 //tooltip's background canvas
     this.ttDivID = ttDivID;                         //tooltip div
     this.wrapperID = wrapperID;                     //ID of div which wraps the tooltip's canvas
     this.prefix = prefix;                           //prefixes to tooltip content lines
@@ -11,9 +10,7 @@ function Tooltip(ttCanvasID, ttTextID, ttBKGcanvID, ttDivID, wrapperID, prefix, 
 
     //inject the necessary DOM elements for this tooltip:
     //wrapper div
-    insertDOM('div', this.ttDivID, 'tooltip', '', 'body', '', '')
-    //background canvas
-    insertDOM('canvas', this.ttBKGcanvID, 'ttBKG', '', this.ttDivID, '', '')
+    insertDOM('div', this.ttDivID, 'tooltip', 'background:rgba(0,0,0,0.7); border: 5px solid; border-radius:10px;', 'body', '', '')
     //content paragraph
     insertDOM('p', this.ttTextID, 'TTtext', '', this.ttDivID, '', '')
 
@@ -21,8 +18,6 @@ function Tooltip(ttCanvasID, ttTextID, ttBKGcanvID, ttDivID, wrapperID, prefix, 
     this.context = this.canvas.getContext('2d'); 
     this.ttDiv = document.getElementById(this.ttDivID);
     this.ttParent = document.getElementById(this.wrapperID);
-    this.BKGcanvas = document.getElementById(this.ttBKGcanvID);
-    this.BKGcontext = this.BKGcanvas.getContext('2d');
 
     //old tt bin, for updates when the mouse is just sitting in the same place:
     this.oldCellIndex = -1;
@@ -50,18 +45,12 @@ function Tooltip(ttCanvasID, ttTextID, ttBKGcanvID, ttDivID, wrapperID, prefix, 
             var newHeight = 200;
 
             //update the size of the tool tip to fit the text:
-            //that.ttDiv.setAttribute('width', newWidth);
-            //that.ttDiv.setAttribute('height', newHeight);
-            $('#'+that.ttTextID).width(newWidth);
-
-            //repaint background canvas:
-            that.BKGcanvas.setAttribute('width', newWidth);
-            that.BKGcanvas.setAttribute('height', newHeight);
-            that.drawBKG(newWidth, newHeight);
+            $(that.ttDiv).width(newWidth)
+            $(that.ttDiv).height(newHeight);
 
             //make the tool tip follow the mouse:
-            that.ttDiv.style.top = event.pageY - newHeight - 5;
-            that.ttDiv.style.left = event.pageX  - 5;
+            that.ttDiv.style.top = event.pageY - newHeight - 10;
+            that.ttDiv.style.left = event.pageX  + 10;
 
             //make the tool tip appear iff the waffle is showing:
             that.ttDiv.style.display = 'block';
@@ -85,26 +74,14 @@ function Tooltip(ttCanvasID, ttTextID, ttBKGcanvID, ttDivID, wrapperID, prefix, 
         if(this.allowUpdate){
             //establish text:
             var newWidth = Math.max(1.5*this.obj.defineText(this.oldCellIndex),200);            
+            var newHeight = 200;
 
             //update the size of the tool tip to fit the text:
-            this.ttDiv.setAttribute('width', newWidth);
-            this.ttDiv.setAttribute('height', 200);
+            $(that.ttDiv).width(newWidth)
+            $(that.ttDiv).height(newHeight);
             $('#'+this.ttTextID).width(newWidth);
-            this.BKGcanvas.setAttribute('width', newWidth);
-            this.BKGcanvas.setAttribute('height', 200);
-            this.drawBKG(newWidth, 200);
-        }
-    };
 
-    //draw the tooltip background
-    this.drawBKG = function(width, height){
-        this.BKGcontext.clearRect(0,0,width, height);
-        this.BKGcontext.lineWidth = 5;
-        this.BKGcontext.strokeStyle = '#FFFFFF';
-        this.BKGcontext.fillStyle = 'rgba(0,0,0,0.8)';
-        roundBox(this.BKGcontext,5,5,width-10,height-10,10);
-        this.BKGcontext.fill();
-        this.BKGcontext.stroke();
+        }
     };
 
 }

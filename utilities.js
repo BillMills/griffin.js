@@ -82,27 +82,14 @@ function parameterDialogue(scales){
     var i;
 
     //insert div and title
-    insertDOM('div', 'tempDiv', '', 'z-index:10; position:absolute; text-align:center; opacity:0; transition:opacity 0.5s; -moz-transition:opacity 0.5s; -webkit-transition:opacity 0.5s;', 'waffleplate', '', '', '');
+    insertDOM('div', 'tempDiv', '', 'z-index:10; position:absolute; text-align:center; opacity:0; transition:opacity 0.5s; -moz-transition:opacity 0.5s; -webkit-transition:opacity 0.5s; background:rgba(0,0,0,0.7); border: 5px solid; border-radius:10px;', 'waffleplate', '', '', '');
     var dialogue = document.getElementById('tempDiv');
     insertDOM('h2', 'dialogHeader', '', 'position:relative; font:24px Orbitron; top:10px; margin-bottom:6%', 'tempDiv', '', 'Adjust Scale');
 
-    //insert canvas
-    insertDOM('canvas', 'dialogBKG', '', 'z-index:-10; position:absolute; top:0', 'tempDiv', '', '');
-    var canvas = document.getElementById('dialogBKG');
-    var context = canvas.getContext('2d');
+    //fix dimensions
     var width = 200*scales.length
     var height = 2*width/3
-    canvas.setAttribute('width', width)
-    canvas.setAttribute('height', height) 
     $('#dialogHeader').width(width)
-
-    //draw background
-    context.lineWidth = 5;
-    context.strokeStyle = '#FFFFFF';
-    context.fillStyle = 'rgba(0,0,0,0.8)';
-    roundBox(context,5,5,width-10,height-10,10);
-    context.fill();
-    context.stroke();
 
     //center dialogue
     $('#tempDiv').css('left', ($('#waffleplate').width()/2 - width/2))
@@ -123,7 +110,7 @@ function parameterDialogue(scales){
 
     //insert submit button
     insertDOM('input', 'updateParameters', 'bigButton', 'width:20%; margin-right:2%; margin-top:6%', 'tempDiv', '', '', '', 'button', 'Commit')
-    insertDOM('input', 'dismiss', 'bigButton', 'width:20%; margin-top:6%', 'tempDiv', '', '', '', 'button', 'Dismiss')
+    insertDOM('input', 'dismiss', 'bigButton', 'width:20%; margin-top:6%; margin-bottom:6%;', 'tempDiv', '', '', '', 'button', 'Dismiss')
 
     document.getElementById('updateParameters').onclick = function(event){
         var i;

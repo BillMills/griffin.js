@@ -54,7 +54,7 @@ function BAMBINO(){
     this.TTcontext.fillStyle = 'rgba(50,100,150,1)';
     this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
     //set up tooltip:
-    this.tooltip = new Tooltip(this.canvasID, 'BAMBINOTipText', 'BAMBINOttCanv', 'BAMBINOTT', this.monitorID, window.parameters.BAMBINOprefix, window.parameters.BAMBINOpostfix);
+    this.tooltip = new Tooltip(this.canvasID, 'BAMBINOTipText', 'BAMBINOTT', this.monitorID, window.parameters.BAMBINOprefix, window.parameters.BAMBINOpostfix);
     this.tooltip.obj = that;
 
     //drawing parameters

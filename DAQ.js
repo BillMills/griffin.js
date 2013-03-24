@@ -115,14 +115,14 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     this.TTcontext.fillStyle = 'rgba(50,100,150,1)';
     this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
     //set up summary tooltip:
-    this.tooltip = new Tooltip(this.canvasID, 'DAQTipText', 'DAQttCanv', 'DAQTT', this.monitorID, prefix, postfix);
+    this.tooltip = new Tooltip(this.canvasID, 'DAQTipText', 'DAQTT', this.monitorID, prefix, postfix);
     this.tooltip.obj = that;
     //detail level tt:
     //paint whole hidden canvas with R!=G!=B to trigger TT suppression:
     this.TTdetailContext.fillStyle = 'rgba(50,100,150,1)';
     this.TTdetailContext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
     //set up detail tooltip:
-    this.detailTooltip = new Tooltip(this.detailCanvasID, 'DAQdetailTipText', 'DAQttDetailCanv', 'DAQTTdetail', this.monitorID, prefix, postfix);
+    this.detailTooltip = new Tooltip(this.detailCanvasID, 'DAQdetailTipText', 'DAQTTdetail', this.monitorID, prefix, postfix);
     this.detailTooltip.obj = that;
 
 

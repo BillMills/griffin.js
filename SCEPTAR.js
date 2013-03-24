@@ -45,7 +45,7 @@ function SCEPTAR(){
     this.TTcontext.fillStyle = 'rgba(50,100,150,1)';
     this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
     //set up tooltip:
-    this.tooltip = new Tooltip(this.canvasID, 'SCEPTARTipText', 'SCEPTARttCanv', 'SCEPTARTT', this.monitorID, window.parameters.SCEPTARprefix, window.parameters.SCEPTARpostfix);
+    this.tooltip = new Tooltip(this.canvasID, 'SCEPTARTipText', 'SCEPTARTT', this.monitorID, window.parameters.SCEPTARprefix, window.parameters.SCEPTARpostfix);
     this.tooltip.obj = that;
 
     //drawing parameters

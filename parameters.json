@@ -2,7 +2,7 @@ loadParameters({
 				"ExpName" : "SR2",
 				"statusURL" : "http://midtig03.triumf.ca:8081/",
 				"topDeployment" : {"HV":1, "Subsystems":1, "DAQ":1, "Clock":1, "Trigger":1},
-				"deployment" : {"SHARC":0, "HPGE":0, "DESCANT":0, "PACES":0, "DANTE":0, "BAMBINO":0, "SCEPTAR":0, "SPICE":0, "TIP":1},
+				"deployment" : {"SHARC":1, "HPGE":1, "DESCANT":1, "PACES":1, "DANTE":1, "BAMBINO":1, "SCEPTAR":1, "SPICE":1, "TIP":1},
 				"wrapper" : "waffleplate",
 				"subdetectorUnit" : ["V", "V", "Hz"],
 				"monitorValues" : ["HV", "Thresholds", "Rate"],

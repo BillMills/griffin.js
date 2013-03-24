@@ -94,14 +94,14 @@ function HPGE(){
     this.TTcontext.fillStyle = 'rgba(50,100,150,1)';
     this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
     //set up summary tooltip:
-    this.tooltip = new Tooltip(this.canvasID, 'HPGETipText', 'HPGEttCanv', 'HPGETT', this.monitorID, window.parameters.HPGEprefix, window.parameters.HPGEpostfix);
+    this.tooltip = new Tooltip(this.canvasID, 'HPGETipText', 'HPGETT', this.monitorID, window.parameters.HPGEprefix, window.parameters.HPGEpostfix);
     this.tooltip.obj = that;
     //detail level tt:
     //paint whole hidden canvas with R!=G!=B to trigger TT suppression:
     this.TTdetailContext.fillStyle = 'rgba(50,100,150,1)';
     this.TTdetailContext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
     //set up detail tooltip:
-    this.detailTooltip = new Tooltip(this.detailCanvasID, 'HPGEdetailTipText', 'HPGEttDetailCanv', 'HPGETTdetail', this.monitorID, window.parameters.HPGEprefix, window.parameters.HPGEpostfix);
+    this.detailTooltip = new Tooltip(this.detailCanvasID, 'HPGEdetailTipText', 'HPGETTdetail', this.monitorID, window.parameters.HPGEprefix, window.parameters.HPGEpostfix);
     this.detailTooltip.obj = that;
 
     //drawing parameters/////////////////////////////////////////////////////////////////////////////////////////////

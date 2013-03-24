@@ -53,8 +53,8 @@ function PACES(){
     this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
 
     //set up tooltip:
-    this.RateTooltip = new Tooltip(this.RateCanvasID, 'PACESTipText', 'PACESttCanv', 'PACESTT', this.monitorID, window.parameters.PACESprefix, window.parameters.PACESpostfix);
-    this.HVTooltip =  new Tooltip(this.HVcanvasID, 'PACESTipTextHV', 'PACESttCanvHV', 'PACESTTHV', this.monitorID, window.parameters.PACESprefix, window.parameters.PACESpostfix);
+    this.RateTooltip = new Tooltip(this.RateCanvasID, 'PACESTipText', 'PACESTT', this.monitorID, window.parameters.PACESprefix, window.parameters.PACESpostfix);
+    this.HVTooltip =  new Tooltip(this.HVcanvasID, 'PACESTipTextHV', 'PACESTTHV', this.monitorID, window.parameters.PACESprefix, window.parameters.PACESpostfix);
     this.RateTooltip.obj = that;
     this.HVTooltip.obj = that;
     this.tooltip = this.RateTooltip;

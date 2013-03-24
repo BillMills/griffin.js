@@ -44,7 +44,7 @@ function DANTE(){
     this.TTcontext.fillStyle = 'rgba(50,100,150,1)';
     this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
     //set up tooltip:
-    this.tooltip = new Tooltip(this.canvasID, 'DANTETipText', 'DANTEttCanv', 'DANTETT', this.monitorID, window.parameters.DANTEprefix, window.parameters.DANTEpostfix);
+    this.tooltip = new Tooltip(this.canvasID, 'DANTETipText', 'DANTETT', this.monitorID, window.parameters.DANTEprefix, window.parameters.DANTEpostfix);
     this.tooltip.obj = that;
 
     //drawing parameters

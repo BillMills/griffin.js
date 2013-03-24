@@ -185,7 +185,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         document.getElementById(this.linkWrapperID).setAttribute('style', 'left:'+(24 + 100*this.leftEdge/$('#'+this.wrapperDiv).width() )+'%;')
 
         //make a tooltip for this object:
-        this.tooltip = new Tooltip(this.canvasID, 'MFTipText', 'MFtipCanv', 'MFTT', this.wrapperDiv, window.parameters.prefix, window.parameters.postfix);
+        this.tooltip = new Tooltip(this.canvasID, 'MFTipText', 'MFTT', this.wrapperDiv, window.parameters.prefix, window.parameters.postfix);
         //give the tooltip a pointer back to this object:
         this.tooltip.obj = that;
 
@@ -590,7 +590,8 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                 }
 
                 //keep track of longest line:
-                longestLine = Math.max(longestLine, this.tooltip.BKGcontext.measureText(nextLine).width);
+                this.tooltip.context.font = '12px Raleway'
+                longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width);
 
                 //append to tooltip:
                 toolTipContent += nextLine;

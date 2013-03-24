@@ -50,7 +50,7 @@ function DESCANT(){
     this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
 
     //set up tooltip:
-    this.tooltip = new Tooltip(this.canvasID, 'DESCANTTipText', 'DESCANTttCanv', 'DESCANTTT', this.monitorID, window.parameters.DESCANTprefix, window.parameters.DESCANTpostfix);
+    this.tooltip = new Tooltip(this.canvasID, 'DESCANTTipText', 'DESCANTTT', this.monitorID, window.parameters.DESCANTprefix, window.parameters.DESCANTpostfix);
     this.tooltip.obj = that;
 
     //drawing parameters//////////////////////////////////////////////////////////////////////////////////

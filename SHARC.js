@@ -46,7 +46,7 @@ function SHARC(){
     this.halfWidth = this.canvasWidth/2;
 
     //set up tooltip:
-    this.tooltip = new Tooltip(this.canvasID, 'SHARCTipText', 'SHARCttCanv', 'SHARCTT', this.monitorID, window.parameters.SHARCprefix, window.parameters.SHARCpostfix);
+    this.tooltip = new Tooltip(this.canvasID, 'SHARCTipText', 'SHARCTT', this.monitorID, window.parameters.SHARCprefix, window.parameters.SHARCpostfix);
     this.tooltip.obj = that;
 
     //define dimensions of each detector display/////////////////////////////////////////////////////////
