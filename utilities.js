@@ -139,5 +139,11 @@ function parameterDialogue(scales){
     dialogue.style.opacity = 1
 }
 
+//Crockford's prototype magics:
+function DCobject(o) {
+    function F() {}
+    F.prototype = o;
+    return new F();
+}
 
 

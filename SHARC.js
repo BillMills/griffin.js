@@ -1,8 +1,11 @@
+SHARC.prototype = new Subsystem();
+
 function SHARC(){
 
 	var i,j;
 
-	//argument member variables/////////////////////////////////////////////////////////////////////////////////
+	//member variables/////////////////////////////////////////////////////////////////////////////////
+	this.name = 'SHARC';
 	this.monitorID = window.parameters.wrapper;		//div ID of wrapper div
 	this.canvasID = 'SHARCCanvas';					//the canvas ID on which to draw the strip monitor
 	this.rows = window.parameters.SMrows;			//number of rows of detectors
@@ -10,20 +13,12 @@ function SHARC(){
 	this.nStrips = window.parameters.SMnChannels;	//number of sense strips per detector
 	this.minima = window.parameters.SHARCminima;		//array of scale minima, one entry for each scalar option
 	this.maxima = window.parameters.SHARCmaxima;		//array of scale maxima, one entry for each scalar option
-	this.linkWrapperID = 'SubsystemLinks';			//ID of div wrapping subsystem navigation links
-	this.sidebarID = 'SubsystemSidebar';			//ID of right sidebar for this object
-	this.topNavID = 'SubsystemsButton';				//ID of top level nav button
 	this.dataBus = new SHARCDS();
     this.subviewLink = 'SHARClink';                   //ID of inter-subsystem nav button
 
 	var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
     window.SHARCpointer = that;
-
-    //establish animation parameters////////////////////////////////////////////////////////////////////
-    this.FPS = 30;
-    this.duration = 0.5;
-    this.nFrames = this.FPS*this.duration;
 
     //which of the scalars are we tracking now? (corresponds to the index in this.maxima)
     this.trackingIndex = 0;

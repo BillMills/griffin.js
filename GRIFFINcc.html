@@ -26,6 +26,7 @@
     <script src="StatusBar.js" type="text/javascript"></script>
 
     <script src="BarGraph.js" type="text/javascript"></script>
+    <script src="Subsystem.js" type="text/javascript"></script>
     <script src="SHARC.js" type="text/javascript"></script>
     <script src="DESCANT.js" type="text/javascript"></script>
     <script src="HPGE.js" type="text/javascript"></script>
@@ -42,7 +43,6 @@
 
 
   <body style="font-family: 'Raleway', sans-serif; font-size:14px; background-color:#333333; color:#FFFFFF; margin-left:0px"> 
-
     <!--Load static parameters from JSONP DB////////////////////////////////////////////////////-->
     <script id='parameterLoad' type="text/JavaScript">
       window.parameters = {};
@@ -183,6 +183,7 @@
           for(var key in window.parameters.deployment){
             window.nDetectors+=window.parameters.deployment[key]
           }
+
           if(window.parameters.deployment["SHARC"]) window.Subdetectors[window.Subdetectors.length] = new SHARC();
           if(window.parameters.deployment["HPGE"]) window.Subdetectors[window.Subdetectors.length] = new HPGE();
           if(window.parameters.deployment["DESCANT"]) window.Subdetectors[window.Subdetectors.length] = new DESCANT();

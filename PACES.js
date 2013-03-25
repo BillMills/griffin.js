@@ -1,10 +1,10 @@
+PACES.prototype = new Subsystem();
+
 function PACES(){
+    this.name = 'PACES'
 	this.monitorID = window.parameters.wrapper; //div ID of wrapper div
 	this.HVcanvasID = 'PACESHVCanvas'; 	        //ID of canvas to draw HV view
     this.RateCanvasID = 'PACESrateCanvas';      //ID of canvas to draw rate / threshold view
-    this.linkWrapperID = 'SubsystemLinks';      //ID of div wrapping subsystem navigation links
-    this.sidebarID = 'SubsystemSidebar';        //ID of right sidebar for this object
-    this.topNavID = 'SubsystemsButton';         //ID of top level nav button
     this.TTcanvasID = 'PACESTTCanvas';          //ID of hidden tooltip map canvas
     this.minima = window.parameters.PACESminima;//array of meter minima [HV, thresholds, rate]
     this.maxima = window.parameters.PACESmaxima;//array of meter maxima, arranged as minima
@@ -14,11 +14,6 @@ function PACES(){
     var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
     window.PACESpointer = that;
-
-    //establish animation parameters////////////////////////////////////////////////////////////////////
-    this.FPS = 30;
-    this.duration = 0.5;
-    this.nFrames = this.FPS*this.duration;
 
     insertDOM('button', 'PACESlink', 'navLink', '', this.linkWrapperID, "javascript:swapFade('PACESlink', window.PACESpointer, window.subsystemScalars, window.subdetectorView)", 'PACES', '', 'button')
 

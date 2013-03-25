@@ -66,7 +66,7 @@ function masterLoop(callMyself){
 
     window.freshLoad = 0;
     //next iteration:
-    window.loop = setTimeout(function(){loadJSONP('masterLoop(1)')}, 3000);
+    window.loop = setTimeout(function(){loadJSONP('masterLoop(1)')}, 60000);
 }
 
 //determine what size cards are in what slot:

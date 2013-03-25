@@ -102,6 +102,7 @@ function swapSubsystemView(buttonID, navWrapperID, viewIndex){
 
 //swap top level views
 function swapView(inboundNav, inboundCanvas, inboundSidebar, buttonID){
+
 	if(inboundNav != window.navOnDisplay){
 
 		fadeIn(inboundCanvas, 0);
@@ -129,7 +130,7 @@ function swapView(inboundNav, inboundCanvas, inboundSidebar, buttonID){
     	$('#youAreHere').css('left', renderWidth - 50 - context.measureText(title).width);
 		document.getElementById('youAreHere').innerHTML = title;
 
-	}	
+	}
 }
 
 //simple canvas swap in / out:

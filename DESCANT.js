@@ -1,13 +1,13 @@
+DESCANT.prototype = new Subsystem();
+
 function DESCANT(){
 
 	var i, j;
 
+    this.name = 'DESCANT';
 	this.monitorID = window.parameters.wrapper;		//div ID of wrapper div
-	this.canvasID = 'DESCANTCanvas';		        //ID of canvas to draw DESCANT on
+	this.canvasID = this.name+'Canvas';		        //ID of canvas to draw DESCANT on
 	this.TTcanvasID = 'DESCANTTTCanvas';	        //ID of hidden tooltip map canvas
-	this.linkWrapperID = 'SubsystemLinks';	        //ID of div wrapping subsystem navigation links
-	this.sidebarID = 'SubsystemSidebar';	        //ID of right sidebar for this object
-	this.topNavID = 'SubsystemsButton';		        //ID of top level nav button
 	this.minima = window.parameters.DESCANTminima;  //array of meter minima [HV, thresholds, rate]
 	this.maxima = window.parameters.DESCANTmaxima;  //array of meter maxima, arranged as minima
     this.dataBus = new DESCANTDS();
@@ -17,13 +17,8 @@ function DESCANT(){
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
     window.DESCANTpointer = that;
 
-    //establish animation parameters////////////////////////////////////////////////////////////////////
-    this.FPS = 30;
-    this.duration = 0.5;
-    this.nFrames = this.FPS*this.duration;
-
     //insert nav link
-    insertDOM('button', 'DESCANTlink', 'navLink', '', this.linkWrapperID, "javascript:swapFade('DESCANTlink', window.DESCANTpointer, window.subsystemScalars, window.subdetectorView)", 'DESCANT', '', 'button')
+    insertDOM('button', this.subviewLink, 'navLink', '', this.linkWrapperID, "javascript:swapFade('"+this.subviewLink+"', window.DESCANTpointer, window.subsystemScalars, window.subdetectorView)", 'DESCANT', '', 'button')
 
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
 	this.monitor = document.getElementById(this.monitorID);

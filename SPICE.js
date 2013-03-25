@@ -1,9 +1,9 @@
+SPICE.prototype = new Subsystem();
+
 function SPICE(){
+    this.name = 'SPICE';
 	this.monitorID = window.parameters.wrapper;  //div ID of wrapper div
 	this.canvasID = 'SPICECanvas'; 			     //ID of canvas to draw top level TIGRESS view on
-    this.linkWrapperID = 'SubsystemLinks';       //ID of div wrapping subsystem navigation links
-    this.sidebarID = 'SubsystemSidebar';         //ID of right sidebar for this object
-    this.topNavID = 'SubsystemsButton';          //ID of top level nav button
     this.TTcanvasID = 'SPICETTCanvas';           //ID of hidden tooltip map canvas
     this.minima = window.parameters.SPICEminima; //array of meter minima [HV, thresholds, rate]
     this.maxima = window.parameters.SPICEmaxima; //array of meter maxima, arranged as minima
@@ -16,11 +16,6 @@ function SPICE(){
 
 	this.nRadial = 10;
 	this.nAzimuthal = 12;
-
-    //establish animation parameters////////////////////////////////////////////////////////////////////
-    this.FPS = 30;
-    this.duration = 0.5;
-    this.nFrames = this.FPS*this.duration;
 
     //insert nav link
     insertDOM('button', 'SPICElink', 'navLink', '', this.linkWrapperID, "javascript:swapFade('SPICElink', window.SPICEpointer, window.subsystemScalars, window.subdetectorView)", 'SPICE', '', 'button')

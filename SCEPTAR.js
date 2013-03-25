@@ -1,9 +1,9 @@
+SCEPTAR.prototype = new Subsystem();
+
 function SCEPTAR(){
+    this.name = 'SCEPTAR';
 	this.monitorID = window.parameters.wrapper;     //div ID of wrapper div
 	this.canvasID = 'SCEPTARCanvas'; 		        //ID of canvas to draw top level TIGRESS view on
-    this.linkWrapperID = 'SubsystemLinks';          //ID of div wrapping subsystem navigation links
-    this.sidebarID = 'SubsystemSidebar';            //ID of right sidebar for this object
-    this.topNavID = 'SubsystemsButton';             //ID of top level nav button
     this.TTcanvasID = 'SCEPTARTTCanvas';            //ID of hidden tooltip map canvas
     this.config = window.parameters.SCEPTARconfig;  //subsystems on: [upstream sceptar, downstream sceptar, downstream ZDS]
     this.dataBus = new SCEPTARDS();
@@ -12,11 +12,6 @@ function SCEPTAR(){
     var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
     window.SCEPTARpointer = that;
-
-    //establish animation parameters////////////////////////////////////////////////////////////////////
-    this.FPS = 30;
-    this.duration = 0.5;
-    this.nFrames = this.FPS*this.duration;
 
     //insert nav link
     insertDOM('button', 'SCEPTARlink', 'navLink', '', this.linkWrapperID, "javascript:swapFade('SCEPTARlink', window.SCEPTARpointer, window.subsystemScalars, window.subdetectorView)", 'SCEPTAR', '', 'button')

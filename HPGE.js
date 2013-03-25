@@ -1,11 +1,11 @@
+HPGE.prototype = new Subsystem();
+
 function HPGE(){
 
+    this.name = 'HPGE';
 	this.monitorID = window.parameters.wrapper;		//div ID of wrapper div
 	this.canvasID = 'HPGECanvas'; 			        //ID of canvas to draw top level TIGRESS view on
 	this.detailCanvasID = 'HPGEdetailCanvas';		//ID of canvas to draw single HPGE view on
-    this.linkWrapperID = 'SubsystemLinks';          //ID of div wrapping subsystem navigation links
-    this.sidebarID = 'SubsystemSidebar';            //ID of right sidebar for this object
-    this.topNavID = 'SubsystemsButton';             //ID of top level nav button
     this.TTcanvasID = 'HPGETTCanvas';               //ID of hidden tooltip map canvas for summary level
     this.TTdetailCanvasID = 'HPGETTdetailCanvas';   //ID of hidden tooltip map canvas for detail level
     this.mode = window.parameters.HPGEmode;         //mode to run in, either 'TIGRESS' or 'GRIFFIN'
@@ -25,11 +25,6 @@ function HPGE(){
     var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
     window.HPGEpointer = that;
-
-    //establish animation parameters////////////////////////////////////////////////////////////////////
-    this.FPS = 30;
-    this.duration = 0.5;
-    this.nFrames = this.FPS*this.duration;
 
     //subsystem navigation//////////////////////////////////////////////////////////////////////////////
     //insert nav link
