@@ -1,12 +1,8 @@
 //the subsystem class from which all subsystems will inherit.
 function Subsystem(){
-	/*
-	var keys = [];
-	for(var key in document.defaultView.parameters){
-		keys[keys.length] = key
-	}
-	alert(keys)
-	*/
+
+
+	
 	//this.monitorID = window.parameters.wrapper;		//div ID of wrapper div
 	this.linkWrapperID = 'SubsystemLinks';	        //ID of div wrapping subsystem navigation links
 	this.sidebarID = 'SubsystemSidebar';			//ID of right sidebar for this object

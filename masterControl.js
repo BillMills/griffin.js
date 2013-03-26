@@ -2,18 +2,25 @@ function loadJSONP(callback) {
     var i;
 
     for(i=0; i<window.parameters.JSONPrepos.length; i++){
+
         var script  = document.createElement('script');
-        script.setAttribute('src', window.parameters.JSONPrepos[i]);    //fetch the ith repo
+        if (window.parameters.JSONPrepos[i] != 'SERVICE DOWN') script.setAttribute('src', window.parameters.JSONPrepos[i]);    //fetch the ith repo
         script.setAttribute('id', 'tempScript'+i);
+
         //recover if the JSON bounces:
         script.onerror = function(){
-            alert('JSONP service\n\n' + window.parameters.JSONPrepos.splice(i-1,i-1) + '\n\nhas dropped.  Suppressing further requests.' )
-            //window.parameters.JSONPrepos.splice(i-1,i-1);
-            loadJSONP(callback);
-            i=window.parameters.JSONPrepos.length
+            alert('JSONP service\n\n' + this.src + '\n\nhas dropped.  Suppressing further requests.' )
+            
+            //delete the failed resource from the list:
+            for(var k=0; k<window.parameters.JSONPrepos.length; k++){
+                if(window.parameters.JSONPrepos[k] == this.src)
+                    window.parameters.JSONPrepos[k] = 'SERVICE DOWN';
+            }
         }
+
         if(i == window.parameters.JSONPrepos.length-1)
             script.setAttribute('onload', callback);                    //attach the callback to the last data store to load
+
         document.head.appendChild(script);
     }
 }
@@ -66,7 +73,7 @@ function masterLoop(callMyself){
 
     window.freshLoad = 0;
     //next iteration:
-    window.loop = setTimeout(function(){loadJSONP('masterLoop(1)')}, 60000);
+    window.loop = setTimeout(function(){loadJSONP('masterLoop(1)')}, 3000);
 }
 
 //determine what size cards are in what slot:
