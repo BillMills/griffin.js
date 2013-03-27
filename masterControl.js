@@ -78,10 +78,22 @@ function masterLoop(callMyself){
 
 //determine what size cards are in what slot:
 function detectCards(){
-    var moduleSizes
-    //insert ODB magic here
-    moduleSizes = [0,4,0,4,0,4,0,4,0,4,0,4];
-    //moduleSizes = [1,0,0,0,0,0];
+    var moduleSizes, crateCode, nSlots;
+    //moduleSizes = [0,1,0,0,0,0,0,0,0,0,0,0];
+
+    //fetch cratemap code: lowest bit: 0 = 6 slot, 1 = 12 slot; subsequent pairs of bits correspond to slots in ascending order;
+    //00 => empty slot; 01 => 12 channel card; 10 => 48 channel card.
+    crateCode = ODBGet('/Equipment/HV/Settings/CrateMap[0]');
+    if(crateCode & 1) nSlots = 12;
+    else nSlots = 6;
+
+    moduleSizes = [];
+    for(var i=0; i<nSlots; i++){
+        if( ((crateCode>>(1+2*i)) & 3) == 1 ) moduleSizes[moduleSizes.length] = 1;
+        else if( ((crateCode>>(1+2*i)) & 3) == 2 ) moduleSizes[moduleSizes.length] = 4;
+        else moduleSizes[moduleSizes.length] = 0;
+    }
+
     return moduleSizes;
 }
 
