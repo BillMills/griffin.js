@@ -1,5 +1,5 @@
 loadParameters({
-				"devMode" : 0,
+				"devMode" : 1,
 				"ExpName" : "SR2",
 				"statusURL" : "http://midtig03.triumf.ca:8081/",
 				"topDeployment" : {"HV":1, "Subsystems":1, "DAQ":1, "Clock":1, "Trigger":1},
@@ -8,7 +8,7 @@ loadParameters({
 				"subdetectorUnit" : ["V", "V", "Hz"],
 				"monitorValues" : ["HV", "Thresholds", "Rate"],
 
-				"ODBkeys" : ["/Location/Of/Device/Varibles", "/Location/Of/Device/Settings", "Demand Voltage Key", "Measured Voltage Key", "Measured Current Key", "Voltage Ramp Up Key", "Voltage Ramp Down Key", "Temperature Key", "ChState Key", "ChStatus Key", "Voltage Limit Key", "Current Limit Key"],
+				"ODBkeys" : ["/Location/Of/Device/Varibles", "/Location/Of/Device/Settings", "Demand Voltage Key", "Measured Voltage Key", "Measured Current Key", "Voltage Ramp Up Key", "Voltage Ramp Down Key", "Temperature Key", "ChState Key", "ChStatus Key", "Voltage Limit Key", "Current Limit Key", "Channel Name Key"],
 				"rows" : 12,
 				"columns": 0,
 				"rowTitles" : ["Ch.", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"],

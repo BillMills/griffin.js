@@ -147,7 +147,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         insertDOM('button', 'Main1', 'navLinkDown', '', 'mainframeLinks', "{window.HVpointer.viewStatus=-1; swapFade('Main1', window.HVpointer, 0, 0)}", 'Mainframe 1')
         insertDOM('br', 'break', '', '', this.linkWrapperID, '', '')
 
-        //deploy slot buttons
+        //deploy card buttons
         for(i=0; i<window.parameters.moduleSizes.length; i++){
             insertDOM('button', 'card'+i, 'navLink', '', this.linkWrapperID, "{window.HVpointer.viewStatus="+i+"; swapFade('card"+i+"', window.HVpointer, 0, 0);}", 'Slot '+i, '', 'button')
         }
@@ -197,13 +197,15 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         //style card nav buttons
         var newRule;
         for(i=0; i<this.moduleLabels.length; i++){
-            var buttonWidth;
+            var buttonWidth, fontsize;
             buttonWidth = Math.max(window.parameters.moduleSizes[i],1)*0.9*this.cellSide + (Math.max(window.parameters.moduleSizes[i],1)-1)*0.1*this.cellSide;
+            if(window.parameters.moduleSizes[i] == 4) fontsize = 0.9*this.cellSide*0.5;
+            else fontsize = 0.9*this.cellSide*0.3;
             //FF freaks out if you try and overwrite a styleSheet :(
             //newRule = "button#card"+i+"{width:"+buttonWidth+"px; height:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; margin-top:"+0.05*this.cellSide+"px; float:left; background: -webkit-gradient(linear, left top, left bottom, from(#DDDDDD), to(#FFFFFF)); background: -moz-linear-gradient(top,  #DDDDDD,  #FFFFFF); -webkit-border-radius: 5; -moz-border-radius: 5; border-radius: 5; font-size:"+this.cellSide/4+"px; padding:0px}";
             //document.styleSheets[0].insertRule(newRule,0);
             if(window.parameters.moduleSizes[i] != 0)
-                newRule = "width:"+buttonWidth+"px; height:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; margin-top:"+0.05*this.cellSide+"px; float:left; -webkit-border-radius: 5;  -moz-border-radius: 5; border-radius: 5; display: inline; font-family: 'Raleway', sans-serif; font-size:"+buttonWidth/8+"px; padding:0px;";
+                newRule = "width:"+buttonWidth+"px; height:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; margin-top:"+0.05*this.cellSide+"px; float:left; -webkit-border-radius: 5;  -moz-border-radius: 5; border-radius: 5; display: inline; font-family: 'Raleway', sans-serif; font-size:"+fontsize+"px; padding:0px;";
             else{ 
                 newRule = "width:"+buttonWidth+"px; height:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; margin-top:"+0.05*this.cellSide+"px; float:left; -webkit-border-radius: 5;  -moz-border-radius: 5; border-radius: 5; display: inline; font-family: 'Raleway', sans-serif; font-size:"+this.cellSide/2+"px; padding:0px; color:#CC0000;";
                 document.getElementById('card'+i).setAttribute('onclick', '');
@@ -570,6 +572,11 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
             longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
             toolTipContent += nextLine;
 
+            //channel Name
+            nextLine = this.dataBus.channelName[row][col]+'<br>';
+            longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
+            toolTipContent += nextLine;            
+
             //fill out tooltip content:
             for(i=0; i<this.reportedValues.length; i++){
                 //establish prefix:
@@ -605,13 +612,13 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
 
         //get new data:
         this.fetchNewData = function(){
-            var testParameter, i, j, ODBindex, columns, slot, realData;
-            realData = 1;
+            var testParameter, i, j, ODBindex, columns, slot;
             //batch fetch all in one big lump:
-            if(realData){
+            if(!window.parameters.devMode){
                 var variablesRecord = ODBGetRecord(window.parameters.ODBkeys[0]);
                 var settingsRecord  = ODBGetRecord(window.parameters.ODBkeys[1]);
     
+                var chName          = ODBExtractRecord(settingsRecord,  window.parameters.ODBkeys[12])
                 var reqVoltage      = ODBExtractRecord(variablesRecord, window.parameters.ODBkeys[2]);
                 var measVoltage     = ODBExtractRecord(variablesRecord, window.parameters.ODBkeys[3]);
                 var measCurrent     = ODBExtractRecord(variablesRecord, window.parameters.ODBkeys[4]);
@@ -635,8 +642,9 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                     else slot = j;
                     //don't populate the primary of a 12 channel card, or any channel corresponding to an empty slot:
                     if( (i!=0 || window.parameters.moduleSizes[j]==4) && window.parameters.moduleSizes[slot]!=0 ){
-                        if(realData){
+                        if(!window.parameters.devMode){
 
+                            this.dataBus.channelName[i][j] = 'channel'+i+j;
                             this.dataBus.demandVoltage[i][j] = -9999;
                             this.dataBus.reportVoltage[i][j] = -9999;
                             this.dataBus.reportCurrent[i][j] = -9999;
@@ -649,6 +657,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                             this.dataBus.currentLimit[i][j] = -9999;
 
                             ODBindex = getMIDASindex(i, j);
+                            this.dataBus.channelName[i][j]       = chName[ODBindex];
                             this.dataBus.demandVoltage[i][j]     = parseFloat(reqVoltage[ODBindex]);
                             this.dataBus.reportVoltage[i][j]     = parseFloat(measVoltage[ODBindex]);   
                             this.dataBus.reportCurrent[i][j]     = parseFloat(measCurrent[ODBindex]);
@@ -683,6 +692,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                             this.dataBus.currentLimit[i][j] = 1+Math.random();
                             */
                             //no randoms in live experimental tests:
+                            this.dataBus.channelName[i][j]   = 'channel'+i+j;
                             this.dataBus.demandVoltage[i][j] = -9999;
                             this.dataBus.reportVoltage[i][j] = -9999;
                             this.dataBus.reportCurrent[i][j] = -9999;
@@ -695,6 +705,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                             this.dataBus.currentLimit[i][j] = -9999;
                         }
                     } else if (i!=0 || window.parameters.moduleSizes[j]==4){  //keep the array filled, even for empty slots to avoid unpredictable behavior
+                        this.dataBus.channelName[i][j] = 'channel'+i+j;
                         this.dataBus.demandVoltage[i][j] = 0;
                         this.dataBus.reportVoltage[i][j] = 0;
                         this.dataBus.reportCurrent[i][j] = 0;

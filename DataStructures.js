@@ -7,6 +7,7 @@
 HVDS = function(rows, cols){
 	var i,j;
 	//data arrays:
+	this.channelName = [];
     this.demandVoltage = [];
     this.reportVoltage = [];
     this.reportCurrent = [];
@@ -19,6 +20,7 @@ HVDS = function(rows, cols){
     this.voltLimit = [];
     this.currentLimit = [];
     for(i=0; i<rows; i++){
+    	this.channelName[i] = [];
         this.demandVoltage[i] = [];
         this.reportVoltage[i] = [];
         this.reportCurrent[i] = [];
