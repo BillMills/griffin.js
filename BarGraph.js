@@ -1,5 +1,7 @@
 function BarGraph(cvas, moduleNumber, nBars, title, yAxisTitle, scaleMin, scaleMax, barChartPrecision, masterWaffle){
 
+	var i;
+
 	this.dataBus = new HVBarDS();
 
 	//bar chart levels:
@@ -48,6 +50,25 @@ function BarGraph(cvas, moduleNumber, nBars, title, yAxisTitle, scaleMin, scaleM
     $('#'+cvas).attr('width', this.width);
     $('#'+cvas).attr('height', this.height);
     $('#'+cvas).css('top', this.headerHeight);
+
+    //determine optimal font sizes for labels:
+    //determine longest y-axis tick label:
+    this.context.font="12px 'Raleway'"; 
+    var longestLabel = 0;
+    var longestLabelIndex = 0;
+    for(i=0; i<this.yAxisTicks; i++){
+    	if(this.context.measureText( ((this.scaleMax-this.scaleMin)/(this.yAxisTicks-1)*i).toFixed(this.precision) ).width > longestLabel){
+	    	longestLabel = Math.max(longestLabel, this.context.measureText( ((this.scaleMax-this.scaleMin)/(this.yAxisTicks-1)*i).toFixed(this.precision) ).width);
+	    	longestLabelIndex = i;
+	    }
+    }
+    //seek largest fontsize such that the longest label + height of y axis title fit into margin:
+    this.fontscale = 1;
+    this.context.font=this.fontscale+"px 'Raleway'";
+    while( this.context.measureText( ((this.scaleMax-this.scaleMin)/(this.yAxisTicks-1)*longestLabelIndex).toFixed(this.precision) ).width + 1.5*this.fontscale < 0.1*this.width/2 ){
+    	this.fontscale++ 
+	    this.context.font=this.fontscale+"px 'Raleway'";
+	}
 
     //number of bars:
     this.nBars = nBars;
@@ -170,7 +191,7 @@ function BarGraph(cvas, moduleNumber, nBars, title, yAxisTitle, scaleMin, scaleM
 		var i = 0;
 
 		//set label font:
-		this.context.font=Math.min(16, 0.8*this.barWidth)+"px 'Raleway'";    //0.25*this.barWidth+"px 'Raleway'";
+		this.context.font=this.fontscale+"px Raleway";         ///Math.min(16, 0.8*this.barWidth)+"px 'Raleway'";    //0.25*this.barWidth+"px 'Raleway'";
 
 		//set text color:
 		this.context.fillStyle = 'rgba(255,255,255,0.3)';
@@ -205,7 +226,7 @@ function BarGraph(cvas, moduleNumber, nBars, title, yAxisTitle, scaleMin, scaleM
 		}
 
 		//draw y-axis title:
-		this.context.font=Math.max(0.4*this.barWidth,26)+"px 'Raleway'";
+		this.context.font= 1.5*this.fontscale+'px Raleway';   //Math.max(0.4*this.barWidth,26)+"px 'Raleway'";
 		this.context.save();
 		this.context.translate(this.width*0.05, this.topMargin + this.context.measureText(this.yAxisTitle).width);
 		this.context.rotate(-Math.PI/2);
