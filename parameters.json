@@ -103,7 +103,7 @@ loadParameters({
 				"DAQminima" : [0,0,0,0,0,0,0,0,0],
 				"DAQmaxima" : [1,1,1,1,1,1,1,1,1],
 
-				"JSONPrepos" : [/*"http://midtig03.triumf.ca:8092/parameters?jsonp=parseResponse", "http://midtig03.triumf.ca:8091/scalar?jsonp=parseResponse",*/ "dummy.json"]
+				"JSONPrepos" : ["http://midtig03.triumf.ca:8092/parameters?jsonp=parseResponse", "http://midtig03.triumf.ca:8091/scalar?jsonp=parseResponse", "dummy.json"]
 				})
 
 /*Parameter Dictionary//////////////////////////////////////
@@ -201,6 +201,6 @@ DAQmaxima:						""
 
 
 //JSONP
-JSONPrepos						array containing URLs of all JSONP data to be pulled in at each update
+JSONPrepos						array containing URLs of all JSONP data to be pulled in at each update: [thresholds, scalars, dummy]
 
 *//////////////////////////////////////////////////////////

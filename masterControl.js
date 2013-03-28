@@ -9,7 +9,7 @@ function loadJSONP(callback) {
 
         //recover if the JSON bounces:
         script.onerror = function(){
-            alert('JSONP service\n\n' + this.src + '\n\nhas dropped.  Suppressing further requests.' )
+            //alert('JSONP service\n\n' + this.src + '\n\nhas dropped.  Suppressing further requests.' )
             
             //delete the failed resource from the list:
             for(var k=0; k<window.parameters.JSONPrepos.length; k++){

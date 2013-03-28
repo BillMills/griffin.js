@@ -24,6 +24,22 @@ function StatusBar(wrapper){
     //Alarm Service
     window.AlarmServices = new AlarmService('leftSidebar', 'leftSidebarDetail');
 
+    //JSONP monitor
+    insertDOM('p', 'JSONPmonitor', '', 'width:80%; margin-left:auto; margin-right:auto; padding-left:5%; padding-right:5%; margin-top:5%;', this.wrapperID, '', '')
+
+
+/*
+    insertDOM('table', 'JSONPmonitor', '', 'width:80%; margin-left:auto; margin-right:auto; padding-left:5%; padding-right:5%; margin-top:5%;', this.wrapperID, '', '');
+    insertDOM('caption', 'JSONPtitle', '', '', 'JSONPmonitor', '', 'JSONP Services');
+    //rates
+    insertDOM('tr', 'ratesRow', '', '', 'JSONPmonitor', '', '');
+    insertDOM('td', 'ratesLabel', '', 'text-align:right; width:50%', 'ratesRow', '', 'Rates:');
+    insertDOM('td', 'ratesFlag', '', '', 'ratesRow', '', 'Online');
+    //thresholds
+    insertDOM('tr', 'thresholdsRow', '', '', 'JSONPmonitor', '', '');
+    insertDOM('td', 'thresholdsLabel', '', 'text-align:right; width:50%', 'thresholdsRow', '', 'Thresholds:');
+    insertDOM('td', 'thresholdsFlag', '', '', 'thresholdsRow', '', 'Not Responding');
+*/
     this.update = function(){
     	//experiment title
     	if(window.parameters.devMode) this.expTitle = 'Offline Demo Experiment'; 
@@ -88,6 +104,16 @@ function StatusBar(wrapper){
         else comment = ODBGet('/Experiment/Run Parameters/Comment');
 
   		document.getElementById(this.runInfoID).innerHTML = '<br>' + runInfo + '<br>' + startInfo + '<br>' + elapsed + '<br><br>' + comment + '<br><br>';
+
+        //JSONP monitor:
+        var JSONPtext = 'JSONP Services<br>';
+        JSONPtext += 'Thresholds: ';
+        if(window.parameters.JSONPrepos[0] == 'SERVICE DOWN') JSONPtext += 'Not Responding<br>';
+        else thresholdsOnline = JSONPtext += 'Online<br>';
+        JSONPtext += 'Rates: ';
+        if(window.parameters.JSONPrepos[1] == 'SERVICE DOWN') JSONPtext += 'Not Responding<br>';
+        else JSONPtext += 'Online<br>';
+        document.getElementById('JSONPmonitor').innerHTML = JSONPtext;
 
     };
 
