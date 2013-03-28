@@ -185,7 +185,7 @@
             window.nDetectors+=window.parameters.deployment[key]
           }
           if(window.parameters.deployment["SHARC"]) window.Subdetectors[window.Subdetectors.length] = new SHARC();
-          if(window.parameters.deployment["HPGE"]) window.Subdetectors[window.Subdetectors.length] = new HPGE();
+          if(window.parameters.deployment["HPGe"]) window.Subdetectors[window.Subdetectors.length] = new HPGe();
           if(window.parameters.deployment["DESCANT"]) window.Subdetectors[window.Subdetectors.length] = new DESCANT();
           if(window.parameters.deployment["PACES"]) window.Subdetectors[window.Subdetectors.length] = new PACES();
           if(window.parameters.deployment["DANTE"]) window.Subdetectors[window.Subdetectors.length] = new DANTE();
@@ -274,6 +274,7 @@
 
         //hack to put subsystems on top for TIP deploy
         if(window.parameters.topDeployment['Subsystems']) swapView('SubsystemLinks', window.Subdetectors[0].canvasID, 'SubsystemSidebar', 'SubsystemsButton')
+        else if(!window.parameters.topDeployment['Trigger']) swapView('mainframeLinks', 'TestWaffle', 'InputLayer', 'HVmonitorButton');
 
         startLoop(); 
 

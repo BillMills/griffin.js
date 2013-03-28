@@ -3,7 +3,7 @@ loadParameters({
 				"ExpName" : "SR2",
 				"statusURL" : "http://midtig03.triumf.ca:8081/",
 				"topDeployment" : {"HV":1, "Subsystems":1, "DAQ":1, "Clock":1, "Trigger":1},
-				"deployment" : {"SHARC":1, "HPGE":1, "DESCANT":1, "PACES":1, "DANTE":1, "BAMBINO":1, "SCEPTAR":1, "SPICE":1, "TIP":1},
+				"deployment" : {"SHARC":1, "HPGe":1, "DESCANT":1, "PACES":1, "DANTE":1, "BAMBINO":1, "SCEPTAR":1, "SPICE":1, "TIP":1},
 				"wrapper" : "waffleplate",
 				"subdetectorUnit" : ["V", "V", "Hz"],
 				"monitorValues" : ["HV", "Thresholds", "Rate"],
@@ -46,14 +46,14 @@ loadParameters({
 				"SHARCprefix" : [],
 				"SHARCpostfix" : [],
 
-				"HPGEmode" : "GRIFFIN",
+				"HPGemode" : "GRIFFIN",
 				"BGOenable" : 1,
-				"HPGEminima" : [0,0,0],
-				"HPGEmaxima" : [1,1,1],
+				"HPGeminima" : [0,0,0],
+				"HPGemaxima" : [1,1,1],
 				"BGOminima" : [0,0,0],
 				"BGOmaxima" : [100,100,100],
-				"HPGEprefix" : [],
-				"HPGEpostfix" : [],
+				"HPGeprefix" : [],
+				"HPGepostfix" : [],
 
 				"DESCANTminima" : [0,0,0],
 				"DESCANTmaxima" : [1,1,1],
@@ -93,8 +93,8 @@ loadParameters({
 
 				"TIPCsIminima" : [0,0,0],
 				"TIPCsImaxima" : [1,200,200],
-				"TIPHPGEminima" : [0,0,0],
-				"TIPHPGEmaxima" : [1,1000,1000],
+				"TIPHPGeminima" : [0,0,0],
+				"TIPHPGemaxima" : [1,1000,1000],
 				"TIPBGOminima" : [0,0,0],
 				"TIPBGOmaxima" : [1,1,2],
 				"TIPprefix" : ["HV: ", "Thresholds: ", "Rate: "],
@@ -156,13 +156,13 @@ nAzimuthalVert					number of azimuthal bins ""
 SHARCprefix                     array of strings to use as prefixes in SHARC tooltip
 SHARCpostfix                    as SHARCprefix
 
-//HPGE
-HPGEmode						'GRIFFIN' or 'TIGRESS'
+//HPGe
+HPGemode						'GRIFFIN' or 'TIGRESS'
 BGOenable						are the suppressors present?
-HPGEminima						array of scale minima: [HPGE HV, HPGE Thresholds, HPGE Rate...]
-HPGEmaxima						""
-HPGEprefix                      array of strings to use as prefixes in HPGE tooltip
-HPGEpostfix                     as HPGEprefix
+HPGeminima						array of scale minima: [HPGe HV, HPGe Thresholds, HPGe Rate...]
+HPGemaxima						""
+HPGeprefix                      array of strings to use as prefixes in HPGe tooltip
+HPGepostfix                     as HPGeprefix
 
 DESACNTminima					array of scale minima: [HV, Thresholds, Rate...]
 DESCANTmaxima					""

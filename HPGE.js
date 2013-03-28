@@ -1,34 +1,34 @@
-HPGE.prototype = new Subsystem();
+HPGe.prototype = new Subsystem();
 
-function HPGE(){
+function HPGe(){
 
-    this.name = 'HPGE';
+    this.name = 'HPGe';
 	this.monitorID = window.parameters.wrapper;		//div ID of wrapper div
-	this.canvasID = 'HPGECanvas'; 			        //ID of canvas to draw top level TIGRESS view on
-	this.detailCanvasID = 'HPGEdetailCanvas';		//ID of canvas to draw single HPGE view on
-    this.TTcanvasID = 'HPGETTCanvas';               //ID of hidden tooltip map canvas for summary level
-    this.TTdetailCanvasID = 'HPGETTdetailCanvas';   //ID of hidden tooltip map canvas for detail level
-    this.mode = window.parameters.HPGEmode;         //mode to run in, either 'TIGRESS' or 'GRIFFIN'
+	this.canvasID = 'HPGeCanvas'; 			        //ID of canvas to draw top level TIGRESS view on
+	this.detailCanvasID = 'HPGedetailCanvas';		//ID of canvas to draw single HPGe view on
+    this.TTcanvasID = 'HPGeTTCanvas';               //ID of hidden tooltip map canvas for summary level
+    this.TTdetailCanvasID = 'HPGeTTdetailCanvas';   //ID of hidden tooltip map canvas for detail level
+    this.mode = window.parameters.HPGemode;         //mode to run in, either 'TIGRESS' or 'GRIFFIN'
     this.BGOenable = window.parameters.BGOenable;   //are the suppresors present?
-    this.dataBus = new HPGEDS();
-    this.subviewLink = 'HPGElink';                   //ID of inter-subsystem nav button
+    this.dataBus = new HPGeDS();
+    this.subviewLink = 'HPGelink';                   //ID of inter-subsystem nav button
 
     this.cloverShowing = 1;                         //index of clover currently showing in detail view
     this.detailShowing = 0;                         //is the detail canvas showing?
 
-    this.nHPGEsegments = 0;
+    this.nHPGesegments = 0;
     if(this.mode == 'TIGRESS')
-        this.nHPGEsegments = 40;
+        this.nHPGesegments = 40;
     else if(this.mode == 'GRIFFIN')
-        this.nHPGEsegments = 8;
+        this.nHPGesegments = 8;
 
     var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
-    window.HPGEpointer = that;
+    window.HPGepointer = that;
 
     //subsystem navigation//////////////////////////////////////////////////////////////////////////////
     //insert nav link
-    insertDOM('button', 'HPGElink', 'navLink', '', this.linkWrapperID, "javascript:swapFade('HPGElink', window.HPGEpointer, window.subsystemScalars, window.subdetectorView)", 'HPGE', '', 'button')
+    insertDOM('button', 'HPGelink', 'navLink', '', this.linkWrapperID, "javascript:swapFade('HPGelink', window.HPGepointer, window.subsystemScalars, window.subdetectorView)", 'HPGe', '', 'button')
 
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
     this.monitor = document.getElementById(this.monitorID);
@@ -89,14 +89,14 @@ function HPGE(){
     this.TTcontext.fillStyle = 'rgba(50,100,150,1)';
     this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
     //set up summary tooltip:
-    this.tooltip = new Tooltip(this.canvasID, 'HPGETipText', 'HPGETT', this.monitorID, window.parameters.HPGEprefix, window.parameters.HPGEpostfix);
+    this.tooltip = new Tooltip(this.canvasID, 'HPGeTipText', 'HPGeTT', this.monitorID, window.parameters.HPGeprefix, window.parameters.HPGepostfix);
     this.tooltip.obj = that;
     //detail level tt:
     //paint whole hidden canvas with R!=G!=B to trigger TT suppression:
     this.TTdetailContext.fillStyle = 'rgba(50,100,150,1)';
     this.TTdetailContext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
     //set up detail tooltip:
-    this.detailTooltip = new Tooltip(this.detailCanvasID, 'HPGEdetailTipText', 'HPGETTdetail', this.monitorID, window.parameters.HPGEprefix, window.parameters.HPGEpostfix);
+    this.detailTooltip = new Tooltip(this.detailCanvasID, 'HPGedetailTipText', 'HPGeTTdetail', this.monitorID, window.parameters.HPGeprefix, window.parameters.HPGepostfix);
     this.detailTooltip.obj = that;
 
     //drawing parameters/////////////////////////////////////////////////////////////////////////////////////////////
@@ -108,7 +108,7 @@ function HPGE(){
     //summary view
     this.BGOouter = 0.1*this.canvasWidth;
     this.BGOinner = 0.67*this.BGOouter;
-    this.HPGEside = 0.4*this.BGOouter;
+    this.HPGeside = 0.4*this.BGOouter;
     //establish coords of each detector summary; start array index at 1 to correspond to actual detector numbering in TIGRESS:
     this.firstRow = this.canvasHeight*0.05;
     this.secondRow = this.canvasHeight*0.22;
@@ -163,12 +163,12 @@ function HPGE(){
     this.sideSpacer = 20;
 
     //establish data buffers////////////////////////////////////////////////////////////////////////////
-    this.summaryHPGEHVcolor = [];
-    this.oldSummaryHPGEHVcolor = [];
-    this.summaryHPGEthresholdColor = [];
-    this.oldSummaryHPGEthresholdColor = [];
-    this.summaryHPGErateColor = [];
-    this.oldSummaryHPGErateColor = [];
+    this.summaryHPGeHVcolor = [];
+    this.oldSummaryHPGeHVcolor = [];
+    this.summaryHPGethresholdColor = [];
+    this.oldSummaryHPGethresholdColor = [];
+    this.summaryHPGerateColor = [];
+    this.oldSummaryHPGerateColor = [];
     this.summaryBGOHVcolor = [];
     this.oldSummaryBGOHVcolor = [];
     this.summaryBGOthresholdColor = [];
@@ -176,12 +176,12 @@ function HPGE(){
     this.summaryBGOrateColor = [];
     this.oldSummaryBGOrateColor = [];
 
-    this.detailHPGEHVcolor = [];
-    this.oldDetailHPGEHVcolor = [];
-    this.detailHPGEthresholdColor = [];
-    this.oldDetailHPGEthresholdColor = [];
-    this.detailHPGErateColor = [];
-    this.oldDetailHPGErateColor = [];
+    this.detailHPGeHVcolor = [];
+    this.oldDetailHPGeHVcolor = [];
+    this.detailHPGethresholdColor = [];
+    this.oldDetailHPGethresholdColor = [];
+    this.detailHPGerateColor = [];
+    this.oldDetailHPGerateColor = [];
     this.detailBGOHVcolor = [];
     this.oldDetailBGOHVcolor = [];
     this.detailBGOthresholdColor = [];
@@ -234,15 +234,15 @@ function HPGE(){
 
         for(i=0; i<4; i++){
 
-            //HPGE
+            //HPGe
             //fill the crystal quarter with the appropriate color on the top view, or the tt encoding on the tt layer:
-            if(window.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.oldSummaryHPGEHVcolor[4*(cloverNumber-1)+i]), parseHexColor(this.summaryHPGEHVcolor[4*(cloverNumber-1)+i]), frame/this.nFrames);
-            else if(window.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldSummaryHPGEthresholdColor[4*(cloverNumber-1)+i]), parseHexColor(this.summaryHPGEthresholdColor[4*(cloverNumber-1)+i]), frame/this.nFrames);
-            else if(window.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldSummaryHPGErateColor[4*(cloverNumber-1)+i]), parseHexColor(this.summaryHPGErateColor[4*(cloverNumber-1)+i]), frame/this.nFrames);
-            this.context.fillRect(Math.round(x0 + (this.BGOouter-this.HPGEside)/2 + (i%2)*(this.lineWeight + this.HPGEside/2)), Math.round(y0 + (this.BGOouter-this.HPGEside)/2 + (i>>1)/2*(2*this.lineWeight + this.HPGEside)), Math.round(this.HPGEside/2),Math.round(this.HPGEside/2));
+            if(window.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.oldSummaryHPGeHVcolor[4*(cloverNumber-1)+i]), parseHexColor(this.summaryHPGeHVcolor[4*(cloverNumber-1)+i]), frame/this.nFrames);
+            else if(window.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldSummaryHPGethresholdColor[4*(cloverNumber-1)+i]), parseHexColor(this.summaryHPGethresholdColor[4*(cloverNumber-1)+i]), frame/this.nFrames);
+            else if(window.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldSummaryHPGerateColor[4*(cloverNumber-1)+i]), parseHexColor(this.summaryHPGerateColor[4*(cloverNumber-1)+i]), frame/this.nFrames);
+            this.context.fillRect(Math.round(x0 + (this.BGOouter-this.HPGeside)/2 + (i%2)*(this.lineWeight + this.HPGeside/2)), Math.round(y0 + (this.BGOouter-this.HPGeside)/2 + (i>>1)/2*(2*this.lineWeight + this.HPGeside)), Math.round(this.HPGeside/2),Math.round(this.HPGeside/2));
             //give the top view clovers an appropriately-colored outline:
             this.context.strokeStyle = colors[i];
-            this.context.strokeRect(x0 + (this.BGOouter-this.HPGEside)/2 + (i%2)*(this.lineWeight + this.HPGEside/2), y0 + (this.BGOouter-this.HPGEside)/2 + (i>>1)/2*(2*this.lineWeight + this.HPGEside), this.HPGEside/2, this.HPGEside/2);
+            this.context.strokeRect(x0 + (this.BGOouter-this.HPGeside)/2 + (i%2)*(this.lineWeight + this.HPGeside/2), y0 + (this.BGOouter-this.HPGeside)/2 + (i>>1)/2*(2*this.lineWeight + this.HPGeside), this.HPGeside/2, this.HPGeside/2);
 
             //BGO
             var rotation 
@@ -268,8 +268,8 @@ function HPGE(){
     this.drawDetail = function(context, frame){
         var i, j;
 
-        //state variables select the segmentation state of HPGE and services of BGO 
-        var HPGEstate, BGOstate;
+        //state variables select the segmentation state of HPGe and services of BGO 
+        var HPGestate, BGOstate;
 
         this.detailContext.lineWidth = this.lineWeight;
 
@@ -281,10 +281,10 @@ function HPGE(){
         var fillColor, fillColor2;
 
         if(window.subdetectorView == 0){
-            HPGEstate = 0; //no segmentation
+            HPGestate = 0; //no segmentation
             BGOstate = 1;  //two services per sector per side per suppressor
         }else if(window.subdetectorView == 1 || window.subdetectorView == 2){
-            HPGEstate = 1; //9-element segmentation
+            HPGestate = 1; //9-element segmentation
             BGOstate = 0;  //one service per sector per side per suppressor
         }
             
@@ -296,30 +296,30 @@ function HPGE(){
             var NAB = Math.floor(i/2) - 1;              //negative for i=0,1, 0 OW
             var PCD = Math.floor(i/2);                  //positive for i=2,3, 0 OW
 
-            //HPGE/////////////////////////////
-            if(HPGEstate == 0){
+            //HPGe/////////////////////////////
+            if(HPGestate == 0){
                 if(context == this.detailContext){
-                    fillColor  = interpolateColor(parseHexColor(this.oldDetailHPGEHVcolor[4*(this.cloverShowing-1)+i]), parseHexColor(this.detailHPGEHVcolor[4*(this.cloverShowing-1)+i]), frame/this.nFrames);
+                    fillColor  = interpolateColor(parseHexColor(this.oldDetailHPGeHVcolor[4*(this.cloverShowing-1)+i]), parseHexColor(this.detailHPGeHVcolor[4*(this.cloverShowing-1)+i]), frame/this.nFrames);
                 } else{
                     fillColor  = 'rgba('+i+', '+i+', '+i+', 1)';
                 }
                 this.crystal(context, this.centerX + PBC*this.lineWeight + NAD*this.crystalSide, this.centerY + NAB*this.crystalSide + PCD*this.lineWeight, colorWheel[i], fillColor);
 
-            } else if(HPGEstate == 1){
+            } else if(HPGestate == 1){
                 if(this.mode == 'TIGRESS'){
                     //cores
                     if(context == this.detailContext){
                         if(window.subdetectorView == 1){ 
-                            fillColor  = interpolateColor(parseHexColor(this.oldDetailHPGEthresholdColor[this.nHPGEsegments*(this.cloverShowing-1)+this.nHPGEsegments/4*i]), parseHexColor(this.detailHPGEthresholdColor[this.nHPGEsegments*(this.cloverShowing-1)+this.nHPGEsegments/4*i]), frame/this.nFrames);
-                            fillColor2 = interpolateColor(parseHexColor(this.oldDetailHPGEthresholdColor[this.nHPGEsegments*(this.cloverShowing-1)+this.nHPGEsegments/4*i+1]), parseHexColor(this.detailHPGEthresholdColor[this.nHPGEsegments*(this.cloverShowing-1)+this.nHPGEsegments/4*i+1]), frame/this.nFrames);
+                            fillColor  = interpolateColor(parseHexColor(this.oldDetailHPGethresholdColor[this.nHPGesegments*(this.cloverShowing-1)+this.nHPGesegments/4*i]), parseHexColor(this.detailHPGethresholdColor[this.nHPGesegments*(this.cloverShowing-1)+this.nHPGesegments/4*i]), frame/this.nFrames);
+                            fillColor2 = interpolateColor(parseHexColor(this.oldDetailHPGethresholdColor[this.nHPGesegments*(this.cloverShowing-1)+this.nHPGesegments/4*i+1]), parseHexColor(this.detailHPGethresholdColor[this.nHPGesegments*(this.cloverShowing-1)+this.nHPGesegments/4*i+1]), frame/this.nFrames);
                         }
                         else if(window.subdetectorView == 2){
-                            fillColor  = interpolateColor(parseHexColor(this.oldDetailHPGErateColor[this.nHPGEsegments*(this.cloverShowing-1)+this.nHPGEsegments/4*i]), parseHexColor(this.detailHPGErateColor[this.nHPGEsegments*(this.cloverShowing-1)+this.nHPGEsegments/4*i]), frame/this.nFrames);
-                            fillColor2 = interpolateColor(parseHexColor(this.oldDetailHPGErateColor[this.nHPGEsegments*(this.cloverShowing-1)+this.nHPGEsegments/4*i+1]), parseHexColor(this.detailHPGErateColor[this.nHPGEsegments*(this.cloverShowing-1)+this.nHPGEsegments/4*i+1]), frame/this.nFrames);
+                            fillColor  = interpolateColor(parseHexColor(this.oldDetailHPGerateColor[this.nHPGesegments*(this.cloverShowing-1)+this.nHPGesegments/4*i]), parseHexColor(this.detailHPGerateColor[this.nHPGesegments*(this.cloverShowing-1)+this.nHPGesegments/4*i]), frame/this.nFrames);
+                            fillColor2 = interpolateColor(parseHexColor(this.oldDetailHPGerateColor[this.nHPGesegments*(this.cloverShowing-1)+this.nHPGesegments/4*i+1]), parseHexColor(this.detailHPGerateColor[this.nHPGesegments*(this.cloverShowing-1)+this.nHPGesegments/4*i+1]), frame/this.nFrames);
                         }
                     } else{
-                        fillColor  = 'rgba('+this.nHPGEsegments/4*i+', '+this.nHPGEsegments/4*i+', '+this.nHPGEsegments/4*i+', 1)';
-                        fillColor2 = 'rgba('+(this.nHPGEsegments/4*i+1)+', '+(this.nHPGEsegments/4*i+1)+', '+(this.nHPGEsegments/4*i+1)+', 1)';
+                        fillColor  = 'rgba('+this.nHPGesegments/4*i+', '+this.nHPGesegments/4*i+', '+this.nHPGesegments/4*i+', 1)';
+                        fillColor2 = 'rgba('+(this.nHPGesegments/4*i+1)+', '+(this.nHPGesegments/4*i+1)+', '+(this.nHPGesegments/4*i+1)+', 1)';
                     }
                     this.splitCrystal(context, this.centerX + NAD*2/3*this.crystalSide + PBC*1/3*this.crystalSide + PBC*this.lineWeight, this.centerY + NAB*2/3*this.crystalSide + PCD*1/3*this.crystalSide + PCD*this.lineWeight, this.crystalSide/3, i, colorWheel[i], fillColor, fillColor2);  
 
@@ -332,31 +332,31 @@ function HPGE(){
 
                         //front segs
                         if(context == this.detailContext){
-                            if(window.subdetectorView == 1) fillColor = interpolateColor(parseHexColor(this.oldDetailHPGEthresholdColor[this.nHPGEsegments*(this.cloverShowing-1)+this.nHPGEsegments/4*i+j+2]), parseHexColor(this.detailHPGEthresholdColor[this.nHPGEsegments*(this.cloverShowing-1)+this.nHPGEsegments/4*i+j+2]), frame/this.nFrames);
-                            else if(window.subdetectorView == 2) fillColor = interpolateColor(parseHexColor(this.oldDetailHPGErateColor[this.nHPGEsegments*(this.cloverShowing-1)+this.nHPGEsegments/4*i+j+2]), parseHexColor(this.detailHPGErateColor[this.nHPGEsegments*(this.cloverShowing-1)+this.nHPGEsegments/4*i+j+2]), frame/this.nFrames);
+                            if(window.subdetectorView == 1) fillColor = interpolateColor(parseHexColor(this.oldDetailHPGethresholdColor[this.nHPGesegments*(this.cloverShowing-1)+this.nHPGesegments/4*i+j+2]), parseHexColor(this.detailHPGethresholdColor[this.nHPGesegments*(this.cloverShowing-1)+this.nHPGesegments/4*i+j+2]), frame/this.nFrames);
+                            else if(window.subdetectorView == 2) fillColor = interpolateColor(parseHexColor(this.oldDetailHPGerateColor[this.nHPGesegments*(this.cloverShowing-1)+this.nHPGesegments/4*i+j+2]), parseHexColor(this.detailHPGerateColor[this.nHPGesegments*(this.cloverShowing-1)+this.nHPGesegments/4*i+j+2]), frame/this.nFrames);
     
                         } else
-                            fillColor = 'rgba('+(this.nHPGEsegments/4*i+j+2)+', '+(this.nHPGEsegments/4*i+j+2)+', '+(this.nHPGEsegments/4*i+j+2)+', 1)';
+                            fillColor = 'rgba('+(this.nHPGesegments/4*i+j+2)+', '+(this.nHPGesegments/4*i+j+2)+', '+(this.nHPGesegments/4*i+j+2)+', 1)';
                         this.drawL(context, j*Math.PI/2, this.crystalSide/6, 1/3*this.crystalSide, this.centerX + PBC*this.lineWeight + NAD*(-NAD2)*5/6*this.crystalSide + NAD*PBC2*1/6*this.crystalSide + PBC*(-NAD2)*1/6*this.crystalSide + PBC*PBC2*5/6*this.crystalSide, this.centerY + NAB*(-NAB2)*5/6*this.crystalSide + NAB*PCD2*1/6*this.crystalSide + PCD*(-NAB2)*1/6*this.crystalSide + PCD*PCD2*5/6*this.crystalSide + PCD*this.lineWeight, colorWheel[i], fillColor);
 
                         //back segs
                         if(context == this.detailContext){
-                            if(window.subdetectorView == 1) fillColor = interpolateColor(parseHexColor(this.oldDetailHPGEthresholdColor[this.nHPGEsegments*(this.cloverShowing-1)+this.nHPGEsegments/4*i+j+2+4]), parseHexColor(this.detailHPGEthresholdColor[this.nHPGEsegments*(this.cloverShowing-1)+this.nHPGEsegments/4*i+j+2+4]), frame/this.nFrames);
-                            else if(window.subdetectorView == 2) fillColor = interpolateColor(parseHexColor(this.oldDetailHPGErateColor[this.nHPGEsegments*(this.cloverShowing-1)+this.nHPGEsegments/4*i+j+2+4]), parseHexColor(this.detailHPGErateColor[this.nHPGEsegments*(this.cloverShowing-1)+this.nHPGEsegments/4*i+j+2+4]), frame/this.nFrames);
+                            if(window.subdetectorView == 1) fillColor = interpolateColor(parseHexColor(this.oldDetailHPGethresholdColor[this.nHPGesegments*(this.cloverShowing-1)+this.nHPGesegments/4*i+j+2+4]), parseHexColor(this.detailHPGethresholdColor[this.nHPGesegments*(this.cloverShowing-1)+this.nHPGesegments/4*i+j+2+4]), frame/this.nFrames);
+                            else if(window.subdetectorView == 2) fillColor = interpolateColor(parseHexColor(this.oldDetailHPGerateColor[this.nHPGesegments*(this.cloverShowing-1)+this.nHPGesegments/4*i+j+2+4]), parseHexColor(this.detailHPGerateColor[this.nHPGesegments*(this.cloverShowing-1)+this.nHPGesegments/4*i+j+2+4]), frame/this.nFrames);
                         } else
-                            fillColor = 'rgba('+(this.nHPGEsegments/4*i+j+2+4)+', '+(this.nHPGEsegments/4*i+j+2+4)+', '+(this.nHPGEsegments/4*i+j+2+4)+', 1)';
+                            fillColor = 'rgba('+(this.nHPGesegments/4*i+j+2+4)+', '+(this.nHPGesegments/4*i+j+2+4)+', '+(this.nHPGesegments/4*i+j+2+4)+', 1)';
                         this.drawL(context, j*Math.PI/2, this.crystalSide/6, this.crystalSide/2, this.centerX + (-NAD)*NAD2*this.crystalSide + PBC*PBC2*this.crystalSide + PBC*this.lineWeight, this.centerY + (-NAB)*NAB2*this.crystalSide + PCD*PCD2*this.crystalSide + PCD*this.lineWeight, colorWheel[i], fillColor);
                     }
                 } else if(this.mode == 'GRIFFIN'){
                     //cores
                     if(context == this.detailContext){
                         if(window.subdetectorView == 1){
-                            fillColor  = interpolateColor(parseHexColor(this.oldDetailHPGEthresholdColor[8*(this.cloverShowing-1)+2*i]), parseHexColor(this.detailHPGEthresholdColor[8*(this.cloverShowing-1)+2*i]), frame/this.nFrames);
-                            fillColor2 = interpolateColor(parseHexColor(this.oldDetailHPGEthresholdColor[8*(this.cloverShowing-1)+2*i+1]), parseHexColor(this.detailHPGEthresholdColor[8*(this.cloverShowing-1)+2*i+1]), frame/this.nFrames);
+                            fillColor  = interpolateColor(parseHexColor(this.oldDetailHPGethresholdColor[8*(this.cloverShowing-1)+2*i]), parseHexColor(this.detailHPGethresholdColor[8*(this.cloverShowing-1)+2*i]), frame/this.nFrames);
+                            fillColor2 = interpolateColor(parseHexColor(this.oldDetailHPGethresholdColor[8*(this.cloverShowing-1)+2*i+1]), parseHexColor(this.detailHPGethresholdColor[8*(this.cloverShowing-1)+2*i+1]), frame/this.nFrames);
                         }
                         else if(window.subdetectorView == 2){ 
-                            fillColor = interpolateColor(parseHexColor(this.oldDetailHPGErateColor[8*(this.cloverShowing-1)+2*i]), parseHexColor(this.detailHPGErateColor[8*(this.cloverShowing-1)+2*i]), frame/this.nFrames);
-                            fillColor2 = interpolateColor(parseHexColor(this.oldDetailHPGErateColor[8*(this.cloverShowing-1)+2*i+1]), parseHexColor(this.detailHPGErateColor[8*(this.cloverShowing-1)+2*i+1]), frame/this.nFrames);
+                            fillColor = interpolateColor(parseHexColor(this.oldDetailHPGerateColor[8*(this.cloverShowing-1)+2*i]), parseHexColor(this.detailHPGerateColor[8*(this.cloverShowing-1)+2*i]), frame/this.nFrames);
+                            fillColor2 = interpolateColor(parseHexColor(this.oldDetailHPGerateColor[8*(this.cloverShowing-1)+2*i+1]), parseHexColor(this.detailHPGerateColor[8*(this.cloverShowing-1)+2*i+1]), frame/this.nFrames);
                         }
                     } else {
                         fillColor  = 'rgba('+2*i+', '+2*i+', '+2*i+', 1)';
@@ -387,7 +387,7 @@ function HPGE(){
                         fillColor  = 'rgba('+(4+2*i+j)+', '+(4+2*i+j)+', '+(4+2*i+j)+', 1)';
                     }
                     else
-                        fillColor = 'rgba('+(this.nHPGEsegments+i)+', '+(this.nHPGEsegments+i)+', '+(this.nHPGEsegments+i)+', 1)';
+                        fillColor = 'rgba('+(this.nHPGesegments+i)+', '+(this.nHPGesegments+i)+', '+(this.nHPGesegments+i)+', 1)';
                 }
                 if(window.subdetectorView == 0){
                     this.drawHalfL(context, (i-1+j)*(Math.PI/2), this.suppressorWidth, this.backBGOouterWidth/2, this.centerX + NAD*this.backBGOinnerWidth/2 + PBC*this.backBGOinnerWidth/2 + PBC*2*this.lineWeight + (-NAB)*NA*this.lineWeight + PCD*NB*this.lineWeight, this.centerY + (NAB+PCD)*this.backBGOinnerWidth/2 + PCD*2*this.lineWeight + (-NAD)*NB*this.lineWeight + PBC*NA*this.lineWeight, orientation[j], false, colorWheel[i], fillColor);
@@ -409,7 +409,7 @@ function HPGE(){
                         fillColor2 = 'rgba('+(4+8+4*i+2*j+1)+', '+(4+8+4*i+2*j+1)+', '+(4+8+4*i+2*j+1)+', 1)';
                     }
                     else
-                        fillColor = 'rgba('+(this.nHPGEsegments+4+2*i+j)+', '+(this.nHPGEsegments+4+2*i+j)+', '+(this.nHPGEsegments+4+2*i+j)+', 1)';
+                        fillColor = 'rgba('+(this.nHPGesegments+4+2*i+j)+', '+(this.nHPGesegments+4+2*i+j)+', '+(this.nHPGesegments+4+2*i+j)+', 1)';
                 }
                 this.drawHalfL(context, (i-1+j)*(Math.PI/2), this.suppressorWidth, this.sideBGOouterWidth/2, this.centerX +NAD*this.sideBGOinnerWidth/2 + PBC*this.sideBGOinnerWidth/2 + PBC*2*this.lineWeight + (-NAB)*NA*this.lineWeight + PCD*NB*this.lineWeight     , this.centerY + (NAB+PCD)*this.sideBGOinnerWidth/2 + PCD*2*this.lineWeight + (-NAD)*NB*this.lineWeight + PBC*NA*this.lineWeight, orientation[j], BGOstate, colorWheel[i], fillColor, fillColor2);
                 //front suppressors
@@ -426,7 +426,7 @@ function HPGE(){
                         fillColor2 = 'rgba('+(4+8+16+4*i+2*j+1)+', '+(4+8+16+4*i+2*j+1)+', '+(4+8+16+4*i+2*j+1)+', 1)';
                     }
                     else
-                        fillColor = 'rgba('+(this.nHPGEsegments+4+8+2*i+j)+', '+(this.nHPGEsegments+4+8+2*i+j)+', '+(this.nHPGEsegments+4+8+2*i+j)+', 1)';
+                        fillColor = 'rgba('+(this.nHPGesegments+4+8+2*i+j)+', '+(this.nHPGesegments+4+8+2*i+j)+', '+(this.nHPGesegments+4+8+2*i+j)+', 1)';
                 }
                 this.drawHalfL(context, (i-1+j)*(Math.PI/2), this.suppressorWidth, this.frontBGOouterWidth/2 - this.sideSpacer, this.centerX + (PBC+NAD)*this.frontBGOinnerWidth/2 + PBC*this.lineWeight + (-NAB)*NA*this.sideSpacer + PCD*NB*this.sideSpacer + (-NAD)*this.sideSpacer, this.centerY + (NAB+PCD)*this.frontBGOinnerWidth/2 + PCD*this.lineWeight + (-NAB*PA + PBC*NA + PBC*PB + PCD*NB)*this.sideSpacer, orientation[j], BGOstate, colorWheel[i], fillColor, fillColor2);
             }   
@@ -619,12 +619,12 @@ function HPGE(){
 
         //parse colors
         for(i=0; i<16*4; i++){
-            this.oldSummaryHPGEHVcolor[i] = this.summaryHPGEHVcolor[i];
-            this.summaryHPGEHVcolor[i] = this.parseColor(this.dataBus.summaryHPGEHV[i], 'HPGE');
-            this.oldSummaryHPGEthresholdColor[i] = this.summaryHPGEthresholdColor[i];
-            this.summaryHPGEthresholdColor[i] = this.parseColor(this.dataBus.summaryHPGEthreshold[i], 'HPGE');
-            this.oldSummaryHPGErateColor[i] = this.summaryHPGErateColor[i];
-            this.summaryHPGErateColor[i] = this.parseColor(this.dataBus.summaryHPGErate[i], 'HPGE');
+            this.oldSummaryHPGeHVcolor[i] = this.summaryHPGeHVcolor[i];
+            this.summaryHPGeHVcolor[i] = this.parseColor(this.dataBus.summaryHPGeHV[i], 'HPGe');
+            this.oldSummaryHPGethresholdColor[i] = this.summaryHPGethresholdColor[i];
+            this.summaryHPGethresholdColor[i] = this.parseColor(this.dataBus.summaryHPGethreshold[i], 'HPGe');
+            this.oldSummaryHPGerateColor[i] = this.summaryHPGerateColor[i];
+            this.summaryHPGerateColor[i] = this.parseColor(this.dataBus.summaryHPGerate[i], 'HPGe');
 
             this.oldSummaryBGOHVcolor[i] = this.summaryBGOHVcolor[i];
             this.summaryBGOHVcolor[i] = this.parseColor(this.dataBus.summaryBGOHV[i], 'BGO');
@@ -635,15 +635,15 @@ function HPGE(){
         }
 
         //detail level
-        for(i=0; i<16*this.nHPGEsegments; i++){
-            this.oldDetailHPGEthresholdColor[i] = this.detailHPGEthresholdColor[i];
-            this.detailHPGEthresholdColor[i] = this.parseColor(this.dataBus.detailHPGEthreshold[i], 'HPGE');
-            this.oldDetailHPGErateColor[i] = this.detailHPGErateColor[i];
-            this.detailHPGErateColor[i] = this.parseColor(this.dataBus.detailHPGErate[i], 'HPGE');
+        for(i=0; i<16*this.nHPGesegments; i++){
+            this.oldDetailHPGethresholdColor[i] = this.detailHPGethresholdColor[i];
+            this.detailHPGethresholdColor[i] = this.parseColor(this.dataBus.detailHPGethreshold[i], 'HPGe');
+            this.oldDetailHPGerateColor[i] = this.detailHPGerateColor[i];
+            this.detailHPGerateColor[i] = this.parseColor(this.dataBus.detailHPGerate[i], 'HPGe');
         }
         for(i=0; i<16*4; i++){
-            this.oldDetailHPGEHVcolor[i] = this.detailHPGEHVcolor[i];
-            this.detailHPGEHVcolor[i] = this.parseColor(this.dataBus.detailHPGEHV[i], 'HPGE');
+            this.oldDetailHPGeHVcolor[i] = this.detailHPGeHVcolor[i];
+            this.detailHPGeHVcolor[i] = this.parseColor(this.dataBus.detailHPGeHV[i], 'HPGe');
         }
         for(i=0; i<16*20; i++){
             this.oldDetailBGOthresholdColor[i] = this.detailBGOthresholdColor[i];
@@ -666,8 +666,8 @@ function HPGE(){
 
         //how far along the scale are we?
         var scale;
-        if(detectorType == 'HPGE')
-            scale = (scalar - window.parameters.HPGEminima[window.subdetectorView]) / (window.parameters.HPGEmaxima[window.subdetectorView] - window.parameters.HPGEminima[window.subdetectorView]);
+        if(detectorType == 'HPGe')
+            scale = (scalar - window.parameters.HPGeminima[window.subdetectorView]) / (window.parameters.HPGemaxima[window.subdetectorView] - window.parameters.HPGeminima[window.subdetectorView]);
         if(detectorType == 'BGO')
             scale = (scalar - window.parameters.BGOminima[window.subdetectorView]) / (window.parameters.BGOmaxima[window.subdetectorView] - window.parameters.BGOminima[window.subdetectorView]);
         //different scales for different meters to aid visual recognition:
@@ -690,21 +690,21 @@ function HPGE(){
         //dummy data
         //summary level
         for(i=0; i<16*4; i++){
-            this.dataBus.summaryHPGEHV[i] = Math.random();
-            this.dataBus.summaryHPGEthreshold[i] = Math.random();
-            this.dataBus.summaryHPGErate[i] = Math.random();
+            this.dataBus.summaryHPGeHV[i] = Math.random();
+            this.dataBus.summaryHPGethreshold[i] = Math.random();
+            this.dataBus.summaryHPGerate[i] = Math.random();
             this.dataBus.summaryBGOHV[i] = Math.random();
             this.dataBus.summaryBGOthreshold[i] = Math.random();
             this.dataBus.summaryBGOrate[i] = Math.random();
         }
 
         //detail level
-        for(i=0; i<16*this.nHPGEsegments; i++){
-                this.dataBus.detailHPGEthreshold[i] = Math.random();
-                this.dataBus.detailHPGErate[i] = Math.random();
+        for(i=0; i<16*this.nHPGesegments; i++){
+                this.dataBus.detailHPGethreshold[i] = Math.random();
+                this.dataBus.detailHPGerate[i] = Math.random();
         }
         for(i=0; i<16*4; i++){
-            this.dataBus.detailHPGEHV[i] = Math.random();
+            this.dataBus.detailHPGeHV[i] = Math.random();
         }
         for(i=0; i<16*20; i++){
             this.dataBus.detailBGOthreshold[i] = Math.random();
@@ -727,10 +727,10 @@ function HPGE(){
         var i, j; 
         context.clearRect(0, this.canvasHeight - this.scaleHeight, this.canvasWidth, this.canvasHeight);
 
-        var title, HPGEminTick, HPGEmaxTick, BGOminTick, BGOmaxTick;
+        var title, HPGeminTick, HPGemaxTick, BGOminTick, BGOmaxTick;
         title = window.parameters.monitorValues[window.subdetectorView];
-        HPGEminTick = 'HPGE: ' + window.parameters.HPGEminima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
-        HPGEmaxTick = 'HPGE: ' + window.parameters.HPGEmaxima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
+        HPGeminTick = 'HPGe: ' + window.parameters.HPGeminima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
+        HPGemaxTick = 'HPGe: ' + window.parameters.HPGemaxima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
         BGOminTick = 'BGO: ' + window.parameters.BGOminima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
         BGOmaxTick = 'BGO: ' +window.parameters.BGOmaxima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
 
@@ -748,14 +748,14 @@ function HPGE(){
         context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - 40);
         context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - 30);
         context.stroke();
-        context.fillText(HPGEminTick, this.canvasWidth*0.05 - context.measureText(HPGEminTick).width/2, this.canvasHeight-15);
+        context.fillText(HPGeminTick, this.canvasWidth*0.05 - context.measureText(HPGeminTick).width/2, this.canvasHeight-15);
         context.fillText(BGOminTick, this.canvasWidth*0.05 - context.measureText(BGOminTick).width/2, this.canvasHeight-3);
 
         context.beginPath();
         context.moveTo(this.canvasWidth*0.95-1, this.canvasHeight - 40);
         context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - 30); 
         context.stroke();      
-        context.fillText(HPGEmaxTick, this.canvasWidth*0.95 - context.measureText(HPGEmaxTick).width/2, this.canvasHeight-15);
+        context.fillText(HPGemaxTick, this.canvasWidth*0.95 - context.measureText(HPGemaxTick).width/2, this.canvasHeight-15);
         context.fillText(BGOmaxTick, this.canvasWidth*0.95 - context.measureText(BGOmaxTick).width/2, this.canvasHeight-3);
 
         for(i=0; i<3000; i++){

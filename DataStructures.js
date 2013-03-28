@@ -53,18 +53,18 @@ SHARCDS = function(){
 	//todo
 }
 
-HPGEDS = function(){
+HPGeDS = function(){
 	//data arrays:
-	this.summaryHPGEHV = [];
-	this.summaryHPGEthreshold = [];
-	this.summaryHPGErate = [];
+	this.summaryHPGeHV = [];
+	this.summaryHPGethreshold = [];
+	this.summaryHPGerate = [];
 	this.summaryBGOHV = [];
 	this.summaryBGOthreshold = [];
 	this.summaryBGOrate = [];
 
-	this.detailHPGEHV = [];
-	this.detailHPGEthreshold = [];
-	this.detailHPGErate = [];
+	this.detailHPGeHV = [];
+	this.detailHPGethreshold = [];
+	this.detailHPGerate = [];
 	this.detailBGOHV = [];
 	this.detailBGOthreshold = [];
 	this.detailBGOrate = [];
@@ -187,16 +187,16 @@ TIPDS = function(){
 	this.CsIthresholds = [];
 	this.CsIrate = [];
 
-	this.summaryHPGEHV = [];
-	this.summaryHPGEthreshold = [];
-	this.summaryHPGErate = [];
+	this.summaryHPGeHV = [];
+	this.summaryHPGethreshold = [];
+	this.summaryHPGerate = [];
 	this.summaryBGOHV = [];
 	this.summaryBGOthreshold = [];
 	this.summaryBGOrate = [];
 
-	this.detailHPGEHV = [];
-	this.detailHPGEthreshold = [];
-	this.detailHPGErate = [];
+	this.detailHPGeHV = [];
+	this.detailHPGethreshold = [];
+	this.detailHPGerate = [];
 	this.detailBGOHV = [];
 	this.detailBGOthreshold = [];
 	this.detailBGOrate = [];
@@ -204,15 +204,15 @@ TIPDS = function(){
 	
 	//key map, format: key[griffin.js index number][pointer]
 	//index 0-23: CsI wall elements TPW001P00X - TPW023P00X
-	//index 24-35: HPGE crystal summaries, GBWR x3
+	//index 24-35: HPGe crystal summaries, GBWR x3
 	//index 36-47: BGO summaries, GBWR x3
-	//index 48-55: HPGE detail (rate view), G(a)G(b)B(a)B(b)W(a)W(b)R(a)R(b) clover 0
+	//index 48-55: HPGe detail (rate view), G(a)G(b)B(a)B(b)W(a)W(b)R(a)R(b) clover 0
 	//index 56-59: BGO back detail (rate view), GBRW clover 0
 	//index 60-67: BGO side detail (rate view), G(a)G(b)B(a)B(b)W(a)W(b)R(a)R(b) clover 0
 	//index 68-75: BGO front detail (rate view), G(a)G(b)B(a)B(b)W(a)W(b)R(a)R(b) clover 0
 	//index 76-103: As 48-75, for clover 1
 	//index 104-131: As 48-75, for clover 2
-	//index 132-135: HPGE detail (HV), GBWR clover 0
+	//index 132-135: HPGe detail (HV), GBWR clover 0
 	//index 136-143: BGO back detail (HV), G(a)G(b)B(a)B(b)W(a)W(b)R(a)R(b) clover 0
 	//index 144-159: BGO side detail (HV), G(a)G(b)B(a)B(b)W(a)W(b)R(a)R(b) clover 0
 	//index 160-175: BGO front detail (HV), G(a)G(b)B(a)B(b)W(a)W(b)R(a)R(b) clover 0
@@ -252,13 +252,13 @@ TIPDS = function(){
 	this.key[22][0] = 'TPW020P00X';
 	this.key[23][0] = 'TPW019P00X';		
 
-	//HPGE + BGO summaries: todo
-	//HPGE + BGO rate detail:
+	//HPGe + BGO summaries: todo
+	//HPGe + BGO rate detail:
 	var color = ['G', 'B', 'W', 'R'];
 	var half = ['A', 'B'];
 	var chIndex;
 	for(j=0; j<3; j++){
-		//HPGE
+		//HPGe
 		for(i=0; i<8; i++){
 			chIndex = 48+28*j+i;
 			this.key[chIndex][0] = 'GRG0'+ (j+1) + color[Math.floor(i/2)] + 'N00' + half[i%2];
@@ -271,7 +271,7 @@ TIPDS = function(){
 		}
 
 	}
-	//HPGE + BGO HV detail: todo
+	//HPGe + BGO HV detail: todo
 
 	//figure out where this name is sitting in the JSON scalar rate array and in the FSCP table
 
