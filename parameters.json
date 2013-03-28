@@ -1,4 +1,5 @@
 loadParameters({
+				"devMode" : 0,
 				"ExpName" : "SR2",
 				"statusURL" : "http://midtig03.triumf.ca:8081/",
 				"topDeployment" : {"HV":1, "Subsystems":1, "DAQ":1, "Clock":1, "Trigger":1},
@@ -107,6 +108,7 @@ loadParameters({
 
 /*Parameter Dictionary//////////////////////////////////////
 //Global
+devMode							Flag that toggles between actually fetching ODB values and generating dummy values
 statusURL:						String containing the url of the MIDAS status page
 topDeployment:                  switches to turn top level assets on/off
 deployment						switches to turn subsystems on/off

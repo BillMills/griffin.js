@@ -51,7 +51,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
             insertDOM('input', 'onButton', '', 'margin-left:2%; margin-bottom:10px; display:inline;', 'setValues', '', '', 'HVswitch', 'radio', 'on');
             insertDOM('p', 'onSwitch', '', 'display:inline', 'setValues', '', 'On');
             //submit updates:
-            insertDOM('input', 'submitParameters', 'bigButton', '', 'setValues', '', '', '', 'button', 'Commit')
+            insertDOM('input', 'submitParameters', 'bigButton', 'z-index:10000;', 'setValues', 'updateParameter()', '', '', 'button', 'Commit')
             document.getElementById('submitParameters').setAttribute('disabled', 'true');
 
             //status report:
@@ -849,17 +849,19 @@ function getMIDASindex(row, col){
 
     if(row != 0){
         //count up regular channels
-        MIDASindex += (window.parameters.rows-1 +1)*col + row-1;
-        //add on primary channels
+        MIDASindex += window.parameters.rows*col + row-1;
         moduleNumber = primaryBin(window.parameters.moduleSizes, col);
         for(i=0; i<moduleNumber+1; i++){
+            //add on primary channels
             if(window.parameters.moduleSizes[i] == 4) MIDASindex++;
+            //remove overcounting for empty cards:
+            if(window.parameters.moduleSizes[i] == 0) MIDASindex -= 12;
         }
     } else{
         moduleNumber = col;
-        //add up all the channels from previous cards; recall empty slots occupy a 12-channel card in the arrays:
+        //add up all the channels from previous cards:
         for(i=0; i<moduleNumber; i++){
-            if( (window.parameters.moduleSizes[i] == 1) || (window.parameters.moduleSizes[i] == 0) ) MIDASindex += 12;
+            if(window.parameters.moduleSizes[i] == 1) MIDASindex += 12;
             if(window.parameters.moduleSizes[i] == 4) MIDASindex += 49;
         }
         //MIDASindex++;

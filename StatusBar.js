@@ -26,18 +26,18 @@ function StatusBar(wrapper){
 
     this.update = function(){
     	//experiment title
-    	this.expTitle = 'Offline Demo Experiment'; 
-        //this.expTitle = ODBGet('/Experiment/Name') + ' Experiment';
+    	if(window.parameters.devMode) this.expTitle = 'Offline Demo Experiment'; 
+        else this.expTitle = ODBGet('/Experiment/Name') + ' Experiment';
     	document.getElementById(this.titleID).innerHTML = this.expTitle;
 
     	//run #
-    	var runInfo = 'Run #1337'; 
-        //var runInfo = 'Run # '+ODBGet('/Runinfo/Run number');
+    	if(window.parameters.devMode) var runInfo = 'Run #1337'; 
+        else var runInfo = 'Run # '+ODBGet('/Runinfo/Run number');
 
     	//run state
     	runInfo += ': ';
-    	var runstate = 3; 
-        //var runstate = ODBGet('/Runinfo/State');
+    	if(window.parameters.devMode) var runstate = 3; 
+        else var runstate = ODBGet('/Runinfo/State');
     	if(runstate == 1){ 
             runInfo += 'Stopped';
             $('#statusHeader').css('border-color', '#FF3333');
@@ -53,25 +53,26 @@ function StatusBar(wrapper){
     	else runInfo += 'State Unknown';
 
     	//restart?  TODO
-    	this.restart = '???';
+        if(window.parameters.devMode) this.restart = '???';
+    	else this.restart = ODBGet('/Programs/Logger/Auto restart');
 
     	//data dir:
-    	this.dataDir = '/dummy/directory/path/' 
-        //this.dataDir = ODBGet('/Logger/Data dir')
+    	if(window.parameters.devMode) this.dataDir = '/dummy/directory/path/' 
+        else this.dataDir = ODBGet('/Logger/Data dir')
 
     	//run time
     	var startInfo = 'Start: ';
-    	startInfo += '00:00:00 January 1, 1970'
-        //startInfo += ODBGet('/Runinfo/Start time');
+    	if(window.parameters.devMode) startInfo += '00:00:00 January 1, 1970'
+        else startInfo += ODBGet('/Runinfo/Start time');
     	var elapsed;
     	if(runstate == 1){
     		elapsed = 'Stop: '
-    		elapsed += '00:00:00 January 1, 1970'; 
-            //elapsed += ODBGet('Runinfo/Stop time');
+    		if(window.parameters.devMode) elapsed += '00:00:00 January 1, 1970'; 
+            else elapsed += ODBGet('Runinfo/Stop time');
     	} else {
     		elapsed = 'Up: ';
-    		var binaryStart = 0; 
-            //var binaryStart = ODBGet('Runinfo/Start time binary');
+    		if(window.parameters.devMode) var binaryStart = 0; 
+            else var binaryStart = ODBGet('Runinfo/Start time binary');
     		var date = new Date(); 
     		var now = date.getTime() / 1000;
     		var uptime = now - binaryStart;
@@ -82,7 +83,9 @@ function StatusBar(wrapper){
   		}
 
         //run comment
-        var comment = 'No Comment'//ODBGet('/Experiment/Run Parameters/Comment');
+        var comment;
+        if(window.parameters.devMode) comment = 'No Comment';
+        else comment = ODBGet('/Experiment/Run Parameters/Comment');
 
   		document.getElementById(this.runInfoID).innerHTML = '<br>' + runInfo + '<br>' + startInfo + '<br>' + elapsed + '<br><br>' + comment + '<br><br>';
 
@@ -104,7 +107,7 @@ function StatusBar(wrapper){
         longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
         toolTipContent += nextLine + '<br><br>';
 
-        nextLine = 'Restart: ' + this.restart 
+        nextLine = 'Auto-Restart on End of Run: ' + this.restart 
         //keep track of the longest line of text:
         longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
         toolTipContent += nextLine + '<br>';
