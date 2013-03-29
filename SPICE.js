@@ -1,8 +1,10 @@
-SPICE.prototype = new Subsystem();
+SPICE.prototype = Object.create(Subsystem.prototype);
 
 function SPICE(){
+    Subsystem.call(this);
+    
     this.name = 'SPICE';
-	this.monitorID = window.parameters.wrapper;  //div ID of wrapper div
+	//this.monitorID = window.parameters.wrapper;  //div ID of wrapper div
 	this.canvasID = 'SPICECanvas'; 			     //ID of canvas to draw top level TIGRESS view on
     this.TTcanvasID = 'SPICETTCanvas';           //ID of hidden tooltip map canvas
     this.minima = window.parameters.SPICEminima; //array of meter minima [HV, thresholds, rate]

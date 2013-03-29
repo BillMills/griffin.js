@@ -1,8 +1,10 @@
-BAMBINO.prototype = new Subsystem();
+BAMBINO.prototype = Object.create(Subsystem.prototype);
 
 function BAMBINO(){
+    Subsystem.call(this);
+    
     this.name = 'BAMBINO';
-	this.monitorID = window.parameters.wrapper;     //div ID of wrapper div
+	//this.monitorID = window.parameters.wrapper;     //div ID of wrapper div
     this.mode = window.parameters.BAMBINOmode;      //'S2' or 'S3'
 	this.canvasID = 'BAMBINOCanvas'; 		        //ID of canvas to draw top level TIGRESS view on
     this.TTcanvasID = 'BAMBINOTTCanvas';            //ID of hidden tooltip map canvas

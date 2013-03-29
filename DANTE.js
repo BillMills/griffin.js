@@ -1,8 +1,10 @@
-DANTE.prototype = new Subsystem();
+DANTE.prototype = Object.create(Subsystem.prototype);
 
 function DANTE(){
+    Subsystem.call(this);
+    
     this.name = 'DANTE';
-	this.monitorID = window.parameters.wrapper;  //div ID of wrapper div
+	//this.monitorID = window.parameters.wrapper;  //div ID of wrapper div
 	this.canvasID = 'DANTECanvas'; 			     //ID of canvas to draw top level TIGRESS view on
     this.TTcanvasID = 'DANTETTCanvas';           //ID of hidden tooltip map canvas
     this.dataBus = new DANTEDS();

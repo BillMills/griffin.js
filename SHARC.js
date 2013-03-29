@@ -1,12 +1,13 @@
-SHARC.prototype = new Subsystem();
+SHARC.prototype = Object.create(Subsystem.prototype);
 
 function SHARC(){
+	Subsystem.call(this);
 
 	var i,j;
 
 	//member variables/////////////////////////////////////////////////////////////////////////////////
 	this.name = 'SHARC';
-	this.monitorID = window.parameters.wrapper;		//div ID of wrapper div
+	//this.monitorID = window.parameters.wrapper;		//div ID of wrapper div
 	this.canvasID = 'SHARCCanvas';					//the canvas ID on which to draw the strip monitor
 	this.rows = window.parameters.SMrows;			//number of rows of detectors
 	this.columns = window.parameters.SMcolumns;		//number of columns of detectors

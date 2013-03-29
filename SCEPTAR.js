@@ -1,8 +1,10 @@
-SCEPTAR.prototype = new Subsystem();
+SCEPTAR.prototype = Object.create(Subsystem.prototype);
 
 function SCEPTAR(){
+    Subsystem.call(this);
+    
     this.name = 'SCEPTAR';
-	this.monitorID = window.parameters.wrapper;     //div ID of wrapper div
+	//this.monitorID = window.parameters.wrapper;     //div ID of wrapper div
 	this.canvasID = 'SCEPTARCanvas'; 		        //ID of canvas to draw top level TIGRESS view on
     this.TTcanvasID = 'SCEPTARTTCanvas';            //ID of hidden tooltip map canvas
     this.config = window.parameters.SCEPTARconfig;  //subsystems on: [upstream sceptar, downstream sceptar, downstream ZDS]

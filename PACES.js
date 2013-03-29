@@ -1,8 +1,10 @@
-PACES.prototype = new Subsystem();
+PACES.prototype = Object.create(Subsystem.prototype);
 
 function PACES(){
+    Subsystem.call(this);
+    
     this.name = 'PACES'
-	this.monitorID = window.parameters.wrapper; //div ID of wrapper div
+	//this.monitorID = window.parameters.wrapper; //div ID of wrapper div
 	this.HVcanvasID = 'PACESHVCanvas'; 	        //ID of canvas to draw HV view
     this.RateCanvasID = 'PACESrateCanvas';      //ID of canvas to draw rate / threshold view
     this.TTcanvasID = 'PACESTTCanvas';          //ID of hidden tooltip map canvas

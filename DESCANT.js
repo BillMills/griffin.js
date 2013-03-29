@@ -1,11 +1,12 @@
-DESCANT.prototype = new Subsystem();
+DESCANT.prototype = Object.create(Subsystem.prototype);
 
 function DESCANT(){
+    Subsystem.call(this);
 
 	var i, j;
 
     this.name = 'DESCANT';
-	this.monitorID = window.parameters.wrapper;		//div ID of wrapper div
+	//this.monitorID = window.parameters.wrapper;		//div ID of wrapper div
 	this.canvasID = this.name+'Canvas';		        //ID of canvas to draw DESCANT on
 	this.TTcanvasID = 'DESCANTTTCanvas';	        //ID of hidden tooltip map canvas
 	this.minima = window.parameters.DESCANTminima;  //array of meter minima [HV, thresholds, rate]

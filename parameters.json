@@ -1,11 +1,11 @@
 loadParameters({
 				"devMode" : 1,
 				"ExpName" : "SR2",
-				"statusURL" : "http://midtig03.triumf.ca:8081/",
+				"statusURL" : "http://alphadon.triumf.ca:8081/",
 				"topDeployment" : {"HV":1, "Subsystems":1, "DAQ":1, "Clock":1, "Trigger":1},
 				"deployment" : {"SHARC":1, "HPGe":1, "DESCANT":1, "PACES":1, "DANTE":1, "BAMBINO":1, "SCEPTAR":1, "SPICE":1, "TIP":1},
 				"wrapper" : "waffleplate",
-				"subdetectorUnit" : ["V", "V", "Hz"],
+				"subdetectorUnit" : ["V", "ADC units", "Hz"],
 				"monitorValues" : ["HV", "Thresholds", "Rate"],
 
 				"ODBkeys" : ["/Location/Of/Device/Varibles", "/Location/Of/Device/Settings", "Demand Voltage Key", "Measured Voltage Key", "Measured Current Key", "Voltage Ramp Up Key", "Voltage Ramp Down Key", "Temperature Key", "ChState Key", "ChStatus Key", "Voltage Limit Key", "Current Limit Key", "Channel Name Key"],
@@ -98,12 +98,12 @@ loadParameters({
 				"TIPBGOminima" : [0,0,0],
 				"TIPBGOmaxima" : [1,1,2],
 				"TIPprefix" : ["HV: ", "Thresholds: ", "Rate: "],
-				"TIPpostfix" : [" V", " V", " Hz"],
+				"TIPpostfix" : [" V", " ADC units", " Hz"],
 
 				"DAQminima" : [0,0,0,0,0,0,0,0,0],
 				"DAQmaxima" : [1,1,1,1,1,1,1,1,1],
 
-				"JSONPrepos" : ["http://midtig03.triumf.ca:8092/parameters?jsonp=parseResponse", "http://midtig03.triumf.ca:8091/scalar?jsonp=parseResponse", "dummy.json"]
+				"JSONPrepos" : ["http://alphadon.triumf.ca:8092/parameters?jsonp=parseResponse", "http://alphadon.triumf.ca:8091/scalar?jsonp=parseResponse", "dummy.json"]
 				})
 
 /*Parameter Dictionary//////////////////////////////////////

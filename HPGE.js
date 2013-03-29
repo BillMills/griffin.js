@@ -1,9 +1,10 @@
-HPGe.prototype = new Subsystem();
+HPGe.prototype = Object.create(Subsystem.prototype);
 
 function HPGe(){
+    Subsystem.call(this);
 
     this.name = 'HPGe';
-	this.monitorID = window.parameters.wrapper;		//div ID of wrapper div
+	//this.monitorID = window.parameters.wrapper;		//div ID of wrapper div
 	this.canvasID = 'HPGeCanvas'; 			        //ID of canvas to draw top level TIGRESS view on
 	this.detailCanvasID = 'HPGedetailCanvas';		//ID of canvas to draw single HPGe view on
     this.TTcanvasID = 'HPGeTTCanvas';               //ID of hidden tooltip map canvas for summary level

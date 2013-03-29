@@ -39,19 +39,6 @@
 
     <link rel="stylesheet" type="text/css" href="GRIFFINcc.css" />
 
-    <!--Load static parameters from JSONP DB////////////////////////////////////////////////////-->
-    <script id='parameterLoad' type="text/JavaScript">
-      window.parameters = {};
-      function loadParameters(dataWeGotViaJsonp){
-        for (var key in dataWeGotViaJsonp) {
-          if (dataWeGotViaJsonp.hasOwnProperty(key)) {
-            window.parameters[key] = dataWeGotViaJsonp[key];
-          }
-        }
-      } 
-    </script>
-    <script src='parameters.json'>//experimental parameters loaded here//</script>
-
   </head> 
 
 
@@ -84,11 +71,20 @@
       <canvas id='SidebarBKG' style='position:absolute; z-index:-1; right:0%'> </canvas>
     </div>
 
-    <!--Main routine/////////////////////////////////////////////////////////////////////-->
-    <script id='main' type="text/JavaScript">
-      var i,j,k;
+    <!--Set up JSONP services, then synchronously load parameters->data stores->main routine////////////////////////////////////////////////////-->
+    <script id='parameterLoad' type="text/JavaScript">
+      window.parameters = {};
+
+      function loadParameters(dataWeGotViaJsonp){
+        for (var key in dataWeGotViaJsonp) {
+          if (dataWeGotViaJsonp.hasOwnProperty(key)) {
+            window.parameters[key] = dataWeGotViaJsonp[key];
+          }
+        }
+      }
 
       //define function to fetch from JSONP service
+      var i,j,k;
       window.JSONPstore = {};
       function parseResponse(dataWeGotViaJsonp){
         var i;
@@ -105,12 +101,15 @@
             }
           }
         }
-      }
-      //fetch the JSONP once so the data structures can traverse its arrays and make the necessary mapping:
-      loadJSONP("main()");
+      } 
+    </script>
+    <script src='parameters.json' onload='loadJSONP("main()");'>//experimental parameters loaded here//</script>
+
+    <!--Main routine/////////////////////////////////////////////////////////////////////-->
+    <script id='main' type="text/JavaScript">
 
       function main(){
-
+        //for(var key in window.parameters) document.write(key+'<br>')
         //plug in MIDAS status page link:
         document.getElementById('MIDASstatusLink').setAttribute('onclick', "window.location='"+window.parameters.statusURL+"';")
 
