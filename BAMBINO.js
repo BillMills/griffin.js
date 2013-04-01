@@ -1,16 +1,13 @@
 BAMBINO.prototype = Object.create(Subsystem.prototype);
 
 function BAMBINO(){
-    Subsystem.call(this);
-    
     this.name = 'BAMBINO';
-	//this.monitorID = window.parameters.wrapper;     //div ID of wrapper div
+    Subsystem.call(this);
+
     this.mode = window.parameters.BAMBINOmode;      //'S2' or 'S3'
-	this.canvasID = 'BAMBINOCanvas'; 		        //ID of canvas to draw top level TIGRESS view on
-    this.TTcanvasID = 'BAMBINOTTCanvas';            //ID of hidden tooltip map canvas
+
     this.minima = window.parameters.BAMBINOminima;  //array of meter minima [HV, thresholds, rate]
     this.maxima = window.parameters.BAMBINOmaxima;  //array of meter maxima, arranged as minima
-    this.subviewLink = 'BAMBINOlink';                   //ID of inter-subsystem nav button
 
     this.nRadial = 24;
     if(this.mode=='S2')
@@ -23,13 +20,7 @@ function BAMBINO(){
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
     window.BAMBINOpointer = that;
 
-    //insert nav link
-    insertDOM('button', 'BAMBINOlink', 'navLink', '', this.linkWrapperID, "javascript:swapFade('BAMBINOlink', window.BAMBINOpointer, window.subsystemScalars, window.subdetectorView)", 'BAMBINO', '', 'button')
-
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
-    this.monitor = document.getElementById(this.monitorID);
-    this.canvasWidth = 0.48*$(this.monitor).width();
-    this.canvasHeight = 0.8*$(this.monitor).height();
     //detector view
     insertDOM('canvas', this.canvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.monitorID, '', '')
     this.canvas = document.getElementById(this.canvasID);

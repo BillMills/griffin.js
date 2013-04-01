@@ -1,30 +1,20 @@
 DESCANT.prototype = Object.create(Subsystem.prototype);
 
 function DESCANT(){
+    this.name = 'DESCANT';
     Subsystem.call(this);
 
 	var i, j;
 
-    this.name = 'DESCANT';
-	//this.monitorID = window.parameters.wrapper;		//div ID of wrapper div
-	this.canvasID = this.name+'Canvas';		        //ID of canvas to draw DESCANT on
-	this.TTcanvasID = 'DESCANTTTCanvas';	        //ID of hidden tooltip map canvas
 	this.minima = window.parameters.DESCANTminima;  //array of meter minima [HV, thresholds, rate]
 	this.maxima = window.parameters.DESCANTmaxima;  //array of meter maxima, arranged as minima
     this.dataBus = new DESCANTDS();
-    this.subviewLink = 'DESCANTlink';                   //ID of inter-subsystem nav button
 
 	var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
     window.DESCANTpointer = that;
 
-    //insert nav link
-    insertDOM('button', this.subviewLink, 'navLink', '', this.linkWrapperID, "javascript:swapFade('"+this.subviewLink+"', window.DESCANTpointer, window.subsystemScalars, window.subdetectorView)", 'DESCANT', '', 'button')
-
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
-	this.monitor = document.getElementById(this.monitorID);
-    this.canvasWidth = 0.48*$(this.monitor).width();
-    this.canvasHeight = 0.8*$(this.monitor).height();
     //detector view
     insertDOM('canvas', this.canvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.monitorID, '', '')
     this.canvas = document.getElementById(this.canvasID);

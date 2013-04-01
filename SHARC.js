@@ -1,21 +1,18 @@
 SHARC.prototype = Object.create(Subsystem.prototype);
 
 function SHARC(){
+	this.name = 'SHARC';	
 	Subsystem.call(this);
 
 	var i,j;
 
 	//member variables/////////////////////////////////////////////////////////////////////////////////
-	this.name = 'SHARC';
-	//this.monitorID = window.parameters.wrapper;		//div ID of wrapper div
-	this.canvasID = 'SHARCCanvas';					//the canvas ID on which to draw the strip monitor
 	this.rows = window.parameters.SMrows;			//number of rows of detectors
 	this.columns = window.parameters.SMcolumns;		//number of columns of detectors
 	this.nStrips = window.parameters.SMnChannels;	//number of sense strips per detector
 	this.minima = window.parameters.SHARCminima;		//array of scale minima, one entry for each scalar option
 	this.maxima = window.parameters.SHARCmaxima;		//array of scale maxima, one entry for each scalar option
 	this.dataBus = new SHARCDS();
-    this.subviewLink = 'SHARClink';                   //ID of inter-subsystem nav button
 
 	var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
@@ -24,13 +21,7 @@ function SHARC(){
     //which of the scalars are we tracking now? (corresponds to the index in this.maxima)
     this.trackingIndex = 0;
 
-    //insert nav link
-	insertDOM('button', 'SHARClink', 'navLink', '', this.linkWrapperID, "javascript:swapFade('SHARClink', window.SHARCpointer, window.subsystemScalars, window.subdetectorView)", 'SHARC', '', 'button')
-
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
-	this.monitor = document.getElementById(this.monitorID);
-    this.canvasWidth = 0.48*$(this.monitor).width();
-    this.canvasHeight = 0.8*$(this.monitor).height();
 	insertDOM('canvas', this.canvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.monitorID, '', '')
     document.getElementById(this.canvasID).setAttribute('width', this.canvasWidth);
     document.getElementById(this.canvasID).setAttribute('height', this.canvasHeight);

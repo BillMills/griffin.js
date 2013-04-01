@@ -1,18 +1,15 @@
 HPGe.prototype = Object.create(Subsystem.prototype);
 
 function HPGe(){
+    this.name = 'HPGe';
     Subsystem.call(this);
 
-    this.name = 'HPGe';
-	//this.monitorID = window.parameters.wrapper;		//div ID of wrapper div
-	this.canvasID = 'HPGeCanvas'; 			        //ID of canvas to draw top level TIGRESS view on
+
 	this.detailCanvasID = 'HPGedetailCanvas';		//ID of canvas to draw single HPGe view on
-    this.TTcanvasID = 'HPGeTTCanvas';               //ID of hidden tooltip map canvas for summary level
     this.TTdetailCanvasID = 'HPGeTTdetailCanvas';   //ID of hidden tooltip map canvas for detail level
     this.mode = window.parameters.HPGemode;         //mode to run in, either 'TIGRESS' or 'GRIFFIN'
     this.BGOenable = window.parameters.BGOenable;   //are the suppresors present?
     this.dataBus = new HPGeDS();
-    this.subviewLink = 'HPGelink';                   //ID of inter-subsystem nav button
 
     this.cloverShowing = 1;                         //index of clover currently showing in detail view
     this.detailShowing = 0;                         //is the detail canvas showing?
@@ -28,13 +25,7 @@ function HPGe(){
     window.HPGepointer = that;
 
     //subsystem navigation//////////////////////////////////////////////////////////////////////////////
-    //insert nav link
-    insertDOM('button', 'HPGelink', 'navLink', '', this.linkWrapperID, "javascript:swapFade('HPGelink', window.HPGepointer, window.subsystemScalars, window.subdetectorView)", 'HPGe', '', 'button')
-
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
-    this.monitor = document.getElementById(this.monitorID);
-    this.canvasWidth = 0.48*$(this.monitor).width();
-    this.canvasHeight = 0.8*$(this.monitor).height();
     //top level
     insertDOM('canvas', this.canvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px; transition:opacity 0.5s, z-index 0.5s; -moz-transition:opacity 0.5s, z-index 0.5s; -webkit-transition:opacity 0.5s, z-index 0.5s;', this.monitorID, '', '')
     this.canvas = document.getElementById(this.canvasID);

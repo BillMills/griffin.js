@@ -1,27 +1,17 @@
 SCEPTAR.prototype = Object.create(Subsystem.prototype);
 
 function SCEPTAR(){
-    Subsystem.call(this);
-    
     this.name = 'SCEPTAR';
-	//this.monitorID = window.parameters.wrapper;     //div ID of wrapper div
-	this.canvasID = 'SCEPTARCanvas'; 		        //ID of canvas to draw top level TIGRESS view on
-    this.TTcanvasID = 'SCEPTARTTCanvas';            //ID of hidden tooltip map canvas
+    Subsystem.call(this);
+
     this.config = window.parameters.SCEPTARconfig;  //subsystems on: [upstream sceptar, downstream sceptar, downstream ZDS]
     this.dataBus = new SCEPTARDS();
-    this.subviewLink = 'SCEPTARlink';                   //ID of inter-subsystem nav button
 
     var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
     window.SCEPTARpointer = that;
 
-    //insert nav link
-    insertDOM('button', 'SCEPTARlink', 'navLink', '', this.linkWrapperID, "javascript:swapFade('SCEPTARlink', window.SCEPTARpointer, window.subsystemScalars, window.subdetectorView)", 'SCEPTAR', '', 'button')
-
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
-    this.monitor = document.getElementById(this.monitorID);
-    this.canvasWidth = 0.48*$(this.monitor).width();
-    this.canvasHeight = 0.8*$(this.monitor).height();
     //detector view
     insertDOM('canvas', this.canvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.monitorID, '', '')
     this.canvas = document.getElementById(this.canvasID);

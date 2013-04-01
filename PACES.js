@@ -1,28 +1,20 @@
 PACES.prototype = Object.create(Subsystem.prototype);
 
 function PACES(){
+    this.name = 'PACES';
     Subsystem.call(this);
-    
-    this.name = 'PACES'
-	//this.monitorID = window.parameters.wrapper; //div ID of wrapper div
+
 	this.HVcanvasID = 'PACESHVCanvas'; 	        //ID of canvas to draw HV view
     this.RateCanvasID = 'PACESrateCanvas';      //ID of canvas to draw rate / threshold view
-    this.TTcanvasID = 'PACESTTCanvas';          //ID of hidden tooltip map canvas
     this.minima = window.parameters.PACESminima;//array of meter minima [HV, thresholds, rate]
     this.maxima = window.parameters.PACESmaxima;//array of meter maxima, arranged as minima
     this.dataBus = new PACESDS();           
-    this.subviewLink = 'PACESlink';                   //ID of inter-subsystem nav button
 
     var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
     window.PACESpointer = that;
 
-    insertDOM('button', 'PACESlink', 'navLink', '', this.linkWrapperID, "javascript:swapFade('PACESlink', window.PACESpointer, window.subsystemScalars, window.subdetectorView)", 'PACES', '', 'button')
-
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
-    this.monitor = document.getElementById(this.monitorID);
-    this.canvasWidth = 0.48*$(this.monitor).width();
-    this.canvasHeight = 0.8*$(this.monitor).height();
     //HV view
     insertDOM('canvas', this.HVcanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.monitorID, '', '')
     this.HVcanvas = document.getElementById(this.HVcanvasID);

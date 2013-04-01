@@ -1,26 +1,15 @@
 DANTE.prototype = Object.create(Subsystem.prototype);
 
 function DANTE(){
-    Subsystem.call(this);
-    
     this.name = 'DANTE';
-	//this.monitorID = window.parameters.wrapper;  //div ID of wrapper div
-	this.canvasID = 'DANTECanvas'; 			     //ID of canvas to draw top level TIGRESS view on
-    this.TTcanvasID = 'DANTETTCanvas';           //ID of hidden tooltip map canvas
-    this.dataBus = new DANTEDS();
-    this.subviewLink = 'DANTElink';                   //ID of inter-subsystem nav button
+    Subsystem.call(this);
 
+    this.dataBus = new DANTEDS();
     var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
     window.DANTEpointer = that;
 
-    //insert nav link
-    insertDOM('button', 'DANTElink', 'navLink', '', this.linkWrapperID, "javascript:swapFade('DANTElink', window.DANTEpointer, window.subsystemScalars, window.subdetectorView)", 'DANTE', '', 'button')
-
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
-    this.monitor = document.getElementById(this.monitorID);
-    this.canvasWidth = 0.48*$(this.monitor).width();
-    this.canvasHeight = 0.8*$(this.monitor).height();
     //detector view
     insertDOM('canvas', this.canvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.monitorID, '', '')
     this.canvas = document.getElementById(this.canvasID);

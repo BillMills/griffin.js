@@ -1,16 +1,12 @@
 SPICE.prototype = Object.create(Subsystem.prototype);
 
 function SPICE(){
-    Subsystem.call(this);
-    
     this.name = 'SPICE';
-	//this.monitorID = window.parameters.wrapper;  //div ID of wrapper div
-	this.canvasID = 'SPICECanvas'; 			     //ID of canvas to draw top level TIGRESS view on
-    this.TTcanvasID = 'SPICETTCanvas';           //ID of hidden tooltip map canvas
+    Subsystem.call(this);
+
     this.minima = window.parameters.SPICEminima; //array of meter minima [HV, thresholds, rate]
     this.maxima = window.parameters.SPICEmaxima; //array of meter maxima, arranged as minima
     this.dataBus = new SPICEDS();
-    this.subviewLink = 'SPICElink';                   //ID of inter-subsystem nav button
 
     var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
@@ -19,13 +15,8 @@ function SPICE(){
 	this.nRadial = 10;
 	this.nAzimuthal = 12;
 
-    //insert nav link
-    insertDOM('button', 'SPICElink', 'navLink', '', this.linkWrapperID, "javascript:swapFade('SPICElink', window.SPICEpointer, window.subsystemScalars, window.subdetectorView)", 'SPICE', '', 'button')
-
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
-    this.monitor = document.getElementById(this.monitorID);
-    this.canvasWidth = 0.48*$(this.monitor).width();
-    this.canvasHeight = 0.8*$(this.monitor).height();
+
     //detector view
     insertDOM('canvas', this.canvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.monitorID, '', '')
     this.canvas = document.getElementById(this.canvasID);
