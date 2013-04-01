@@ -2,48 +2,33 @@ BAMBINO.prototype = Object.create(Subsystem.prototype);
 
 function BAMBINO(){
     this.name = 'BAMBINO';
+    var that = this;
+    this.prefix = window.parameters.BAMBINOprefix;
+    this.postfix = window.parameters.BAMBINOpostfix;
+    this.minima = window.parameters.BAMBINOminima;  //array of meter minima [HV, thresholds, rate]
+    this.maxima = window.parameters.BAMBINOmaxima;  //array of meter maxima, arranged as minima
     Subsystem.call(this);
+    this.dataBus = new BAMBINODS(this.mode);
+    //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
+    window.BAMBINOpointer = that;
+
+
+
 
     this.mode = window.parameters.BAMBINOmode;      //'S2' or 'S3'
 
-    this.minima = window.parameters.BAMBINOminima;  //array of meter minima [HV, thresholds, rate]
-    this.maxima = window.parameters.BAMBINOmaxima;  //array of meter maxima, arranged as minima
+
 
     this.nRadial = 24;
     if(this.mode=='S2')
     	this.nAzimuthal = 16;
     else
         this.nAzimuthal = 32;
-    this.dataBus = new BAMBINODS(this.mode);
 
-    var that = this;
-    //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
-    window.BAMBINOpointer = that;
 
-    //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
-    //detector view
-    insertDOM('canvas', this.canvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.monitorID, '', '')
-    this.canvas = document.getElementById(this.canvasID);
-    this.context = this.canvas.getContext('2d');
-    this.canvas.setAttribute('width', this.canvasWidth);
-    this.canvas.setAttribute('height', this.canvasHeight);
 
-    //hidden Tooltip map layer
-    insertDOM('canvas', this.TTcanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.monitorID, '', '')    
-    this.TTcanvas = document.getElementById(this.TTcanvasID);
-    this.TTcontext = this.TTcanvas.getContext('2d');
-    this.TTcanvas.setAttribute('width', this.canvasWidth);
-    this.TTcanvas.setAttribute('height', this.canvasHeight);
 
-    //Dirty trick to implement tooltip on obnoxious geometry: make another canvas of the same size hidden beneath, with the 
-    //detector drawn on it, but with each element filled in with rgba(0,0,n,1), where n is the channel number; fetching the color from the 
-    //hidden canvas at point x,y will then return the appropriate channel index.
-    //paint whole hidden canvas with R!=G!=B to trigger TT suppression:
-    this.TTcontext.fillStyle = 'rgba(50,100,150,1)';
-    this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
-    //set up tooltip:
-    this.tooltip = new Tooltip(this.canvasID, 'BAMBINOTipText', 'BAMBINOTT', this.monitorID, window.parameters.BAMBINOprefix, window.parameters.BAMBINOpostfix);
-    this.tooltip.obj = that;
+
 
     //drawing parameters
     this.scaleHeight = 80;
@@ -234,17 +219,6 @@ function BAMBINO(){
         this.tooltip.update();
     };
 
-    //determine which color <scalar> corresponds to
-    this.parseColor = function(scalar){
-
-        //how far along the scale are we?
-        var scale = (scalar - this.minima[window.subdetectorView]) / (this.maxima[window.subdetectorView] - this.minima[window.subdetectorView]);
-
-        //different scales for different meters to aid visual recognition:
-        if(window.subdetectorView==0) return scalepickr(scale, 'rainbow');
-        else if(window.subdetectorView==1) return scalepickr(scale, 'twighlight');
-        else if(window.subdetectorView==2) return scalepickr(scale, 'thermalScope');
-    };
 
     this.fetchNewData = function(){
         var i;

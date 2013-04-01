@@ -2,38 +2,21 @@ SCEPTAR.prototype = Object.create(Subsystem.prototype);
 
 function SCEPTAR(){
     this.name = 'SCEPTAR';
-    Subsystem.call(this);
-
-    this.config = window.parameters.SCEPTARconfig;  //subsystems on: [upstream sceptar, downstream sceptar, downstream ZDS]
-    this.dataBus = new SCEPTARDS();
-
     var that = this;
+    this.prefix = window.parameters.SCEPTARprefix;
+    this.postfix = window.parameters.SCEPTARpostfix;
+    Subsystem.call(this);
+    this.dataBus = new SCEPTARDS();
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
     window.SCEPTARpointer = that;
 
-    //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
-    //detector view
-    insertDOM('canvas', this.canvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.monitorID, '', '')
-    this.canvas = document.getElementById(this.canvasID);
-    this.context = this.canvas.getContext('2d');
-    this.canvas.setAttribute('width', this.canvasWidth);
-    this.canvas.setAttribute('height', this.canvasHeight);
-    //hidden Tooltip map layer
-    insertDOM('canvas', this.TTcanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.monitorID, '', '')    
-    this.TTcanvas = document.getElementById(this.TTcanvasID);
-    this.TTcontext = this.TTcanvas.getContext('2d');
-    this.TTcanvas.setAttribute('width', this.canvasWidth);
-    this.TTcanvas.setAttribute('height', this.canvasHeight);
 
-    //Dirty trick to implement tooltip on obnoxious geometry: make another canvas of the same size hidden beneath, with the 
-    //detector drawn on it, but with each element filled in with rgba(0,0,n,1), where n is the channel number; fetching the color from the 
-    //hidden canvas at point x,y will then return the appropriate channel index.
-    //paint whole hidden canvas with R!=G!=B to trigger TT suppression:
-    this.TTcontext.fillStyle = 'rgba(50,100,150,1)';
-    this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
-    //set up tooltip:
-    this.tooltip = new Tooltip(this.canvasID, 'SCEPTARTipText', 'SCEPTARTT', this.monitorID, window.parameters.SCEPTARprefix, window.parameters.SCEPTARpostfix);
-    this.tooltip.obj = that;
+    this.config = window.parameters.SCEPTARconfig;  //subsystems on: [upstream sceptar, downstream sceptar, downstream ZDS]
+
+
+
+
+
 
     //drawing parameters
     this.scaleHeight = 80;

@@ -2,39 +2,35 @@ SHARC.prototype = Object.create(Subsystem.prototype);
 
 function SHARC(){
 	this.name = 'SHARC';	
+	var that = this;
+    this.prefix = window.parameters.SHARCprefix;
+    this.postfix = window.parameters.SHARCpostfix;
+	this.minima = window.parameters.SHARCminima;		//array of scale minima, one entry for each scalar option
+	this.maxima = window.parameters.SHARCmaxima;		//array of scale maxima, one entry for each scalar option
 	Subsystem.call(this);
+	this.dataBus = new SHARCDS();
+    //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
+    window.SHARCpointer = that;
 
+	
 	var i,j;
 
 	//member variables/////////////////////////////////////////////////////////////////////////////////
 	this.rows = window.parameters.SMrows;			//number of rows of detectors
 	this.columns = window.parameters.SMcolumns;		//number of columns of detectors
 	this.nStrips = window.parameters.SMnChannels;	//number of sense strips per detector
-	this.minima = window.parameters.SHARCminima;		//array of scale minima, one entry for each scalar option
-	this.maxima = window.parameters.SHARCmaxima;		//array of scale maxima, one entry for each scalar option
-	this.dataBus = new SHARCDS();
 
-	var that = this;
-    //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
-    window.SHARCpointer = that;
+
+
+
+
 
     //which of the scalars are we tracking now? (corresponds to the index in this.maxima)
     this.trackingIndex = 0;
 
-    //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
-	insertDOM('canvas', this.canvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.monitorID, '', '')
-    document.getElementById(this.canvasID).setAttribute('width', this.canvasWidth);
-    document.getElementById(this.canvasID).setAttribute('height', this.canvasHeight);
-
-	this.canvas = document.getElementById(this.canvasID);
-	this.context = this.canvas.getContext('2d');
 
     //half-width for drawing horizontal and vertical schema on same canvas:
     this.halfWidth = this.canvasWidth/2;
-
-    //set up tooltip:
-    this.tooltip = new Tooltip(this.canvasID, 'SHARCTipText', 'SHARCTT', this.monitorID, window.parameters.SHARCprefix, window.parameters.SHARCpostfix);
-    this.tooltip.obj = that;
 
     //define dimensions of each detector display/////////////////////////////////////////////////////////
     //gutter width as fraction of detector width:

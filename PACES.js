@@ -2,17 +2,24 @@ PACES.prototype = Object.create(Subsystem.prototype);
 
 function PACES(){
     this.name = 'PACES';
-    Subsystem.call(this);
-
-	this.HVcanvasID = 'PACESHVCanvas'; 	        //ID of canvas to draw HV view
-    this.RateCanvasID = 'PACESrateCanvas';      //ID of canvas to draw rate / threshold view
+    var that = this;
+    this.prefix = window.parameters.PACESprefix;
+    this.postfix = window.parameters.PACESpostfix;
     this.minima = window.parameters.PACESminima;//array of meter minima [HV, thresholds, rate]
     this.maxima = window.parameters.PACESmaxima;//array of meter maxima, arranged as minima
-    this.dataBus = new PACESDS();           
-
-    var that = this;
+    Subsystem.call(this);
+    this.dataBus = new PACESDS();
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
     window.PACESpointer = that;
+
+    
+	this.HVcanvasID = 'PACESHVCanvas'; 	        //ID of canvas to draw HV view
+    this.RateCanvasID = 'PACESrateCanvas';      //ID of canvas to draw rate / threshold view
+
+           
+
+
+
 
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
     //HV view
@@ -27,19 +34,8 @@ function PACES(){
     this.RateContext = this.RateCanvas.getContext('2d');
     this.RateCanvas.setAttribute('width', this.canvasWidth);
     this.RateCanvas.setAttribute('height', this.canvasHeight);
-    //hidden Tooltip map layer
-    insertDOM('canvas', this.TTcanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.monitorID, '', '')    
-    this.TTcanvas = document.getElementById(this.TTcanvasID);
-    this.TTcontext = this.TTcanvas.getContext('2d');
-    this.TTcanvas.setAttribute('width', this.canvasWidth);
-    this.TTcanvas.setAttribute('height', this.canvasHeight);
 
-    //Dirty trick to implement tooltip on obnoxious geometry: make another canvas of the same size hidden beneath, with the 
-    //detector drawn on it, but with each element filled in with rgba(0,0,n,1), where n is the channel number; fetching the color from the 
-    //hidden canvas at point x,y will then return the appropriate channel index.
-    //paint whole hidden canvas with R!=G!=B to trigger TT suppression:
-    this.TTcontext.fillStyle = 'rgba(50,100,150,1)';
-    this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
+
 
     //set up tooltip:
     this.RateTooltip = new Tooltip(this.RateCanvasID, 'PACESTipText', 'PACESTT', this.monitorID, window.parameters.PACESprefix, window.parameters.PACESpostfix);
@@ -201,17 +197,6 @@ function PACES(){
         this.displaySwitch();
     };
 
-    //determine which color <scalar> corresponds to
-    this.parseColor = function(scalar){
-
-        //how far along the scale are we?
-        var scale = (scalar - this.minima[window.subdetectorView]) / (this.maxima[window.subdetectorView] - this.minima[window.subdetectorView]);
-
-        //different scales for different meters to aid visual recognition:
-        if(window.subdetectorView==0) return scalepickr(scale, 'rainbow');
-        else if(window.subdetectorView==1) return scalepickr(scale, 'twighlight');
-        else if(window.subdetectorView==2) return scalepickr(scale, 'thermalScope');
-    };
 
     //decide which display version to show:
     this.displaySwitch = function(){

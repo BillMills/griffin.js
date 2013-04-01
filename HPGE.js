@@ -2,14 +2,22 @@ HPGe.prototype = Object.create(Subsystem.prototype);
 
 function HPGe(){
     this.name = 'HPGe';
+    var that = this;
+    this.prefix = window.parameters.HPGeprefix;
+    this.postfix = window.parameters.HPGepostfix;
     Subsystem.call(this);
+    this.dataBus = new HPGeDS();
+    //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
+    window.HPGepointer = that;
 
+
+    
 
 	this.detailCanvasID = 'HPGedetailCanvas';		//ID of canvas to draw single HPGe view on
     this.TTdetailCanvasID = 'HPGeTTdetailCanvas';   //ID of hidden tooltip map canvas for detail level
     this.mode = window.parameters.HPGemode;         //mode to run in, either 'TIGRESS' or 'GRIFFIN'
     this.BGOenable = window.parameters.BGOenable;   //are the suppresors present?
-    this.dataBus = new HPGeDS();
+
 
     this.cloverShowing = 1;                         //index of clover currently showing in detail view
     this.detailShowing = 0;                         //is the detail canvas showing?
@@ -20,30 +28,17 @@ function HPGe(){
     else if(this.mode == 'GRIFFIN')
         this.nHPGesegments = 8;
 
-    var that = this;
-    //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
-    window.HPGepointer = that;
+
+
 
     //subsystem navigation//////////////////////////////////////////////////////////////////////////////
     //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
-    //top level
-    insertDOM('canvas', this.canvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px; transition:opacity 0.5s, z-index 0.5s; -moz-transition:opacity 0.5s, z-index 0.5s; -webkit-transition:opacity 0.5s, z-index 0.5s;', this.monitorID, '', '')
-    this.canvas = document.getElementById(this.canvasID);
-    this.context = this.canvas.getContext('2d');
-    this.canvas.setAttribute('width', this.canvasWidth);
-    this.canvas.setAttribute('height', this.canvasHeight);
     //detail level
     insertDOM('canvas', this.detailCanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px; transition:opacity 0.5s, z-index 0.5s; -moz-transition:opacity 0.5s, z-index 0.5s; -webkit-transition:opacity 0.5s, z-index 0.5s;', this.monitorID, '', '')
     this.detailCanvas = document.getElementById(this.detailCanvasID);
     this.detailContext = this.detailCanvas.getContext('2d');
     this.detailCanvas.setAttribute('width', this.canvasWidth);
     this.detailCanvas.setAttribute('height', this.canvasHeight);
-    //hidden Tooltip map layer for summary
-    insertDOM('canvas', this.TTcanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.monitorID, '', '')    
-    this.TTcanvas = document.getElementById(this.TTcanvasID);
-    this.TTcontext = this.TTcanvas.getContext('2d');
-    this.TTcanvas.setAttribute('width', this.canvasWidth);
-    this.TTcanvas.setAttribute('height', this.canvasHeight);
     //hidden Tooltip map layer for detail
     insertDOM('canvas', this.TTdetailCanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.monitorID, '', '')
     this.TTdetailCanvas = document.getElementById(this.TTdetailCanvasID);
@@ -73,16 +68,8 @@ function HPGe(){
                                 }
                             };
 
-    //Dirty trick to implement tooltip on obnoxious geometry: make another canvas of the same size hidden beneath, with the 
-    //detector drawn on it, but with each element filled in with rgba(0,0,n,1), where n is the channel number; fetching the color from the 
-    //hidden canvas at point x,y will then return the appropriate channel index.
-    //summary level:
-    //paint whole hidden canvas with R!=G!=B to trigger TT suppression:
-    this.TTcontext.fillStyle = 'rgba(50,100,150,1)';
-    this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
-    //set up summary tooltip:
-    this.tooltip = new Tooltip(this.canvasID, 'HPGeTipText', 'HPGeTT', this.monitorID, window.parameters.HPGeprefix, window.parameters.HPGepostfix);
-    this.tooltip.obj = that;
+
+
     //detail level tt:
     //paint whole hidden canvas with R!=G!=B to trigger TT suppression:
     this.TTdetailContext.fillStyle = 'rgba(50,100,150,1)';
