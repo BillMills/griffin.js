@@ -1,28 +1,60 @@
-function loadJSONP(callback) {
+function loadJSONP(gatekeeper, callback) {
     var i;
 
     for(i=0; i<window.parameters.JSONPrepos.length; i++){
 
         var script  = document.createElement('script');
-        if (window.parameters.JSONPrepos[i] != 'SERVICE DOWN') script.setAttribute('src', window.parameters.JSONPrepos[i]);    //fetch the ith repo
+        script.setAttribute('src', window.parameters.JSONPrepos[i]);    //fetch the ith repo
         script.setAttribute('id', 'tempScript'+i);
 
-        //recover if the JSON bounces:
-        script.onerror = function(){
-            //alert('JSONP service\n\n' + this.src + '\n\nhas dropped.  Suppressing further requests.' )
-            
-            //delete the failed resource from the list:
-            for(var k=0; k<window.parameters.JSONPrepos.length; k++){
-                if(window.parameters.JSONPrepos[k] == this.src)
-                    window.parameters.JSONPrepos[k] = 'SERVICE DOWN';
+        script.onload = function(){
+            for(var i=0; i<window.parameters.JSONPrepos.length; i++){
+                if (window.parameters.JSONPrepos[i] == this.src) window.JSONPstatus[i] = 'Online';
             }
+            //post to GK:
+            var gatekeeperReport = new  CustomEvent("gatekeeperReport", {
+                                            detail: {
+                                                status: 'loaded',
+                                                cb: callback        
+                                            }
+                                        });
+            gatekeeper.listener.dispatchEvent(gatekeeperReport);
         }
 
-        if(i == window.parameters.JSONPrepos.length-1)
-            script.setAttribute('onload', callback);                    //attach the callback to the last data store to load
+        script.onerror = function(){
+            for(var i=0; i<window.parameters.JSONPrepos.length; i++){
+                if (window.parameters.JSONPrepos[i] == this.src) window.JSONPstatus[i] = 'Not Responding';
+            }
+            //post to GK:
+            var gatekeeperReport = new  CustomEvent("gatekeeperReport", {
+                                            detail: {
+                                                status: 'failed',        
+                                                cb: callback
+                                            }
+                                        });
+            gatekeeper.listener.dispatchEvent(gatekeeperReport);
+        }
 
         document.head.appendChild(script);
     }
+}
+
+//an object to block the page update until all the JSONP requests have reported back. 
+function gatekeeper(){
+    this.listener = document.getElementById('waffleplate')
+
+    //how many JSONP assets have checked in?
+    this.copyBack = 0;
+
+    this.listener.addEventListener("gatekeeperReport", function(e){
+        window.Gatekeeper.copyBack++;
+
+        if(window.Gatekeeper.copyBack == window.parameters.JSONPrepos.length){
+            window.Gatekeeper.copyBack = 0;
+            if(e.detail.cb == 'main') main();
+            else masterLoop(e.detail.cb);
+        }
+    });
 }
 
 function masterLoop(callMyself){
@@ -73,7 +105,7 @@ function masterLoop(callMyself){
 
     window.freshLoad = 0;
     //next iteration:
-    window.loop = setTimeout(function(){loadJSONP('masterLoop(1)')}, 3000);
+    window.loop = setTimeout(function(){loadJSONP(window.Gatekeeper, 1)}, 3000);
 }
 
 //determine what size cards are in what slot:

@@ -166,7 +166,6 @@ function DESCANT(){
         }
 
 		this.tooltip.update();
-        this.displaySwitch();
 	}
 
     this.fetchNewData = function(){

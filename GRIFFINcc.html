@@ -74,6 +74,8 @@
     <!--Set up JSONP services, then synchronously load parameters->data stores->main routine////////////////////////////////////////////////////-->
     <script id='parameterLoad' type="text/JavaScript">
       window.parameters = {};
+      window.Gatekeeper = new gatekeeper();
+      window.JSONPstatus = [];
 
       function loadParameters(dataWeGotViaJsonp){
         for (var key in dataWeGotViaJsonp) {
@@ -103,7 +105,7 @@
         }
       } 
     </script>
-    <script src='parameters.json' onload='loadJSONP("main()");'>//experimental parameters loaded here//</script>
+    <script src='parameters.json' onload='loadJSONP(window.Gatekeeper, "main");'>//experimental parameters loaded here//</script>
 
     <!--Main routine/////////////////////////////////////////////////////////////////////-->
     <script id='main' type="text/JavaScript">
@@ -284,7 +286,7 @@
 
       window.freshLoad = 1;
       function startLoop(){
-        loadJSONP('masterLoop(0)');
+        loadJSONP(window.Gatekeeper, 0);
       }
 
     </script> 

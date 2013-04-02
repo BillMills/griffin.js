@@ -108,11 +108,9 @@ function StatusBar(wrapper){
         //JSONP monitor:
         var JSONPtext = 'JSONP Services<br>';
         JSONPtext += 'Thresholds: ';
-        if(window.parameters.JSONPrepos[0] == 'SERVICE DOWN') JSONPtext += 'Not Responding<br>';
-        else thresholdsOnline = JSONPtext += 'Online<br>';
+        JSONPtext += window.JSONPstatus[0]+'<br>';
         JSONPtext += 'Rates: ';
-        if(window.parameters.JSONPrepos[1] == 'SERVICE DOWN') JSONPtext += 'Not Responding<br>';
-        else JSONPtext += 'Online<br>';
+        JSONPtext += window.JSONPstatus[1]+'<br>';
         document.getElementById('JSONPmonitor').innerHTML = JSONPtext;
 
     };
