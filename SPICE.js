@@ -1,32 +1,27 @@
 SPICE.prototype = Object.create(Subsystem.prototype);
 
 function SPICE(){
+    //detector name, self-pointing pointer, pull in the Subsystem template, 
+    //establish a databus and create a global-scope pointer to this object:
     this.name = 'SPICE';
     var that = this;
-    this.prefix = window.parameters.SPICEprefix;
-    this.postfix = window.parameters.SPICEpostfix;
-    this.minima = window.parameters.SPICEminima; //array of meter minima [HV, thresholds, rate]
-    this.maxima = window.parameters.SPICEmaxima; //array of meter maxima, arranged as minima
     Subsystem.call(this);
     this.dataBus = new SPICEDS();
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
     window.SPICEpointer = that;
 
-
-
-
+    //member variables///////////////////////////////////
 	this.nRadial = 10;
 	this.nAzimuthal = 12;
 
 
-    //drawing parameters
+    //drawing parameters///////////////////////////////////////
     this.centerX = this.canvasWidth/2;
-    this.centerY = this.canvasHeight/2-20;
+    this.centerY = this.canvasHeight*0.42;
     this.innerRadius = this.canvasHeight*0.02;
-    this.outerRadius = this.canvasHeight*0.4;
+    this.outerRadius = this.canvasHeight*0.36;
     this.azimuthalStep = 2*Math.PI / this.nAzimuthal;
     this.radialStep = (this.outerRadius - this.innerRadius) / this.nRadial;
-    this.scaleHeight = 80;
 
     //establish data buffers////////////////////////////////////////////////////////////////////////////
     this.HVcolor = [];
@@ -37,10 +32,7 @@ function SPICE(){
     this.oldRateColor = [];
 
     //member functions///////////////////////////////////////////////////////////////////
-    //decide which view to transition to when this object is navigated to
-    this.view = function(){
-        return this.canvasID;
-    }
+
 
     this.draw = function(frame){
     	var i, ring, sector;
@@ -85,13 +77,6 @@ function SPICE(){
         if(frame==this.nFrames || frame==0) this.drawScale(this.context);
     };
 
-    this.findCell = function(x, y){
-        var imageData = this.TTcontext.getImageData(x,y,1,1);
-        var index = -1;
-        if(imageData.data[0] == imageData.data[1] && imageData.data[0] == imageData.data[2]) index = imageData.data[0];
-        return index;
-    };
-
     this.defineText = function(cell){
         var toolTipContent = '<br>';
         var nextLine;
@@ -120,15 +105,15 @@ function SPICE(){
         //parse the new data into colors
         for(i=0; i<this.dataBus.HV.length; i++){
             this.oldHVcolor[i] = this.HVcolor[i];
-            this.HVcolor[i] = this.parseColor(this.dataBus.HV[i]);
+            this.HVcolor[i] = this.parseColor(this.dataBus.HV[i], 'SPICE');
         }
         for(i=0; i<this.dataBus.thresholds.length; i++){
             this.oldThresholdColor[i] = this.thresholdColor[i];
-            this.thresholdColor[i] = this.parseColor(this.dataBus.thresholds[i]);
+            this.thresholdColor[i] = this.parseColor(this.dataBus.thresholds[i], 'SPICE');
         }
         for(i=0; i<this.dataBus.rate.length; i++){
             this.oldRateColor[i] = this.rateColor[i];
-            this.rateColor[i] = this.parseColor(this.dataBus.rate[i]);
+            this.rateColor[i] = this.parseColor(this.dataBus.rate[i], 'SPICE');
         }
 
         this.tooltip.update();
@@ -145,52 +130,7 @@ function SPICE(){
             this.dataBus.rate[i] = Math.random();
         }
     };
-
-    this.animate = function(){
-        if(window.onDisplay == this.canvasID || window.freshLoad) animate(this, 0);
-        else this.draw(this.nFrames);
-    };
-
-    this.drawScale = function(context){
-        var i, j; 
-        context.clearRect(0, this.canvasHeight - this.scaleHeight, this.canvasWidth, this.canvasHeight);
-
-        var title, minTick, maxTick;
-        title = window.parameters.monitorValues[window.subdetectorView];
-        minTick = window.parameters.SPICEminima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
-        maxTick = window.parameters.SPICEmaxima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
-
-        //titles
-        context.fillStyle = '#999999';
-        context.font="24px 'Orbitron'";
-        context.fillText(title, this.canvasWidth/2 - context.measureText(title).width/2, this.canvasHeight-8);
-
-        //tickmark;
-        context.strokeStyle = '#999999';
-        context.lineWidth = 1;
-        context.font="12px 'Raleway'";
-
-        context.beginPath();
-        context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - 40);
-        context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - 30);
-        context.stroke();
-        context.fillText(minTick, this.canvasWidth*0.05 - context.measureText(minTick).width/2, this.canvasHeight-15);
-
-        context.beginPath();
-        context.moveTo(this.canvasWidth*0.95-1, this.canvasHeight - 40);
-        context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - 30); 
-        context.stroke();      
-        context.fillText(maxTick, this.canvasWidth*0.95 - context.measureText(maxTick).width/2, this.canvasHeight-15);
-
-        for(i=0; i<3000; i++){
-            if(window.subdetectorView == 0) context.fillStyle = scalepickr(0.001*(i%1000), 'rainbow');
-            if(window.subdetectorView == 1) context.fillStyle = scalepickr(0.001*(i%1000), 'twighlight');
-            if(window.subdetectorView == 2) context.fillStyle = scalepickr(0.001*(i%1000), 'thermalScope');
-            context.fillRect(this.canvasWidth*0.05 + this.canvasWidth*0.9/1000*(i%1000), this.canvasHeight-60, this.canvasWidth*0.9/1000, 20);
-        }
-
-    };
-
+    
     //do an initial populate:
     this.update();
 }

@@ -274,7 +274,7 @@ TIPDS = function(){
 	//HPGe + BGO HV detail: todo
 
 	//figure out where this name is sitting in the JSON scalar rate array and in the FSCP table
-
+    //alert(window.JSONPstore['scalar'][91]['fName'])
 	for(i=0; i<this.key.length; i++){
 		this.key[i][1] = -1;
 		this.key[i][2] = -1;

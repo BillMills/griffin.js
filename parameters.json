@@ -33,6 +33,16 @@ loadParameters({
 				"temperatureUnit" : "C",
 				"moduleSizes" : 0,
 
+				"SHARC" : {
+							"prefix" : [], 
+							"postfix" : [],
+							"minima" : {
+											"SHARC" : [0,0,0]
+								       },
+							"maxima" : {
+											"SHARC" : [1,1,1]
+							           },
+						  },
 				"SMrows" : 2,
 				"SMcolumns" : 4,
 				"SM_ODBkeys" : ["/Location/Of/Device/Varibles", "/Location/Of/Device/Settings", "HV Key"],
@@ -43,67 +53,139 @@ loadParameters({
 				"nAzimuthalHoriz" : 4, 
 				"nRadialVert" : 1, 
 				"nAzimuthalVert" : 16,
-				"SHARCprefix" : [],
-				"SHARCpostfix" : [],
 
+				"HPGe" : {
+							"prefix" : [], 
+							"postfix" : [],
+							"minima" : {
+											"HPGe" : [0,0,0],
+											"BGO" : [0,0,0]
+									   },
+							"maxima" : {
+											"HPGe" : [1,1,1],
+											"BGO" : [100,100,100]
+							           },
+						 },
 				"HPGemode" : "GRIFFIN",
 				"BGOenable" : 1,
 				"HPGeminima" : [0,0,0],
 				"HPGemaxima" : [1,1,1],
 				"BGOminima" : [0,0,0],
 				"BGOmaxima" : [100,100,100],
-				"HPGeprefix" : [],
-				"HPGepostfix" : [],
 
+				"DESCANT" : {
+								"prefix" : [], 
+								"postfix" : [],
+								"minima" : {
+												"DESCANT" : [0,0,0]
+										   },
+								"maxima" : {
+												"DESCANT" : [1,1,1]
+										   },
+							},
 				"DESCANTminima" : [0,0,0],
 				"DESCANTmaxima" : [1,1,1],
-				"DESCANTprefix" : [],
-				"DESCANTpostfix" : [],
 
+				"PACES" : {
+							"prefix" : [], 
+							"postfix" : [],
+							"minima" : {
+											"PACES" : [0,0,0]
+									   },
+							"maxima" : {
+											"PACES" : [1,1,1]
+									   }
+						  },
 				"PACESminima" : [0,0,0],
 				"PACESmaxima" : [1,1,1],
-				"PACESprefix" : [],
-				"PACESpostfix" : [],
 
+				"DANTE" : {
+							"prefix" : [], 
+							"postfix" : [],
+							"minima" : {
+											"BaF" : [0,0,0],
+											"BGO" : [1,1,1]
+									   },
+							"maxima" : {
+											"BaF" : [0,0,0],
+											"BGO" : [2,3,4]
+									   }
+						  },
 				"DANTEBaFminima" : [0,0,0],
 				"DANTEBaFmaxima" : [1,1,1],
 				"DANTEBGOminima" : [0,0,0],
 				"DANTEBGOmaxima" : [2,3,4],
-				"DANTEprefix" : [],
-				"DANTEpostfix" : [],
 
+				"BAMBINO" : {
+								"prefix" : [], 
+								"postfix" : [],
+								"minima" : {
+												"BAMBINO" : [0,0,0]
+										   },
+								"maxima" : {
+												"BAMBINO" : [1,1,1]
+										   }
+							},
 				"BAMBINOmode" : "S3",
 				"BAMBINOminima" : [0,0,0],
 				"BAMBINOmaxima" : [1,1,1],
-				"BAMBINOprefix" : [],
-				"BAMBINOpostfix" : [],
 
+				"SCEPTAR" : {
+								"prefix" : [], 
+								"postfix" : [],
+								"minima" : {
+												"SCEPTAR" : [0,0,0],
+												"ZDS" : [0,0,0]
+										   },
+								"maxima" : {
+												"SCEPTAR" : [1,1,1],
+												"ZDS" : [1,1,1]
+										   }
+							},
 				"SCEPTARminima" : [0,0,0],
 				"SCEPTARmaxima" : [1,1,1],
 				"ZDSminima" : [0,0,0],
 				"ZDSmaxima" : [2,3,4],
-				"SCEPTARprefix" : [],
-				"SCEPTARpostfix" : [],
 				"SCEPTARconfig" : [1,0,1],
 
+				"SPICE" : {
+							"prefix" : [], 
+							"postfix" : [],
+							"minima" : {
+											"SPICE" : [0,0,0]
+									   },
+							"maxima" : {
+											"SPICE" : [1,1,1]
+									   }
+						  },
 				"SPICEminima" : [0,0,0],
 				"SPICEmaxima" : [1,1,1],
-				"SPICEprefix" : [],
-				"SPICEpostfix" : [],
 
+				"TIP" : {
+							"prefix" : ["HV: ", "Thresholds: ", "Rate: "], 
+							"postfix" : [" V", " ADC units", " Hz"],
+							"minima" : {
+											"CsI" : [0,0,0],
+											"HPGe" : [0,0,0],
+											"BGO" : [0,0,0]
+									   },
+							"maxima" : {
+											"CsI" : [1,200,200],
+											"HPGe" : [1,1000,1000],
+											"BGO" : [1,1,2]
+									   }
+						},
 				"TIPCsIminima" : [0,0,0],
 				"TIPCsImaxima" : [1,200,200],
 				"TIPHPGeminima" : [0,0,0],
 				"TIPHPGemaxima" : [1,1000,1000],
 				"TIPBGOminima" : [0,0,0],
 				"TIPBGOmaxima" : [1,1,2],
-				"TIPprefix" : ["HV: ", "Thresholds: ", "Rate: "],
-				"TIPpostfix" : [" V", " ADC units", " Hz"],
 
 				"DAQminima" : [0,0,0,0,0,0,0,0,0],
 				"DAQmaxima" : [1,1,1,1,1,1,1,1,1],
 
-				"JSONPrepos" : ["http://alphadon.triumf.ca:8092/parameters?jsonp=parseResponse", "http://alphadon.triumf.ca:8091/scalar?jsonp=parseResponse", "dummy.json"]
+				"JSONPrepos" : ["http://alphadon.triumf.ca:8092/parameters?jsonp=parseResponse", "http://alphadon.triumf.ca:8091/scalar?jsonp=parseResponse"]
 				})
 
 /*Parameter Dictionary//////////////////////////////////////

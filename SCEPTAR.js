@@ -1,16 +1,16 @@
 SCEPTAR.prototype = Object.create(Subsystem.prototype);
 
 function SCEPTAR(){
+    //detector name, self-pointing pointer, pull in the Subsystem template, 
+    //establish a databus and create a global-scope pointer to this object:
     this.name = 'SCEPTAR';
     var that = this;
-    this.prefix = window.parameters.SCEPTARprefix;
-    this.postfix = window.parameters.SCEPTARpostfix;
     Subsystem.call(this);
     this.dataBus = new SCEPTARDS();
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
     window.SCEPTARpointer = that;
 
-
+    //member variables///////////////////////////////////
     this.config = window.parameters.SCEPTARconfig;  //subsystems on: [upstream sceptar, downstream sceptar, downstream ZDS]
 
 
@@ -18,8 +18,7 @@ function SCEPTAR(){
 
 
 
-    //drawing parameters
-    this.scaleHeight = 80;
+    //drawing parameters///////////////////////////////////////
     this.ZDSradius = this.canvasHeight*0.5 / 4; 
     this.ZDScenterX = this.canvasWidth*0.5 + Math.max(this.config[0], this.config[1])*this.canvasWidth*0.25;
     this.ZDScenterY = 0.4*this.canvasHeight;
@@ -41,10 +40,7 @@ function SCEPTAR(){
     this.oldRateColor = [];
 
     //member functions///////////////////////////////////////////////////////////////////
-    //decide which view to transition to when this object is navigated to
-    this.view = function(){
-        return this.canvasID;
-    }
+
 
     this.draw = function(frame){
     	var i, row, col;
@@ -164,13 +160,6 @@ function SCEPTAR(){
         }   
     }
 
-    this.findCell = function(x, y){
-        var imageData = this.TTcontext.getImageData(x,y,1,1);
-        var index = -1;
-        if(imageData.data[0] == imageData.data[1] && imageData.data[0] == imageData.data[2]) index = imageData.data[0];
-        return index;
-    };
-
     this.defineText = function(cell){
         var toolTipContent = '<br>';
         var nextLine;
@@ -222,21 +211,6 @@ function SCEPTAR(){
         this.tooltip.update();
     };
 
-    //determine which color <scalar> corresponds to
-    this.parseColor = function(scalar, detectorType){
-
-        //how far along the scale are we?
-        var scale;
-        if(detectorType == 'SCEPTAR')
-            scale = (scalar - window.parameters.SCEPTARminima[window.subdetectorView]) / (window.parameters.SCEPTARmaxima[window.subdetectorView] - window.parameters.SCEPTARminima[window.subdetectorView]);
-        else if(detectorType == 'ZDS')
-            scale = (scalar - window.parameters.ZDSminima[window.subdetectorView]) / (window.parameters.ZDSmaxima[window.subdetectorView] - window.parameters.ZDSminima[window.subdetectorView]);
-
-        //different scales for different meters to aid visual recognition:
-        if(window.subdetectorView==0) return scalepickr(scale, 'rainbow');
-        else if(window.subdetectorView==1) return scalepickr(scale, 'twighlight');
-        else if(window.subdetectorView==2) return scalepickr(scale, 'thermalScope');
-    };
 
     this.fetchNewData = function(){
         var i;
@@ -247,55 +221,6 @@ function SCEPTAR(){
             this.dataBus.thresholds[i] = Math.random();
             this.dataBus.rate[i] = Math.random();
         }
-    };
-
-    this.animate = function(){
-        if(window.onDisplay == this.canvasID || window.freshLoad) animate(this, 0);
-        else this.draw(this.nFrames);
-    };
-
-    this.drawScale = function(context){
-        var i, j; 
-        context.clearRect(0, this.canvasHeight - this.scaleHeight, this.canvasWidth, this.canvasHeight);
-
-        var title, SCEPTARminTick, SCEPTARmaxTick, ZDSminTick, ZDSmaxTick;
-        title = window.parameters.monitorValues[window.subdetectorView];
-        SCEPTARminTick = 'SCEPTAR: ' + window.parameters.SCEPTARminima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
-        SCEPTARmaxTick = 'SCEPTAR: ' + window.parameters.SCEPTARmaxima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
-        ZDSminTick = 'ZDS: ' + window.parameters.ZDSminima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
-        ZDSmaxTick = 'ZDS: ' + window.parameters.ZDSmaxima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
-
-        //titles
-        context.fillStyle = '#999999';
-        context.font="24px 'Orbitron'";
-        context.fillText(title, this.canvasWidth/2 - context.measureText(title).width/2, this.canvasHeight-8);
-
-        //tickmark;
-        context.strokeStyle = '#999999';
-        context.lineWidth = 1;
-        context.font="12px 'Raleway'";
-
-        context.beginPath();
-        context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - 40);
-        context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - 30);
-        context.stroke();
-        if(this.config[0] || this.config[1]) context.fillText(SCEPTARminTick, this.canvasWidth*0.05 - context.measureText(SCEPTARminTick).width/2, this.canvasHeight-15);
-        if(this.config[2]) context.fillText(ZDSminTick, this.canvasWidth*0.05 - context.measureText(ZDSminTick).width/2, this.canvasHeight-15+12*Math.max(this.config[0],this.config[1]));
-
-        context.beginPath();
-        context.moveTo(this.canvasWidth*0.95-1, this.canvasHeight - 40);
-        context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - 30); 
-        context.stroke();      
-        if(this.config[0] || this.config[1]) context.fillText(SCEPTARmaxTick, this.canvasWidth*0.95 - context.measureText(SCEPTARmaxTick).width/2, this.canvasHeight-15);
-        if(this.config[2]) context.fillText(ZDSmaxTick, this.canvasWidth*0.95 - context.measureText(ZDSmaxTick).width/2, this.canvasHeight-15+12*Math.max(this.config[0],this.config[1]));
-
-        for(i=0; i<3000; i++){
-            if(window.subdetectorView == 0) context.fillStyle = scalepickr(0.001*(i%1000), 'rainbow');
-            if(window.subdetectorView == 1) context.fillStyle = scalepickr(0.001*(i%1000), 'twighlight');
-            if(window.subdetectorView == 2) context.fillStyle = scalepickr(0.001*(i%1000), 'thermalScope');
-            context.fillRect(this.canvasWidth*0.05 + this.canvasWidth*0.9/1000*(i%1000), this.canvasHeight-60, this.canvasWidth*0.9/1000, 20);
-        }
-
     };
 
     //do an initial populate:

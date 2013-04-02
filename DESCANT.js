@@ -1,28 +1,28 @@
 DESCANT.prototype = Object.create(Subsystem.prototype);
 
 function DESCANT(){
+    var i, j;
+    //detector name, self-pointing pointer, pull in the Subsystem template, 
+    //establish a databus and create a global-scope pointer to this object:
     this.name = 'DESCANT';
     var that = this;
-    this.prefix = window.parameters.DESCANTprefix;
-    this.postfix = window.parameters.DESCANTpostfix;
-    this.minima = window.parameters.DESCANTminima;  //array of meter minima [HV, thresholds, rate]
-    this.maxima = window.parameters.DESCANTmaxima;  //array of meter maxima, arranged as minima
     Subsystem.call(this);
     this.dataBus = new DESCANTDS();
-    //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
     window.DESCANTpointer = that;
 
+    //member variables///////////////////////////////////
 
 
-	var i, j;
+
+
 
     //drawing parameters//////////////////////////////////////////////////////////////////////////////////
 	//center of DESCANT
 	this.centerX = $(this.canvas).width() / 2;
-	this.centerY = $(this.canvas).height()*0.45;
+	this.centerY = $(this.canvas).height()*0.43;
 
 	//scale at which to draw DESCANT in pixels relative mm in blueprint:
-	this.scale = 0.3;
+	this.scale = 0.28;
 
 	//pixels to explode DESCANT view by:
 	this.explode = 10;
@@ -37,8 +37,6 @@ function DESCANT(){
 	//longest distance from center of pentagon to side
 	this.pentagonVertex = this.pentagonSide / 2 / Math.sin(36/180 * Math.PI);
 
-    this.scaleHeight = 80;
-
     //establish data buffers////////////////////////////////////////////////////////////////////////////
     this.HVcolor = [];
     this.oldHVcolor = [];
@@ -49,10 +47,6 @@ function DESCANT(){
 
 	//member functions//////////////////////////////////////////////////////
 
-    //decide which view to transition to when this object is navigated to
-    this.view = function(){
-        return this.canvasID;
-    }
 
 	this.draw = function(frame){
 		var i, j;
@@ -103,17 +97,7 @@ function DESCANT(){
 
 	};
 
-	//fetch the channel number that pixel x,y sits on by parsing the info encoded in the blue entry of the hidden tooltip canvas
-	this.fetchChannel = function(x, y){
-		var imageData = this.TTcontext.getImageData(x,y,1,1);
-		var index = -1;
-		if(imageData.data[0] == imageData.data[1] && imageData.data[0] == imageData.data[2]) index = imageData.data[0];
-		return index;
-	};
 
-	this.findCell = function(x, y){
-		return this.fetchChannel(x,y);
-	};
 
     //establish the tooltip text for the cell returned by this.findCell; return length of longest line:
 	this.defineText = function(cell){
@@ -170,25 +154,20 @@ function DESCANT(){
         //parse the new data into colors
         for(i=0; i<this.dataBus.HV.length; i++){
             this.oldHVcolor[i] = this.HVcolor[i];
-            this.HVcolor[i] = this.parseColor(this.dataBus.HV[i]);
+            this.HVcolor[i] = this.parseColor(this.dataBus.HV[i], this.name);
         }
         for(i=0; i<this.dataBus.thresholds.length; i++){
             this.oldThresholdColor[i] = this.thresholdColor[i];
-            this.thresholdColor[i] = this.parseColor(this.dataBus.thresholds[i]);
+            this.thresholdColor[i] = this.parseColor(this.dataBus.thresholds[i], this.name);
         }
         for(i=0; i<this.dataBus.rate.length; i++){
             this.oldRateColor[i] = this.rateColor[i];
-            this.rateColor[i] = this.parseColor(this.dataBus.rate[i]);
+            this.rateColor[i] = this.parseColor(this.dataBus.rate[i], this.name);
         }
 
 		this.tooltip.update();
         this.displaySwitch();
 	}
-
-    //decide which display version to show:
-    this.displaySwitch = function(){
-        //all views look the same, so do nothing.
-    };
 
     this.fetchNewData = function(){
         var i, j;
@@ -211,51 +190,6 @@ function DESCANT(){
             this.dataBus.rate[i] = rawRate[ this.dataBus.key[i][1] ];
         }
         */
-    };
-
-    this.animate = function(){
-        if(window.onDisplay == this.canvasID || window.freshLoad) animate(this, 0);
-        else this.draw(this.nFrames);
-    };
-
-    this.drawScale = function(context){
-        var i, j; 
-        context.clearRect(0, this.canvasHeight - this.scaleHeight, this.canvasWidth, this.canvasHeight);
-
-        var title, minTick, maxTick;
-        title = window.parameters.monitorValues[window.subdetectorView];
-        minTick = window.parameters.DESCANTminima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
-        maxTick = window.parameters.DESCANTmaxima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
-
-        //titles
-        context.fillStyle = '#999999';
-        context.font="24px 'Orbitron'";
-        context.fillText(title, this.canvasWidth/2 - context.measureText(title).width/2, this.canvasHeight-8);
-
-        //tickmark;
-        context.strokeStyle = '#999999';
-        context.lineWidth = 1;
-        context.font="12px 'Raleway'";
-
-        context.beginPath();
-        context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - 40);
-        context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - 30);
-        context.stroke();
-        context.fillText(minTick, this.canvasWidth*0.05 - context.measureText(minTick).width/2, this.canvasHeight-15);
-
-        context.beginPath();
-        context.moveTo(this.canvasWidth*0.95-1, this.canvasHeight - 40);
-        context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - 30); 
-        context.stroke();      
-        context.fillText(maxTick, this.canvasWidth*0.95 - context.measureText(maxTick).width/2, this.canvasHeight-15);
-
-        for(i=0; i<3000; i++){
-            if(window.subdetectorView == 0) context.fillStyle = scalepickr(0.001*(i%1000), 'rainbow');
-            if(window.subdetectorView == 1) context.fillStyle = scalepickr(0.001*(i%1000), 'twighlight');
-            if(window.subdetectorView == 2) context.fillStyle = scalepickr(0.001*(i%1000), 'thermalScope');
-            context.fillRect(this.canvasWidth*0.05 + this.canvasWidth*0.9/1000*(i%1000), this.canvasHeight-60, this.canvasWidth*0.9/1000, 20);
-        }
-
     };
 
 	//array of rules for drawing DESCANT channels.  Array index should correspond to real channel number; packed as [type, center x, center y, canvas rotation, element rotation]

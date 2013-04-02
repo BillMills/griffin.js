@@ -1,24 +1,15 @@
 HPGe.prototype = Object.create(Subsystem.prototype);
 
 function HPGe(){
+    //detector name, self-pointing pointer, pull in the Subsystem template, 
+    //establish a databus and create a global-scope pointer to this object:
     this.name = 'HPGe';
     var that = this;
-    this.prefix = window.parameters.HPGeprefix;
-    this.postfix = window.parameters.HPGepostfix;
     Subsystem.call(this);
     this.dataBus = new HPGeDS();
-    //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
     window.HPGepointer = that;
 
-
-    
-
-	this.detailCanvasID = 'HPGedetailCanvas';		//ID of canvas to draw single HPGe view on
-    this.TTdetailCanvasID = 'HPGeTTdetailCanvas';   //ID of hidden tooltip map canvas for detail level
-    this.mode = window.parameters.HPGemode;         //mode to run in, either 'TIGRESS' or 'GRIFFIN'
-    this.BGOenable = window.parameters.BGOenable;   //are the suppresors present?
-
-
+    //member variables////////////////////////////////////////////////////////
     this.cloverShowing = 1;                         //index of clover currently showing in detail view
     this.detailShowing = 0;                         //is the detail canvas showing?
 
@@ -28,23 +19,21 @@ function HPGe(){
     else if(this.mode == 'GRIFFIN')
         this.nHPGesegments = 8;
 
+    this.mode = window.parameters.HPGemode;         //mode to run in, either 'TIGRESS' or 'GRIFFIN'
+    this.BGOenable = window.parameters.BGOenable;   //are the suppresors present?
+
+    DetailView.call(this);                          //inject the infrastructure for a detail-level view
 
 
 
-    //subsystem navigation//////////////////////////////////////////////////////////////////////////////
-    //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
-    //detail level
-    insertDOM('canvas', this.detailCanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px; transition:opacity 0.5s, z-index 0.5s; -moz-transition:opacity 0.5s, z-index 0.5s; -webkit-transition:opacity 0.5s, z-index 0.5s;', this.monitorID, '', '')
-    this.detailCanvas = document.getElementById(this.detailCanvasID);
-    this.detailContext = this.detailCanvas.getContext('2d');
-    this.detailCanvas.setAttribute('width', this.canvasWidth);
-    this.detailCanvas.setAttribute('height', this.canvasHeight);
-    //hidden Tooltip map layer for detail
-    insertDOM('canvas', this.TTdetailCanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.monitorID, '', '')
-    this.TTdetailCanvas = document.getElementById(this.TTdetailCanvasID);
-    this.TTdetailContext = this.TTdetailCanvas.getContext('2d');
-    this.TTdetailCanvas.setAttribute('width', this.canvasWidth);
-    this.TTdetailCanvas.setAttribute('height', this.canvasHeight);
+
+
+
+
+
+
+
+
 
     //onclick switch between top and detail view:
     this.detailCanvas.onclick = function(event){
@@ -82,7 +71,6 @@ function HPGe(){
     this.centerX = this.canvasWidth/2;
     this.centerY = this.canvasHeight*0.4;
     this.lineWeight = 1;
-    this.scaleHeight = 80;
 
     //summary view
     this.BGOouter = 0.1*this.canvasWidth;
@@ -169,13 +157,7 @@ function HPGe(){
     this.oldDetailBGOrateColor = [];
 
     //Member functions/////////////////////////////////////////////////////////////////////////////////
-    //decide which view to transition to when this object is navigated to
-    this.view = function(){
-        if(this.detailShowing == 0)
-            return this.canvasID;
-        else if(this.detailShowing == 1)
-            return this.detailCanvasID;
-    }
+
 
     this.draw = function(frame){
         var i;
@@ -553,18 +535,7 @@ function HPGe(){
     };
     //end drawing functions///////////////////////////////////////////////////////////////
 
-    this.findCell = function(x, y){
-        var imageData 
-        if(this.detailShowing){
-            imageData = this.TTdetailContext.getImageData(x,y,1,1);
-        } else{
-            imageData = this.TTcontext.getImageData(x,y,1,1);
-        }
-        var index = -1;
-        if(imageData.data[0] == imageData.data[1] && imageData.data[0] == imageData.data[2]) index = imageData.data[0];
 
-        return index;
-    };
 
     this.defineText = function(cell){
         var toolTipContent = '<br>';
@@ -640,28 +611,8 @@ function HPGe(){
         this.displaySwitch();
     };
 
-    //determine which color <scalar> corresponds to
-    this.parseColor = function(scalar, detectorType){
 
-        //how far along the scale are we?
-        var scale;
-        if(detectorType == 'HPGe')
-            scale = (scalar - window.parameters.HPGeminima[window.subdetectorView]) / (window.parameters.HPGemaxima[window.subdetectorView] - window.parameters.HPGeminima[window.subdetectorView]);
-        if(detectorType == 'BGO')
-            scale = (scalar - window.parameters.BGOminima[window.subdetectorView]) / (window.parameters.BGOmaxima[window.subdetectorView] - window.parameters.BGOminima[window.subdetectorView]);
-        //different scales for different meters to aid visual recognition:
-        if(window.subdetectorView==0) return scalepickr(scale, 'rainbow');
-        else if(window.subdetectorView==1) return scalepickr(scale, 'twighlight');
-        else if(window.subdetectorView==2) return scalepickr(scale, 'thermalScope');
-    };
 
-    //decide which display version to show:
-    this.displaySwitch = function(){
-        this.TTdetailContext.fillStyle = 'rgba(50,100,150,1)';
-        this.TTdetailContext.fillRect(0,0,this.canvasWidth,this.canvasHeight);
-        this.drawDetail(this.detailContext, this.nFrames);
-        this.drawDetail(this.TTdetailContext, this.nFrames);
-    };
 
     this.fetchNewData = function(){
         var i;
@@ -695,56 +646,7 @@ function HPGe(){
 
     };
 
-    this.animate = function(){
-        if(window.onDisplay == this.canvasID || window.freshLoad) animate(this, 0);
-        else this.draw(this.nFrames);
-        if(window.onDisplay == this.detailCanvasID || window.freshLoad) animateDetail(this, 0);
-        else this.drawDetail(this.detailContext, this.nFrames);
-    };
 
-    this.drawScale = function(context){
-        var i, j; 
-        context.clearRect(0, this.canvasHeight - this.scaleHeight, this.canvasWidth, this.canvasHeight);
-
-        var title, HPGeminTick, HPGemaxTick, BGOminTick, BGOmaxTick;
-        title = window.parameters.monitorValues[window.subdetectorView];
-        HPGeminTick = 'HPGe: ' + window.parameters.HPGeminima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
-        HPGemaxTick = 'HPGe: ' + window.parameters.HPGemaxima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
-        BGOminTick = 'BGO: ' + window.parameters.BGOminima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
-        BGOmaxTick = 'BGO: ' +window.parameters.BGOmaxima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
-
-        //titles
-        context.fillStyle = '#999999';
-        context.font="24px 'Orbitron'";
-        context.fillText(title, this.canvasWidth/2 - context.measureText(title).width/2, this.canvasHeight-8);
-
-        //tickmark;
-        context.strokeStyle = '#999999';
-        context.lineWidth = 1;
-        context.font="12px 'Raleway'";
-
-        context.beginPath();
-        context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - 40);
-        context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - 30);
-        context.stroke();
-        context.fillText(HPGeminTick, this.canvasWidth*0.05 - context.measureText(HPGeminTick).width/2, this.canvasHeight-15);
-        context.fillText(BGOminTick, this.canvasWidth*0.05 - context.measureText(BGOminTick).width/2, this.canvasHeight-3);
-
-        context.beginPath();
-        context.moveTo(this.canvasWidth*0.95-1, this.canvasHeight - 40);
-        context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - 30); 
-        context.stroke();      
-        context.fillText(HPGemaxTick, this.canvasWidth*0.95 - context.measureText(HPGemaxTick).width/2, this.canvasHeight-15);
-        context.fillText(BGOmaxTick, this.canvasWidth*0.95 - context.measureText(BGOmaxTick).width/2, this.canvasHeight-3);
-
-        for(i=0; i<3000; i++){
-            if(window.subdetectorView == 0) context.fillStyle = scalepickr(0.001*(i%1000), 'rainbow');
-            if(window.subdetectorView == 1) context.fillStyle = scalepickr(0.001*(i%1000), 'twighlight');
-            if(window.subdetectorView == 2) context.fillStyle = scalepickr(0.001*(i%1000), 'thermalScope');
-            context.fillRect(this.canvasWidth*0.05 + this.canvasWidth*0.9/1000*(i%1000), this.canvasHeight-60, this.canvasWidth*0.9/1000, 20);
-        }
-
-    };
 
     //do an initial populate
     this.update();

@@ -1,16 +1,19 @@
 PACES.prototype = Object.create(Subsystem.prototype);
 
 function PACES(){
+    //detector name, self-pointing pointer, pull in the Subsystem template, 
+    //establish a databus and create a global-scope pointer to this object:
     this.name = 'PACES';
     var that = this;
-    this.prefix = window.parameters.PACESprefix;
-    this.postfix = window.parameters.PACESpostfix;
-    this.minima = window.parameters.PACESminima;//array of meter minima [HV, thresholds, rate]
-    this.maxima = window.parameters.PACESmaxima;//array of meter maxima, arranged as minima
     Subsystem.call(this);
     this.dataBus = new PACESDS();
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
     window.PACESpointer = that;
+
+    //member variables///////////////////////////////////
+
+
+
 
     
 	this.HVcanvasID = 'PACESHVCanvas'; 	        //ID of canvas to draw HV view
@@ -45,7 +48,6 @@ function PACES(){
     this.tooltip = this.RateTooltip;
 
     //drawing parameters
-    this.scaleHeight = 80;
     this.centerX = this.canvasWidth/2;
     this.centerY = this.canvasHeight*0.45;
     this.arrayRadius = this.canvasHeight*0.3;
@@ -181,16 +183,16 @@ function PACES(){
         //parse the new data into colors
         for(i=0; i<this.dataBus.HV.length; i++){
             this.oldHVcolor[i] = this.HVcolor[i];
-            this.HVcolor[i] = this.parseColor(this.dataBus.HV[i]);
+            this.HVcolor[i] = this.parseColor(this.dataBus.HV[i], 'PACES');
         }
         for(i=0; i<this.dataBus.thresholds.length; i++){
             this.oldThresholdColor[i] = this.thresholdColor[i];
-            this.thresholdColor[i] = this.parseColor(this.dataBus.thresholds[i]);
+            this.thresholdColor[i] = this.parseColor(this.dataBus.thresholds[i], 'PACES');
         }
 
         for(i=0; i<this.dataBus.rate.length; i++){
             this.oldRateColor[i] = this.rateColor[i];
-            this.rateColor[i] = this.parseColor(this.dataBus.rate[i]);
+            this.rateColor[i] = this.parseColor(this.dataBus.rate[i], 'PACES');
         }
 
         this.tooltip.update();
@@ -225,51 +227,6 @@ function PACES(){
         for(i=0; i<10; i++){
             this.dataBus.thresholds[i] = Math.random();
             this.dataBus.rate[i] = Math.random();
-        }
-
-    };
-
-    this.animate = function(){
-        if(window.onDisplay == this.RateCanvasID || window.onDisplay == this.HVcanvasID || window.freshLoad) animate(this, 0);
-        else this.draw(this.nFrames);
-    };
-
-    this.drawScale = function(context){
-        var i, j; 
-        context.clearRect(0, this.canvasHeight - this.scaleHeight, this.canvasWidth, this.canvasHeight);
-
-        var title, minTick, maxTick;
-        title = window.parameters.monitorValues[window.subdetectorView];
-        minTick = window.parameters.PACESminima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
-        maxTick = window.parameters.PACESmaxima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
-
-        //titles
-        context.fillStyle = '#999999';
-        context.font="24px 'Orbitron'";
-        context.fillText(title, this.canvasWidth/2 - context.measureText(title).width/2, this.canvasHeight-8);
-
-        //tickmark;
-        context.strokeStyle = '#999999';
-        context.lineWidth = 1;
-        context.font="12px 'Raleway'";
-
-        context.beginPath();
-        context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - 40);
-        context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - 30);
-        context.stroke();
-        context.fillText(minTick, this.canvasWidth*0.05 - context.measureText(minTick).width/2, this.canvasHeight-15);
-
-        context.beginPath();
-        context.moveTo(this.canvasWidth*0.95-1, this.canvasHeight - 40);
-        context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - 30); 
-        context.stroke();      
-        context.fillText(maxTick, this.canvasWidth*0.95 - context.measureText(maxTick).width/2, this.canvasHeight-15);
-
-        for(i=0; i<3000; i++){
-            if(window.subdetectorView == 0) context.fillStyle = scalepickr(0.001*(i%1000), 'rainbow');
-            if(window.subdetectorView == 1) context.fillStyle = scalepickr(0.001*(i%1000), 'twighlight');
-            if(window.subdetectorView == 2) context.fillStyle = scalepickr(0.001*(i%1000), 'thermalScope');
-            context.fillRect(this.canvasWidth*0.05 + this.canvasWidth*0.9/1000*(i%1000), this.canvasHeight-60, this.canvasWidth*0.9/1000, 20);
         }
 
     };

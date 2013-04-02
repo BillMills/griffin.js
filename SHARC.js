@@ -1,24 +1,21 @@
 SHARC.prototype = Object.create(Subsystem.prototype);
 
 function SHARC(){
+	var i,j;
+    //detector name, self-pointing pointer, pull in the Subsystem template, 
+    //establish a databus and create a global-scope pointer to this object:
 	this.name = 'SHARC';	
 	var that = this;
-    this.prefix = window.parameters.SHARCprefix;
-    this.postfix = window.parameters.SHARCpostfix;
-	this.minima = window.parameters.SHARCminima;		//array of scale minima, one entry for each scalar option
-	this.maxima = window.parameters.SHARCmaxima;		//array of scale maxima, one entry for each scalar option
 	Subsystem.call(this);
 	this.dataBus = new SHARCDS();
-    //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
     window.SHARCpointer = that;
-
-	
-	var i,j;
 
 	//member variables/////////////////////////////////////////////////////////////////////////////////
 	this.rows = window.parameters.SMrows;			//number of rows of detectors
 	this.columns = window.parameters.SMcolumns;		//number of columns of detectors
 	this.nStrips = window.parameters.SMnChannels;	//number of sense strips per detector
+
+
 
 
 
@@ -36,18 +33,17 @@ function SHARC(){
     //gutter width as fraction of detector width:
     this.gutterWidth = 0.1;
     //fraction of canvas height to alocate to box elements (rest is for disk elements):
-    this.boxElementFraction = 0.4;
+    this.boxElementFraction = 0.5;
     this.detectorWidth = this.halfWidth / (this.columns + (this.columns+1)*this.gutterWidth);
     this.detectorHeight = (this.canvasHeight*this.boxElementFraction - this.rows*this.gutterWidth*this.detectorWidth) / this.rows;
     this.vertStripWidth = this.detectorWidth / this.nStrips;
     this.horizStripWidth = this.detectorHeight / this.nStrips;
-    this.scaleHeight = 80;
 
     //geometry variables for elliptical displays:
     this.centerLeftX = (5*this.gutterWidth + 4)*this.detectorWidth/2;
     this.centerRightX = this.centerLeftX + this.halfWidth;
-    this.centerTopY = (1 - this.boxElementFraction) / 2 * this.canvasHeight / 2 - this.scaleHeight/2;
-    this.centerBottomY = this.canvasHeight - (1 - this.boxElementFraction) / 2 * this.canvasHeight / 2 - this.scaleHeight;
+    this.centerTopY = this.canvasHeight*0.075 //(1 - this.boxElementFraction) / 2 * this.canvasHeight / 2 - this.scaleHeight/2;
+    this.centerBottomY = this.canvasHeight*0.725 //this.canvasHeight - (1 - this.boxElementFraction) / 2 * this.canvasHeight / 2 - this.scaleHeight;
     this.nAzimuthalHoriz = window.parameters.nAzimuthalHoriz;
     this.nAzimuthalVert = window.parameters.nAzimuthalVert;
     this.nRadialHoriz = window.parameters.nRadialHoriz;
@@ -72,10 +68,7 @@ function SHARC(){
     this.oldRateColor = [];
 
     //member functions/////////////////////////////////////////////////////////////////////////////////
-    //decide which view to transition to when this object is navigated to
-    this.view = function(){
-        return this.canvasID;
-    }
+
     //draw the empty wireframe
     this.wireframe = function(){
     	var i, j, n, xCorner, yCorner, half;
@@ -88,7 +81,7 @@ function SHARC(){
 
     				//where is the top left hand corner of this box supposed to go?
     				xCorner = this.halfWidth*half + (1+this.gutterWidth)*this.detectorWidth*i + this.gutterWidth*this.detectorWidth;
-	    			yCorner = this.canvasHeight*(1-this.boxElementFraction)/2 + (this.detectorHeight + this.gutterWidth*this.detectorWidth)*j - this.scaleHeight*0.75;
+	    			yCorner = (this.canvasHeight)*(1 - this.scaleHeight/this.canvasHeight - this.boxElementFraction)/2 + this.gutterWidth*this.detectorWidth/2 + (this.detectorHeight + this.gutterWidth*this.detectorWidth)*j;
 
     				//draw the outer frames
     				this.context.beginPath();
@@ -175,7 +168,7 @@ function SHARC(){
 
     			//where is the top left hand corner of this box supposed to go?
     			xCorner = half*this.halfWidth + (1+this.gutterWidth)*this.detectorWidth*boxCol + this.gutterWidth*this.detectorWidth;
-    			yCorner = this.canvasHeight*(1-this.boxElementFraction)/2 + (this.detectorHeight + this.gutterWidth*this.detectorWidth)*boxRow - this.scaleHeight*0.75;
+    			yCorner = (this.canvasHeight)*(1 - this.scaleHeight/this.canvasHeight - this.boxElementFraction)/2 + this.gutterWidth*this.detectorWidth/2 + (this.detectorHeight + this.gutterWidth*this.detectorWidth)*boxRow;
 
 	    		//where is the top left hand corner of the ith cell?
     			if(half == 0){
@@ -270,32 +263,19 @@ function SHARC(){
         //parse the new data into colors
         for(i=0; i<this.dataBus.HV.length; i++){
             this.oldHVcolor[i] = this.HVcolor[i];
-            this.HVcolor[i] = this.parseColor(this.dataBus.HV[i]);
+            this.HVcolor[i] = this.parseColor(this.dataBus.HV[i], 'SHARC');
         }
         for(i=0; i<this.dataBus.thresholds.length; i++){
             this.oldThresholdColor[i] = this.thresholdColor[i];
-            this.thresholdColor[i] = this.parseColor(this.dataBus.thresholds[i]);
+            this.thresholdColor[i] = this.parseColor(this.dataBus.thresholds[i], 'SHARC');
         }
         for(i=0; i<this.dataBus.rate.length; i++){
             this.oldRateColor[i] = this.rateColor[i];
-            this.rateColor[i] = this.parseColor(this.dataBus.rate[i]);
+            this.rateColor[i] = this.parseColor(this.dataBus.rate[i], 'SHARC');
         }
 
 		this.tooltip.update();
 		this.displaySwitch();
-	};
-
-	//determine which color <scalar> corresponds to
-	this.parseColor = function(scalar){
-
-		//how far along the scale are we?
-		var scale = (scalar - this.minima[this.trackingIndex]) / (this.maxima[this.trackingIndex] - this.minima[this.trackingIndex]);
-
-        //different scales for different meters to aid visual recognition:
-        if(window.subdetectorView==0) return scalepickr(scale, 'rainbow');
-        else if(window.subdetectorView==1) return scalepickr(scale, 'twighlight');
-        else if(window.subdetectorView==2) return scalepickr(scale, 'thermalScope');
-        
 	};
 
 	//determine which cell pixel x,y falls in, with 0,0 being the top left corner of the canvas; return -1 if no corresponding cell.
@@ -443,11 +423,6 @@ function SHARC(){
         return longestLine;
 	};
 
-	//decide which display version to show:
-	this.displaySwitch = function(){
-		//all views look the same for SHARC, so do nothing.
-	};
-
     this.fetchNewData = function(){
     	var i;
 
@@ -459,50 +434,7 @@ function SHARC(){
         }
     };
 
-    this.animate = function(){
-        if(window.onDisplay == this.canvasID || window.freshLoad) animate(this, 0);
-        else this.draw(this.nFrames);
-    };
 
-    this.drawScale = function(context){
-        var i, j; 
-        context.clearRect(0, this.canvasHeight - this.scaleHeight, this.canvasWidth, this.canvasHeight);
-
-        var title, minTick, maxTick;
-        title = window.parameters.monitorValues[window.subdetectorView];
-        minTick = window.parameters.SHARCminima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
-        maxTick = window.parameters.SHARCmaxima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
-
-        //titles
-        context.fillStyle = '#999999';
-        context.font="24px 'Orbitron'";
-        context.fillText(title, this.canvasWidth/2 - context.measureText(title).width/2, this.canvasHeight-8);
-
-        //tickmark;
-        context.strokeStyle = '#999999';
-        context.lineWidth = 1;
-        context.font="12px 'Raleway'";
-
-        context.beginPath();
-        context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - 40);
-        context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - 30);
-        context.stroke();
-        context.fillText(minTick, this.canvasWidth*0.05 - context.measureText(minTick).width/2, this.canvasHeight-15);
-
-        context.beginPath();
-        context.moveTo(this.canvasWidth*0.95-1, this.canvasHeight - 40);
-        context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - 30); 
-        context.stroke();      
-        context.fillText(maxTick, this.canvasWidth*0.95 - context.measureText(maxTick).width/2, this.canvasHeight-15);
-
-        for(i=0; i<3000; i++){
-            if(window.subdetectorView == 0) context.fillStyle = scalepickr(0.001*(i%1000), 'rainbow');
-            if(window.subdetectorView == 1) context.fillStyle = scalepickr(0.001*(i%1000), 'twighlight');
-            if(window.subdetectorView == 2) context.fillStyle = scalepickr(0.001*(i%1000), 'thermalScope');
-            context.fillRect(this.canvasWidth*0.05 + this.canvasWidth*0.9/1000*(i%1000), this.canvasHeight-60, this.canvasWidth*0.9/1000, 20);
-        }
-
-    };
 
     //do an initial populate:
     this.update();

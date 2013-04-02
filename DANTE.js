@@ -1,19 +1,19 @@
 DANTE.prototype = Object.create(Subsystem.prototype);
 
 function DANTE(){
+    //detector name, self-pointing pointer, pull in the Subsystem template, 
+    //establish a databus and create a global-scope pointer to this object:
     this.name = 'DANTE';
     var that = this;
-    this.prefix = window.parameters.DANTEprefix;
-    this.postfix = window.parameters.DANTEpostfix;
     Subsystem.call(this);
     this.dataBus = new DANTEDS();
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
     window.DANTEpointer = that;
 
+    //member variables///////////////////////////////////
 
 
-
-    //drawing parameters
+    //drawing parameters/////////////////////////////////
     this.centerX = this.canvasWidth/2;
     this.centerY = this.canvasHeight/2;
     this.leftRingCenter = this.canvasWidth*0.25;
@@ -22,7 +22,6 @@ function DANTE(){
     this.detectorRadius = this.canvasWidth*0.03;
     this.shieldInnerRadius = this.canvasWidth*0.05;
     this.shieldOuterRadius = this.canvasWidth*0.06;
-    this.scaleHeight = 80;
 
     //establish data buffers////////////////////////////////////////////////////////////////////////////
     this.HVcolor = [];
@@ -33,10 +32,6 @@ function DANTE(){
     this.oldRateColor = [];
 
     //member functions///////////////////////////////////////////////////////////////////
-    //decide which view to transition to when this object is navigated to
-    this.view = function(){
-        return this.canvasID;
-    }
 
     this.draw = function(frame){
 
@@ -132,13 +127,6 @@ function DANTE(){
 
     };
 
-    this.findCell = function(x, y){
-        var imageData = this.TTcontext.getImageData(x,y,1,1);
-        var index = -1;
-        if(imageData.data[0] == imageData.data[1] && imageData.data[0] == imageData.data[2]) index = imageData.data[0];
-        return index;
-    };
-
     this.defineText = function(cell){
         var toolTipContent = '<br>';
         var nextLine;
@@ -188,71 +176,6 @@ function DANTE(){
             this.dataBus.HV[i] = Math.random();
             this.dataBus.thresholds[i] = Math.random();
             this.dataBus.rate[i] = Math.random();
-        }
-
-    };
-
-    //determine which color <scalar> corresponds to
-    this.parseColor = function(scalar, detectorType){
-
-        //how far along the scale are we?
-        var scale;
-        if(detectorType == 'BaF')
-            scale = (scalar - window.parameters.DANTEBaFminima[window.subdetectorView]) / (window.parameters.DANTEBaFmaxima[window.subdetectorView] - window.parameters.DANTEBaFminima[window.subdetectorView]);
-        if(detectorType == 'BGO')
-            scale = (scalar - window.parameters.DANTEBGOminima[window.subdetectorView]) / (window.parameters.DANTEBGOmaxima[window.subdetectorView] - window.parameters.DANTEBGOminima[window.subdetectorView]);
-
-        //different scales for different meters to aid visual recognition:
-        if(window.subdetectorView==0) return scalepickr(scale, 'rainbow');
-        else if(window.subdetectorView==1) return scalepickr(scale, 'twighlight');
-        else if(window.subdetectorView==2) return scalepickr(scale, 'thermalScope');
-    };
-
-    this.animate = function(){
-        if(window.onDisplay == this.canvasID || window.freshLoad) animate(this, 0);
-        else this.draw(this.nFrames);
-    };
-
-    this.drawScale = function(context){
-        var i, j; 
-        context.clearRect(0, this.canvasHeight - this.scaleHeight, this.canvasWidth, this.canvasHeight);
-
-        var title, BaFminTick, BaFmaxTick, BGOminTick, BGOmaxTick;
-        title = window.parameters.monitorValues[window.subdetectorView];
-        BaFminTick = 'BaF: ' + window.parameters.DANTEBaFminima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
-        BaFmaxTick = 'BaF: ' + window.parameters.DANTEBaFmaxima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
-        BGOminTick = 'BGO: ' + window.parameters.DANTEBGOminima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
-        BGOmaxTick = 'BGO: ' + window.parameters.DANTEBGOmaxima[window.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.subdetectorView];
-
-        //titles
-        context.fillStyle = '#999999';
-        context.font="24px 'Orbitron'";
-        context.fillText(title, this.canvasWidth/2 - context.measureText(title).width/2, this.canvasHeight-8);
-
-        //tickmark;
-        context.strokeStyle = '#999999';
-        context.lineWidth = 1;
-        context.font="12px 'Raleway'";
-
-        context.beginPath();
-        context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - 40);
-        context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - 30);
-        context.stroke();
-        context.fillText(BaFminTick, this.canvasWidth*0.05 - context.measureText(BaFminTick).width/2, this.canvasHeight-15);
-        context.fillText(BGOminTick, this.canvasWidth*0.05 - context.measureText(BGOminTick).width/2, this.canvasHeight-3);
-
-        context.beginPath();
-        context.moveTo(this.canvasWidth*0.95-1, this.canvasHeight - 40);
-        context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - 30); 
-        context.stroke();      
-        context.fillText(BaFmaxTick, this.canvasWidth*0.95 - context.measureText(BaFmaxTick).width/2, this.canvasHeight-15);
-        context.fillText(BGOmaxTick, this.canvasWidth*0.95 - context.measureText(BGOmaxTick).width/2, this.canvasHeight-3);
-
-        for(i=0; i<3000; i++){
-            if(window.subdetectorView == 0) context.fillStyle = scalepickr(0.001*(i%1000), 'rainbow');
-            if(window.subdetectorView == 1) context.fillStyle = scalepickr(0.001*(i%1000), 'twighlight');
-            if(window.subdetectorView == 2) context.fillStyle = scalepickr(0.001*(i%1000), 'thermalScope');
-            context.fillRect(this.canvasWidth*0.05 + this.canvasWidth*0.9/1000*(i%1000), this.canvasHeight-60, this.canvasWidth*0.9/1000, 20);
         }
 
     };
