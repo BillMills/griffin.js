@@ -48,7 +48,7 @@ function Subsystem(){
     this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
 
     //set up tooltip:
-    this.tooltip = new Tooltip(this.canvasID, this.name+'TipText', this.name+'TT', this.monitorID, this.prefix, this.postfix);
+    this.tooltip = new Tooltip(this.canvasID, this.name+'TT', this.monitorID, this.prefix, this.postfix);
     this.tooltip.obj = that;
 
     //what fraction of the canvas does the scale take up?  need this for onclick behavior:
@@ -179,7 +179,7 @@ function DetailView(){
     this.TTdetailContext.fillStyle = 'rgba(50,100,150,1)';
     this.TTdetailContext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
     //set up detail tooltip:
-    this.detailTooltip = new Tooltip(this.detailCanvasID, this.name+'detailTipText', this.name+'TTdetail', this.monitorID, window.parameters.HPGeprefix, window.parameters.HPGepostfix);
+    this.detailTooltip = new Tooltip(this.detailCanvasID, this.name+'TTdetail', this.monitorID, window.parameters.HPGeprefix, window.parameters.HPGepostfix);
     this.detailTooltip.obj = that;
 
     //member functions

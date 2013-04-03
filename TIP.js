@@ -293,34 +293,26 @@ function TIP(){
     this.defineText = function(cell){
         var toolTipContent = '<br>';
         var nextLine;
-        var longestLine = 0;
         var cardIndex;
         var i;
 
-        this.context.font = '12px Raleway';
         //summary level//////////////////////////////////////////////////
         //CsI wall reporting:
         if(cell<24){
             nextLine = this.dataBus.key[cell][0];
-
-            //keep track of the longest line of text:
-            longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
             toolTipContent += nextLine + '<br><br>';
 
             //HV
             nextLine = this.prefix[0];
             nextLine += (this.dataBus.CsIHV[cell]).toFixed() + this.postfix[0];
-            longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
             toolTipContent += nextLine + '<br>';
             //Thresholds
             nextLine = this.prefix[1];
             nextLine += (this.dataBus.CsIthresholds[cell]).toFixed() + this.postfix[1];
-            longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
             toolTipContent += nextLine + '<br>';
             //Rate
             nextLine = this.prefix[2];
             nextLine += (this.dataBus.CsIrate[cell]).toFixed() + this.postfix[2];
-            longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
             toolTipContent += nextLine; 
         } else {
         //HPGe+BGO summaries
@@ -333,36 +325,30 @@ function TIP(){
                 } else {
                     cellPointing = 136 + cloverPointing*44 + 2*((cell-100)%8);
                 }
-                nextLine = this.dataBus.key[cellPointing][0]
-                longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)    
+                nextLine = this.dataBus.key[cellPointing][0]   
                 toolTipContent = '<br>' + nextLine + '<br>';
                 if(window.parameters.monitorValues[window.subdetectorView] != 'HV' && (cell-100)%8<4){
                     //HV: todo
                     //Thresholds
                     nextLine = this.prefix[1];
                     nextLine += (this.dataBus.detailHPGethreshold[2*(cell-100 -4*cloverPointing)]).toFixed() + this.postfix[1];
-                    longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
                     toolTipContent += nextLine + '<br>';
                     //Rate
                     nextLine = this.prefix[2];
                     nextLine += (this.dataBus.detailHPGerate[2*(cell -100-4*cloverPointing)]).toFixed() + this.postfix[2];
-                    longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
                     toolTipContent += nextLine; 
                 }
-                nextLine = this.dataBus.key[cellPointing+1][0]
-                longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)    
+                nextLine = this.dataBus.key[cellPointing+1][0]   
                 toolTipContent += '<br><br>' + nextLine + '<br>';
                 if(window.parameters.monitorValues[window.subdetectorView] != 'HV' && (cell-100)%8<4){
                     //HV: todo
                     //Thresholds
                     nextLine = this.prefix[1];
                     nextLine += (this.dataBus.detailHPGethreshold[2*(cell-100 -4*cloverPointing)+1]).toFixed() + this.postfix[1];
-                    longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
                     toolTipContent += nextLine + '<br>';
                     //Rate
                     nextLine = this.prefix[2];
                     nextLine += (this.dataBus.detailHPGerate[2*(cell -100-4*cloverPointing)+1]).toFixed() + this.postfix[2];
-                    longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
                     toolTipContent += nextLine; 
                 }
             } else{
@@ -380,8 +366,6 @@ function TIP(){
                 chIndex = 136 + this.cloverShowing*44 + cell;
             }
             nextLine = this.dataBus.key[chIndex][0]
-            //keep track of the longest line of text:
-            longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
             //report the channel name
             toolTipContent = '<br>' + nextLine + '<br><br>';
 
@@ -390,25 +374,24 @@ function TIP(){
                 //Thresholds
                 nextLine = this.prefix[1];
                 nextLine += (this.dataBus.detailHPGethreshold[cell + this.nHPGesegments*this.cloverShowing]).toFixed() + this.postfix[1];
-                longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
                 toolTipContent += nextLine + '<br>';
                 //Rate
                 nextLine = this.prefix[2];
                 nextLine += (this.dataBus.detailHPGerate[cell + this.nHPGesegments*this.cloverShowing]).toFixed() + this.postfix[2];
-                longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
                 toolTipContent += nextLine; 
             }
         }
 
         //put the text in the right tooltip:
+        toolTipContent += '<br><br>';
         if(this.detailShowing){
-            document.getElementById(this.detailTooltip.ttTextID).innerHTML = toolTipContent;
+            document.getElementById(this.detailTooltip.ttDivID).innerHTML = toolTipContent;
         } else{
-            document.getElementById(this.tooltip.ttTextID).innerHTML = toolTipContent;
+            document.getElementById(this.tooltip.ttDivID).innerHTML = toolTipContent;
         }
 
         //return length of longest line:
-        return longestLine;
+        return 0;
     };
 
     this.update = function(){

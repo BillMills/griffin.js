@@ -6,7 +6,7 @@ function StatusBar(wrapper){
 	var that = this;
 
 	//deploy tooltip:
-    this.tooltip = new Tooltip('LeftSidebarBKG', 'leftSidebarTTipText', 'leftSidebarTT', this.wrapperID, [], []);
+    this.tooltip = new Tooltip('LeftSidebarBKG', 'leftSidebarTT', this.wrapperID, [], []);
     this.tooltip.obj = that;
     //tooltip actually attaches to a canvas - attach it to the background canvas, but then pull the event listners up to the top-level div:
     document.getElementById(this.wrapperID).onmousemove = document.getElementById('LeftSidebarBKG').onmousemove
@@ -122,29 +122,23 @@ function StatusBar(wrapper){
     this.defineText = function(cell){
         var toolTipContent = '<br>';
         var nextLine;
-        var longestLine = 0;
         var cardIndex;
         var i;
 
         nextLine = '<u>Run Config Details</u>'
-        //keep track of the longest line of text:
-        longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
         toolTipContent += nextLine + '<br><br>';
 
         nextLine = 'Auto-Restart on End of Run: ' + this.restart 
-        //keep track of the longest line of text:
-        longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
         toolTipContent += nextLine + '<br>';
 
         nextLine = 'Data dir: ' + this.dataDir
-        //keep track of the longest line of text:
-        longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
         toolTipContent += nextLine + '<br>';
 
-        document.getElementById(this.tooltip.ttTextID).innerHTML = toolTipContent;
+        toolTipContent += '<br>';
 
-        //return length of longest line:
-        return longestLine;
+        document.getElementById(this.tooltip.ttDivID).innerHTML = toolTipContent;
+
+        return 0;
     };
 
     this.update();

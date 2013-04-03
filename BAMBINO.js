@@ -162,20 +162,16 @@ function BAMBINO(){
     this.defineText = function(cell){
         var toolTipContent = '<br>';
         var nextLine;
-        var longestLine = 0;
         var cardIndex;
         var i;
 
         nextLine = 'Channel '+cell;
-
-        //keep track of the longest line of text:
-        longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
         toolTipContent += nextLine;
+        
+        toolTipContent += '<br><br>';
+        document.getElementById(this.tooltip.ttDivID).innerHTML = toolTipContent;
 
-        document.getElementById(this.tooltip.ttTextID).innerHTML = toolTipContent;
-
-        //return length of longest line:
-        return longestLine;
+        return 0;
     };
 
     this.update = function(){

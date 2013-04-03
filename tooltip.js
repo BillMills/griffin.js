@@ -1,8 +1,7 @@
-function Tooltip(ttCanvasID, ttTextID, ttDivID, wrapperID, prefix, postfix){
+function Tooltip(ttCanvasID, ttDivID, wrapperID, prefix, postfix){
 
     this.obj;                                       //the object that this tooltip is associated with
     this.canvasID = ttCanvasID;                     //target canvas
-    this.ttTextID = ttTextID;                       //tooltip text
     this.ttDivID = ttDivID;                         //tooltip div
     this.wrapperID = wrapperID;                     //ID of div which wraps the tooltip's canvas
     this.prefix = prefix;                           //prefixes to tooltip content lines
@@ -10,9 +9,7 @@ function Tooltip(ttCanvasID, ttTextID, ttDivID, wrapperID, prefix, postfix){
 
     //inject the necessary DOM elements for this tooltip:
     //wrapper div
-    insertDOM('div', this.ttDivID, 'tooltip', 'background:rgba(0,0,0,0.7); border: 5px solid; border-radius:10px;', 'body', '', '')
-    //content paragraph
-    insertDOM('p', this.ttTextID, 'TTtext', '', this.ttDivID, '', '')
+    insertDOM('div', this.ttDivID, 'tooltip', 'background:rgba(0,0,0,0.7); border: 5px solid; border-radius:10px; width:auto; height:auto; padding-left:20px; padding-right:20px;', 'body', '', '')
 
     this.canvas = document.getElementById(this.canvasID);
     this.context = this.canvas.getContext('2d'); 
@@ -41,15 +38,10 @@ function Tooltip(ttCanvasID, ttTextID, ttDivID, wrapperID, prefix, postfix){
         if(cellIndex != -1 && x>1 && y>0){
 
             //establish text:
-            var newWidth = Math.max(1.5*that.obj.defineText(cellIndex),200);
-            var newHeight = 200;
-
-            //update the size of the tool tip to fit the text:
-            $(that.ttDiv).width(newWidth)
-            $(that.ttDiv).height(newHeight);
+            that.obj.defineText(cellIndex);
 
             //make the tool tip follow the mouse:
-            that.ttDiv.style.top = event.pageY - newHeight - 10;
+            that.ttDiv.style.top = event.pageY - 10;
             that.ttDiv.style.left = event.pageX  + 10;
 
             //make the tool tip appear iff the waffle is showing:
@@ -73,14 +65,7 @@ function Tooltip(ttCanvasID, ttTextID, ttDivID, wrapperID, prefix, postfix){
     this.update = function(){
         if(this.allowUpdate){
             //establish text:
-            var newWidth = Math.max(1.5*this.obj.defineText(this.oldCellIndex),200);            
-            var newHeight = 200;
-
-            //update the size of the tool tip to fit the text:
-            $(that.ttDiv).width(newWidth)
-            $(that.ttDiv).height(newHeight);
-            $('#'+this.ttTextID).width(newWidth);
-
+            this.obj.defineText(this.oldCellIndex);
         }
     };
 

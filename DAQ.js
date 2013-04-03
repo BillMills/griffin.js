@@ -115,14 +115,14 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     this.TTcontext.fillStyle = 'rgba(50,100,150,1)';
     this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
     //set up summary tooltip:
-    this.tooltip = new Tooltip(this.canvasID, 'DAQTipText', 'DAQTT', this.monitorID, prefix, postfix);
+    this.tooltip = new Tooltip(this.canvasID, 'DAQTT', this.monitorID, prefix, postfix);
     this.tooltip.obj = that;
     //detail level tt:
     //paint whole hidden canvas with R!=G!=B to trigger TT suppression:
     this.TTdetailContext.fillStyle = 'rgba(50,100,150,1)';
     this.TTdetailContext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
     //set up detail tooltip:
-    this.detailTooltip = new Tooltip(this.detailCanvasID, 'DAQdetailTipText', 'DAQTTdetail', this.monitorID, prefix, postfix);
+    this.detailTooltip = new Tooltip(this.detailCanvasID, 'DAQTTdetail', this.monitorID, prefix, postfix);
     this.detailTooltip.obj = that;
 
 
@@ -582,24 +582,21 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     this.defineText = function(cell){
         var toolTipContent = '<br>';
         var nextLine;
-        var longestLine = 0;
         var cardIndex;
         var i;
 
         nextLine = 'Channel '+cell;
-
-        //keep track of the longest line of text:
-        longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
         toolTipContent += nextLine;
 
+        toolTipContent += '<br><br>';
         if(this.detailShowing){
-            document.getElementById(this.detailTooltip.ttTextID).innerHTML = toolTipContent;
+            document.getElementById(this.detailTooltip.ttDivID).innerHTML = toolTipContent;
         } else{
-            document.getElementById(this.tooltip.ttTextID).innerHTML = toolTipContent;
+            document.getElementById(this.tooltip.ttDivID).innerHTML = toolTipContent;
         }
 
         //return length of longest line:
-        return longestLine;
+        return 0;
     };
 
     this.animate = function(){

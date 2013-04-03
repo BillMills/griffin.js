@@ -103,46 +103,16 @@ function DESCANT(){
 	this.defineText = function(cell){
         var toolTipContent = '<br>';
         var nextLine;
-        var longestLine = 0;
         var cardIndex;
         var i;
 
         nextLine = this.dataBus.key[cell][0];
-        //keep track of the longest line of text:
-        longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
         toolTipContent += nextLine;
-/*
-        //fill out tooltip content:
-        for(i=0; i<this.reportedValues.length; i++){
-            //establish prefix:
-            nextLine = '<br/>'+this.tooltip.prefix[i];
-            if(this.tooltip.prefix[i] !== '') nextLine += ' ';
 
-            //pull in content; special cases for the status word and reported current:
-            //status word:
-            if(i == 6){
-                nextLine += parseStatusWord(this.reportedValues[i][row][col]);
-            }
-            //current:
-            else if(i == 2){
-                    if(this.moduleSizes[cardIndex]==4 && row!=0) nextLine += '--';
-                    else nextLine += Math.round( this.reportedValues[i][row][col]*1000)/1000 + ' ' + this.tooltip.postfix[i];                
-            } else {
-                nextLine += Math.round( this.reportedValues[i][row][col]*1000)/1000 + ' ' + this.tooltip.postfix[i];
-            }
+        toolTipContent += '<br><br>';
+        document.getElementById(this.tooltip.ttDivID).innerHTML = toolTipContent;
 
-            //keep track of longest line:
-            longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width);
-
-            //append to tooltip:
-            toolTipContent += nextLine;
- 
-        }
-*/
-        document.getElementById(this.tooltip.ttTextID).innerHTML = toolTipContent;
-
-        //return length of longest line:
-        return longestLine;
+        return 0;
 	};
 
 	this.update = function(){

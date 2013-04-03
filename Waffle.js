@@ -185,7 +185,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         document.getElementById(this.linkWrapperID).setAttribute('style', 'left:'+(24 + 100*this.leftEdge/$('#'+this.wrapperDiv).width() )+'%;')
 
         //make a tooltip for this object:
-        this.tooltip = new Tooltip(this.canvasID, 'MFTipText', 'MFTT', this.wrapperDiv, window.parameters.prefix, window.parameters.postfix);
+        this.tooltip = new Tooltip(this.canvasID, 'MFTT', this.wrapperDiv, window.parameters.prefix, window.parameters.postfix);
         //give the tooltip a pointer back to this object:
         this.tooltip.obj = that;
 
@@ -552,7 +552,6 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         this.defineText = function(cell){
             var toolTipContent = '<br>';
             var nextLine;
-            var longestLine = 0;
             var cardIndex;
             var i;
 
@@ -567,14 +566,10 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
             if(row != 0) nextLine = this.moduleLabels[cardIndex]+', '+window.parameters.rowTitles[0]+' '+channelMap(col, row, window.parameters.moduleSizes, this.rows)+'<br>';
             //Title for primary channels:
             else nextLine = this.moduleLabels[cardIndex]+' Primary <br>';
-
-            //keep track of the longest line of text:
-            longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
             toolTipContent += nextLine;
 
             //channel Name
             nextLine = this.dataBus.channelName[row][col]+'<br>';
-            longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width)
             toolTipContent += nextLine;            
 
             //fill out tooltip content:
@@ -596,18 +591,14 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                     nextLine += Math.round( this.reportedValues[i][row][col]*1000)/1000 + ' ' + this.tooltip.postfix[i];
                 }
 
-                //keep track of longest line:
-                this.tooltip.context.font = '12px Raleway'
-                longestLine = Math.max(longestLine, this.tooltip.context.measureText(nextLine).width);
-
                 //append to tooltip:
                 toolTipContent += nextLine;
  
             }
-            document.getElementById(this.tooltip.ttTextID).innerHTML = toolTipContent;
+            toolTipContent += '<br><br>';
+            document.getElementById(this.tooltip.ttDivID).innerHTML = toolTipContent;
 
-            //return length of longest line:
-            return longestLine;
+            return 0;
         };
 
         //get new data:
