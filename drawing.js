@@ -33,7 +33,7 @@ ellipseSpoke = function(context, centerX, centerY, horizRadiusInner, horizRadius
 }
 
 //color in a particular annular section
-fillAnnularSection = function(context, centerX, centerY, innerRadius, outerRadius, startAngle, endAngle){
+fillAnnularSection = function(drawOption, context, centerX, centerY, innerRadius, outerRadius, startAngle, endAngle){
 
     context.save();
     context.translate(centerX, centerY);
@@ -45,7 +45,8 @@ fillAnnularSection = function(context, centerX, centerY, innerRadius, outerRadiu
     context.arc(0, 0, outerRadius, 2*Math.PI - endAngle, 2*Math.PI - startAngle, false);
     context.closePath();
     context.restore();
-    context.fill();
+    if(drawOption == 'fill' || drawOption == 'both') context.fill();
+    if(drawOption == 'stroke' || drawOption == 'both')context.stroke();
 
 }
 
