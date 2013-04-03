@@ -23,17 +23,7 @@ function HPGe(){
     this.BGOenable = window.parameters.BGOenable;   //are the suppresors present?
 
     DetailView.call(this);                          //inject the infrastructure for a detail-level view
-
-
-
-
-
-
-
-
-
-
-
+    HPGeAssets.call(this);                          //inject the HPGe drawing assets
 
     //onclick switch between top and detail view:
     this.detailCanvas.onclick = function(event){
@@ -49,6 +39,7 @@ function HPGe(){
                                 cloverClicked = that.findCell(x,y);
                                 //draw and swap out if user clicked on a valid clover
                                 if(cloverClicked != -1){
+                                    cloverClicked = Math.floor( (cloverClicked - 108) / 8)+1;
                                     that.cloverShowing = cloverClicked
                                     that.drawDetail(that.detailContext, that.nFrames);
                                     that.drawDetail(that.TTdetailContext, that.nFrames);
@@ -57,15 +48,6 @@ function HPGe(){
                                 }
                             };
 
-
-
-    //detail level tt:
-    //paint whole hidden canvas with R!=G!=B to trigger TT suppression:
-    this.TTdetailContext.fillStyle = 'rgba(50,100,150,1)';
-    this.TTdetailContext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
-    //set up detail tooltip:
-    this.detailTooltip = new Tooltip(this.detailCanvasID, 'HPGedetailTipText', 'HPGeTTdetail', this.monitorID, window.parameters.HPGeprefix, window.parameters.HPGepostfix);
-    this.detailTooltip.obj = that;
 
     //drawing parameters/////////////////////////////////////////////////////////////////////////////////////////////
     this.centerX = this.canvasWidth/2;
@@ -118,9 +100,9 @@ function HPGe(){
     }
 
     //detail view
-    this.crystalSide = this.canvasWidth*0.1*0.9;
-    this.suppressorWidth = this.canvasWidth*0.03*0.9;
-    this.suppressorSpacing = this.canvasWidth*0.04*0.9;
+    this.crystalSide = this.canvasWidth*0.1*0.8;
+    this.suppressorWidth = this.canvasWidth*0.03*0.8;
+    this.suppressorSpacing = this.canvasWidth*0.04*0.8;
     this.backBGOinnerWidth = 2*this.crystalSide + 2*this.suppressorSpacing;
     this.backBGOouterWidth = this.backBGOinnerWidth + 2*this.suppressorWidth;
     this.sideBGOinnerWidth = this.backBGOouterWidth + 2*this.suppressorSpacing;
@@ -158,73 +140,30 @@ function HPGe(){
 
     //Member functions/////////////////////////////////////////////////////////////////////////////////
 
-
+    //function to wrap drawing for animate
     this.draw = function(frame){
         var i;
         this.context.lineWidth = this.lineWeight;
 
         for(i=0; i<16; i++){
-            this.drawSummary(this.summaryCoord[i+1][0], this.summaryCoord[i+1][1], this.summaryCoord[i+1][2], i+1, frame);
+            this.drawHPGesummary(this.context, this.summaryCoord[i+1][0], this.summaryCoord[i+1][1], i, frame);
+            this.drawHPGesummary(this.TTcontext, this.summaryCoord[i+1][0], this.summaryCoord[i+1][1], i, frame);
         }
 
         //titles
-        this.context.clearRect(0,0.7*this.canvasHeight,this.canvasWidth,0.3*this.canvasHeight - this.scaleHeight);
+        this.context.clearRect(0,0.75*this.canvasHeight,this.canvasWidth,0.25*this.canvasHeight - this.scaleHeight);
         this.context.fillStyle = '#999999';
         this.context.font="24px 'Orbitron'";
         if(this.mode == 'TIGRESS'){
-            this.context.fillText('North Hemisphere', 0.201*this.canvasWidth + this.BGOouter/2 - this.context.measureText('North Hemisphere').width/2, 0.8*this.canvasHeight);
-            this.context.fillText('South Hemisphere', 0.701*this.canvasWidth + this.BGOouter/2 - this.context.measureText('North Hemisphere').width/2, 0.8*this.canvasHeight);
+            this.context.fillText('North Hemisphere', 0.201*this.canvasWidth + this.BGOouter/2 - this.context.measureText('North Hemisphere').width/2, 0.78*this.canvasHeight);
+            this.context.fillText('South Hemisphere', 0.701*this.canvasWidth + this.BGOouter/2 - this.context.measureText('North Hemisphere').width/2, 0.78*this.canvasHeight);
         } else if(this.mode == 'GRIFFIN'){
-            this.context.fillText('West Hemisphere', 0.201*this.canvasWidth + this.BGOouter/2 - this.context.measureText('West Hemisphere').width/2, 0.8*this.canvasHeight);
-            this.context.fillText('East Hemisphere', 0.701*this.canvasWidth + this.BGOouter/2 - this.context.measureText('East Hemisphere').width/2, 0.8*this.canvasHeight);
+            this.context.fillText('West Hemisphere', 0.201*this.canvasWidth + this.BGOouter/2 - this.context.measureText('West Hemisphere').width/2, 0.78*this.canvasHeight);
+            this.context.fillText('East Hemisphere', 0.701*this.canvasWidth + this.BGOouter/2 - this.context.measureText('East Hemisphere').width/2, 0.78*this.canvasHeight);
         }
 
         if(frame==this.nFrames || frame==0) this.drawScale(this.context);
     };
-
-
-    //drawing functions/////////////////////////////////////////////////////////
-    //summary view/////////////////////////
-
-    this.drawSummary = function(x0,y0, hemisphere, cloverNumber, frame){
-        var i;
-        var colors 
-        //cloverleaves are oriented differently in north and south hemispheres in the blueprints, match here:
-        if(hemisphere == 'north') colors = ['#999999','#999999','#999999','#999999'];//['#00FF00', '#0000FF', '#FF0000', '#FFFFFF'];
-        else if(hemisphere == 'south') colors = ['#999999','#999999','#999999','#999999'];//['#FFFFFF', '#FF0000', '#0000FF', '#00FF00'];
-
-        for(i=0; i<4; i++){
-
-            //HPGe
-            //fill the crystal quarter with the appropriate color on the top view, or the tt encoding on the tt layer:
-            if(window.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.oldSummaryHPGeHVcolor[4*(cloverNumber-1)+i]), parseHexColor(this.summaryHPGeHVcolor[4*(cloverNumber-1)+i]), frame/this.nFrames);
-            else if(window.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldSummaryHPGethresholdColor[4*(cloverNumber-1)+i]), parseHexColor(this.summaryHPGethresholdColor[4*(cloverNumber-1)+i]), frame/this.nFrames);
-            else if(window.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldSummaryHPGerateColor[4*(cloverNumber-1)+i]), parseHexColor(this.summaryHPGerateColor[4*(cloverNumber-1)+i]), frame/this.nFrames);
-            this.context.fillRect(Math.round(x0 + (this.BGOouter-this.HPGeside)/2 + (i%2)*(this.lineWeight + this.HPGeside/2)), Math.round(y0 + (this.BGOouter-this.HPGeside)/2 + (i>>1)/2*(2*this.lineWeight + this.HPGeside)), Math.round(this.HPGeside/2),Math.round(this.HPGeside/2));
-            //give the top view clovers an appropriately-colored outline:
-            this.context.strokeStyle = colors[i];
-            this.context.strokeRect(x0 + (this.BGOouter-this.HPGeside)/2 + (i%2)*(this.lineWeight + this.HPGeside/2), y0 + (this.BGOouter-this.HPGeside)/2 + (i>>1)/2*(2*this.lineWeight + this.HPGeside), this.HPGeside/2, this.HPGeside/2);
-
-            //BGO
-            var rotation 
-            if(i<2) rotation = i*Math.PI/2;
-            else if(i==2) rotation = 3*Math.PI/2;
-            else if(i==3) rotation = Math.PI;
-            var color = '#000000';
-            if(this.BGOenable){
-                if(window.subdetectorView == 0) color = interpolateColor(parseHexColor(this.oldSummaryBGOHVcolor[4*(cloverNumber-1)+i]), parseHexColor(this.summaryBGOHVcolor[4*(cloverNumber-1)+i]), frame/this.nFrames);
-                else if(window.subdetectorView == 1) color = interpolateColor(parseHexColor(this.oldSummaryBGOthresholdColor[4*(cloverNumber-1)+i]), parseHexColor(this.summaryBGOthresholdColor[4*(cloverNumber-1)+i]), frame/this.nFrames);
-                else if(window.subdetectorView == 2) color = interpolateColor(parseHexColor(this.oldSummaryBGOrateColor[4*(cloverNumber-1)+i]), parseHexColor(this.summaryBGOrateColor[4*(cloverNumber-1)+i]), frame/this.nFrames);
-            }
-            this.drawL(this.context, rotation, Math.round((this.BGOouter - this.BGOinner)/2), Math.round(this.BGOouter/2), Math.round(x0 + (this.BGOouter+this.lineWeight)*(i%2)), Math.round(y0 + (this.BGOouter+this.lineWeight)*(i>>1)), colors[i], color);
-
-            //reproduce encoded shadow on the summary tooltip canvas:
-            this.TTcontext.fillStyle = 'rgba('+cloverNumber+', '+cloverNumber+', '+cloverNumber+', 1)';
-            this.TTcontext.fillRect(Math.round(x0), Math.round(y0), Math.round(this.BGOouter), Math.round(this.BGOouter) );
-        }
-    }
-
-    //detail view///////////////////////////
 
     this.drawDetail = function(context, frame){
         var i, j;
@@ -404,138 +343,6 @@ function HPGe(){
             this.detailContext.fillText('Clover '+this.cloverShowing, 0.5*this.canvasWidth - this.detailContext.measureText('Clover '+this.cloverShowing).width/2, 0.85*this.canvasHeight);
         }
     };
-
-    //draw crystal core
-    this.crystalCore = function(context, x0, y0, border, fill){
-        context.strokeStyle = border;
-        context.fillStyle = fill;
-    	context.fillRect(Math.round(x0), Math.round(y0), Math.round(this.crystalSide/3), Math.round(this.crystalSide/3));
-    	if(context == this.context || context == this.detailContext) context.stroke();
-    };
-
-    //draw HV box for one cloverleaf:
-    this.crystal = function(context, x0, y0, border, fill){
-        context.strokeStyle = border;
-        context.fillStyle = fill;
-        context.fillRect(Math.round(x0), Math.round(y0), Math.round(this.crystalSide), Math.round(this.crystalSide));
-        if(context == this.context || context == this.detailContext){
-            context.strokeRect(x0, y0, this.crystalSide, this.crystalSide);
-        }
-
-    };    
-
-    //draw split crystal for HV view
-    this.splitCrystal = function(context, x0, y0, side, cloverLeaf, border, fill, fillB){
-        //antialiasing hack: draw this first on the tooltip level
-        if(context == this.TTdetailContext && fill != '#123456'){
-            this.splitCrystal(context, x0, y0, side, border, '#123456', '#123456');
-        }
-
-        context.save();
-        context.translate(x0+side/2, y0+side/2);
-        context.rotate(Math.PI/2*cloverLeaf);
-        context.strokeStyle = border;
-        context.fillStyle = fill;
-        context.beginPath();
-        context.moveTo(side/2,-side/2);
-        context.lineTo(-side/2,-side/2);
-        context.lineTo(-side/2,side/2);
-        context.closePath();
-        context.fill();
-        if(context == this.context || context == this.detailContext) context.stroke();
-
-        context.fillStyle = fillB;
-        context.beginPath();
-        context.moveTo(side/2,-side/2);
-        context.lineTo(side/2,side/2);
-        context.lineTo(-side/2,side/2);
-        context.closePath();
-        context.fill();
-        if(context == this.context || context == this.detailContext) context.stroke();
-        context.restore();
-    };
-
-    //draw L shape
-    this.drawL = function(context, phi, thickness, length, x0, y0, border, fill){
-        //antialiasing hack: draw this first on the tooltip level
-        if(context == this.TTdetailContext && fill != '#123456'){
-            this.drawL(context, phi, thickness, length, x0, y0, border, '#123456');
-        }
-
-        context.strokeStyle = border;
-        context.fillStyle = fill;
-    	context.save();
-    	context.translate(Math.round(x0), Math.round(y0));
-    	context.rotate(phi);
-
-        context.beginPath();
-    	context.moveTo(0,0);
-    	context.lineTo(Math.round(length), 0);
-    	context.lineTo(Math.round(length), Math.round(thickness));
-    	context.lineTo(Math.round(thickness), Math.round(thickness));
-    	context.lineTo(Math.round(thickness), Math.round(length));
-    	context.lineTo(0,Math.round(length));
-    	context.closePath();
-        context.fill();
-    	if(context == this.context || context == this.detailContext) context.stroke();
-
-    	context.restore();
-
-    };
-
-    //draw half-L
-    this.drawHalfL = function(context, phi, thickness, length, x0, y0, chirality, split, border, fill, fillB){
-        //antialiasing hack: draw this first on the tooltip level
-        if(context == this.TTdetailContext && fill != '#123456'){
-            this.drawHalfL(context, phi, thickness, length, x0, y0, chirality, split, border, '#123456', '#123456');
-        }
-
-        context.save();
-        context.strokeStyle = border;
-        context.fillStyle = fill;
-        context.translate(x0, y0);
-        context.rotate(phi);
-
-        if(chirality == 'left'){
-            context.translate(this.detailContext.width,0);
-            context.scale(-1,1);   
-        }
-
-        if(split){
-            context.beginPath();
-            context.moveTo((length-thickness)/2,0);
-            context.lineTo(length-thickness, 0);
-            context.lineTo(length-thickness, -thickness);
-            context.lineTo((length-thickness)/2,-thickness);
-            context.closePath();
-            context.fill();
-            if(context == this.context || context == this.detailContext) context.stroke();
-
-            context.fillStyle = fillB;
-            context.beginPath();
-            context.moveTo(0,0);
-            context.lineTo((length-thickness)/2,0);
-            context.lineTo((length-thickness)/2,-thickness);
-            context.lineTo(-thickness, -thickness);
-            context.closePath();
-            context.fill();
-            if(context == this.context || context == this.detailContext) context.stroke();
-        } else{
-            context.beginPath();
-            context.moveTo(0,0);
-            context.lineTo(length-thickness, 0);
-            context.lineTo(length-thickness, -thickness);
-            context.lineTo(-thickness, -thickness);
-            context.closePath();
-            context.fill();
-            if(context == this.context || context == this.detailContext) context.stroke();
-        }
-
-        context.restore();
-    };
-    //end drawing functions///////////////////////////////////////////////////////////////
-
-
 
     this.defineText = function(cell){
         var toolTipContent = '<br>';

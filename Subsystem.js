@@ -152,8 +152,12 @@ function Subsystem(){
 
 }
 
+
+
+
 //another object to inject into subsystems that need a detail-level view:
 function DetailView(){
+    var that = this;
     this.detailCanvasID = this.name+'detailCanvas';       //ID of canvas to draw single HPGe view on
     this.TTdetailCanvasID = this.name+'TTdetailCanvas';   //ID of hidden tooltip map canvas for detail level
 
@@ -169,6 +173,14 @@ function DetailView(){
     this.TTdetailContext = this.TTdetailCanvas.getContext('2d');
     this.TTdetailCanvas.setAttribute('width', this.canvasWidth);
     this.TTdetailCanvas.setAttribute('height', this.canvasHeight);
+
+    //detail level tt:
+    //paint whole hidden canvas with R!=G!=B to trigger TT suppression:
+    this.TTdetailContext.fillStyle = 'rgba(50,100,150,1)';
+    this.TTdetailContext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
+    //set up detail tooltip:
+    this.detailTooltip = new Tooltip(this.detailCanvasID, this.name+'detailTipText', this.name+'TTdetail', this.monitorID, window.parameters.HPGeprefix, window.parameters.HPGepostfix);
+    this.detailTooltip.obj = that;
 
     //member functions
     //decide which view to transition to when this object is navigated to; overwrites equivalent in Subsystem.
@@ -211,6 +223,181 @@ function DetailView(){
 }
 
 
+
+
+
+//function wrapping all the specialized drawing tools for HPGe displays:
+function HPGeAssets(){
+    //draw crystal core
+    this.crystalCore = function(context, x0, y0, border, fill){
+        context.strokeStyle = border;
+        context.fillStyle = fill;
+        context.fillRect(Math.round(x0), Math.round(y0), Math.round(this.crystalSide/3), Math.round(this.crystalSide/3));
+        if(context == this.context || context == this.detailContext) context.stroke();
+    };
+
+    //draw HV box for one cloverleaf:
+    this.crystal = function(context, x0, y0, border, fill){
+        context.strokeStyle = border;
+        context.fillStyle = fill;
+        context.fillRect(Math.round(x0), Math.round(y0), Math.round(this.crystalSide), Math.round(this.crystalSide));
+        if(context == this.context || context == this.detailContext){
+            context.strokeRect(x0, y0, this.crystalSide, this.crystalSide);
+        }
+
+    }; 
+
+    //draw split crystal for HV view
+    this.splitCrystal = function(context, x0, y0, side, cloverLeaf, border, fill, fillB){
+        //antialiasing hack: draw this first on the tooltip level
+        if(context == this.TTdetailContext && fill != '#123456'){
+            this.splitCrystal(context, x0, y0, side, border, '#123456', '#123456');
+        }
+
+        context.save();
+        context.translate(x0+side/2, y0+side/2);
+        context.rotate(Math.PI/2*cloverLeaf);
+        context.strokeStyle = border;
+
+        context.fillStyle = fill;
+        context.beginPath();
+        context.moveTo(side/2,-side/2);
+        context.lineTo(-side/2,-side/2);
+        context.lineTo(-side/2,side/2);
+        context.closePath();
+        context.fill();
+        if(context == this.context || context == this.detailContext) context.stroke();
+
+        context.fillStyle = fillB;
+        context.beginPath();
+        context.moveTo(side/2,-side/2);
+        context.lineTo(side/2,side/2);
+        context.lineTo(-side/2,side/2);
+        context.closePath();
+        context.fill();
+        if(context == this.context || context == this.detailContext) context.stroke();
+        
+        context.restore();
+    };
+
+    //draw L shape
+    this.drawL = function(context, phi, thickness, length, x0, y0, border, fill){
+        //antialiasing hack: draw this first on the tooltip level
+        if(context == this.TTdetailContext && fill != '#123456'){
+            this.drawL(context, phi, thickness, length, x0, y0, border, '#123456');
+        }
+
+        context.strokeStyle = border;
+        context.fillStyle = fill;
+        context.save();
+        context.translate(Math.round(x0), Math.round(y0));
+        context.rotate(phi);
+
+        context.beginPath();
+        context.moveTo(0,0);
+        context.lineTo(Math.round(length), 0);
+        context.lineTo(Math.round(length), Math.round(thickness));
+        context.lineTo(Math.round(thickness), Math.round(thickness));
+        context.lineTo(Math.round(thickness), Math.round(length));
+        context.lineTo(0,Math.round(length));
+        context.closePath();
+        context.fill();
+        if(context == this.context || context == this.detailContext) context.stroke();
+
+        context.restore();
+
+    };
+
+    //draw half-L
+    this.drawHalfL = function(context, phi, thickness, length, x0, y0, chirality, split, border, fill, fillB){
+        //antialiasing hack: draw this first on the tooltip level
+        if(context == this.TTdetailContext && fill != '#123456'){
+            this.drawHalfL(context, phi, thickness, length, x0, y0, chirality, split, border, '#123456', '#123456');
+        }
+
+        context.save();
+        context.strokeStyle = border;
+        context.fillStyle = fill;
+        context.translate(x0, y0);
+        context.rotate(phi);
+
+        if(chirality == 'left'){
+            context.translate(this.detailContext.width,0);
+            context.scale(-1,1);   
+        }
+
+        if(split){
+            context.beginPath();
+            context.moveTo((length-thickness)/2,0);
+            context.lineTo(length-thickness, 0);
+            context.lineTo(length-thickness, -thickness);
+            context.lineTo((length-thickness)/2,-thickness);
+            context.closePath();
+            context.fill();
+            if(context == this.context || context == this.detailContext) context.stroke();
+
+            context.fillStyle = fillB;
+            context.beginPath();
+            context.moveTo(0,0);
+            context.lineTo((length-thickness)/2,0);
+            context.lineTo((length-thickness)/2,-thickness);
+            context.lineTo(-thickness, -thickness);
+            context.closePath();
+            context.fill();
+            if(context == this.context || context == this.detailContext) context.stroke();
+        } else{
+            context.beginPath();
+            context.moveTo(0,0);
+            context.lineTo(length-thickness, 0);
+            context.lineTo(length-thickness, -thickness);
+            context.lineTo(-thickness, -thickness);
+            context.closePath();
+            context.fill();
+            if(context == this.context || context == this.detailContext) context.stroke();
+        }
+
+        context.restore();
+    };
+
+    this.drawHPGesummary = function(context, x0,y0, cloverNumber, frame){
+        var i, iprime;
+        var colors = ['#999999', '#999999', '#999999', '#999999'];
+
+        for(i=0; i<4; i++){
+
+            //fudge to arrange the summary the same as the detail:
+            if (i<2) iprime = i;
+            if (i==2) iprime = 3;
+            if (i==3) iprime = 2;
+
+            //HPGe
+            //fill the crystal quarter with the appropriate color on the top view, or the tt encoding on the tt layer:
+            if(window.subdetectorView == 0) context.fillStyle = interpolateColor(parseHexColor(this.oldSummaryHPGeHVcolor[4*(cloverNumber)+i]), parseHexColor(this.summaryHPGeHVcolor[4*(cloverNumber)+i]), frame/this.nFrames);
+            else if(window.subdetectorView == 1) context.fillStyle = interpolateColor(parseHexColor(this.oldSummaryHPGethresholdColor[4*(cloverNumber)+i]), parseHexColor(this.summaryHPGethresholdColor[4*(cloverNumber)+i]), frame/this.nFrames);
+            else if(window.subdetectorView == 2) context.fillStyle = interpolateColor(parseHexColor(this.oldSummaryHPGerateColor[4*(cloverNumber)+i]), parseHexColor(this.summaryHPGerateColor[4*(cloverNumber)+i]), frame/this.nFrames);
+            if(context == this.TTcontext) this.TTcontext.fillStyle = 'rgba('+(100+cloverNumber*8 + iprime)+', '+(100+cloverNumber*8 + iprime)+', '+(100+cloverNumber*8 + iprime)+', 1)';
+            context.fillRect(Math.round(x0 + (this.BGOouter-this.HPGeside)/2 + (i%2)*(this.lineWeight + this.HPGeside/2)), Math.round(y0 + (this.BGOouter-this.HPGeside)/2 + (i>>1)/2*(2*this.lineWeight + this.HPGeside)), Math.round(this.HPGeside/2),Math.round(this.HPGeside/2));
+            //give the top view clovers an appropriately-colored outline:
+            if(context != this.TTcontext){
+                context.strokeStyle = colors[i];
+                context.strokeRect(x0 + (this.BGOouter-this.HPGeside)/2 + (i%2)*(this.lineWeight + this.HPGeside/2), y0 + (this.BGOouter-this.HPGeside)/2 + (i>>1)/2*(2*this.lineWeight + this.HPGeside), this.HPGeside/2, this.HPGeside/2);
+            }
+
+            //BGO
+            var rotation 
+            if(i<2) rotation = i*Math.PI/2;
+            else if(i==2) rotation = 3*Math.PI/2;
+            else if(i==3) rotation = Math.PI;
+            var color = '#000000';
+            if(window.subdetectorView == 0) color = interpolateColor(parseHexColor(this.oldSummaryBGOHVcolor[4*(cloverNumber)+i]), parseHexColor(this.summaryBGOHVcolor[4*(cloverNumber)+i]), frame/this.nFrames);
+            else if(window.subdetectorView == 1) color = interpolateColor(parseHexColor(this.oldSummaryBGOthresholdColor[4*(cloverNumber)+i]), parseHexColor(this.summaryBGOthresholdColor[4*(cloverNumber)+i]), frame/this.nFrames);
+            else if(window.subdetectorView == 2) color = interpolateColor(parseHexColor(this.oldSummaryBGOrateColor[4*(cloverNumber)+i]), parseHexColor(this.summaryBGOrateColor[4*(cloverNumber)+i]), frame/this.nFrames);
+            if(context == this.TTcontext) color = 'rgba('+(100+cloverNumber*8 + 4 + iprime)+', '+(100+cloverNumber*8 + 4 + iprime)+', '+(100+cloverNumber*8 + 4 + iprime)+', 1)';
+            this.drawL(context, rotation, Math.round((this.BGOouter - this.BGOinner)/2), Math.round(this.BGOouter/2), Math.round(x0 + (this.BGOouter+this.lineWeight)*(i%2)), Math.round(y0 + (this.BGOouter+this.lineWeight)*(i>>1)), colors[i], color);
+
+        }
+    };
+}
 
 
 
