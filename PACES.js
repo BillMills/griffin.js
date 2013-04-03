@@ -12,41 +12,6 @@ function PACES(){
 
     //member variables///////////////////////////////////
 
-
-
-
-    
-	this.HVcanvasID = 'PACESHVCanvas'; 	        //ID of canvas to draw HV view
-    this.RateCanvasID = 'PACESrateCanvas';      //ID of canvas to draw rate / threshold view
-
-           
-
-
-
-
-    //insert & scale canvas//////////////////////////////////////////////////////////////////////////////////////
-    //HV view
-    insertDOM('canvas', this.HVcanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.monitorID, '', '')
-    this.HVcanvas = document.getElementById(this.HVcanvasID);
-    this.HVcontext = this.HVcanvas.getContext('2d');
-    this.HVcanvas.setAttribute('width', this.canvasWidth);
-    this.HVcanvas.setAttribute('height', this.canvasHeight);
-    //Rate view
-    insertDOM('canvas', this.RateCanvasID, 'monitor', 'top:' + ($('#SubsystemLinks').height()*1.25 + 5) +'px;', this.monitorID, '', '')
-    this.RateCanvas = document.getElementById(this.RateCanvasID);
-    this.RateContext = this.RateCanvas.getContext('2d');
-    this.RateCanvas.setAttribute('width', this.canvasWidth);
-    this.RateCanvas.setAttribute('height', this.canvasHeight);
-
-
-
-    //set up tooltip:
-    this.RateTooltip = new Tooltip(this.RateCanvasID, 'PACESTipText', 'PACESTT', this.monitorID, window.parameters.PACESprefix, window.parameters.PACESpostfix);
-    this.HVTooltip =  new Tooltip(this.HVcanvasID, 'PACESTipTextHV', 'PACESTTHV', this.monitorID, window.parameters.PACESprefix, window.parameters.PACESpostfix);
-    this.RateTooltip.obj = that;
-    this.HVTooltip.obj = that;
-    this.tooltip = this.RateTooltip;
-
     //drawing parameters
     this.centerX = this.canvasWidth/2;
     this.centerY = this.canvasHeight*0.45;
@@ -62,45 +27,40 @@ function PACES(){
     this.oldRateColor = [];
 
     //member functions///////////////////////////////////////////////////////////////////
-    //decide which view to transition to when this object is navigated to
-    this.view = function(){
-        if(window.subdetectorView == 0)
-            return this.HVcanvasID;
-        else if(window.subdetectorView == 1 || window.subdetectorView == 2)
-            return this.RateCanvasID;
-    }
 
     this.draw = function(frame){
 
     	var i;
-    	this.RateContext.strokeStyle = '#999999'
+    	this.context.strokeStyle = '#999999'
 
         //Thresholds & Rate view///////////////////////////////////////
         //once for the display canvas....
+        if(window.subdetectorView == 1 || window.subdetectorView == 2){
     	for(i=0; i<5; i++){
 
-    		this.RateContext.save();
-    		this.RateContext.translate(this.centerX, this.centerY);
-    		this.RateContext.rotate(i*Math.PI*72/180);
+    		this.context.save();
+    		this.context.translate(this.centerX, this.centerY);
+    		this.context.rotate(i*Math.PI*72/180);
 
-            if(window.subdetectorView == 1) this.RateContext.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[2*i]), parseHexColor(this.thresholdColor[2*i]), frame/this.nFrames);
-            else if(window.subdetectorView == 2) this.RateContext.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[2*i]), parseHexColor(this.rateColor[2*i]), frame/this.nFrames);
-    		this.RateContext.beginPath();
-    		this.RateContext.arc(0, -this.arrayRadius, this.SiLiRadius, 0, Math.PI);
-    		this.RateContext.closePath();
-            this.RateContext.fill();
-    		this.RateContext.stroke();
+            if(window.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[2*i]), parseHexColor(this.thresholdColor[2*i]), frame/this.nFrames);
+            else if(window.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[2*i]), parseHexColor(this.rateColor[2*i]), frame/this.nFrames);
+    		this.context.beginPath();
+    		this.context.arc(0, -this.arrayRadius, this.SiLiRadius, 0, Math.PI);
+    		this.context.closePath();
+            this.context.fill();
+    		this.context.stroke();
 
-            if(window.subdetectorView == 1) this.RateContext.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[2*i+1]), parseHexColor(this.thresholdColor[2*i+1]), frame/this.nFrames);
-            else if(window.subdetectorView == 2) this.RateContext.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[2*i+1]), parseHexColor(this.rateColor[2*i+1]), frame/this.nFrames);
-            this.RateContext.beginPath();
-            this.RateContext.arc(0, -this.arrayRadius, this.SiLiRadius, Math.PI, 0);
-            this.RateContext.closePath();
-            this.RateContext.fill();
-            this.RateContext.stroke();
+            if(window.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[2*i+1]), parseHexColor(this.thresholdColor[2*i+1]), frame/this.nFrames);
+            else if(window.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[2*i+1]), parseHexColor(this.rateColor[2*i+1]), frame/this.nFrames);
+            this.context.beginPath();
+            this.context.arc(0, -this.arrayRadius, this.SiLiRadius, Math.PI, 0);
+            this.context.closePath();
+            this.context.fill();
+            this.context.stroke();
 
-    		this.RateContext.restore();
+    		this.context.restore();
     	}
+        }
         //...and again for the tooltip encoding
         for(i=0; i<5; i++){
             this.TTcontext.save();
@@ -124,23 +84,24 @@ function PACES(){
         }
 
         //HV view///////////////////////////////////////////
+        if(window.subdetectorView == 0){
         for(i=0; i<5; i++){
-            this.HVcontext.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[i]), parseHexColor(this.HVcolor[i]), frame/this.nFrames);
-            this.HVcontext.save();
-            this.HVcontext.translate(this.centerX, this.centerY);
-            this.HVcontext.rotate(i*Math.PI*72/180);
-            this.HVcontext.beginPath();
-            this.HVcontext.arc(0, -this.arrayRadius, this.SiLiRadius, 0, 2*Math.PI);
-            this.HVcontext.closePath();
-            this.HVcontext.fill();
-            this.HVcontext.stroke();
-            this.HVcontext.restore();
+            this.context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[i]), parseHexColor(this.HVcolor[i]), frame/this.nFrames);
+            this.context.save();
+            this.context.translate(this.centerX, this.centerY);
+            this.context.rotate(i*Math.PI*72/180);
+            this.context.beginPath();
+            this.context.arc(0, -this.arrayRadius, this.SiLiRadius, 0, 2*Math.PI);
+            this.context.closePath();
+            this.context.fill();
+            this.context.stroke();
+            this.context.restore();
+        }
         }
 
         if(frame==this.nFrames || frame==0) {
             //scale
-            this.drawScale(this.HVcontext);
-            this.drawScale(this.RateContext);
+            this.drawScale(this.context);
         }
     };
 
@@ -149,9 +110,9 @@ function PACES(){
         var index = -1;
         if(imageData.data[0] == imageData.data[1] && imageData.data[0] == imageData.data[2]) index = imageData.data[0];
         //different behvior for rate VS. HV views:
-        if(window.onDisplay == this.RateCanvasID || index == -1)
+        if(window.subdetectorView == 1 || window.subdetectorView == 2 || index == -1)
             return index;
-        else if(window.onDisplay == this.HVcanvasID)
+        else if(window.subdetectorView == 0)
             return Math.floor(index/2);
     };
 
@@ -196,24 +157,6 @@ function PACES(){
         }
 
         this.tooltip.update();
-        this.displaySwitch();
-    };
-
-
-    //decide which display version to show:
-    this.displaySwitch = function(){
-        //handle putting the right canvas on top:
-        if(window.subdetectorView == 0){
-            if($('#'+this.RateCanvasID).css('opacity') > 0){
-                swapCanv(this.HVcanvasID, this.RateCanvasID);
-                this.tooltip = this.HVTooltip;
-            }
-        } else{
-            if($('#'+this.HVcanvasID).css('opacity') > 0){
-                swapCanv(this.RateCanvasID, this.HVcanvasID);
-                this.tooltip = this.RateTooltip;
-            }
-        }
 
     };
 
