@@ -1,10 +1,7 @@
 //Generates branding
 
-function Banner(canvas, location, navbar, title) {
+function Banner(canvas, location, navbar, title, mode) {
 	'use strict'
-
-    //mode TRIUMF, GRIFFIN
-    var mode = 'TRIUMF';
 
     //fetch canvas
     var canvas = document.getElementById(canvas);
@@ -43,7 +40,7 @@ function Banner(canvas, location, navbar, title) {
     //write title
     if(mode == 'TRIUMF')
         context.font= context.canvas.height*0.75+'px Raleway';
-    else       
+    else  
         context.font= context.canvas.height*0.75+'px Times New Roman';
     context.fillText(mode, context.canvas.height*0.7*.9/.8+20, 0.65*context.canvas.height);
 

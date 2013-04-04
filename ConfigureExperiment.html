@@ -1,0 +1,185 @@
+<html>
+	<head>
+	    <link id='fontLink' href='http://fonts.googleapis.com/css?family=Orbitron|Raleway' rel='stylesheet' type='text/css'>
+
+	    <script src="zepto.min.js" type="text/javascript"></script>
+	    <script src="utilities.js" type="text/javascript"></script>
+	    <script src="branding.js" type="text/javascript"></script>
+	    <script src="thumbnails.js" type="text/javascript"></script>
+
+	    <link rel="stylesheet" type="text/css" href="ConfigureExperiment.css" />
+
+	</head>
+
+	<body style="font-family: 'Raleway', sans-serif; font-size:14px; background-color:#333333; color:#FFFFFF;">
+
+		<div id='chooseExperiment', style='margin-left:auto; margin-right:auto; background:rgba(0,0,0,0.7); border: 5px solid; border-radius:10px; opacity:0; width:35%; position:relative; font-family:Orbitron; transition:opacity 0.5s; -moz-transition:opacity 0.5s; -webkit-transition:opacity 0.5s; text-align:center;'>
+			<table style='margin:0 auto; width:60%;'>
+				<caption style='font-size:36px'><br>Choose Your Experiment<br><br></caption>
+				<tr>
+					<td>
+						<canvas id='GrifLogo' width='150px' height='150px'> </canvas>
+					</td>
+					<td>
+						<canvas id='TigLogo' width='150px' height='150px'> </canvas>
+					</td>
+				</tr>
+				<tr>
+					<td style="font-size:20px;">GRIFFIN</td>
+					<td style="font-size:20px;">TIGRESS</td>
+				</tr>
+				<tr><td><br></td></tr>
+			</table>
+			<br><br><br>
+		</div>
+
+		<script type='text/JavaScript'>
+
+			//choose TIGRESS or GRIFFIN//////////////////////////////////////////////////////////////
+			document.getElementById('GrifLogo').onclick = function(){
+      			window.experiment = 'GRIFFIN';
+				document.getElementById('chooseExperiment').style.opacity = 0;
+        		setTimeout(function(){
+            		var element = document.getElementById('chooseExperiment');
+            		element.parentNode.removeChild(element);
+            		deployBanner(); 
+        		}, 500);
+			}
+
+			document.getElementById('TigLogo').onclick = function(){
+      			window.experiment = 'TIGRESS';
+				document.getElementById('chooseExperiment').style.opacity = 0;
+        		setTimeout(function(){
+            		var element = document.getElementById('chooseExperiment');
+            		element.parentNode.removeChild(element);
+            		deployBanner();            
+        		}, 500);	
+			}
+
+			//insert images
+			var GrifCanv = document.getElementById('GrifLogo');
+			var TigCanv = document.getElementById('TigLogo');
+			var GrifCtx = GrifCanv.getContext('2d');
+			var TigCtx = TigCanv.getContext('2d');
+
+		    var imageObj = new Image();
+    		imageObj.src = 'logo.gif';
+		    imageObj.onload = function() {
+		      GrifCtx.drawImage(imageObj, 20, 0, imageObj.width/imageObj.height*GrifCtx.canvas.height*0.8, GrifCtx.canvas.height*0.8);
+    		};
+
+   		    var tigImage = new Image();
+    		tigImage.src = 'triumf.gif';
+		    tigImage.onload = function() {
+		      TigCtx.drawImage(tigImage, 10, 0, tigImage.width/tigImage.height*TigCtx.canvas.height*0.8, TigCtx.canvas.height*0.8);
+    		};
+
+    		//fade initial option in
+			$('#chooseExperiment').css('top', (window.innerHeight - parseFloat($('#chooseExperiment').css('height')) )*0.4  )
+			document.getElementById('chooseExperiment').style.opacity = 1;
+			//experiment selected///////////////////////////////////////////////////////////////////////
+
+			function deployBanner(){
+				insertDOM('canvas', 'banner', '', 'opacity:0; transition:opacity 0.5s; -moz-transition:opacity 0.5s; -webkit-transition:opacity 0.5s;', 'body', '', '');
+				insertDOM('div', 'navBar', '', 'margin:none; opacity:0; transition:opacity 0.5s; -moz-transition:opacity 0.5s; -webkit-transition:opacity 0.5s; margin-bottom:100px;', 'body', '', '');
+				insertDOM('p', 'youAreHere', '', 'opacity:0; display: inline; color:rgba(255,255,255,0.3); font-size:24px; margin:0; position:absolute; right:0;transition:opacity 0.5s; -moz-transition:opacity 0.5s; -webkit-transition:opacity 0.5s;', 'navBar', '','');
+
+				//Insert branding & navigation:
+        		Banner('banner', 'youAreHere', 'navBar', 'Experimental Deployment', window.experiment);
+
+        		//deploy subsections:
+        		deployChamber();
+        		deployDSlampshade();
+        		deployCorona();
+        		deployUSlampshade();
+        		deployBeamdump();
+
+        		//fade assets in:
+        		document.getElementById('banner').style.opacity = 1;
+        		document.getElementById('navBar').style.opacity = 1;
+        		document.getElementById('youAreHere').style.opacity = 1;
+
+        		setTimeout(function(){document.getElementById('Chamber').style.opacity = 1;}, 100);
+        		setTimeout(function(){document.getElementById('DSlampshade').style.opacity = 1;}, 200);
+        		setTimeout(function(){document.getElementById('Corona').style.opacity = 1;}, 300);
+        		setTimeout(function(){document.getElementById('USlampshade').style.opacity = 1;}, 400);
+        		setTimeout(function(){document.getElementById('Beamdump').style.opacity = 1;}, 500);
+			}
+
+			function deployChamber(){
+				var i; 
+
+				insertDOM('div', 'Chamber', 'section', '', 'body', '', '');
+				insertDOM('h1', 'chamberTitle', 'title', '', 'Chamber', '', 'Chamber Configuration' );
+
+				insertDOM('table', 'chamberTable', 'sectionTable', '', 'Chamber', '', '');
+				insertDOM('tr', 'chamberPicRow', '', '', 'chamberTable', '', '');
+				insertDOM('tr', 'chamberRadioRow', '', '', 'chamberTable', '', '');
+				//GRIFFIN:
+				if(window.experiment == 'GRIFFIN'){
+					for(i=0; i<6; i++){
+						insertDOM('td', 'Gcha'+i+'pic', '', '', 'chamberPicRow', '', '');
+						insertDOM('canvas', 'Gcha'+i+'canv', '', '', 'Gcha'+i+'pic', '', '');
+						insertDOM('td', 'Gcha'+i+'rdo', '', '', 'chamberRadioRow', '', '');
+						insertDOM('input', 'Gcha'+i+'radio', '', '', 'Gcha'+i+'rdo', '', '', 'ChamberRadio', 'radio');
+					}
+
+					sceptarsceptar('Gcha0canv');
+					sceptarzds('Gcha1canv')
+				}
+				//TIGRESS:
+			}
+
+			function deployDSlampshade(){
+				insertDOM('div', 'DSlampshade', 'section', '', 'body', '', '');
+				insertDOM('h1', 'deLampshadeTitle', 'title', '', 'DSlampshade', '', 'Downstream Lampshade Configuration' );
+
+				insertDOM('table', 'dsLampTable', 'sectionTable', '', 'DSlampshade', '', '');
+				insertDOM('tr', 'dsLampPicRow', '', '', 'dsLampTable', '', '');
+				insertDOM('tr', 'dsLampRadioRow', '', '', 'dsLampTable', '', '');
+				//GRIFFIN:
+
+				//TIGRESS:
+			}
+
+			function deployCorona(){
+				insertDOM('div', 'Corona', 'section', '', 'body', '', '');
+				insertDOM('h1', 'coronaTitle', 'title', '', 'Corona', '', 'Corona Configuration' );
+
+				insertDOM('table', 'coronaTable', 'sectionTable', '', 'Corona', '', '');
+				insertDOM('tr', 'coronaPicRow', '', '', 'coronaTable', '', '');
+				insertDOM('tr', 'coronaRadioRow', '', '', 'coronaTable', '', '');
+				//GRIFFIN:
+
+				//TIGRESS:
+			}
+
+			function deployUSlampshade(){
+				insertDOM('div', 'USlampshade', 'section', '', 'body', '', '');
+				insertDOM('h1', 'USlampshadeTitle', 'title', '', 'USlampshade', '', 'Upstream Lampshade Configuration' );
+
+				insertDOM('table', 'usLampTable', 'sectionTable', '', 'USlampshade', '', '');
+				insertDOM('tr', 'usLampPicRow', '', '', 'usLampTable', '', '');
+				insertDOM('tr', 'usLampRadioRow', '', '', 'usLampTable', '', '');
+				//GRIFFIN:
+
+				//TIGRESS:
+			}
+
+			function deployBeamdump(){
+				insertDOM('div', 'Beamdump', 'section', '', 'body', '', '');
+				insertDOM('h1', 'beamdumpTitle', 'title', '', 'Beamdump', '', 'Beamdump Configuration' );
+
+				insertDOM('table', 'beamdumpTable', 'sectionTable', '', 'Beamdump', '', '');
+				insertDOM('tr', 'beamdumpPicRow', '', '', 'beamdumpTable', '', '');
+				insertDOM('tr', 'beamdumpRadioRow', '', '', 'beamdumpTable', '', '');
+				//GRIFFIN:
+
+				//TIGRESS:
+			}
+
+
+		</script>
+
+	</body>
+</html>
