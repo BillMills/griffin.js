@@ -6,10 +6,10 @@ ellipse = function(context, centerX, centerY, horizRadius, startAngle, endAngle)
     context.save();
     context.translate(centerX, centerY);
     context.scale(1, 0.3);
-    //context.beginPath();
-    //recall the internet counts its angles backwards :(
+    context.beginPath();
     context.arc(0, 0, horizRadius, 2*Math.PI - startAngle, 2*Math.PI - endAngle);
     context.restore();
+    context.closePath();
     context.stroke();
 }
 

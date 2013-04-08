@@ -4,6 +4,7 @@
 
 	    <script src="zepto.min.js" type="text/javascript"></script>
 	    <script src="utilities.js" type="text/javascript"></script>
+	    <script src="drawing.js" type="text/javascript"></script>
 	    <script src="branding.js" type="text/javascript"></script>
 	    <script src="thumbnails.js" type="text/javascript"></script>
 
@@ -118,9 +119,9 @@
 				insertDOM('tr', 'chamberPicRow', '', '', 'chamberTable', '', '');
 				//insertDOM('tr', 'chamberRadioRow', '', '', 'chamberTable', '', '');
 				//GRIFFIN:
-				window.leftChamber = ['USSC', 'USSC', 'PACES', 'PACES', 'SPICE', 'SPICE'];
-				window.rightChamber = ['DSSC', 'ZDS', 'DSSC', 'ZDS', 'ZDS', 'DSSC'];
 				if(window.experiment == 'GRIFFIN'){
+					window.leftChamber = ['USSC', 'USSC', 'PACES', 'PACES', 'SPICE', 'SPICE'];
+					window.rightChamber = ['DSSC', 'ZDS', 'DSSC', 'ZDS', 'ZDS', 'DSSC'];
 					for(i=0; i<6; i++){
 						insertDOM('td', 'Gcha'+i+'pic', '', '', 'chamberPicRow', '', '');
 						insertDOM('canvas', 'Gcha'+i+'canv', 'thumbnail', '', 'Gcha'+i+'pic', '', '');
@@ -146,6 +147,30 @@
 				}
 
 				//TIGRESS:
+				if(window.experiment == 'TIGRESS'){
+					window.leftChamber = ['BAMBINO', 'none', 'BAMBINO', 'SHARC', 'TIPwall', 'TIPball'];
+					window.rightChamber = ['none', 'BAMBINO', 'BAMBINO', 'none', 'none', 'none'];
+					for(i=0; i<6; i++){
+						insertDOM('td', 'Tcha'+i+'pic', '', '', 'chamberPicRow', '', '');
+						insertDOM('canvas', 'Tcha'+i+'canv', 'thumbnail', '', 'Tcha'+i+'pic', '', '');
+						document.getElementById('Tcha'+i+'canv').setAttribute('width', 0.9*totalWidth/6);
+						document.getElementById('Tcha'+i+'canv').thumb = i;
+						document.getElementById('Tcha'+i+'canv').chosen = 0;
+
+						thumbnail('Tcha'+i+'canv', window.leftChamber[i], window.rightChamber[i], '#999999');
+
+						document.getElementById('Tcha'+i+'canv').onmouseover = function() {
+							thumbnail(this.id, window.leftChamber[this.thumb], window.rightChamber[this.thumb], '#FFFFFF');
+						}
+						document.getElementById('Tcha'+i+'canv').onmouseout = function() {
+							if(this.chosen==0)thumbnail(this.id, window.leftChamber[this.thumb], window.rightChamber[this.thumb], '#999999');
+						}
+
+						document.getElementById('Tcha'+i+'canv').onclick = function(){clickBehavior.call(this, 6, 'Tcha')};
+
+					}
+
+				}
 			}
 
 			function deployDSlampshade(){
@@ -160,17 +185,15 @@
 				insertDOM('tr', 'dsLampPicRow', '', '', 'dsLampTable', '', '');
 				//insertDOM('tr', 'dsLampRadioRow', '', '', 'dsLampTable', '', '');
 				//GRIFFIN:
-				window.leftDSL = ['DESCANT', 'DESCANT'];
-				window.rightDSL = ['', 'none'];
 				if(window.experiment == 'GRIFFIN'){
+					window.leftDSL = ['GRIFFIN', 'GRIFFIN'];
+					window.rightDSL = ['none', 'DESCANT'];
 					for(i=0; i<2; i++){
 						insertDOM('td', 'Gdsl'+i+'pic', '', '', 'dsLampPicRow', '', '');
 						insertDOM('canvas', 'Gdsl'+i+'canv', 'thumbnail', '', 'Gdsl'+i+'pic', '', '');
 						document.getElementById('Gdsl'+i+'canv').setAttribute('width', 0.9*totalWidth/6);
 						document.getElementById('Gdsl'+i+'canv').thumb = i;
 						document.getElementById('Gdsl'+i+'canv').chosen = 0;
-						//insertDOM('td', 'Gdsl'+i+'rdo', '', '', 'dsLampRadioRow', '', '');
-						//insertDOM('input', 'Gdsl'+i+'radio', '', '', 'Gdsl'+i+'rdo', '', '', 'DSLRadio', 'radio');
 
 						thumbnail('Gdsl'+i+'canv', window.leftDSL[i], window.rightDSL[i], '#999999');
 
@@ -185,6 +208,28 @@
 					}
 				}
 				//TIGRESS:
+				if(window.experiment == 'TIGRESS'){
+					window.leftDSL = ['TIGRESS', 'TIGRESS', 'TIGRESS', 'TIGRESS'];
+					window.rightDSL = ['none', 'SHARC', 'DESCANT', 'all'];
+					for(i=0; i<4; i++){
+						insertDOM('td', 'Tdsl'+i+'pic', '', '', 'dsLampPicRow', '', '');
+						insertDOM('canvas', 'Tdsl'+i+'canv', 'thumbnail', '', 'Tdsl'+i+'pic', '', '');
+						document.getElementById('Tdsl'+i+'canv').setAttribute('width', 0.9*totalWidth/6);
+						document.getElementById('Tdsl'+i+'canv').thumb = i;
+						document.getElementById('Tdsl'+i+'canv').chosen = 0;
+
+						thumbnail('Tdsl'+i+'canv', window.leftDSL[i], window.rightDSL[i], '#999999');
+
+						document.getElementById('Tdsl'+i+'canv').onmouseover = function() {
+							thumbnail(this.id, window.leftDSL[this.thumb], window.rightDSL[this.thumb], '#FFFFFF');
+						}
+						document.getElementById('Tdsl'+i+'canv').onmouseout = function() {
+							if(this.chosen == 0)thumbnail(this.id, window.leftDSL[this.thumb], window.rightDSL[this.thumb], '#999999');
+						}
+
+						document.getElementById('Tdsl'+i+'canv').onclick = function(){clickBehavior.call(this, 2, 'Tdsl')};
+					}
+				}
 			}
 
 			function deployCorona(){
@@ -197,33 +242,52 @@
 
 				insertDOM('table', 'coronaTable', 'sectionTable', '', 'Corona', '', '');
 				insertDOM('tr', 'coronaPicRow', '', '', 'coronaTable', '', '');
-				//insertDOM('tr', 'coronaRadioRow', '', '', 'coronaTable', '', '');
 				//GRIFFIN:
-				window.leftCor = ['DANTE', 'DANTE'];
-				window.rightCor = ['', 'none'];
-				if(window.experiment == 'GRIFFIN'){				
-					for(i=0; i<2; i++){
+				if(window.experiment == 'GRIFFIN'){
+					window.leftCor = ['GRIFFIN'];
+					window.rightCor = ['DANTE'];	
+					for(i=0; i<1; i++){
 						insertDOM('td', 'Gcor'+i+'pic', '', '', 'coronaPicRow', '', '');
 						insertDOM('canvas', 'Gcor'+i+'canv', 'thumbnail', '', 'Gcor'+i+'pic', '', '');
 						document.getElementById('Gcor'+i+'canv').setAttribute('width', 0.9*totalWidth/6);
 						document.getElementById('Gcor'+i+'canv').thumb = i;
 						document.getElementById('Gcor'+i+'canv').chosen = 0;				
-						//insertDOM('td', 'Gcor'+i+'rdo', '', '', 'coronaRadioRow', '', '');
-						//insertDOM('input', 'Gcor'+i+'radio', '', '', 'Gcor'+i+'rdo', '', '', 'coronaRadio', 'radio');
 
-						thumbnail('Gcor'+i+'canv', window.leftCor[i], window.rightCor[i], '#999999');
+						thumbnail('Gcor'+i+'canv', window.leftCor[i], window.rightCor[i], '#FFFFFF');
 
 						document.getElementById('Gcor'+i+'canv').onmouseover = function() {
 							thumbnail(this.id, window.leftCor[this.thumb], window.rightCor[this.thumb], '#FFFFFF');
 						}
-						document.getElementById('Gcor'+i+'canv').onmouseout = function() {
-							if(this.chosen == 0)thumbnail(this.id, window.leftCor[this.thumb], window.rightCor[this.thumb], '#999999');
-						}
+						//document.getElementById('Gcor'+i+'canv').onmouseout = function() {
+						//	if(this.chosen == 0)thumbnail(this.id, window.leftCor[this.thumb], window.rightCor[this.thumb], '#999999');
+						//}
 
 						document.getElementById('Gcor'+i+'canv').onclick = function(){clickBehavior.call(this, 2, 'Gcor')};						
 					}
 				}
 				//TIGRESS:
+				if(window.experiment == 'TIGRESS'){
+					window.leftCor = ['TIGRESS'];
+					window.rightCor = ['none'];	
+					for(i=0; i<1; i++){
+						insertDOM('td', 'Tcor'+i+'pic', '', '', 'coronaPicRow', '', '');
+						insertDOM('canvas', 'Tcor'+i+'canv', 'thumbnail', '', 'Tcor'+i+'pic', '', '');
+						document.getElementById('Tcor'+i+'canv').setAttribute('width', 0.9*totalWidth/6);
+						document.getElementById('Tcor'+i+'canv').thumb = i;
+						document.getElementById('Tcor'+i+'canv').chosen = 0;				
+
+						thumbnail('Tcor'+i+'canv', window.leftCor[i], window.rightCor[i], '#FFFFFF');
+
+						document.getElementById('Tcor'+i+'canv').onmouseover = function() {
+							thumbnail(this.id, window.leftCor[this.thumb], window.rightCor[this.thumb], '#FFFFFF');
+						}
+						//document.getElementById('Gcor'+i+'canv').onmouseout = function() {
+						//	if(this.chosen == 0)thumbnail(this.id, window.leftCor[this.thumb], window.rightCor[this.thumb], '#999999');
+						//}
+
+						document.getElementById('Tcor'+i+'canv').onclick = function(){clickBehavior.call(this, 2, 'Tcor')};						
+					}
+				}
 			}
 
 			function deployUSlampshade(){
@@ -238,17 +302,15 @@
 				insertDOM('tr', 'usLampPicRow', '', '', 'usLampTable', '', '');
 				//insertDOM('tr', 'usLampRadioRow', '', '', 'usLampTable', '', '');
 				//GRIFFIN:
-				window.leftUSL = ['SPICE', 'SPICE'];
-				window.rightUSL = ['', 'none'];
 				if(window.experiment == 'GRIFFIN'){
+					window.leftUSL = ['GRIFFIN', 'GRIFFIN'];
+					window.rightUSL = ['none', 'SPICE'];
 					for(i=0; i<2; i++){
 						insertDOM('td', 'Gusl'+i+'pic', '', '', 'usLampPicRow', '', '');
 						insertDOM('canvas', 'Gusl'+i+'canv', 'thumbnail', '', 'Gusl'+i+'pic', '', '');
 						document.getElementById('Gusl'+i+'canv').setAttribute('width', 0.9*totalWidth/6);
 						document.getElementById('Gusl'+i+'canv').thumb = i;	
 						document.getElementById('Gusl'+i+'canv').chosen = 0;
-						//insertDOM('td', 'Gusl'+i+'rdo', '', '', 'usLampRadioRow', '', '');
-						//insertDOM('input', 'Gusl'+i+'radio', '', '', 'Gusl'+i+'rdo', '', '', 'USLRadio', 'radio');
 
 						thumbnail('Gusl'+i+'canv', window.leftUSL[i], window.rightUSL[i], '#999999');
 
@@ -264,9 +326,36 @@
 					}
 				}
 				//TIGRESS:
+				if(window.experiment == 'TIGRESS'){
+					window.leftUSL = ['TIGRESS', 'TIGRESS'];
+					window.rightUSL = ['none', 'SPICE'];
+					for(i=0; i<2; i++){
+						insertDOM('td', 'Tusl'+i+'pic', '', '', 'usLampPicRow', '', '');
+						insertDOM('canvas', 'Tusl'+i+'canv', 'thumbnail', '', 'Tusl'+i+'pic', '', '');
+						document.getElementById('Tusl'+i+'canv').setAttribute('width', 0.9*totalWidth/6);
+						document.getElementById('Tusl'+i+'canv').thumb = i;	
+						document.getElementById('Tusl'+i+'canv').chosen = 0;
+
+						thumbnail('Tusl'+i+'canv', window.leftUSL[i], window.rightUSL[i], '#999999');
+
+						document.getElementById('Tusl'+i+'canv').onmouseover = function() {
+							thumbnail(this.id, window.leftUSL[this.thumb], window.rightUSL[this.thumb], '#FFFFFF');
+						}
+						document.getElementById('Tusl'+i+'canv').onmouseout = function() {
+							if(this.chosen == 0)thumbnail(this.id, window.leftUSL[this.thumb], window.rightUSL[this.thumb], '#999999');
+						}
+
+						document.getElementById('Tusl'+i+'canv').onclick = function(){clickBehavior.call(this, 2, 'Tusl')};	
+
+					}
+				}
 			}
 
 			function deployBeamdump(){
+				var i, totalWidth; 
+
+				totalWidth = window.innerWidth;
+
 				insertDOM('div', 'Beamdump', 'section', '', 'body', '', '');
 				insertDOM('h1', 'beamdumpTitle', 'title', '', 'Beamdump', '', 'Beamdump Configuration' );
 
@@ -276,6 +365,29 @@
 				//GRIFFIN:
 
 				//TIGRESS:
+				if(window.experiment == 'TIGRESS'){
+					window.leftBDP = ['beamdump'];
+					window.rightBDP = ['none'];
+					for(i=0; i<1; i++){
+						insertDOM('td', 'Tbdp'+i+'pic', '', '', 'beamdumpPicRow', '', '');
+						insertDOM('canvas', 'Tbdp'+i+'canv', 'thumbnail', '', 'Tbdp'+i+'pic', '', '');
+						document.getElementById('Tbdp'+i+'canv').setAttribute('width', 0.9*totalWidth/6);
+						document.getElementById('Tbdp'+i+'canv').thumb = i;	
+						document.getElementById('Tbdp'+i+'canv').chosen = 0;
+
+						thumbnail('Tbdp'+i+'canv', window.leftBDP[i], window.rightBDP[i], '#999999');
+
+						document.getElementById('Tbdp'+i+'canv').onmouseover = function() {
+							thumbnail(this.id, window.leftBDP[this.thumb], window.rightBDP[this.thumb], '#FFFFFF');
+						}
+						document.getElementById('Tbdp'+i+'canv').onmouseout = function() {
+							if(this.chosen == 0)thumbnail(this.id, window.leftBDP[this.thumb], window.rightBDP[this.thumb], '#999999');
+						}
+
+						document.getElementById('Tbdp'+i+'canv').onclick = function(){clickBehavior.call(this, 2, 'Tbdp')};	
+
+					}
+				}
 			}
 
 			function clickBehavior(nFigures, prefix){
