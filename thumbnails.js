@@ -76,126 +76,31 @@ function thumbnail(canvasID, left, right, color){
 	} else if(left == 'TIPball' && right == 'none'){
 		title = 'TIP Ball';
 	} else if(left == 'TIGRESS' && right == 'none'){
+		tigress(context, width/2, height*0.45, Math.round(height*0.25));
 		title = 'TIGRESS Standalone';
 	} else if(left == 'TIGRESS' && right == 'SHARC'){
-		sharc(context, width*0.68, height*0.45, width*0.3, height*0.7);
+		tigress(context, width*0.32, height*0.45, Math.round(height*0.25));
+		sharc(context, width*0.7, height*0.45, width*0.3, height*0.7);
 		title = 'TIGRESS + SHARC';
 	} else if(left == 'TIGRESS' && right == 'DESCANT'){
+		tigress(context, width*0.28, height*0.45, Math.round(height*0.25));
 		descant(context, width*0.68,height*0.4, height*0.1 );
 		title = 'TIGRESS + DESCANT';
 	} else if(left == 'TIGRESS' && right == 'all'){
+		tigress(context, width*0.2, height*0.45, Math.round(height*0.25));
 		sharc(context, width*0.5, height*0.45, width*0.3, height*0.7);
 		descant(context, width*0.8,height*0.4, height*0.1 );
 		context.font = '14px Raleway';
 		title = 'TIGRESS + SHARC + DESCANT';
 	} else if(left == 'TIGRESS' && right == 'SPICE'){
-		spice(context, width*0.68, height*0.4, height*0.2);
+		tigress(context, width*0.28, height*0.45, Math.round(height*0.25));
+		spice(context, width*0.68, height*0.45, height*0.2);
 		title = 'TIGRESS + SPICE';
 	} else if(left == 'beamdump' && right == 'none'){
-
+		beamdump(context, width/2, height*0.45, height*0.4)
 		title = 'Beamdump Scintilator';
 	}
 
-/*
-	if(left == 'USSC'){
-		sceptar(context, width/3, height*0.4, height*0.2);
-		title = 'USSC + ';
-	} else if(left == 'PACES'){
-		paces(context, width/3, height*0.4, height*0.15, height*0.05);
-		title = 'PACES + ';
-	} else if(left == 'SPICE'){
-		if(right == ''){
-			spice(context, width/2, height*0.4, height*0.2);
-			title = window.experiment +' + SPICE';
-		} else if(right == 'none'){
-			spice(context, width/2, height*0.4, height*0.2);
-			title = window.experiment +' w/o SPICE';
-		} else {
-			spice(context, width/3, height*0.4, height*0.2);
-			title = 'SPICE + ';
-		}
-	} else if(left == 'DESCANT'){
-		descant(context, width/2,height*0.4, height*0.1 )
-		title = window.experiment +' + DESCANT'
-	} else if (left == 'DANTE'){
-		dante(context, width/3, height*0.4, height*0.2, color);
-		dante(context, 2*width/3, height*0.4, height*0.2, color);
-		title = window.experiment +' + DANTE';
-	} else if (left == 'SHARC'){
-		if(right == ''){
-			title = 'SHARC';
-			sharc(context, width/2, height*0.45, width*0.3, height*0.7);
-		} else if(right == 'none'){ 
-			sharc(context, width/2, height*0.45, width*0.3, height*0.7);
-			strikeOut(context, width, height);
-			title = window.experiment + ' w/o SHARC'
-		} else {
-			title = 'TIGRESS + SHARC + ';
-			sharc(context, width*0.3, height*0.45, width*0.3, height*0.7);
-		}
-
-	} else if (left == 'TIPwall'){
-		if(right == ''){
-			title = 'CsI Wall';
-			tipWall(context, width/2, height*0.45, height/2)
-		}
-	} else if (left == 'TIPball'){
-		if(right == ''){
-			title = 'CsI Ball';
-		}
-	} else if (left == 'TIGRESS'){
-		title = 'TIGRESS'
-	} else if (left == 'GRIFFIN'){
-		title = 'GRIFFIN + '
-		griffin(context, width*0.3 - imageObj.width/imageObj.height*context.canvas.height*0.6/2, height*0.1);
-	}
-
-
-	if(right == 'DSSC'){
-		sceptar(context, 2*width/3, height*0.4, height*0.2);
-		title += 'DSSC';
-	} else if(right == 'ZDS'){
-		context.beginPath();
-		context.arc(2*width/3, height*0.4, height*0.18, 0, 2*Math.PI);
-		context.closePath();
-		context.stroke();
-		title += 'ZDS';
-	} else if (right == 'DESCANT'){
-		title += 'DESCANT';
-		descant(context, width*0.7,height*0.4, height*0.1 )
-	}
-
-	if(left=='DESCANT' && right=='none'){
-		title = window.experiment +' w/o DESCANT';
-		strikeOut(context, width, height);
-	}
-
-	if(left == 'DANTE' && right == 'none'){
-		title = window.experiment +' w/o DANTE';
-		context.beginPath()
-		strikeOut(context, width, height);
-	}
-
-	if(left == 'SPICE' && right == 'none'){
-		strikeOut(context, width, height);
-	}
-
-	if(left == 'BAMBINO' && right == ''){
-		title = 'US BAMBINO';
-		bambino(context, width*0.45, width*0.55, height/3, height*0.6, height*0.12);
-	}
-
-	if(left == '' && right == 'BAMBINO'){
-		title = 'DS BAMBINO';
-		bambino(context, width*0.45, width*0.55, height/3, height*0.6, height*0.12);
-	}
-
-	if(left == 'BAMBINO' && right == 'BAMBINO'){
-		title = 'US + DS BAMBINO';
-		bambino(context, width*0.28, width*0.38, height/3, height*0.6, height*0.12);
-		bambino(context, width*0.62, width*0.72, height/3, height*0.6, height*0.12);	
-	}
-*/
 	if(right != 'all') context.font = '16px Raleway';
 	context.fillText(title, width/2 - context.measureText(title).width/2, 0.9*height);
 }
@@ -391,6 +296,68 @@ function griffin(context, x0, y0, color){
 	context.drawImage(imageObj, x0, y0, imageObj.width/imageObj.height*context.canvas.height*0.6, context.canvas.height*0.6);
 	context.globalAlpha = 1;
     		
+}
+
+function tigress(context, x0, y0, size){
+	var hpge = Math.round(size*0.3);
+	var bgo = Math.round(size*0.75);
+
+	context.save();
+	context.translate(x0, y0);
+	context.strokeRect(-size, -size, 2*size, 2*size);
+	context.strokeRect(-bgo, -bgo, 2*bgo, 2*bgo);
+	context.strokeRect(-hpge, -hpge, 2*hpge, 2*hpge );
+
+	context.moveTo(-hpge, 0);
+	context.lineTo(hpge, 0);
+	context.moveTo(0, -hpge);
+	context.lineTo(0, hpge);
+
+	context.moveTo(0, -size);
+	context.lineTo(0, -(size-hpge) - 2 );
+	context.moveTo(0, size);
+	context.lineTo(0, size-hpge + 2 );
+	context.moveTo(-size, 0);
+	context.lineTo(-(size-hpge) - 2, 0);
+	context.moveTo(size, 0);
+	context.lineTo(size-hpge + 2, 0);
+
+	context.stroke();
+	context.restore();
+}
+
+function beamdump(context, x0, y0, width){
+	var i;
+
+	context.save();
+	context.translate(x0, y0);
+
+	context.moveTo(width/2, -width/2);
+	context.lineTo(width/2, width/2);
+	context.moveTo(width*0.45, -width/2 );
+	context.lineTo(width*0.45, width/2);
+
+	for(i=0; i<10; i++){
+		context.moveTo(width*0.45, width/2 - i*width/10);
+		context.lineTo(width*0.5, width/2 - (i+1)*width/10)
+	}
+
+	context.fillRect(-width/2, -2, width*0.95, 4);
+
+	context.moveTo(width*0.45, 0);
+	context.lineTo(width*0.4, 12);
+	context.moveTo(width*0.45, 0);
+	context.lineTo(width*0.3, 20);
+	context.moveTo(width*0.45, 0);
+	context.lineTo(width*0.4, -15);
+	context.moveTo(width*0.45, 0);
+	context.lineTo(width*0.1, -10)
+
+
+
+	context.stroke();
+	context.restore();
+
 }
 
 //draws a regular polygon of n sides on context, centered at x0, y0 and with a center-vertext distance of size

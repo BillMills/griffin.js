@@ -227,7 +227,7 @@
 							if(this.chosen == 0)thumbnail(this.id, window.leftDSL[this.thumb], window.rightDSL[this.thumb], '#999999');
 						}
 
-						document.getElementById('Tdsl'+i+'canv').onclick = function(){clickBehavior.call(this, 2, 'Tdsl')};
+						document.getElementById('Tdsl'+i+'canv').onclick = function(){clickBehavior.call(this, 4, 'Tdsl')};
 					}
 				}
 			}
@@ -375,14 +375,14 @@
 						document.getElementById('Tbdp'+i+'canv').thumb = i;	
 						document.getElementById('Tbdp'+i+'canv').chosen = 0;
 
-						thumbnail('Tbdp'+i+'canv', window.leftBDP[i], window.rightBDP[i], '#999999');
+						thumbnail('Tbdp'+i+'canv', window.leftBDP[i], window.rightBDP[i], '#FFFFFF');
 
 						document.getElementById('Tbdp'+i+'canv').onmouseover = function() {
 							thumbnail(this.id, window.leftBDP[this.thumb], window.rightBDP[this.thumb], '#FFFFFF');
 						}
-						document.getElementById('Tbdp'+i+'canv').onmouseout = function() {
-							if(this.chosen == 0)thumbnail(this.id, window.leftBDP[this.thumb], window.rightBDP[this.thumb], '#999999');
-						}
+						///document.getElementById('Tbdp'+i+'canv').onmouseout = function() {
+						///	if(this.chosen == 0)thumbnail(this.id, window.leftBDP[this.thumb], window.rightBDP[this.thumb], '#999999');
+						///}
 
 						document.getElementById('Tbdp'+i+'canv').onclick = function(){clickBehavior.call(this, 2, 'Tbdp')};	
 
