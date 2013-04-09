@@ -112,7 +112,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     //hidden canvas at point x,y will then return the appropriate channel index.
     //summary level:
     //paint whole hidden canvas with R!=G!=B to trigger TT suppression:
-    this.TTcontext.fillStyle = 'rgba(50,100,150,1)';
+    this.TTcontext.fillStyle = '#123456';
     this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
     //set up summary tooltip:
     this.tooltip = new Tooltip(this.canvasID, 'DAQTT', this.monitorID, prefix, postfix);
@@ -462,9 +462,9 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         var topMargin = 30;
         var leftMargin = 5;
 
-        if(frame == 0){
+        //if(frame == 0){
             this.detailContext.clearRect(0,0,this.canvasWidth, this.canvasHeight - this.scaleHeight);
-        }
+        //}
 
         if(frame == this.nFrames){
             this.drawScale(this.detailContext);

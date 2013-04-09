@@ -35,7 +35,7 @@ function Tooltip(ttCanvasID, ttDivID, wrapperID, prefix, postfix){
         var cellIndex = that.obj.findCell(x, y);
 
         //only continue if the cursor is actually on a valid channel; x and y>0 suppresses an antialiasing bug:
-        if(cellIndex != -1 && x>1 && y>0){
+        if(cellIndex != -1 && x>1 && y>1 && x<that.obj.canvasWidth-1 && y<that.obj.canvasHeight-1){
 
             //establish text:
             that.obj.defineText(cellIndex);
