@@ -307,14 +307,62 @@ DAQDS = function(){
 	this.digitizerLinks = [];
 	this.digitizers = [];
 
-	//key map
 	/*
-	//use the codex to find out what the ODB index for each name is:
-	for(j=0; j<window.codex.table.length; j++){
-		if(window.codex.table[j][0] == this.key[i][0]){
-			this.key[i][1] = window.codex.table[j][1];
-			break;
+	key map, format: key[griffin.js index number] = array containing parsed FSPC keys from masterCodex for this node, down to digitizer level
+
+	FSPC key array packed like [master key, collector key, digitizer key];
+	note that the master node only has a master key, collector nodes only have master + collector keys etc, so length of array
+	corresponds to type of node.  Example: FSPC = 0x0700604 -> ['0x0XXXXXX', '0x07XXXXX', '0x07006XX']
+
+	griffin.js index counts from 0: first master -> collectors -> digitizer summary nodes -> digitizers, next master... etc 
+	*/
+
+	this.key = [];
+	var Fkey, Skey, Pkey, Ckey;
+	var i = 0;
+	var j = 0;
+	for(Fkey in window.codex.DAQmap){
+		this.key[i] = [Fkey];
+		i++;
+		for(Skey in window.codex.DAQmap[Fkey]){
+			this.key[i] = [Fkey, Skey];
+			i++;
+			j++
+		}
+		i += j //leave an index for a summary node to go with each collector node
+		j = 0;
+		//now count through digitizers, starting with the first collector:
+		for(Skey in window.codex.DAQmap[Fkey]){
+			for(Pkey in window.codex.DAQmap[Fkey][Skey]){
+				this.key[i] = [Fkey, Skey, Pkey];
+				i++;
+				/*
+				for(Ckey in window.codex.DAQmap[Fkey][Skey][Pkey]){
+					this.key[i] = [Fkey, Skey, Pkey, Ckey];
+					i++;
+				}
+				*/
+			}
 		}
 	}
-	*/
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

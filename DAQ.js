@@ -511,7 +511,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                 this.detailContext.fill();
                 this.detailContext.stroke();
                 //tooltip layer:
-                this.TTdetailContext.fillStyle = 'rgba('+(i-this.prevDigi[clctr])+','+(i-this.prevDigi[clctr])+','+(i-this.prevDigi[clctr])+',1)';
+                this.TTdetailContext.fillStyle = 'rgba('+(i+1+2*this.nCollectors)+','+(i+1+2*this.nCollectors)+','+(i+1+2*this.nCollectors)+',1)';
                 this.TTdetailContext.fillRect(Math.floor(Math.floor( (i - this.prevDigi[clctr])/4 )*0.76/3*this.canvasWidth + 0.12*this.canvasWidth - this.canvasWidth*0.09 + (i%4)*this.canvasWidth*0.06 - 0.02*this.canvasWidth), Math.floor(this.canvasHeight*0.6 + topMargin), Math.floor(0.04*this.canvasWidth), Math.floor(0.04*this.canvasWidth));
             }
         } else {  //TIGRESS mode:
@@ -522,7 +522,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                 this.detailContext.fill();
                 this.detailContext.stroke();
                 //tooltip layer:
-                this.TTdetailContext.fillStyle = 'rgba('+(i-this.prevDigi[clctr])+','+(i-this.prevDigi[clctr])+','+(i-this.prevDigi[clctr])+',1)';
+                this.TTdetailContext.fillStyle = 'rgba('+(i+1+2*this.nCollectors)+','+(i+1+2*this.nCollectors)+','+(i+1+2*this.nCollectors)+',1)';
                 this.TTdetailContext.fillRect(Math.round(this.margin + ((i-this.prevDigi[clctr])+0.5)*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector[clctr] - 0.02*this.canvasWidth), Math.round(this.canvasHeight*0.6 + topMargin), Math.round(0.04*this.canvasWidth), Math.round(0.04*this.canvasWidth));
 
                 //digitizer to collector link:
@@ -583,9 +583,19 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         var toolTipContent = '<br>';
         var nextLine;
         var cardIndex;
-        var i;
+        var i, key;
 
-        nextLine = 'Channel '+cell;
+        nextLine = '';
+        if(this.dataBus.key[cell]){
+            nextLine = 'FSPC: ' + this.dataBus.key[cell][this.dataBus.key[cell].length-1] + '<br><br>';
+
+            if(this.dataBus.key[cell].length == 3){
+                for(key in window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]]){
+                    nextLine += window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]][key]['detector']
+                    nextLine += '<br>'
+                }
+            } 
+        }
         toolTipContent += nextLine;
 
         toolTipContent += '<br><br>';
