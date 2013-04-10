@@ -47,8 +47,6 @@ loadParameters({
 				"SMcolumns" : 4,
 				"SM_ODBkeys" : ["/Location/Of/Device/Varibles", "/Location/Of/Device/Settings", "HV Key"],
 				"SMnChannels" : 16,
-				"SHARCminima" : [0,0,0],
-				"SHARCmaxima" : [1,1,1],
 				"nRadialHoriz" : 4, 
 				"nAzimuthalHoriz" : 4, 
 				"nRadialVert" : 1, 
@@ -68,10 +66,6 @@ loadParameters({
 						 },
 				"HPGemode" : "GRIFFIN",
 				"BGOenable" : 1,
-				"HPGeminima" : [0,0,0],
-				"HPGemaxima" : [1,1,1],
-				"BGOminima" : [0,0,0],
-				"BGOmaxima" : [100,100,100],
 
 				"DESCANT" : {
 								"prefix" : [], 
@@ -83,8 +77,6 @@ loadParameters({
 												"DESCANT" : [1,1,1]
 										   },
 							},
-				"DESCANTminima" : [0,0,0],
-				"DESCANTmaxima" : [1,1,1],
 
 				"PACES" : {
 							"prefix" : [], 
@@ -96,8 +88,6 @@ loadParameters({
 											"PACES" : [1,1,1]
 									   }
 						  },
-				"PACESminima" : [0,0,0],
-				"PACESmaxima" : [1,1,1],
 
 				"DANTE" : {
 							"prefix" : [], 
@@ -111,10 +101,6 @@ loadParameters({
 											"BGO" : [2,3,4]
 									   }
 						  },
-				"DANTEBaFminima" : [0,0,0],
-				"DANTEBaFmaxima" : [1,1,1],
-				"DANTEBGOminima" : [0,0,0],
-				"DANTEBGOmaxima" : [2,3,4],
 
 				"BAMBINO" : {
 								"prefix" : [], 
@@ -127,8 +113,6 @@ loadParameters({
 										   }
 							},
 				"BAMBINOmode" : "S3",
-				"BAMBINOminima" : [0,0,0],
-				"BAMBINOmaxima" : [1,1,1],
 
 				"SCEPTAR" : {
 								"prefix" : [], 
@@ -142,10 +126,6 @@ loadParameters({
 												"ZDS" : [1,1,1]
 										   }
 							},
-				"SCEPTARminima" : [0,0,0],
-				"SCEPTARmaxima" : [1,1,1],
-				"ZDSminima" : [0,0,0],
-				"ZDSmaxima" : [2,3,4],
 				"SCEPTARconfig" : [1,0,1],
 
 				"SPICE" : {
@@ -158,8 +138,6 @@ loadParameters({
 											"SPICE" : [1,1,1]
 									   }
 						  },
-				"SPICEminima" : [0,0,0],
-				"SPICEmaxima" : [1,1,1],
 
 				"TIP" : {
 							"prefix" : ["HV: ", "Thresholds: ", "Rate: "], 
@@ -170,17 +148,12 @@ loadParameters({
 											"BGO" : [0,0,0]
 									   },
 							"maxima" : {
-											"CsI" : [1,200,200],
-											"HPGe" : [1,1000,1000],
+											"CsI" : [1,200,5000],
+											"HPGe" : [1,1000,5000],
 											"BGO" : [1,1,2]
 									   }
 						},
-				"TIPCsIminima" : [0,0,0],
-				"TIPCsImaxima" : [1,200,200],
-				"TIPHPGeminima" : [0,0,0],
-				"TIPHPGemaxima" : [1,1000,1000],
-				"TIPBGOminima" : [0,0,0],
-				"TIPBGOmaxima" : [1,1,2],
+
 
 				"DAQminima" : [0,0,0,0,0,0,0,0,0],
 				"DAQmaxima" : [1,1,1,1,1,1,1,1,1],

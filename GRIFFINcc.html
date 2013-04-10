@@ -274,9 +274,13 @@
         window.commitBlink = 0;
         //end globals//////////////////////////////////////////////////////////////////////////////////
 
-        //hack to put subsystems on top for TIP deploy
-        //if(window.parameters.topDeployment['Subsystems']) swapView('SubsystemLinks', window.Subdetectors[0].canvasID, 'SubsystemSidebar', 'SubsystemsButton')
-        //else if(!window.parameters.topDeployment['Trigger']) swapView('mainframeLinks', 'TestWaffle', 'InputLayer', 'HVmonitorButton');
+        if(window.parameters.devMode == 0){
+          //hack to put subsystems on top for TIP deploy
+          if(window.parameters.topDeployment['Subsystems']) swapView('SubsystemLinks', window.Subdetectors[0].canvasID, 'SubsystemSidebar', 'SubsystemsButton')
+          else if(!window.parameters.topDeployment['Trigger']) swapView('mainframeLinks', 'TestWaffle', 'InputLayer', 'HVmonitorButton');
+          //hack to patch in HV assets:
+          insertDOM('button', 'HVhackButton', 'navLink', '', 'statusLink', 'window.location="http://alphadon.triumf.ca:8082/CS/HV-Dashboard"', 'HV Status', '', 'submit');
+        }
 
         startLoop(); 
 

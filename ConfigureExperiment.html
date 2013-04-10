@@ -12,7 +12,7 @@
 
 	</head>
 
-	<body style="font-family: 'Raleway', sans-serif; font-size:14px; background-color:#333333; color:#FFFFFF;">
+	<body style="font-family: 'Raleway', sans-serif; font-size:14px; background-color:#333333; color:#FFFFFF; text-align:center;">
 
 		<div id='chooseExperiment', style='margin-left:auto; margin-right:auto; background:rgba(0,0,0,0.7); border: 5px solid; border-radius:10px; opacity:0; width:35%; position:relative; font-family:Orbitron; transition:opacity 0.5s; -moz-transition:opacity 0.5s; -webkit-transition:opacity 0.5s; text-align:center;'>
 			<table style='margin:0 auto; width:60%;'>
@@ -39,6 +39,8 @@
 			//choose TIGRESS or GRIFFIN//////////////////////////////////////////////////////////////
 			document.getElementById('GrifLogo').onclick = function(){
       			window.experiment = 'GRIFFIN';
+      			window.subdetectors['DANTE'] = 1; //DANTE is apparently always in the corona for GRIFFIN
+      			ODBSet('/DashboardConfig/experiment', 'GRIFFIN');
 				document.getElementById('chooseExperiment').style.opacity = 0;
         		setTimeout(function(){
             		var element = document.getElementById('chooseExperiment');
@@ -49,6 +51,7 @@
 
 			document.getElementById('TigLogo').onclick = function(){
       			window.experiment = 'TIGRESS';
+      			ODBSet('/DashboardConfig/experiment', 'TIGRESS');
 				document.getElementById('chooseExperiment').style.opacity = 0;
         		setTimeout(function(){
             		var element = document.getElementById('chooseExperiment');
@@ -62,6 +65,19 @@
 			var TigCanv = document.getElementById('TigLogo');
 			var GrifCtx = GrifCanv.getContext('2d');
 			var TigCtx = TigCanv.getContext('2d');
+			window.subdetectors = {'SHARC' : 0,
+								   'HPGe' : 1,
+								   'DESCANT' : 0,
+								   'PACES' : 0,
+								   'DANTE' : 0,
+								   'BAMBINO' : 0,
+								   'SCEPTAR' : 0,
+								   'SPICE' : 0,
+								   'TIPwall' : 0,
+								   'TIPball' : 0,
+								   'ZDS' : 0
+								  }
+			window.choices = 0;
 
 		    var imageObj = new Image();
     		imageObj.src = 'logo.gif';
@@ -105,6 +121,16 @@
         		setTimeout(function(){document.getElementById('Corona').style.opacity = 1;}, 300);
         		setTimeout(function(){document.getElementById('USlampshade').style.opacity = 1;}, 400);
         		if(window.experiment == 'TIGRESS') setTimeout(function(){document.getElementById('Beamdump').style.opacity = 1;}, 500);
+        		setTimeout(function(){
+        							//commit data////////////////////////////////////////////////////////////////////////
+									insertDOM('button', 'writeParameters', 'button', '', 'body', 'commitParameters()', 'Deploy Detectors');
+									document.getElementById('writeParameters').onmousedown = function(){
+										$('#writeParameters').css('background-color', '#999999');
+									}
+									document.getElementById('writeParameters').onmouseup = function(){
+										$('#writeParameters').css('background-color', '#FFFFFF');
+									}
+        						   }, 550)
 			}
 
 			function deployChamber(){
@@ -120,16 +146,14 @@
 				//insertDOM('tr', 'chamberRadioRow', '', '', 'chamberTable', '', '');
 				//GRIFFIN:
 				if(window.experiment == 'GRIFFIN'){
-					window.leftChamber = ['USSC', 'USSC', 'PACES', 'PACES', 'SPICE', 'SPICE'];
-					window.rightChamber = ['DSSC', 'ZDS', 'DSSC', 'ZDS', 'ZDS', 'DSSC'];
+					window.leftChamber = ['SCEPTAR', 'SCEPTAR', 'PACES', 'PACES', 'SPICE', 'SPICE'];
+					window.rightChamber = ['SCEPTAR', 'ZDS', 'SCEPTAR', 'ZDS', 'ZDS', 'SCEPTAR'];
 					for(i=0; i<6; i++){
 						insertDOM('td', 'Gcha'+i+'pic', '', '', 'chamberPicRow', '', '');
 						insertDOM('canvas', 'Gcha'+i+'canv', 'thumbnail', '', 'Gcha'+i+'pic', '', '');
 						document.getElementById('Gcha'+i+'canv').setAttribute('width', 0.9*totalWidth/6);
 						document.getElementById('Gcha'+i+'canv').thumb = i;
 						document.getElementById('Gcha'+i+'canv').chosen = 0;
-						//insertDOM('td', 'Gcha'+i+'rdo', '', '', 'chamberRadioRow', '', '');
-						//insertDOM('input', 'Gcha'+i+'radio', '', '', 'Gcha'+i+'rdo', '', '', 'ChamberRadio', 'radio');
 
 						thumbnail('Gcha'+i+'canv', window.leftChamber[i], window.rightChamber[i], '#999999');
 
@@ -140,7 +164,7 @@
 							if(this.chosen==0)thumbnail(this.id, window.leftChamber[this.thumb], window.rightChamber[this.thumb], '#999999');
 						}
 
-						document.getElementById('Gcha'+i+'canv').onclick = function(){clickBehavior.call(this, 6, 'Gcha')};
+						document.getElementById('Gcha'+i+'canv').onclick = function(){clickBehavior.call(this, 6, 'Gcha', window.leftChamber, window.rightChamber)};
 
 					}
 
@@ -166,7 +190,7 @@
 							if(this.chosen==0)thumbnail(this.id, window.leftChamber[this.thumb], window.rightChamber[this.thumb], '#999999');
 						}
 
-						document.getElementById('Tcha'+i+'canv').onclick = function(){clickBehavior.call(this, 6, 'Tcha')};
+						document.getElementById('Tcha'+i+'canv').onclick = function(){clickBehavior.call(this, 6, 'Tcha', window.leftChamber, window.rightChamber)};
 
 					}
 
@@ -204,7 +228,7 @@
 							if(this.chosen == 0)thumbnail(this.id, window.leftDSL[this.thumb], window.rightDSL[this.thumb], '#999999');
 						}
 
-						document.getElementById('Gdsl'+i+'canv').onclick = function(){clickBehavior.call(this, 2, 'Gdsl')};
+						document.getElementById('Gdsl'+i+'canv').onclick = function(){clickBehavior.call(this, 2, 'Gdsl', window.leftDSL, window.rightDSL)};
 					}
 				}
 				//TIGRESS:
@@ -227,7 +251,7 @@
 							if(this.chosen == 0)thumbnail(this.id, window.leftDSL[this.thumb], window.rightDSL[this.thumb], '#999999');
 						}
 
-						document.getElementById('Tdsl'+i+'canv').onclick = function(){clickBehavior.call(this, 4, 'Tdsl')};
+						document.getElementById('Tdsl'+i+'canv').onclick = function(){clickBehavior.call(this, 4, 'Tdsl', window.leftDSL, window.rightDSL)};
 					}
 				}
 			}
@@ -262,7 +286,7 @@
 						//	if(this.chosen == 0)thumbnail(this.id, window.leftCor[this.thumb], window.rightCor[this.thumb], '#999999');
 						//}
 
-						document.getElementById('Gcor'+i+'canv').onclick = function(){clickBehavior.call(this, 2, 'Gcor')};						
+						//document.getElementById('Gcor'+i+'canv').onclick = function(){clickBehavior.call(this, 2, 'Gcor', window.leftCor, window.rightCor)};						
 					}
 				}
 				//TIGRESS:
@@ -285,7 +309,7 @@
 						//	if(this.chosen == 0)thumbnail(this.id, window.leftCor[this.thumb], window.rightCor[this.thumb], '#999999');
 						//}
 
-						document.getElementById('Tcor'+i+'canv').onclick = function(){clickBehavior.call(this, 2, 'Tcor')};						
+						//document.getElementById('Tcor'+i+'canv').onclick = function(){clickBehavior.call(this, 2, 'Tcor', window.leftCor, window.rightCor)};						
 					}
 				}
 			}
@@ -321,7 +345,7 @@
 							if(this.chosen == 0)thumbnail(this.id, window.leftUSL[this.thumb], window.rightUSL[this.thumb], '#999999');
 						}
 
-						document.getElementById('Gusl'+i+'canv').onclick = function(){clickBehavior.call(this, 2, 'Gusl')};	
+						document.getElementById('Gusl'+i+'canv').onclick = function(){clickBehavior.call(this, 2, 'Gusl', window.leftUSL, window.rightUSL)};	
 
 					}
 				}
@@ -345,7 +369,7 @@
 							if(this.chosen == 0)thumbnail(this.id, window.leftUSL[this.thumb], window.rightUSL[this.thumb], '#999999');
 						}
 
-						document.getElementById('Tusl'+i+'canv').onclick = function(){clickBehavior.call(this, 2, 'Tusl')};	
+						document.getElementById('Tusl'+i+'canv').onclick = function(){clickBehavior.call(this, 2, 'Tusl', window.leftUSL, window.rightUSL)};	
 
 					}
 				}
@@ -384,13 +408,13 @@
 						///	if(this.chosen == 0)thumbnail(this.id, window.leftBDP[this.thumb], window.rightBDP[this.thumb], '#999999');
 						///}
 
-						document.getElementById('Tbdp'+i+'canv').onclick = function(){clickBehavior.call(this, 2, 'Tbdp')};	
+						//document.getElementById('Tbdp'+i+'canv').onclick = function(){clickBehavior.call(this, 2, 'Tbdp', window.leftBDP, window.rightBDP)};	
 
 					}
 				}
 			}
 
-			function clickBehavior(nFigures, prefix){
+			function clickBehavior(nFigures, prefix, det1, det2){
 				if(this.chosen == 0){
 					$('#'+this.id).css('left', window.innerWidth/2 - parseFloat(this.width)/2 - document.getElementById(this.id).getBoundingClientRect().left  );
 					$('#'+this.id).css('z-index', 1);
@@ -400,6 +424,11 @@
 							document.getElementById(prefix+i+'canv').setAttribute('z-index', -1);
 						}
 					}
+
+					window.subdetectors[det1[this.thumb]]++;
+					window.subdetectors[det2[this.thumb]]++;
+					window.choices++;
+
 					this.chosen = 1;
 				} else{
 					$('#'+this.id).css('left', 0);
@@ -410,10 +439,24 @@
 							document.getElementById(prefix+i+'canv').setAttribute('z-index', 0);
 						}
 					}
+
+					window.subdetectors[det1[this.thumb]]--;
+					window.subdetectors[det2[this.thumb]]--;
+					window.choices--;
+
 					this.chosen = 0;
 				}
 			}
 
+			function commitParameters(){
+				if(window.choices < 3){
+					alert('Please click on a deployment option for all sectors.')
+				} else{
+					for (var key in window.subdetectors){
+						ODBSet('/DashboardConfig/'+key, window.subdetectors[key]);
+					}
+				}
+			}
 
 		</script>
 

@@ -498,7 +498,7 @@ function TIP(){
 
         //summary level
         for(i=0; i<3*4; i++){
-            this.dataBus.summaryHPGeHV[i] = (this.dataBus.detailHPGeHV[2*i] + this.dataBus.detailHPGeHV[2*i+1]) / 2//Math.random();
+            this.dataBus.summaryHPGeHV[i] = (this.dataBus.detailHPGeHV[2*i] + this.dataBus.detailHPGeHV[2*i+1]) / 2;
             this.dataBus.summaryHPGethreshold[i] =  (this.dataBus.detailHPGethreshold[2*i] + this.dataBus.detailHPGethreshold[2*i+1]) / 2//Math.random();
             this.dataBus.summaryHPGerate[i] = (this.dataBus.detailHPGerate[2*i] + this.dataBus.detailHPGerate[2*i+1]) / 2//Math.random();
             this.dataBus.summaryBGOHV[i] = -9999//Math.random();
