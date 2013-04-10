@@ -143,7 +143,6 @@
 
 				insertDOM('table', 'chamberTable', 'sectionTable', '', 'Chamber', '', '');
 				insertDOM('tr', 'chamberPicRow', '', '', 'chamberTable', '', '');
-				//insertDOM('tr', 'chamberRadioRow', '', '', 'chamberTable', '', '');
 				//GRIFFIN:
 				if(window.experiment == 'GRIFFIN'){
 					window.leftChamber = ['SCEPTAR', 'SCEPTAR', 'PACES', 'PACES', 'SPICE', 'SPICE'];
@@ -173,7 +172,7 @@
 				//TIGRESS:
 				if(window.experiment == 'TIGRESS'){
 					window.leftChamber = ['BAMBINO', 'none', 'BAMBINO', 'SHARC', 'TIPwall', 'TIPball'];
-					window.rightChamber = ['none', 'BAMBINO', 'BAMBINO', 'none', 'none', 'none'];
+					window.rightChamber = ['solo', 'BAMBINO', 'BAMBINO', 'none', 'none', 'none'];
 					for(i=0; i<6; i++){
 						insertDOM('td', 'Tcha'+i+'pic', '', '', 'chamberPicRow', '', '');
 						insertDOM('canvas', 'Tcha'+i+'canv', 'thumbnail', '', 'Tcha'+i+'pic', '', '');
@@ -427,6 +426,10 @@
 
 					window.subdetectors[det1[this.thumb]]++;
 					window.subdetectors[det2[this.thumb]]++;
+					if(det2[this.thumb] == 'all'){
+						window.subdetectors['SHARC']++;
+						window.subdetectors['DESCANT']++;
+					}
 					window.choices++;
 
 					this.chosen = 1;
@@ -455,6 +458,7 @@
 					for (var key in window.subdetectors){
 						ODBSet('/DashboardConfig/'+key, window.subdetectors[key]);
 					}
+					window.location = 'http://alphadon.triumf.ca:8088/CS/SubdetectorConfig';
 				}
 			}
 

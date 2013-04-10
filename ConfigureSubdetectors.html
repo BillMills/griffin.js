@@ -1,0 +1,59 @@
+<html>
+	<head>
+	    <link id='fontLink' href='http://fonts.googleapis.com/css?family=Orbitron|Raleway' rel='stylesheet' type='text/css'>
+
+	    <script src="zepto.min.js" type="text/javascript"></script>
+	    <script src="utilities.js" type="text/javascript"></script>
+	    <script src="drawing.js" type="text/javascript"></script>
+	    <script src="branding.js" type="text/javascript"></script>
+	    <script src="thumbnails.js" type="text/javascript"></script>
+
+	    <link rel="stylesheet" type="text/css" href="ConfigureSubdetectors.css" />
+	</head>
+
+	<body style="font-family: 'Raleway', sans-serif; font-size:14px; background-color:#333333; color:#FFFFFF; text-align:center;">
+		<script type='text/JavaScript'>
+			var i;
+
+			//banner
+			insertDOM('canvas', 'banner', '', '', 'body', '', '');
+			insertDOM('div', 'navBar', '', 'margin:none; margin-bottom:100px;', 'body', '', '');
+			insertDOM('p', 'youAreHere', '', 'display: inline; color:rgba(255,255,255,0.3); font-size:24px; margin:0; position:absolute; right:0;', 'navBar', '','');
+			var experiment = ODBGet('DashboardConfig/experiment');
+			Banner('banner', 'youAreHere', 'navBar', 'Experimental Deployment', experiment);
+
+			//subdetector icons
+			insertDOM('table', 'detectorIcons', 'sectionTable', '', 'body', '', '');
+			insertDOM('tr', 'PicRow', '', '', 'detectorIcons', '', '');
+
+			//which subdetectors are present?
+			var subdetectors = [];
+			var totalWidth = window.innerWidth;
+			var iconWidth = Math.min(0.9*totalWidth/subdetectors.length, 300)
+			if(ODBGet('DashboardConfig/SHARC') > 0) subdetectors[subdetectors.length] = 'SHARC';
+			if(ODBGet('DashboardConfig/HPGe') > 0) subdetectors[subdetectors.length] = 'HPGe';
+			if(ODBGet('DashboardConfig/DESCANT') > 0) subdetectors[subdetectors.length] = 'DESCANT';
+			if(ODBGet('DashboardConfig/PACES') > 0) subdetectors[subdetectors.length] = 'PACES';
+			if(ODBGet('DashboardConfig/DANTE') > 0) subdetectors[subdetectors.length] = 'DANTE';
+			if(ODBGet('DashboardConfig/BAMBINO') > 0) subdetectors[subdetectors.length] = 'BAMBINO';
+			if(ODBGet('DashboardConfig/SCEPTAR') > 0) subdetectors[subdetectors.length] = 'SCEPTAR';
+			if(ODBGet('DashboardConfig/SPICE') > 0) subdetectors[subdetectors.length] = 'SPICE';
+			if(ODBGet('DashboardConfig/TIPwall') > 0) subdetectors[subdetectors.length] = 'TIPwall';
+			if(ODBGet('DashboardConfig/TIPball') > 0) subdetectors[subdetectors.length] = 'TIPball';
+			if(ODBGet('DashboardConfig/ZDS') > 0) subdetectors[subdetectors.length] = 'ZDS';
+
+			function insertIcon(detector){
+				insertDOM('td', detector+'icon', '', '', 'PicRow', '', '');
+				insertDOM('canvas', detector+'canv', '', '', detector+'icon', '', '');
+				document.getElementById(detector+'canv').setAttribute('width', iconWidth);
+				thumbnail(detector+'canv', detector, 'none', '#999999');
+			}
+
+			for(i=0; i<subdetectors.length; i++){
+				insertIcon(subdetectors[i]);
+			}
+
+		</script>
+	</body>
+
+</html>

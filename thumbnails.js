@@ -21,7 +21,7 @@ function thumbnail(canvasID, left, right, color){
 		title = 'USSC + DSSC';
 	} else if(left == 'SCEPTAR' && right == 'ZDS'){
 		sceptar(context, width/3, height*0.4, height*0.2);
-		zds(context, width, height);
+		zds(context, 2/3*width, 0.4*height, 0.18*height);
 		title = 'USSC + ZDS';
 	} else if(left == 'PACES' && right == 'SCEPTAR'){
 		paces(context, width/3, height*0.4, height*0.15, height*0.05);
@@ -29,11 +29,11 @@ function thumbnail(canvasID, left, right, color){
 		title = 'PACES + SCEPTAR';
 	} else if(left == 'PACES' && right == 'ZDS'){
 		paces(context, width/3, height*0.4, height*0.15, height*0.05);
-		zds(context, width, height);
+		zds(context, 2/3*width, 0.4*height, 0.18*height);
 		title = 'PACES + ZDS';
 	} else if(left == 'SPICE' && right == 'ZDS'){
 		spice(context, width/3, height*0.4, height*0.2);
-		zds(context, width, height);
+		zds(context, 2/3*width, 0.4*height, 0.18*height);
 		title = 'SPICE + ZDS';
 	} else if(left == 'SPICE' && right == 'SCEPTAR'){
 		spice(context, width/3, height*0.4, height*0.2);
@@ -57,7 +57,7 @@ function thumbnail(canvasID, left, right, color){
 	}
 
 	//TIGRESS options
-	if(left == 'BAMBINO' && right == 'none'){
+	if(left == 'BAMBINO' && right == 'solo'){
 		title = 'US BAMBINO';
 		bambino(context, width*0.45, width*0.55, height/3, height*0.6, height*0.12);	
 	} else if(right == 'BAMBINO' && left == 'none'){
@@ -101,6 +101,33 @@ function thumbnail(canvasID, left, right, color){
 		title = 'Beamdump Scintilator';
 	}
 
+	//standalone options
+	if(left == 'HPGe' && right == 'none'){
+		tigress(context, width/2, height*0.45, Math.round(height*0.25));
+		title = 'HPGe';		
+	} else if(left == 'DESCANT' && right=='none'){
+		descant(context, width*0.5,height*0.4, height*0.1 );
+		title = 'DESCANT';		
+	} else if(left == 'PACES' && right=='none'){
+		paces(context, width/2, height*0.4, height*0.15, height*0.05);
+		title = 'PACES';
+	} else if(left == 'DANTE' && right=='none'){
+		dante(context, width*0.5, height*0.4, height*0.2, color);
+		title = 'DANTE';
+	} else if(left == 'SCEPTAR' && right=='none'){
+		sceptar(context, width/2, height*0.4, height*0.2);
+		title = 'SCEPTAR';
+	} else if(left == 'SPICE' && right=='none'){
+		spice(context, width*0.5, height*0.45, height*0.2);
+		title = 'SPICE';
+	} else if(left == 'ZDS' && right=='none'){
+		zds(context, 0.5*width, 0.4*height, 0.18*height);
+		title = 'ZDS';
+	} else if(left == 'BAMBINO' && right=='none'){
+		title = 'BAMBINO';
+		bambino(context, width*0.45, width*0.55, height/3, height*0.6, height*0.12);		
+	}
+
 	if(right != 'all') context.font = '16px Raleway';
 	context.fillText(title, width/2 - context.measureText(title).width/2, 0.9*height);
 }
@@ -131,9 +158,9 @@ function sceptar(context, x0, y0, size){
 	context.restore();
 }
 
-function zds(context, width, height){
+function zds(context, x0, y0, radius){
 	context.beginPath();
-	context.arc(2*width/3, height*0.4, height*0.18, 0, 2*Math.PI);
+	context.arc(x0, y0, radius, 0, 2*Math.PI);
 	context.closePath();
 	context.stroke();
 }
