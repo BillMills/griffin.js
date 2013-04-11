@@ -65,7 +65,6 @@ function insertDOM(element, id, classTag, style, wrapperID, onclick, content, na
     newElement.setAttribute('id', id);
     newElement.setAttribute('class', classTag);
     newElement.setAttribute('style', style);
-    newElement.setAttribute('onclick', onclick);
     newElement.setAttribute('name', name);
     newElement.setAttribute('type', type);
     newElement.setAttribute('value', value);
@@ -74,6 +73,7 @@ function insertDOM(element, id, classTag, style, wrapperID, onclick, content, na
     else
         document.getElementById(wrapperID).appendChild(newElement);
     document.getElementById(id).innerHTML = content;
+    document.getElementById(id).onclick = onclick;
 }
 
 

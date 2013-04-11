@@ -22,7 +22,8 @@ function Subsystem(){
     
     //DOM insertions
     //insert nav link
-	insertDOM('button', this.name+'link', 'navLink', '', this.linkWrapperID, "javascript:swapFade('"+this.name+"link', window."+this.name+"pointer, window.subsystemScalars, window.subdetectorView)", this.name, '', 'button');
+	insertDOM('button', this.name+'link', 'navLink', '', this.linkWrapperID, function(){swapFade(this.id, this.parentPointer, window.subsystemScalars, window.subdetectorView)}, this.name, '', 'button');
+    document.getElementById(this.name+'link').parentPointer = this;
     //scale canvas
 	this.monitor = document.getElementById(this.monitorID);
     this.canvasWidth = 0.48*$(this.monitor).width();

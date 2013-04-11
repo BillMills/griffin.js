@@ -8,7 +8,7 @@ function Trigger(){
 	this.wrapper = document.getElementById(this.wrapperID);
 
     //add top level nav button:
-    insertDOM('button', 'TriggerButton', 'navLink', '', 'statusLink', "javascript:swapView('TriggerLinks', 'TriggerCanvas', 'TriggerSidebar', 'TriggerButton')", 'Trigger', '', 'button')
+    insertDOM('button', 'TriggerButton', 'navLink', '', 'statusLink', function(){swapView('TriggerLinks', 'TriggerCanvas', 'TriggerSidebar', 'TriggerButton')}, 'Trigger', '', 'button')
 
     //nav wrapper div
     insertDOM('div', this.linkWrapperID, 'navPanel', '', this.wrapperID, '', '')

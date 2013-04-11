@@ -203,7 +203,8 @@
             //position 2 is default for now:
             if(i==2) classDef = 'navLinkDown';
             else classDef = 'navLink'; 
-            insertDOM('button', 'subsystem'+window.parameters.monitorValues[i], classDef, '', 'SubsystemLinks', "javascript:swapSubsystemView('subsystem"+window.parameters.monitorValues[i]+"', 'SubsystemLinks', "+i+")", window.parameters.monitorValues[i], '', 'button')
+            insertDOM('button', 'subsystem'+window.parameters.monitorValues[i], classDef, '', 'SubsystemLinks', function(){swapSubsystemView(this.id, 'SubsystemLinks', this.viewIndex)}, window.parameters.monitorValues[i], '', 'button');
+            document.getElementById('subsystem'+window.parameters.monitorValues[i]).viewIndex = i;
           }
           window.subsystemScalars = window.parameters.monitorValues.length;
 

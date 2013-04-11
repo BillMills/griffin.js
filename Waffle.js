@@ -51,7 +51,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
             insertDOM('input', 'onButton', '', 'margin-left:2%; margin-bottom:10px; display:inline;', 'setValues', '', '', 'HVswitch', 'radio', 'on');
             insertDOM('p', 'onSwitch', '', 'display:inline', 'setValues', '', 'On');
             //submit updates:
-            insertDOM('input', 'submitParameters', 'bigButton', 'z-index:10000;', 'setValues', 'updateParameter()', '', '', 'button', 'Commit')
+            insertDOM('input', 'submitParameters', 'bigButton', 'z-index:10000;', 'setValues', function(){updateParameter()}, '', '', 'button', 'Commit')
             document.getElementById('submitParameters').setAttribute('disabled', 'true');
 
             //status report:
@@ -111,7 +111,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
             insertDOM('p', 'channelTitle', '', 'display:inline; margin-left:10%; position:relative; top:-20px; margin-right:1%;', 'changeChannel', '', 'Channel')
             insertDOM('select', 'ChannelList', '', 'width:80px; position:relative; top:-20px;', 'changeChannel', '', '')
             //submit button:
-            insertDOM('input', 'getChannelButton', 'link', 'position:relative; top:-30px; width: 50px; height:50px; font-size:24px; margin-left:3%; margin-top:10px; border-color:black', 'changeChannel', '{window.refreshInput = 1; gotoNewChannel(event, window.HVpointer);}', '', '', 'button', 'Go')
+            insertDOM('input', 'getChannelButton', 'link', 'position:relative; top:-30px; width: 50px; height:50px; font-size:24px; margin-left:3%; margin-top:10px; border-color:black', 'changeChannel', function(){window.refreshInput = 1; gotoNewChannel(event, window.HVpointer);}, '', '', 'button', 'Go')
         };
 
         //deploy a sidebar to interact with this element:
@@ -137,19 +137,20 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         //DOM insertions///////////////////////////////////////////////////////////////////////
         //navigation
         //top level nav button
-        insertDOM('button', this.topNavID, 'navLink', '', 'statusLink', "javascript:swapView('mainframeLinks', 'TestWaffle', 'InputLayer', '"+this.topNavID+"')", 'HV Monitor')
+        insertDOM('button', this.topNavID, 'navLink', '', 'statusLink', function(){swapView('mainframeLinks', 'TestWaffle', 'InputLayer', window.HVpointer.topNavID)}, 'HV Monitor')
         //nav wrapper div
         insertDOM('div', this.linkWrapperID, 'navPanel', '', this.wrapperDiv, '', '')
         //nav header
         insertDOM('h1', 'mainframeLinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', window.parameters.ExpName+' HV Mainframes')
         insertDOM('br', 'break', '', '', this.linkWrapperID, '', '')
         //nav buttons
-        insertDOM('button', 'Main1', 'navLinkDown', '', 'mainframeLinks', "{window.HVpointer.viewStatus=-1; swapFade('Main1', window.HVpointer, 0, 0)}", 'Mainframe 1')
+        insertDOM('button', 'Main1', 'navLinkDown', '', 'mainframeLinks', function(){window.HVpointer.viewStatus=-1; swapFade('Main1', window.HVpointer, 0, 0)}, 'Mainframe 1')
         insertDOM('br', 'break', '', '', this.linkWrapperID, '', '')
 
         //deploy card buttons
         for(i=0; i<window.parameters.moduleSizes.length; i++){
-            insertDOM('button', 'card'+i, 'navLink', '', this.linkWrapperID, "{window.HVpointer.viewStatus="+i+"; swapFade('card"+i+"', window.HVpointer, 0, 0);}", 'Slot '+i, '', 'button')
+            insertDOM('button', 'card'+i, 'navLink', '', this.linkWrapperID, function(){window.HVpointer.viewStatus=this.cardNumber; swapFade(this.id, window.HVpointer, 0, 0);}, 'Slot '+i, '', 'button')
+            document.getElementById('card'+i).cardNumber = i;
         }
 
         //inject canvas into DOM for waffle to paint on:

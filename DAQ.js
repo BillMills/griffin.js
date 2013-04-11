@@ -40,21 +40,22 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 
     //navigation
     //top level nav button
-    insertDOM('button', this.topNavID, 'navLink', '', 'statusLink', "javascript:swapView('DAQlinks', 'DAQcanvas', 'DAQsidebar', '"+this.topNavID+"')", 'DAQ', '', 'button')
+    insertDOM('button', this.topNavID, 'navLink', '', 'statusLink', function(){swapView('DAQlinks', 'DAQcanvas', 'DAQsidebar', window.DAQpointer.topNavID)}, 'DAQ', '', 'button')
     //nav wrapper div
     insertDOM('div', this.linkWrapperID, 'navPanel', '', this.monitorID, '', '')
     //nav header
     insertDOM('h1', 'DAQlinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', window.parameters.ExpName+' DAQ Status')
     insertDOM('br', 'break', '', '', this.linkWrapperID, '', '')
     //nav buttons
-    insertDOM('button', 'DAQToplink', 'navLinkDown', '', 'DAQlinks', "{window.DAQpointer.detailShowing=0; window.DAQdetail=-1; swapFade('DAQToplink', window.DAQpointer, 0, 0);}", 'Master', '', 'button')
+    insertDOM('button', 'DAQToplink', 'navLinkDown', '', 'DAQlinks', function(){window.DAQpointer.detailShowing=0; window.DAQdetail=-1; swapFade('DAQToplink', window.DAQpointer, 0, 0);}, 'Master', '', 'button')
     insertDOM('br', 'break', '', '', this.linkWrapperID, '', '')
     //p to label row of collector buttons
     insertDOM('p', 'DAQcollectorTitle', '', 'display:inline; color:#999999; margin-right:5px;', 'DAQlinks', '', 'Slave')
     //deploy collector buttons
     for(i=0; i<this.nCollectors; i++){
-        insertDOM('button', 'Collector'+i, 'navLink', '', this.linkWrapperID, "{swapFade('Collector"+i+"', window.DAQpointer, 0, 1); window.DAQpointer.detailShowing=1; animateDetail(window.DAQpointer, 0); window.DAQdetail="+i+";}", i, '', 'button')
+        insertDOM('button', 'Collector'+i, 'navLink', '', this.linkWrapperID, function(){swapFade(this.id, window.DAQpointer, 0, 1); window.DAQpointer.detailShowing=1; animateDetail(window.DAQpointer, 0); window.DAQdetail=this.collectorNumber;}, i, '', 'button')
         $('#Collector'+i).width( ( 0.95*this.canvasWidth - $('#DAQcollectorTitle').width()) / this.nCollectors );
+        document.getElementById('Collector'+i).collectorNumber = i;
     }
     //right sidebar
     insertDOM('div', this.sidebarID, 'Sidebar', '', this.monitorID, '', '')

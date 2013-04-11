@@ -7,6 +7,7 @@
 	    <script src="drawing.js" type="text/javascript"></script>
 	    <script src="branding.js" type="text/javascript"></script>
 	    <script src="thumbnails.js" type="text/javascript"></script>
+	    <script src="subdetectorForms.js" type="text/javascript"></script>
 
 	    <link rel="stylesheet" type="text/css" href="ConfigureSubdetectors.css" />
 	</head>
@@ -40,21 +41,26 @@
 			if(ODBGet('DashboardConfig/TIPball') > 0) subdetectors[subdetectors.length] = 'TIPball';
 			if(ODBGet('DashboardConfig/ZDS') > 0) subdetectors[subdetectors.length] = 'ZDS';
 
+			//inject the form to hold all the submission fields:
+			insertDOM('form', 'subdetectorParameters', '', '', 'body', '', '');
+
 			function insertIcon(detector){
-				insertDOM('div', detector+'div', 'sectionDiv', '', 'body', '', '','','div');
+				insertDOM('div', detector+'div', 'sectionDiv', '', 'subdetectorParameters', '', '','','div');
 				insertDOM('canvas', detector+'canv', 'iconCanv', '', detector+'div', '', '');
 				document.getElementById(detector+'canv').setAttribute('width', iconWidth);
 				thumbnail(detector+'canv', detector, 'none', '#999999');
 			}
 
-			function fadeInIcon(div){
-				document.getElementById(div).style.opacity = 1;
-			}
-
 			for(i=0; i<subdetectors.length; i++){
 				insertIcon(subdetectors[i]);
-				setTimeout(function(div){fadeInIcon(div)},100+100*i, subdetectors[i]+'div');
+				setTimeout(function(div){document.getElementById(div).style.opacity = 1;},100+100*i, subdetectors[i]+'div');
 			}
+
+			insertDOM('input', 'test', '', '', 'TIPwalldiv', '', '', 'testytest', 'number', '');
+			//insertDOM('input', 'submitButton', '', '', 'subdetectorParameters', '', '', '', 'submit', 'Test Commit')
+			document.getElementById('subdetectorParameters').oninput = function(){window.magicNumber = test.valueAsNumber};
+			insertDOM('button', 'commitButton', '', '', 'subdetectorParameters', '', '', '', 'button', 'Test Submit');
+			document.getElementById('commitButton').onclick = function(){alert(window.magicNumber)};
 
 		</script>
 	</body>

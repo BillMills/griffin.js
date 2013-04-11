@@ -16,7 +16,7 @@ function Dashboard(){
     this.deploySidebar();
 
     //add top level nav button:
-    insertDOM('button', 'DashboardButton', 'navLinkDown', '', 'statusLink', "javascript:swapView('DashboardLinks', 'DashboardCanvas', 'DashboardSidebar', 'DashboardButton')", 'Dashboard', '', 'button')
+    insertDOM('button', 'DashboardButton', 'navLinkDown', '', 'statusLink', function(){swapView('DashboardLinks', 'DashboardCanvas', 'DashboardSidebar', 'DashboardButton')}, 'Dashboard', '', 'button')
 
     //nav wrapper div
     insertDOM('div', this.linkWrapperID, 'navPanel', '', this.wrapperID, '', '')
