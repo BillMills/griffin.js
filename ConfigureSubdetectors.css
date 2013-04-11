@@ -1,6 +1,32 @@
-table.sectionTable{
-	position:relative;
-	margin-left: auto;
-	margin-right: auto;
-	margin-bottom: 50px;
+div.sectionDiv{
+	background:rgba(0,0,0,0.7); 
+	border: 5px solid; 
+	border-radius:10px;
+	border-color: #FFFFFF;
+	margin-bottom: 20px;
+	margin-left:20px;
+	opacity:0;
+	transition:opacity 0.5s; 
+	-moz-transition:opacity 0.5s; 
+	-webkit-transition:opacity 0.5s;
+}
+
+canvas.iconCanv{
+	margin-top:10px; 
+	margin-bottom:10px;
+	/*
+	opacity:0;
+	transition:opacity 0.5s; 
+	-moz-transition:opacity 0.5s; 
+	-webkit-transition:opacity 0.5s;
+	*/
+}
+
+h1#title{
+	opacity: 0.3; 
+	font-family: "Orbitron", sans-serif; 
+	font-size: 275%; 
+	vertical-align:-20px;
+	margin-left:20px;
+	margin-bottom:20px;
 }
