@@ -1,4 +1,5 @@
 div.sectionDiv{
+	float:left;
 	background:rgba(0,0,0,0.7); 
 	border: 5px solid; 
 	border-radius:10px;
@@ -9,11 +10,13 @@ div.sectionDiv{
 	transition:opacity 0.5s; 
 	-moz-transition:opacity 0.5s; 
 	-webkit-transition:opacity 0.5s;
+	padding:20px;
 }
 
 canvas.iconCanv{
 	margin-top:10px; 
 	margin-bottom:10px;
+	float:left;
 	/*
 	opacity:0;
 	transition:opacity 0.5s; 
@@ -29,4 +32,13 @@ h1#title{
 	vertical-align:-20px;
 	margin-left:20px;
 	margin-bottom:20px;
+}
+
+table.minmaxtable{
+	float:left;
+	text-align: center;
+}
+
+input.minmaxCell{
+
 }

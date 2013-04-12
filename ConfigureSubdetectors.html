@@ -51,16 +51,17 @@
 				thumbnail(detector+'canv', detector, 'none', '#999999');
 			}
 
+			//inject divs for all subdetectors selected:
 			for(i=0; i<subdetectors.length; i++){
 				insertIcon(subdetectors[i]);
 				setTimeout(function(div){document.getElementById(div).style.opacity = 1;},100+100*i, subdetectors[i]+'div');
 			}
 
-			insertDOM('input', 'test', '', '', 'TIPwalldiv', '', '', 'testytest', 'number', '');
-			//insertDOM('input', 'submitButton', '', '', 'subdetectorParameters', '', '', '', 'submit', 'Test Commit')
-			document.getElementById('subdetectorParameters').oninput = function(){window.magicNumber = test.valueAsNumber};
-			insertDOM('button', 'commitButton', '', '', 'subdetectorParameters', '', '', '', 'button', 'Test Submit');
-			document.getElementById('commitButton').onclick = function(){alert(window.magicNumber)};
+			//insertDOM('input', 'test', '', '', 'TIPwalldiv', '', '', 'testytest', 'number', '');
+			//document.getElementById('subdetectorParameters').oninput = function(){window.magicNumber = test.valueAsNumber};
+			//insertDOM('button', 'commitButton', '', '', 'subdetectorParameters', function(){alert(window.magicNumber)}, '', '', 'button', 'Test Submit');
+
+			minmaxTable('testTable', 'TIPwalldiv', 'CsI')
 
 		</script>
 	</body>
