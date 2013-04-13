@@ -1,5 +1,5 @@
 div.sectionDiv{
-	float:left;
+	display:inline-block;
 	background:rgba(0,0,0,0.7); 
 	border: 5px solid; 
 	border-radius:10px;
@@ -11,6 +11,18 @@ div.sectionDiv{
 	-moz-transition:opacity 0.5s; 
 	-webkit-transition:opacity 0.5s;
 	padding:20px;
+}
+
+div.tooltip{
+	background:rgba(0,0,0,0.9); 
+	border: 5px solid; 
+	border-radius:10px;
+	border-color: #FFFFFF;
+	display:none;
+	position:absolute;
+	width:300px;
+	height:auto;
+	padding: 20px;
 }
 
 canvas.iconCanv{
@@ -37,8 +49,30 @@ h1#title{
 table.minmaxtable{
 	float:left;
 	text-align: center;
+	padding-right:30px;
 }
 
 input.minmaxCell{
 
+}
+
+button.button{
+	clear:both;
+	width: auto;
+	height: 5%;   
+	background-color: #FFFFFF;
+	background-image: -webkit-linear-gradient(transparent, #C1C1C1);
+    background-image: -moz-linear-gradient(transparent, #C1C1C1); 
+	-webkit-border-radius: 5; 
+	-moz-border-radius: 5; 
+	border-radius: 5; 
+	font-size:20px;
+	font-family: Raleway;
+	border-color: #333333;
+	margin-bottom: 100px;
+	margin-left: 20px;
+}
+
+:invalid{
+	color: #FF0000;
 }

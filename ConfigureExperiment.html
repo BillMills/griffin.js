@@ -123,7 +123,7 @@
         		if(window.experiment == 'TIGRESS') setTimeout(function(){document.getElementById('Beamdump').style.opacity = 1;}, 500);
         		setTimeout(function(){
         							//commit data////////////////////////////////////////////////////////////////////////
-									insertDOM('button', 'writeParameters', 'button', '', 'body', 'commitParameters()', 'Deploy Detectors');
+									insertDOM('button', 'writeParameters', 'button', '', 'body', function(){commitParameters()}, 'Deploy Detectors');
 									document.getElementById('writeParameters').onmousedown = function(){
 										$('#writeParameters').css('background-color', '#999999');
 									}

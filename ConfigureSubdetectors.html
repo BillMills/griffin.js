@@ -15,6 +15,22 @@
 	<body style="font-family: 'Raleway', sans-serif; font-size:14px; background-color:#333333; color:#FFFFFF;">
 		<script type='text/JavaScript'>
 			var i;
+			
+			window.mousePointing = '';
+			//tt messages for subdetectors:
+			window.ttMessages = {};
+			var scaleLimitMessage = 'Each subdetector has a Scale Limits table, which accepts the minimum and maximum HV, ADC threshold, and rate to represent in its dashboard view.';
+			window.ttMessages['SHARCcanv'] = '<u>SHARC Config</u><br><br>'+scaleLimitMessage;
+			window.ttMessages['HPGecanv'] = '<u>HPGe Config</u><br><br>'+scaleLimitMessage;
+			window.ttMessages['DESCANTcanv'] = '<u>DESCANT Config</u><br><br>'+scaleLimitMessage;
+			window.ttMessages['PACEScanv'] = '<u>PACES Config</u><br><br>'+scaleLimitMessage;
+			window.ttMessages['DANTEcanv'] = '<u>DANTE Config</u><br><br>'+scaleLimitMessage;
+			window.ttMessages['BAMBINOcanv'] = '<u>BAMBINO Config</u><br><br> Choose which mode to run BAMBINO in, either S2 or S3.<br><br>' + scaleLimitMessage;
+			window.ttMessages['SCEPTARcanv'] = '<u>SCEPTAR Config</u><br><br>'+scaleLimitMessage;
+			window.ttMessages['SPICEcanv'] = '<u>SPICE Config</u><br><br>'+scaleLimitMessage;
+			window.ttMessages['TIPwallcanv'] = '<u>TIP Wall Config</u><br><br>'+scaleLimitMessage;
+			window.ttMessages['TIPballcanv'] = '<u>TIP Ball Config</u><br><br>'+scaleLimitMessage;
+			window.ttMessages['ZDScanv'] = '<u>ZDS Config</u><br><br>'+scaleLimitMessage;
 
 			//banner
 			insertDOM('canvas', 'banner', '', '', 'body', '', '');
@@ -23,7 +39,7 @@
 			var experiment = ODBGet('DashboardConfig/experiment');
 			Banner('banner', 'youAreHere', 'navBar', 'Experimental Deployment', experiment);
 
-			insertDOM('h1', 'title', '', '', 'body', '', 'Initialize Detector Parameters');
+			insertDOM('h1', 'title', '', '', 'body', '', 'Initialize Experimental Parameters');
 
 			//which subdetectors are present?
 			var subdetectors = [];
@@ -42,26 +58,145 @@
 			if(ODBGet('DashboardConfig/ZDS') > 0) subdetectors[subdetectors.length] = 'ZDS';
 
 			//inject the form to hold all the submission fields:
-			insertDOM('form', 'subdetectorParameters', '', '', 'body', '', '');
+			insertDOM('form', 'subdetectorParameters', '', 'margin-bottom: 100px', 'body', '', '');
+			$('#subdetectorParameters').css('height', document.height);
 
+			//Top-Level panel://////////////////////////////////////////////////////////////////////////////////
+			insertDOM('div', 'topDiv', 'sectionDiv', '', 'subdetectorParameters', '', '','','div');
+			insertDOM('canvas', 'topCanv', 'iconCanv', '', 'topDiv', '', '');
+			document.getElementById('topCanv').setAttribute('width', iconWidth);
+			var imageObj = new Image();
+    		imageObj.src = 'triumf.gif';
+    		imageObj.onload = function() {
+				thumbnail('topCanv', 'TRIUMF', 'none', '#999999');
+    		};
+    		document.getElementById('topCanv').onmousemove = function(){
+    			window.mousePointing = 'topLevel';
+    			document.getElementById('tooltip').innerHTML = '<u>Top Level Config</u><br><br>Give your experiment a name, and the URL of the MIDAS status page.'
+    		}
+    		document.getElementById('topCanv').onmouseout = function(){
+    			window.mousePointing = '';
+    			document.getElementById('tooltip').innerHTML = '';
+    		}
+    		//table
+    		insertDOM('table', 'topLevelTable', '', 'margin-top:60px', 'topDiv', '', '');
+    		//experimental name row
+    		insertDOM('tr', 'topLevelName', '', '', 'topLevelTable', '', '');
+    		insertDOM('td', 'topLevelNameLabel', '', 'text-align:right;', 'topLevelName', '', '')
+    		insertDOM('p', 'EXPnameLabel', '', '', 'topLevelNameLabel', '', 'Experiment Name');
+    		insertDOM('td', 'topLevelNameField', '', '', 'topLevelName', '', '');
+    		insertDOM('input', 'EXPname', '', '', 'topLevelNameField', '', '', '', 'text', 'Experiment');
+    		document.getElementById('EXPname').setAttribute('size', 40);
+    		//status url row
+    		insertDOM('tr', 'topLevelURL', '', '', 'topLevelTable', '', '');
+    		insertDOM('td', 'topLevelURLlabel', '', 'text-align:right;', 'topLevelURL', '', '');
+    		insertDOM('p', 'StatusURLlabel', '', 'display:inline', 'topLevelURLlabel', '', 'Status URL');
+    		insertDOM('td', 'topLevelURLfield', '', '', 'topLevelURL', '', '');
+    		insertDOM('input', 'StatusURL', '', '', 'topLevelURLfield', '', '', '', 'text', 'http://alphadon.triumf.ca:8081/');
+    		document.getElementById('StatusURL').setAttribute('size', 40);
+
+			//HV Panel://////////////////////////////////////////////////////////////////////////////////////////
+			insertDOM('div', 'hvDiv', 'sectionDiv', '', 'subdetectorParameters', '', '','','div');
+			insertDOM('canvas', 'hvCanv', 'iconCanv', '', 'hvDiv', '', '');
+			document.getElementById('hvCanv').setAttribute('width', iconWidth);
+			thumbnail('hvCanv', 'HV', 'none', '#999999');
+    		document.getElementById('hvCanv').onmousemove = function(){
+    			window.mousePointing = 'hv';
+    			document.getElementById('tooltip').innerHTML = "<u>HV Conifg</u><br><br> Set the tolerances for the dashboard's Alarm Service.  Voltage tolerance represents how far the measured voltage can be from the demand voltage before throwing an alarm; current and temperature tolerances represent the maximum current and temperature allowed before an alarm is tripped.<br><br>  The Voltage Parameter Limits fix the range of demand voltage and voltage ramp speeds allowed to be set from the dashboard.";
+    		}
+    		document.getElementById('hvCanv').onmouseout = function(){
+    			window.mousePointing = '';
+    			document.getElementById('tooltip').innerHTML = '';
+    		}
+			//alarm tolerance table
+			insertDOM('table', 'alarmTolerance', '', 'margin-top:30px; float:left; padding-right:20px', 'hvDiv', '', '');
+			insertDOM('tr', 'alarmTitleRow', '', '', 'alarmTolerance', '', '');
+			insertDOM('td', 'alarmSpacer', '', '', 'alarmTitleRow', '', '');
+			insertDOM('td', 'alarmTitle', '', '', 'alarmTitleRow', '', 'Alarm Tolerance');
+			document.getElementById('alarmTitle').setAttribute('colspan', 2);
+			//Voltage row
+			insertDOM('tr', 'voltageTol', '', '', 'alarmTolerance', '', '');
+			insertDOM('td', 'voltageTolTitle', '', 'text-align:right;', 'voltageTol', '', 'Voltage');
+			insertDOM('td', 'voltageTolField', '', '', 'voltageTol', '', '');
+			insertDOM('input', 'voltageTolInput', '', '', 'voltageTolField', '', '', '', 'number', 100);
+			insertDOM('td', 'voltageTolUnit', '', '', 'voltageTol', '', 'V');
+			//current row
+			insertDOM('tr', 'currentTol', '', '', 'alarmTolerance', '', '');
+			insertDOM('td', 'currentTolTitle', '', 'text-align:right;', 'currentTol', '', 'Current');
+			insertDOM('td', 'currentTolField', '', '', 'currentTol', '', '');
+			insertDOM('input', 'currentTolInput', '', '', 'currentTolField', '', '', '', 'number', 100);
+			insertDOM('td', 'currentTolUnit', '', '', 'currentTol', '', String.fromCharCode(181)+'A');
+			//temperature row
+			insertDOM('tr', 'tempTol', '', '', 'alarmTolerance', '', '');
+			insertDOM('td', 'tempTolTitle', '', 'text-align:right;', 'tempTol', '', 'Temperature');
+			insertDOM('td', 'tempTolField', '', '', 'tempTol', '', '');
+			insertDOM('input', 'tempTolInput', '', '', 'tempTolField', '', '', '', 'number', 50);
+			insertDOM('td', 'tempTolUnit', '', '', 'tempTol', '', String.fromCharCode(176)+'C');
+			//limits for settable parameters; fudge the subdetector minmax table to suit:
+			minmaxTable('HVminmax', 'hvDiv', 'HV');
+			$('#HVminmax').css('margin-top', '34px');
+			document.getElementById('HVminmaxtitleCell').innerHTML = 'Voltage Parameter Limits'
+			document.getElementById('HVminmaxHVTitle').innerHTML = 'Demand Voltage';
+			document.getElementById('HVminmaxthresholdTitle').innerHTML = 'Voltage Ramp Speed';
+			document.getElementById('HVminmaxthresholdUnit').innerHTML = 'V/s';
+			var element = document.getElementById('HVminmaxrateRow');
+            element.parentNode.removeChild(element);
+
+			//subdetector config panels:///////////////////////////////////////////////////////////////////////////////
 			function insertIcon(detector){
 				insertDOM('div', detector+'div', 'sectionDiv', '', 'subdetectorParameters', '', '','','div');
 				insertDOM('canvas', detector+'canv', 'iconCanv', '', detector+'div', '', '');
+    			document.getElementById(detector+'canv').onmousemove = function(){
+    				window.mousePointing = 'subdetector';
+    				document.getElementById('tooltip').innerHTML = window.ttMessages[this.id];
+	    		}
+    			document.getElementById(detector+'canv').onmouseout = function(){
+    				window.mousePointing = '';
+    				document.getElementById('tooltip').innerHTML = '';
+    			}
 				document.getElementById(detector+'canv').setAttribute('width', iconWidth);
 				thumbnail(detector+'canv', detector, 'none', '#999999');
+				configure(detector);
 			}
 
-			//inject divs for all subdetectors selected:
+			//fade in divs for all subdetectors selected:
+			setTimeout(function(){document.getElementById('topDiv').style.opacity = 1;}, 100);
+			setTimeout(function(){document.getElementById('hvDiv').style.opacity = 1;}, 200);
 			for(i=0; i<subdetectors.length; i++){
 				insertIcon(subdetectors[i]);
-				setTimeout(function(div){document.getElementById(div).style.opacity = 1;},100+100*i, subdetectors[i]+'div');
+				setTimeout(function(div){document.getElementById(div).style.opacity = 1;},300+100*i, subdetectors[i]+'div');
+			}
+
+			//add commit button
+        	setTimeout(function(){
+        						//commit data////////////////////////////////////////////////////////////////////////
+        						insertDOM('br', 'break', '', '', 'subdetectorParameters', '', '')
+								insertDOM('button', 'writeParameters', 'button', '', 'subdetectorParameters', '', 'Commit Parameters & Launch Dashboard');
+								document.getElementById('writeParameters').onmousedown = function(){
+									$('#writeParameters').css('background-color', '#999999');
+								}
+								document.getElementById('writeParameters').onmouseup = function(){
+									$('#writeParameters').css('background-color', '#FFFFFF');
+								}
+       						   }, subdetectors.length*100+200)
+
+			//create a tooltip:
+			insertDOM('div', 'tooltip', 'tooltip', '', 'body', '', '');
+			//make the tooltip follow the mouse, and turn on and off as appropriate:
+			document.getElementById('subdetectorParameters').onmousemove = function(event){
+	            //make the tool tip follow the mouse:
+	            if(window.mousePointing != '') document.getElementById('tooltip').style.display = 'block';
+    	        document.getElementById('tooltip').style.top = event.pageY - 10;
+        	    document.getElementById('tooltip').style.left = event.pageX  + 10;
+			}
+			document.getElementById('subdetectorParameters').onmouseout = function(){
+				document.getElementById('tooltip').style.display = 'none';
 			}
 
 			//insertDOM('input', 'test', '', '', 'TIPwalldiv', '', '', 'testytest', 'number', '');
 			//document.getElementById('subdetectorParameters').oninput = function(){window.magicNumber = test.valueAsNumber};
 			//insertDOM('button', 'commitButton', '', '', 'subdetectorParameters', function(){alert(window.magicNumber)}, '', '', 'button', 'Test Submit');
 
-			minmaxTable('testTable', 'TIPwalldiv', 'CsI')
 
 		</script>
 	</body>

@@ -126,6 +126,12 @@ function thumbnail(canvasID, left, right, color){
 	} else if(left == 'BAMBINO' && right=='none'){
 		title = 'BAMBINO';
 		bambino(context, width*0.45, width*0.55, height/3, height*0.6, height*0.12);		
+	} else if(left == 'TRIUMF' && right == 'none'){
+		triumf(context, width*0.5 - imageObj.width/imageObj.height*context.canvas.height*0.6/2, height*0.1, color);
+		title = 'Top Level Config';	
+	} else if(left == 'HV' && right == 'none'){
+		hv(context, width, height, color);
+		title = 'High Voltage';
 	}
 
 	if(right != 'all') context.font = '16px Raleway';
@@ -322,7 +328,12 @@ function griffin(context, x0, y0, color){
 	if(color == '#999999')context.globalAlpha = 0.4;
 	context.drawImage(imageObj, x0, y0, imageObj.width/imageObj.height*context.canvas.height*0.6, context.canvas.height*0.6);
 	context.globalAlpha = 1;
-    		
+}
+
+function triumf(context, x0, y0, color){
+	if(color == '#999999')context.globalAlpha = 0.4;
+	context.drawImage(imageObj, x0, y0, imageObj.width/imageObj.height*context.canvas.height*0.6, context.canvas.height*0.6);
+	context.globalAlpha = 1;
 }
 
 function tigress(context, x0, y0, size){
@@ -385,6 +396,19 @@ function beamdump(context, x0, y0, width){
 	context.stroke();
 	context.restore();
 
+}
+
+function hv(context, width, height, color){
+	context.fillStyle = color;
+	context.beginPath()
+	context.moveTo(0.6*width, 0.2*height);
+	context.lineTo(0.4*width, 0.475*height);
+	context.lineTo(0.5*width, 0.475*height);
+	context.lineTo(0.4*width, 0.7*height);
+	context.lineTo(0.6*width, 0.425*height);
+	context.lineTo(0.5*width, 0.425*height);
+	context.closePath();
+	context.fill()
 }
 
 //draws a regular polygon of n sides on context, centered at x0, y0 and with a center-vertext distance of size
