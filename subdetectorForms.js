@@ -1,41 +1,43 @@
 function configure(detector){
 	if(detector == 'SHARC'){
-		minmaxTable('sharcTable', 'SHARCdiv', 'SHARC');
+		minmaxTable('SHARCdiv', 'SHARC');
 	} else if(detector == 'HPGe'){
-		minmaxTable('hpgeTable', 'HPGediv', 'HPGe');
-		minmaxTable('bgoTable', 'HPGediv', 'BGO');
+		minmaxTable('HPGediv', 'HPGe');
+		minmaxTable('HPGediv', 'HPGe BGO');
 	} else if(detector == 'DESCANT'){
-		minmaxTable('descantTable', 'DESCANTdiv', 'DESCANT');
+		minmaxTable('DESCANTdiv', 'DESCANT');
 	} else if(detector == 'PACES'){
-		minmaxTable('pacesTable', 'PACESdiv', 'PACES');
+		minmaxTable('PACESdiv', 'PACES');
 	} else if(detector == 'DANTE'){
-		minmaxTable('bafTable', 'DANTEdiv', 'BaF');
-		minmaxTable('DANTEbgoTable', 'DANTEdiv', 'BGO');
+		minmaxTable('DANTEdiv', 'DANTE BaF');
+		minmaxTable('DANTEdiv', 'DANTE BGO');
 	} else if(detector == 'BAMBINO'){
 		insertDOM('p', 'BAMBINOmodeLabel', '', 'float:left; text-align:center; padding-right:20px; margin-top:70px', 'BAMBINOdiv', '', 'BAMBINO Mode<br>')
 		insertDOM('p', 'S2label', '', 'display:inline;', 'BAMBINOmodeLabel', '', 'S2');
 		insertDOM('input', 'BAMBINOmodeS2', '', '', 'BAMBINOmodeLabel', '', '', 'BAMBINOmode', 'radio', 'S2')
 		insertDOM('p', 'S3label', '', 'display:inline; margin-left:10px;', 'BAMBINOmodeLabel', '', 'S3');
 		insertDOM('input', 'BAMBINOmodeS3', '', '', 'BAMBINOmodeLabel', '', '', 'BAMBINOmode', 'radio', 'S3')
-		minmaxTable('bambinoTable', 'BAMBINOdiv', 'BAMBINO');
+		minmaxTable('BAMBINOdiv', 'BAMBINO');
 	} else if(detector == 'SCEPTAR'){
-		minmaxTable('sceptarTable', 'SCEPTARdiv', 'SCEPTAR');
+		minmaxTable('SCEPTARdiv', 'SCEPTAR');
 	} else if(detector == 'ZDS'){
-		minmaxTable('zdsTable', 'ZDSdiv', 'ZDS');
+		minmaxTable('ZDSdiv', 'ZDS');
 	} else if(detector == 'SPICE'){
-		minmaxTable('spiceTable', 'SPICEdiv', 'SPICE');
+		minmaxTable('SPICEdiv', 'SPICE');
 	} else if(detector == 'TIPwall'){
-		minmaxTable('csiTable', 'TIPwalldiv', 'TIP Wall');
-		minmaxTable('TIPhpgeTable', 'TIPwalldiv', 'TIP HPGe');
-		minmaxTable('TIPbgoTable', 'TIPwalldiv', 'TIP BGO');
+		minmaxTable('TIPwalldiv', 'TIP Wall');
+		minmaxTable('TIPwalldiv', 'TIP HPGe');
+		minmaxTable('TIPwalldiv', 'TIP BGO');
 	} else if(detector == 'TIPball'){
-		minmaxTable('csiTable', 'TIPballdiv', 'TIP Ball');
-		minmaxTable('TIPhpgeTable', 'TIPballdiv', 'TIP HPGe');
-		minmaxTable('TIPbgoTable', 'TIPballdiv', 'TIP BGO');
+		minmaxTable('TIPballdiv', 'TIP Ball');
+		minmaxTable('TIPballdiv', 'TIP HPGe');
+		minmaxTable('TIPballdiv', 'TIP BGO');
 	}	
 }
 
-function minmaxTable(id, wrapper, detType){
+function minmaxTable(wrapper, detType){
+
+	var id = detType + 'Table';
 
 	//wrap elements in a table
 	insertDOM('table', id, 'minmaxtable', '', wrapper, '', '');
@@ -58,38 +60,38 @@ function minmaxTable(id, wrapper, detType){
 	insertDOM('td', id+'HVTitle', '', 'text-align:right;', id+'HVRow', '', 'HV');
 	insertDOM('td', id+'HVminCell', '', '', id+'HVRow', '', '');
 	insertDOM('td', id+'HVmaxCell', '', '', id+'HVRow', '', '');
-	insertDOM('input', id+detType+'HVmin', 'minmaxCell', '', id+'HVminCell', '', '', '', 'number', '0');
-	insertDOM('input', id+detType+'HVmax', 'minmaxCell', '', id+'HVmaxCell', '', '', '', 'number', '3000');
+	insertDOM('input', id+'HVmin', 'minmaxCell', '', id+'HVminCell', '', '', '', 'number', '0');
+	insertDOM('input', id+'HVmax', 'minmaxCell', '', id+'HVmaxCell', '', '', '', 'number', '3000');
 	insertDOM('td', id+'HVunitCell', '', 'text-align:left', id+'HVRow', '', '');
 	insertDOM('p', id+'HVunit', '', 'display:inline;', id+'HVunitCell', '', 'V');
 	//max should be > min
-    document.getElementById(id+detType+'HVmin').onchange = function(){document.getElementById(id+detType+'HVmax').min = document.getElementById(id+detType+'HVmin').valueAsNumber;};
+    document.getElementById(id+'HVmin').onchange = function(){document.getElementById(id+'HVmax').min = document.getElementById(id+'HVmin').valueAsNumber;};
 
 	//threshold
 	insertDOM('tr', id+'thresholdRow', '', '', id, '', '');
 	insertDOM('td', id+'thresholdTitle', '', 'text-align:right;', id+'thresholdRow', '', 'Threshold');
 	insertDOM('td', id+'thresholdMinCell', '', '', id+'thresholdRow', '', '');
 	insertDOM('td', id+'thresholdMaxCell', '', '', id+'thresholdRow', '', '');
-	insertDOM('input', id+detType+'thresholdMin', 'minmaxCell', '', id+'thresholdMinCell', '', '', '', 'number', '0');
-	insertDOM('input', id+detType+'thresholdMax', 'minmaxCell', '', id+'thresholdMaxCell', '', '', '', 'number', '1000');
+	insertDOM('input', id+'thresholdMin', 'minmaxCell', '', id+'thresholdMinCell', '', '', '', 'number', '0');
+	insertDOM('input', id+'thresholdMax', 'minmaxCell', '', id+'thresholdMaxCell', '', '', '', 'number', '1000');
 	insertDOM('td', id+'thresholdUnitCell', '', 'text-align:left', id+'thresholdRow', '', '');
 	insertDOM('p', id+'thresholdUnit', '', 'display:inline;', id+'thresholdUnitCell', '', 'ADC Units');
-	document.getElementById(id+detType+'thresholdMin').setAttribute('min', 0);
+	document.getElementById(id+'thresholdMin').setAttribute('min', 0);
 	//max should be > min
-    document.getElementById(id+detType+'thresholdMin').onchange = function(){document.getElementById(id+detType+'thresholdMax').min = document.getElementById(id+detType+'thresholdMin').valueAsNumber;};
+    document.getElementById(id+'thresholdMin').onchange = function(){document.getElementById(id+'thresholdMax').min = document.getElementById(id+'thresholdMin').valueAsNumber;};
 
 	//rate	
 	insertDOM('tr', id+'rateRow', '', '', id, '', '');
 	insertDOM('td', id+'rateTitle', '', 'text-align:right;', id+'rateRow', '', 'Rate');
 	insertDOM('td', id+'rateMinCell', '', '', id+'rateRow', '', '');
 	insertDOM('td', id+'rateMaxCell', '', '', id+'rateRow', '', '');
-	insertDOM('input', id+detType+'rateMin', 'minmaxCell', '', id+'rateMinCell', '', '', '', 'number', '0');
-	insertDOM('input', id+detType+'rateMax', 'minmaxCell', '', id+'rateMaxCell', '', '', '', 'number', '10000');
+	insertDOM('input', id+'rateMin', 'minmaxCell', '', id+'rateMinCell', '', '', '', 'number', '0');
+	insertDOM('input', id+'rateMax', 'minmaxCell', '', id+'rateMaxCell', '', '', '', 'number', '10000');
 	insertDOM('td', id+'rateUnitCell', '', 'text-align:left', id+'rateRow', '', '');
 	insertDOM('p', id+'rateUnit', '', 'display:inline;', id+'rateUnitCell', '', 'Hz');
-	document.getElementById(id+detType+'rateMin').setAttribute('min', 0);
+	document.getElementById(id+'rateMin').setAttribute('min', 0);
 	//max should be > min
-    document.getElementById(id+detType+'rateMin').onchange = function(){document.getElementById(id+detType+'rateMax').min = document.getElementById(id+detType+'rateMin').valueAsNumber;};
+    document.getElementById(id+'rateMin').onchange = function(){document.getElementById(id+'rateMax').min = document.getElementById(id+'rateMin').valueAsNumber;};
 
 }
 

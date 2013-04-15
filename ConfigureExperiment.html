@@ -40,7 +40,7 @@
 			document.getElementById('GrifLogo').onclick = function(){
       			window.experiment = 'GRIFFIN';
       			window.subdetectors['DANTE'] = 1; //DANTE is apparently always in the corona for GRIFFIN
-      			ODBSet('/DashboardConfig/experiment', 'GRIFFIN');
+      			ODBSet('/DashboardConfig/topLevel/HPGeArray', 'GRIFFIN');
 				document.getElementById('chooseExperiment').style.opacity = 0;
         		setTimeout(function(){
             		var element = document.getElementById('chooseExperiment');
@@ -51,7 +51,7 @@
 
 			document.getElementById('TigLogo').onclick = function(){
       			window.experiment = 'TIGRESS';
-      			ODBSet('/DashboardConfig/experiment', 'TIGRESS');
+      			ODBSet('/DashboardConfig/topLevel/HPGeArray', 'TIGRESS');
 				document.getElementById('chooseExperiment').style.opacity = 0;
         		setTimeout(function(){
             		var element = document.getElementById('chooseExperiment');
@@ -456,9 +456,23 @@
 					alert('Please click on a deployment option for all sectors.')
 				} else{
 					for (var key in window.subdetectors){
-						ODBSet('/DashboardConfig/'+key, window.subdetectors[key]);
+						if(key == 'TIPwall' || key == 'TIPball'){
+							if(window.subdetectors['TIPwall']==1 || window.subdetectors['TIPball']==1)
+								ODBSet('/DashboardConfig/TIP/deploy', 1);
+							else 
+								ODBSet('/DashboardConfig/TIP/deploy', 0);
+
+							if(window.subdetectors['TIPwall'] == 1)
+								ODBSet('/DashboardConfig/TIP/mode', 'wall');
+							else if(window.subdetectors['TIPball'] == 1)
+								ODBSet('/DashboardConfig/TIP/mode', 'ball');
+							else 
+								ODBSet('/DashboardConfig/TIP/mode', '');
+						} else
+							ODBSet('/DashboardConfig/'+key+'/deploy', window.subdetectors[key]);
 					}
-					window.location = 'http://alphadon.triumf.ca:8081/CS/SubdetectorConfig';
+					//alert(window.subdetectors['TIPwall']==1 || window.subdetectors['TIPball']==1)
+					window.location = 'http://alphadon.triumf.ca:8082/CS/ConfigureSubdetectors';
 				}
 			}
 

@@ -36,7 +36,7 @@
 			insertDOM('canvas', 'banner', '', '', 'body', '', '');
 			insertDOM('div', 'navBar', '', 'margin:none; margin-bottom:50px', 'body', '', '');
 			insertDOM('p', 'youAreHere', '', 'display: inline; color:rgba(255,255,255,0.3); font-size:24px; margin:0; position:absolute; right:0;', 'navBar', '','');
-			var experiment = ODBGet('DashboardConfig/experiment');
+			var experiment = ODBGet('DashboardConfig/topLevel/HPGeArray');
 			Banner('banner', 'youAreHere', 'navBar', 'Experimental Deployment', experiment);
 
 			insertDOM('h1', 'title', '', '', 'body', '', 'Initialize Experimental Parameters');
@@ -45,21 +45,20 @@
 			var subdetectors = [];
 			var totalWidth = window.innerWidth;
 			var iconWidth = 150;//Math.min(0.9*totalWidth/subdetectors.length, 300)
-			if(ODBGet('DashboardConfig/SHARC') > 0) subdetectors[subdetectors.length] = 'SHARC';
-			if(ODBGet('DashboardConfig/HPGe') > 0) subdetectors[subdetectors.length] = 'HPGe';
-			if(ODBGet('DashboardConfig/DESCANT') > 0) subdetectors[subdetectors.length] = 'DESCANT';
-			if(ODBGet('DashboardConfig/PACES') > 0) subdetectors[subdetectors.length] = 'PACES';
-			if(ODBGet('DashboardConfig/DANTE') > 0) subdetectors[subdetectors.length] = 'DANTE';
-			if(ODBGet('DashboardConfig/BAMBINO') > 0) subdetectors[subdetectors.length] = 'BAMBINO';
-			if(ODBGet('DashboardConfig/SCEPTAR') > 0) subdetectors[subdetectors.length] = 'SCEPTAR';
-			if(ODBGet('DashboardConfig/SPICE') > 0) subdetectors[subdetectors.length] = 'SPICE';
-			if(ODBGet('DashboardConfig/TIPwall') > 0) subdetectors[subdetectors.length] = 'TIPwall';
-			if(ODBGet('DashboardConfig/TIPball') > 0) subdetectors[subdetectors.length] = 'TIPball';
-			if(ODBGet('DashboardConfig/ZDS') > 0) subdetectors[subdetectors.length] = 'ZDS';
+			if(ODBGet('DashboardConfig/SHARC/deploy') > 0) subdetectors[subdetectors.length] = 'SHARC';
+			if(ODBGet('DashboardConfig/HPGe/deploy') > 0) subdetectors[subdetectors.length] = 'HPGe';
+			if(ODBGet('DashboardConfig/DESCANT/deploy') > 0) subdetectors[subdetectors.length] = 'DESCANT';
+			if(ODBGet('DashboardConfig/PACES/deploy') > 0) subdetectors[subdetectors.length] = 'PACES';
+			if(ODBGet('DashboardConfig/DANTE/deploy') > 0) subdetectors[subdetectors.length] = 'DANTE';
+			if(ODBGet('DashboardConfig/BAMBINO/deploy') > 0) subdetectors[subdetectors.length] = 'BAMBINO';
+			if(ODBGet('DashboardConfig/SCEPTAR/deploy') > 0) subdetectors[subdetectors.length] = 'SCEPTAR';
+			if(ODBGet('DashboardConfig/SPICE/deploy') > 0) subdetectors[subdetectors.length] = 'SPICE';
+			if(ODBGet('DashboardConfig/TIP/deploy') > 0 && ODBGet('DashboardConfig/TIP/mode').slice(0,4) == 'wall' )subdetectors[subdetectors.length] = 'TIPwall';
+			if(ODBGet('DashboardConfig/TIP/deploy') > 0 && ODBGet('DashboardConfig/TIP/mode').slice(0,4) == 'ball') subdetectors[subdetectors.length] = 'TIPball';
+			if(ODBGet('DashboardConfig/ZDS/deploy') > 0) subdetectors[subdetectors.length] = 'ZDS';
 
 			//inject the form to hold all the submission fields:
-			insertDOM('form', 'subdetectorParameters', '', 'margin-bottom: 100px', 'body', '', '');
-			$('#subdetectorParameters').css('height', document.height);
+			insertDOM('form', 'subdetectorParameters', '', '', 'body', '', '');
 
 			//Top-Level panel://////////////////////////////////////////////////////////////////////////////////
 			insertDOM('div', 'topDiv', 'sectionDiv', '', 'subdetectorParameters', '', '','','div');
@@ -133,13 +132,13 @@
 			insertDOM('input', 'tempTolInput', '', '', 'tempTolField', '', '', '', 'number', 50);
 			insertDOM('td', 'tempTolUnit', '', '', 'tempTol', '', String.fromCharCode(176)+'C');
 			//limits for settable parameters; fudge the subdetector minmax table to suit:
-			minmaxTable('HVminmax', 'hvDiv', 'HV');
-			$('#HVminmax').css('margin-top', '34px');
-			document.getElementById('HVminmaxtitleCell').innerHTML = 'Voltage Parameter Limits'
-			document.getElementById('HVminmaxHVTitle').innerHTML = 'Demand Voltage';
-			document.getElementById('HVminmaxthresholdTitle').innerHTML = 'Voltage Ramp Speed';
-			document.getElementById('HVminmaxthresholdUnit').innerHTML = 'V/s';
-			var element = document.getElementById('HVminmaxrateRow');
+			minmaxTable('hvDiv', 'HV');
+			$('#HVTable').css('margin-top', '34px');
+			document.getElementById('HVTabletitleCell').innerHTML = 'Voltage Parameter Limits'
+			document.getElementById('HVTableHVTitle').innerHTML = 'Demand Voltage';
+			document.getElementById('HVTablethresholdTitle').innerHTML = 'Voltage Ramp Speed';
+			document.getElementById('HVTablethresholdUnit').innerHTML = 'V/s';
+			var element = document.getElementById('HVTablerateRow');
             element.parentNode.removeChild(element);
 
 			//subdetector config panels:///////////////////////////////////////////////////////////////////////////////
@@ -171,7 +170,7 @@
         	setTimeout(function(){
         						//commit data////////////////////////////////////////////////////////////////////////
         						insertDOM('br', 'break', '', '', 'subdetectorParameters', '', '')
-								insertDOM('button', 'writeParameters', 'button', '', 'subdetectorParameters', '', 'Commit Parameters & Launch Dashboard');
+								insertDOM('button', 'writeParameters', 'button', '', 'subdetectorParameters', function(){commitParameters()}, 'Commit Parameters & Launch Dashboard', '', 'button');
 								document.getElementById('writeParameters').onmousedown = function(){
 									$('#writeParameters').css('background-color', '#999999');
 								}
@@ -193,9 +192,95 @@
 				document.getElementById('tooltip').style.display = 'none';
 			}
 
-			//insertDOM('input', 'test', '', '', 'TIPwalldiv', '', '', 'testytest', 'number', '');
-			//document.getElementById('subdetectorParameters').oninput = function(){window.magicNumber = test.valueAsNumber};
-			//insertDOM('button', 'commitButton', '', '', 'subdetectorParameters', function(){alert(window.magicNumber)}, '', '', 'button', 'Test Submit');
+			//function to push all the fields to the ODB
+			function commitParameters(){
+				//todo: form validation
+
+				//top Level
+				ODBSet('/DashboardConfig/topLevel/expName', document.getElementById('EXPname').value);
+				ODBSet('/DashboardConfig/topLevel/statusURL', document.getElementById('StatusURL').value);
+
+				//HV - funny id's come from repurposing the minmax table
+				ODBSet('/DashboardConfig/HV/voltageTolerance', document.getElementById('voltageTolInput').valueAsNumber);
+				ODBSet('/DashboardConfig/HV/currentTolerance', document.getElementById('currentTolInput').valueAsNumber);
+				ODBSet('/DashboardConfig/HV/tempTolerance', document.getElementById('tempTolInput').valueAsNumber);
+				ODBSet('/DashboardConfig/HV/demandVoltage[*]', [document.getElementById('HVTableHVmin').valueAsNumber, document.getElementById('HVTableHVmax').valueAsNumber] );
+				ODBSet('/DashboardConfig/HV/voltRampSpeed[*]', [document.getElementById('HVTablethresholdMin').valueAsNumber, document.getElementById('HVTablethresholdMax').valueAsNumber]);
+
+				for(var i=0; i<subdetectors.length; i++){
+					//BAMBINO
+					if(subdetectors[i] == 'BAMBINO'){
+						var bambinoMode = (document.getElementById('BAMBINOmodeS2').checked) ? 'S2' : 'S3';
+						ODBSet('/DashboardConfig/BAMBINO/mode', bambinoMode);
+						setMinMax('BAMBINO', '');
+					}
+
+					//DANTE
+					if(subdetectors[i] == 'DANTE'){
+						setMinMax('DANTE', 'BaF');
+						setMinMax('DANTE', 'BGO');
+					}
+
+					//DESCANT
+					if(subdetectors[i] == 'DESCANT'){
+						setMinMax('DESCANT', '');						
+					}
+
+					//HPGe
+					if(subdetectors[i] == 'HPGe'){
+						setMinMax('HPGe', '');
+						setMinMax('HPGe', 'BGO');
+					}
+
+					//PACES
+					if(subdetectors[i] == 'PACES'){
+						setMinMax('PACES', '');
+					}
+
+					//SCEPTAR
+					if(subdetectors[i] == 'SCEPTAR'){
+						setMinMax('SCEPTAR', '');
+					}
+
+					//SHARC
+					if(subdetectors[i] == 'SHARC'){
+						setMinMax('SHARC', '');
+					}
+
+					//SPICE
+					if(subdetectors[i] == 'SPICE'){
+						setMinMax('SPICE', '');
+					}
+
+					//TIP wall
+					if(subdetectors[i] == 'TIPwall'){
+						setMinMax('TIP', 'Wall');
+						setMinMax('TIP', 'HPGe');
+						setMinMax('TIP', 'BGO');
+					}
+
+					//TIP ball
+					if(subdetectors[i] == 'TIPball'){
+						setMinMax('TIP', 'Ball');
+						setMinMax('TIP', 'HPGe');
+						setMinMax('TIP', 'BGO');
+					}			
+
+					//ZDS
+					if(subdetectors[i] == 'ZDS'){
+						setMinMax('ZDS', '');
+					}		
+				}
+			}
+
+			//factor out pushing the minmax table info to the ODB:
+			function setMinMax(detector, subType){
+				var suffix = (subType == '') ? '' : ' '+subType;
+				var id = detector + suffix + 'Table';
+				ODBSet('/DashboardConfig/'+detector+'/'+subType+'HVscale[*]', [document.getElementById(id+'HVmin').valueAsNumber, document.getElementById(id+'HVmax').valueAsNumber]);
+				ODBSet('/DashboardConfig/'+detector+'/'+subType+'thresholdScale[*]', [document.getElementById(id+'thresholdMin').valueAsNumber, document.getElementById(id+'thresholdMax').valueAsNumber]);
+				ODBSet('/DashboardConfig/'+detector+'/'+subType+'rateScale[*]', [document.getElementById(id+'rateMin').valueAsNumber, document.getElementById(id+'rateMax').valueAsNumber]);
+			}
 
 
 		</script>
