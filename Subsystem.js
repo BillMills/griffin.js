@@ -151,6 +151,27 @@ function Subsystem(){
         else this.draw(this.nFrames);
     };
 
+    //make the base HV / thresholds / rate summary text for the tooltip
+    this.baseTTtext = function(HV, thresh, rate){
+        var nextLine, toolTipContent;
+        toolTipContent = '';
+
+        //HV
+        nextLine = window.parameters.monitorValues[0] + ': ';
+        nextLine += HV.toFixed() + ' ' + window.parameters.subdetectorUnit[0];
+        toolTipContent += nextLine + '<br>';
+        //Thresholds
+        nextLine = window.parameters.monitorValues[1] + ': ';
+        nextLine += thresh.toFixed() + ' ' + window.parameters.subdetectorUnit[1];
+        toolTipContent += nextLine + '<br>';
+        //Rate
+        nextLine = window.parameters.monitorValues[2] + ': ';
+        nextLine += rate.toFixed() + ' ' + window.parameters.subdetectorUnit[2];
+        toolTipContent += nextLine;
+
+        return toolTipContent;
+    };
+
 }
 
 

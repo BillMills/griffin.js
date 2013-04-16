@@ -134,7 +134,8 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     this.cellColor = '#4C4C4C';
     this.lineweight = 2;
 
-    this.scaleHeight = 110;
+    this.scaleHeight = this.canvasHeight*0.2;//110;
+    this.vertAdjust = -0.1*this.canvasHeight;
 
     this.margin = 5;
     this.collectorGutter = 0.1*this.collectorWidth;
@@ -280,7 +281,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 	this.draw = function(frame){
 		var color, i, j, k;
 
-		if(frame==0)this.context.clearRect(0,0, this.canvasWidth, this.canvasHeight - this.scaleHeight);
+		if(frame==0)this.context.clearRect(0,0, this.canvasWidth, this.canvasHeight - this.scaleHeight - 0.1*this.canvasHeight);
 
         if(frame == 15){
             this.drawScale(this.context);
@@ -318,13 +319,14 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 
     this.drawScale = function(context){
         var i, j; 
-        context.clearRect(0, this.canvasHeight - this.scaleHeight, this.canvasWidth, this.canvasHeight);
+
+        context.clearRect(0, this.canvasHeight - this.scaleHeight + this.vertAdjust, this.canvasWidth, this.canvasHeight);
 
         //titles
         context.fillStyle = '#999999';
         context.font="24px 'Orbitron'";
-        context.fillText('Transfer Rate', this.canvasWidth/2 - context.measureText('Transfer Rate').width/2, this.canvasHeight-this.scaleHeight/2-10);
-        context.fillText('Trigger Rate', this.canvasWidth/2 - context.measureText('Trigger Rate').width/2, this.canvasHeight-8);
+        context.fillText('Transfer Rate', this.canvasWidth/2 - context.measureText('Transfer Rate').width/2, this.canvasHeight-this.scaleHeight/2-10 + this.vertAdjust);
+        context.fillText('Trigger Rate', this.canvasWidth/2 - context.measureText('Trigger Rate').width/2, this.canvasHeight-8 + this.vertAdjust);
 
         //tickmark;
         context.strokeStyle = '#999999';
@@ -332,32 +334,32 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         context.font="12px 'Raleway'";
 
         context.beginPath();
-        context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2);
-        context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2-10);
+        context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2 + this.vertAdjust);
+        context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2-10 + this.vertAdjust);
         context.stroke();
-        context.fillText('0 Mb/s', this.canvasWidth*0.05 - context.measureText('0 Mb/s').width/2, this.canvasHeight-this.scaleHeight/2-15);
+        context.fillText('0 Mb/s', this.canvasWidth*0.05 - context.measureText('0 Mb/s').width/2, this.canvasHeight-this.scaleHeight/2-15 + this.vertAdjust);
 
         context.beginPath();
-        context.moveTo(this.canvasWidth*0.95-1, this.canvasHeight - this.scaleHeight/2);
-        context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - this.scaleHeight/2-10); 
+        context.moveTo(this.canvasWidth*0.95-1, this.canvasHeight - this.scaleHeight/2 + this.vertAdjust);
+        context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - this.scaleHeight/2-10 + this.vertAdjust); 
         context.stroke();      
-        context.fillText('100 Mb/s', this.canvasWidth*0.95 - context.measureText('100 Mb/s').width/2, this.canvasHeight-this.scaleHeight/2-15);
+        context.fillText('100 Mb/s', this.canvasWidth*0.95 - context.measureText('100 Mb/s').width/2, this.canvasHeight-this.scaleHeight/2-15 + this.vertAdjust);
 
         context.beginPath();
-        context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2 + 20);
-        context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2 + 20 + 10);
+        context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2 + 20 + this.vertAdjust);
+        context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2 + 20 + 10 + this.vertAdjust);
         context.stroke();
-        context.fillText('0 Hz', this.canvasWidth*0.05 - context.measureText('0 Hz').width/2, this.canvasHeight-this.scaleHeight/2 + 45);
+        context.fillText('0 Hz', this.canvasWidth*0.05 - context.measureText('0 Hz').width/2, this.canvasHeight-this.scaleHeight/2 + 45 + this.vertAdjust);
 
         context.beginPath();
-        context.moveTo(this.canvasWidth*0.95-1, this.canvasHeight - this.scaleHeight/2 + 20);
-        context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - this.scaleHeight/2 + 20 + 10); 
+        context.moveTo(this.canvasWidth*0.95-1, this.canvasHeight - this.scaleHeight/2 + 20 + this.vertAdjust);
+        context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - this.scaleHeight/2 + 20 + 10 + this.vertAdjust); 
         context.stroke();      
-        context.fillText('1 MHz', this.canvasWidth*0.95 - context.measureText('1 MHz').width/2, this.canvasHeight-this.scaleHeight/2 + 45);
+        context.fillText('1 MHz', this.canvasWidth*0.95 - context.measureText('1 MHz').width/2, this.canvasHeight-this.scaleHeight/2 + 45 + this.vertAdjust);
 
         for(i=0; i<3000; i++){
             context.fillStyle = redScale(0.001*(i%1000));
-            context.fillRect(this.canvasWidth*0.05 + this.canvasWidth*0.9/1000*(i%1000), this.canvasHeight-this.scaleHeight/2, this.canvasWidth*0.9/1000, 20);
+            context.fillRect(this.canvasWidth*0.05 + this.canvasWidth*0.9/1000*(i%1000), this.canvasHeight-this.scaleHeight/2 + this.vertAdjust, this.canvasWidth*0.9/1000, 20);
         }
 
     };
@@ -464,7 +466,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         var leftMargin = 5;
 
         //if(frame == 0){
-            this.detailContext.clearRect(0,0,this.canvasWidth, this.canvasHeight - this.scaleHeight);
+            this.detailContext.clearRect(0,0,this.canvasWidth, this.canvasHeight - this.scaleHeight + this.vertAdjust);
         //}
 
         if(frame == this.nFrames){

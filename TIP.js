@@ -290,7 +290,7 @@ function TIP(){
         this.detailContext.fillText('GRG0'+(this.cloverShowing+1), 0.5*this.canvasWidth - this.detailContext.measureText('GRG0'+(this.cloverShowing+1)).width/2, 0.85*this.canvasHeight);
     };
 
-    this.defineText = function(cell){
+    this.defineText = function(cell){ //!!!HV todo in all HPGE reporting!///////////////////
         var toolTipContent = '<br>';
         var nextLine;
         var cardIndex;
@@ -302,55 +302,32 @@ function TIP(){
             nextLine = this.dataBus.key[cell][0];
             toolTipContent += nextLine + '<br><br>';
 
-            //HV
-            nextLine = this.prefix[0];
-            nextLine += (this.dataBus.CsIHV[cell]).toFixed() + this.postfix[0];
-            toolTipContent += nextLine + '<br>';
-            //Thresholds
-            nextLine = this.prefix[1];
-            nextLine += (this.dataBus.CsIthresholds[cell]).toFixed() + this.postfix[1];
-            toolTipContent += nextLine + '<br>';
-            //Rate
-            nextLine = this.prefix[2];
-            nextLine += (this.dataBus.CsIrate[cell]).toFixed() + this.postfix[2];
-            toolTipContent += nextLine; 
+            toolTipContent += this.baseTTtext(this.dataBus.CsIHV[cell], this.dataBus.CsIthresholds[cell], this.dataBus.CsIrate[cell]); 
         } else {
         //HPGe+BGO summaries
             var cloverPointing = Math.floor((cell-100)/8);
             var cellPointing
             //HPGe
             if( (cell-100)%8 < 4 ){
+                //identify cell mouse is pointing at:
                 if(window.parameters.monitorValues[window.subdetectorView] != 'HV'){
                     cellPointing = 48 + cloverPointing*28 + 2*((cell-100)%8);
                 } else {
                     cellPointing = 136 + cloverPointing*44 + 2*((cell-100)%8);
                 }
+                //report first crystal half
                 nextLine = this.dataBus.key[cellPointing][0]   
                 toolTipContent = '<br>' + nextLine + '<br>';
                 if(window.parameters.monitorValues[window.subdetectorView] != 'HV' && (cell-100)%8<4){
-                    //HV: todo
-                    //Thresholds
-                    nextLine = this.prefix[1];
-                    nextLine += (this.dataBus.detailHPGethreshold[2*(cell-100 -4*cloverPointing)]).toFixed() + this.postfix[1];
-                    toolTipContent += nextLine + '<br>';
-                    //Rate
-                    nextLine = this.prefix[2];
-                    nextLine += (this.dataBus.detailHPGerate[2*(cell -100-4*cloverPointing)]).toFixed() + this.postfix[2];
-                    toolTipContent += nextLine; 
+                    toolTipContent += this.baseTTtext(-9999, this.dataBus.detailHPGethreshold[2*(cell-100 -4*cloverPointing)], this.dataBus.detailHPGerate[2*(cell -100-4*cloverPointing)])
                 }
+                //report second crystal half
                 nextLine = this.dataBus.key[cellPointing+1][0]   
                 toolTipContent += '<br><br>' + nextLine + '<br>';
                 if(window.parameters.monitorValues[window.subdetectorView] != 'HV' && (cell-100)%8<4){
-                    //HV: todo
-                    //Thresholds
-                    nextLine = this.prefix[1];
-                    nextLine += (this.dataBus.detailHPGethreshold[2*(cell-100 -4*cloverPointing)+1]).toFixed() + this.postfix[1];
-                    toolTipContent += nextLine + '<br>';
-                    //Rate
-                    nextLine = this.prefix[2];
-                    nextLine += (this.dataBus.detailHPGerate[2*(cell -100-4*cloverPointing)+1]).toFixed() + this.postfix[2];
-                    toolTipContent += nextLine; 
+                    toolTipContent += this.baseTTtext(-9999, this.dataBus.detailHPGethreshold[2*(cell-100 -4*cloverPointing)+1], this.dataBus.detailHPGerate[2*(cell -100-4*cloverPointing)+1]) 
                 }
+
             } else{
             //BGO: TODO
 
@@ -370,15 +347,7 @@ function TIP(){
             toolTipContent = '<br>' + nextLine + '<br><br>';
 
             if(window.parameters.monitorValues[window.subdetectorView] != 'HV' && cell<8){
-                //HV: todo
-                //Thresholds
-                nextLine = this.prefix[1];
-                nextLine += (this.dataBus.detailHPGethreshold[cell + this.nHPGesegments*this.cloverShowing]).toFixed() + this.postfix[1];
-                toolTipContent += nextLine + '<br>';
-                //Rate
-                nextLine = this.prefix[2];
-                nextLine += (this.dataBus.detailHPGerate[cell + this.nHPGesegments*this.cloverShowing]).toFixed() + this.postfix[2];
-                toolTipContent += nextLine; 
+                toolTipContent += this.baseTTtext(-9999, this.dataBus.detailHPGethreshold[cell + this.nHPGesegments*this.cloverShowing], this.dataBus.detailHPGerate[cell + this.nHPGesegments*this.cloverShowing]);
             }
         }
 
