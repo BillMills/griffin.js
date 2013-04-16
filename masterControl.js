@@ -263,6 +263,8 @@ function fetchCustomParameters(){
     window.parameters.PACES.minima.PACES = [parseFloat(data[32][0]), parseFloat(data[33][0]), parseFloat(data[34][0])];
     window.parameters.PACES.maxima.PACES = [parseFloat(data[32][1]), parseFloat(data[33][1]), parseFloat(data[34][1])];    
 
+    if(parseFloat(data[35]) || parseFloat(data[36]) || parseFloat(data[48])) window.parameters.deployment.SCEPTAR = 1;
+    else window.parameters.deployment.SCEPTAR = 0;
     window.parameters.SCEPTARconfig = [parseFloat(data[35]), parseFloat(data[36]), parseFloat(data[48])];
     window.parameters.SCEPTAR.minima.SCEPTAR = [parseFloat(data[37][0]), parseFloat(data[38][0]), parseFloat(data[39][0])];
     window.parameters.SCEPTAR.maxima.SCEPTAR = [parseFloat(data[37][1]), parseFloat(data[38][1]), parseFloat(data[39][1])];
