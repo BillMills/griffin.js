@@ -15,15 +15,15 @@ function thumbnail(canvasID, left, right, color){
 	context.fillStyle = color;
 
 	//GRIFFIN options
-	if(left == 'SCEPTAR' && right == 'SCEPTAR'){
+	if(left == 'US SCEPTAR' && right == 'DS SCEPTAR'){
 		sceptar(context, width/3, height*0.4, height*0.2);
 		sceptar(context, 2*width/3, height*0.4, height*0.2);
 		title = 'USSC + DSSC';
-	} else if(left == 'SCEPTAR' && right == 'ZDS'){
+	} else if(left == 'US SCEPTAR' && right == 'ZDS'){
 		sceptar(context, width/3, height*0.4, height*0.2);
 		zds(context, 2/3*width, 0.4*height, 0.18*height);
 		title = 'USSC + ZDS';
-	} else if(left == 'PACES' && right == 'SCEPTAR'){
+	} else if(left == 'PACES' && right == 'DS SCEPTAR'){
 		paces(context, width/3, height*0.4, height*0.15, height*0.05);
 		sceptar(context, 2*width/3, height*0.4, height*0.2);
 		title = 'PACES + SCEPTAR';
@@ -35,7 +35,7 @@ function thumbnail(canvasID, left, right, color){
 		spice(context, width/3, height*0.4, height*0.2);
 		zds(context, 2/3*width, 0.4*height, 0.18*height);
 		title = 'SPICE + ZDS';
-	} else if(left == 'SPICE' && right == 'SCEPTAR'){
+	} else if(left == 'SPICE' && right == 'DS SCEPTAR'){
 		spice(context, width/3, height*0.4, height*0.2);
 		sceptar(context, 2*width/3, height*0.4, height*0.2);
 		title = 'SPICE + DSSC';
@@ -114,7 +114,7 @@ function thumbnail(canvasID, left, right, color){
 	} else if(left == 'DANTE' && right=='none'){
 		dante(context, width*0.5, height*0.4, height*0.2, color);
 		title = 'DANTE';
-	} else if(left == 'SCEPTAR' && right=='none'){
+	} else if( (left == 'US SCEPTAR' || left == 'SCEPTAR') && right=='none'){
 		sceptar(context, width/2, height*0.4, height*0.2);
 		title = 'SCEPTAR';
 	} else if(left == 'SPICE' && right=='none'){

@@ -51,7 +51,7 @@
 			if(ODBGet('DashboardConfig/PACES/deploy') > 0) subdetectors[subdetectors.length] = 'PACES';
 			if(ODBGet('DashboardConfig/DANTE/deploy') > 0) subdetectors[subdetectors.length] = 'DANTE';
 			if(ODBGet('DashboardConfig/BAMBINO/deploy') > 0) subdetectors[subdetectors.length] = 'BAMBINO';
-			if(ODBGet('DashboardConfig/SCEPTAR/deploy') > 0) subdetectors[subdetectors.length] = 'SCEPTAR';
+			if(ODBGet('DashboardConfig/SCEPTAR/USdeploy') > 0 || ODBGet('DashboardConfig/SCEPTAR/DSdeploy') > 0) subdetectors[subdetectors.length] = 'SCEPTAR';
 			if(ODBGet('DashboardConfig/SPICE/deploy') > 0) subdetectors[subdetectors.length] = 'SPICE';
 			if(ODBGet('DashboardConfig/TIP/deploy') > 0 && ODBGet('DashboardConfig/TIP/mode').slice(0,4) == 'wall' )subdetectors[subdetectors.length] = 'TIPwall';
 			if(ODBGet('DashboardConfig/TIP/deploy') > 0 && ODBGet('DashboardConfig/TIP/mode').slice(0,4) == 'ball') subdetectors[subdetectors.length] = 'TIPball';
@@ -269,7 +269,9 @@
 					//ZDS
 					if(subdetectors[i] == 'ZDS'){
 						setMinMax('ZDS', '');
-					}		
+					}
+
+					window.location = 'http://alphadon.triumf.ca:8082/CS/HV-Dashboard';
 				}
 			}
 

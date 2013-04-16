@@ -1,9 +1,9 @@
 loadParameters({
 				"devMode" : 1,
-				"ExpName" : "SR2",
+				"ExpName" : "DEMO",
 				"statusURL" : "http://alphadon.triumf.ca:8081/",
 				"topDeployment" : {"HV":1, "Subsystems":1, "DAQ":1, "Clock":1, "Trigger":1},
-				"deployment" : {"SHARC":1, "HPGe":1, "DESCANT":1, "PACES":1, "DANTE":1, "BAMBINO":1, "SCEPTAR":1, "SPICE":1, "TIP":1},
+				"deployment" : {"BAMBINO":1, "DANTE":1, "DESCANT":1, "HPGe":1, "PACES":1, "SCEPTAR":1, "SHARC":1, "SPICE":1, "TIP":1},
 				"wrapper" : "waffleplate",
 				"subdetectorUnit" : ["V", "ADC units", "Hz"],
 				"monitorValues" : ["HV", "Thresholds", "Rate"],
@@ -33,9 +33,72 @@ loadParameters({
 				"temperatureUnit" : "C",
 				"moduleSizes" : 0,
 
+				"BAMBINO" : {
+								"minima" : {
+												"BAMBINO" : [0,0,0]
+										   },
+								"maxima" : {
+												"BAMBINO" : [1,1,1]
+										   }
+							},
+				"BAMBINOmode" : "S3",
+
+				"DANTE" : {
+							"minima" : {
+											"BaF" : [0,0,0],
+											"BGO" : [1,1,1]
+									   },
+							"maxima" : {
+											"BaF" : [0,0,0],
+											"BGO" : [2,3,4]
+									   }
+						  },
+
+				"DESCANT" : {
+								"minima" : {
+												"DESCANT" : [0,0,0]
+										   },
+								"maxima" : {
+												"DESCANT" : [1,1,1]
+										   },
+							},
+
+				"HPGe" : {
+							"minima" : {
+											"HPGe" : [0,0,0],
+											"BGO" : [0,0,0]
+									   },
+							"maxima" : {
+											"HPGe" : [1,1,1],
+											"BGO" : [100,100,100]
+							           },
+						 },
+				"HPGemode" : "GRIFFIN",
+				"BGOenable" : 1,
+
+				"PACES" : {
+							"minima" : {
+											"PACES" : [0,0,0]
+									   },
+							"maxima" : {
+											"PACES" : [1,1,1]
+									   }
+						  },
+
+
+				"SCEPTAR" : {
+								"minima" : {
+												"SCEPTAR" : [0,0,0],
+												"ZDS" : [0,0,0]
+										   },
+								"maxima" : {
+												"SCEPTAR" : [1,1,1],
+												"ZDS" : [1,1,1]
+										   }
+							},
+				"SCEPTARconfig" : [1,0,1],
+
 				"SHARC" : {
-							"prefix" : [], 
-							"postfix" : [],
 							"minima" : {
 											"SHARC" : [0,0,0]
 								       },
@@ -52,85 +115,7 @@ loadParameters({
 				"nRadialVert" : 1, 
 				"nAzimuthalVert" : 16,
 
-				"HPGe" : {
-							"prefix" : [], 
-							"postfix" : [],
-							"minima" : {
-											"HPGe" : [0,0,0],
-											"BGO" : [0,0,0]
-									   },
-							"maxima" : {
-											"HPGe" : [1,1,1],
-											"BGO" : [100,100,100]
-							           },
-						 },
-				"HPGemode" : "GRIFFIN",
-				"BGOenable" : 1,
-
-				"DESCANT" : {
-								"prefix" : [], 
-								"postfix" : [],
-								"minima" : {
-												"DESCANT" : [0,0,0]
-										   },
-								"maxima" : {
-												"DESCANT" : [1,1,1]
-										   },
-							},
-
-				"PACES" : {
-							"prefix" : [], 
-							"postfix" : [],
-							"minima" : {
-											"PACES" : [0,0,0]
-									   },
-							"maxima" : {
-											"PACES" : [1,1,1]
-									   }
-						  },
-
-				"DANTE" : {
-							"prefix" : [], 
-							"postfix" : [],
-							"minima" : {
-											"BaF" : [0,0,0],
-											"BGO" : [1,1,1]
-									   },
-							"maxima" : {
-											"BaF" : [0,0,0],
-											"BGO" : [2,3,4]
-									   }
-						  },
-
-				"BAMBINO" : {
-								"prefix" : [], 
-								"postfix" : [],
-								"minima" : {
-												"BAMBINO" : [0,0,0]
-										   },
-								"maxima" : {
-												"BAMBINO" : [1,1,1]
-										   }
-							},
-				"BAMBINOmode" : "S3",
-
-				"SCEPTAR" : {
-								"prefix" : [], 
-								"postfix" : [],
-								"minima" : {
-												"SCEPTAR" : [0,0,0],
-												"ZDS" : [0,0,0]
-										   },
-								"maxima" : {
-												"SCEPTAR" : [1,1,1],
-												"ZDS" : [1,1,1]
-										   }
-							},
-				"SCEPTARconfig" : [1,0,1],
-
 				"SPICE" : {
-							"prefix" : [], 
-							"postfix" : [],
 							"minima" : {
 											"SPICE" : [0,0,0]
 									   },
@@ -140,8 +125,6 @@ loadParameters({
 						  },
 
 				"TIP" : {
-							"prefix" : ["HV: ", "Thresholds: ", "Rate: "], 
-							"postfix" : [" V", " ADC units", " Hz"],
 							"minima" : {
 											"CsI" : [0,0,0],
 											"HPGe" : [0,0,0],
@@ -153,6 +136,7 @@ loadParameters({
 											"BGO" : [1,1,2]
 									   }
 						},
+				"TIPmode" : "Wall",
 
 
 				"DAQminima" : [0,0,0,0,0,0,0,0,0],
@@ -208,47 +192,31 @@ nRadialHoriz					number of radial bins in the disks corresponding to the horizon
 nAzimuthalHoriz					number of azimuthal bins "" 
 nRadialVert						number of radial bins in disks associated with the vertical strip display 
 nAzimuthalVert					number of azimuthal bins ""
-SHARCprefix                     array of strings to use as prefixes in SHARC tooltip
-SHARCpostfix                    as SHARCprefix
 
 //HPGe
 HPGemode						'GRIFFIN' or 'TIGRESS'
 BGOenable						are the suppressors present?
 HPGeminima						array of scale minima: [HPGe HV, HPGe Thresholds, HPGe Rate...]
 HPGemaxima						""
-HPGeprefix                      array of strings to use as prefixes in HPGe tooltip
-HPGepostfix                     as HPGeprefix
 
 DESACNTminima					array of scale minima: [HV, Thresholds, Rate...]
 DESCANTmaxima					""
-DESCANTprefix                   array of strings to use as prefixes in DESCANT tooltip
-DESCANTpostfix                  as prefix
 
 PACESminima						array of scale minima: [HV, Thresholds, Rate...]
 PACESmaxima						""
-PACESprefix                     array of strings to use as prefixes in PACES tooltip
-PACESpostfix                    as prefix
 
 DANTEminima						array of scale minima: [HV, Thresholds, Rate...]
 DANTEmaxima						""
-DANTEprefix                     array of strings to use as prefixes in DANTE tooltip
-DANTEpostfix                    as prefix
 
 SPICEminima						array of scale minima: [HV, Thresholds, Rate...]
 SPICEmaxima						""
-SPICEprefix                     array of strings to use as prefixes in SPICE tooltip
-SPICEpostfix                    as prefix
 
 SCEPTARminima					array of scale minima: [HV, Thresholds, Rate...]
 SCEPTARmaxima					""
-SCEPTARprefix                   array of strings to use as prefixes in SCEPTAR tooltip
-SCEPTARpostfix                  as prefix
 SCEPTARconfig                   subsystems on: [upstream sceptar, downstream sceptar, downstream ZDS]
 
 TIPminima						array of scale minima: [HV, Thresholds, Rate...]
 TIPmaxima						""
-TIPprefix                       array of strings to use as prefixes in TIP tooltip
-TIPpostfix                      as prefix
 
 //DAQ
 DAQminima:						array containing minima of DAQ rate reporting scale: [master, collector groups, collector links, collectors, digitizer summary links, digitizer summaries, digitizer groups, digitizer links, digitizers]

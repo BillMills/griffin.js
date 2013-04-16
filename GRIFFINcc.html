@@ -112,7 +112,9 @@
 
       function main(){
 
-        //for(var key in window.parameters) document.write(key+'<br>')
+        //overwrite default parameters with custom ones:
+        fetchCustomParameters();
+
         //plug in MIDAS status page link:
         document.getElementById('MIDASstatusLink').setAttribute('onclick', "window.location='"+window.parameters.statusURL+"';")
 

@@ -71,7 +71,8 @@
 								   'PACES' : 0,
 								   'DANTE' : 0,
 								   'BAMBINO' : 0,
-								   'SCEPTAR' : 0,
+								   'US SCEPTAR' : 0,
+								   'DS SCEPTAR' : 0,
 								   'SPICE' : 0,
 								   'TIPwall' : 0,
 								   'TIPball' : 0,
@@ -145,8 +146,8 @@
 				insertDOM('tr', 'chamberPicRow', '', '', 'chamberTable', '', '');
 				//GRIFFIN:
 				if(window.experiment == 'GRIFFIN'){
-					window.leftChamber = ['SCEPTAR', 'SCEPTAR', 'PACES', 'PACES', 'SPICE', 'SPICE'];
-					window.rightChamber = ['SCEPTAR', 'ZDS', 'SCEPTAR', 'ZDS', 'ZDS', 'SCEPTAR'];
+					window.leftChamber = ['US SCEPTAR', 'US SCEPTAR', 'PACES', 'PACES', 'SPICE', 'SPICE'];
+					window.rightChamber = ['DS SCEPTAR', 'ZDS', 'DS SCEPTAR', 'ZDS', 'ZDS', 'DS SCEPTAR'];
 					for(i=0; i<6; i++){
 						insertDOM('td', 'Gcha'+i+'pic', '', '', 'chamberPicRow', '', '');
 						insertDOM('canvas', 'Gcha'+i+'canv', 'thumbnail', '', 'Gcha'+i+'pic', '', '');
@@ -456,6 +457,7 @@
 					alert('Please click on a deployment option for all sectors.')
 				} else{
 					for (var key in window.subdetectors){
+						//TIP and SCEPTAR have fancy deployment modes, everything else is just on / off:
 						if(key == 'TIPwall' || key == 'TIPball'){
 							if(window.subdetectors['TIPwall']==1 || window.subdetectors['TIPball']==1)
 								ODBSet('/DashboardConfig/TIP/deploy', 1);
@@ -468,6 +470,15 @@
 								ODBSet('/DashboardConfig/TIP/mode', 'ball');
 							else 
 								ODBSet('/DashboardConfig/TIP/mode', '');
+						} else if(key == 'US SCEPTAR' || key == 'DS SCEPTAR'){ 
+							if(window.subdetectors['US SCEPTAR'] > 0)
+								ODBSet('/DashboardConfig/SCEPTAR/USdeploy', 1);
+							else 
+								ODBSet('/DashboardConfig/SCEPTAR/USdeploy', 0);
+							if(window.subdetectors['DS SCEPTAR'] > 0)
+								ODBSet('/DashboardConfig/SCEPTAR/DSdeploy', 1);
+							else
+								ODBSet('/DashboardConfig/SCEPTAR/DSdeploy', 0);
 						} else
 							ODBSet('/DashboardConfig/'+key+'/deploy', window.subdetectors[key]);
 					}
