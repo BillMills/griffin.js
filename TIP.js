@@ -14,6 +14,8 @@ function TIP(){
     this.nHPGesegments = 8;                         //per GRIFFIN
     this.cloverShowing = 1;                         //index of clover currently showing in detail view
     this.detailShowing = 0;                         //is the detail canvas showing?
+    this.mode = 'GRIFFIN';                          //HPGe are all GRIFFIN-configuration
+    this.scalePrefix = 'GRG0';                      //prefix for scale titles
 
     DetailView.call(this);                          //inject the infrastructure for a detail-level view
     HPGeAssets.call(this);                          //inject the HPGe drawing assets
@@ -155,139 +157,6 @@ function TIP(){
         this.drawHPGesummary(this.TTcontext, this.canvasWidth*0.7, this.canvasHeight*0.55, 2, frame);
 
         this.drawScale(this.context, frame);
-    };
-
-    this.drawDetail = function(context, frame){
-        var i, j;
-
-        //state variables select the segmentation state of HPGe and services of BGO 
-        var HPGestate, BGOstate;
-
-        this.detailContext.lineWidth = this.lineWeight;
-
-        //colorWheel enumerates the standard configuration of color sectors:
-        var colorWheel = ['#999999', '#999999', '#999999', '#999999'];
-        //orientation enumerates orientations of half-BGOs
-        var orientation = ['left', 'right'];
-
-        var fillColor, fillColor2;
-
-        if(window.subdetectorView == 0){
-            HPGestate = 0; //no segmentation
-            BGOstate = 1;  //two services per sector per side per suppressor
-        }else if(window.subdetectorView == 1 || window.subdetectorView == 2){
-            HPGestate = 1; //9-element segmentation
-            BGOstate = 0;  //one service per sector per side per suppressor
-        }
-            
-        //loop over quadrents:
-        for(i=0; i<4; i++){
-            //useful switches:
-            var PBC = Math.ceil((i%3)/3);               //positive for i=1,2, 0 OW
-            var NAD = Math.ceil((i%3)/3) - 1;           //negative for i=0,3, 0 OW
-            var NAB = Math.floor(i/2) - 1;              //negative for i=0,1, 0 OW
-            var PCD = Math.floor(i/2);                  //positive for i=2,3, 0 OW
-
-            //HPGe/////////////////////////////
-            if(HPGestate == 0){
-                if(context == this.detailContext){
-                    fillColor  = interpolateColor(parseHexColor(this.oldDetailHPGeHVcolor[4*(this.cloverShowing)+i]), parseHexColor(this.detailHPGeHVcolor[4*(this.cloverShowing)+i]), frame/this.nFrames);
-                } else{
-                    fillColor  = 'rgba('+i+', '+i+', '+i+', 1)';
-                }
-                this.crystal(context, this.centerX + PBC*this.lineWeight + NAD*this.crystalSide, this.centerY + NAB*this.crystalSide + PCD*this.lineWeight, colorWheel[i], fillColor);
-
-            } else if(HPGestate == 1){
-                //cores
-                if(context == this.detailContext){
-                    if(window.subdetectorView == 1){
-                        fillColor  = interpolateColor(parseHexColor(this.oldDetailHPGethresholdColor[8*(this.cloverShowing)+2*i]), parseHexColor(this.detailHPGethresholdColor[8*(this.cloverShowing)+2*i]), frame/this.nFrames);
-                        fillColor2 = interpolateColor(parseHexColor(this.oldDetailHPGethresholdColor[8*(this.cloverShowing)+2*i+1]), parseHexColor(this.detailHPGethresholdColor[8*(this.cloverShowing)+2*i+1]), frame/this.nFrames);
-                    }
-                    else if(window.subdetectorView == 2){ 
-                        fillColor = interpolateColor(parseHexColor(this.oldDetailHPGerateColor[8*(this.cloverShowing)+2*i]), parseHexColor(this.detailHPGerateColor[8*(this.cloverShowing)+2*i]), frame/this.nFrames);
-                        fillColor2 = interpolateColor(parseHexColor(this.oldDetailHPGerateColor[8*(this.cloverShowing)+2*i+1]), parseHexColor(this.detailHPGerateColor[8*(this.cloverShowing)+2*i+1]), frame/this.nFrames);
-                    }
-                } else {
-                    fillColor  = 'rgba('+2*i+', '+2*i+', '+2*i+', 1)';
-                    fillColor2 = 'rgba('+(2*i+1)+', '+(2*i+1)+', '+(2*i+1)+', 1)';
-                }
-
-                this.splitCrystal(context, this.centerX + NAD*this.crystalSide + PBC*this.lineWeight, this.centerY + NAB*this.crystalSide + PCD*this.lineWeight, this.crystalSide, i, colorWheel[i], fillColor, fillColor2);                       
-            }
-
-            //BGO//////////////////////////////
-            for(j=0; j<2; j++){
-                //useful switches
-                var NA = j-1;
-                var NB = (-1)*j;
-                var PA = (j+1)%2;
-                var PB = j;
-
-                //back suppressors
-                if(context == this.detailContext){
-                    if(window.subdetectorView == 0){ 
-                        fillColor  = interpolateColor(parseHexColor(this.oldDetailBGOHVcolor[40*(this.cloverShowing)+i*2+j]), parseHexColor(this.detailBGOHVcolor[40*(this.cloverShowing)+i*2+j]), frame/this.nFrames);
-                    }
-                    else if(window.subdetectorView == 1) fillColor = interpolateColor(parseHexColor(this.oldDetailBGOthresholdColor[20*(this.cloverShowing)+i]), parseHexColor(this.detailBGOthresholdColor[20*(this.cloverShowing)+i]), frame/this.nFrames);
-                    else if(window.subdetectorView == 2) fillColor = interpolateColor(parseHexColor(this.oldDetailBGOrateColor[20*(this.cloverShowing)+i]), parseHexColor(this.detailBGOrateColor[20*(this.cloverShowing)+i]), frame/this.nFrames);
-                } else{
-                    if(window.subdetectorView == 0){
-                        fillColor  = 'rgba('+(4+2*i+j)+', '+(4+2*i+j)+', '+(4+2*i+j)+', 1)';
-                    }
-                    else
-                        fillColor = 'rgba('+(this.nHPGesegments+i)+', '+(this.nHPGesegments+i)+', '+(this.nHPGesegments+i)+', 1)';
-                }
-                if(window.subdetectorView == 0){
-                    this.drawHalfL(context, (i-1+j)*(Math.PI/2), this.suppressorWidth, this.backBGOouterWidth/2, this.centerX + NAD*this.backBGOinnerWidth/2 + PBC*this.backBGOinnerWidth/2 + PBC*2*this.lineWeight + (-NAB)*NA*this.lineWeight + PCD*NB*this.lineWeight, this.centerY + (NAB+PCD)*this.backBGOinnerWidth/2 + PCD*2*this.lineWeight + (-NAD)*NB*this.lineWeight + PBC*NA*this.lineWeight, orientation[j], false, colorWheel[i], fillColor);
-                } else if(window.subdetectorView == 1 || window.subdetectorView == 2){
-                    if(j==0) this.drawL(context, i*(Math.PI/2), this.suppressorWidth, this.backBGOouterWidth/2, this.centerX + NAD*this.backBGOinnerWidth/2 + PBC*this.backBGOinnerWidth/2 + PBC*this.lineWeight + (NAD+PBC)*this.suppressorWidth, this.centerY + (NAB+PCD)*this.backBGOinnerWidth/2 + PCD*this.lineWeight + (NAB+PCD)*this.suppressorWidth, colorWheel[i], fillColor);    
-                }
-
-                //side suppressors
-                if(context == this.detailContext){
-                    if(window.subdetectorView == 0){
-                        fillColor  = interpolateColor(parseHexColor(this.oldDetailBGOHVcolor[40*(this.cloverShowing)+i*4+j*2+8]), parseHexColor(this.detailBGOHVcolor[40*(this.cloverShowing)+i*4+j*2+8]), frame/this.nFrames);
-                        fillColor2 = interpolateColor(parseHexColor(this.oldDetailBGOHVcolor[40*(this.cloverShowing)+i*4+j*2+8+1]), parseHexColor(this.detailBGOHVcolor[40*(this.cloverShowing)+i*4+j*2+8+1]), frame/this.nFrames);
-                    }
-                    else if(window.subdetectorView == 1) fillColor = interpolateColor(parseHexColor(this.oldDetailBGOthresholdColor[20*(this.cloverShowing)+i*2+j+4]), parseHexColor(this.detailBGOthresholdColor[20*(this.cloverShowing)+i*2+j+4]), frame/this.nFrames);
-                    else if(window.subdetectorView == 2) fillColor = interpolateColor(parseHexColor(this.oldDetailBGOrateColor[20*(this.cloverShowing)+i*2+j+4]), parseHexColor(this.detailBGOrateColor[20*(this.cloverShowing)+i*2+j+4]), frame/this.nFrames);
-                } else{
-                    if(window.subdetectorView == 0){
-                        fillColor  = 'rgba('+(4+8+4*i+2*j)+', '+(4+8+4*i+2*j)+', '+(4+8+4*i+2*j)+', 1)';
-                        fillColor2 = 'rgba('+(4+8+4*i+2*j+1)+', '+(4+8+4*i+2*j+1)+', '+(4+8+4*i+2*j+1)+', 1)';
-                    }
-                    else
-                        fillColor = 'rgba('+(this.nHPGesegments+4+2*i+j)+', '+(this.nHPGesegments+4+2*i+j)+', '+(this.nHPGesegments+4+2*i+j)+', 1)';
-                }
-                this.drawHalfL(context, (i-1+j)*(Math.PI/2), this.suppressorWidth, this.sideBGOouterWidth/2, this.centerX +NAD*this.sideBGOinnerWidth/2 + PBC*this.sideBGOinnerWidth/2 + PBC*2*this.lineWeight + (-NAB)*NA*this.lineWeight + PCD*NB*this.lineWeight     , this.centerY + (NAB+PCD)*this.sideBGOinnerWidth/2 + PCD*2*this.lineWeight + (-NAD)*NB*this.lineWeight + PBC*NA*this.lineWeight, orientation[j], BGOstate, colorWheel[i], fillColor, fillColor2);
-                //front suppressors
-                if(context == this.detailContext){
-                    if(window.subdetectorView == 0){
-                        fillColor  = interpolateColor(parseHexColor(this.oldDetailBGOHVcolor[40*(this.cloverShowing)+i*4+j*2+8+16]), parseHexColor(this.detailBGOHVcolor[40*(this.cloverShowing)+i*4+j*2+8+16]), frame/this.nFrames);
-                        fillColor2 = interpolateColor(parseHexColor(this.oldDetailBGOHVcolor[40*(this.cloverShowing)+i*4+j*2+8+16+1]), parseHexColor(this.detailBGOHVcolor[40*(this.cloverShowing)+i*4+j*2+8+16+1]), frame/this.nFrames);
-                    }
-                    else if(window.subdetectorView == 1) fillColor = interpolateColor(parseHexColor(this.oldDetailBGOthresholdColor[20*(this.cloverShowing)+i*2+j+4+8]), parseHexColor(this.detailBGOthresholdColor[20*(this.cloverShowing)+i*2+j+4+8]), frame/this.nFrames);
-                    else if(window.subdetectorView == 2) fillColor = interpolateColor(parseHexColor(this.oldDetailBGOrateColor[20*(this.cloverShowing)+i*2+j+4+8]), parseHexColor(this.detailBGOrateColor[20*(this.cloverShowing)+i*2+j+4+8]), frame/this.nFrames);
-                } else{
-                    if(window.subdetectorView == 0){
-                        fillColor  = 'rgba('+(4+8+16+4*i+2*j)+', '+(4+8+16+4*i+2*j)+', '+(4+8+16+4*i+2*j)+', 1)';
-                        fillColor2 = 'rgba('+(4+8+16+4*i+2*j+1)+', '+(4+8+16+4*i+2*j+1)+', '+(4+8+16+4*i+2*j+1)+', 1)';
-                    }
-                    else
-                        fillColor = 'rgba('+(this.nHPGesegments+4+8+2*i+j)+', '+(this.nHPGesegments+4+8+2*i+j)+', '+(this.nHPGesegments+4+8+2*i+j)+', 1)';
-                }
-                this.drawHalfL(context, (i-1+j)*(Math.PI/2), this.suppressorWidth, this.frontBGOouterWidth/2 - this.sideSpacer, this.centerX + (PBC+NAD)*this.frontBGOinnerWidth/2 + PBC*this.lineWeight + (-NAB)*NA*this.sideSpacer + PCD*NB*this.sideSpacer + (-NAD)*this.sideSpacer, this.centerY + (NAB+PCD)*this.frontBGOinnerWidth/2 + PCD*this.lineWeight + (-NAB*PA + PBC*NA + PBC*PB + PCD*NB)*this.sideSpacer, orientation[j], BGOstate, colorWheel[i], fillColor, fillColor2);
-            }   
-
-        }
-
-        //scale
-        this.drawScale(this.detailContext, frame);
-        //title
-        this.detailContext.fillStyle = '#999999';
-        this.detailContext.font="24px 'Orbitron'";
-        this.detailContext.fillText('GRG0'+(this.cloverShowing+1), 0.5*this.canvasWidth - this.detailContext.measureText('GRG0'+(this.cloverShowing+1)).width/2, 0.85*this.canvasHeight);
     };
 
     this.defineText = function(cell){ //!!!HV todo in all HPGE reporting!///////////////////
