@@ -302,20 +302,19 @@ function TIP(){
         for(i=0; i<24; i++){
             this.dataBus.CsIHV[i] = -9999//Math.random();
             this.dataBus.CsIthresholds[i] = -9999//Math.random();
-            this.dataBus.CsIrate[i] = -9999//Math.random();
+            this.dataBus.CsIrate[i] = 1000//Math.random();
             if(this.dataBus.key[i][1] != -1)
                 this.dataBus.CsIrate[i] = window.JSONPstore['scalar'][this.dataBus.key[i][1]]['fLastRate']
             if(this.dataBus.key[i][2] != -1 && window.JSONPstore['parameters'])
                 this.dataBus.CsIthresholds[i] = window.JSONPstore['parameters'][0]['fVec'][this.dataBus.key[i][2]]
         }
 
-
         //HPGe + BGO
         //detail level
         var chIndex;
         for(i=0; i<3*this.nHPGesegments; i++){
             this.dataBus.detailHPGethreshold[i] = -9999;
-            this.dataBus.detailHPGerate[i] = -9999;
+            this.dataBus.detailHPGerate[i] = 5000;
             //determine index per key in DataStructures:
             chIndex = 48 + Math.floor(i/8)*28 + i%8;
             if(this.dataBus.key[chIndex][2] != -1)
@@ -344,7 +343,23 @@ function TIP(){
             this.dataBus.summaryBGOrate[i] = -9999//Math.random();
         }
     };
+/*
+    //overhauled data fetcher for new key value packing
+    this.xxFetchNewData = function(){
+        var key;
 
+        //CsI
+        for(key in this.dataBus.CsIwall){
+            this.dataBus.CsIwall[key]['threshold'] = window.JSONPstore['parameters'][key]['threshold'];
+            this.dataBus.CsIwall[key]['rate']      = window.JSONPstore['scalar'][key]['rate'];
+        }
+        //HPGe + BGO
+        for(key in this.dataBus.HPGe){
+
+        }
+
+    };
+*/
     //do an initial populate:
     this.update();
 }

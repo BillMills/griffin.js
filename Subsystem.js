@@ -488,7 +488,7 @@ function HPGeAssets(){
                         //front segs
                         if(context == this.detailContext){
                             if(window.subdetectorView == 1) fillColor = interpolateColor(parseHexColor(this.oldDetailHPGethresholdColor[this.nHPGesegments*this.cloverShowing+this.nHPGesegments/4*i+j+2]), parseHexColor(this.detailHPGethresholdColor[this.nHPGesegments*this.cloverShowing+this.nHPGesegments/4*i+j+2]), frame/this.nFrames);
-                            else if(window.subdetectorView == 2) fillColor = interpolateColor(parseHexColor(this.oldDetailHPGerateColor[this.nHPGesegments*this.cloverShowing+this.nHPGesegments/4*i+j+2]), parseHexColor(this.detailHPGerateColor[this.nHPGesegments*this.cloverShowing+this.nHPGesegments/4*i+j+2]), frame/this.nFrames);
+                            else if(window.subdetectorView == 2){ fillColor = interpolateColor(parseHexColor(this.oldDetailHPGerateColor[this.nHPGesegments*this.cloverShowing+this.nHPGesegments/4*i+j+2]), parseHexColor(this.detailHPGerateColor[this.nHPGesegments*this.cloverShowing+this.nHPGesegments/4*i+j+2]), frame/this.nFrames); console.log(fillColor)}
     
                         } else
                             fillColor = 'rgba('+(this.nHPGesegments/4*i+j+2)+', '+(this.nHPGesegments/4*i+j+2)+', '+(this.nHPGesegments/4*i+j+2)+', 1)';
@@ -588,12 +588,12 @@ function HPGeAssets(){
 
         }
 
-            //scale
-            this.drawScale(this.detailContext);
-            //title
-            this.detailContext.fillStyle = '#999999';
-            this.detailContext.font="24px 'Orbitron'";
-            this.detailContext.fillText(this.scalePrefix+this.cloverShowing, 0.5*this.canvasWidth - this.detailContext.measureText(this.scalePrefix+this.cloverShowing).width/2, 0.85*this.canvasHeight);
+        //scale
+        this.drawScale(this.detailContext);
+        //title
+        this.detailContext.fillStyle = '#999999';
+        this.detailContext.font="24px 'Orbitron'";
+        this.detailContext.fillText(this.scalePrefix+(this.cloverShowing+1), 0.5*this.canvasWidth - this.detailContext.measureText(this.scalePrefix+(this.cloverShowing+1)).width/2, 0.85*this.canvasHeight);
     };
 }
 

@@ -69,9 +69,6 @@ HPGeDS = function(){
 	this.detailBGOthreshold = [];
 	this.detailBGOrate = [];
 
-	//key map
-	//todo
-
 }
 
 DESCANTDS = function(){
@@ -201,7 +198,6 @@ TIPDS = function(){
 	this.detailBGOthreshold = [];
 	this.detailBGOrate = [];
 	
-	
 	//key map, format: key[griffin.js index number][pointer]
 	//index 0-23: CsI wall elements TPW001P00X - TPW023P00X
 	//index 24-35: HPGe crystal summaries, GBWR x3
@@ -294,6 +290,196 @@ TIPDS = function(){
     }
     
 }
+
+
+xxTIPDS = function(){
+	this.CsIwall = {
+
+		'TPW001P00X' : {
+			'index' 	: 11,
+			'HV'		: 0,
+			'threshold' : 500,
+			'rate' 		: 1000
+		},
+
+		'TPW002P00X' : {
+			'index' 	: 6,
+			'HV'		: 0,
+			'threshold' : 500,
+			'rate' 		: 1000
+		},
+
+		'TPW003P00X' : {
+			'index' 	: 7,
+			'HV'		: 0,
+			'threshold' : 500,
+			'rate' 		: 1000
+		},
+
+		'TPW004P00X' : {
+			'index' 	: 8,
+			'HV'		: 0,
+			'threshold' : 500,
+			'rate' 		: 1000
+		},
+
+		'TPW005P00X' : {
+			'index' 	: 12,
+			'HV'		: 0,
+			'threshold' : 500,
+			'rate' 		: 1000
+		},
+
+		'TPW006P00X' : {
+			'index' 	: 17,
+			'HV'		: 0,
+			'threshold' : 500,
+			'rate' 		: 1000
+		},
+
+		'TPW007P00X' : {
+			'index' 	: 16,
+			'HV'		: 0,
+			'threshold' : 500,
+			'rate' 		: 1000
+		},
+
+		'TPW008P00X' : {
+			'index' 	: 15,
+			'HV'		: 0,
+			'threshold' : 500,
+			'rate' 		: 1000
+		},
+
+		'TPW009P00X' : {
+			'index' 	: 10,
+			'HV'		: 0,
+			'threshold' : 500,
+			'rate' 		: 1000
+		},
+
+		'TPW010P00X' : {
+			'index' 	: 5,
+			'HV'		: 0,
+			'threshold' : 500,
+			'rate' 		: 1000
+		},
+
+		'TPW011P00X' : {
+			'index' 	: 0,
+			'HV'		: 0,
+			'threshold' : 500,
+			'rate' 		: 1000
+		},
+
+		'TPW012P00X' : {
+			'index' 	: 1,
+			'HV'		: 0,
+			'threshold' : 500,
+			'rate' 		: 1000
+		},
+
+		'TPW013P00X' : {
+			'index' 	: 2,
+			'HV'		: 0,
+			'threshold' : 500,
+			'rate' 		: 1000
+		},
+
+		'TPW014P00X' : {
+			'index' 	: 3,
+			'HV'		: 0,
+			'threshold' : 500,
+			'rate' 		: 1000
+		},
+
+		'TPW015P00X' : {
+			'index' 	: 4,
+			'HV'		: 0,
+			'threshold' : 500,
+			'rate' 		: 1000
+		},
+
+		'TPW016P00X' : {
+			'index' 	: 9,
+			'HV'		: 0,
+			'threshold' : 500,
+			'rate' 		: 1000
+		},
+
+		'TPW017P00X' : {
+			'index' 	: 13,
+			'HV'		: 0,
+			'threshold' : 500,
+			'rate' 		: 1000
+		},
+
+		'TPW018P00X' : {
+			'index' 	: 18,
+			'HV'		: 0,
+			'threshold' : 500,
+			'rate' 		: 1000
+		},
+
+		'TPW019P00X' : {
+			'index' 	: 23,
+			'HV'		: 0,
+			'threshold' : 500,
+			'rate' 		: 1000
+		},
+
+		'TPW020P00X' : {
+			'index' 	: 22,
+			'HV'		: 0,
+			'threshold' : 500,
+			'rate' 		: 1000
+		},
+
+		'TPW021P00X' : {
+			'index' 	: 21,
+			'HV'		: 0,
+			'threshold' : 500,
+			'rate' 		: 1000
+		},
+
+		'TPW022P00X' : {
+			'index' 	: 20,
+			'HV'		: 0,
+			'threshold' : 500,
+			'rate' 		: 1000
+		},
+
+		'TPW023P00X' : {
+			'index' 	: 19,
+			'HV'		: 0,
+			'threshold' : 500,
+			'rate' 		: 1000
+		},
+
+		'TPW024P00X' : {
+			'index' 	: 14,
+			'HV'		: 0,
+			'threshold' : 500,
+			'rate' 		: 1000
+		},
+
+	};
+
+	this.HPGe = {
+		'GRG00' : {
+
+		},
+
+		'GRG01' : {
+
+		},
+
+		'GRG02' : {
+
+		}
+	}
+}
+
 
 DAQDS = function(){
 	//data arrays:

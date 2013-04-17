@@ -256,7 +256,7 @@ function HPGe(){
         //detail level
         for(i=0; i<16*this.nHPGesegments; i++){
                 this.dataBus.detailHPGethreshold[i] = Math.random();
-                this.dataBus.detailHPGerate[i] = Math.random();
+                this.dataBus.detailHPGerate[i] = 5000;//Math.random();
         }
         for(i=0; i<16*4; i++){
             this.dataBus.detailHPGeHV[i] = Math.random();
