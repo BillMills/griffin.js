@@ -142,7 +142,7 @@ loadParameters({
 				"DAQminima" : [0,0,0,0,0,0,0,0,0],
 				"DAQmaxima" : [1,1,1,1,1,1,1,1,1],
 
-				"JSONPrepos" : ["http://alphadon.triumf.ca:8092/parameters?jsonp=parseResponse", "http://alphadon.triumf.ca:8091/scalar?jsonp=parseResponse"]
+				"JSONPrepos" : ["http://alphadon.triXumf.ca:8092/parameters?jsonp=parseResponse", "http://alphadon.triXumf.ca:8091/scalar?jsonp=parseResponse"]
 				})
 
 /*Parameter Dictionary//////////////////////////////////////

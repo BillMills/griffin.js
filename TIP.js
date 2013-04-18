@@ -79,66 +79,31 @@ function TIP(){
     this.frontBGOouterWidth = this.frontBGOinnerWidth + 2*this.suppressorWidth;
     this.sideSpacer = 20;
 
-    //establish data buffers////////////////////////////////////////////////////////////////////////////
-    //CsI
-    this.CsIHVcolor = [];
-    this.oldCsIHVcolor = [];
-    this.CsIthresholdColor = [];
-    this.oldCsIThresholdColor = [];
-    this.CsIrateColor = [];
-    this.oldCsIRateColor = [];
-
-    //HPGe+BGO
-    this.summaryHPGeHVcolor = [];
-    this.oldSummaryHPGeHVcolor = [];
-    this.summaryHPGethresholdColor = [];
-    this.oldSummaryHPGethresholdColor = [];
-    this.summaryHPGerateColor = [];
-    this.oldSummaryHPGerateColor = [];
-    this.summaryBGOHVcolor = [];
-    this.oldSummaryBGOHVcolor = [];
-    this.summaryBGOthresholdColor = [];
-    this.oldSummaryBGOthresholdColor = [];
-    this.summaryBGOrateColor = [];
-    this.oldSummaryBGOrateColor = [];
-
-    this.detailHPGeHVcolor = [];
-    this.oldDetailHPGeHVcolor = [];
-    this.detailHPGethresholdColor = [];
-    this.oldDetailHPGethresholdColor = [];
-    this.detailHPGerateColor = [];
-    this.oldDetailHPGerateColor = [];
-    this.detailBGOHVcolor = [];
-    this.oldDetailBGOHVcolor = [];
-    this.detailBGOthresholdColor = [];
-    this.oldDetailBGOthresholdColor = [];
-    this.detailBGOrateColor = [];
-    this.oldDetailBGOrateColor = [];
-
     //member functions///////////////////////////////////////////////////////////////////
 
-
     this.draw = function(frame){
-    	var i, iAdj;
+    	var key, iAdj, i;
 
         this.context.strokeStyle = '#999999';
         this.context.lineWidth = this.lineWeight;
+
         //CsI wall:
         //once for display canvas...
-    	for(i=0; i<24; i++){
-            iAdj = i;
+        for(key in this.dataBus.CsIwall){
+            iAdj = this.dataBus.CsIwall[key].index;
             if (iAdj>11) iAdj++;
 
-            if(window.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.oldCsIHVcolor[i]), parseHexColor(this.CsIHVcolor[i]), frame/this.nFrames);
-            else if(window.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldCsIThresholdColor[i]), parseHexColor(this.CsIthresholdColor[i]), frame/this.nFrames);
-            else if(window.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldCsIRateColor[i]), parseHexColor(this.CsIrateColor[i]), frame/this.nFrames);
+            if(window.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.CsIwall[key].oldHVcolor), parseHexColor(this.dataBus.CsIwall[key].HVcolor), frame/this.nFrames);
+            else if(window.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.CsIwall[key].oldThresholdColor), parseHexColor(this.dataBus.CsIwall[key].thresholdColor), frame/this.nFrames);
+            else if(window.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.CsIwall[key].oldRateColor), parseHexColor(this.dataBus.CsIwall[key].rateColor), frame/this.nFrames);
 
             this.context.fillRect(this.CsIx0 + this.CsIcellSide*(iAdj%5), this.CsIy0 + this.CsIcellSide*Math.floor(iAdj/5), this.CsIcellSide, this.CsIcellSide);
             this.context.strokeRect(this.CsIx0 + this.CsIcellSide*(iAdj%5), this.CsIy0 + this.CsIcellSide*Math.floor(iAdj/5), this.CsIcellSide, this.CsIcellSide);
 
     	}
         //...and again for tt encoding:
-        for(i=0; i<24; i++){
+        for(key in this.dataBus.CsIwall){
+            i = this.dataBus.CsIwall[key].index;
             iAdj = i;
             if (iAdj>11) iAdj++;
 
@@ -147,14 +112,14 @@ function TIP(){
         }
 
         //HPGe summaries
-        this.drawHPGesummary(this.context, this.canvasWidth*0.7, this.canvasHeight*0.1, 0, frame);
-        this.drawHPGesummary(this.context, this.canvasWidth*0.7, this.canvasHeight*0.325, 1, frame);
-        this.drawHPGesummary(this.context, this.canvasWidth*0.7, this.canvasHeight*0.55, 2, frame);
+        this.drawHPGesummary(this.context, this.canvasWidth*0.7, this.canvasHeight*0.1, 'GRG01', frame);
+        this.drawHPGesummary(this.context, this.canvasWidth*0.7, this.canvasHeight*0.325, 'GRG02', frame);
+        this.drawHPGesummary(this.context, this.canvasWidth*0.7, this.canvasHeight*0.55, 'GRG03', frame);
 
         //HPGe summary tooltip
-        this.drawHPGesummary(this.TTcontext, this.canvasWidth*0.7, this.canvasHeight*0.1, 0, frame);
-        this.drawHPGesummary(this.TTcontext, this.canvasWidth*0.7, this.canvasHeight*0.325, 1, frame);
-        this.drawHPGesummary(this.TTcontext, this.canvasWidth*0.7, this.canvasHeight*0.55, 2, frame);
+        this.drawHPGesummary(this.TTcontext, this.canvasWidth*0.7, this.canvasHeight*0.1, 'GRG01', frame);
+        this.drawHPGesummary(this.TTcontext, this.canvasWidth*0.7, this.canvasHeight*0.325, 'GRG02', frame);
+        this.drawHPGesummary(this.TTcontext, this.canvasWidth*0.7, this.canvasHeight*0.55, 'GRG03', frame);
 
         this.drawScale(this.context, frame);
     };
@@ -163,17 +128,55 @@ function TIP(){
         var toolTipContent = '<br>';
         var nextLine;
         var cardIndex;
-        var i;
+        var i, key, segA, segB, cloverNumber, cloverName, quadrant;
 
         //summary level//////////////////////////////////////////////////
         //CsI wall reporting:
         if(cell<24){
-            nextLine = this.dataBus.key[cell][0];
+            key = this.dataBus.CsIwallTTmap[cell];
+            nextLine = key;
             toolTipContent += nextLine + '<br><br>';
 
-            toolTipContent += this.baseTTtext(this.dataBus.CsIHV[cell], this.dataBus.CsIthresholds[cell], this.dataBus.CsIrate[cell]); 
+            toolTipContent += this.baseTTtext(this.dataBus.CsIwall[key].HV, this.dataBus.CsIwall[key].threshold, this.dataBus.CsIwall[key].rate);
         } else {
-        //HPGe+BGO summaries
+        
+            //HPGe+BGO summaries
+            cloverNumber = Math.floor((cell-100)/8);
+            cloverName = 'GRG0'+cloverNumber;  //will match the summary ID of this clover
+            quadrant = ((cell-100)%8)%4;
+            //HPGE
+            if( (cell-100)%8 < 4 ){
+                //identify cell mouse is pointing at:
+                if(window.parameters.monitorValues[window.subdetectorView] == 'HV'){
+                    //todo
+                } else {
+                    segA = cloverName+this.dataBus.colorQuads[quadrant]+'N00A';
+                    segB = cloverName+this.dataBus.colorQuads[quadrant]+'N00B';
+                }
+
+                //report segment A:
+                nextLine = segA;
+                toolTipContent = '<br>' + nextLine + '<br>';
+                if(window.parameters.monitorValues[window.subdetectorView] != 'HV'){
+                    toolTipContent += this.baseTTtext(0, this.dataBus.HPGe[cloverName][segA].threshold, this.dataBus.HPGe[cloverName][segA].rate)
+                } else{
+                    //todo
+                }
+
+                //report segment B:
+                nextLine = segB;
+                toolTipContent += '<br><br>' + nextLine + '<br>';
+                if(window.parameters.monitorValues[window.subdetectorView] != 'HV'){
+                    toolTipContent += this.baseTTtext(0, this.dataBus.HPGe[cloverName][segB].threshold, this.dataBus.HPGe[cloverName][segB].rate)
+                } else{
+                    //todo
+                }                
+                
+            }
+            //BGO: TODO
+        
+
+            /*
             var cloverPointing = Math.floor((cell-100)/8);
             var cellPointing
             //HPGe
@@ -201,7 +204,9 @@ function TIP(){
             //BGO: TODO
 
             }
+            */
         }
+
         //HPGe detail level///////////////////////////////////////////////
         if(this.detailShowing){
             //determine index number per the mapping in the key definition in DataStructures.js:
@@ -233,52 +238,60 @@ function TIP(){
     };
 
     this.update = function(){
-        var i;
+        var key, subKey;
 
         //get new data
         this.fetchNewData();
 
         //parse the new data into colors
         //CsI
-        for(i=0; i<this.dataBus.CsIHV.length; i++){
-            this.oldCsIHVcolor[i] = this.CsIHVcolor[i];
-            this.CsIHVcolor[i] = this.parseColor(this.dataBus.CsIHV[i], 'CsI');
-            this.oldCsIThresholdColor[i] = this.CsIthresholdColor[i];
-            this.CsIthresholdColor[i] = this.parseColor(this.dataBus.CsIthresholds[i], 'CsI');
-            this.oldCsIRateColor[i] = this.CsIrateColor[i];
-            this.CsIrateColor[i] = this.parseColor(this.dataBus.CsIrate[i], 'CsI');
-
+        for(key in this.dataBus.CsIwall){
+            this.dataBus.CsIwall[key].oldHVcolor = this.dataBus.CsIwall[key].HVcolor;
+            this.dataBus.CsIwall[key].HVcolor = this.parseColor(this.dataBus.CsIwall[key].HV, 'CsI');
+            this.dataBus.CsIwall[key].oldThresholdColor = this.dataBus.CsIwall[key].thresholdColor;
+            this.dataBus.CsIwall[key].thresholdColor = this.parseColor(this.dataBus.CsIwall[key].threshold, 'CsI');
+            this.dataBus.CsIwall[key].oldRateColor = this.dataBus.CsIwall[key].rateColor;
+            this.dataBus.CsIwall[key].rateColor = this.parseColor(this.dataBus.CsIwall[key].rate, 'CsI');
         }
-
+                
         //HPGe + BGO
         //summary level
-        for(i=0; i<3*4; i++){
-            this.oldSummaryHPGeHVcolor[i] = this.summaryHPGeHVcolor[i];
-            this.summaryHPGeHVcolor[i] = this.parseColor(this.dataBus.summaryHPGeHV[i], 'HPGe');
-            this.oldSummaryHPGethresholdColor[i] = this.summaryHPGethresholdColor[i];
-            this.summaryHPGethresholdColor[i] = this.parseColor(this.dataBus.summaryHPGethreshold[i], 'HPGe');
-            this.oldSummaryHPGerateColor[i] = this.summaryHPGerateColor[i];
-            this.summaryHPGerateColor[i] = this.parseColor(this.dataBus.summaryHPGerate[i], 'HPGe');
+        for(key in this.dataBus.summary){
+            for(subKey in this.dataBus.summary[key]){
 
-            this.oldSummaryBGOHVcolor[i] = this.summaryBGOHVcolor[i];
-            this.summaryBGOHVcolor[i] = this.parseColor(this.dataBus.summaryBGOHV[i], 'BGO');
-            this.oldSummaryBGOthresholdColor[i] = this.summaryBGOthresholdColor[i];
-            this.summaryBGOthresholdColor[i] = this.parseColor(this.dataBus.summaryBGOthreshold[i], 'BGO');
-            this.oldSummaryBGOrateColor[i] = this.summaryBGOrateColor[i];
-            this.summaryBGOrateColor[i] = this.parseColor(this.dataBus.summaryBGOrate[i], 'BGO');
+                this.dataBus.summary[key][subKey].oldHVcolor = this.dataBus.summary[key][subKey].HVcolor;
+                this.dataBus.summary[key][subKey].HVcolor = this.parseColor(this.dataBus.summary[key][subKey].HV, 'HPGe');
+                this.dataBus.summary[key][subKey].oldThresholdColor = this.dataBus.summary[key][subKey].thresholdColor;
+                this.dataBus.summary[key][subKey].thresholdColor = this.parseColor(this.dataBus.summary[key][subKey].threshold, 'HPGe');
+                this.dataBus.summary[key][subKey].oldRateColor = this.dataBus.summary[key][subKey].rateColor;
+                this.dataBus.summary[key][subKey].rateColor = this.parseColor(this.dataBus.summary[key][subKey].rate, 'HPGe');
+/*
+                this.oldSummaryBGOHVcolor[i] = this.summaryBGOHVcolor[i];
+                this.summaryBGOHVcolor[i] = this.parseColor(this.dataBus.summaryBGOHV[i], 'BGO');
+                this.oldSummaryBGOthresholdColor[i] = this.summaryBGOthresholdColor[i];
+                this.summaryBGOthresholdColor[i] = this.parseColor(this.dataBus.summaryBGOthreshold[i], 'BGO');
+                this.oldSummaryBGOrateColor[i] = this.summaryBGOrateColor[i];
+                this.summaryBGOrateColor[i] = this.parseColor(this.dataBus.summaryBGOrate[i], 'BGO');
+*/
+            }
         }
+        
 
         //detail level
-        for(i=0; i<3*this.nHPGesegments; i++){
-            this.oldDetailHPGethresholdColor[i] = this.detailHPGethresholdColor[i];
-            this.detailHPGethresholdColor[i] = this.parseColor(this.dataBus.detailHPGethreshold[i], 'HPGe');
-            this.oldDetailHPGerateColor[i] = this.detailHPGerateColor[i];
-            this.detailHPGerateColor[i] = this.parseColor(this.dataBus.detailHPGerate[i], 'HPGe');
+        //loop over detectors
+        for(key in this.dataBus.HPGe){
+            //loop over detector elements
+            for(subKey in this.dataBus.HPGe[key]){
+                this.dataBus.HPGe[key][subKey].oldHVcolor = this.dataBus.HPGe[key][subKey].HVcolor;
+                this.dataBus.HPGe[key][subKey].HVcolor = this.parseColor(this.dataBus.HPGe[key][subKey].HV, 'HPGe');
+                this.dataBus.HPGe[key][subKey].oldThresholdColor = this.dataBus.HPGe[key][subKey].thresholdColor;
+                this.dataBus.HPGe[key][subKey].thresholdColor = this.parseColor(this.dataBus.HPGe[key][subKey].threshold, 'HPGe');
+                this.dataBus.HPGe[key][subKey].oldRateColor = this.dataBus.HPGe[key][subKey].rateColor;
+                this.dataBus.HPGe[key][subKey].rateColor = this.parseColor(this.dataBus.HPGe[key][subKey].rate, 'HPGe');
+            }
         }
-        for(i=0; i<3*4; i++){
-            this.oldDetailHPGeHVcolor[i] = this.detailHPGeHVcolor[i];
-            this.detailHPGeHVcolor[i] = this.parseColor(this.dataBus.detailHPGeHV[i], 'HPGe');
-        }
+/*
+        //BGO
         for(i=0; i<3*20; i++){
             this.oldDetailBGOthresholdColor[i] = this.detailBGOthresholdColor[i];
             this.detailBGOthresholdColor[i] = this.parseColor(this.dataBus.detailBGOthreshold[i], 'BGO');
@@ -289,77 +302,44 @@ function TIP(){
             this.oldDetailBGOHVcolor[i] = this.detailBGOHVcolor[i];
             this.detailBGOHVcolor[i] = this.parseColor(this.dataBus.detailBGOHV[i], 'BGO');
         }
-
+*/        
         this.tooltip.update();
         this.detailTooltip.update();
         this.displaySwitch();
     };
 
-    this.fetchNewData = function(){
-        var i;
-
-        //CsI
-        for(i=0; i<24; i++){
-            this.dataBus.CsIHV[i] = -9999//Math.random();
-            this.dataBus.CsIthresholds[i] = -9999//Math.random();
-            this.dataBus.CsIrate[i] = 1000//Math.random();
-            if(this.dataBus.key[i][1] != -1)
-                this.dataBus.CsIrate[i] = window.JSONPstore['scalar'][this.dataBus.key[i][1]]['fLastRate']
-            if(this.dataBus.key[i][2] != -1 && window.JSONPstore['parameters'])
-                this.dataBus.CsIthresholds[i] = window.JSONPstore['parameters'][0]['fVec'][this.dataBus.key[i][2]]
-        }
-
-        //HPGe + BGO
-        //detail level
-        var chIndex;
-        for(i=0; i<3*this.nHPGesegments; i++){
-            this.dataBus.detailHPGethreshold[i] = -9999;
-            this.dataBus.detailHPGerate[i] = 5000;
-            //determine index per key in DataStructures:
-            chIndex = 48 + Math.floor(i/8)*28 + i%8;
-            if(this.dataBus.key[chIndex][2] != -1)
-                this.dataBus.detailHPGethreshold[i] = window.JSONPstore['parameters'][0]['fVec'][this.dataBus.key[chIndex][2]]//Math.random();
-            if(this.dataBus.key[chIndex][1] != -1)
-                this.dataBus.detailHPGerate[i] = window.JSONPstore['scalar'][this.dataBus.key[chIndex][1]]['fLastRate']//Math.random();
-        }
-        for(i=0; i<3*4; i++){
-            this.dataBus.detailHPGeHV[i] = -9999//Math.random();
-        }
-        for(i=0; i<3*20; i++){
-            this.dataBus.detailBGOthreshold[i] = -9999//Math.random();
-            this.dataBus.detailBGOrate[i] = -9999//Math.random();
-        }
-        for(i=0; i<3*40; i++){
-            this.dataBus.detailBGOHV[i] = -9999//Math.random();        
-        }
-
-        //summary level
-        for(i=0; i<3*4; i++){
-            this.dataBus.summaryHPGeHV[i] = (this.dataBus.detailHPGeHV[2*i] + this.dataBus.detailHPGeHV[2*i+1]) / 2;
-            this.dataBus.summaryHPGethreshold[i] =  (this.dataBus.detailHPGethreshold[2*i] + this.dataBus.detailHPGethreshold[2*i+1]) / 2//Math.random();
-            this.dataBus.summaryHPGerate[i] = (this.dataBus.detailHPGerate[2*i] + this.dataBus.detailHPGerate[2*i+1]) / 2//Math.random();
-            this.dataBus.summaryBGOHV[i] = -9999//Math.random();
-            this.dataBus.summaryBGOthreshold[i] = -9999//Math.random();
-            this.dataBus.summaryBGOrate[i] = -9999//Math.random();
-        }
-    };
-/*
     //overhauled data fetcher for new key value packing
-    this.xxFetchNewData = function(){
-        var key;
+    this.fetchNewData = function(){
+        var i, key, subKey, summaryKey;
 
         //CsI
         for(key in this.dataBus.CsIwall){
-            this.dataBus.CsIwall[key]['threshold'] = window.JSONPstore['parameters'][key]['threshold'];
-            this.dataBus.CsIwall[key]['rate']      = window.JSONPstore['scalar'][key]['rate'];
+            if(window.JSONPstore['parameters'])
+                this.dataBus.CsIwall[key]['threshold'] = window.JSONPstore['parameters'][key]['threshold'];
+            if(window.JSONPstore['scalar'])
+                this.dataBus.CsIwall[key]['rate']      = window.JSONPstore['scalar'][key]['rate'];
         }
+        
         //HPGe + BGO
         for(key in this.dataBus.HPGe){
+            //detail
+            for(subKey in this.dataBus.HPGe[key]){
+                if(window.JSONPstore['parameters'])
+                    this.dataBus.HPGe[key][subKey]['threshold'] = window.JSONPstore['parameters'][subKey]['threshold'];
+                if(window.JSONPstore['scalar'])
+                    this.dataBus.HPGe[key][subKey]['rate'] = window.JSONPstore['scalar'][subKey]['rate'];
+            }
 
+            //summary
+            for(i=0; i<4; i++){
+                summaryKey = key + this.dataBus.colorQuads[i];
+                this.dataBus.summary[key][summaryKey].threshold = (this.dataBus.HPGe[key][summaryKey+'N00A']['threshold'] + this.dataBus.HPGe[key][summaryKey+'N00B']['threshold'])/2;
+                this.dataBus.summary[key][summaryKey].rate = (this.dataBus.HPGe[key][summaryKey+'N00A']['rate'] + this.dataBus.HPGe[key][summaryKey+'N00B']['rate'])/2;
+            }
         }
-
+        
     };
-*/
+
     //do an initial populate:
     this.update();
 }

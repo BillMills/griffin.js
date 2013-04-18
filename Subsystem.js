@@ -381,7 +381,39 @@ function HPGeAssets(){
         context.restore();
     };
 
-    this.drawHPGesummary = function(context, x0,y0, cloverNumber, frame){
+    this.drawHPGesummary = function(context, x0,y0, cloverSummaryKey, frame){
+        var key, i, iprime;
+        var color1, color2;
+
+        for(key in this.dataBus.summary[cloverSummaryKey]){
+            i = this.dataBus.summary[cloverSummaryKey][key].quadrant;
+            //HPGE
+            if(context == this.TTcontext){
+                iprime = 100+this.dataBus.summary[cloverSummaryKey][key].clover*8+i;
+                context.fillStyle = 'rgba('+iprime+','+iprime+','+iprime+',1)';
+            } else{
+                if(window.subdetectorView == 0){
+                    color1 = parseHexColor(this.dataBus.summary[cloverSummaryKey][key].oldHVcolor);
+                    color2 = parseHexColor(this.dataBus.summary[cloverSummaryKey][key].HVcolor);
+                } else if(window.subdetectorView == 1){
+                    color1 = parseHexColor(this.dataBus.summary[cloverSummaryKey][key].oldThresholdColor);
+                    color2 = parseHexColor(this.dataBus.summary[cloverSummaryKey][key].thresholdColor);
+                } else if(window.subdetectorView == 2){
+                    color1 = parseHexColor(this.dataBus.summary[cloverSummaryKey][key].oldRateColor);
+                    color2 = parseHexColor(this.dataBus.summary[cloverSummaryKey][key].rateColor);
+                }
+                context.fillStyle = interpolateColor(color1, color2, frame/this.nFrames);
+            }
+            context.fillRect(Math.round(x0 + (this.BGOouter-this.HPGeside)/2 + (i%2)*(this.lineWeight + this.HPGeside/2)), Math.round(y0 + (this.BGOouter-this.HPGeside)/2 + (i>>1)/2*(2*this.lineWeight + this.HPGeside)), Math.round(this.HPGeside/2),Math.round(this.HPGeside/2));
+            if(context != this.TTcontext){
+                context.strokeStyle = '#999999';
+                context.strokeRect(x0 + (this.BGOouter-this.HPGeside)/2 + (i%2)*(this.lineWeight + this.HPGeside/2), y0 + (this.BGOouter-this.HPGeside)/2 + (i>>1)/2*(2*this.lineWeight + this.HPGeside), this.HPGeside/2, this.HPGeside/2);
+            }
+
+            //BGO
+        }
+
+        /*
         var i, iprime;
         var colors = ['#999999', '#999999', '#999999', '#999999'];
 
@@ -397,7 +429,7 @@ function HPGeAssets(){
             if(window.subdetectorView == 0) context.fillStyle = interpolateColor(parseHexColor(this.oldSummaryHPGeHVcolor[4*(cloverNumber)+i]), parseHexColor(this.summaryHPGeHVcolor[4*(cloverNumber)+i]), frame/this.nFrames);
             else if(window.subdetectorView == 1) context.fillStyle = interpolateColor(parseHexColor(this.oldSummaryHPGethresholdColor[4*(cloverNumber)+i]), parseHexColor(this.summaryHPGethresholdColor[4*(cloverNumber)+i]), frame/this.nFrames);
             else if(window.subdetectorView == 2) context.fillStyle = interpolateColor(parseHexColor(this.oldSummaryHPGerateColor[4*(cloverNumber)+i]), parseHexColor(this.summaryHPGerateColor[4*(cloverNumber)+i]), frame/this.nFrames);
-            if(context == this.TTcontext) this.TTcontext.fillStyle = 'rgba('+(100+cloverNumber*8 + iprime)+', '+(100+cloverNumber*8 + iprime)+', '+(100+cloverNumber*8 + iprime)+', 1)';
+            if(context == this.TTcontext) context.fillStyle = 'rgba('+(100+cloverNumber*8 + iprime)+', '+(100+cloverNumber*8 + iprime)+', '+(100+cloverNumber*8 + iprime)+', 1)';
             context.fillRect(Math.round(x0 + (this.BGOouter-this.HPGeside)/2 + (i%2)*(this.lineWeight + this.HPGeside/2)), Math.round(y0 + (this.BGOouter-this.HPGeside)/2 + (i>>1)/2*(2*this.lineWeight + this.HPGeside)), Math.round(this.HPGeside/2),Math.round(this.HPGeside/2));
             //give the top view clovers an appropriately-colored outline:
             if(context != this.TTcontext){
@@ -418,9 +450,11 @@ function HPGeAssets(){
             this.drawL(context, rotation, Math.round((this.BGOouter - this.BGOinner)/2), Math.round(this.BGOouter/2), Math.round(x0 + (this.BGOouter+this.lineWeight)*(i%2)), Math.round(y0 + (this.BGOouter+this.lineWeight)*(i>>1)), colors[i], color);
 
         }
+        */
     };
 
-    this.drawDetail = function(context, frame, titlePrefix){
+    this.drawDetail = function(context, frame){
+        /*
         var i, j;
 
         //state variables select the segmentation state of HPGe and services of BGO 
@@ -488,7 +522,7 @@ function HPGeAssets(){
                         //front segs
                         if(context == this.detailContext){
                             if(window.subdetectorView == 1) fillColor = interpolateColor(parseHexColor(this.oldDetailHPGethresholdColor[this.nHPGesegments*this.cloverShowing+this.nHPGesegments/4*i+j+2]), parseHexColor(this.detailHPGethresholdColor[this.nHPGesegments*this.cloverShowing+this.nHPGesegments/4*i+j+2]), frame/this.nFrames);
-                            else if(window.subdetectorView == 2){ fillColor = interpolateColor(parseHexColor(this.oldDetailHPGerateColor[this.nHPGesegments*this.cloverShowing+this.nHPGesegments/4*i+j+2]), parseHexColor(this.detailHPGerateColor[this.nHPGesegments*this.cloverShowing+this.nHPGesegments/4*i+j+2]), frame/this.nFrames); console.log(fillColor)}
+                            else if(window.subdetectorView == 2) fillColor = interpolateColor(parseHexColor(this.oldDetailHPGerateColor[this.nHPGesegments*this.cloverShowing+this.nHPGesegments/4*i+j+2]), parseHexColor(this.detailHPGerateColor[this.nHPGesegments*this.cloverShowing+this.nHPGesegments/4*i+j+2]), frame/this.nFrames);
     
                         } else
                             fillColor = 'rgba('+(this.nHPGesegments/4*i+j+2)+', '+(this.nHPGesegments/4*i+j+2)+', '+(this.nHPGesegments/4*i+j+2)+', 1)';
@@ -594,6 +628,7 @@ function HPGeAssets(){
         this.detailContext.fillStyle = '#999999';
         this.detailContext.font="24px 'Orbitron'";
         this.detailContext.fillText(this.scalePrefix+(this.cloverShowing+1), 0.5*this.canvasWidth - this.detailContext.measureText(this.scalePrefix+(this.cloverShowing+1)).width/2, 0.85*this.canvasHeight);
+        */
     };
 }
 

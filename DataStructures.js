@@ -176,6 +176,7 @@ SPICEDS = function(){
 	}
 }
 
+/*
 TIPDS = function(){
 	var i, j;
 
@@ -290,194 +291,120 @@ TIPDS = function(){
     }
     
 }
+*/
 
+TIPDS = function(){
+	var i, j, name, key;
 
-xxTIPDS = function(){
-	this.CsIwall = {
-
-		'TPW001P00X' : {
-			'index' 	: 11,
+	this.CsIwall = {};
+	for(i=1; i<25; i++){
+		var name = (i<10) ? 'TPW00'+i+'P00X' : 'TPW0'+i+'P00X';
+		this.CsIwall[name] = {
 			'HV'		: 0,
 			'threshold' : 500,
-			'rate' 		: 1000
-		},
+			'rate' 		: 100*i,
 
-		'TPW002P00X' : {
-			'index' 	: 6,
-			'HV'		: 0,
-			'threshold' : 500,
-			'rate' 		: 1000
-		},
-
-		'TPW003P00X' : {
-			'index' 	: 7,
-			'HV'		: 0,
-			'threshold' : 500,
-			'rate' 		: 1000
-		},
-
-		'TPW004P00X' : {
-			'index' 	: 8,
-			'HV'		: 0,
-			'threshold' : 500,
-			'rate' 		: 1000
-		},
-
-		'TPW005P00X' : {
-			'index' 	: 12,
-			'HV'		: 0,
-			'threshold' : 500,
-			'rate' 		: 1000
-		},
-
-		'TPW006P00X' : {
-			'index' 	: 17,
-			'HV'		: 0,
-			'threshold' : 500,
-			'rate' 		: 1000
-		},
-
-		'TPW007P00X' : {
-			'index' 	: 16,
-			'HV'		: 0,
-			'threshold' : 500,
-			'rate' 		: 1000
-		},
-
-		'TPW008P00X' : {
-			'index' 	: 15,
-			'HV'		: 0,
-			'threshold' : 500,
-			'rate' 		: 1000
-		},
-
-		'TPW009P00X' : {
-			'index' 	: 10,
-			'HV'		: 0,
-			'threshold' : 500,
-			'rate' 		: 1000
-		},
-
-		'TPW010P00X' : {
-			'index' 	: 5,
-			'HV'		: 0,
-			'threshold' : 500,
-			'rate' 		: 1000
-		},
-
-		'TPW011P00X' : {
-			'index' 	: 0,
-			'HV'		: 0,
-			'threshold' : 500,
-			'rate' 		: 1000
-		},
-
-		'TPW012P00X' : {
-			'index' 	: 1,
-			'HV'		: 0,
-			'threshold' : 500,
-			'rate' 		: 1000
-		},
-
-		'TPW013P00X' : {
-			'index' 	: 2,
-			'HV'		: 0,
-			'threshold' : 500,
-			'rate' 		: 1000
-		},
-
-		'TPW014P00X' : {
-			'index' 	: 3,
-			'HV'		: 0,
-			'threshold' : 500,
-			'rate' 		: 1000
-		},
-
-		'TPW015P00X' : {
-			'index' 	: 4,
-			'HV'		: 0,
-			'threshold' : 500,
-			'rate' 		: 1000
-		},
-
-		'TPW016P00X' : {
-			'index' 	: 9,
-			'HV'		: 0,
-			'threshold' : 500,
-			'rate' 		: 1000
-		},
-
-		'TPW017P00X' : {
-			'index' 	: 13,
-			'HV'		: 0,
-			'threshold' : 500,
-			'rate' 		: 1000
-		},
-
-		'TPW018P00X' : {
-			'index' 	: 18,
-			'HV'		: 0,
-			'threshold' : 500,
-			'rate' 		: 1000
-		},
-
-		'TPW019P00X' : {
-			'index' 	: 23,
-			'HV'		: 0,
-			'threshold' : 500,
-			'rate' 		: 1000
-		},
-
-		'TPW020P00X' : {
-			'index' 	: 22,
-			'HV'		: 0,
-			'threshold' : 500,
-			'rate' 		: 1000
-		},
-
-		'TPW021P00X' : {
-			'index' 	: 21,
-			'HV'		: 0,
-			'threshold' : 500,
-			'rate' 		: 1000
-		},
-
-		'TPW022P00X' : {
-			'index' 	: 20,
-			'HV'		: 0,
-			'threshold' : 500,
-			'rate' 		: 1000
-		},
-
-		'TPW023P00X' : {
-			'index' 	: 19,
-			'HV'		: 0,
-			'threshold' : 500,
-			'rate' 		: 1000
-		},
-
-		'TPW024P00X' : {
-			'index' 	: 14,
-			'HV'		: 0,
-			'threshold' : 500,
-			'rate' 		: 1000
-		},
-
-	};
-
-	this.HPGe = {
-		'GRG00' : {
-
-		},
-
-		'GRG01' : {
-
-		},
-
-		'GRG02' : {
-
+			'oldHVcolor' : '#000000',
+			'HVcolor'	 : '#000000',
+			'oldThresholdColor' : '#000000',
+			'thresholdColor' : '#000000',
+			'oldRateColor' : '#000000',
+			'rateColor' : '#000000'	
 		}
 	}
+	this.CsIwall['TPW011P00X']['index'] = 0;
+	this.CsIwall['TPW012P00X']['index'] = 1;
+	this.CsIwall['TPW013P00X']['index'] = 2;
+	this.CsIwall['TPW014P00X']['index'] = 3;
+	this.CsIwall['TPW015P00X']['index'] = 4;
+	this.CsIwall['TPW010P00X']['index'] = 5;
+	this.CsIwall['TPW002P00X']['index'] = 6;
+	this.CsIwall['TPW003P00X']['index'] = 7;
+	this.CsIwall['TPW004P00X']['index'] = 8;
+	this.CsIwall['TPW016P00X']['index'] = 9;
+	this.CsIwall['TPW009P00X']['index'] = 10;
+	this.CsIwall['TPW001P00X']['index'] = 11;
+	this.CsIwall['TPW005P00X']['index'] = 12;
+	this.CsIwall['TPW017P00X']['index'] = 13;
+	this.CsIwall['TPW024P00X']['index'] = 14;
+	this.CsIwall['TPW008P00X']['index'] = 15;
+	this.CsIwall['TPW007P00X']['index'] = 16;
+	this.CsIwall['TPW006P00X']['index'] = 17;
+	this.CsIwall['TPW018P00X']['index'] = 18;
+	this.CsIwall['TPW023P00X']['index'] = 19;
+	this.CsIwall['TPW022P00X']['index'] = 20;
+	this.CsIwall['TPW021P00X']['index'] = 21;
+	this.CsIwall['TPW020P00X']['index'] = 22;
+	this.CsIwall['TPW019P00X']['index'] = 23;
+
+	//invert the above index map for TT lookup
+	this.CsIwallTTmap = []
+	for(key in this.CsIwall){
+		this.CsIwallTTmap[this.CsIwall[key].index] = key;
+	}
+
+	this.colorQuads = ['G', 'B', 'R', 'W'];
+	this.HPGe = {};
+	//loop over HPGe
+	for(i=1; i<4; i++){
+		this.HPGe['GRG0'+i] = {};
+		//loop over quadrents
+		for(j=0; j<4; j++){
+			this.HPGe['GRG0'+i]['GRG0'+i+this.colorQuads[j]+'N00A'] = {
+				'HV'		: 0,
+				'threshold' : 500,
+				'rate'		: 1000,
+
+				'oldHVcolor' : '#000000',
+				'HVcolor'	 : '#000000',
+				'oldThresholdColor' : '#000000',
+				'thresholdColor' : '#000000',
+				'oldRateColor' : '#000000',
+				'rateColor' : '#000000'				
+			}
+			this.HPGe['GRG0'+i]['GRG0'+i+this.colorQuads[j]+'N00B'] = {
+				'HV'		: 0,
+				'threshold' : 500,
+				'rate'		: 1000,
+
+				'oldHVcolor' : '#000000',
+				'HVcolor'	 : '#000000',
+				'oldThresholdColor' : '#000000',
+				'thresholdColor' : '#000000',
+				'oldRateColor' : '#000000',
+				'rateColor' : '#000000'				
+			}
+		}
+
+
+	}
+
+	this.summary = {};
+	//loop over HPGe
+	for(i=1; i<4; i++){
+		this.summary['GRG0'+i] = {};
+		for(j=0; j<4; j++){
+			this.summary['GRG0'+i]['GRG0'+i+this.colorQuads[j]] = {
+				'clover' : i,
+				'quadrant' : j,
+				'index' : 100 + i*8 + j,
+
+				'HV'		: 0,
+				'threshold' : 500,
+				'rate'		: 1000,
+
+				'oldHVcolor' : '#000000',
+				'HVcolor'	 : '#000000',
+				'oldThresholdColor' : '#000000',
+				'thresholdColor' : '#000000',
+				'oldRateColor' : '#000000',
+				'rateColor' : '#000000'					
+			}
+		}
+	}
+
+	//invert summary indices for TT map:
+
 }
 
 
