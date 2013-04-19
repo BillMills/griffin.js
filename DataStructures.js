@@ -176,125 +176,8 @@ SPICEDS = function(){
 	}
 }
 
-/*
 TIPDS = function(){
-	var i, j;
-
-	//data arrays:
-	this.CsIHV = [];
-	this.CsIthresholds = [];
-	this.CsIrate = [];
-
-	this.summaryHPGeHV = [];
-	this.summaryHPGethreshold = [];
-	this.summaryHPGerate = [];
-	this.summaryBGOHV = [];
-	this.summaryBGOthreshold = [];
-	this.summaryBGOrate = [];
-
-	this.detailHPGeHV = [];
-	this.detailHPGethreshold = [];
-	this.detailHPGerate = [];
-	this.detailBGOHV = [];
-	this.detailBGOthreshold = [];
-	this.detailBGOrate = [];
-	
-	//key map, format: key[griffin.js index number][pointer]
-	//index 0-23: CsI wall elements TPW001P00X - TPW023P00X
-	//index 24-35: HPGe crystal summaries, GBWR x3
-	//index 36-47: BGO summaries, GBWR x3
-	//index 48-55: HPGe detail (rate view), G(a)G(b)B(a)B(b)W(a)W(b)R(a)R(b) clover 0
-	//index 56-59: BGO back detail (rate view), GBRW clover 0
-	//index 60-67: BGO side detail (rate view), G(a)G(b)B(a)B(b)W(a)W(b)R(a)R(b) clover 0
-	//index 68-75: BGO front detail (rate view), G(a)G(b)B(a)B(b)W(a)W(b)R(a)R(b) clover 0
-	//index 76-103: As 48-75, for clover 1
-	//index 104-131: As 48-75, for clover 2
-	//index 132-135: HPGe detail (HV), GBWR clover 0
-	//index 136-143: BGO back detail (HV), G(a)G(b)B(a)B(b)W(a)W(b)R(a)R(b) clover 0
-	//index 144-159: BGO side detail (HV), G(a)G(b)B(a)B(b)W(a)W(b)R(a)R(b) clover 0
-	//index 160-175: BGO front detail (HV), G(a)G(b)B(a)B(b)W(a)W(b)R(a)R(b) clover 0
-	//index 176-219: As 132-175, for clover 1
-	//index 220-263: As 132-175, for clover 2
-
-	//pointer == 0: Greg's name
-	//pointer == 1: index in scalar rate json object
-	//pointer == 2: FSCP index
-	this.key = [];
-	for(i=0; i<264; i++)
-		this.key[i] = [];
-	//generate names//////////////////////////////////////
-	//CsI wall:
-	this.key[0][0]  = 'TPW011P00X';
-	this.key[1][0]  = 'TPW012P00X';
-	this.key[2][0]  = 'TPW013P00X';
-	this.key[3][0]  = 'TPW014P00X';
-	this.key[4][0]  = 'TPW015P00X';
-	this.key[5][0]  = 'TPW010P00X';
-	this.key[6][0]  = 'TPW002P00X';
-	this.key[7][0]  = 'TPW003P00X';
-	this.key[8][0]  = 'TPW004P00X';
-	this.key[9][0]  = 'TPW016P00X';
-	this.key[10][0] = 'TPW009P00X';
-	this.key[11][0] = 'TPW001P00X';
-	this.key[12][0] = 'TPW005P00X';
-	this.key[13][0] = 'TPW017P00X';
-	this.key[14][0] = 'TPW024P00X';
-	this.key[15][0] = 'TPW008P00X';
-	this.key[16][0] = 'TPW007P00X';
-	this.key[17][0] = 'TPW006P00X';
-	this.key[18][0] = 'TPW018P00X';
-	this.key[19][0] = 'TPW023P00X';
-	this.key[20][0] = 'TPW022P00X';
-	this.key[21][0] = 'TPW021P00X';
-	this.key[22][0] = 'TPW020P00X';
-	this.key[23][0] = 'TPW019P00X';		
-
-	//HPGe + BGO summaries: todo
-	//HPGe + BGO rate detail:
-	var color = ['G', 'B', 'W', 'R'];
-	var half = ['A', 'B'];
-	var chIndex;
-	for(j=0; j<3; j++){
-		//HPGe
-		for(i=0; i<8; i++){
-			chIndex = 48+28*j+i;
-			this.key[chIndex][0] = 'GRG0'+ (j+1) + color[Math.floor(i/2)] + 'N00' + half[i%2];
-		}
-		//BGO
-		for(i=0; i<20; i++){
-			chIndex = 56+28*j+i;
-			if(i<4) this.key[chIndex][0] = 'GRS0' + (j+1) + color[i] + 'XXXX'
-			else this.key[chIndex][0] = 'GRS0' + (j+1) + color[Math.floor((i-4)/2)%4] + 'XXXX'
-		}
-
-	}
-	//HPGe + BGO HV detail: todo
-
-	//figure out where this name is sitting in the JSON scalar rate array and in the FSCP table
-    //alert(window.JSONPstore['scalar'][91]['fName'])
-	for(i=0; i<this.key.length; i++){
-		this.key[i][1] = -1;
-		this.key[i][2] = -1;
-		if(window.JSONPstore['scalar']){
-	        for(j=0; j<window.JSONPstore['scalar'].length; j++){
-    	        if(window.JSONPstore['scalar'][j].fName == this.key[i][0])
-        	      	this.key[i][1] = j;
-        	}
-        }
-        if(window.JSONPstore['parameters']){
-	        for(j=0; j<window.codex.Name.length; j++){
-    	    	if(window.codex.Name[j] == this.key[i][0])
-        			this.key[i][2] = j;
-        	}
-        }
-
-    }
-    
-}
-*/
-
-TIPDS = function(){
-	var i, j, name, key;
+	var i, j, k, name, key, subKey;
 
 	this.CsIwall = {};
 	for(i=1; i<25; i++){
@@ -343,17 +226,18 @@ TIPDS = function(){
 		this.CsIwallTTmap[this.CsIwall[key].index] = key;
 	}
 
-	this.colorQuads = ['G', 'B', 'R', 'W'];
+	this.colorQuads = ['G', 'B', 'W', 'R'];
 	this.HPGe = {};
-	//loop over HPGe
 	for(i=1; i<4; i++){
+		//HPGE channels
 		this.HPGe['GRG0'+i] = {};
-		//loop over quadrents
+		//loop over quadrants
 		for(j=0; j<4; j++){
 			this.HPGe['GRG0'+i]['GRG0'+i+this.colorQuads[j]+'N00A'] = {
-				'HV'		: 0,
+				'HV'		: 500*j,		//note both A and B carry the same HV for GRIFFIN style HPGe
 				'threshold' : 500,
 				'rate'		: 1000,
+				'index'     : 2*j+30*(i-1),
 
 				'oldHVcolor' : '#000000',
 				'HVcolor'	 : '#000000',
@@ -363,9 +247,10 @@ TIPDS = function(){
 				'rateColor' : '#000000'				
 			}
 			this.HPGe['GRG0'+i]['GRG0'+i+this.colorQuads[j]+'N00B'] = {
-				'HV'		: 0,
+				'HV'		: 0,		//note both A and B carry the same HV for GRIFFIN style HPGe
 				'threshold' : 500,
 				'rate'		: 1000,
+				'index'		: 2*j+1+30*(i-1),
 
 				'oldHVcolor' : '#000000',
 				'HVcolor'	 : '#000000',
@@ -376,12 +261,50 @@ TIPDS = function(){
 			}
 		}
 
+		//BGO channels
+		var ID;
+		this.HPGe['GRS0'+i] = {};
+		//loop over quadrants
+		for(j=0; j<4; j++){
+			//five BGO segments in each quadrant: front, front, side, side, back
+			for(k=1; k<6; k++){
+				if(k==1) ID = 20+2*j;	//front suppressors
+				if(k==2) ID = 21+2*j;
+				if(k==3) ID = 12+2*j;	//side suppressors
+				if(k==4) ID = 13+2*j;
+				if(k==5) ID = 8+j; 		//back suppressors
+				this.HPGe['GRS0'+i]['GRS0'+i+this.colorQuads[j]+'N0'+k+'X'] = {
+				'HVA'		: 1000,		//each rate channel has two HV hookups.
+				'HVB'		: 2000,
+				'threshold' : 500,
+				'rate'		: 1000*i+100*j+10*k,
+				'index'		: ID+30*(i-1),
+
+				'oldHVAcolor' : '#000000',
+				'HVAcolor'	 : '#000000',
+				'oldHVBcolor' : '#000000',
+				'HVBcolor'	 : '#000000',				
+				'oldThresholdColor' : '#000000',
+				'thresholdColor' : '#000000',
+				'oldRateColor' : '#000000',
+				'rateColor' : '#000000'					
+				}
+			}
+		}
 
 	}
 
+	//invert the index map for the TT:
+	this.HPGeTTmap = [];
+	for(key in this.HPGe){
+		for(subKey in this.HPGe[key]){
+			this.HPGeTTmap[this.HPGe[key][subKey].index] = subKey;
+		}
+	}
+
 	this.summary = {};
-	//loop over HPGe
 	for(i=1; i<4; i++){
+		//HPGe summaries
 		this.summary['GRG0'+i] = {};
 		for(j=0; j<4; j++){
 			this.summary['GRG0'+i]['GRG0'+i+this.colorQuads[j]] = {
@@ -401,10 +324,39 @@ TIPDS = function(){
 				'rateColor' : '#000000'					
 			}
 		}
+
+		//BGO summaries
+		this.summary['GRS0'+i] = {};
+		for(j=0; j<4; j++){
+			this.summary['GRS0'+i]['GRS0'+i+this.colorQuads[j]] = {
+				'clover' : i,
+				'quadrant' : j,
+				//'index' : 100 + i*8 + j,
+
+				'HV'		: 0,
+				'threshold' : 500,
+				'rate'		: 1000,
+
+				'oldHVcolor' : '#000000',
+				'HVcolor'	 : '#000000',
+				'oldThresholdColor' : '#000000',
+				'thresholdColor' : '#000000',
+				'oldRateColor' : '#000000',
+				'rateColor' : '#000000'					
+			}			
+		}
 	}
 
-	//invert summary indices for TT map:
 
+	//validation
+	this.HPGe['GRG01']['GRG01GN00A'].rate = 2000;
+	this.HPGe['GRG01']['GRG01BN00A'].rate = 4000;
+	this.HPGe['GRG01']['GRG01RN00A'].rate = 6000;
+	this.HPGe['GRG01']['GRG01WN00A'].rate = 8000;
+	this.HPGe['GRG01']['GRG01GN00B'].rate = 2000;
+	this.HPGe['GRG01']['GRG01BN00B'].rate = 4000;
+	this.HPGe['GRG01']['GRG01RN00B'].rate = 6000;
+	this.HPGe['GRG01']['GRG01WN00B'].rate = 8000;
 }
 
 
