@@ -6,7 +6,6 @@ function HPGe(){
     this.name = 'HPGe';
     var that = this;
     Subsystem.call(this);
-    this.dataBus = new HPGeDS();
     window.HPGepointer = that;
 
     //member variables////////////////////////////////////////////////////////
@@ -14,13 +13,14 @@ function HPGe(){
     this.detailShowing = 0;                         //is the detail canvas showing?
     this.scalePrefix = 'Clover ';                   //prefix for scale title
 
+    this.mode = window.parameters.HPGemode;         //mode to run in, either 'TIGRESS' or 'GRIFFIN'
+    this.dataBus = new HPGeDS(this.mode);                    //called after mode is fetched in order to know what kind of HPGe to deploy
     this.nHPGesegments = 0;
     if(this.mode == 'TIGRESS')
         this.nHPGesegments = 40;
     else if(this.mode == 'GRIFFIN')
         this.nHPGesegments = 8;
 
-    this.mode = window.parameters.HPGemode;         //mode to run in, either 'TIGRESS' or 'GRIFFIN'
     this.BGOenable = window.parameters.BGOenable;   //are the suppresors present?
 
     DetailView.call(this);                          //inject the infrastructure for a detail-level view
@@ -112,43 +112,21 @@ function HPGe(){
     this.frontBGOouterWidth = this.frontBGOinnerWidth + 2*this.suppressorWidth;
     this.sideSpacer = 20;
 
-    //establish data buffers////////////////////////////////////////////////////////////////////////////
-    this.summaryHPGeHVcolor = [];
-    this.oldSummaryHPGeHVcolor = [];
-    this.summaryHPGethresholdColor = [];
-    this.oldSummaryHPGethresholdColor = [];
-    this.summaryHPGerateColor = [];
-    this.oldSummaryHPGerateColor = [];
-    this.summaryBGOHVcolor = [];
-    this.oldSummaryBGOHVcolor = [];
-    this.summaryBGOthresholdColor = [];
-    this.oldSummaryBGOthresholdColor = [];
-    this.summaryBGOrateColor = [];
-    this.oldSummaryBGOrateColor = [];
-
-    this.detailHPGeHVcolor = [];
-    this.oldDetailHPGeHVcolor = [];
-    this.detailHPGethresholdColor = [];
-    this.oldDetailHPGethresholdColor = [];
-    this.detailHPGerateColor = [];
-    this.oldDetailHPGerateColor = [];
-    this.detailBGOHVcolor = [];
-    this.oldDetailBGOHVcolor = [];
-    this.detailBGOthresholdColor = [];
-    this.oldDetailBGOthresholdColor = [];
-    this.detailBGOrateColor = [];
-    this.oldDetailBGOrateColor = [];
-
     //Member functions/////////////////////////////////////////////////////////////////////////////////
 
     //function to wrap drawing for animate
     this.draw = function(frame){
-        var i;
+        var i, summaryKey;
         this.context.lineWidth = this.lineWeight;
 
-        for(i=0; i<16; i++){
-            this.drawHPGesummary(this.context, this.summaryCoord[i+1][0], this.summaryCoord[i+1][1], i, frame);
-            this.drawHPGesummary(this.TTcontext, this.summaryCoord[i+1][0], this.summaryCoord[i+1][1], i, frame);
+        for(i=1; i<17; i++){
+            summaryKey = 'GRG' + ( (i<10) ? '0'+i : i );
+            this.drawHPGesummary(this.context, this.summaryCoord[i][0], this.summaryCoord[i][1], summaryKey, frame);
+            this.drawHPGesummary(this.TTcontext, this.summaryCoord[i][0], this.summaryCoord[i][1], summaryKey, frame);
+
+            summaryKey = 'GRS' + ( (i<10) ? '0'+i : i );
+            this.drawHPGesummary(this.context, this.summaryCoord[i][0], this.summaryCoord[i][1], summaryKey, frame);
+            this.drawHPGesummary(this.TTcontext, this.summaryCoord[i][0], this.summaryCoord[i][1], summaryKey, frame);            
         }
 
         //titles
@@ -167,15 +145,12 @@ function HPGe(){
     };
 
     this.defineText = function(cell){
-        var toolTipContent = '<br>';
+        
+        var toolTipContent = '';
         var nextLine;
-        var cardIndex;
-        var i;
 
-        nextLine = 'Channel '+cell;
-        toolTipContent += nextLine;
+        toolTipContent += this.defineHPGeText(cell) + '<br>';
 
-        toolTipContent += '<br><br>';
         if(this.detailShowing){
             document.getElementById(this.detailTooltip.ttDivID).innerHTML = toolTipContent;
         } else{
@@ -183,95 +158,25 @@ function HPGe(){
         }
 
         return 0;
+
     };
 
     this.update = function(){
-
-        var i;
-
         //get new data
         this.fetchNewData();
 
-        //parse colors
-        for(i=0; i<16*4; i++){
-            this.oldSummaryHPGeHVcolor[i] = this.summaryHPGeHVcolor[i];
-            this.summaryHPGeHVcolor[i] = this.parseColor(this.dataBus.summaryHPGeHV[i], 'HPGe');
-            this.oldSummaryHPGethresholdColor[i] = this.summaryHPGethresholdColor[i];
-            this.summaryHPGethresholdColor[i] = this.parseColor(this.dataBus.summaryHPGethreshold[i], 'HPGe');
-            this.oldSummaryHPGerateColor[i] = this.summaryHPGerateColor[i];
-            this.summaryHPGerateColor[i] = this.parseColor(this.dataBus.summaryHPGerate[i], 'HPGe');
+        //update the databus
+        this.updateHPGe();
 
-            this.oldSummaryBGOHVcolor[i] = this.summaryBGOHVcolor[i];
-            this.summaryBGOHVcolor[i] = this.parseColor(this.dataBus.summaryBGOHV[i], 'BGO');
-            this.oldSummaryBGOthresholdColor[i] = this.summaryBGOthresholdColor[i];
-            this.summaryBGOthresholdColor[i] = this.parseColor(this.dataBus.summaryBGOthreshold[i], 'BGO');
-            this.oldSummaryBGOrateColor[i] = this.summaryBGOrateColor[i];
-            this.summaryBGOrateColor[i] = this.parseColor(this.dataBus.summaryBGOrate[i], 'BGO');
-        }
-
-        //detail level
-        for(i=0; i<16*this.nHPGesegments; i++){
-            this.oldDetailHPGethresholdColor[i] = this.detailHPGethresholdColor[i];
-            this.detailHPGethresholdColor[i] = this.parseColor(this.dataBus.detailHPGethreshold[i], 'HPGe');
-            this.oldDetailHPGerateColor[i] = this.detailHPGerateColor[i];
-            this.detailHPGerateColor[i] = this.parseColor(this.dataBus.detailHPGerate[i], 'HPGe');
-        }
-        for(i=0; i<16*4; i++){
-            this.oldDetailHPGeHVcolor[i] = this.detailHPGeHVcolor[i];
-            this.detailHPGeHVcolor[i] = this.parseColor(this.dataBus.detailHPGeHV[i], 'HPGe');
-        }
-        for(i=0; i<16*20; i++){
-            this.oldDetailBGOthresholdColor[i] = this.detailBGOthresholdColor[i];
-            this.detailBGOthresholdColor[i] = this.parseColor(this.dataBus.detailBGOthreshold[i], 'BGO');
-            this.oldDetailBGOrateColor[i] = this.detailBGOrateColor[i];
-            this.detailBGOrateColor[i] = this.parseColor(this.dataBus.detailBGOrate[i], 'BGO');
-        }
-        for(i=0; i<16*40; i++){
-            this.oldDetailBGOHVcolor[i] = this.detailBGOHVcolor[i];
-            this.detailBGOHVcolor[i] = this.parseColor(this.dataBus.detailBGOHV[i], 'BGO');
-        }
-
+        //update tooltips & display
         this.tooltip.update();
         this.detailTooltip.update();
         this.displaySwitch();
     };
 
-
-
-
     this.fetchNewData = function(){
-        var i;
-
-        //dummy data
-        //summary level
-        for(i=0; i<16*4; i++){
-            this.dataBus.summaryHPGeHV[i] = Math.random();
-            this.dataBus.summaryHPGethreshold[i] = Math.random();
-            this.dataBus.summaryHPGerate[i] = Math.random();
-            this.dataBus.summaryBGOHV[i] = Math.random();
-            this.dataBus.summaryBGOthreshold[i] = Math.random();
-            this.dataBus.summaryBGOrate[i] = Math.random();
-        }
-
-        //detail level
-        for(i=0; i<16*this.nHPGesegments; i++){
-                this.dataBus.detailHPGethreshold[i] = Math.random();
-                this.dataBus.detailHPGerate[i] = 5000;//Math.random();
-        }
-        for(i=0; i<16*4; i++){
-            this.dataBus.detailHPGeHV[i] = Math.random();
-        }
-        for(i=0; i<16*20; i++){
-            this.dataBus.detailBGOthreshold[i] = Math.random();
-            this.dataBus.detailBGOrate[i] = Math.random();
-        }
-        for(i=0; i<16*40; i++){
-            this.dataBus.detailBGOHV[i] = Math.random();        
-        }
-
+        this.fetchHPGeData();
     };
-
-
 
     //do an initial populate
     this.update();

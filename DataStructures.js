@@ -43,6 +43,120 @@ HVBarDS = function(){
     this.barChartAlarms = [];
 }
 
+function GRIFFINclover(nClovers){
+	this.colorQuads = ['G', 'B', 'W', 'R'];
+	this.HPGe = {};
+	for(i=1; i<1+nClovers; i++){
+		//loop over quadrants
+		for(j=0; j<4; j++){
+			this.HPGe['GRG'+( (i<10) ? '0'+i : i)+this.colorQuads[j]+'N00A'] = {
+				'HV'		: 500*j,		//note both A and B carry the same HV for GRIFFIN style HPGe
+				'threshold' : 500,
+				'rate'		: 1000,
+				'index'     : 2*j+30*(i-1),
+
+				'oldHVcolor' : '#000000',
+				'HVcolor'	 : '#000000',
+				'oldThresholdColor' : '#000000',
+				'thresholdColor' : '#000000',
+				'oldRateColor' : '#000000',
+				'rateColor' : '#000000'				
+			}
+			this.HPGe['GRG'+( (i<10) ? '0'+i : i)+this.colorQuads[j]+'N00B'] = {
+				'HV'		: 500*j,		//note both A and B carry the same HV for GRIFFIN style HPGe
+				'threshold' : 500,
+				'rate'		: 1000,
+				'index'		: 2*j+1+30*(i-1),
+
+				'oldHVcolor' : '#000000',
+				'HVcolor'	 : '#000000',
+				'oldThresholdColor' : '#000000',
+				'thresholdColor' : '#000000',
+				'oldRateColor' : '#000000',
+				'rateColor' : '#000000'				
+			}
+		}
+
+		//BGO channels
+		var ID;
+		//loop over quadrants
+		for(j=0; j<4; j++){
+			//five BGO segments in each quadrant: front, front, side, side, back
+			for(k=1; k<6; k++){
+				if(k==1) ID = 20+2*j;	//front suppressors
+				if(k==2) ID = 21+2*j;
+				if(k==3) ID = 12+2*j;	//side suppressors
+				if(k==4) ID = 13+2*j;
+				if(k==5) ID = 8+j; 		//back suppressors
+				this.HPGe['GRS'+( (i<10) ? '0'+i : i)+this.colorQuads[j]+'N0'+k+'X'] = {
+				'HVA'		: 1000,		//each rate channel has two HV hookups.
+				'HVB'		: 2000,
+				'threshold' : 500,
+				'rate'		: 1000*i+100*j+10*k,
+				'index'		: ID+30*(i-1),
+
+				'oldHVAcolor' : '#000000',
+				'HVAcolor'	 : '#000000',
+				'oldHVBcolor' : '#000000',
+				'HVBcolor'	 : '#000000',				
+				'oldThresholdColor' : '#000000',
+				'thresholdColor' : '#000000',
+				'oldRateColor' : '#000000',
+				'rateColor' : '#000000'					
+				}
+			}
+		}
+
+	}
+
+	//invert the index map for the TT:
+	this.HPGeTTmap = [];
+	for(key in this.HPGe){
+		this.HPGeTTmap[this.HPGe[key].index] = key;
+	}
+
+	this.summary = {};
+	for(i=1; i<1+nClovers; i++){
+		//HPGe summaries
+		for(j=0; j<4; j++){
+			this.summary['GRG'+( (i<10) ? '0'+i : i)+this.colorQuads[j]] = {
+				'clover' : i,
+				'quadrant' : j,
+
+				'HV'		: 0,
+				'threshold' : 0,
+				'rate'		: 0,
+
+				'oldHVcolor' : '#000000',
+				'HVcolor'	 : '#000000',
+				'oldThresholdColor' : '#000000',
+				'thresholdColor' : '#000000',
+				'oldRateColor' : '#000000',
+				'rateColor' : '#000000'					
+			}
+		}
+
+		//BGO summaries
+		for(j=0; j<4; j++){
+			this.summary['GRS'+( (i<10) ? '0'+i : i)+this.colorQuads[j]] = {
+				'clover' : i,
+				'quadrant' : j,
+
+				'HV'		: 0,
+				'threshold' : 0,
+				'rate'		: 0,
+
+				'oldHVcolor' : '#000000',
+				'HVcolor'	 : '#000000',
+				'oldThresholdColor' : '#000000',
+				'thresholdColor' : '#000000',
+				'oldRateColor' : '#000000',
+				'rateColor' : '#000000'					
+			}			
+		}
+	}
+}
+
 SHARCDS = function(){
 	//data arrays:
 	this.HV = [];
@@ -53,22 +167,9 @@ SHARCDS = function(){
 	//todo
 }
 
-HPGeDS = function(){
-	//data arrays:
-	this.summaryHPGeHV = [];
-	this.summaryHPGethreshold = [];
-	this.summaryHPGerate = [];
-	this.summaryBGOHV = [];
-	this.summaryBGOthreshold = [];
-	this.summaryBGOrate = [];
-
-	this.detailHPGeHV = [];
-	this.detailHPGethreshold = [];
-	this.detailHPGerate = [];
-	this.detailBGOHV = [];
-	this.detailBGOthreshold = [];
-	this.detailBGOrate = [];
-
+HPGeDS = function(mode){
+	if(mode == 'GRIFFIN')
+		GRIFFINclover.call(this, 16);
 }
 
 DESCANTDS = function(){
@@ -226,130 +327,8 @@ TIPDS = function(){
 		this.CsIwallTTmap[this.CsIwall[key].index] = key;
 	}
 
-	this.colorQuads = ['G', 'B', 'W', 'R'];
-	this.HPGe = {};
-	for(i=1; i<4; i++){
-		//loop over quadrants
-		for(j=0; j<4; j++){
-			this.HPGe['GRG0'+i+this.colorQuads[j]+'N00A'] = {
-				'HV'		: 500*j,		//note both A and B carry the same HV for GRIFFIN style HPGe
-				'threshold' : 500,
-				'rate'		: 1000,
-				'index'     : 2*j+30*(i-1),
+	GRIFFINclover.call(this, 3);
 
-				'oldHVcolor' : '#000000',
-				'HVcolor'	 : '#000000',
-				'oldThresholdColor' : '#000000',
-				'thresholdColor' : '#000000',
-				'oldRateColor' : '#000000',
-				'rateColor' : '#000000'				
-			}
-			this.HPGe['GRG0'+i+this.colorQuads[j]+'N00B'] = {
-				'HV'		: 500*j,		//note both A and B carry the same HV for GRIFFIN style HPGe
-				'threshold' : 500,
-				'rate'		: 1000,
-				'index'		: 2*j+1+30*(i-1),
-
-				'oldHVcolor' : '#000000',
-				'HVcolor'	 : '#000000',
-				'oldThresholdColor' : '#000000',
-				'thresholdColor' : '#000000',
-				'oldRateColor' : '#000000',
-				'rateColor' : '#000000'				
-			}
-		}
-
-		//BGO channels
-		var ID;
-		//loop over quadrants
-		for(j=0; j<4; j++){
-			//five BGO segments in each quadrant: front, front, side, side, back
-			for(k=1; k<6; k++){
-				if(k==1) ID = 20+2*j;	//front suppressors
-				if(k==2) ID = 21+2*j;
-				if(k==3) ID = 12+2*j;	//side suppressors
-				if(k==4) ID = 13+2*j;
-				if(k==5) ID = 8+j; 		//back suppressors
-				this.HPGe['GRS0'+i+this.colorQuads[j]+'N0'+k+'X'] = {
-				'HVA'		: 1000,		//each rate channel has two HV hookups.
-				'HVB'		: 2000,
-				'threshold' : 500,
-				'rate'		: 1000*i+100*j+10*k,
-				'index'		: ID+30*(i-1),
-
-				'oldHVAcolor' : '#000000',
-				'HVAcolor'	 : '#000000',
-				'oldHVBcolor' : '#000000',
-				'HVBcolor'	 : '#000000',				
-				'oldThresholdColor' : '#000000',
-				'thresholdColor' : '#000000',
-				'oldRateColor' : '#000000',
-				'rateColor' : '#000000'					
-				}
-			}
-		}
-
-	}
-
-	//invert the index map for the TT:
-	this.HPGeTTmap = [];
-	for(key in this.HPGe){
-		this.HPGeTTmap[this.HPGe[key].index] = key;
-	}
-
-	this.summary = {};
-	for(i=1; i<4; i++){
-		//HPGe summaries
-		for(j=0; j<4; j++){
-			this.summary['GRG0'+i+this.colorQuads[j]] = {
-				'clover' : i,
-				'quadrant' : j,
-				'index' : 100 + i*8 + j,
-
-				'HV'		: 0,
-				'threshold' : 0,
-				'rate'		: 0,
-
-				'oldHVcolor' : '#000000',
-				'HVcolor'	 : '#000000',
-				'oldThresholdColor' : '#000000',
-				'thresholdColor' : '#000000',
-				'oldRateColor' : '#000000',
-				'rateColor' : '#000000'					
-			}
-		}
-
-		//BGO summaries
-		for(j=0; j<4; j++){
-			this.summary['GRS0'+i+this.colorQuads[j]] = {
-				'clover' : i,
-				'quadrant' : j,
-				//'index' : 100 + i*8 + j,
-
-				'HV'		: 0,
-				'threshold' : 0,
-				'rate'		: 0,
-
-				'oldHVcolor' : '#000000',
-				'HVcolor'	 : '#000000',
-				'oldThresholdColor' : '#000000',
-				'thresholdColor' : '#000000',
-				'oldRateColor' : '#000000',
-				'rateColor' : '#000000'					
-			}			
-		}
-	}
-
-
-	//validation
-	this.HPGe['GRG01GN00A'].rate = 2000;
-	this.HPGe['GRG01BN00A'].rate = 4000;
-	this.HPGe['GRG01RN00A'].rate = 6000;
-	this.HPGe['GRG01WN00A'].rate = 8000;
-	this.HPGe['GRG01GN00B'].rate = 2000;
-	this.HPGe['GRG01BN00B'].rate = 4000;
-	this.HPGe['GRG01RN00B'].rate = 6000;
-	this.HPGe['GRG01WN00B'].rate = 8000;
 }
 
 
