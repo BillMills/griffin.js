@@ -183,7 +183,7 @@ TIPDS = function(){
 	for(i=1; i<25; i++){
 		var name = (i<10) ? 'TPW00'+i+'P00X' : 'TPW0'+i+'P00X';
 		this.CsIwall[name] = {
-			'HV'		: 0,
+			'HV'		: 0.3,
 			'threshold' : 500,
 			'rate' 		: 100*i,
 
@@ -247,7 +247,7 @@ TIPDS = function(){
 				'rateColor' : '#000000'				
 			}
 			this.HPGe['GRG0'+i]['GRG0'+i+this.colorQuads[j]+'N00B'] = {
-				'HV'		: 0,		//note both A and B carry the same HV for GRIFFIN style HPGe
+				'HV'		: 500*j,		//note both A and B carry the same HV for GRIFFIN style HPGe
 				'threshold' : 500,
 				'rate'		: 1000,
 				'index'		: 2*j+1+30*(i-1),
@@ -313,8 +313,8 @@ TIPDS = function(){
 				'index' : 100 + i*8 + j,
 
 				'HV'		: 0,
-				'threshold' : 500,
-				'rate'		: 1000,
+				'threshold' : 0,
+				'rate'		: 0,
 
 				'oldHVcolor' : '#000000',
 				'HVcolor'	 : '#000000',
@@ -334,8 +334,8 @@ TIPDS = function(){
 				//'index' : 100 + i*8 + j,
 
 				'HV'		: 0,
-				'threshold' : 500,
-				'rate'		: 1000,
+				'threshold' : 0,
+				'rate'		: 0,
 
 				'oldHVcolor' : '#000000',
 				'HVcolor'	 : '#000000',

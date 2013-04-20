@@ -201,6 +201,11 @@ function Subsystem(){
 
 
 
+
+
+
+
+
 //another object to inject into subsystems that need a detail-level view:
 function DetailView(){
     var that = this;
@@ -267,6 +272,9 @@ function DetailView(){
         this.drawDetail(this.TTdetailContext, this.nFrames);
     };
 }
+
+
+
 
 
 
