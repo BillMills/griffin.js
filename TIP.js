@@ -162,12 +162,12 @@ function TIP(){
                     //report segment A:
                     nextLine = segA;
                     toolTipContent = '<br>' + nextLine + '<br>';
-                    toolTipContent += this.baseTTtext(this.dataBus.HPGe[cloverName][segA].HV, this.dataBus.HPGe[cloverName][segA].threshold, this.dataBus.HPGe[cloverName][segA].rate)
+                    toolTipContent += this.baseTTtext(this.dataBus.HPGe[segA].HV, this.dataBus.HPGe[segA].threshold, this.dataBus.HPGe[segA].rate)
 
                     //report segment B:
                     nextLine = segB;
                     toolTipContent += '<br><br>' + nextLine + '<br>';
-                    toolTipContent += this.baseTTtext(this.dataBus.HPGe[cloverName][segA].HV, this.dataBus.HPGe[cloverName][segB].threshold, this.dataBus.HPGe[cloverName][segB].rate)
+                    toolTipContent += this.baseTTtext(this.dataBus.HPGe[segA].HV, this.dataBus.HPGe[segB].threshold, this.dataBus.HPGe[segB].rate)
         
                 //BGO 
                 } else {
@@ -176,7 +176,7 @@ function TIP(){
                     for(i=1; i<6; i++){
                         BGO[i] = cloverName+this.dataBus.colorQuads[quadrant]+'N0'+i+'X';
                         toolTipContent += '<br><br>' + BGO[i] + '<br>';
-                        toolTipContent += this.baseTTtext(this.dataBus.HPGe[cloverName][BGO[i]].HVA, this.dataBus.HPGe[cloverName][BGO[i]].threshold, this.dataBus.HPGe[cloverName][BGO[i]].rate, this.dataBus.HPGe[cloverName][BGO[i]].HVB);
+                        toolTipContent += this.baseTTtext(this.dataBus.HPGe[BGO[i]].HVA, this.dataBus.HPGe[BGO[i]].threshold, this.dataBus.HPGe[BGO[i]].rate, this.dataBus.HPGe[BGO[i]].HVB);
                     }
                     toolTipContent += '<br>';
                 }
@@ -192,7 +192,7 @@ function TIP(){
                 if(cell<4){
                     detName = 'GRG0'+this.cloverShowing+this.dataBus.colorQuads[cell]+'N00A';
                     title = detName.slice(0,9) + 'X';
-                    nextLine = this.TTtext([['HV',this.dataBus.HPGe[detName.slice(0,5)][detName].HV,window.parameters.subdetectorUnit[0]],['Thresholds-A',this.dataBus.HPGe[detName.slice(0,5)][detName].threshold,window.parameters.subdetectorUnit[1]],['Thresholds-B',this.dataBus.HPGe[detName.slice(0,5)][detName.slice(0,9)+'B'].threshold,window.parameters.subdetectorUnit[1]],['Rate-A',this.dataBus.HPGe[detName.slice(0,5)][detName].rate,window.parameters.subdetectorUnit[2]],['Rate-B',this.dataBus.HPGe[detName.slice(0,5)][detName.slice(0,9)+'B'].rate,window.parameters.subdetectorUnit[2]]]);
+                    nextLine = this.TTtext([['HV',this.dataBus.HPGe[detName].HV,window.parameters.subdetectorUnit[0]],['Thresholds-A',this.dataBus.HPGe[detName].threshold,window.parameters.subdetectorUnit[1]],['Thresholds-B',this.dataBus.HPGe[detName.slice(0,9)+'B'].threshold,window.parameters.subdetectorUnit[1]],['Rate-A',this.dataBus.HPGe[detName].rate,window.parameters.subdetectorUnit[2]],['Rate-B',this.dataBus.HPGe[detName.slice(0,9)+'B'].rate,window.parameters.subdetectorUnit[2]]]);
                 } else if(cell<12){ //back
                     detName = 'GRS0'+this.cloverShowing+this.dataBus.colorQuads[Math.floor((cell-4)/2)]+'N05X';
                 } else if(cell<28){ //sides
@@ -205,7 +205,7 @@ function TIP(){
                 if(cell>3){
                     ABX = (cell%2 == 0) ? 'A' : 'B';
                     title = detName.slice(0,9) + ABX;
-                    nextLine = this.baseTTtext(this.dataBus.HPGe[detName.slice(0,5)][detName]['HV'+ABX], this.dataBus.HPGe[detName.slice(0,5)][detName].threshold, this.dataBus.HPGe[detName.slice(0,5)][detName].rate );
+                    nextLine = this.baseTTtext(this.dataBus.HPGe[detName]['HV'+ABX], this.dataBus.HPGe[detName].threshold, this.dataBus.HPGe[detName].rate );
                 }
 
                 toolTipContent = '<br>' + title + '<br><br>' + nextLine;
@@ -216,9 +216,9 @@ function TIP(){
 
                 toolTipContent = '<br>' + channelName + '<br><br>';
                 if(detName.slice(2,3) == 'G')
-                    toolTipContent += this.baseTTtext(this.dataBus.HPGe[detName][channelName].HV, this.dataBus.HPGe[detName][channelName].threshold, this.dataBus.HPGe[detName][channelName].rate);
+                    toolTipContent += this.baseTTtext(this.dataBus.HPGe[channelName].HV, this.dataBus.HPGe[channelName].threshold, this.dataBus.HPGe[channelName].rate);
                 else if(detName.slice(2,3) == 'S')
-                    toolTipContent += this.baseTTtext(this.dataBus.HPGe[detName][channelName].HVA, this.dataBus.HPGe[detName][channelName].threshold, this.dataBus.HPGe[detName][channelName].rate, this.dataBus.HPGe[detName][channelName].HVB);
+                    toolTipContent += this.baseTTtext(this.dataBus.HPGe[channelName].HVA, this.dataBus.HPGe[channelName].threshold, this.dataBus.HPGe[channelName].rate, this.dataBus.HPGe[channelName].HVB);
             }
 
         }
@@ -255,42 +255,36 @@ function TIP(){
         //HPGe + BGO
         //summary level
         for(key in this.dataBus.summary){
-            for(subKey in this.dataBus.summary[key]){
 
-                detType = (key[2] == 'G') ? 'HPGe' : 'BGO';
+            detType = (key[2] == 'G') ? 'HPGe' : 'BGO';
 
-                this.dataBus.summary[key][subKey].oldHVcolor = this.dataBus.summary[key][subKey].HVcolor;
-                this.dataBus.summary[key][subKey].HVcolor = this.parseColor(this.dataBus.summary[key][subKey].HV, detType);
-                this.dataBus.summary[key][subKey].oldThresholdColor = this.dataBus.summary[key][subKey].thresholdColor;
-                this.dataBus.summary[key][subKey].thresholdColor = this.parseColor(this.dataBus.summary[key][subKey].threshold, detType);
-                this.dataBus.summary[key][subKey].oldRateColor = this.dataBus.summary[key][subKey].rateColor;
-                this.dataBus.summary[key][subKey].rateColor = this.parseColor(this.dataBus.summary[key][subKey].rate, detType);
-            }
+            this.dataBus.summary[key].oldHVcolor = this.dataBus.summary[key].HVcolor;
+            this.dataBus.summary[key].HVcolor = this.parseColor(this.dataBus.summary[key].HV, detType);
+            this.dataBus.summary[key].oldThresholdColor = this.dataBus.summary[key].thresholdColor;
+            this.dataBus.summary[key].thresholdColor = this.parseColor(this.dataBus.summary[key].threshold, detType);
+            this.dataBus.summary[key].oldRateColor = this.dataBus.summary[key].rateColor;
+            this.dataBus.summary[key].rateColor = this.parseColor(this.dataBus.summary[key].rate, detType);
         }
         
 
         //detail level
-        //loop over detectors
+        //loop over detector elements
         for(key in this.dataBus.HPGe){
-            //loop over detector elements
-            for(subKey in this.dataBus.HPGe[key]){
+            detType = (key[2] == 'G') ? 'HPGe' : 'BGO';
 
-                detType = (key[2] == 'G') ? 'HPGe' : 'BGO';
-
-                if(detType == 'HPGe'){
-                    this.dataBus.HPGe[key][subKey].oldHVcolor = this.dataBus.HPGe[key][subKey].HVcolor;
-                    this.dataBus.HPGe[key][subKey].HVcolor = this.parseColor(this.dataBus.HPGe[key][subKey].HV, detType);                    
-                } else{
-                    this.dataBus.HPGe[key][subKey].oldHVAcolor = this.dataBus.HPGe[key][subKey].HVAcolor;
-                    this.dataBus.HPGe[key][subKey].HVAcolor = this.parseColor(this.dataBus.HPGe[key][subKey].HVA, detType);
-                    this.dataBus.HPGe[key][subKey].oldHVBcolor = this.dataBus.HPGe[key][subKey].HVBcolor;
-                    this.dataBus.HPGe[key][subKey].HVBcolor = this.parseColor(this.dataBus.HPGe[key][subKey].HVB,detType);
-                }
-                this.dataBus.HPGe[key][subKey].oldThresholdColor = this.dataBus.HPGe[key][subKey].thresholdColor;
-                this.dataBus.HPGe[key][subKey].thresholdColor = this.parseColor(this.dataBus.HPGe[key][subKey].threshold, detType);
-                this.dataBus.HPGe[key][subKey].oldRateColor = this.dataBus.HPGe[key][subKey].rateColor;
-                this.dataBus.HPGe[key][subKey].rateColor = this.parseColor(this.dataBus.HPGe[key][subKey].rate, detType);
+            if(detType == 'HPGe'){
+                this.dataBus.HPGe[key].oldHVcolor = this.dataBus.HPGe[key].HVcolor;
+                this.dataBus.HPGe[key].HVcolor = this.parseColor(this.dataBus.HPGe[key].HV, detType);                    
+            } else{
+                this.dataBus.HPGe[key].oldHVAcolor = this.dataBus.HPGe[key].HVAcolor;
+                this.dataBus.HPGe[key].HVAcolor = this.parseColor(this.dataBus.HPGe[key].HVA, detType);
+                this.dataBus.HPGe[key].oldHVBcolor = this.dataBus.HPGe[key].HVBcolor;
+                this.dataBus.HPGe[key].HVBcolor = this.parseColor(this.dataBus.HPGe[key].HVB,detType);
             }
+            this.dataBus.HPGe[key].oldThresholdColor = this.dataBus.HPGe[key].thresholdColor;
+            this.dataBus.HPGe[key].thresholdColor = this.parseColor(this.dataBus.HPGe[key].threshold, detType);
+            this.dataBus.HPGe[key].oldRateColor = this.dataBus.HPGe[key].rateColor;
+            this.dataBus.HPGe[key].rateColor = this.parseColor(this.dataBus.HPGe[key].rate, detType);
         }
        
         this.tooltip.update();
@@ -310,35 +304,32 @@ function TIP(){
                 this.dataBus.CsIwall[key]['rate']      = window.JSONPstore['scalar'][key]['rate'];
         }
         
-        //HPGe + BGO
+        //HPGe + BGO detail
         for(key in this.dataBus.HPGe){
-            //detail
-            for(subKey in this.dataBus.HPGe[key]){
-                if(window.JSONPstore['parameters'])
-                    this.dataBus.HPGe[key][subKey]['threshold'] = window.JSONPstore['parameters'][subKey]['threshold'];
-                if(window.JSONPstore['scalar'])
-                    this.dataBus.HPGe[key][subKey]['rate'] = window.JSONPstore['scalar'][subKey]['rate'];
+            if(window.JSONPstore['parameters'])
+                this.dataBus.HPGe[key]['threshold'] = window.JSONPstore['parameters'][key]['threshold'];
+            if(window.JSONPstore['scalar'])
+                this.dataBus.HPGe[key]['rate'] = window.JSONPstore['scalar'][key]['rate'];            
+        }
 
-            }
-
+        //HPGe + BGO summary
+        for(key in this.dataBus.summary){
             //summary            
             for(i=0; i<4; i++){
-                summaryKey = key + this.dataBus.colorQuads[i];
                 if(key[2] == 'G'){
-                    this.dataBus.summary[key][summaryKey].HV = this.dataBus.HPGe[key][summaryKey+'N00A']['HV']
-                    this.dataBus.summary[key][summaryKey].threshold = (this.dataBus.HPGe[key][summaryKey+'N00A']['threshold'] + this.dataBus.HPGe[key][summaryKey+'N00B']['threshold'])/2;
-                    this.dataBus.summary[key][summaryKey].rate = (this.dataBus.HPGe[key][summaryKey+'N00A']['rate'] + this.dataBus.HPGe[key][summaryKey+'N00B']['rate'])/2;
+                    this.dataBus.summary[key].HV = this.dataBus.HPGe[key+'N00A']['HV']
+                    this.dataBus.summary[key].threshold = (this.dataBus.HPGe[key+'N00A']['threshold'] + this.dataBus.HPGe[key+'N00B']['threshold'])/2;
+                    this.dataBus.summary[key].rate = (this.dataBus.HPGe[key+'N00A']['rate'] + this.dataBus.HPGe[key+'N00B']['rate'])/2;
                 } else if(key[2] == 'S'){
-                    this.dataBus.summary[key][summaryKey].HV = 0;
+                    this.dataBus.summary[key].HV = 0;
                     for(j=1; j<6; j++){
-                        this.dataBus.summary[key][summaryKey].HV += this.dataBus.HPGe[key][summaryKey+'N0'+j+'A'] / 10;
-                        this.dataBus.summary[key][summaryKey].HV += this.dataBus.HPGe[key][summaryKey+'N0'+j+'A'] / 10;
+                        this.dataBus.summary[key].HV += this.dataBus.HPGe[key+'N0'+j+'A'] / 10;
+                        this.dataBus.summary[key].HV += this.dataBus.HPGe[key+'N0'+j+'B'] / 10;
                     }
-                    this.dataBus.summary[key][summaryKey].threshold = (this.dataBus.HPGe[key][summaryKey+'N01X']['threshold'] + this.dataBus.HPGe[key][summaryKey+'N02X']['threshold'] + this.dataBus.HPGe[key][summaryKey+'N03X']['threshold'] + this.dataBus.HPGe[key][summaryKey+'N04X']['threshold'] + this.dataBus.HPGe[key][summaryKey+'N05X']['threshold'])/5;
-                    this.dataBus.summary[key][summaryKey].rate = (this.dataBus.HPGe[key][summaryKey+'N01X']['rate'] + this.dataBus.HPGe[key][summaryKey+'N02X']['rate'] + this.dataBus.HPGe[key][summaryKey+'N03X']['rate'] + this.dataBus.HPGe[key][summaryKey+'N04X']['rate'] + this.dataBus.HPGe[key][summaryKey+'N05X']['rate'])/5;
+                    this.dataBus.summary[key].threshold = (this.dataBus.HPGe[key+'N01X']['threshold'] + this.dataBus.HPGe[key+'N02X']['threshold'] + this.dataBus.HPGe[key+'N03X']['threshold'] + this.dataBus.HPGe[key+'N04X']['threshold'] + this.dataBus.HPGe[key+'N05X']['threshold'])/5;
+                    this.dataBus.summary[key].rate = (this.dataBus.HPGe[key+'N01X']['rate'] + this.dataBus.HPGe[key+'N02X']['rate'] + this.dataBus.HPGe[key+'N03X']['rate'] + this.dataBus.HPGe[key+'N04X']['rate'] + this.dataBus.HPGe[key+'N05X']['rate'])/5;
                 }
             }
-            
         }
         
     };

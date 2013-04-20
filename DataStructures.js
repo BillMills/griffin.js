@@ -229,11 +229,9 @@ TIPDS = function(){
 	this.colorQuads = ['G', 'B', 'W', 'R'];
 	this.HPGe = {};
 	for(i=1; i<4; i++){
-		//HPGE channels
-		this.HPGe['GRG0'+i] = {};
 		//loop over quadrants
 		for(j=0; j<4; j++){
-			this.HPGe['GRG0'+i]['GRG0'+i+this.colorQuads[j]+'N00A'] = {
+			this.HPGe['GRG0'+i+this.colorQuads[j]+'N00A'] = {
 				'HV'		: 500*j,		//note both A and B carry the same HV for GRIFFIN style HPGe
 				'threshold' : 500,
 				'rate'		: 1000,
@@ -246,7 +244,7 @@ TIPDS = function(){
 				'oldRateColor' : '#000000',
 				'rateColor' : '#000000'				
 			}
-			this.HPGe['GRG0'+i]['GRG0'+i+this.colorQuads[j]+'N00B'] = {
+			this.HPGe['GRG0'+i+this.colorQuads[j]+'N00B'] = {
 				'HV'		: 500*j,		//note both A and B carry the same HV for GRIFFIN style HPGe
 				'threshold' : 500,
 				'rate'		: 1000,
@@ -263,7 +261,6 @@ TIPDS = function(){
 
 		//BGO channels
 		var ID;
-		this.HPGe['GRS0'+i] = {};
 		//loop over quadrants
 		for(j=0; j<4; j++){
 			//five BGO segments in each quadrant: front, front, side, side, back
@@ -273,7 +270,7 @@ TIPDS = function(){
 				if(k==3) ID = 12+2*j;	//side suppressors
 				if(k==4) ID = 13+2*j;
 				if(k==5) ID = 8+j; 		//back suppressors
-				this.HPGe['GRS0'+i]['GRS0'+i+this.colorQuads[j]+'N0'+k+'X'] = {
+				this.HPGe['GRS0'+i+this.colorQuads[j]+'N0'+k+'X'] = {
 				'HVA'		: 1000,		//each rate channel has two HV hookups.
 				'HVB'		: 2000,
 				'threshold' : 500,
@@ -297,17 +294,14 @@ TIPDS = function(){
 	//invert the index map for the TT:
 	this.HPGeTTmap = [];
 	for(key in this.HPGe){
-		for(subKey in this.HPGe[key]){
-			this.HPGeTTmap[this.HPGe[key][subKey].index] = subKey;
-		}
+		this.HPGeTTmap[this.HPGe[key].index] = key;
 	}
 
 	this.summary = {};
 	for(i=1; i<4; i++){
 		//HPGe summaries
-		this.summary['GRG0'+i] = {};
 		for(j=0; j<4; j++){
-			this.summary['GRG0'+i]['GRG0'+i+this.colorQuads[j]] = {
+			this.summary['GRG0'+i+this.colorQuads[j]] = {
 				'clover' : i,
 				'quadrant' : j,
 				'index' : 100 + i*8 + j,
@@ -326,9 +320,8 @@ TIPDS = function(){
 		}
 
 		//BGO summaries
-		this.summary['GRS0'+i] = {};
 		for(j=0; j<4; j++){
-			this.summary['GRS0'+i]['GRS0'+i+this.colorQuads[j]] = {
+			this.summary['GRS0'+i+this.colorQuads[j]] = {
 				'clover' : i,
 				'quadrant' : j,
 				//'index' : 100 + i*8 + j,
@@ -349,14 +342,14 @@ TIPDS = function(){
 
 
 	//validation
-	this.HPGe['GRG01']['GRG01GN00A'].rate = 2000;
-	this.HPGe['GRG01']['GRG01BN00A'].rate = 4000;
-	this.HPGe['GRG01']['GRG01RN00A'].rate = 6000;
-	this.HPGe['GRG01']['GRG01WN00A'].rate = 8000;
-	this.HPGe['GRG01']['GRG01GN00B'].rate = 2000;
-	this.HPGe['GRG01']['GRG01BN00B'].rate = 4000;
-	this.HPGe['GRG01']['GRG01RN00B'].rate = 6000;
-	this.HPGe['GRG01']['GRG01WN00B'].rate = 8000;
+	this.HPGe['GRG01GN00A'].rate = 2000;
+	this.HPGe['GRG01BN00A'].rate = 4000;
+	this.HPGe['GRG01RN00A'].rate = 6000;
+	this.HPGe['GRG01WN00A'].rate = 8000;
+	this.HPGe['GRG01GN00B'].rate = 2000;
+	this.HPGe['GRG01BN00B'].rate = 4000;
+	this.HPGe['GRG01RN00B'].rate = 6000;
+	this.HPGe['GRG01WN00B'].rate = 8000;
 }
 
 

@@ -414,28 +414,29 @@ function HPGeAssets(){
     };
 
     this.drawHPGesummary = function(context, x0,y0, cloverSummaryKey, frame){
-        var key, i, iprime;
+        var key, i, q, iprime;
         var color1, color2, fillColor;
 
-        for(key in this.dataBus.summary[cloverSummaryKey]){
-            i = this.dataBus.summary[cloverSummaryKey][key].quadrant;
+        for(q=0; q<4; q++){
+            key = cloverSummaryKey + this.dataBus.colorQuads[q];
+            i = this.dataBus.summary[key].quadrant;
             if(i==3) i = 2;
             else if(i==2) i = 3;
             if(key[2] == 'G'){
                 //HPGE
                 if(context == this.TTcontext){
-                    iprime = 100+this.dataBus.summary[cloverSummaryKey][key].clover*8+i;
+                    iprime = 100+this.dataBus.summary[key].clover*8+i;
                     context.fillStyle = 'rgba('+iprime+','+iprime+','+iprime+',1)';
                 } else{
                     if(window.subdetectorView == 0){
-                        color1 = parseHexColor(this.dataBus.summary[cloverSummaryKey][key].oldHVcolor);
-                        color2 = parseHexColor(this.dataBus.summary[cloverSummaryKey][key].HVcolor);
+                        color1 = parseHexColor(this.dataBus.summary[key].oldHVcolor);
+                        color2 = parseHexColor(this.dataBus.summary[key].HVcolor);
                     } else if(window.subdetectorView == 1){
-                        color1 = parseHexColor(this.dataBus.summary[cloverSummaryKey][key].oldThresholdColor);
-                        color2 = parseHexColor(this.dataBus.summary[cloverSummaryKey][key].thresholdColor);
+                        color1 = parseHexColor(this.dataBus.summary[key].oldThresholdColor);
+                        color2 = parseHexColor(this.dataBus.summary[key].thresholdColor);
                     } else if(window.subdetectorView == 2){
-                        color1 = parseHexColor(this.dataBus.summary[cloverSummaryKey][key].oldRateColor);
-                        color2 = parseHexColor(this.dataBus.summary[cloverSummaryKey][key].rateColor);
+                        color1 = parseHexColor(this.dataBus.summary[key].oldRateColor);
+                        color2 = parseHexColor(this.dataBus.summary[key].rateColor);
                     }
                     context.fillStyle = interpolateColor(color1, color2, frame/this.nFrames);
                 }
@@ -452,18 +453,18 @@ function HPGeAssets(){
                 else if(i==3) rotation = Math.PI;
                 var color = '#999999';
                 if(context == this.TTcontext){
-                    iprime = 100+this.dataBus.summary[cloverSummaryKey][key].clover*8+i+4;
+                    iprime = 100+this.dataBus.summary[key].clover*8+i+4;
                     fillColor = 'rgba('+iprime+','+iprime+','+iprime+',1)';
                 } else{
                     if(window.subdetectorView == 0){
-                        color1 = parseHexColor(this.dataBus.summary[cloverSummaryKey][key].oldHVcolor);
-                        color2 = parseHexColor(this.dataBus.summary[cloverSummaryKey][key].HVcolor);
+                        color1 = parseHexColor(this.dataBus.summary[key].oldHVcolor);
+                        color2 = parseHexColor(this.dataBus.summary[key].HVcolor);
                     } else if(window.subdetectorView == 1){
-                        color1 = parseHexColor(this.dataBus.summary[cloverSummaryKey][key].oldThresholdColor);
-                        color2 = parseHexColor(this.dataBus.summary[cloverSummaryKey][key].thresholdColor);
+                        color1 = parseHexColor(this.dataBus.summary[key].oldThresholdColor);
+                        color2 = parseHexColor(this.dataBus.summary[key].thresholdColor);
                     } else if(window.subdetectorView == 2){
-                        color1 = parseHexColor(this.dataBus.summary[cloverSummaryKey][key].oldRateColor);
-                        color2 = parseHexColor(this.dataBus.summary[cloverSummaryKey][key].rateColor);
+                        color1 = parseHexColor(this.dataBus.summary[key].oldRateColor);
+                        color2 = parseHexColor(this.dataBus.summary[key].rateColor);
                     }
                     fillColor = interpolateColor(color1, color2, frame/this.nFrames);
                 }
@@ -471,7 +472,6 @@ function HPGeAssets(){
                 this.drawL(context, rotation, Math.round((this.BGOouter - this.BGOinner)/2), Math.round(this.BGOouter/2), Math.round(x0 + (this.BGOouter+this.lineWeight)*(i%2)), Math.round(y0 + (this.BGOouter+this.lineWeight)*(i>>1)), color, fillColor);
             }
         }
-
     };
 
     this.drawDetail = function(context, frame){
@@ -519,7 +519,7 @@ function HPGeAssets(){
             if(HPGestate == 0){
                 
                 if(context == this.detailContext){
-                    fillColor  =  interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeName][HPGeKey+'N00A'].oldHVcolor), parseHexColor(this.dataBus.HPGe[HPGeName][HPGeKey+'N00A'].HVcolor), frame/this.nFrames);
+                    fillColor  =  interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeKey+'N00A'].oldHVcolor), parseHexColor(this.dataBus.HPGe[HPGeKey+'N00A'].HVcolor), frame/this.nFrames);
                 } else{
                     fillColor  = 'rgba('+i+', '+i+', '+i+', 1)';
                 }
@@ -575,12 +575,12 @@ function HPGeAssets(){
                     //cores
                     if(context == this.detailContext){
                         if(window.subdetectorView == 1){
-                            fillColor  = interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeName][HPGeKey+'N00A'].oldThresholdColor), parseHexColor(this.dataBus.HPGe[HPGeName][HPGeKey+'N00A'].thresholdColor), frame/this.nFrames );
-                            fillColor2 = interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeName][HPGeKey+'N00B'].oldThresholdColor), parseHexColor(this.dataBus.HPGe[HPGeName][HPGeKey+'N00B'].thresholdColor), frame/this.nFrames );
+                            fillColor  = interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeKey+'N00A'].oldThresholdColor), parseHexColor(this.dataBus.HPGe[HPGeKey+'N00A'].thresholdColor), frame/this.nFrames );
+                            fillColor2 = interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeKey+'N00B'].oldThresholdColor), parseHexColor(this.dataBus.HPGe[HPGeKey+'N00B'].thresholdColor), frame/this.nFrames );
                         }
                         else if(window.subdetectorView == 2){ 
-                            fillColor  = interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeName][HPGeKey+'N00A'].oldRateColor), parseHexColor(this.dataBus.HPGe[HPGeName][HPGeKey+'N00A'].rateColor), frame/this.nFrames );
-                            fillColor2 = interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeName][HPGeKey+'N00B'].oldRateColor), parseHexColor(this.dataBus.HPGe[HPGeName][HPGeKey+'N00B'].rateColor), frame/this.nFrames );
+                            fillColor  = interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeKey+'N00A'].oldRateColor), parseHexColor(this.dataBus.HPGe[HPGeKey+'N00A'].rateColor), frame/this.nFrames );
+                            fillColor2 = interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeKey+'N00B'].oldRateColor), parseHexColor(this.dataBus.HPGe[HPGeKey+'N00B'].rateColor), frame/this.nFrames );
                         }
                     } else {
                         fillColor  = 'rgba('+2*i+', '+2*i+', '+2*i+', 1)';
@@ -606,9 +606,9 @@ function HPGeAssets(){
 
                 //back suppressors
                 if(context == this.detailContext){
-                    if(window.subdetectorView == 0) fillColor  = interpolateColor(parseHexColor(this.dataBus.HPGe[BGOname][BGOkey+'N05X']['old'+HVchan+'color']), parseHexColor(this.dataBus.HPGe[BGOname][BGOkey+'N05X'][HVchan+'color']), frame/this.nFrames);
-                    else if(window.subdetectorView == 1) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[BGOname][BGOkey+'N05X'].oldThresholdColor), parseHexColor(this.dataBus.HPGe[BGOname][BGOkey+'N05X'].thresholdColor), frame/this.nFrames);
-                    else if(window.subdetectorView == 2) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[BGOname][BGOkey+'N05X'].oldRateColor), parseHexColor(this.dataBus.HPGe[BGOname][BGOkey+'N05X'].rateColor), frame/this.nFrames);
+                    if(window.subdetectorView == 0) fillColor  = interpolateColor(parseHexColor(this.dataBus.HPGe[BGOkey+'N05X']['old'+HVchan+'color']), parseHexColor(this.dataBus.HPGe[BGOkey+'N05X'][HVchan+'color']), frame/this.nFrames);
+                    else if(window.subdetectorView == 1) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[BGOkey+'N05X'].oldThresholdColor), parseHexColor(this.dataBus.HPGe[BGOkey+'N05X'].thresholdColor), frame/this.nFrames);
+                    else if(window.subdetectorView == 2) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[BGOkey+'N05X'].oldRateColor), parseHexColor(this.dataBus.HPGe[BGOkey+'N05X'].rateColor), frame/this.nFrames);
 
                 } else{
                     if(window.subdetectorView == 0){
@@ -627,11 +627,11 @@ function HPGeAssets(){
                 BGOsuffix = 'N0'+(3+j)+'X'; //side suppressors labeled -N03X and -N04X
                 if(context == this.detailContext){
                     if(window.subdetectorView == 0){
-                        fillColor  = interpolateColor(parseHexColor(this.dataBus.HPGe[BGOname][BGOkey+BGOsuffix].oldHVAcolor), parseHexColor(this.dataBus.HPGe[BGOname][BGOkey+BGOsuffix].HVAcolor), frame/this.nFrames);
-                        fillColor2 = interpolateColor(parseHexColor(this.dataBus.HPGe[BGOname][BGOkey+BGOsuffix].oldHVBcolor), parseHexColor(this.dataBus.HPGe[BGOname][BGOkey+BGOsuffix].HVBcolor), frame/this.nFrames);
+                        fillColor  = interpolateColor(parseHexColor(this.dataBus.HPGe[BGOkey+BGOsuffix].oldHVAcolor), parseHexColor(this.dataBus.HPGe[BGOkey+BGOsuffix].HVAcolor), frame/this.nFrames);
+                        fillColor2 = interpolateColor(parseHexColor(this.dataBus.HPGe[BGOkey+BGOsuffix].oldHVBcolor), parseHexColor(this.dataBus.HPGe[BGOkey+BGOsuffix].HVBcolor), frame/this.nFrames);
                     }
-                    else if(window.subdetectorView == 1) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[BGOname][BGOkey+BGOsuffix].oldThresholdColor), parseHexColor(this.dataBus.HPGe[BGOname][BGOkey+BGOsuffix].thresholdColor), frame/this.nFrames);
-                    else if(window.subdetectorView == 2) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[BGOname][BGOkey+BGOsuffix].oldRateColor), parseHexColor(this.dataBus.HPGe[BGOname][BGOkey+BGOsuffix].rateColor), frame/this.nFrames);
+                    else if(window.subdetectorView == 1) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[BGOkey+BGOsuffix].oldThresholdColor), parseHexColor(this.dataBus.HPGe[BGOkey+BGOsuffix].thresholdColor), frame/this.nFrames);
+                    else if(window.subdetectorView == 2) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[BGOkey+BGOsuffix].oldRateColor), parseHexColor(this.dataBus.HPGe[BGOkey+BGOsuffix].rateColor), frame/this.nFrames);
                 } else{
                     if(window.subdetectorView == 0){
                         fillColor  = 'rgba('+(4+8+4*i+2*j)+', '+(4+8+4*i+2*j)+', '+(4+8+4*i+2*j)+', 1)';
@@ -646,11 +646,11 @@ function HPGeAssets(){
                 BGOsuffix = 'N0'+(1+j)+'X'; //front suppressors labeled -N01X and -N02X
                 if(context == this.detailContext){
                     if(window.subdetectorView == 0){
-                        fillColor  = interpolateColor(parseHexColor(this.dataBus.HPGe[BGOname][BGOkey+BGOsuffix].oldHVAcolor), parseHexColor(this.dataBus.HPGe[BGOname][BGOkey+BGOsuffix].HVAcolor), frame/this.nFrames);
-                        fillColor2 = interpolateColor(parseHexColor(this.dataBus.HPGe[BGOname][BGOkey+BGOsuffix].oldHVBcolor), parseHexColor(this.dataBus.HPGe[BGOname][BGOkey+BGOsuffix].HVBcolor), frame/this.nFrames);
+                        fillColor  = interpolateColor(parseHexColor(this.dataBus.HPGe[BGOkey+BGOsuffix].oldHVAcolor), parseHexColor(this.dataBus.HPGe[BGOkey+BGOsuffix].HVAcolor), frame/this.nFrames);
+                        fillColor2 = interpolateColor(parseHexColor(this.dataBus.HPGe[BGOkey+BGOsuffix].oldHVBcolor), parseHexColor(this.dataBus.HPGe[BGOkey+BGOsuffix].HVBcolor), frame/this.nFrames);
                     }
-                    else if(window.subdetectorView == 1) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[BGOname][BGOkey+BGOsuffix].oldThresholdColor), parseHexColor(this.dataBus.HPGe[BGOname][BGOkey+BGOsuffix].thresholdColor), frame/this.nFrames);
-                    else if(window.subdetectorView == 2) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[BGOname][BGOkey+BGOsuffix].oldRateColor), parseHexColor(this.dataBus.HPGe[BGOname][BGOkey+BGOsuffix].rateColor), frame/this.nFrames);
+                    else if(window.subdetectorView == 1) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[BGOkey+BGOsuffix].oldThresholdColor), parseHexColor(this.dataBus.HPGe[BGOkey+BGOsuffix].thresholdColor), frame/this.nFrames);
+                    else if(window.subdetectorView == 2) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[BGOkey+BGOsuffix].oldRateColor), parseHexColor(this.dataBus.HPGe[BGOkey+BGOsuffix].rateColor), frame/this.nFrames);
                 } else{
                     if(window.subdetectorView == 0){
                         fillColor  = 'rgba('+(4+8+16+4*i+2*j)+', '+(4+8+16+4*i+2*j)+', '+(4+8+16+4*i+2*j)+', 1)';
