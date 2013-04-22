@@ -56,7 +56,7 @@ function cloverDS(nClovers, mode){
 				'HV'		: 500*j,		//note both A and B carry the same HV for GRIFFIN style HPGe
 				'threshold' : 500,
 				'rate'		: 1000,
-				'index'     : 2*j+30*(i-1),
+				'index'     : ((mode== 'TIGRESS')? 10:2)*j+((mode== 'TIGRESS')? 60:30)*(i-1),
 
 				'oldHVcolor' : '#000000',
 				'HVcolor'	 : '#000000',
@@ -69,7 +69,7 @@ function cloverDS(nClovers, mode){
 				'HV'		: 500*j,		//note both A and B carry the same HV for GRIFFIN style HPGe
 				'threshold' : 500,
 				'rate'		: 1000,
-				'index'		: 2*j+1+30*(i-1),
+				'index'		: ((mode== 'TIGRESS')? 10:2)*j+1+((mode== 'TIGRESS')? 60:30)*(i-1),
 
 				'oldHVcolor' : '#000000',
 				'HVcolor'	 : '#000000',
@@ -85,7 +85,7 @@ function cloverDS(nClovers, mode){
 						'HV'		: 500*k,
 						'threshold' : 500,
 						'rate'		: 1000,
-						'index'     : 2*j+30*(i-1),
+						'index'     : 10*j+1+k + 60*(i-1),
 
 						'oldHVcolor' : '#000000',
 						'HVcolor'	 : '#000000',
@@ -104,17 +104,17 @@ function cloverDS(nClovers, mode){
 		for(j=0; j<4; j++){
 			//five BGO segments in each quadrant: front, front, side, side, back
 			for(k=1; k<6; k++){
-				if(k==1) ID = 20+2*j;	//front suppressors
-				if(k==2) ID = 21+2*j;
-				if(k==3) ID = 12+2*j;	//side suppressors
-				if(k==4) ID = 13+2*j;
-				if(k==5) ID = 8+j; 		//back suppressors
+				if(k==1) ID = ((mode== 'TIGRESS')? 52:20)+2*j;	//front suppressors
+				if(k==2) ID = ((mode== 'TIGRESS')? 53:21)+2*j;
+				if(k==3) ID = ((mode== 'TIGRESS')? 44:12)+2*j;	//side suppressors
+				if(k==4) ID = ((mode== 'TIGRESS')? 45:13)+2*j;
+				if(k==5) ID = ((mode== 'TIGRESS')? 40:8)+j; 		//back suppressors
 				this.HPGe[pfx+'S'+( (i<10) ? '0'+i : i)+this.colorQuads[j]+'N0'+k+'X'] = {
 				'HVA'		: 1000,		//each rate channel has two HV hookups.
 				'HVB'		: 2000,
 				'threshold' : 500,
 				'rate'		: 1000*i+100*j+10*k,
-				'index'		: ID+30*(i-1),
+				'index'		: ID+((mode== 'TIGRESS')? 60:30)*(i-1),
 
 				'oldHVAcolor' : '#000000',
 				'HVAcolor'	 : '#000000',

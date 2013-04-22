@@ -809,10 +809,10 @@ function HPGeAssets(){
             //HV view decodes detector from cell index algorithmically; rate view uses lookup table from DataStructures.  Haven't decided which I dislike less.
             if(window.subdetectorView == 0){ 
                 toolTipContent = cell;
-                cloverName = 'GRS'+((this.cloverShowing<10) ? '0'+this.cloverShowing : this.cloverShowing);
+                cloverName = pfx+'S'+((this.cloverShowing<10) ? '0'+this.cloverShowing : this.cloverShowing);
                 //HPGe, front, side or back BGO?
                 if(cell<4){
-                    cloverName = 'GRG'+((this.cloverShowing<10) ? '0'+this.cloverShowing : this.cloverShowing);
+                    cloverName = pfx+'G'+((this.cloverShowing<10) ? '0'+this.cloverShowing : this.cloverShowing);
                     detName = cloverName+this.dataBus.colorQuads[cell]+'N00A';
                     title = detName.slice(0,9) + 'X';
                     nextLine = this.TTtext([['HV',this.dataBus.HPGe[detName].HV,window.parameters.subdetectorUnit[0]],['Thresholds-A',this.dataBus.HPGe[detName].threshold,window.parameters.subdetectorUnit[1]],['Thresholds-B',this.dataBus.HPGe[detName.slice(0,9)+'B'].threshold,window.parameters.subdetectorUnit[1]],['Rate-A',this.dataBus.HPGe[detName].rate,window.parameters.subdetectorUnit[2]],['Rate-B',this.dataBus.HPGe[detName.slice(0,9)+'B'].rate,window.parameters.subdetectorUnit[2]]]);
@@ -834,7 +834,7 @@ function HPGeAssets(){
                 toolTipContent = '<br>' + title + '<br><br>' + nextLine;
 
             } else {
-                channelName = this.dataBus.HPGeTTmap[(this.cloverShowing-1)*30 + cell];
+                channelName = this.dataBus.HPGeTTmap[(this.cloverShowing-1)*((this.mode=='TIGRESS')? 60:30) + cell];
                 detName = channelName.slice(0,5);
 
                 toolTipContent = '<br>' + channelName + '<br><br>';
@@ -842,6 +842,7 @@ function HPGeAssets(){
                     toolTipContent += this.baseTTtext(this.dataBus.HPGe[channelName].HV, this.dataBus.HPGe[channelName].threshold, this.dataBus.HPGe[channelName].rate);
                 else if(detName.slice(2,3) == 'S')
                     toolTipContent += this.baseTTtext(this.dataBus.HPGe[channelName].HVA, this.dataBus.HPGe[channelName].threshold, this.dataBus.HPGe[channelName].rate, this.dataBus.HPGe[channelName].HVB);
+                
             }
         }
 
