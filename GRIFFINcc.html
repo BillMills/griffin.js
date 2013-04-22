@@ -239,7 +239,7 @@
           document.getElementById('SidebarBKG').width = parseInt(($('#InputLayer').css('width')).slice(0,3));
         else
           document.getElementById('SidebarBKG').width = document.getElementById('LeftSidebarBKG').width; 
-        document.getElementById('SidebarBKG').height = renderHeight*0.9; //parseInt($('#InputLayer').css('height').slice(0,3));
+        document.getElementById('SidebarBKG').height = Math.max(renderHeight*0.9, 1.05*parseInt($('#'+window.HVpointer.sidebarID).css('height')) );
         tabBKG('SidebarBKG', 'right');
 
         //position right sidebar nicely:
