@@ -82,7 +82,7 @@ function cloverDS(nClovers, mode){
 			if(mode == 'TIGRESS'){
 				for(k=1; k<9; k++){
 					this.HPGe['TIG'+( (i<10) ? '0'+i : i)+this.colorQuads[j]+'P0'+k+'X'] = {
-						'HV'		: 500*k,
+						'HV'		: 500*j,
 						'threshold' : 500,
 						'rate'		: 1000,
 						'index'     : 10*j+1+k + 60*(i-1),

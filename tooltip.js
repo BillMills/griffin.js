@@ -22,6 +22,12 @@ function Tooltip(ttCanvasID, ttDivID, wrapperID, prefix, postfix){
 
     var that = this;
 
+    //suppresses some flaky positioning when TT changes size:
+    this.canvas.onmouseover = function(event){
+        that.ttDiv.style.display = 'none';
+        that.allowUpdate = 0; 
+    }
+
     this.canvas.onmousemove = function(event){
 
         //force the tooltip off - patches persistency problem when moving down off the waffle.  TODO: understand persistency problem.
@@ -40,12 +46,16 @@ function Tooltip(ttCanvasID, ttDivID, wrapperID, prefix, postfix){
             //establish text:
             that.obj.defineText(cellIndex);
 
-            //make the tool tip follow the mouse:
-            that.ttDiv.style.top = event.pageY - 10;
+            //set the display on so offsetHeight and Width work:
+            that.ttDiv.style.display = 'block';
+            that.ttDiv.style.opacity = 0;
+
+            //make the tool tip follow the mouse, but keep it on the screen:
+            that.ttDiv.style.top = Math.min(event.pageY - 10, window.innerHeight - that.ttDiv.offsetHeight);
             that.ttDiv.style.left = event.pageX  + 10;
 
-            //make the tool tip appear iff the waffle is showing:
-            that.ttDiv.style.display = 'block';
+            //turn the TT on:
+            that.ttDiv.style.opacity = 1;
 
             //keep track of tooltip position
             that.oldCellIndex = cellIndex;

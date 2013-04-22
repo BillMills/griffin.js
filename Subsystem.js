@@ -745,7 +745,9 @@ function HPGeAssets(){
                         for(j=1; j<9; j++){
                             this.dataBus.summary[key].threshold += this.dataBus.HPGe[key+'P0'+j+'X']['threshold'];
                             this.dataBus.summary[key].rate += this.dataBus.HPGe[key+'P0'+j+'X']['rate'];
-                        }                        
+                        }
+                        this.dataBus.summary[key].threshold /= 10;
+                        this.dataBus.summary[key].rate /= 10;
                     }
                 } else if(key[2] == 'S'){
                     this.dataBus.summary[key].HV = 0;
@@ -842,7 +844,6 @@ function HPGeAssets(){
                     toolTipContent += this.baseTTtext(this.dataBus.HPGe[channelName].HV, this.dataBus.HPGe[channelName].threshold, this.dataBus.HPGe[channelName].rate);
                 else if(detName.slice(2,3) == 'S')
                     toolTipContent += this.baseTTtext(this.dataBus.HPGe[channelName].HVA, this.dataBus.HPGe[channelName].threshold, this.dataBus.HPGe[channelName].rate, this.dataBus.HPGe[channelName].HVB);
-                
             }
         }
 
