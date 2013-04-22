@@ -43,13 +43,16 @@ HVBarDS = function(){
     this.barChartAlarms = [];
 }
 
-function GRIFFINclover(nClovers){
+function cloverDS(nClovers, mode){
+	var i, j, k;
+
 	this.colorQuads = ['G', 'B', 'W', 'R'];
+	var pfx = (mode == 'TIGRESS') ? 'TI' : 'GR';
 	this.HPGe = {};
 	for(i=1; i<1+nClovers; i++){
 		//loop over quadrants
 		for(j=0; j<4; j++){
-			this.HPGe['GRG'+( (i<10) ? '0'+i : i)+this.colorQuads[j]+'N00A'] = {
+			this.HPGe[pfx+'G'+( (i<10) ? '0'+i : i)+this.colorQuads[j]+'N00A'] = {
 				'HV'		: 500*j,		//note both A and B carry the same HV for GRIFFIN style HPGe
 				'threshold' : 500,
 				'rate'		: 1000,
@@ -62,7 +65,7 @@ function GRIFFINclover(nClovers){
 				'oldRateColor' : '#000000',
 				'rateColor' : '#000000'				
 			}
-			this.HPGe['GRG'+( (i<10) ? '0'+i : i)+this.colorQuads[j]+'N00B'] = {
+			this.HPGe[pfx+'G'+( (i<10) ? '0'+i : i)+this.colorQuads[j]+'N00B'] = {
 				'HV'		: 500*j,		//note both A and B carry the same HV for GRIFFIN style HPGe
 				'threshold' : 500,
 				'rate'		: 1000,
@@ -74,6 +77,24 @@ function GRIFFINclover(nClovers){
 				'thresholdColor' : '#000000',
 				'oldRateColor' : '#000000',
 				'rateColor' : '#000000'				
+			}
+
+			if(mode == 'TIGRESS'){
+				for(k=1; k<9; k++){
+					this.HPGe['TIG'+( (i<10) ? '0'+i : i)+this.colorQuads[j]+'P0'+k+'X'] = {
+						'HV'		: 500*k,
+						'threshold' : 500,
+						'rate'		: 1000,
+						'index'     : 2*j+30*(i-1),
+
+						'oldHVcolor' : '#000000',
+						'HVcolor'	 : '#000000',
+						'oldThresholdColor' : '#000000',
+						'thresholdColor' : '#000000',
+						'oldRateColor' : '#000000',
+						'rateColor' : '#000000'							
+					}
+				}
 			}
 		}
 
@@ -88,7 +109,7 @@ function GRIFFINclover(nClovers){
 				if(k==3) ID = 12+2*j;	//side suppressors
 				if(k==4) ID = 13+2*j;
 				if(k==5) ID = 8+j; 		//back suppressors
-				this.HPGe['GRS'+( (i<10) ? '0'+i : i)+this.colorQuads[j]+'N0'+k+'X'] = {
+				this.HPGe[pfx+'S'+( (i<10) ? '0'+i : i)+this.colorQuads[j]+'N0'+k+'X'] = {
 				'HVA'		: 1000,		//each rate channel has two HV hookups.
 				'HVB'		: 2000,
 				'threshold' : 500,
@@ -119,7 +140,7 @@ function GRIFFINclover(nClovers){
 	for(i=1; i<1+nClovers; i++){
 		//HPGe summaries
 		for(j=0; j<4; j++){
-			this.summary['GRG'+( (i<10) ? '0'+i : i)+this.colorQuads[j]] = {
+			this.summary[pfx+'G'+( (i<10) ? '0'+i : i)+this.colorQuads[j]] = {
 				'clover' : i,
 				'quadrant' : j,
 
@@ -138,7 +159,7 @@ function GRIFFINclover(nClovers){
 
 		//BGO summaries
 		for(j=0; j<4; j++){
-			this.summary['GRS'+( (i<10) ? '0'+i : i)+this.colorQuads[j]] = {
+			this.summary[pfx+'S'+( (i<10) ? '0'+i : i)+this.colorQuads[j]] = {
 				'clover' : i,
 				'quadrant' : j,
 
@@ -165,11 +186,6 @@ SHARCDS = function(){
 
 	//key map
 	//todo
-}
-
-HPGeDS = function(mode){
-	if(mode == 'GRIFFIN')
-		GRIFFINclover.call(this, 16);
 }
 
 DESCANTDS = function(){
@@ -327,7 +343,7 @@ TIPDS = function(){
 		this.CsIwallTTmap[this.CsIwall[key].index] = key;
 	}
 
-	GRIFFINclover.call(this, 3);
+	cloverDS.call(this, 3, 'GRIFFIN');
 
 }
 

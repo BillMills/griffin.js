@@ -14,7 +14,7 @@ function HPGe(){
     this.scalePrefix = 'Clover ';                   //prefix for scale title
 
     this.mode = window.parameters.HPGemode;         //mode to run in, either 'TIGRESS' or 'GRIFFIN'
-    this.dataBus = new HPGeDS(this.mode);                    //called after mode is fetched in order to know what kind of HPGe to deploy
+    this.dataBus = new cloverDS(16, this.mode);                    //called after mode is fetched in order to know what kind of HPGe to deploy
     this.nHPGesegments = 0;
     if(this.mode == 'TIGRESS')
         this.nHPGesegments = 40;
@@ -116,15 +116,16 @@ function HPGe(){
 
     //function to wrap drawing for animate
     this.draw = function(frame){
-        var i, summaryKey;
+        var i, summaryKey,
+            pfx = (this.mode == 'TIGRESS') ? 'TI' : 'GR';
         this.context.lineWidth = this.lineWeight;
 
         for(i=1; i<17; i++){
-            summaryKey = 'GRG' + ( (i<10) ? '0'+i : i );
+            summaryKey = pfx+'G' + ( (i<10) ? '0'+i : i );
             this.drawHPGesummary(this.context, this.summaryCoord[i][0], this.summaryCoord[i][1], summaryKey, frame);
             this.drawHPGesummary(this.TTcontext, this.summaryCoord[i][0], this.summaryCoord[i][1], summaryKey, frame);
 
-            summaryKey = 'GRS' + ( (i<10) ? '0'+i : i );
+            summaryKey = pfx+'S' + ( (i<10) ? '0'+i : i );
             this.drawHPGesummary(this.context, this.summaryCoord[i][0], this.summaryCoord[i][1], summaryKey, frame);
             this.drawHPGesummary(this.TTcontext, this.summaryCoord[i][0], this.summaryCoord[i][1], summaryKey, frame);            
         }
@@ -154,7 +155,8 @@ function HPGe(){
         if(this.detailShowing){
             document.getElementById(this.detailTooltip.ttDivID).innerHTML = toolTipContent;
         } else{
-            document.getElementById(this.tooltip.ttDivID).innerHTML = toolTipContent;
+            if(!( ((cell-100)%8 < 4) && this.mode=='TIGRESS'  ))  //HPGe summaries on TIGRESS have so much stuff in them, they need to build their own table :(
+                document.getElementById(this.tooltip.ttDivID).innerHTML = toolTipContent;
         }
 
         return 0;

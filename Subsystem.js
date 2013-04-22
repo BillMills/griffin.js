@@ -492,10 +492,11 @@ function HPGeAssets(){
         var orientation = ['left', 'right'];
 
         var fillColor, fillColor2;
-        
+        var pfx = (this.mode == 'TIGRESS') ? 'TI' : 'GR';
+
         //clover HPGe and BGO keys:
-        var HPGeName = 'GRG'+ ( (this.cloverShowing<10) ? '0'+this.cloverShowing : this.cloverShowing );
-        var BGOname  = 'GRS'+ ( (this.cloverShowing<10) ? '0'+this.cloverShowing : this.cloverShowing );
+        var HPGeName = pfx+'G'+ ( (this.cloverShowing<10) ? '0'+this.cloverShowing : this.cloverShowing );
+        var BGOname  = pfx+'S'+ ( (this.cloverShowing<10) ? '0'+this.cloverShowing : this.cloverShowing );
         var HPGeKey, BGOkey, BGOsuffix;
 
         if(window.subdetectorView == 0){
@@ -518,7 +519,7 @@ function HPGeAssets(){
             //append quadrant color to keys:
             HPGeKey = HPGeName + this.dataBus.colorQuads[i];
             BGOkey = BGOname + this.dataBus.colorQuads[i];
-            
+
             //HPGe/////////////////////////////
             if(HPGestate == 0){
                 
@@ -532,22 +533,23 @@ function HPGeAssets(){
             } else if(HPGestate == 1){
                 
                 if(this.mode == 'TIGRESS'){
-                    /*    
-                    //cores
+
+                    //cores - same as GRIFFIN for core, factor out
                     if(context == this.detailContext){
-                        if(window.subdetectorView == 1){ 
-                            fillColor  = interpolateColor(parseHexColor(this.oldDetailHPGethresholdColor[this.nHPGesegments*this.cloverShowing+this.nHPGesegments/4*i]), parseHexColor(this.detailHPGethresholdColor[this.nHPGesegments*this.cloverShowing+this.nHPGesegments/4*i]), frame/this.nFrames);
-                            fillColor2 = interpolateColor(parseHexColor(this.oldDetailHPGethresholdColor[this.nHPGesegments*this.cloverShowing+this.nHPGesegments/4*i+1]), parseHexColor(this.detailHPGethresholdColor[this.nHPGesegments*this.cloverShowing+this.nHPGesegments/4*i+1]), frame/this.nFrames);
+                        if(window.subdetectorView == 1){
+                            fillColor  = interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeKey+'N00A'].oldThresholdColor), parseHexColor(this.dataBus.HPGe[HPGeKey+'N00A'].thresholdColor), frame/this.nFrames );
+                            fillColor2 = interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeKey+'N00B'].oldThresholdColor), parseHexColor(this.dataBus.HPGe[HPGeKey+'N00B'].thresholdColor), frame/this.nFrames );
                         }
-                        else if(window.subdetectorView == 2){
-                            fillColor  = interpolateColor(parseHexColor(this.oldDetailHPGerateColor[this.nHPGesegments*this.cloverShowing+this.nHPGesegments/4*i]), parseHexColor(this.detailHPGerateColor[this.nHPGesegments*this.cloverShowing+this.nHPGesegments/4*i]), frame/this.nFrames);
-                            fillColor2 = interpolateColor(parseHexColor(this.oldDetailHPGerateColor[this.nHPGesegments*this.cloverShowing+this.nHPGesegments/4*i+1]), parseHexColor(this.detailHPGerateColor[this.nHPGesegments*this.cloverShowing+this.nHPGesegments/4*i+1]), frame/this.nFrames);
+                        else if(window.subdetectorView == 2){ 
+                            fillColor  = interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeKey+'N00A'].oldRateColor), parseHexColor(this.dataBus.HPGe[HPGeKey+'N00A'].rateColor), frame/this.nFrames );
+                            fillColor2 = interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeKey+'N00B'].oldRateColor), parseHexColor(this.dataBus.HPGe[HPGeKey+'N00B'].rateColor), frame/this.nFrames );
                         }
-                    } else{
-                        fillColor  = 'rgba('+this.nHPGesegments/4*i+', '+this.nHPGesegments/4*i+', '+this.nHPGesegments/4*i+', 1)';
-                        fillColor2 = 'rgba('+(this.nHPGesegments/4*i+1)+', '+(this.nHPGesegments/4*i+1)+', '+(this.nHPGesegments/4*i+1)+', 1)';
+                    } else {
+                        fillColor  = 'rgba('+10*i+', '+10*i+', '+10*i+', 1)';
+                        fillColor2 = 'rgba('+(10*i+1)+', '+(10*i+1)+', '+(10*i+1)+', 1)';
                     }
-                    this.splitCrystal(context, this.centerX + NAD*2/3*this.crystalSide + PBC*1/3*this.crystalSide + PBC*this.lineWeight, this.centerY + NAB*2/3*this.crystalSide + PCD*1/3*this.crystalSide + PCD*this.lineWeight, this.crystalSide/3, i, colorWheel[i], fillColor, fillColor2);  
+
+                    this.splitCrystal(context, this.centerX + NAD*2/3*this.crystalSide + PBC*1/3*this.crystalSide + PBC*this.lineWeight, this.centerY + NAB*2/3*this.crystalSide + PCD*1/3*this.crystalSide + PCD*this.lineWeight, this.crystalSide/3, i, colorWheel[i], fillColor, fillColor2);
 
                     for(j=0; j<4; j++){
                         //useful switches:
@@ -558,8 +560,8 @@ function HPGeAssets(){
 
                         //front segs
                         if(context == this.detailContext){
-                            if(window.subdetectorView == 1) fillColor = interpolateColor(parseHexColor(this.oldDetailHPGethresholdColor[this.nHPGesegments*this.cloverShowing+this.nHPGesegments/4*i+j+2]), parseHexColor(this.detailHPGethresholdColor[this.nHPGesegments*this.cloverShowing+this.nHPGesegments/4*i+j+2]), frame/this.nFrames);
-                            else if(window.subdetectorView == 2) fillColor = interpolateColor(parseHexColor(this.oldDetailHPGerateColor[this.nHPGesegments*this.cloverShowing+this.nHPGesegments/4*i+j+2]), parseHexColor(this.detailHPGerateColor[this.nHPGesegments*this.cloverShowing+this.nHPGesegments/4*i+j+2]), frame/this.nFrames);
+                            if(window.subdetectorView == 1) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeKey+'P0'+(j+1)+'X'].oldThresholdColor), parseHexColor(this.dataBus.HPGe[HPGeKey+'P0'+(j+1)+'X'].thresholdColor), frame/this.nFrames);
+                            else if(window.subdetectorView == 2) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeKey+'P0'+(j+1)+'X'].oldRateColor), parseHexColor(this.dataBus.HPGe[HPGeKey+'P0'+(j+1)+'X'].rateColor), frame/this.nFrames);
     
                         } else
                             fillColor = 'rgba('+(this.nHPGesegments/4*i+j+2)+', '+(this.nHPGesegments/4*i+j+2)+', '+(this.nHPGesegments/4*i+j+2)+', 1)';
@@ -567,13 +569,14 @@ function HPGeAssets(){
 
                         //back segs
                         if(context == this.detailContext){
-                            if(window.subdetectorView == 1) fillColor = interpolateColor(parseHexColor(this.oldDetailHPGethresholdColor[this.nHPGesegments*this.cloverShowing+this.nHPGesegments/4*i+j+2+4]), parseHexColor(this.detailHPGethresholdColor[this.nHPGesegments*this.cloverShowing+this.nHPGesegments/4*i+j+2+4]), frame/this.nFrames);
-                            else if(window.subdetectorView == 2) fillColor = interpolateColor(parseHexColor(this.oldDetailHPGerateColor[this.nHPGesegments*this.cloverShowing+this.nHPGesegments/4*i+j+2+4]), parseHexColor(this.detailHPGerateColor[this.nHPGesegments*this.cloverShowing+this.nHPGesegments/4*i+j+2+4]), frame/this.nFrames);
+                            if(window.subdetectorView == 1) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeKey+'P0'+(j+5)+'X'].oldThresholdColor), parseHexColor(this.dataBus.HPGe[HPGeKey+'P0'+(j+5)+'X'].thresholdColor), frame/this.nFrames);
+                            else if(window.subdetectorView == 2) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeKey+'P0'+(j+5)+'X'].oldRateColor), parseHexColor(this.dataBus.HPGe[HPGeKey+'P0'+(j+5)+'X'].rateColor), frame/this.nFrames);
                         } else
                             fillColor = 'rgba('+(this.nHPGesegments/4*i+j+2+4)+', '+(this.nHPGesegments/4*i+j+2+4)+', '+(this.nHPGesegments/4*i+j+2+4)+', 1)';
                         this.drawL(context, j*Math.PI/2, this.crystalSide/6, this.crystalSide/2, this.centerX + (-NAD)*NAD2*this.crystalSide + PBC*PBC2*this.crystalSide + PBC*this.lineWeight, this.centerY + (-NAB)*NAB2*this.crystalSide + PCD*PCD2*this.crystalSide + PCD*this.lineWeight, colorWheel[i], fillColor);
+                        
                     }
-                    */
+
                     
                 } else if(this.mode == 'GRIFFIN'){
                     
@@ -732,9 +735,18 @@ function HPGeAssets(){
             //summary            
             for(i=0; i<4; i++){
                 if(key[2] == 'G'){
-                    this.dataBus.summary[key].HV = this.dataBus.HPGe[key+'N00A']['HV']
-                    this.dataBus.summary[key].threshold = (this.dataBus.HPGe[key+'N00A']['threshold'] + this.dataBus.HPGe[key+'N00B']['threshold'])/2;
-                    this.dataBus.summary[key].rate = (this.dataBus.HPGe[key+'N00A']['rate'] + this.dataBus.HPGe[key+'N00B']['rate'])/2;
+                    this.dataBus.summary[key].HV = this.dataBus.HPGe[key+'N00A']['HV'];
+                    if(this.mode == 'GRIFFIN'){
+                        this.dataBus.summary[key].threshold = (this.dataBus.HPGe[key+'N00A']['threshold'] + this.dataBus.HPGe[key+'N00B']['threshold'])/2;
+                        this.dataBus.summary[key].rate = (this.dataBus.HPGe[key+'N00A']['rate'] + this.dataBus.HPGe[key+'N00B']['rate'])/2;
+                    } else if (this.mode == 'TIGRESS'){
+                        this.dataBus.summary[key].threshold = this.dataBus.HPGe[key+'N00A']['threshold'] + this.dataBus.HPGe[key+'N00B']['threshold'];
+                        this.dataBus.summary[key].rate = this.dataBus.HPGe[key+'N00A']['rate'] + this.dataBus.HPGe[key+'N00B']['rate'];
+                        for(j=1; j<9; j++){
+                            this.dataBus.summary[key].threshold += this.dataBus.HPGe[key+'P0'+j+'X']['threshold'];
+                            this.dataBus.summary[key].rate += this.dataBus.HPGe[key+'P0'+j+'X']['rate'];
+                        }                        
+                    }
                 } else if(key[2] == 'S'){
                     this.dataBus.summary[key].HV = 0;
                     for(j=1; j<6; j++){
@@ -752,34 +764,38 @@ function HPGeAssets(){
         var i, segA, segB, cloverNumber, cloverName, quadrant, BGO, channelName, detName, suffix, title, ABX;
         var BGO = [];
         var toolTipContent = '';
+        var pfx = (this.mode == 'TIGRESS') ? 'TI' : 'GR';
 
         //summary level//////////////////////////////////////////////////
 
         if(!this.detailShowing) {
             
             cloverNumber = Math.floor((cell-100)/8);
-            cloverName = 'GRG'+((cloverNumber<10) ? '0'+cloverNumber : cloverNumber );  //will match the HPGe summary ID of this clover
+            cloverName = pfx+'G'+((cloverNumber<10) ? '0'+cloverNumber : cloverNumber );  //will match the HPGe summary ID of this clover
             quadrant = ((cell-100)%8)%4;
             if (quadrant==2) quadrant = 3;
             else if(quadrant==3) quadrant = 2;
             //HPGE
             if( (cell-100)%8 < 4 ){
-                segA = cloverName+this.dataBus.colorQuads[quadrant]+'N00A';
-                segB = cloverName+this.dataBus.colorQuads[quadrant]+'N00B';
+                if(this.mode == 'GRIFFIN'){
+                    segA = cloverName+this.dataBus.colorQuads[quadrant]+'N00A';
+                    segB = cloverName+this.dataBus.colorQuads[quadrant]+'N00B';
 
-                //report segment A:
-                nextLine = segA;
-                toolTipContent = '<br>' + nextLine + '<br>';
-                toolTipContent += this.baseTTtext(this.dataBus.HPGe[segA].HV, this.dataBus.HPGe[segA].threshold, this.dataBus.HPGe[segA].rate)
+                    //report segment A:
+                    nextLine = segA;
+                    toolTipContent = '<br>' + nextLine + '<br>';
+                    toolTipContent += this.baseTTtext(this.dataBus.HPGe[segA].HV, this.dataBus.HPGe[segA].threshold, this.dataBus.HPGe[segA].rate)
 
-                //report segment B:
-                nextLine = segB;
-                toolTipContent += '<br><br>' + nextLine + '<br>';
-                toolTipContent += this.baseTTtext(this.dataBus.HPGe[segA].HV, this.dataBus.HPGe[segB].threshold, this.dataBus.HPGe[segB].rate)
-        
+                    //report segment B:
+                    nextLine = segB;
+                    toolTipContent += '<br><br>' + nextLine + '<br>';
+                    toolTipContent += this.baseTTtext(this.dataBus.HPGe[segA].HV, this.dataBus.HPGe[segB].threshold, this.dataBus.HPGe[segB].rate)
+                } else if(this.mode == 'TIGRESS'){
+                    createTIGRESSsummaryTT(this.tooltip.ttDivID, cloverName+this.dataBus.colorQuads[quadrant], this.dataBus);
+                }
             //BGO 
             } else {
-                cloverName = 'GRS'+((cloverNumber<10) ? '0'+cloverNumber : cloverNumber );
+                cloverName = pfx+'S'+((cloverNumber<10) ? '0'+cloverNumber : cloverNumber );
                 toolTipContent = '';
                 for(i=1; i<6; i++){
                     BGO[i] = cloverName+this.dataBus.colorQuads[quadrant]+'N0'+i+'X';
@@ -833,6 +849,85 @@ function HPGeAssets(){
         return toolTipContent;
 
     };
+
+    function createTIGRESSsummaryTT(wrapperID, cloverLeaf, dataBus){
+        var i, elt, eltName1, eltName2;
+
+        document.getElementById(wrapperID).innerHTML = ''; //kill off whatever used to be in there
+        insertDOM('table', 'tigressTTtable', '', 'text-align:center; margin:10px; ', wrapperID, '', '');  //new table
+        insertDOM('tr', 'coreTitles', '', '', 'tigressTTtable', '', '');
+        insertDOM('td', 'blank', '', '', 'coreTitles', '', '');
+        insertDOM('td', 'spacer', '', 'width:10px', 'coreTitles', '', '');
+        insertDOM('td', 'coreAname', '', '', 'coreTitles', '', cloverLeaf+'N00A');
+        insertDOM('td', 'spacer', '', 'width:50px', 'coreTitles', '', '');
+        insertDOM('td', 'coreBname', '', '', 'coreTitles', '', cloverLeaf+'N00B');
+
+        insertDOM('tr', 'coreVolt', '', '', 'tigressTTtable', '', '');
+        insertDOM('td', 'coreVoltTitle', '', 'text-align:right;', 'coreVolt', '', window.parameters.monitorValues[0])
+        insertDOM('td', 'spacer', '', 'width:10px', 'coreVolt', '', '');
+        insertDOM('td', 'coreAhv', '', '', 'coreVolt', '', dataBus.HPGe[cloverLeaf+'N00A'].HV + ' ' + window.parameters.subdetectorUnit[0]);
+        insertDOM('td', 'spacer', '', 'width:50px', 'coreVolt', '', '');
+        insertDOM('td', 'coreBhv', '', '', 'coreVolt', '', dataBus.HPGe[cloverLeaf+'N00B'].HV + ' ' + window.parameters.subdetectorUnit[0]);
+
+        insertDOM('tr', 'coreThreshold', '', '', 'tigressTTtable', '', '');
+        insertDOM('td', 'coreThresholdTitle', '', 'text-align:right;', 'coreThreshold', '', window.parameters.monitorValues[1])
+        insertDOM('td', 'spacer', '', 'width:10px', 'coreThreshold', '', '');
+        insertDOM('td', 'coreAthreshold', '', '', 'coreThreshold', '', dataBus.HPGe[cloverLeaf+'N00A'].threshold + ' ' + window.parameters.subdetectorUnit[1]);
+        insertDOM('td', 'spacer', '', 'width:50px', 'coreThreshold', '', '');
+        insertDOM('td', 'coreBthreshold', '', '', 'coreThreshold', '', dataBus.HPGe[cloverLeaf+'N00B'].threshold + ' ' + window.parameters.subdetectorUnit[1]); 
+
+        insertDOM('tr', 'coreRate', '', '', 'tigressTTtable', '', '');
+        insertDOM('td', 'coreRateTitle', '', 'text-align:right;', 'coreRate', '', window.parameters.monitorValues[2])
+        insertDOM('td', 'spacer', '', 'width:10px', 'coreRate', '', '');
+        insertDOM('td', 'coreArate', '', '', 'coreRate', '', dataBus.HPGe[cloverLeaf+'N00A'].rate + ' ' + window.parameters.subdetectorUnit[2]);
+        insertDOM('td', 'spacer', '', 'width:50px;', 'coreRate', '', '');
+        insertDOM('td', 'coreBrate', '', '', 'coreRate', '', dataBus.HPGe[cloverLeaf+'N00B'].rate + ' ' + window.parameters.subdetectorUnit[2]); 
+
+        insertDOM('tr', 'divider', '', '', 'tigressTTtable', '', '');
+        insertDOM('td', 'line', '', 'border-bottom-style:solid; border-color:white; border-width:1px;', 'divider', '', '');
+        document.getElementById('line').setAttribute('colspan', 5);
+
+        for(i=0; i<4; i++){
+            elt = cloverLeaf+i;
+            eltName1 = cloverLeaf + 'P0' + (2*i+1) + 'X';
+            eltName2 = cloverLeaf + 'P0' + (2*i+2) + 'X';
+
+            insertDOM('tr', elt+'Titles', '', '', 'tigressTTtable', '', '');
+            insertDOM('td', 'blank', '', '', elt+'Titles', '', '');
+            insertDOM('td', 'spacer', '', 'width:10px', elt+'Titles', '', '');
+            insertDOM('td', elt+'Aname', '', '', elt+'Titles', '', eltName1);
+            insertDOM('td', 'spacer', '', 'width:50px', elt+'Titles', '', '');
+            insertDOM('td', elt+'Bname', '', '', elt+'Titles', '', eltName2);
+
+            insertDOM('tr', elt+'Volt', '', '', 'tigressTTtable', '', '');
+            insertDOM('td', elt+'VoltTitle', '', 'text-align:right;', elt+'Volt', '', window.parameters.monitorValues[0])
+            insertDOM('td', 'spacer', '', 'width:10px', elt+'Volt', '', '');
+            insertDOM('td', elt+'Ahv', '', '', elt+'Volt', '', dataBus.HPGe[eltName1].HV + ' ' + window.parameters.subdetectorUnit[0]);
+            insertDOM('td', 'spacer', '', 'width:50px', elt+'Volt', '', '');
+            insertDOM('td', elt+'Bhv', '', '', elt+'Volt', '', dataBus.HPGe[eltName2].HV + ' ' + window.parameters.subdetectorUnit[0]);
+
+            insertDOM('tr', elt+'Threshold', '', '', 'tigressTTtable', '', '');
+            insertDOM('td', elt+'ThresholdTitle', '', 'text-align:right;', elt+'Threshold', '', window.parameters.monitorValues[1])
+            insertDOM('td', 'spacer', '', 'width:10px', elt+'Threshold', '', '');
+            insertDOM('td', elt+'Athreshold', '', '', elt+'Threshold', '', dataBus.HPGe[eltName1].threshold + ' ' + window.parameters.subdetectorUnit[1]);
+            insertDOM('td', 'spacer', '', 'width:50px', elt+'Threshold', '', '');
+            insertDOM('td', elt+'Bthreshold', '', '', elt+'Threshold', '', dataBus.HPGe[eltName2].threshold + ' ' + window.parameters.subdetectorUnit[1]); 
+
+            insertDOM('tr', elt+'Rate', '', '', 'tigressTTtable', '', '');
+            insertDOM('td', elt+'RateTitle', '', 'text-align:right;', elt+'Rate', '', window.parameters.monitorValues[2])
+            insertDOM('td', 'spacer', '', 'width:10px', elt+'Rate', '', '');
+            insertDOM('td', elt+'Arate', '', '', elt+'Rate', '', dataBus.HPGe[eltName1].rate + ' ' + window.parameters.subdetectorUnit[2]);
+            insertDOM('td', 'spacer', '', 'width:50px;', elt+'Rate', '', '');
+            insertDOM('td', elt+'Brate', '', '', elt+'Rate', '', dataBus.HPGe[eltName2].rate + ' ' + window.parameters.subdetectorUnit[2]); 
+
+            if(i!=3){
+                insertDOM('tr', elt+'divider', '', '', 'tigressTTtable', '', '');
+                insertDOM('td', elt+'line', '', 'border-bottom-style:solid; border-color:white; border-width:1px;', elt+'divider', '', '');
+                document.getElementById(elt+'line').setAttribute('colspan', 5);
+            }   
+
+        }
+    }
 
 }
 
