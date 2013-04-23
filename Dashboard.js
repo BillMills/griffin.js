@@ -36,6 +36,15 @@ function Dashboard(){
     this.canvas.setAttribute('width', this.canvasWidth)
     this.canvas.setAttribute('height', this.canvasHeight)
 
+/*
+    //determine appropriate font size for header banner:
+    var bannerFontSize = 72;
+
+    while(document.getElementById('DashboardLinksBanner').offsetWidth > document.getElementById(this.canvasID).offsetWidth){
+        bannerFontSize--;
+        $('#DashboardLinksBanner').css('font-size', bannerFontSize);
+    }
+*/
     //drawing parameters:
 
     //establish animation parameters////////////////////////////////////////////////////////////////////

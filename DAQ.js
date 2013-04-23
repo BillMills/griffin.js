@@ -57,6 +57,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         $('#Collector'+i).width( ( 0.95*this.canvasWidth - $('#DAQcollectorTitle').width()) / this.nCollectors );
         document.getElementById('Collector'+i).collectorNumber = i;
     }
+
     //right sidebar
     insertDOM('div', this.sidebarID, 'Sidebar', '', this.monitorID, '', '')
 
@@ -279,9 +280,27 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 	};
 
 	this.draw = function(frame){
-		var color, i, j, k;
+		var color, i, j, k, fontSize;
 
-		if(frame==0)this.context.clearRect(0,0, this.canvasWidth, this.canvasHeight - this.scaleHeight - 0.1*this.canvasHeight);
+		if(frame==0){
+            this.context.clearRect(0,0, this.canvasWidth, this.canvasHeight - this.scaleHeight - 0.1*this.canvasHeight);
+            //labels:
+            this.context.fillStyle = '#FFFFFF';
+            fontSize = fitFont(this.context, 'Collectors', 2*this.collectorWidth);
+            this.context.font = fontSize + 'px Raleway';
+            this.context.save();
+            this.context.rotate(-Math.PI/2);
+            this.context.fillText('Collectors', -this.collectorBottom - 0.25*this.collectorWidth,8*this.margin);
+            this.context.restore();
+
+            fontSize = fitFont(this.context, 'Summary', 2*this.collectorWidth);
+            this.context.font = fontSize + 'px Raleway';
+            this.context.save();
+            this.context.rotate(-Math.PI/2);
+            this.context.fillText('Digi', -(this.digiSummaryBottom + this.digiSummaryTop + this.context.measureText('Digi').width)/2,8*this.margin-fontSize);
+            this.context.fillText('Summary', -(this.digiSummaryBottom + this.digiSummaryTop + this.context.measureText('Summary').width)/2,8*this.margin);
+            this.context.restore();            
+        }
 
         if(frame == 15){
             this.drawScale(this.context);
@@ -305,7 +324,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     		this.drawSummaryDigitizerNodeLink(i, color);
 	   		//collecter nodes:
     		color = interpolateColor(parseHexColor(this.oldCollectorColor[i]), parseHexColor(this.collectorColor[i]), frame/this.nFrames);
-			this.drawCollectorNode(i, color);    		    		
+			this.drawCollectorNode(i, color);   		    		
     		//collector links:
 	    	color = interpolateColor(parseHexColor(this.oldMasterLinkColor[i]), parseHexColor(this.masterLinkColor[i]), frame/this.nFrames);
     		this.drawMasterLink(i, color); 
@@ -375,6 +394,14 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         //tooltip encoding level:
         this.TTcontext.fillStyle = 'rgba(0, 0, 0, 1)';
         this.TTcontext.fillRect(Math.round(this.margin), Math.round(this.masterTop), Math.round(this.canvasWidth-2*this.margin), Math.round(this.masterBottom - this.masterTop));
+
+        this.context.fillStyle = '#FFFFFF';
+        fontSize = fitFont(this.context, 'Master', 0.8*(this.masterBottom - this.masterTop));
+        this.context.font = fontSize + 'px Raleway';
+        this.context.save();
+        this.context.rotate(-Math.PI/2);
+        this.context.fillText('Master', -this.masterBottom*0.9,8*this.margin);
+        this.context.restore();
     };
 
     this.drawCollectorNode = function(index, color){
@@ -398,24 +425,44 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     };
 
     this.drawSummaryDigitizerNode = function(index, color){
+        var i, ttColors;
 
     	this.context.strokeStyle = color;
     	this.context.fillStyle = this.cellColor;
+        this.context.lineWidth = this.lineweight;
         if(this.nCollectorGroups != 0){ //GRIFFIN mode:
-    		roundBox(this.context, this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups + (index%4 - 1.5)*(this.collectorWidth + this.collectorGutter) - this.collectorWidth/2, this.digiSummaryTop, this.collectorWidth, this.digiSummaryBottom - this.digiSummaryTop, 5);
+            this.context.beginPath();
+            this.context.arc(this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups + (index%4 - 1.5)*(this.collectorWidth + this.collectorGutter), this.digiSummaryLinkBottom + this.collectorWidth/2,  this.collectorWidth/2, 0, Math.PI*2);
+            this.context.closePath();
+    		//roundBox(this.context, this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups + (index%4 - 1.5)*(this.collectorWidth + this.collectorGutter) - this.collectorWidth/2, this.digiSummaryTop, this.collectorWidth, this.digiSummaryBottom - this.digiSummaryTop, 5);
         } else { //TIGRESS mode
-            roundBox(this.context, this.margin + (index+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectors - this.collectorWidth/2, this.digiSummaryTop, this.collectorWidth, this.digiSummaryBottom - this.digiSummaryTop, 5);
+            this.context.beginPath();
+            this.context.arc(this.margin + (index + 0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectors, this.digiSummaryLinkBottom + this.collectorWidth/2, this.collectorWidth/2, 0, Math.PI*2);
+            this.context.closePath();
+            //roundBox(this.context, this.margin + (index+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectors - this.collectorWidth/2, this.digiSummaryTop, this.collectorWidth, this.digiSummaryBottom - this.digiSummaryTop, 5);
         }
 		this.context.fill();
         this.context.stroke();
 
-        //tooltip encoding level:
-        this.TTcontext.fillStyle = 'rgba('+(1+this.nCollectors+index)+', '+(1+this.nCollectors+index)+', '+(1+this.nCollectors+index)+', 1)';
-        if(this.nCollectorGroups != 0) //GRIFFIN mode
-            this.TTcontext.fillRect(Math.round(this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups + (index%4 - 1.5)*(this.collectorWidth + this.collectorGutter) - this.collectorWidth/2), Math.round(this.digiSummaryTop), Math.round(this.collectorWidth), Math.round(this.digiSummaryBottom - this.digiSummaryTop));  
-        else //TIGRESS mode:
-            this.TTcontext.fillRect(Math.round(this.margin + (index+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectors - this.collectorWidth/2), Math.round(this.digiSummaryTop), Math.round(this.collectorWidth), Math.round(this.digiSummaryBottom - this.digiSummaryTop));
 
+        //tooltip encoding level:
+        ttColors = ['#123456', 'rgba('+(1+this.nCollectors+index)+', '+(1+this.nCollectors+index)+', '+(1+this.nCollectors+index)+', 1)'];
+        for(i=0; i<2; i++){
+            this.TTcontext.fillStyle = ttColors[i];  //first suppress AA, then paint code color
+            if(this.nCollectorGroups != 0){ //GRIFFIN mode
+                this.TTcontext.beginPath();
+                this.TTcontext.arc(this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups + (index%4 - 1.5)*(this.collectorWidth + this.collectorGutter), this.digiSummaryLinkBottom + this.collectorWidth/2,  this.collectorWidth/2, 0, Math.PI*2);
+                this.TTcontext.closePath();
+                this.TTcontext.fill();
+                //this.TTcontext.fillRect(Math.round(this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups + (index%4 - 1.5)*(this.collectorWidth + this.collectorGutter) - this.collectorWidth/2), Math.round(this.digiSummaryTop), Math.round(this.collectorWidth), Math.round(this.digiSummaryBottom - this.digiSummaryTop));  
+            }else {//TIGRESS mode:
+                this.TTcontext.beginPath();
+                this.TTcontext.arc(this.margin + (index + 0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectors, this.digiSummaryLinkBottom + this.collectorWidth/2, this.collectorWidth/2, 0, Math.PI*2);
+                this.TTcontext.closePath();
+                this.TTcontext.fill();
+                //this.TTcontext.fillRect(Math.round(this.margin + (index+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectors - this.collectorWidth/2), Math.round(this.digiSummaryTop), Math.round(this.collectorWidth), Math.round(this.digiSummaryBottom - this.digiSummaryTop));
+            }
+        }
     };
 
     this.drawMasterGroupLink = function(index, color){

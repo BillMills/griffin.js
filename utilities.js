@@ -147,3 +147,19 @@ function DCobject(o) {
 }
 
 
+//return the biggest font size that fits a string into a given length in a given context:
+
+function fitFont(context, string, length){
+    var i, size = 1;
+    context.font = size+'px Raleway';
+    
+    while(context.measureText(string).width < length){
+        size++;
+        context.font = size+'px Raleway';
+    }
+    
+    return size-1;
+}
+
+
+
