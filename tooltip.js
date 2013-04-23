@@ -51,9 +51,14 @@ function Tooltip(ttCanvasID, ttDivID, wrapperID, prefix, postfix){
             that.ttDiv.style.opacity = 0;
 
             //make the tool tip follow the mouse, but keep it on the screen:
-            that.ttDiv.style.top = Math.min(event.pageY - 10, window.innerHeight - that.ttDiv.offsetHeight);
-            that.ttDiv.style.left = event.pageX  + 10;
-
+            that.ttDiv.style.top = Math.min(event.pageY - 10, window.innerHeight + window.pageYOffset - that.ttDiv.offsetHeight);
+            if(event.pageX < that.canvas.offsetWidth){
+                that.ttDiv.style.right = 'auto'
+                that.ttDiv.style.left = event.pageX  + 10;
+            }else{
+                that.ttDiv.style.left = 'auto';
+                that.ttDiv.style.right = window.innerWidth - event.pageX + 10;
+            }
             //turn the TT on:
             that.ttDiv.style.opacity = 1;
 
