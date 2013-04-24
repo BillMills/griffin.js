@@ -230,7 +230,7 @@
 
         //style the sidebar backgrounds:
         document.getElementById('LeftSidebarBKG').width = parseInt(($('#leftSidebar').css('width')).slice(0,3));
-        document.getElementById('LeftSidebarBKG').height = renderHeight*0.9; //parseInt($('#InputLayer').css('height').slice(0,3));
+        document.getElementById('LeftSidebarBKG').height =  Math.max(renderHeight*0.9, 50+parseInt($('#leftSidebar').css('height')) );
         tabBKG('LeftSidebarBKG', 'left');
         document.getElementById('LeftSidebarDetailBKG').width = parseInt(($('#leftSidebar').css('width')).slice(0,3));
         document.getElementById('LeftSidebarDetailBKG').height = renderHeight*0.9; //parseInt($('#InputLayer').css('height').slice(0,3));

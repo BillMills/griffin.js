@@ -65,7 +65,7 @@ function Subsystem(){
         //different scales for different meters to aid visual recognition:
         if(window.subdetectorView==0) return scalepickr(scale, 'rainbow');
         else if(window.subdetectorView==1) return scalepickr(scale, 'twighlight');
-        else if(window.subdetectorView==2) return scalepickr(scale, 'thermalScope');
+        else if(window.subdetectorView==2) return scalepickr(scale, 'thermalScope2');
     };
 
     //draw the color scale
@@ -126,7 +126,7 @@ function Subsystem(){
         for(i=0; i<3*colorSteps; i++){
             if(window.subdetectorView == 0) context.fillStyle = scalepickr((i%colorSteps)/colorSteps, 'rainbow');
             if(window.subdetectorView == 1) context.fillStyle = scalepickr((i%colorSteps)/colorSteps, 'twighlight');
-            if(window.subdetectorView == 2) context.fillStyle = scalepickr((i%colorSteps)/colorSteps, 'thermalScope');
+            if(window.subdetectorView == 2) context.fillStyle = scalepickr((i%colorSteps)/colorSteps, 'thermalScope2');
             context.fillRect(this.canvasWidth*(1-scaleFraction)/2 + this.canvasWidth*scaleFraction/colorSteps*(i%colorSteps), this.canvasHeight-this.scaleHeight/2-20, this.canvasWidth*scaleFraction/colorSteps, 20);
         }
 

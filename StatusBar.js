@@ -27,6 +27,18 @@ function StatusBar(wrapper){
     //JSONP monitor
     insertDOM('p', 'JSONPmonitor', '', 'width:80%; margin-left:auto; margin-right:auto; padding-left:5%; padding-right:5%; margin-top:5%;', this.wrapperID, '', '')
 
+    //message service
+    insertDOM('table', 'messageTable', '', 'padding:10px; font-family:10px Raleway;', this.wrapperID, '', '');
+    insertDOM('tr', 'messRow0', '', '', 'messageTable', '', '');
+    insertDOM('td', 'message0', 'messageServiceCell', 'background:#777777;', 'messRow0', '');
+    insertDOM('tr', 'messRow1', '', '', 'messageTable', '', '');
+    insertDOM('td', 'message1', 'messageServiceCell', 'background:#333333;', 'messRow1', '');
+    insertDOM('tr', 'messRow2', '', '', 'messageTable', '', '');
+    insertDOM('td', 'message2', 'messageServiceCell', 'background:#777777;', 'messRow2', '');
+    insertDOM('tr', 'messRow3', '', '', 'messageTable', '', '');
+    insertDOM('td', 'message3', 'messageServiceCell', 'background:#333333;', 'messRow3', '');
+    insertDOM('tr', 'messRow4', '', '', 'messageTable', '', '');
+    insertDOM('td', 'message4', 'messageServiceCell', 'background:#777777;', 'messRow4', '');
 
 /*
     insertDOM('table', 'JSONPmonitor', '', 'width:80%; margin-left:auto; margin-right:auto; padding-left:5%; padding-right:5%; margin-top:5%;', this.wrapperID, '', '');
@@ -41,6 +53,7 @@ function StatusBar(wrapper){
     insertDOM('td', 'thresholdsFlag', '', '', 'thresholdsRow', '', 'Not Responding');
 */
     this.update = function(){
+        var i;
     	//experiment title
     	if(window.parameters.devMode) this.expTitle = 'Offline Demo Experiment'; 
         else this.expTitle = ODBGet('/Experiment/Name') + ' Experiment';
@@ -112,6 +125,18 @@ function StatusBar(wrapper){
         JSONPtext += 'Rates: ';
         JSONPtext += window.JSONPstatus[1]+'<br>';
         document.getElementById('JSONPmonitor').innerHTML = JSONPtext;
+
+        //message service:
+        var messages = ODBGetMsg(5);
+        for(i=0; i<5; i++){
+            document.getElementById('message'+i).innerHTML = messages[4-i]; //most recent on top
+        }
+
+
+
+        //make sure the left sidebar background adjusts to accomodate its elements
+        document.getElementById('LeftSidebarBKG').height = Math.max(renderHeight*0.9, 50+parseInt($('#'+this.wrapperID).css('height')) );
+        tabBKG('LeftSidebarBKG', 'left');
 
     };
 

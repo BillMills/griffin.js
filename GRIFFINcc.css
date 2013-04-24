@@ -73,7 +73,7 @@ div.leftSidebar{
 	position: absolute;
 	color: rgba(255,255,255,0.9);
 	width: 21%;
-	height: 695px;
+	height: auto;
 	left:0%;
 	display:inline;
 	text-align: center;
@@ -290,4 +290,11 @@ p.alarmPara{
 canvas#downStep{
 	display: inline;
 	background-color: Black;
+}
+
+td.messageServiceCell{
+	border:solid; 
+	border-color:#000000; 
+	border-width:1px;
+	padding:5px;
 }

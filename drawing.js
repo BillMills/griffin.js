@@ -225,6 +225,13 @@ scalepickr = function(scale, palette){
         start3 = [255,0,0];
         start4 = [255,0x66,0];
         start5 = [255,255,255];
+    } else if (palette == 'thermalScope2'){
+        start0 = [0,0,0];
+        start1 = [0,0,0x52];
+        start2 = [0xE6,0,0x5C];
+        start3 = [255,255,0];        
+        start4 = [255,0x66,0];
+        start5 = [255,0,0];        
     }
     if(H>=0 && H<1){
         R = start0[0] + Math.round(H*(start1[0]-start0[0]));
@@ -333,6 +340,8 @@ function tabBKG(canvasID, side){
     var cornerRad = 20;
     var tailRad = 50;
     var lineWeight = 2;
+
+    context.clearRect(0,0,width,height);
 
     if(side == 'left'){
         context.translate(width,0);

@@ -163,7 +163,7 @@ function channelSelect(waffle){
     temperatureMeter.update(Math.round(waffle.dataBus.reportTemperature[waffle.chy][xIndex]*100)/100);
 
     //make sure the right sidebar background adjusts to accomodate the interface
-    document.getElementById('SidebarBKG').height = Math.max(renderHeight*0.9, 1.05*parseInt($('#'+waffle.sidebarID).css('height')) );
+    document.getElementById('SidebarBKG').height = Math.max(renderHeight*0.9, 50+parseInt($('#'+waffle.sidebarID).css('height')) );
     tabBKG('SidebarBKG', 'right');
 }
 
