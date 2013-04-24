@@ -104,16 +104,16 @@ function cloverDS(nClovers, mode){
 		for(j=0; j<4; j++){
 			//five BGO segments in each quadrant: front, front, side, side, back
 			for(k=1; k<6; k++){
-				if(k==1) ID = ((mode== 'TIGRESS')? 52:20)+2*j;	//front suppressors
-				if(k==2) ID = ((mode== 'TIGRESS')? 53:21)+2*j;
-				if(k==3) ID = ((mode== 'TIGRESS')? 44:12)+2*j;	//side suppressors
-				if(k==4) ID = ((mode== 'TIGRESS')? 45:13)+2*j;
+				if(k==1) ID = ((mode== 'TIGRESS')? 53:21)+2*j;	//front suppressors
+				if(k==2) ID = ((mode== 'TIGRESS')? 52:20)+2*j;
+				if(k==3) ID = ((mode== 'TIGRESS')? 45:13)+2*j;	//side suppressors
+				if(k==4) ID = ((mode== 'TIGRESS')? 44:12)+2*j;
 				if(k==5) ID = ((mode== 'TIGRESS')? 40:8)+j; 		//back suppressors
 				this.HPGe[pfx+'S'+( (i<10) ? '0'+i : i)+this.colorQuads[j]+'N0'+k+'X'] = {
 				'HVA'		: 1000,		//each rate channel has two HV hookups.
 				'HVB'		: 2000,
 				'threshold' : 500,
-				'rate'		: 1000*i+100*j+10*k,
+				'rate'		: 1000*k,
 				'index'		: ID+((mode== 'TIGRESS')? 60:30)*(i-1),
 
 				'oldHVAcolor' : '#000000',
@@ -189,27 +189,27 @@ SHARCDS = function(){
 }
 
 DESCANTDS = function(){
-	var i,j;
 
-	//data arrays:
-	this.HV = [];
-	this.thresholds = [];
-	this.rate = [];
+	var i, name;
 
-	//ODB paths & keys for each type of info:
-	this.HVpath = 'some/path';
-	this.thresholdsPath = 'need/a/function';
-	this.ratePath = 'to/determine/these';
+	this.DESCANT = {};
+	this.DESCANTTTmap = [];
+	for(i=1; i<71; i++){
+		var name = (i<10) ? 'DSC00'+i+'P00X' : 'DSC0'+i+'P00X';
+		this.DESCANT[name] = {
+			'HV'		: 0,
+			'threshold' : 0,
+			'rate' 		: 0,
+			'index'		: i,
 
-	//key map
-	this.key = [];
-	for(i=0; i<70; i++){
-		this.key[i] = [];
-		//generate names
-		if(i<10)
-			this.key[i][0] = 'DSC0' +i+ 'XN00X';
-		else
-			this.key[i][0] = 'DSC' +i+ 'XN00X';
+			'oldHVcolor' : '#000000',
+			'HVcolor'	 : '#000000',
+			'oldThresholdColor' : '#000000',
+			'thresholdColor' : '#000000',
+			'oldRateColor' : '#000000',
+			'rateColor' : '#000000'	
+		}
+		this.DESCANTTTmap[i] = name;
 	}
 
 }

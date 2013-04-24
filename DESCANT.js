@@ -12,10 +12,6 @@ function DESCANT(){
 
     //member variables///////////////////////////////////
 
-
-
-
-
     //drawing parameters//////////////////////////////////////////////////////////////////////////////////
 	//center of DESCANT
 	this.centerX = $(this.canvas).width() / 2;
@@ -37,58 +33,52 @@ function DESCANT(){
 	//longest distance from center of pentagon to side
 	this.pentagonVertex = this.pentagonSide / 2 / Math.sin(36/180 * Math.PI);
 
-    //establish data buffers////////////////////////////////////////////////////////////////////////////
-    this.HVcolor = [];
-    this.oldHVcolor = [];
-    this.thresholdColor = [];
-    this.oldThresholdColor = [];
-    this.rateColor = [];
-    this.oldRateColor = [];
-
 	//member functions//////////////////////////////////////////////////////
 
 
 	this.draw = function(frame){
-		var i, j;
+		var i, j, key;
 		this.context.clearRect(0,0,this.canvasWidth, this.canvasHeight-this.scaleHeight);
 		this.TTcontext.fillStyle = '#123456'
 		this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
-		if(this.drawRules[i]!=0){
-			for(i=0; i<70; i++){
-				this.context.save();
-				this.context.translate(this.centerX, this.centerY);
-				this.context.rotate(this.drawRules[i][3]);
+		//for(i=0; i<70; i++){
+        for(key in this.dataBus.DESCANT){
+            i = this.dataBus.DESCANT[key].index - 1;
+			this.context.save();
+			this.context.translate(this.centerX, this.centerY);
+			this.context.rotate(this.drawRules[i][3]);
 
-                if(window.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[i]), parseHexColor(this.HVcolor[i]), frame/this.nFrames);
-                else if(window.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[i]), parseHexColor(this.thresholdColor[i]), frame/this.nFrames);
-				else if(window.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[i]), parseHexColor(this.rateColor[i]), frame/this.nFrames);
+            if(window.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.DESCANT[key].oldHVcolor), parseHexColor(this.dataBus.DESCANT[key].HVcolor), frame/this.nFrames);
+            else if(window.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.DESCANT[key].oldThresholdColor), parseHexColor(this.dataBus.DESCANT[key].thresholdColor), frame/this.nFrames);
+			else if(window.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.DESCANT[key].oldRateColor), parseHexColor(this.dataBus.DESCANT[key].rateColor), frame/this.nFrames);
 
-				if(this.drawRules[i][0] == 'white')whiteDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, 0);
-				else if(this.drawRules[i][0] == 'red') redDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 0);
-				else if(this.drawRules[i][0] == 'blue') blueDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 0);
-				else if(this.drawRules[i][0] == 'greenLeft') greenLeftDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 0);
-				else if(this.drawRules[i][0] == 'greenRight') greenRightDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 0);
+			if(this.drawRules[i][0] == 'white')whiteDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, 0);
+			else if(this.drawRules[i][0] == 'red') redDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 0);
+			else if(this.drawRules[i][0] == 'blue') blueDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 0);
+			else if(this.drawRules[i][0] == 'greenLeft') greenLeftDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 0);
+			else if(this.drawRules[i][0] == 'greenRight') greenRightDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 0);
 
-				this.context.restore();
-			}
-
-			//and the same again for the hidden TT info canvas:
-			for(i=0; i<70; i++){
-				this.TTcontext.save();
-				this.TTcontext.translate(this.centerX, this.centerY);
-				this.TTcontext.rotate(this.drawRules[i][3]);
-
-				this.TTcontext.fillStyle = 'rgba('+i+','+i+','+i+',1)';
-
-				if(this.drawRules[i][0] == 'white')whiteDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, 1);
-				else if(this.drawRules[i][0] == 'red') redDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 1);
-				else if(this.drawRules[i][0] == 'blue') blueDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 1);
-				else if(this.drawRules[i][0] == 'greenLeft') greenLeftDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 1);
-				else if(this.drawRules[i][0] == 'greenRight') greenRightDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 1);
-
-				this.TTcontext.restore();
-			}
+			this.context.restore();
 		}
+
+		//and the same again for the hidden TT info canvas:
+		for(key in this.dataBus.DESCANT){
+            i = this.dataBus.DESCANT[key].index - 1;
+			this.TTcontext.save();
+			this.TTcontext.translate(this.centerX, this.centerY);
+			this.TTcontext.rotate(this.drawRules[i][3]);
+
+			this.TTcontext.fillStyle = 'rgba('+this.dataBus.DESCANT[key].index+','+this.dataBus.DESCANT[key].index+','+this.dataBus.DESCANT[key].index+',1)';
+
+			if(this.drawRules[i][0] == 'white')whiteDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, 1);
+			else if(this.drawRules[i][0] == 'red') redDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 1);
+			else if(this.drawRules[i][0] == 'blue') blueDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 1);
+			else if(this.drawRules[i][0] == 'greenLeft') greenLeftDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 1);
+			else if(this.drawRules[i][0] == 'greenRight') greenRightDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 1);
+
+			this.TTcontext.restore();
+		}
+		
 
         if(frame==this.nFrames || frame==0) {
             //scale
@@ -106,7 +96,7 @@ function DESCANT(){
         var cardIndex;
         var i;
 
-        nextLine = this.dataBus.key[cell][0];
+        nextLine = this.dataBus.DESCANTTTmap[cell];
         toolTipContent += nextLine;
 
         toolTipContent += '<br><br>';
@@ -116,49 +106,34 @@ function DESCANT(){
 	};
 
 	this.update = function(){
-        var i;
+        var key;
 
         //get new data
         this.fetchNewData();
 
         //parse the new data into colors
-        for(i=0; i<this.dataBus.HV.length; i++){
-            this.oldHVcolor[i] = this.HVcolor[i];
-            this.HVcolor[i] = this.parseColor(this.dataBus.HV[i], this.name);
-        }
-        for(i=0; i<this.dataBus.thresholds.length; i++){
-            this.oldThresholdColor[i] = this.thresholdColor[i];
-            this.thresholdColor[i] = this.parseColor(this.dataBus.thresholds[i], this.name);
-        }
-        for(i=0; i<this.dataBus.rate.length; i++){
-            this.oldRateColor[i] = this.rateColor[i];
-            this.rateColor[i] = this.parseColor(this.dataBus.rate[i], this.name);
+        for(key in this.dataBus.DESCANT){
+            this.dataBus.DESCANT[key].oldHVcolor = this.dataBus.DESCANT[key].HVcolor;
+            this.dataBus.DESCANT[key].HVcolor = this.parseColor(this.dataBus.DESCANT[key].HV, this.name);
+            this.dataBus.DESCANT[key].oldThresholdColor = this.dataBus.DESCANT[key].thresholdColor;
+            this.dataBus.DESCANT[key].thresholdColor = this.parseColor(this.dataBus.DESCANT[key].threshold, this.name);
+            this.dataBus.DESCANT[key].oldRateColor = this.dataBus.DESCANT[key].rateColor;
+            this.dataBus.DESCANT[key].rateColor = this.parseColor(this.dataBus.DESCANT[key].rate, this.name);
         }
 
 		this.tooltip.update();
 	}
 
     this.fetchNewData = function(){
-        var i, j;
+        var key;
 
         //dummy data:
-        for(i=0; i<70; i++){
-            this.dataBus.HV[i] = Math.random();
-            this.dataBus.thresholds[i] = Math.random();
-            this.dataBus.rate[i] = Math.random();
+        for(key in this.dataBus.DESCANT){
+            this.dataBus.DESCANT[key].HV = Math.random();
+            this.dataBus.DESCANT[key].threshold = Math.random();
+            this.dataBus.DESCANT[key].rate = Math.random();
         }
-        /*
-        //get the data out of the ODB in whatever order its packed in:
-        var rawHV = ODBGet(this.dataBus.HVpath+'[*]');
-        var rawThresholds = ODBGet(this.dataBus.thresholdsPath+'[*]');
-        var rawRate = ODBGet(this.dataBus.ratePath+'[*]');
-        //re-sort the data in the order we expect it in:
-        for(i=0; i<70; i++){
-            this.dataBus.HV[i] = rawHV[ this.dataBus.key[i][1] ];
-            this.dataBus.thresholds[i] = rawThresholds[ this.dataBus.key[i][1] ];
-            this.dataBus.rate[i] = rawRate[ this.dataBus.key[i][1] ];
-        }
-        */
+
     };
 
 	//array of rules for drawing DESCANT channels.  Array index should correspond to real channel number; packed as [type, center x, center y, canvas rotation, element rotation]

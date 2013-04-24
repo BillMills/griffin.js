@@ -557,22 +557,25 @@ function HPGeAssets(){
                         var NAD2 = Math.ceil((j%3)/3) - 1;           //negative for i=0,3, 0 OW
                         var NAB2 = Math.floor(j/2) - 1;              //negative for i=0,1, 0 OW
                         var PCD2 = Math.floor(j/2);                  //positive for i=2,3, 0 OW
+                        //segements drawn in different order than numbering; use jprime to get the right mapping:
+                        var jprime = (((1-j)+4)%4 + i)%4;
+                        if (jprime==0) jprime = 4;
 
-                        //front segs
+                        //segs 1-4
                         if(context == this.detailContext){
-                            if(window.subdetectorView == 1) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeKey+'P0'+(j+1)+'X'].oldThresholdColor), parseHexColor(this.dataBus.HPGe[HPGeKey+'P0'+(j+1)+'X'].thresholdColor), frame/this.nFrames);
-                            else if(window.subdetectorView == 2) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeKey+'P0'+(j+1)+'X'].oldRateColor), parseHexColor(this.dataBus.HPGe[HPGeKey+'P0'+(j+1)+'X'].rateColor), frame/this.nFrames);
+                            if(window.subdetectorView == 1) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeKey+'P0'+jprime+'X'].oldThresholdColor), parseHexColor(this.dataBus.HPGe[HPGeKey+'P0'+jprime+'X'].thresholdColor), frame/this.nFrames);
+                            else if(window.subdetectorView == 2) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeKey+'P0'+jprime+'X'].oldRateColor), parseHexColor(this.dataBus.HPGe[HPGeKey+'P0'+jprime+'X'].rateColor), frame/this.nFrames);
     
                         } else
-                            fillColor = 'rgba('+(this.nHPGesegments/4*i+j+2)+', '+(this.nHPGesegments/4*i+j+2)+', '+(this.nHPGesegments/4*i+j+2)+', 1)';
+                            fillColor = 'rgba('+(this.nHPGesegments/4*i+jprime+1)+', '+(this.nHPGesegments/4*i+jprime+1)+', '+(this.nHPGesegments/4*i+jprime+1)+', 1)';
                         this.drawL(context, j*Math.PI/2, this.crystalSide/6, 1/3*this.crystalSide, this.centerX + PBC*this.lineWeight + NAD*(-NAD2)*5/6*this.crystalSide + NAD*PBC2*1/6*this.crystalSide + PBC*(-NAD2)*1/6*this.crystalSide + PBC*PBC2*5/6*this.crystalSide, this.centerY + NAB*(-NAB2)*5/6*this.crystalSide + NAB*PCD2*1/6*this.crystalSide + PCD*(-NAB2)*1/6*this.crystalSide + PCD*PCD2*5/6*this.crystalSide + PCD*this.lineWeight, colorWheel[i], fillColor);
 
-                        //back segs
+                        //segs 5-8
                         if(context == this.detailContext){
-                            if(window.subdetectorView == 1) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeKey+'P0'+(j+5)+'X'].oldThresholdColor), parseHexColor(this.dataBus.HPGe[HPGeKey+'P0'+(j+5)+'X'].thresholdColor), frame/this.nFrames);
-                            else if(window.subdetectorView == 2) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeKey+'P0'+(j+5)+'X'].oldRateColor), parseHexColor(this.dataBus.HPGe[HPGeKey+'P0'+(j+5)+'X'].rateColor), frame/this.nFrames);
+                            if(window.subdetectorView == 1) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeKey+'P0'+(jprime+4)+'X'].oldThresholdColor), parseHexColor(this.dataBus.HPGe[HPGeKey+'P0'+(jprime+4)+'X'].thresholdColor), frame/this.nFrames);
+                            else if(window.subdetectorView == 2) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeKey+'P0'+(jprime+4)+'X'].oldRateColor), parseHexColor(this.dataBus.HPGe[HPGeKey+'P0'+(jprime+4)+'X'].rateColor), frame/this.nFrames);
                         } else
-                            fillColor = 'rgba('+(this.nHPGesegments/4*i+j+2+4)+', '+(this.nHPGesegments/4*i+j+2+4)+', '+(this.nHPGesegments/4*i+j+2+4)+', 1)';
+                            fillColor = 'rgba('+(this.nHPGesegments/4*i+jprime+1+4)+', '+(this.nHPGesegments/4*i+jprime+1+4)+', '+(this.nHPGesegments/4*i+jprime+1+4)+', 1)';
                         this.drawL(context, j*Math.PI/2, this.crystalSide/6, this.crystalSide/2, this.centerX + (-NAD)*NAD2*this.crystalSide + PBC*PBC2*this.crystalSide + PBC*this.lineWeight, this.centerY + (-NAB)*NAB2*this.crystalSide + PCD*PCD2*this.crystalSide + PCD*this.lineWeight, colorWheel[i], fillColor);
                         
                     }
@@ -633,7 +636,7 @@ function HPGeAssets(){
                 }
                 
                 //side suppressors
-                BGOsuffix = 'N0'+(3+j)+'X'; //side suppressors labeled -N03X and -N04X
+                BGOsuffix = 'N0'+(3+1-j)+'X'; //side suppressors labeled -N03X and -N04X j->1-j here since drawing happens in reverse order
                 if(context == this.detailContext){
                     if(window.subdetectorView == 0){
                         fillColor  = interpolateColor(parseHexColor(this.dataBus.HPGe[BGOkey+BGOsuffix].oldHVAcolor), parseHexColor(this.dataBus.HPGe[BGOkey+BGOsuffix].HVAcolor), frame/this.nFrames);
@@ -652,7 +655,7 @@ function HPGeAssets(){
                 this.drawHalfL(context, (i-1+j)*(Math.PI/2), this.suppressorWidth, this.sideBGOouterWidth/2, this.centerX +NAD*this.sideBGOinnerWidth/2 + PBC*this.sideBGOinnerWidth/2 + PBC*2*this.lineWeight + (-NAB)*NA*this.lineWeight + PCD*NB*this.lineWeight     , this.centerY + (NAB+PCD)*this.sideBGOinnerWidth/2 + PCD*2*this.lineWeight + (-NAD)*NB*this.lineWeight + PBC*NA*this.lineWeight, orientation[j], BGOstate, colorWheel[i], fillColor, fillColor2);
 
                 //front suppressors
-                BGOsuffix = 'N0'+(1+j)+'X'; //front suppressors labeled -N01X and -N02X
+                BGOsuffix = 'N0'+(1+1-j)+'X'; //front suppressors labeled -N01X and -N02X; j->1-j here since drawing happens in reverse order
                 if(context == this.detailContext){
                     if(window.subdetectorView == 0){
                         fillColor  = interpolateColor(parseHexColor(this.dataBus.HPGe[BGOkey+BGOsuffix].oldHVAcolor), parseHexColor(this.dataBus.HPGe[BGOkey+BGOsuffix].HVAcolor), frame/this.nFrames);
@@ -668,6 +671,7 @@ function HPGeAssets(){
                     else
                         fillColor = 'rgba('+(this.nHPGesegments+4+8+2*i+j)+', '+(this.nHPGesegments+4+8+2*i+j)+', '+(this.nHPGesegments+4+8+2*i+j)+', 1)';
                 }
+
                 this.drawHalfL(context, (i-1+j)*(Math.PI/2), this.suppressorWidth, this.frontBGOouterWidth/2 - this.sideSpacer, this.centerX + (PBC+NAD)*this.frontBGOinnerWidth/2 + PBC*this.lineWeight + (-NAB)*NA*this.sideSpacer + PCD*NB*this.sideSpacer + (-NAD)*this.sideSpacer, this.centerY + (NAB+PCD)*this.frontBGOinnerWidth/2 + PCD*this.lineWeight + (-NAB*PA + PBC*NA + PBC*PB + PCD*NB)*this.sideSpacer, orientation[j], BGOstate, colorWheel[i], fillColor, fillColor2);
             }  
 
