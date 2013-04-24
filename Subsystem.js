@@ -63,8 +63,8 @@ function Subsystem(){
         var scale = (scalar - window.parameters[this.name].minima[detector][window.subdetectorView]) / (window.parameters[this.name].maxima[detector][window.subdetectorView] - window.parameters[this.name].minima[detector][window.subdetectorView]);
 
         //different scales for different meters to aid visual recognition:
-        if(window.subdetectorView==0) return scalepickr(scale, 'rainbow');
-        else if(window.subdetectorView==1) return scalepickr(scale, 'twighlight');
+        if(window.subdetectorView==0) return scalepickr(scale, 'ROOTrainbow');
+        else if(window.subdetectorView==1) return scalepickr(scale, 'greyscale');
         else if(window.subdetectorView==2) return scalepickr(scale, 'thermalScope2');
     };
 
@@ -124,8 +124,8 @@ function Subsystem(){
 
         var colorSteps = 150
         for(i=0; i<3*colorSteps; i++){
-            if(window.subdetectorView == 0) context.fillStyle = scalepickr((i%colorSteps)/colorSteps, 'rainbow');
-            if(window.subdetectorView == 1) context.fillStyle = scalepickr((i%colorSteps)/colorSteps, 'twighlight');
+            if(window.subdetectorView == 0) context.fillStyle = scalepickr((i%colorSteps)/colorSteps, 'ROOTrainbow');
+            if(window.subdetectorView == 1) context.fillStyle = scalepickr((i%colorSteps)/colorSteps, 'greyscale');
             if(window.subdetectorView == 2) context.fillStyle = scalepickr((i%colorSteps)/colorSteps, 'thermalScope2');
             context.fillRect(this.canvasWidth*(1-scaleFraction)/2 + this.canvasWidth*scaleFraction/colorSteps*(i%colorSteps), this.canvasHeight-this.scaleHeight/2-20, this.canvasWidth*scaleFraction/colorSteps, 20);
         }
