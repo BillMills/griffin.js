@@ -305,3 +305,9 @@ td.messageServiceCell{
 :invalid{
 	color: #FF0000;
 }
+
+textarea{
+	font-size: 14px;
+	font-family: Raleway;
+	border-color: #FFFFFF;
+	border-style: dotted;

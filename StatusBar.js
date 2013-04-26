@@ -29,6 +29,27 @@ function StatusBar(wrapper){
 
     //message service
     insertDOM('table', 'messageTable', '', 'padding:10px; font-family:10px Raleway;', this.wrapperID, '', '');
+    insertDOM('tr', 'inputRow', '', '', 'messageTable', '', '');
+    insertDOM('td', 'inputCell', 'messageServiceCell', 'background:#333333;', 'inputRow', '');
+    document.getElementById('inputCell').innerHTML = ''
+    //insertDOM('input', 'inputMessage', '', '', 'inputCell', '', '', '', 'text', '');
+    insertDOM('textarea', 'inputMessage', '', 'background:#333333; color:#FFFFFF', 'inputCell', '', '', '', '', '');
+    document.getElementById('inputMessage').rows = 3;
+    document.getElementById('inputMessage').cols = 30;
+    //expand the text box to fill the sidebar on larger monitors:
+    while(document.getElementById('messageTable').offsetWidth + 10 < document.getElementById(this.wrapperID).offsetWidth)
+        document.getElementById('inputMessage').cols++;
+    document.getElementById('inputMessage').value = 'Enter log message here; press return to commit.';
+    document.getElementById('inputMessage').onclick = function(){
+        this.value = '';
+    }
+    document.getElementById('inputMessage').onkeypress = function(event){
+        if(event.keyCode == 13 && this.value!=''){
+            ODBGenerateMsg(this.value);
+            forceUpdate();
+            this.value = 'Enter log message here; press return to commit.';
+        }
+    }
     insertDOM('tr', 'messRow0', '', '', 'messageTable', '', '');
     insertDOM('td', 'message0', 'messageServiceCell', 'background:#777777;', 'messRow0', '');
     insertDOM('tr', 'messRow1', '', '', 'messageTable', '', '');

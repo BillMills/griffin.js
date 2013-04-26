@@ -174,6 +174,21 @@ function HPGe(){
             pfx = (this.mode == 'TIGRESS') ? 'TI' : 'GR';
         this.context.lineWidth = this.lineWeight;
 
+        //beam arrow
+        this.context.clearRect(this.centerX-0.04*this.canvasWidth, 0, 0.07*this.canvasWidth, 0.7*this.canvasHeight);
+        this.context.strokeStyle = '#999999';
+        this.context.fillStyle = '#999999';
+        this.context.font="24px 'Orbitron'";
+        this.context.moveTo(this.centerX, 0.7*this.canvasHeight);
+        this.context.lineTo(this.centerX, 0.1*this.canvasHeight);
+        this.context.lineTo(this.centerX + 10, 0.1*this.canvasHeight + 10);
+        this.context.stroke();
+        this.context.save();
+        this.context.translate(this.centerX-5, 0.1*this.canvasHeight);
+        this.context.rotate(-Math.PI/2);
+        this.context.fillText('Beam', -this.context.measureText('Beam').width-10, 0);
+        this.context.restore();
+
         for(i=1; i<17; i++){
             summaryKey = pfx+'G' + ( (i<10) ? '0'+i : i );
             this.drawHPGesummary(this.context, this.summaryCoord[i][0], this.summaryCoord[i][1], summaryKey, frame);
@@ -195,19 +210,6 @@ function HPGe(){
             this.context.fillText('West Hemisphere', 0.201*this.canvasWidth + this.BGOouter/2 - this.context.measureText('West Hemisphere').width/2, 0.78*this.canvasHeight);
             this.context.fillText('East Hemisphere', 0.701*this.canvasWidth + this.BGOouter/2 - this.context.measureText('East Hemisphere').width/2, 0.78*this.canvasHeight);
         }
-
-        //beam arrow
-        this.context.clearRect(this.centerX-35, 0, 70, 0.7*this.canvasHeight);
-        this.context.strokeStyle = '#999999';
-        this.context.moveTo(this.centerX, 0.7*this.canvasHeight);
-        this.context.lineTo(this.centerX, 0.1*this.canvasHeight);
-        this.context.lineTo(this.centerX + 10, 0.1*this.canvasHeight + 10);
-        this.context.stroke();
-        this.context.save();
-        this.context.translate(this.centerX-5, 0.1*this.canvasHeight);
-        this.context.rotate(-Math.PI/2);
-        this.context.fillText('Beam', -this.context.measureText('Beam').width-10, 0);
-        this.context.restore();
 
         if(frame==this.nFrames || frame==0) this.drawScale(this.context);
     };
