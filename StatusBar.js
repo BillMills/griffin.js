@@ -53,6 +53,7 @@ function StatusBar(wrapper){
     insertDOM('td', 'thresholdsFlag', '', '', 'thresholdsRow', '', 'Not Responding');
 */
     this.update = function(){
+
         var i;
     	//experiment title
     	if(window.parameters.devMode) this.expTitle = 'Offline Demo Experiment'; 
@@ -119,6 +120,7 @@ function StatusBar(wrapper){
   		document.getElementById(this.runInfoID).innerHTML = '<br>' + runInfo + '<br>' + startInfo + '<br>' + elapsed + '<br><br>' + comment + '<br><br>';
 
         //JSONP monitor:
+
         var JSONPtext = 'JSONP Services<br>';
         JSONPtext += 'Thresholds: ';
         JSONPtext += window.JSONPstatus[0]+'<br>';
@@ -135,7 +137,8 @@ function StatusBar(wrapper){
 
 
         //make sure the left sidebar background adjusts to accomodate its elements
-        document.getElementById('LeftSidebarBKG').height = Math.max(renderHeight*0.9, 50+parseInt($('#'+this.wrapperID).css('height')) );
+        document.getElementById('LeftSidebarBKG').width = parseInt(($('#'+this.wrapperID).css('width')));
+        document.getElementById('LeftSidebarBKG').height = Math.max(renderHeight*0.9, 50 + parseInt($('#'+this.wrapperID).css('height')) );
         tabBKG('LeftSidebarBKG', 'left');
 
     };

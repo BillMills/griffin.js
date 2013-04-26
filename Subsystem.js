@@ -54,6 +54,12 @@ function Subsystem(){
 
     //what fraction of the canvas does the scale take up?  need this for onclick behavior:
     this.scaleHeight = this.canvasHeight*0.2;
+    //set up scale adjust dialog:
+    this.canvas.onclick = function(event){
+        var y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;
+        if(y > that.canvasHeight - that.scaleHeight)
+            parameterDialogue([[that.name, window.parameters[that.name].minima[that.name], window.parameters[that.name].maxima[that.name]]]);
+    }
 
     //member functions
     //determine which color <scalar> corresponds to

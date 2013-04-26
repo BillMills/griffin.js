@@ -14,7 +14,13 @@ function SCEPTAR(){
     this.config = window.parameters.SCEPTARconfig;  //subsystems on: [upstream sceptar, downstream sceptar, downstream ZDS]
 
 
-
+    //set up scale adjust dialog:
+    this.canvas.onclick = function(event){
+        var y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;
+        if(y > that.canvasHeight - that.scaleHeight)
+            if(that.config[2]) parameterDialogue([['SCEPTAR', window.parameters[that.name].minima['SCEPTAR'], window.parameters[that.name].maxima['SCEPTAR']], ['ZDS', window.parameters[that.name].minima['ZDS'], window.parameters[that.name].maxima['ZDS']]]);
+            else parameterDialogue([['SCEPTAR', window.parameters[that.name].minima['SCEPTAR'], window.parameters[that.name].maxima['SCEPTAR']]]);
+    }
 
 
 

@@ -379,6 +379,62 @@ function tabBKG(canvasID, side){
 
 }
 
+//atom spinner:
+function drawSpinner(canvasID){
+    
+    var canvas = document.getElementById(canvasID);
+    var context = canvas.getContext('2d');
+
+        $('#spinner').css('left', window.innerWidth/2 - 100);
+        $('#spinner').css('top', window.innerHeight/2 - 100);
+
+    context.lineWidth = 5;
+    context.strokeStyle = '#FFFFFF';
+    context.fillStyle = 'rgba(0,0,0,0.7)';
+    roundBox(context, 5, 5, 190, 190, 5);
+    context.lineWidth = 1;
+    context.fill();
+    context.stroke();
+
+    context.fillStyle = '#FFFFFF';
+    context.font = '16px Arial'
+    context.fillText('LOADING', 100-context.measureText('LOADING').width/2, 145);
+    window.nProtons = 0;
+    window.nNucleons = 0;
+
+/*
+    window.spinLoop = setInterval(function(){
+        context = document.getElementById('spinner').getContext('2d');
+
+        //choose proton or neutron:
+        var nucleon = (Math.random() < 0.5) ? 'p' : 'n';
+        window.nNucleons++;
+        if(nucleon == 'p') window.nProtons++;
+        //choose position on canvas
+        var radius = Math.random()*15;
+        var phi = Math.random()*Math.PI*2;
+
+        //draw:
+        context.strokeStyle = '#FFFFFF';
+        context.fillStyle = (nucleon == 'p') ? '#FF0000' : '#0000FF';
+        context.beginPath();
+        context.arc(100+radius*Math.cos(phi), 100+radius*Math.sin(phi), 5, 0, Math.PI*2);
+        context.closePath();
+        context.fill();
+        context.stroke();
+
+        context.clearRect(20,20, 160, 55);
+        context.fillStyle = 'rgba(0,0,0,0.7)'
+        context.fillRect(20,20, 160, 55);
+        context.fillStyle = '#FFFFFF';
+        context.fillText('Z = '+window.nProtons, 70-context.measureText('Z = '+window.nProtons).width/2, 70);
+        context.fillText('A = '+window.nNucleons, 130-context.measureText('N = '+window.nProtons).width/2, 70);
+
+    }, 3);
+*/    
+
+
+}
 
 
 

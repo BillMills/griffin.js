@@ -13,6 +13,13 @@ function DANTE(){
     //member variables///////////////////////////////////
 
 
+    //set up scale adjust dialog:
+    this.canvas.onclick = function(event){
+        var y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;
+        if(y > that.canvasHeight - that.scaleHeight)
+            parameterDialogue([['BaF', window.parameters[that.name].minima['BaF'], window.parameters[that.name].maxima['BaF']], ['BGO', window.parameters[that.name].minima['BGO'], window.parameters[that.name].maxima['BGO']]]);
+    }
+
     //drawing parameters/////////////////////////////////
     this.centerX = this.canvasWidth/2;
     this.centerY = this.canvasHeight/2;

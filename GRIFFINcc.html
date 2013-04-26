@@ -1,13 +1,14 @@
 <html> 
   <head>
 
-    <link id='fontLink' href='http://fonts.googleapis.com/css?family=Orbitron|Raleway' rel='stylesheet' type='text/css'>
+    <!--link id='fontLink' href='http://fonts.googleapis.com/css?family=Orbitron|Raleway' rel='stylesheet' type='text/css'-->
 
     <script src="zepto.min.js" type="text/javascript"></script>
     <script src="utilities.js" type="text/javascript"></script>
     <script src="masterControl.js" type="text/javascript"></script>
     <script src="viewTransitions.js" type="text/javascript"></script>
     <script src="drawing.js" type="text/javascript"></script>
+    <script src='sonic.js' type='text/javascript'></script>
 
     <script src="Dashboard.js" type="text/javascript"></script>
     <script src="Waffle.js" type="text/javascript"></script>
@@ -39,6 +40,7 @@
 
     <link rel="stylesheet" type="text/css" href="GRIFFINcc.css" />
 
+
   </head> 
 
 
@@ -50,7 +52,7 @@
     <!--Top Level Navigation////////////////////////////////////////////////////////////-->
     <div id="navBar" style='margin:none;'>
       <div id='statusLink' style='display:inline; position:relative; left:1%;'>
-        <button id='MIDASstatusLink' class='navLink' type="submit">MIDAS Status</button>
+        <button id='MIDASstatusLink' class='navLink' style='opacity:0;' type="submit">MIDAS Status</button>
         <!--All other objects will insert their nav buttons here-->
       </div>
       <p id="youAreHere" style='display: inline; color:rgba(255,255,255,0.3); font-size:24px; margin:0; position:absolute; right:0; width:;'></p>
@@ -69,10 +71,15 @@
 
       <!--Right Sidebars///////////////////////////////////////////////////-->
       <canvas id='SidebarBKG' style='position:absolute; z-index:-1; right:0%'> </canvas>
+
+      <!--Spinner Canvas////////////////-->
+      <canvas id='spinner' style='position:fixed; z-index:100000; transition:opacity 0.5s; -moz-transition:opacity 0.5s; -webkit-transition:opacity 0.5s;' width='200px' height='200px'> </canvas>
+
     </div>
 
     <!--Set up JSONP services, then synchronously load parameters->data stores->main routine////////////////////////////////////////////////////-->
     <script id='parameterLoad' type="text/JavaScript">
+
       window.parameters = {};
       window.Gatekeeper = new gatekeeper();
       window.JSONPstatus = [];
@@ -105,12 +112,51 @@
         }
       } 
     </script>
-    <script src='parameters.json' onload='loadJSONP(window.Gatekeeper, "main");'>//experimental parameters loaded here//</script>
+
+    <script type="text/javascript">
+      //load the webfonts, and block the page until they're ready or failed - otherwise lots of rendering bugs happen!
+      WebFontConfig = { google: { families: [ 'Orbitron', 'Raleway' ] },
+      loading: function(){
+        //set the spinner going:
+        drawSpinner('spinner');
+      },
+      active: function() {
+        var initScript  = document.createElement('script');
+        initScript.setAttribute('src', 'parameters.json');
+        initScript.onload = function(){
+          loadJSONP(window.Gatekeeper, "main");
+        }
+        document.head.appendChild(initScript);
+      },
+      inactive: function() {
+        var initScript  = document.createElement('script');
+        initScript.setAttribute('src', 'parameters.json');
+        initScript.onload = function(){
+          loadJSONP(window.Gatekeeper, "main");
+        }
+        document.head.appendChild(initScript);
+      }
+      };
+      (function() {
+        var wf = document.createElement('script');
+        wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+            '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+        wf.type = 'text/javascript';
+        wf.async = 'true';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(wf, s);
+      })();
+    </script>
+
+    <!--script src='parameters.json' onload='loadJSONP(window.Gatekeeper, "main");'>//experimental parameters loaded here//</script-->
 
     <!--Main routine/////////////////////////////////////////////////////////////////////-->
     <script id='main' type="text/JavaScript">
 
       function main(){
+
+        //let the MIDAS status link appear:
+        $('#MIDASstatusLink').css('opacity', 1);
 
         //overwrite default parameters with custom ones:
         fetchCustomParameters();
@@ -229,9 +275,9 @@
         //end main elements////////////////////////////////////////////////////////////////////////////
 
         //style the sidebar backgrounds:
-        document.getElementById('LeftSidebarBKG').width = parseInt(($('#leftSidebar').css('width')).slice(0,3));
-        document.getElementById('LeftSidebarBKG').height =  Math.max(renderHeight*0.9, 50+parseInt($('#leftSidebar').css('height')) );
-        tabBKG('LeftSidebarBKG', 'left');
+        //document.getElementById('LeftSidebarBKG').width = parseInt(($('#leftSidebar').css('width')).slice(0,3));
+        //document.getElementById('LeftSidebarBKG').height =  Math.max(renderHeight*0.9, 50+parseInt($('#leftSidebar').css('height')) );
+        //tabBKG('LeftSidebarBKG', 'left');
         document.getElementById('LeftSidebarDetailBKG').width = parseInt(($('#leftSidebar').css('width')).slice(0,3));
         document.getElementById('LeftSidebarDetailBKG').height = renderHeight*0.9; //parseInt($('#InputLayer').css('height').slice(0,3));
         tabBKG('LeftSidebarDetailBKG', 'left');
@@ -288,6 +334,15 @@
         startLoop(); 
 
         $('#setValues').on('change', function(event){highlight('submitParameters')})
+
+        //kill the spinner:
+        //clearInterval(window.spinLoop)
+        $('#spinner').css('opacity', 0);
+        document.getElementById('spinner').style.opacity = 0;
+        setTimeout(function(){
+          var spinElt = document.getElementById('spinner');
+          spinElt.parentNode.removeChild(spinElt);
+        }, 500)
 
       }
 

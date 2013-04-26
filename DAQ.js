@@ -138,15 +138,15 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     this.scaleHeight = this.canvasHeight*0.2;//110;
     this.vertAdjust = -0.1*this.canvasHeight;
 
-    this.margin = 5;
+    this.margin = 30;
     this.collectorGutter = 0.1*this.collectorWidth;
 
     this.masterTop = 5;
     this.masterBottom = this.masterTop+1.5*this.collectorHeight;
     this.masterGroupLinkTop = this.masterBottom;
-    this.masterGroupLinkBottom = this.masterGroupLinkTop + this.collectorHeight;
+    this.masterGroupLinkBottom = this.masterGroupLinkTop + this.collectorHeight/2;
     this.masterLinkTop = this.masterGroupLinkBottom;
-    this.masterLinkBottom = this.masterLinkTop + this.collectorHeight;
+    this.masterLinkBottom = this.masterLinkTop + this.collectorHeight/2;
     this.collectorTop = this.masterLinkBottom;
     this.collectorBottom = this.collectorTop + this.collectorHeight;
     this.digiSummaryLinkTop = this.collectorBottom;
@@ -290,16 +290,24 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
             this.context.font = fontSize + 'px Raleway';
             this.context.save();
             this.context.rotate(-Math.PI/2);
-            this.context.fillText('Collectors', -this.collectorBottom - 0.25*this.collectorWidth,8*this.margin);
+            this.context.fillText('Collectors', -this.collectorBottom - 0.25*this.collectorWidth,0.7*this.margin);
             this.context.restore();
 
             fontSize = fitFont(this.context, 'Summary', 2*this.collectorWidth);
             this.context.font = fontSize + 'px Raleway';
             this.context.save();
             this.context.rotate(-Math.PI/2);
-            this.context.fillText('Digi', -(this.digiSummaryBottom + this.digiSummaryTop + this.context.measureText('Digi').width)/2,8*this.margin-fontSize);
-            this.context.fillText('Summary', -(this.digiSummaryBottom + this.digiSummaryTop + this.context.measureText('Summary').width)/2,8*this.margin);
-            this.context.restore();            
+            //this.context.fillText('Digi', -(this.digiSummaryBottom + this.digiSummaryTop + this.context.measureText('Digi').width)/2,0.8*this.margin-fontSize);
+            this.context.fillText('Digi Summary', -(this.digiSummaryBottom + this.digiSummaryTop + this.context.measureText('Digi Summary').width)/2,0.7*this.margin);
+            this.context.restore();  
+
+            fontSize = fitFont(this.context, 'Master', 0.8*(this.masterBottom - this.masterTop));
+            this.context.font = fontSize + 'px Raleway';
+            this.context.save();
+            this.context.rotate(-Math.PI/2);
+            this.context.fillText('Master', -this.masterBottom*0.9,0.7*this.margin);
+            this.context.restore();
+
         }
 
         if(frame == 15){
@@ -395,13 +403,6 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         this.TTcontext.fillStyle = 'rgba(0, 0, 0, 1)';
         this.TTcontext.fillRect(Math.round(this.margin), Math.round(this.masterTop), Math.round(this.canvasWidth-2*this.margin), Math.round(this.masterBottom - this.masterTop));
 
-        this.context.fillStyle = '#FFFFFF';
-        fontSize = fitFont(this.context, 'Master', 0.8*(this.masterBottom - this.masterTop));
-        this.context.font = fontSize + 'px Raleway';
-        this.context.save();
-        this.context.rotate(-Math.PI/2);
-        this.context.fillText('Master', -this.masterBottom*0.9,8*this.margin);
-        this.context.restore();
     };
 
     this.drawCollectorNode = function(index, color){

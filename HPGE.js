@@ -28,8 +28,13 @@ function HPGe(){
 
     //onclick switch between top and detail view:
     this.detailCanvas.onclick = function(event){
-                                    that.detailShowing = 0;
-                                    swapFade(null, that, 1000, 0);
+                                    var y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;    
+                                    if(y < that.canvasHeight - that.scaleHeight){
+                                        that.detailShowing = 0;
+                                        swapFade(null, that, 1000, 0);
+                                    } else{
+                                        parameterDialogue([['HPGe', window.parameters[that.name].minima['HPGe'], window.parameters[that.name].maxima['HPGe']], ['BGO', window.parameters[that.name].minima['BGO'], window.parameters[that.name].maxima['BGO']]]);
+                                    }
                                 };
     this.canvas.onclick =   function(event){
                                 //use TT layer to decide which clover user clicked on
@@ -46,7 +51,8 @@ function HPGe(){
                                     that.drawDetail(that.TTdetailContext, that.nFrames);
                                     that.detailShowing = 1;
                                     swapFade(null, that, 1000, 0)
-                                }
+                                } else if(y > that.canvasHeight - that.scaleHeight)
+                                    parameterDialogue([['HPGe', window.parameters[that.name].minima['HPGe'], window.parameters[that.name].maxima['HPGe']], ['BGO', window.parameters[that.name].minima['BGO'], window.parameters[that.name].maxima['BGO']]]);
                             };
 
 
@@ -54,12 +60,13 @@ function HPGe(){
     this.centerX = this.canvasWidth/2;
     this.centerY = this.canvasHeight*0.4;
     this.lineWeight = 1;
-
+/*
     //summary view
     this.BGOouter = 0.1*this.canvasWidth;
     this.BGOinner = 0.67*this.BGOouter;
     this.HPGeside = 0.4*this.BGOouter;
     //establish coords of each detector summary; start array index at 1 to correspond to actual detector numbering in TIGRESS:
+    
     this.firstRow = this.canvasHeight*0.05;
     this.secondRow = this.canvasHeight*0.22;
     this.thirdRow = this.canvasHeight*0.39;
@@ -99,7 +106,54 @@ function HPGe(){
         this.summaryCoord[15] = [this.sixthCol, this.fourthRow, 'south'];
         this.summaryCoord[16] = [this.firstCol, this.thirdRow, 'north'];
     }
+    */
+///////////////////////////////////////////////////////////////////
+    this.BGOouter = 0.09*this.canvasWidth;
+    this.BGOinner = 0.67*this.BGOouter;
+    this.HPGeside = 0.4*this.BGOouter;
 
+    this.firstRow = this.centerY - this.BGOouter/2 - .112*this.canvasWidth;
+    this.secondRow = this.centerY - this.BGOouter/2;
+    this.thirdRow = this.centerY - this.BGOouter/2 + .112*this.canvasWidth;
+
+    this.firstCol = this.canvasWidth*0.022;
+    this.secondCol = this.canvasWidth*0.134;
+    this.thirdCol = this.canvasWidth*0.246;
+    this.fourthCol = this.canvasWidth*0.358;
+    this.fifthCol = this.canvasWidth*0.540;
+    this.sixthCol = this.canvasWidth*0.652;
+    this.seventhCol = this.canvasWidth*0.764;
+    this.eighthCol = this.canvasWidth*0.876;
+
+    this.summaryCoord = [];
+    this.summaryCoord[5] = [this.thirdCol, this.secondRow, 'north'];
+    this.summaryCoord[6] = [this.fourthCol, this.secondRow, 'north'];
+    this.summaryCoord[7] = [this.fifthCol, this.secondRow, 'south'];
+    this.summaryCoord[8] = [this.sixthCol, this.secondRow, 'south'];
+    this.summaryCoord[9] = [this.seventhCol, this.secondRow, 'south']; 
+    this.summaryCoord[10] = [this.eighthCol, this.secondRow, 'south'];
+    this.summaryCoord[11] = [this.firstCol, this.secondRow, 'north'];
+    this.summaryCoord[12] = [this.secondCol, this.secondRow, 'north'];
+    if(this.mode == 'TIGRESS'){
+        this.summaryCoord[1] = [this.thirdCol, this.firstRow, 'north'];
+        this.summaryCoord[2] = [this.fifthCol, this.firstRow, 'south'];
+        this.summaryCoord[3] = [this.seventhCol, this.firstRow, 'south'];
+        this.summaryCoord[4] = [this.firstCol, this.firstRow, 'north'];
+        this.summaryCoord[13] = [this.thirdCol, this.thirdRow, 'north'];
+        this.summaryCoord[14] = [this.fifthCol, this.thirdRow, 'south'];
+        this.summaryCoord[15] = [this.seventhCol, this.thirdRow, 'south'];
+        this.summaryCoord[16] = [this.firstCol, this.thirdRow, 'north'];
+    } else if(this.mode == 'GRIFFIN'){
+        this.summaryCoord[1] = [this.fourthCol, this.firstRow, 'north'];
+        this.summaryCoord[2] = [this.sixthCol, this.firstRow, 'south'];
+        this.summaryCoord[3] = [this.eighthCol, this.firstRow, 'south'];
+        this.summaryCoord[4] = [this.secondCol, this.firstRow, 'north'];
+        this.summaryCoord[13] = [this.fourthCol, this.thirdRow, 'north'];
+        this.summaryCoord[14] = [this.sixthCol, this.thirdRow, 'south'];
+        this.summaryCoord[15] = [this.eighthCol, this.thirdRow, 'south'];
+        this.summaryCoord[16] = [this.secondCol, this.thirdRow, 'north'];
+    }
+/////////////////////////////////////////////////////////////////
     //detail view
     this.crystalSide = this.canvasWidth*0.1*0.8;
     this.suppressorWidth = this.canvasWidth*0.03*0.8;
@@ -141,6 +195,19 @@ function HPGe(){
             this.context.fillText('West Hemisphere', 0.201*this.canvasWidth + this.BGOouter/2 - this.context.measureText('West Hemisphere').width/2, 0.78*this.canvasHeight);
             this.context.fillText('East Hemisphere', 0.701*this.canvasWidth + this.BGOouter/2 - this.context.measureText('East Hemisphere').width/2, 0.78*this.canvasHeight);
         }
+
+        //beam arrow
+        this.context.clearRect(this.centerX-35, 0, 70, 0.7*this.canvasHeight);
+        this.context.strokeStyle = '#999999';
+        this.context.moveTo(this.centerX, 0.7*this.canvasHeight);
+        this.context.lineTo(this.centerX, 0.1*this.canvasHeight);
+        this.context.lineTo(this.centerX + 10, 0.1*this.canvasHeight + 10);
+        this.context.stroke();
+        this.context.save();
+        this.context.translate(this.centerX-5, 0.1*this.canvasHeight);
+        this.context.rotate(-Math.PI/2);
+        this.context.fillText('Beam', -this.context.measureText('Beam').width-10, 0);
+        this.context.restore();
 
         if(frame==this.nFrames || frame==0) this.drawScale(this.context);
     };

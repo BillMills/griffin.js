@@ -296,5 +296,8 @@ td.messageServiceCell{
 	border:solid; 
 	border-color:#000000; 
 	border-width:1px;
-	padding:5px;
+	padding:7px;
+	-webkit-border-radius: 10; 
+	-moz-border-radius: 10; 
+	border-radius: 10;
 }
