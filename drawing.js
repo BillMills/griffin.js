@@ -225,14 +225,14 @@ scalepickr = function(scale, palette){
         start3 = [255,0,0];
         start4 = [255,0x66,0];
         start5 = [255,255,255];
-    } else if (palette == 'thermalScope2'){
+    } else if (palette == 'Sunset'){
         start0 = [0,0,0];
         start1 = [0,0,0x52];
         start2 = [0xE6,0,0x5C];
         start3 = [255,255,0];        
         start4 = [255,0x66,0];
         start5 = [255,0,0];        
-    } else if (palette == 'ROOTrainbow'){
+    } else if (palette == 'ROOT Rainbow'){
         start0 = [0xFF,0x00,0x00];
         start1 = [0xFF,0xFF,0x00];
         start2 = [0x00,0xFF,0x00];
@@ -240,7 +240,7 @@ scalepickr = function(scale, palette){
         start4 = [0x00,0x00,0xFF];
         start5 = [0x66,0x00,0xCC];
         H = -1*(H-5);
-    } else if (palette == 'greyscale'){
+    } else if (palette == 'Greyscale'){
         start0 = [0x00,0x00,0x00];
         start1 = [0x22,0x22,0x22];
         start2 = [0x55,0x55,0x55];

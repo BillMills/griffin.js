@@ -301,3 +301,7 @@ td.messageServiceCell{
 	-moz-border-radius: 10; 
 	border-radius: 10;
 }
+
+:invalid{
+	color: #FF0000;
+}

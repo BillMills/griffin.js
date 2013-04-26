@@ -69,9 +69,9 @@ function Subsystem(){
         var scale = (scalar - window.parameters[this.name].minima[detector][window.subdetectorView]) / (window.parameters[this.name].maxima[detector][window.subdetectorView] - window.parameters[this.name].minima[detector][window.subdetectorView]);
 
         //different scales for different meters to aid visual recognition:
-        if(window.subdetectorView==0) return scalepickr(scale, 'ROOTrainbow');
-        else if(window.subdetectorView==1) return scalepickr(scale, 'greyscale');
-        else if(window.subdetectorView==2) return scalepickr(scale, 'thermalScope2');
+        if(window.subdetectorView==0) return scalepickr(scale, window.parameters.colorScale[0]);
+        else if(window.subdetectorView==1) return scalepickr(scale, window.parameters.colorScale[1]);
+        else if(window.subdetectorView==2) return scalepickr(scale, window.parameters.colorScale[2]);
     };
 
     //draw the color scale
@@ -130,9 +130,9 @@ function Subsystem(){
 
         var colorSteps = 150
         for(i=0; i<3*colorSteps; i++){
-            if(window.subdetectorView == 0) context.fillStyle = scalepickr((i%colorSteps)/colorSteps, 'ROOTrainbow');
-            if(window.subdetectorView == 1) context.fillStyle = scalepickr((i%colorSteps)/colorSteps, 'greyscale');
-            if(window.subdetectorView == 2) context.fillStyle = scalepickr((i%colorSteps)/colorSteps, 'thermalScope2');
+            if(window.subdetectorView == 0) context.fillStyle = scalepickr((i%colorSteps)/colorSteps, window.parameters.colorScale[0]);
+            if(window.subdetectorView == 1) context.fillStyle = scalepickr((i%colorSteps)/colorSteps, window.parameters.colorScale[1]);
+            if(window.subdetectorView == 2) context.fillStyle = scalepickr((i%colorSteps)/colorSteps, window.parameters.colorScale[2]);
             context.fillRect(this.canvasWidth*(1-scaleFraction)/2 + this.canvasWidth*scaleFraction/colorSteps*(i%colorSteps), this.canvasHeight-this.scaleHeight/2-20, this.canvasWidth*scaleFraction/colorSteps, 20);
         }
 

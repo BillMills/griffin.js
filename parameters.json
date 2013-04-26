@@ -32,6 +32,7 @@ loadParameters({
 				"currentUnit" : "uA",
 				"temperatureUnit" : "C",
 				"moduleSizes" : 0,
+				"colorScale"  : ["ROOT Rainbow", "Greyscale", "Sunset"],
 
 				"BAMBINO" : {
 								"minima" : {

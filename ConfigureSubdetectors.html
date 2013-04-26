@@ -194,84 +194,87 @@
 
 			//function to push all the fields to the ODB
 			function commitParameters(){
-				//todo: form validation
+				
+				if(document.getElementById('subdetectorParameters').checkValidity()){
+					//top Level
+					ODBSet('/DashboardConfig/topLevel/expName', document.getElementById('EXPname').value);
+					ODBSet('/DashboardConfig/topLevel/statusURL', document.getElementById('StatusURL').value);
 
-				//top Level
-				ODBSet('/DashboardConfig/topLevel/expName', document.getElementById('EXPname').value);
-				ODBSet('/DashboardConfig/topLevel/statusURL', document.getElementById('StatusURL').value);
+					//HV - funny id's come from repurposing the minmax table
+					ODBSet('/DashboardConfig/HV/voltageTolerance', document.getElementById('voltageTolInput').valueAsNumber);
+					ODBSet('/DashboardConfig/HV/currentTolerance', document.getElementById('currentTolInput').valueAsNumber);
+					ODBSet('/DashboardConfig/HV/tempTolerance', document.getElementById('tempTolInput').valueAsNumber);
+					ODBSet('/DashboardConfig/HV/demandVoltage[*]', [document.getElementById('HVTableHVmin').valueAsNumber, document.getElementById('HVTableHVmax').valueAsNumber] );
+					ODBSet('/DashboardConfig/HV/voltRampSpeed[*]', [document.getElementById('HVTablethresholdMin').valueAsNumber, document.getElementById('HVTablethresholdMax').valueAsNumber]);
 
-				//HV - funny id's come from repurposing the minmax table
-				ODBSet('/DashboardConfig/HV/voltageTolerance', document.getElementById('voltageTolInput').valueAsNumber);
-				ODBSet('/DashboardConfig/HV/currentTolerance', document.getElementById('currentTolInput').valueAsNumber);
-				ODBSet('/DashboardConfig/HV/tempTolerance', document.getElementById('tempTolInput').valueAsNumber);
-				ODBSet('/DashboardConfig/HV/demandVoltage[*]', [document.getElementById('HVTableHVmin').valueAsNumber, document.getElementById('HVTableHVmax').valueAsNumber] );
-				ODBSet('/DashboardConfig/HV/voltRampSpeed[*]', [document.getElementById('HVTablethresholdMin').valueAsNumber, document.getElementById('HVTablethresholdMax').valueAsNumber]);
+					for(var i=0; i<subdetectors.length; i++){
+						//BAMBINO
+						if(subdetectors[i] == 'BAMBINO'){
+							var bambinoMode = (document.getElementById('BAMBINOmodeS2').checked) ? 'S2' : 'S3';
+							ODBSet('/DashboardConfig/BAMBINO/mode', bambinoMode);
+							setMinMax('BAMBINO', '');
+						}
 
-				for(var i=0; i<subdetectors.length; i++){
-					//BAMBINO
-					if(subdetectors[i] == 'BAMBINO'){
-						var bambinoMode = (document.getElementById('BAMBINOmodeS2').checked) ? 'S2' : 'S3';
-						ODBSet('/DashboardConfig/BAMBINO/mode', bambinoMode);
-						setMinMax('BAMBINO', '');
+						//DANTE
+						if(subdetectors[i] == 'DANTE'){
+							setMinMax('DANTE', 'BaF');
+							setMinMax('DANTE', 'BGO');
+						}
+
+						//DESCANT
+						if(subdetectors[i] == 'DESCANT'){
+							setMinMax('DESCANT', '');						
+						}
+
+						//HPGe
+						if(subdetectors[i] == 'HPGe'){
+							setMinMax('HPGe', '');
+							setMinMax('HPGe', 'BGO');
+						}
+
+						//PACES
+						if(subdetectors[i] == 'PACES'){
+							setMinMax('PACES', '');
+						}
+
+						//SCEPTAR
+						if(subdetectors[i] == 'SCEPTAR'){
+							setMinMax('SCEPTAR', '');
+						}
+
+						//SHARC
+						if(subdetectors[i] == 'SHARC'){
+							setMinMax('SHARC', '');
+						}
+
+						//SPICE
+						if(subdetectors[i] == 'SPICE'){
+							setMinMax('SPICE', '');
+						}
+
+						//TIP wall
+						if(subdetectors[i] == 'TIPwall'){
+							setMinMax('TIP', 'Wall');
+							setMinMax('TIP', 'HPGe');
+							setMinMax('TIP', 'BGO');
+						}
+
+						//TIP ball
+						if(subdetectors[i] == 'TIPball'){
+							setMinMax('TIP', 'Ball');
+							setMinMax('TIP', 'HPGe');
+							setMinMax('TIP', 'BGO');
+						}			
+
+						//ZDS
+						if(subdetectors[i] == 'ZDS'){
+							setMinMax('ZDS', '');
+						}
+
+						window.location = 'http://alphadon.triumf.ca:8082/CS/HV-Dashboard';
 					}
-
-					//DANTE
-					if(subdetectors[i] == 'DANTE'){
-						setMinMax('DANTE', 'BaF');
-						setMinMax('DANTE', 'BGO');
-					}
-
-					//DESCANT
-					if(subdetectors[i] == 'DESCANT'){
-						setMinMax('DESCANT', '');						
-					}
-
-					//HPGe
-					if(subdetectors[i] == 'HPGe'){
-						setMinMax('HPGe', '');
-						setMinMax('HPGe', 'BGO');
-					}
-
-					//PACES
-					if(subdetectors[i] == 'PACES'){
-						setMinMax('PACES', '');
-					}
-
-					//SCEPTAR
-					if(subdetectors[i] == 'SCEPTAR'){
-						setMinMax('SCEPTAR', '');
-					}
-
-					//SHARC
-					if(subdetectors[i] == 'SHARC'){
-						setMinMax('SHARC', '');
-					}
-
-					//SPICE
-					if(subdetectors[i] == 'SPICE'){
-						setMinMax('SPICE', '');
-					}
-
-					//TIP wall
-					if(subdetectors[i] == 'TIPwall'){
-						setMinMax('TIP', 'Wall');
-						setMinMax('TIP', 'HPGe');
-						setMinMax('TIP', 'BGO');
-					}
-
-					//TIP ball
-					if(subdetectors[i] == 'TIPball'){
-						setMinMax('TIP', 'Ball');
-						setMinMax('TIP', 'HPGe');
-						setMinMax('TIP', 'BGO');
-					}			
-
-					//ZDS
-					if(subdetectors[i] == 'ZDS'){
-						setMinMax('ZDS', '');
-					}
-
-					window.location = 'http://alphadon.triumf.ca:8082/CS/HV-Dashboard';
+				} else {
+					alert("Something doesn't make sense.  Check fields for mistakes, highlighted in red.");
 				}
 			}
 

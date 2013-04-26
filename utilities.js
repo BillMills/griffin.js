@@ -96,34 +96,56 @@ function parameterDialogue(scales){
     //insert form fields
     insertDOM('form', 'dialogueValues', '', '', 'tempDiv', '', '');
     for(i=0; i<scales.length; i++){
-        insertDOM('p', 'title'+i, '', 'font-size:16px; margin-top:3%;', 'tempDiv', '', scales[i][0]+'<br>');
-        insertDOM('p', 'minlabel'+i, '', 'display:inline;', 'tempDiv', '', 'Minimum: ');
-        insertDOM('input', 'minfield'+i, '', 'display:inline;', 'tempDiv', '', '', 'textbox', 'text', scales[i][1][window.subdetectorView])
+        insertDOM('p', 'title'+i, '', 'font-size:16px; margin-top:3%;', 'dialogueValues', '', scales[i][0]+'<br>');
+        insertDOM('p', 'minlabel'+i, '', 'display:inline;', 'dialogueValues', '', 'Minimum: ');
+        insertDOM('input', 'minfield'+i, '', 'display:inline;', 'dialogueValues', '', '', 'textbox', 'number', scales[i][1][window.subdetectorView]);
         document.getElementById('minfield'+i).setAttribute('size', 6);
-        insertDOM('p', 'minunit'+i, '', 'display:inline; margin-right:3%', 'tempDiv', '', window.parameters.subdetectorUnit[window.subdetectorView]);
-        insertDOM('p', 'maxlabel'+i, '', 'display:inline', 'tempDiv', '', 'Maximum: ');
-        insertDOM('input', 'maxfield'+i, '', 'display:inline;', 'tempDiv', '', '', 'textbox', 'text', scales[i][2][window.subdetectorView])
+        insertDOM('p', 'minunit'+i, '', 'display:inline; margin-right:3%', 'dialogueValues', '', window.parameters.subdetectorUnit[window.subdetectorView]);
+        insertDOM('p', 'maxlabel'+i, '', 'display:inline', 'dialogueValues', '', 'Maximum: ');
+        insertDOM('input', 'maxfield'+i, '', 'display:inline;', 'dialogueValues', '', '', 'textbox', 'number', scales[i][2][window.subdetectorView])
         document.getElementById('maxfield'+i).setAttribute('size', 6);
-        insertDOM('p', 'maxunit'+i, '', 'display:inline;', 'tempDiv', '', window.parameters.subdetectorUnit[window.subdetectorView] + '<br>');
+        insertDOM('p', 'maxunit'+i, '', 'display:inline;', 'dialogueValues', '', window.parameters.subdetectorUnit[window.subdetectorView] + '<br>');
+        //don't allow min > max:
+        document.getElementById('minfield'+i).onchange = function(){document.getElementById('maxfield'+this.id[8]).min = document.getElementById(this.id).valueAsNumber;};
+
     }
 
+    //insert color scale picker:
+    insertDOM('p', 'colorPickerLabel', '', 'display:inline', 'dialogueValues', '', '<br><br>Palette: ');
+    var colorScales = ['Greyscale', 'ROOT Rainbow', 'Sunset'];
+    insertDOM('select', 'colorOptions', '', '', 'dialogueValues', '', '');
+    var colorDD = document.getElementById('colorOptions');
+    var option = [];
+    for(i=0; i<colorScales.length; i++){
+        option[i] = document.createElement('option');
+        option[i].text = colorScales[i];
+        option[i].value = colorScales[i];
+        colorDD.add(option[i], null);
+    }
+    colorDD.value = window.parameters.colorScale[window.subdetectorView];
+    insertDOM('br', 'break', '', '', 'dialogueValues', '', '');
+
     //insert submit button
-    insertDOM('input', 'updateParameters', 'bigButton', 'width:20%; margin-right:2%; margin-top:6%', 'tempDiv', '', '', '', 'button', 'Commit')
-    insertDOM('input', 'dismiss', 'bigButton', 'width:20%; margin-top:6%; margin-bottom:6%;', 'tempDiv', '', '', '', 'button', 'Dismiss')
+    insertDOM('input', 'updateParameters', 'bigButton', 'width:20%; margin-right:2%; margin-top:6%', 'dialogueValues', '', '', '', 'button', 'Commit')
+    insertDOM('input', 'dismiss', 'bigButton', 'width:20%; margin-top:6%; margin-bottom:6%;', 'dialogueValues', '', '', '', 'button', 'Dismiss')
 
     document.getElementById('updateParameters').onclick = function(event){
         var i;
-        
-        for(i=0; i<scales.length; i++){
-            scales[i][1][window.subdetectorView] = parseFloat(document.getElementById('minfield'+i).value);
-            scales[i][2][window.subdetectorView] = parseFloat(document.getElementById('maxfield'+i).value);
+        if(document.getElementById('dialogueValues').checkValidity()){
+            for(i=0; i<scales.length; i++){
+                scales[i][1][window.subdetectorView] = parseFloat(document.getElementById('minfield'+i).value);
+                scales[i][2][window.subdetectorView] = parseFloat(document.getElementById('maxfield'+i).value);
+            }
+            window.parameters.colorScale[window.subdetectorView] = colorDD.value;
+            document.getElementById('tempDiv').style.opacity = 0;
+            setTimeout(function(){
+                var element = document.getElementById('tempDiv');
+                element.parentNode.removeChild(element);            
+            }, 500);
+            forceUpdate();
+        } else{
+            alert("Something doesn't make sense.  Check fields for mistakes, highlighted in red.");
         }
-        document.getElementById('tempDiv').style.opacity = 0;
-        setTimeout(function(){
-            var element = document.getElementById('tempDiv');
-            element.parentNode.removeChild(element);            
-        }, 500);
-        forceUpdate();
     }
 
     document.getElementById('dismiss').onclick = function(event){
