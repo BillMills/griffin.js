@@ -11,6 +11,10 @@ function StatusBar(wrapper){
     //tooltip actually attaches to a canvas - attach it to the background canvas, but then pull the event listners up to the top-level div:
     document.getElementById(this.wrapperID).onmousemove = document.getElementById('LeftSidebarBKG').onmousemove
     document.getElementById(this.wrapperID).onmouseout = document.getElementById('LeftSidebarBKG').onmouseout
+    document.getElementById(this.wrapperID).onmouseover = document.getElementById('LeftSidebarBKG').onmouseover
+    //tooltip will also look for members canvasWidth and canvasHeight:
+    this.canvasWidth = document.getElementById('LeftSidebarBKG').width
+    this.canvasHeight = document.getElementById('LeftSidebarBKG').height
 
     //header info
     insertDOM('div', 'statusHeader', '', 'background:rgba(0,0,0,0.7); border: 5px solid; border-radius:10px; width:80%; margin-top:5%; margin-bottom:5%; margin-left:auto; margin-right:auto; padding-left:5%; padding-right:5%; transition:border-color 0.5s; -moz-transition:border-color 0.5s; -webkit-transition:border-color 0.5s;', this.wrapperID, '', '')
@@ -29,6 +33,7 @@ function StatusBar(wrapper){
 
     //message service
     insertDOM('table', 'messageTable', '', 'padding:10px; font-family:10px Raleway;', this.wrapperID, '', '');
+    /*  //message input diabled until further notice///////////////////////////////////
     insertDOM('tr', 'inputRow', '', '', 'messageTable', '', '');
     insertDOM('td', 'inputCell', 'messageServiceCell', 'background:#333333;', 'inputRow', '');
     document.getElementById('inputCell').innerHTML = ''
@@ -50,6 +55,7 @@ function StatusBar(wrapper){
             this.value = 'Enter log message here; press return to commit.';
         }
     }
+    */ //end message input///////////////////////////////////////////////////////////////
     insertDOM('tr', 'messRow0', '', '', 'messageTable', '', '');
     insertDOM('td', 'message0', 'messageServiceCell', 'background:#777777;', 'messRow0', '');
     insertDOM('tr', 'messRow1', '', '', 'messageTable', '', '');
@@ -155,11 +161,11 @@ function StatusBar(wrapper){
             document.getElementById('message'+i).innerHTML = messages[4-i]; //most recent on top
         }
 
-
-
         //make sure the left sidebar background adjusts to accomodate its elements
         document.getElementById('LeftSidebarBKG').width = parseInt(($('#'+this.wrapperID).css('width')));
         document.getElementById('LeftSidebarBKG').height = Math.max(renderHeight*0.9, 50 + parseInt($('#'+this.wrapperID).css('height')) );
+        this.canvasWidth = document.getElementById('LeftSidebarBKG').width;
+        this.canvasHeight = document.getElementById('LeftSidebarBKG').height;
         tabBKG('LeftSidebarBKG', 'left');
 
     };
@@ -173,7 +179,6 @@ function StatusBar(wrapper){
         var nextLine;
         var cardIndex;
         var i;
-
         nextLine = '<u>Run Config Details</u>'
         toolTipContent += nextLine + '<br><br>';
 

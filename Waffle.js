@@ -189,6 +189,9 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         this.tooltip = new Tooltip(this.canvasID, 'MFTT', this.wrapperDiv, window.parameters.prefix, window.parameters.postfix);
         //give the tooltip a pointer back to this object:
         this.tooltip.obj = that;
+        //tooltip looks for members canvasWidth and canvasHeight to make sure its in a valid place:
+        this.canvasWidth = document.getElementById(this.canvasID).width;
+        this.canvasHeight = document.getElementById(this.canvasID).height;
 
         //establish animation parameters:
         this.FPS = 30;

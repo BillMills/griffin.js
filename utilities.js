@@ -87,7 +87,7 @@ function parameterDialogue(scales){
     insertDOM('h2', 'dialogHeader', '', 'position:relative; font:24px Orbitron; top:10px; margin-bottom:6%', 'tempDiv', '', 'Adjust Scale');
 
     //fix dimensions
-    var width = 0.3*window.innerWidth;
+    var width = 0.35*window.innerWidth;
     $('#dialogHeader').width(width)
 
     //center dialogue
