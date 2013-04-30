@@ -5,19 +5,21 @@ function StatusBar(wrapper){
 
 	var that = this;
 
-	//deploy tooltip:
+    //header info
+    insertDOM('div', 'statusHeader', '', 'background:rgba(0,0,0,0.7); border: 5px solid; border-radius:10px; width:80%; margin-top:5%; margin-bottom:5%; margin-left:auto; margin-right:auto; padding-left:5%; padding-right:5%; transition:border-color 0.5s; -moz-transition:border-color 0.5s; -webkit-transition:border-color 0.5s;', this.wrapperID, '', '')
+
+    //deploy tooltip:
     this.tooltip = new Tooltip('LeftSidebarBKG', 'leftSidebarTT', this.wrapperID, [], []);
     this.tooltip.obj = that;
+    //in order to suppress the meta reload baked into the status page, we'll load it into a plaintext tag first, scrape out the body, then promote it to a real object:
+    //insertDOM('plaintext', 'rawStatus', '', '', 'leftSidebarTT', '', '');
     //tooltip actually attaches to a canvas - attach it to the background canvas, but then pull the event listners up to the top-level div:
-    document.getElementById(this.wrapperID).onmousemove = document.getElementById('LeftSidebarBKG').onmousemove
-    document.getElementById(this.wrapperID).onmouseout = document.getElementById('LeftSidebarBKG').onmouseout
-    document.getElementById(this.wrapperID).onmouseover = document.getElementById('LeftSidebarBKG').onmouseover
+    document.getElementById('statusHeader').onmousemove = document.getElementById('LeftSidebarBKG').onmousemove
+    document.getElementById('statusHeader').onmouseout = document.getElementById('LeftSidebarBKG').onmouseout
+    document.getElementById('statusHeader').onmouseover = document.getElementById('LeftSidebarBKG').onmouseover
     //tooltip will also look for members canvasWidth and canvasHeight:
     this.canvasWidth = document.getElementById('LeftSidebarBKG').width
     this.canvasHeight = document.getElementById('LeftSidebarBKG').height
-
-    //header info
-    insertDOM('div', 'statusHeader', '', 'background:rgba(0,0,0,0.7); border: 5px solid; border-radius:10px; width:80%; margin-top:5%; margin-bottom:5%; margin-left:auto; margin-right:auto; padding-left:5%; padding-right:5%; transition:border-color 0.5s; -moz-transition:border-color 0.5s; -webkit-transition:border-color 0.5s;', this.wrapperID, '', '')
 
     //experiment title
     insertDOM('h2', this.titleID, '', 'margin-top:25px; font-family: "Orbitron", sans-serif;', 'statusHeader', '', 'Experiment Title')
@@ -108,15 +110,7 @@ function StatusBar(wrapper){
             $('#statusHeader').css('border-color', '#66FF66');
         }
     	else runInfo += 'State Unknown';
-
-    	//restart?  TODO
-        if(window.parameters.devMode) this.restart = '???';
-    	else this.restart = ODBGet('/Programs/Logger/Auto restart');
-
-    	//data dir:
-    	if(window.parameters.devMode) this.dataDir = '/dummy/directory/path/' 
-        else this.dataDir = ODBGet('/Logger/Data dir')
-
+        
     	//run time
     	var startInfo = 'Start: ';
     	if(window.parameters.devMode) startInfo += '00:00:00 January 1, 1970'
@@ -168,6 +162,52 @@ function StatusBar(wrapper){
         this.canvasHeight = document.getElementById('LeftSidebarBKG').height;
         tabBKG('LeftSidebarBKG', 'left');
 
+        /*
+        //tooltip content:
+        //get Status table, strip out meta refresh tag, and first 3 table rows:
+        $('#leftSidebarTT').load(window.parameters.statusURL, function(){
+            var i, rowNode;
+            var metaTags = getTag('meta', 'leftSidebarTT');
+            var rowTags = getTag('tr', 'leftSidebarTT');
+        
+            if(metaTags){
+                metaTags[0].id = 'metaNode0';
+                var metaNode = document.getElementById('metaNode0');
+                metaNode.parentNode.removeChild(metaNode);        
+            }
+
+            if(rowTags){
+                for(i=0; i<3; i++){
+                    rowTags[0].id = 'rowNodeID';
+                    rowNode = document.getElementById('rowNodeID');
+                    rowNode.parentNode.removeChild(rowNode);                    
+                }
+            }
+
+            $('#leftSidebarTT').css('padding', 0);
+        });
+        */
+
+        $.get(window.parameters.statusURL, function(response){
+            var i, headStart, headEnd = '';
+
+
+            //remove the <head>:
+            i=0;
+            while(headEnd==''){
+                if(response[i] == '<' && response[i+1] == 'h' && response[i+2] == 'e' && response[i+3] == 'a' && response[i+4] == 'd' && response[i+5] == '>' )
+                    headStart = i;
+                else if (response[i] == '<' && response[i+1] == '/' && response[i+2] == 'h' && response[i+3] == 'e' && response[i+4] == 'a' && response[i+5] == 'd' && response[i+6] == '>' )
+                    headEnd = i+7;
+                i++;
+            }
+            response = response.slice(0, headStart) + response.slice(headEnd, response.length);
+
+            //stick the result in the TT:
+            document.getElementById('leftSidebarTT').innerHTML = response;
+            //$('#leftSidebarTT').append(response);
+        });
+
     };
 
     this.findCell = function(event){
@@ -175,6 +215,7 @@ function StatusBar(wrapper){
     };
 
     this.defineText = function(cell){
+        /*
         var toolTipContent = '<br>';
         var nextLine;
         var cardIndex;
@@ -191,7 +232,8 @@ function StatusBar(wrapper){
         toolTipContent += '<br>';
 
         document.getElementById(this.tooltip.ttDivID).innerHTML = toolTipContent;
-
+        */
+        
         return 0;
     };
 

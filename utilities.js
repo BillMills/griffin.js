@@ -169,7 +169,6 @@ function DCobject(o) {
 
 
 //return the biggest font size that fits a string into a given length in a given context:
-
 function fitFont(context, string, length){
     var i, size = 1;
     context.font = size+'px Raleway';
@@ -182,5 +181,13 @@ function fitFont(context, string, length){
     return size-1;
 }
 
+//get the <tag> elements inside a given <parent> (for stripping the head out of the imported status page, since those objects currently have no id's :/ )
+function getTag(tag, parentID){
+    parent = document.getElementById(parentID);
+    var descendants = parent.getElementsByTagName(tag);
+    if ( descendants.length )
+        return descendants;
+    return null;
+}
 
 

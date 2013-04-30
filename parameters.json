@@ -1,7 +1,7 @@
 loadParameters({
 				"devMode" : 1,
 				"ExpName" : "DEMO",
-				"statusURL" : "http://alphadon.triumf.ca:8081/",
+				"statusURL" : "http://alphadon.triumf.ca:8082/",
 				"topDeployment" : {"HV":1, "Subsystems":1, "DAQ":1, "Clock":1, "Trigger":1},
 				"deployment" : {"BAMBINO":1, "DANTE":1, "DESCANT":1, "HPGe":1, "PACES":1, "SCEPTAR":1, "SHARC":1, "SPICE":1, "TIP":1},
 				"wrapper" : "waffleplate",
