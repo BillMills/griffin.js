@@ -42,12 +42,19 @@ div.navPanel{
 div.tooltip{
 	display:none;
 	position:absolute;
-	/*background: rgba(0,0,0,0.7);*/
 	width:100px;
 	height:60px;
 	color:#FFFFFF;
 	text-align: center;
 	z-index: 20000;
+	background:rgba(0,0,0,0.7); 
+	border: 5px solid; 
+	border-radius:10px; 
+	border-color:#FFFFFF;
+	width:auto; 
+	height:auto; 
+	padding-left:20px; 
+	padding-right:20px;
 }
 
 canvas.ttBKG{
@@ -311,3 +318,8 @@ textarea{
 	font-family: Raleway;
 	border-color: #FFFFFF;
 	border-style: dotted;
+}
+
+tbody tbody a:link{
+	color:#FFFFFF;
+}

@@ -162,37 +162,11 @@ function StatusBar(wrapper){
         this.canvasHeight = document.getElementById('LeftSidebarBKG').height;
         tabBKG('LeftSidebarBKG', 'left');
 
-        /*
-        //tooltip content:
-        //get Status table, strip out meta refresh tag, and first 3 table rows:
-        $('#leftSidebarTT').load(window.parameters.statusURL, function(){
-            var i, rowNode;
-            var metaTags = getTag('meta', 'leftSidebarTT');
-            var rowTags = getTag('tr', 'leftSidebarTT');
-        
-            if(metaTags){
-                metaTags[0].id = 'metaNode0';
-                var metaNode = document.getElementById('metaNode0');
-                metaNode.parentNode.removeChild(metaNode);        
-            }
-
-            if(rowTags){
-                for(i=0; i<3; i++){
-                    rowTags[0].id = 'rowNodeID';
-                    rowNode = document.getElementById('rowNodeID');
-                    rowNode.parentNode.removeChild(rowNode);                    
-                }
-            }
-
-            $('#leftSidebarTT').css('padding', 0);
-        });
-        */
-
+        //pull in status table from traditional status page, and put it in the TT:
         $.get(window.parameters.statusURL, function(response){
-            var i, headStart, headEnd = '';
+            var i, headStart, headEnd = '', rowNode;
 
-
-            //remove the <head>:
+            //remove the <head> before html is parsed: (todo: oneline this with regex and replace?)
             i=0;
             while(headEnd==''){
                 if(response[i] == '<' && response[i+1] == 'h' && response[i+2] == 'e' && response[i+3] == 'a' && response[i+4] == 'd' && response[i+5] == '>' )
@@ -203,9 +177,24 @@ function StatusBar(wrapper){
             }
             response = response.slice(0, headStart) + response.slice(headEnd, response.length);
 
-            //stick the result in the TT:
+            //change some colors - tags don't have IDs so easiest to do this as text:
+            response = response.replace(/#E0E0FF/g, '#333333');
+
+            //stick the result in the TT - html parsing happens now:
             document.getElementById('leftSidebarTT').innerHTML = response;
-            //$('#leftSidebarTT').append(response);
+
+            //now strip out unwanted table elements, easiest to do after html parsing:
+            var rowTags = getTag('tr', 'leftSidebarTT');
+            if(rowTags){
+                for(i=0; i<3; i++){
+                    rowTags[0].id = 'rowNodeID';
+                    rowNode = document.getElementById('rowNodeID');
+                    rowNode.parentNode.removeChild(rowNode);                    
+                }
+            }
+            $('#leftSidebarTT').css('padding', 0);
+            //$('#leftSidebarTT').css('background-color', '#000000');
+
         });
 
     };
@@ -214,26 +203,7 @@ function StatusBar(wrapper){
     	return 1;
     };
 
-    this.defineText = function(cell){
-        /*
-        var toolTipContent = '<br>';
-        var nextLine;
-        var cardIndex;
-        var i;
-        nextLine = '<u>Run Config Details</u>'
-        toolTipContent += nextLine + '<br><br>';
-
-        nextLine = 'Auto-Restart on End of Run: ' + this.restart 
-        toolTipContent += nextLine + '<br>';
-
-        nextLine = 'Data dir: ' + this.dataDir
-        toolTipContent += nextLine + '<br>';
-
-        toolTipContent += '<br>';
-
-        document.getElementById(this.tooltip.ttDivID).innerHTML = toolTipContent;
-        */
-        
+    this.defineText = function(cell){        
         return 0;
     };
 
