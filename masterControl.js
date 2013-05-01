@@ -207,18 +207,15 @@ function fetchCustomParameters(){
 
     paths[52] = '/DashboardConfig/TIP/deploy'
     paths[53] = '/DashboardConfig/TIP/mode'                         //'Ball' or 'Wall' 
-    paths[54] = '/DashboardConfig/TIP/WallHVscale[*]'
-    paths[55] = '/DashboardConfig/TIP/BallHVscale[*]'
-    paths[56] = '/DashboardConfig/TIP/HPGeHVscale[*]'
-    paths[57] = '/DashboardConfig/TIP/BGOHVscale[*]'
-    paths[58] = '/DashboardConfig/TIP/WallthresholdScale[*]'
-    paths[59] = '/DashboardConfig/TIP/BallthresholdScale[*]'
-    paths[60] = '/DashboardConfig/TIP/HPGethresholdScale[*]'
-    paths[61] = '/DashboardConfig/TIP/BGOthresholdScale[*]'
-    paths[62] = '/DashboardConfig/TIP/WallrateScale[*]'
-    paths[63] = '/DashboardConfig/TIP/BallrateScale[*]'
-    paths[64] = '/DashboardConfig/TIP/HPGerateScale[*]'
-    paths[65] = '/DashboardConfig/TIP/BGOrateScale[*]'              
+    paths[54] = '/DashboardConfig/TIP/CsIHVscale[*]'
+    paths[55] = '/DashboardConfig/TIP/HPGeHVscale[*]'
+    paths[56] = '/DashboardConfig/TIP/BGOHVscale[*]'
+    paths[57] = '/DashboardConfig/TIP/CsIthresholdScale[*]'
+    paths[58] = '/DashboardConfig/TIP/HPGethresholdScale[*]'
+    paths[59] = '/DashboardConfig/TIP/BGOthresholdScale[*]'
+    paths[60] = '/DashboardConfig/TIP/CsIrateScale[*]'
+    paths[61] = '/DashboardConfig/TIP/HPGerateScale[*]'
+    paths[62] = '/DashboardConfig/TIP/BGOrateScale[*]'              
 
     //fetch:
     var data = ODBMGet(paths);
@@ -281,14 +278,12 @@ function fetchCustomParameters(){
 
     window.parameters.deployment.TIP = parseFloat(data[52]);
     window.parameters.TIPmode = data[53].slice(0, data[53].length-1);
-    if(window.parameters.TIPmode == 'Wall') window.parameters.TIP.minima.CsI = [parseFloat(data[54][0]), parseFloat(data[58][0]), parseFloat(data[62][0])];
-    else if(window.parameters.TIPmode == 'Ball') window.parameters.TIP.minima.CsI = [parseFloat(data[55][0]), parseFloat(data[59][0]), parseFloat(data[63][0])];
-    window.parameters.TIP.minima.HPGe = [parseFloat(data[56][0]), parseFloat(data[60][0]), parseFloat(data[64][0])];
-    window.parameters.TIP.minima.BGO = [parseFloat(data[57][0]), parseFloat(data[61][0]), parseFloat(data[65][0])];
-    if(window.parameters.TIPmode == 'Wall') window.parameters.TIP.maxima.CsI = [parseFloat(data[54][1]), parseFloat(data[58][1]), parseFloat(data[62][1])];
-    else if(window.parameters.TIPmode == 'Ball') window.parameters.TIP.maxima.CsI = [parseFloat(data[55][1]), parseFloat(data[59][1]), parseFloat(data[63][1])];
-    window.parameters.TIP.maxima.HPGe = [parseFloat(data[56][1]), parseFloat(data[60][1]), parseFloat(data[64][1])];
-    window.parameters.TIP.maxima.BGO = [parseFloat(data[57][1]), parseFloat(data[61][1]), parseFloat(data[65][1])];
+    window.parameters.TIP.minima.CsI = [parseFloat(data[54][0]), parseFloat(data[57][0]), parseFloat(data[60][0])];
+    window.parameters.TIP.minima.HPGe = [parseFloat(data[55][0]), parseFloat(data[58][0]), parseFloat(data[61][0])];
+    window.parameters.TIP.minima.BGO = [parseFloat(data[56][0]), parseFloat(data[59][0]), parseFloat(data[62][0])];
+    window.parameters.TIP.maxima.CsI = [parseFloat(data[54][1]), parseFloat(data[57][1]), parseFloat(data[60][1])];
+    window.parameters.TIP.maxima.HPGe = [parseFloat(data[55][1]), parseFloat(data[58][1]), parseFloat(data[61][1])];
+    window.parameters.TIP.maxima.BGO = [parseFloat(data[56][1]), parseFloat(data[59][1]), parseFloat(data[62][1])];
 
 
 }

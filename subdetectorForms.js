@@ -25,11 +25,11 @@ function configure(detector){
 	} else if(detector == 'SPICE'){
 		minmaxTable('SPICEdiv', 'SPICE');
 	} else if(detector == 'TIPwall'){
-		minmaxTable('TIPwalldiv', 'TIP Wall');
+		minmaxTable('TIPwalldiv', 'TIP CsI');
 		minmaxTable('TIPwalldiv', 'TIP HPGe');
 		minmaxTable('TIPwalldiv', 'TIP BGO');
 	} else if(detector == 'TIPball'){
-		minmaxTable('TIPballdiv', 'TIP Ball');
+		minmaxTable('TIPballdiv', 'TIP CsI');
 		minmaxTable('TIPballdiv', 'TIP HPGe');
 		minmaxTable('TIPballdiv', 'TIP BGO');
 	}	

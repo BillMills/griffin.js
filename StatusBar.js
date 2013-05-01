@@ -11,8 +11,7 @@ function StatusBar(wrapper){
     //deploy tooltip:
     this.tooltip = new Tooltip('LeftSidebarBKG', 'leftSidebarTT', this.wrapperID, [], []);
     this.tooltip.obj = that;
-    //in order to suppress the meta reload baked into the status page, we'll load it into a plaintext tag first, scrape out the body, then promote it to a real object:
-    //insertDOM('plaintext', 'rawStatus', '', '', 'leftSidebarTT', '', '');
+
     //tooltip actually attaches to a canvas - attach it to the background canvas, but then pull the event listners up to the top-level div:
     document.getElementById('statusHeader').onmousemove = document.getElementById('LeftSidebarBKG').onmousemove
     document.getElementById('statusHeader').onmouseout = document.getElementById('LeftSidebarBKG').onmouseout

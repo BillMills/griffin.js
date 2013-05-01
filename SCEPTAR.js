@@ -18,8 +18,8 @@ function SCEPTAR(){
     this.canvas.onclick = function(event){
         var y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;
         if(y > that.canvasHeight - that.scaleHeight)
-            if(that.config[2]) parameterDialogue([['SCEPTAR', window.parameters[that.name].minima['SCEPTAR'], window.parameters[that.name].maxima['SCEPTAR']], ['ZDS', window.parameters[that.name].minima['ZDS'], window.parameters[that.name].maxima['ZDS']]]);
-            else parameterDialogue([['SCEPTAR', window.parameters[that.name].minima['SCEPTAR'], window.parameters[that.name].maxima['SCEPTAR']]]);
+            if(that.config[2]) parameterDialogue(that.name, [['SCEPTAR', window.parameters[that.name].minima['SCEPTAR'], window.parameters[that.name].maxima['SCEPTAR']], ['ZDS', window.parameters[that.name].minima['ZDS'], window.parameters[that.name].maxima['ZDS']]]);
+            else parameterDialogue(that.name, [['SCEPTAR', window.parameters[that.name].minima['SCEPTAR'], window.parameters[that.name].maxima['SCEPTAR']]]);
     }
 
 

@@ -205,13 +205,11 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
             buttonWidth = Math.max(window.parameters.moduleSizes[i],1)*0.9*this.cellSide + (Math.max(window.parameters.moduleSizes[i],1)-1)*0.1*this.cellSide;
             if(window.parameters.moduleSizes[i] == 4) fontsize = 0.9*this.cellSide*0.5;
             else fontsize = 0.9*this.cellSide*0.3;
-            //FF freaks out if you try and overwrite a styleSheet :(
-            //newRule = "button#card"+i+"{width:"+buttonWidth+"px; height:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; margin-top:"+0.05*this.cellSide+"px; float:left; background: -webkit-gradient(linear, left top, left bottom, from(#DDDDDD), to(#FFFFFF)); background: -moz-linear-gradient(top,  #DDDDDD,  #FFFFFF); -webkit-border-radius: 5; -moz-border-radius: 5; border-radius: 5; font-size:"+this.cellSide/4+"px; padding:0px}";
-            //document.styleSheets[0].insertRule(newRule,0);
+
             if(window.parameters.moduleSizes[i] != 0)
-                newRule = "width:"+buttonWidth+"px; height:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; margin-top:"+0.05*this.cellSide+"px; float:left; -webkit-border-radius: 5;  -moz-border-radius: 5; border-radius: 5; display: inline; font-family: 'Raleway', sans-serif; font-size:"+fontsize+"px; padding:0px;";
+                newRule = "width:"+buttonWidth+"px; height:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; margin-top:"+0.05*this.cellSide+"px; float:left; border-radius: 5px; display: inline; font-family: 'Raleway', sans-serif; font-size:"+fontsize+"px; padding:0px;";
             else{ 
-                newRule = "width:"+buttonWidth+"px; height:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; margin-top:"+0.05*this.cellSide+"px; float:left; -webkit-border-radius: 5;  -moz-border-radius: 5; border-radius: 5; display: inline; font-family: 'Raleway', sans-serif; font-size:"+this.cellSide/2+"px; padding:0px; color:#CC0000;";
+                newRule = "width:"+buttonWidth+"px; height:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; margin-top:"+0.05*this.cellSide+"px; float:left; border-radius: 5px; display: inline; font-family: 'Raleway', sans-serif; font-size:"+this.cellSide/2+"px; padding:0px; color:#CC0000;";
                 document.getElementById('card'+i).setAttribute('onclick', '');
                 document.getElementById('card'+i).innerHTML = 'X'
             }

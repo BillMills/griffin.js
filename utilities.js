@@ -78,13 +78,13 @@ function insertDOM(element, id, classTag, style, wrapperID, onclick, content, na
 
 
 //summon a dialogue to change some parameter values.  mostly hardcoded for scale min/max, todo: generalize
-function parameterDialogue(scales){
-    var i;
+function parameterDialogue(detName, scales){
+    var i, j, ODBpath;
 
     //insert div and title
     insertDOM('div', 'tempDiv', '', 'z-index:10; position:absolute; text-align:center; opacity:0; transition:opacity 0.5s; -moz-transition:opacity 0.5s; -webkit-transition:opacity 0.5s; background:rgba(0,0,0,0.7); border: 5px solid; border-radius:10px;', 'waffleplate', '', '', '');
     var dialogue = document.getElementById('tempDiv');
-    insertDOM('h2', 'dialogHeader', '', 'position:relative; font:24px Orbitron; top:10px; margin-bottom:6%', 'tempDiv', '', 'Adjust Scale');
+    insertDOM('h2', 'dialogHeader', '', 'position:relative; font:24px Orbitron; top:10px; margin-bottom:6%', 'tempDiv', '', 'Adjust '+detName+' Scale');
 
     //fix dimensions
     var width = 0.35*window.innerWidth;
@@ -133,16 +133,29 @@ function parameterDialogue(scales){
         var i;
         if(document.getElementById('dialogueValues').checkValidity()){
             for(i=0; i<scales.length; i++){
+                //commit to local parameter service:
                 scales[i][1][window.subdetectorView] = parseFloat(document.getElementById('minfield'+i).value);
                 scales[i][2][window.subdetectorView] = parseFloat(document.getElementById('maxfield'+i).value);
+
+                //commit to ODB:
+                ODBpath = '/DashboardConfig/'+detName+'/'
+                if(scales[i][0] != detName) ODBpath += scales[i][0];
+                if(window.subdetectorView == 0) ODBpath += 'HVscale[*]';
+                else if(window.subdetectorView == 1) ODBpath += 'thresholdScale[*]';
+                else if(window.subdetectorView == 2) ODBpath += 'rateScale[*]';
+                ODBSet(ODBpath, [ scales[i][1][window.subdetectorView], scales[i][2][window.subdetectorView] ]);
             }
             window.parameters.colorScale[window.subdetectorView] = colorDD.value;
+
+            //remove dialogue
             document.getElementById('tempDiv').style.opacity = 0;
             setTimeout(function(){
                 var element = document.getElementById('tempDiv');
                 element.parentNode.removeChild(element);            
             }, 500);
+
             forceUpdate();
+
         } else{
             alert("Something doesn't make sense.  Check fields for mistakes, highlighted in red.");
         }

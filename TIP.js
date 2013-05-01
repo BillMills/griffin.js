@@ -27,7 +27,7 @@ function TIP(){
                                         that.detailShowing = 0;
                                         swapFade(null, that, 1000, 0);
                                     } else {
-                                        parameterDialogue([['CsI', window.parameters[that.name].minima['CsI'], window.parameters[that.name].maxima['CsI']], ['HPGe', window.parameters[that.name].minima['HPGe'], window.parameters[that.name].maxima['HPGe']], ['BGO', window.parameters[that.name].minima['BGO'], window.parameters[that.name].maxima['BGO']]]);
+                                        parameterDialogue(that.name, [['CsI', window.parameters[that.name].minima['CsI'], window.parameters[that.name].maxima['CsI']], ['HPGe', window.parameters[that.name].minima['HPGe'], window.parameters[that.name].maxima['HPGe']], ['BGO', window.parameters[that.name].minima['BGO'], window.parameters[that.name].maxima['BGO']]]);
                                     }
                                 };
     this.canvas.onclick =   function(event){
@@ -46,7 +46,7 @@ function TIP(){
                                     swapFade(null, that, 1000, 0)
                                 } else if(y > that.canvasHeight - that.scaleHeight)
                                     //parameterDialogue([['CsI', window.parameters.TIPCsIminima, window.parameters.TIPCsImaxima], ['HPGe', window.parameters.TIPHPGeminima, window.parameters.TIPHPGemaxima], ['BGO',window.parameters.TIPBGOminima, window.parameters.TIPBGOmaxima]]);
-                                    parameterDialogue([['CsI', window.parameters[that.name].minima['CsI'], window.parameters[that.name].maxima['CsI']], ['HPGe', window.parameters[that.name].minima['HPGe'], window.parameters[that.name].maxima['HPGe']], ['BGO', window.parameters[that.name].minima['BGO'], window.parameters[that.name].maxima['BGO']]]);
+                                    parameterDialogue(that.name, [['CsI', window.parameters[that.name].minima['CsI'], window.parameters[that.name].maxima['CsI']], ['HPGe', window.parameters[that.name].minima['HPGe'], window.parameters[that.name].maxima['HPGe']], ['BGO', window.parameters[that.name].minima['BGO'], window.parameters[that.name].maxima['BGO']]]);
                             };
 
     //drawing parameters

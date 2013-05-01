@@ -8,8 +8,6 @@ button.button{
 	background-color: #FFFFFF;
 	background-image: -webkit-linear-gradient(transparent, #C1C1C1);
     background-image: -moz-linear-gradient(transparent, #C1C1C1); 
-	-webkit-border-radius: 5; 
-	-moz-border-radius: 5; 
 	border-radius: 5; 
 	font-size:20px;
 	font-family: Raleway;

@@ -58,7 +58,7 @@ function Subsystem(){
     this.canvas.onclick = function(event){
         var y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;
         if(y > that.canvasHeight - that.scaleHeight)
-            parameterDialogue([[that.name, window.parameters[that.name].minima[that.name], window.parameters[that.name].maxima[that.name]]]);
+            parameterDialogue(that.name, [[that.name, window.parameters[that.name].minima[that.name], window.parameters[that.name].maxima[that.name]]]);
     }
 
     //member functions
