@@ -607,6 +607,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         this.fetchNewData = function(){
             var testParameter, i, j, ODBindex, columns, slot;
             //batch fetch all in one big lump:
+
             if(!window.parameters.devMode){
                 var variablesRecord = ODBGetRecord(window.parameters.ODBkeys[0]);
                 var settingsRecord  = ODBGetRecord(window.parameters.ODBkeys[1]);
@@ -631,12 +632,13 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                 else columns = this.cols;
 
                 for(j=0; j<columns; j++){
+                  
                     if (i>0) slot = primaryBin(window.parameters.moduleSizes, j);
                     else slot = j;
                     //don't populate the primary of a 12 channel card, or any channel corresponding to an empty slot:
                     if( (i!=0 || window.parameters.moduleSizes[j]==4) && window.parameters.moduleSizes[slot]!=0 ){
                         if(!window.parameters.devMode){
-
+                           
                             this.dataBus.channelName[i][j] = 'channel'+i+j;
                             this.dataBus.demandVoltage[i][j] = -9999;
                             this.dataBus.reportVoltage[i][j] = -9999;
@@ -665,7 +667,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                             //48ch cards report the currents in mA, convert to uA: 
                             if(i==0){
                                 this.dataBus.reportCurrent[i][j] = this.dataBus.reportCurrent[i][j]*1000;
-                                this.dataBus.currentLimit[i][j] = this.dataBus.curLimit[i][j]*1000;
+                                this.dataBus.currentLimit[i][j] = this.dataBus.currentLimit[i][j]*1000;
                             }
                             
                         } else{

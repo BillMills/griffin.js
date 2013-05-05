@@ -47,7 +47,7 @@ function AlarmService(sidebarDivID, sidebarDetailDivID){
 	//make detail paragraph disappear onclick:
 	document.getElementById(this.pID).setAttribute('onclick', 'javascript:hideDetail()');
 	//insert button to call out alarm detail:
-    insertDOM('button', 'alarmDetailButton', 'alarmButton', '', this.sidebarDivID, 'javascript:showDetail()', 'Alarms')
+    if(!window.parameters.MIDASlegacyMode) insertDOM('button', 'alarmDetailButton', 'alarmButton', '', this.sidebarDivID, 'javascript:showDetail()', 'Alarms')
 	//end DOM manipulation//////////////////////////////////////////////////////
 
 	//event listeners///////////////////////////////////////////////////////////

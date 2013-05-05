@@ -114,18 +114,21 @@ function detectCards(){
     
     if(window.parameters.devMode) moduleSizes = [0,4,0,1,1,0];
     else {
-        //fetch cratemap code: lowest bit: 0 = 6 slot, 1 = 12 slot; subsequent pairs of bits correspond to slots in ascending order;
-        //00 => empty slot; 01 => 12 channel card; 10 => 48 channel card.
+        //fetch cratemap code: subsequent pairs of bits correspond to slots in ascending order: 00 => empty slot; 01 => 12 channel card; 10 => 48 channel card.
+        //crate size indicated by terminating bitpattern = 111: at bit 12 -> 6 slot crate, at bit 24 -> 12 slot crate, absent -> 16 slot crate:
         crateCode = ODBGet('/Equipment/HV/Settings/CrateMap[0]');
-        if(crateCode & 1) nSlots = 12;
-        else nSlots = 6;
+        if( ((crateCode & (7<<12)) >> 12) == 7) nSlots = 6;
+        else if( ((crateCode & (7<<24)) >> 24) == 7) nSlots = 12;
+        else nSlots = 16;
 
         moduleSizes = [];
+        
         for(var i=0; i<nSlots; i++){
-            if( ((crateCode>>(1+2*i)) & 3) == 1 ) moduleSizes[moduleSizes.length] = 1;
-            else if( ((crateCode>>(1+2*i)) & 3) == 2 ) moduleSizes[moduleSizes.length] = 4;
+            if( ((crateCode>>(2*i)) & 3) == 1 ) moduleSizes[moduleSizes.length] = 1;
+            else if( ((crateCode>>(2*i)) & 3) == 2 ) moduleSizes[moduleSizes.length] = 4;
             else moduleSizes[moduleSizes.length] = 0;
         }
+        //console.log(moduleSizes)
     }
 
     return moduleSizes;
@@ -143,6 +146,7 @@ function fetchCustomParameters(){
     //define keys
     var paths = [];
     paths[0]  = '/DashboardConfig/topLevel/HPGeArray'            //GRIFFIN or TIGRESS
+    
     paths[1]  = '/DashboardConfig/topLevel/statusURL'            //URL of MIDAS status page
     paths[2]  = '/DashboardConfig/topLevel/expName'              //Experiment name
 
@@ -216,14 +220,18 @@ function fetchCustomParameters(){
     paths[60] = '/DashboardConfig/TIP/CsIrateScale[*]'
     paths[61] = '/DashboardConfig/TIP/HPGerateScale[*]'
     paths[62] = '/DashboardConfig/TIP/BGOrateScale[*]'              
-
+    
     //fetch:
     var data = ODBMGet(paths);
     //alert(data[0].slice(data[0].length-1,data[0].length).charCodeAt(0));  //ODBGet sticks a \n onto the end of all returned strings :(
     //also all numbers are returned as strings with \n suffix, and all arrays have an empty array position stuck on the back :( :( :(
 
+    //console.log(ODBGet(paths[62]))
+
     //plug data in
+    
     window.parameters['HPGemode'] = data[0].slice(0, data[0].length-1);
+    
     window.parameters['statusURL'] = data[1].slice(0, data[1].length-1);
     window.parameters['ExpName'] = data[2].slice(0, data[2].length-1);
 
@@ -284,8 +292,7 @@ function fetchCustomParameters(){
     window.parameters.TIP.maxima.CsI = [parseFloat(data[54][1]), parseFloat(data[57][1]), parseFloat(data[60][1])];
     window.parameters.TIP.maxima.HPGe = [parseFloat(data[55][1]), parseFloat(data[58][1]), parseFloat(data[61][1])];
     window.parameters.TIP.maxima.BGO = [parseFloat(data[56][1]), parseFloat(data[59][1]), parseFloat(data[62][1])];
-
-
+    
 }
 
 

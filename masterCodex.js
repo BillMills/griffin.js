@@ -7,9 +7,9 @@ masterCodex = function(){
 
 	//pull the table info in from the ODB
     if(window.parameters.devMode == 0){
-        this.FSPC = ODBGet('/Analyzer/Parameters/Cathode/config/FSCP[*]');
-        this.Name = ODBGet('/Analyzer/Parameters/Cathode/config/Name[*]');
-        this.nRows = ODBGet('/Analyzer/Parameters/Cathode/config/N');
+        this.FSPC  = ODBExtractRecord('/Analyzer/Parameters/Cathode/config', 'FSCP');//ODBGet('/Analyzer/Parameters/Cathode/config/FSCP[*]');
+        this.Name  = ODBExtractRecord('/Analyzer/Parameters/Cathode/config', 'Name');///ODBGet('/Analyzer/Parameters/Cathode/config/Name[*]');
+        this.nRows = ODBExtractRecord('/Analyzer/Parameters/Cathode/config', 'N')//ODBGet('/Analyzer/Parameters/Cathode/config/N');
     } else{
         //put the tables in by hand for now:
         this.FSPC = [0x0700700,0x0700701,0x0700702,0x0700703,0x0700704,0x0700705,0x0700706,0x0700707,0x0700708,0x0700709,0x0700800,0x0700801,0x0700802,0x0700803,0x0700804,0x0700805,0x0700806,0x0700807,0x0700808,0x0700809,0x0700900,0x0700901,0x0700902,0x0700903,0x0700904,0x0700905,0x0700906,0x0700907,0x0700908,0x0700909,0x0800700,0x0800701,0x0800702,0x0800703,0x0800704,0x0800705,0x0800706,0x0800707,0x0800708,0x0800709,0x0800800,0x0800801,0x0800802,0x0800803,0x0800804,0x0800805,0x0800806,0x0800807,0x0800808,0x0800809,0x0800900,0x0800901,0x0800902,0x0800903,0x0800904,0x0800905,0x0800906,0x0800907,0x0800908,0x0800909,0x0900700,0x0900701,0x0900702,0x0900703,0x0900704,0x0900705,0x0900706,0x0900707,0x0900708,0x0900709];

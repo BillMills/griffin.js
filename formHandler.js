@@ -197,7 +197,7 @@ function parseStatusWord(statusCode){
     else if(statusCode == 1) return 'On';
     else if(statusCode == 3) return 'Ramping Up';
     else if(statusCode == 5) return 'Ramping Down';
-    else if(statusCode == 256) return 'Internal Trip';
+    else if(statusCode == 256) return 'External Disable';
     else return 'Unknown Error';
 }
 

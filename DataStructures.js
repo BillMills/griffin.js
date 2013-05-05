@@ -234,6 +234,32 @@ DANTEDS = function(){
 	//todo
 }
 
+DSSD = function(){
+
+	var i, name;
+
+	this.DSSD = {};
+	this.DSSDTTmap = [];
+	for(i=1; i<16*2*4; i++){
+		var name = 'x'+i;
+		this.DESCANT[name] = {
+			'HV'		: 0,
+			'threshold' : 0,
+			'rate' 		: 0,
+			'index'		: i,
+
+			'oldHVcolor' : '#000000',
+			'HVcolor'	 : '#000000',
+			'oldThresholdColor' : '#000000',
+			'thresholdColor' : '#000000',
+			'oldRateColor' : '#000000',
+			'rateColor' : '#000000'	
+		}
+		this.DSSDTTmap[i] = name;
+	}
+
+}
+
 BAMBINODS = function(mode){
 	//data arrays:
 	this.HV = [];
