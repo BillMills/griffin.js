@@ -98,7 +98,7 @@ function channelSelect(waffle){
 
     //determine horizontal binning
     var xIndex;
-    if(waffle.chy == 0) xIndex = primaryBin(window.parameters.moduleSizes, waffle.chx);
+    if(waffle.chy == 0) xIndex = primaryBin(window.parameters.moduleSizes[window.HVview], waffle.chx);
     else xIndex = waffle.chx;
 
     //Throw up to global so the setter remembers where we're pointing.  TODO: refactor without globals?
@@ -109,8 +109,8 @@ function channelSelect(waffle){
     var inputDiv = document.getElementById(waffle.InputLayer);
 
     //set text in dialog box:
-    if(waffle.chy != 0) inputTitle = 'Parameters for <br>'+waffle.moduleLabels[primaryBin(window.parameters.moduleSizes, waffle.chx)]+', '+window.parameters.rowTitles[0]+' '+channelMap(waffle.chx, waffle.chy, window.parameters.moduleSizes, waffle.rows) + ' (' + waffle.dataBus.channelName[waffle.chy][xIndex] + ')';
-    else inputTitle = 'Parameters for <br>'+waffle.moduleLabels[primaryBin(window.parameters.moduleSizes, waffle.chx)]+' Primary';
+    if(waffle.chy != 0) inputTitle = 'Parameters for <br>'+waffle.moduleLabels[primaryBin(window.parameters.moduleSizes[window.HVview], waffle.chx)]+', '+window.parameters.rowTitles[0]+' '+channelMap(waffle.chx, waffle.chy, window.parameters.moduleSizes[window.HVview], waffle.rows) + ' (' + waffle.dataBus.channelName[waffle.chy][xIndex] + ')';
+    else inputTitle = 'Parameters for <br>'+waffle.moduleLabels[primaryBin(window.parameters.moduleSizes[window.HVview], waffle.chx)]+' Primary';
     document.getElementById('inputTitle').innerHTML = inputTitle;
 
     if(window.refreshInput){
@@ -125,11 +125,11 @@ function channelSelect(waffle){
         window.refreshInput = 0;
 
         //set the module
-        setInput('changeChannel',0,waffle.moduleLabels[primaryBin(window.parameters.moduleSizes, waffle.chx)]);
+        setInput('changeChannel',0,waffle.moduleLabels[primaryBin(window.parameters.moduleSizes[window.HVview], waffle.chx)]);
         //update channel number list
-        reconfigureChannelList(waffle.moduleLabels, window.parameters.moduleSizes, 'ChannelList');
+        reconfigureChannelList(waffle.moduleLabels, window.parameters.moduleSizes[window.HVview], 'ChannelList');
         //set the channel number
-        setInput('changeChannel',1,channelMap(waffle.chx, waffle.chy, window.parameters.moduleSizes, waffle.rows));
+        setInput('changeChannel',1,channelMap(waffle.chx, waffle.chy, window.parameters.moduleSizes[window.HVview], waffle.rows));
         if(waffle.chy==0) setInput('changeChannel',1,'Primary');
 
         //abandon the please update me flag when navigating away from the channel:
@@ -145,16 +145,16 @@ function channelSelect(waffle){
     //report status word:
     document.getElementById('status').innerHTML = 'Status: '+parseStatusWord(waffle.dataBus.rampStatus[waffle.chy][xIndex]);
     //report current & update voltage slider and meter maximum:
-    if(waffle.chy == 0 || window.parameters.moduleSizes[primaryBin(window.parameters.moduleSizes, waffle.chx)]==1){
+    if(waffle.chy == 0 || window.parameters.moduleSizes[window.HVview][primaryBin(window.parameters.moduleSizes[window.HVview], waffle.chx)]==1){
         waffle.voltageSlider.max = waffle.dataBus.voltLimit[waffle.chy][xIndex];
         meter.max = waffle.dataBus.voltLimit[waffle.chy][xIndex];
         currentMeter.max = waffle.dataBus.currentLimit[waffle.chy][xIndex];
         currentMeter.update(Math.round(waffle.dataBus.reportCurrent[waffle.chy][xIndex]*10000)/10000)
     }
     else{
-        waffle.voltageSlider.max = waffle.dataBus.voltLimit[0][primaryBin(window.parameters.moduleSizes, waffle.chx)];
-        meter.max = waffle.dataBus.voltLimit[0][primaryBin(window.parameters.moduleSizes, waffle.chx)];
-        currentMeter.max = waffle.dataBus.currentLimit[0][primaryBin(window.parameters.moduleSizes, waffle.chx)];
+        waffle.voltageSlider.max = waffle.dataBus.voltLimit[0][primaryBin(window.parameters.moduleSizes[window.HVview], waffle.chx)];
+        meter.max = waffle.dataBus.voltLimit[0][primaryBin(window.parameters.moduleSizes[window.HVview], waffle.chx)];
+        currentMeter.max = waffle.dataBus.currentLimit[0][primaryBin(window.parameters.moduleSizes[window.HVview], waffle.chx)];
         currentMeter.update('--');
     }
 
@@ -185,7 +185,7 @@ function gotoNewChannel(event, waffle){
         if(waffle.moduleLabels[i] == xName) xVal = i;
     }
     waffle.chx = 0;
-    for(i=0; i<xVal; i++) waffle.chx += Math.max(window.parameters.moduleSizes[i], 1);
+    for(i=0; i<xVal; i++) waffle.chx += Math.max(window.parameters.moduleSizes[window.HVview][i], 1);
     if(yVal != 'Primary') waffle.chx += Math.floor(yVal/(waffle.rows-1));
 
     channelSelect(waffle);

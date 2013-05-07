@@ -82,7 +82,7 @@ function FillMeter(cvas, wrapperDiv, width, min, max, unit, precision){
 
     //draw a meter at frame <frame> when transitioning between this.oldFillLevel and this.fillLevel:
     this.draw = function(frame){
-    
+
         //fill level for this frame:
         var frameFill = this.oldFillLevel + (this.fillLevel - this.oldFillLevel) * frame / this.nFrames;
 

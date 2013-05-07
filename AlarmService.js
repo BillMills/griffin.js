@@ -1,14 +1,24 @@
 function AlarmService(sidebarDivID, sidebarDetailDivID){
+    var i;
+
 	this.sidebarDivID = sidebarDivID;					//ID of div wrapping left sidebar
 	this.sidebarDetailDivID = sidebarDetailDivID;		//ID of div wrapping detail level sidebar elements
 	this.canvasID = 'alarmCanvas';						//ID of canvas to draw alarms on
 	this.pID = 'alarmText';								//ID of <p> to write alarm text in
+
+    this.nCrates = window.parameters.moduleSizes.length;
 
 	//arrays of info for state reporting - repopulated every loop
 	this.demandVoltage = [];
 	this.reportVoltage = [];
 	this.reportCurrent = [];
 	this.reportTemperature = [];
+    for(i=0; i<this.nCrates; i++){
+        this.demandVoltage[i] = [];
+        this.reportVoltage[i] = [];
+        this.reportCurrent[i] = [];
+        this.reportTemperature[i] = [];
+    }
 
 	var that = this;
 
@@ -90,8 +100,8 @@ function AlarmService(sidebarDivID, sidebarDetailDivID){
     	var cahnnel = -1;
     	if(this.voltageAlarms.length != 0) alarmText += 'Voltage Alarms<br>'
     	for(i=0; i<Math.min(this.voltageAlarms.length, this.nAlarms); i++){
-    		slot = primaryBin(window.parameters.moduleSizes, this.voltageAlarms[i][1]);
-    		channel = channelMap(this.voltageAlarms[i][1], this.voltageAlarms[i][0], window.parameters.moduleSizes, window.parameters.rows + 1);
+    		slot = primaryBin(window.parameters.moduleSizes[window.HVview], this.voltageAlarms[i][1]);
+    		channel = channelMap(this.voltageAlarms[i][1], this.voltageAlarms[i][0], window.parameters.moduleSizes[window.HVview], window.parameters.rows + 1);
     		if(channel == -1){
     			alarmText += 'Slot ' + slot + ' Primary' + '<br>';	
     		} else
@@ -103,8 +113,8 @@ function AlarmService(sidebarDivID, sidebarDetailDivID){
 
     	if(this.currentAlarms.length != 0) alarmText += '<br>Current Alarms<br>'
     	for(i=0; i<Math.min(this.currentAlarms.length, this.nAlarms); i++){
-    		slot = primaryBin(window.parameters.moduleSizes, this.currentAlarms[i][1]);
-    		channel = channelMap(this.currentAlarms[i][1], this.currentAlarms[i][0], window.parameters.moduleSizes, window.parameters.rows + 1);
+    		slot = primaryBin(window.parameters.moduleSizes[window.HVview], this.currentAlarms[i][1]);
+    		channel = channelMap(this.currentAlarms[i][1], this.currentAlarms[i][0], window.parameters.moduleSizes[window.HVview], window.parameters.rows + 1);
     		if(channel == -1){
     			alarmText += 'Slot ' + slot + ' Primary' + '<br>';	
     		} else
@@ -114,8 +124,8 @@ function AlarmService(sidebarDivID, sidebarDetailDivID){
 
     	if(this.temperatureAlarms.length != 0) alarmText += '<br>Temperature Alarms<br>'
     	for(i=0; i<Math.min(this.temperatureAlarms.length, this.nAlarms); i++){
-	   		slot = primaryBin(window.parameters.moduleSizes, this.temperatureAlarms[i][1]);
-    		channel = channelMap(this.temperatureAlarms[i][1], this.temperatureAlarms[i][0], window.parameters.moduleSizes, window.parameters.rows + 1);
+	   		slot = primaryBin(window.parameters.moduleSizes[window.HVview], this.temperatureAlarms[i][1]);
+    		channel = channelMap(this.temperatureAlarms[i][1], this.temperatureAlarms[i][0], window.parameters.moduleSizes[window.HVview], window.parameters.rows + 1);
     		if(channel == -1){
     			alarmText += 'Slot ' + slot + ' Primary' + '<br>';	
     		} else

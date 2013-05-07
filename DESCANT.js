@@ -87,55 +87,6 @@ function DESCANT(){
 
 	};
 
-
-
-    //establish the tooltip text for the cell returned by this.findCell; return length of longest line:
-	this.defineText = function(cell){
-        var toolTipContent = '<br>';
-        var nextLine;
-        var cardIndex;
-        var i;
-
-        nextLine = this.dataBus.DESCANTTTmap[cell];
-        toolTipContent += nextLine;
-
-        toolTipContent += '<br><br>';
-        document.getElementById(this.tooltip.ttDivID).innerHTML = toolTipContent;
-
-        return 0;
-	};
-
-	this.update = function(){
-        var key;
-
-        //get new data
-        this.fetchNewData();
-
-        //parse the new data into colors
-        for(key in this.dataBus.DESCANT){
-            this.dataBus.DESCANT[key].oldHVcolor = this.dataBus.DESCANT[key].HVcolor;
-            this.dataBus.DESCANT[key].HVcolor = this.parseColor(this.dataBus.DESCANT[key].HV, this.name);
-            this.dataBus.DESCANT[key].oldThresholdColor = this.dataBus.DESCANT[key].thresholdColor;
-            this.dataBus.DESCANT[key].thresholdColor = this.parseColor(this.dataBus.DESCANT[key].threshold, this.name);
-            this.dataBus.DESCANT[key].oldRateColor = this.dataBus.DESCANT[key].rateColor;
-            this.dataBus.DESCANT[key].rateColor = this.parseColor(this.dataBus.DESCANT[key].rate, this.name);
-        }
-
-		this.tooltip.update();
-	}
-
-    this.fetchNewData = function(){
-        var key;
-
-        //dummy data:
-        for(key in this.dataBus.DESCANT){
-            this.dataBus.DESCANT[key].HV = Math.random();
-            this.dataBus.DESCANT[key].threshold = Math.random();
-            this.dataBus.DESCANT[key].rate = Math.random();
-        }
-
-    };
-
 	//array of rules for drawing DESCANT channels.  Array index should correspond to real channel number; packed as [type, center x, center y, canvas rotation, element rotation]
 	this.drawRules = [];
 	for(i=0; i<5; i++){

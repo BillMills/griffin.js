@@ -15,7 +15,7 @@ function BAMBINO(){
     this.nRadial = 24;
     if(this.mode=='S2')
     	this.nAzimuthal = 16;
-    else
+    else if(this.mode=='S3')
         this.nAzimuthal = 32;
 
 

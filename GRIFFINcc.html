@@ -45,9 +45,9 @@
 
     <!--Bounce to the right mirror - necessary to accomodate legacy MIDAS & mhttpd-->
     <script type="text/JavaScript">
-      if(document.URL.search('http://midtig06.triumf.ca:8081') == -1){
+      if(document.URL.search('http://midtig06.triumf.ca:8082') == -1){
         console.log('redirecting...')
-        window.location = 'http://midtig06.triumf.ca:8081/CS/Dashboard'
+        window.location = 'http://midtig06.triumf.ca:8082/CS/Dashboard'
       }
     </script>
 
@@ -159,6 +159,7 @@
     <script id='main' type="text/JavaScript">
 
       function main(){
+        var i, j;
 
         //let the MIDAS status link appear:
         $('#MIDASstatusLink').css('opacity', 1);
@@ -171,20 +172,6 @@
 
         //state variables for what the subdetector view is showing: 0->HV, 1->Thresholds, 2->Rate
         window.subdetectorView = 2;  //rate by default
-
-        //autodetect what size cards are plugged into what slot:
-        window.parameters.moduleSizes = detectCards();
-
-        //columns for HV monitor:
-        for(i=0; i<window.parameters.moduleSizes.length; i++){
-          window.parameters.columns += window.parameters.moduleSizes[i];
-          if (window.parameters.moduleSizes[i] == 0) window.parameters.columns++;
-        }
-        //establish module labels for HV display
-        moduleLabels = [];
-        for(i=0; i<window.parameters.moduleSizes.length; i++){
-          moduleLabels[i] = 'Slot '+i;
-        }
 
         //Insert branding & navigation:
         Banner('banner', 'youAreHere', 'navBar', window.parameters.ExpName+' Dashboard', 'TRIUMF');
@@ -303,8 +290,8 @@
 
         //set up channel navigation dropdowns:
         if(window.parameters.topDeployment['HV']){
-          configureDropdowns('ChannelList', 'CardList', moduleLabels, window.parameters.moduleSizes);
-          document.getElementById('CardList').onblur = function(event){reconfigureChannelList(moduleLabels, window.parameters.moduleSizes, 'ChannelList')};
+          configureDropdowns('ChannelList', 'CardList', window.waffle.moduleLabels, window.parameters.moduleSizes[window.HVview]);
+          document.getElementById('CardList').onblur = function(event){reconfigureChannelList(window.waffle.moduleLabels, window.parameters.moduleSizes[window.HVview], 'ChannelList')};
         }
 
         //global variables todo: try and cut down on these/////////////////////////////////////////////

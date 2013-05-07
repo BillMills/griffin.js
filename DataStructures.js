@@ -193,7 +193,7 @@ DESCANTDS = function(){
 	var i, name;
 
 	this.DESCANT = {};
-	this.DESCANTTTmap = [];
+	this.TTmap = [];
 	for(i=1; i<71; i++){
 		var name = (i<10) ? 'DSC00'+i+'P00X' : 'DSC0'+i+'P00X';
 		this.DESCANT[name] = {
@@ -209,7 +209,7 @@ DESCANTDS = function(){
 			'oldRateColor' : '#000000',
 			'rateColor' : '#000000'	
 		}
-		this.DESCANTTTmap[i] = name;
+		this.TTmap[i] = name;
 	}
 
 }
@@ -239,7 +239,7 @@ DSSD = function(){
 	var i, name;
 
 	this.DSSD = {};
-	this.DSSDTTmap = [];
+	this.TTmap = [];
 	for(i=1; i<16*2*4; i++){
 		var name = 'x'+i;
 		this.DESCANT[name] = {
@@ -255,7 +255,7 @@ DSSD = function(){
 			'oldRateColor' : '#000000',
 			'rateColor' : '#000000'	
 		}
-		this.DSSDTTmap[i] = name;
+		this.TTmap[i] = name;
 	}
 
 }

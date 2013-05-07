@@ -12,7 +12,7 @@ loadParameters({
 				//"ODBkeys" : ["/Location/Of/Device/Varibles", "/Location/Of/Device/Settings", "Demand Voltage Key", "Measured Voltage Key", "Measured Current Key", "Voltage Ramp Up Key", "Voltage Ramp Down Key", "Temperature Key", "ChState Key", "ChStatus Key", "Voltage Limit Key", "Current Limit Key", "Channel Name Key"],
 				"ODBkeys" : ["/Equipment/HV/Variables", "/Equipment/HV/Settings", "Demand", "Measured", "Current", "Ramp Up Speed", "Ramp Down Speed", "Temperature", "ChState", "ChStatus", "Voltage Limit", "Current Limit", "Names"],
 				"rows" : 12,
-				"columns": 0,
+				"columns": [],
 				"rowTitles" : ["Ch.", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"],
 				"alarmThresholds" : [0.8, 0.999, 0.999, 0],
 				"scaleMaxima" : [1,1,1,1],
@@ -33,7 +33,8 @@ loadParameters({
 				"rampUnit" : "V/s",
 				"currentUnit" : "uA",
 				"temperatureUnit" : "C",
-				"moduleSizes" : 0,
+				"HVequipmentNames" : ["HV-0", "HV-1", "HV-2"],
+				"moduleSizes" : [],
 				"colorScale"  : ["ROOT Rainbow", "Greyscale", "Sunset"],
 
 				"BAMBINO" : {

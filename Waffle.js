@@ -1,21 +1,36 @@
 function Waffle(InputLayer, headerDiv, AlarmServices){
 
-    	var i, j, n, columns;
+    	var i, j, k, n, columns;
 
         //pointer voodoo:
         var that = this;
         //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
         window.HVpointer = that;
 
+        //autodetect what size cards are plugged into what slot:
+        detectCards();
+        window.HVview = 0; //index of which crate is currently on display in the HV view.
+        this.nCrates = window.parameters.moduleSizes.length;
+
+        //columns for HV monitor:
+        this.cols = [];
+        for(i=0; i<this.nCrates; i++){
+          window.parameters.columns[i] = 0;
+          for(j=0; j<window.parameters.moduleSizes[i].length; j++){
+            window.parameters.columns[i] += window.parameters.moduleSizes[i][j];
+            if (window.parameters.moduleSizes[i][j] == 0) window.parameters.columns[i]++;
+          }
+          this.cols[i] = window.parameters.columns[i];
+        }
+
         //member data:
         this.rows = window.parameters.rows + 1;     //number of rows in the waffle; +1 for primary row
-        this.cols = window.parameters.columns;      //numver of columns in the waffle
-        this.canvasID = 'TestWaffle';               //canvas ID to draw the waffle on
+        this.canvasID = [];                         //canvas ID to draw the waffles on
         this.prevAlarmStatus;                       //previous iteration's alarmStatus
-        this.alarmStatus;                           //2D array containing the alarm level for each cell
+        this.alarmStatus = [];                           //3D array containing the alarm level for each cell [mainframe][row][column] = alarm level
         this.wrapperDiv = window.parameters.wrapper;//div ID of top level div
-        this.InputLayer = InputLayer;               //div ID of wrapper for input fields
-        this.headerDiv = headerDiv;                 //div ID of waffle header
+        this.InputLayer = InputLayer;               //div ID of wrapper for input fields  TODO: resundant with sidebarID
+        //this.headerDiv = headerDiv;                 //div ID of waffle header  TODO: depricated?
         this.chx = 0;                               //x channel of input sidebar focus
         this.chy = 1;                               //y channel of input sidebar focus
         this.linkWrapperID = 'mainframeLinks';      //ID of div containing nav links
@@ -23,13 +38,23 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         this.sidebarID = 'InputLayer';
         this.monitor = document.getElementById(this.wrapperDiv);
         this.AlarmServices = AlarmServices;         //Alarm serivce object the waffle will fire events at
-        this.dataBus = new HVDS(this.rows, this.cols);  //data structure to manage info.
-        this.viewStatus = -1;                       //indicates which view is on top: -1=summary, n>-1=bar chart n.
+        this.dataBus = [];
+        for(i=0; i<this.nCrates; i++){
+            this.dataBus[i] = new HVDS(this.rows, this.cols[i]);  //data structure to manage info.
+        }
+        this.viewStatus = -1;                       //indicates which view is on top: -1=summary, n>-1=bar chart n.  TODO: redundant with window.HVview?
+        this.canvas = [];
+        this.context = [];
 
         //make sure the waffle is pointing at a channel that actually has something in it before the initial populate:
         i=0;
-        while(window.parameters.moduleSizes[i] == 0) i++;
+        while(window.parameters.moduleSizes[window.HVview][i] == 0) i++;
         this.chx = i;
+
+        //generate the canvas IDs:
+        for (i=0; i<window.parameters.HVequipmentNames; i++){
+            this.canvasID[i] = 'HVgrid'+i;
+        }
 
         //deploy the sidebar
         this.deploySidebar = function(){
@@ -117,13 +142,13 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         //deploy a sidebar to interact with this element:
         this.deploySidebar();
 
-        //deploy some sliders in the sidebar
+        //deploy some sliders in the sidebar  TODO: push into deploySidebar()?
         var sliderWidth = parseFloat($(document.getElementById('InputLayer')).width())*0.5;
         this.voltageSlider = new Slider('SidebarBKG', 'volageSliderText', 'demandVoltage', 'voltageSlider', 'voltageSliderBKG', 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', window.parameters.minVoltage, window.parameters.maxVoltage, window.parameters.statusPrecision, window.parameters.voltUnit, sliderWidth );
         this.rampSlider = new Slider('SidebarBKG', 'rampSliderText', 'demandRampSpeed', 'rampSlider', 'rampSliderBKG', 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', window.parameters.minRampSpeed, window.parameters.maxRampSpeed, window.parameters.statusPrecision, window.parameters.rampUnit,  sliderWidth);
         this.rampDownSlider = new Slider('SidebarBKG', 'rampDownSliderText', 'demandRampDownSpeed', 'rampDownSlider', 'rampDownSliderBKG', 'rampDownSliderKnob', 'rampDownKnobStyle', 'rampDownSliderText', window.parameters.minRampSpeed, window.parameters.maxRampSpeed, window.parameters.statusPrecision, window.parameters.rampUnit,  sliderWidth);
 
-        //fill meters
+        //fill meters  TODO: put these on the waffle object instead of window?
         window.meter = new FillMeter('voltageMeter', 'InputLayer', 0, window.parameters.minVoltage, window.parameters.maxVoltage, window.parameters.voltUnit, window.parameters.statusPrecision);
         window.currentMeter = new FillMeter('currentMeter', 'InputLayer', 0, window.parameters.minCurrent, window.parameters.maxCurrent, window.parameters.currentUnit, window.parameters.statusPrecision);
         window.temperatureMeter = new FillMeter('temperatureMeter', 'InputLayer', 0, window.parameters.minTemperature, window.parameters.maxTemperature, window.parameters.temperatureUnit, window.parameters.statusPrecision);
@@ -131,67 +156,90 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         //determine dimesions of canvas:
         this.totalWidth = Math.round(0.5*$('#'+this.wrapperDiv).width());
         //cell dimensions controlled by total width, since width more visually important here:
-        this.cellSide = (this.totalWidth - 60) / Math.max(20, this.cols);
-        this.totalHeight = 16*this.cellSide;
-
-        //DOM insertions///////////////////////////////////////////////////////////////////////
-        //navigation
-        //top level nav button
-        insertDOM('button', this.topNavID, 'navLink', '', 'statusLink', function(){swapView('mainframeLinks', 'TestWaffle', 'InputLayer', window.HVpointer.topNavID)}, 'HV Monitor')
-        //nav wrapper div
-        insertDOM('div', this.linkWrapperID, 'navPanel', '', this.wrapperDiv, '', '')
-        //nav header
-        insertDOM('h1', 'mainframeLinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', window.parameters.ExpName+' HV Mainframes')
-        insertDOM('br', 'break', '', '', this.linkWrapperID, '', '')
-        //nav buttons
-        insertDOM('button', 'Main1', 'navLinkDown', '', 'mainframeLinks', function(){window.HVpointer.viewStatus=-1; swapFade('Main1', window.HVpointer, 0, 0)}, 'Mainframe 1')
-        insertDOM('br', 'break', '', '', this.linkWrapperID, '', '')
-
-        //deploy card buttons
-        for(i=0; i<window.parameters.moduleSizes.length; i++){
-            insertDOM('button', 'card'+i, 'navLink', '', this.linkWrapperID, function(){window.HVpointer.viewStatus=this.cardNumber; swapFade(this.id, window.HVpointer, 0, 0);}, 'Slot '+i, '', 'button')
-            document.getElementById('card'+i).cardNumber = i;
+        this.cellSide = [];
+        this.totalHeight = [];
+        for(i=0; i<this.nCrates; i++){
+            this.cellSide[i] = (this.totalWidth - 60) / Math.max(20, this.cols[i]);
+            this.totalHeight[i] = 16*this.cellSide[i];
         }
 
-        //inject canvas into DOM for waffle to paint on:
-        insertDOM('canvas', this.canvasID, 'monitor', '', this.wrapperDiv, '', '')
-        document.getElementById(this.canvasID).setAttribute('width', this.totalWidth);
-        document.getElementById(this.canvasID).setAttribute('height', this.totalHeight);
+        //DOM insertions////////////////////////////////////
+        //inject top level nav button
+        insertDOM('button', this.topNavID, 'navLink', '', 'statusLink', function(){swapView('mainframeLinks', 'TestWaffle', 'InputLayer', window.HVpointer.topNavID)}, 'HV Monitor')
 
-        this.canvas = document.getElementById(this.canvasID);
-        this.context = this.canvas.getContext('2d');
-        //finished DOM insertions///////////////////////////////////////////////////////////////
+        //function to inject the DOM elements needed for the view header
+        this.generateHeader = function(crate){
+            //wrapper div
+            insertDOM('div', this.linkWrapperID+crate, 'navPanel', 'opacity:0; z-index:-10;', this.wrapperDiv, '', '');
+            //nav header
+            insertDOM('h1', 'mainframeLinksBanner', 'navPanelHeader', '', this.linkWrapperID+crate, '', window.parameters.ExpName+' HV Mainframes');
+            insertDOM('br', 'break', '', '', this.linkWrapperID, '', '');
+            //nav buttons
+            insertDOM('button', 'Main'+(crate+1), (crate==0)? 'navLinkDown' : 'navLink', '', 'mainframeLinks', function(){window.HVpointer.viewStatus=-1; swapFade(this.id, window.HVpointer, 0, window.HVview)}, 'Mainframe '+(crate+1) );
+            insertDOM('br', 'break', '', '', this.linkWrapperID, '', '');
 
-        //set up module labels
+            for(i=0; i<window.parameters.moduleSizes[crate].length; i++){
+                //deploy card buttons
+                insertDOM('button', 'crate'+crate+'card'+i, 'navLink', '', this.linkWrapperID+crate, function(){window.HVpointer.viewStatus=this.cardNumber; swapFade(this.id, window.HVpointer, 0, window.HVview);}, 'Slot '+i, '', 'button');
+                document.getElementById('crate'+crate+'card'+i).cardNumber = i;
+            }
+        };
+
+        for(i=0; i<this.nCrates; i++){
+            //inject a header for each crate:
+            this.generateHeader(i);
+
+            //inject canvas into DOM for waffle to paint on:
+            insertDOM('canvas', this.canvasID[i], 'monitor', '', this.wrapperDiv, '', '')
+            document.getElementById(this.canvasID[i]).setAttribute('width', this.totalWidth);
+            document.getElementById(this.canvasID[i]).setAttribute('height', this.totalHeight[i]);
+
+            this.canvas[i] = document.getElementById(this.canvasID[i]);
+            this.context[i] = this.canvas[i].getContext('2d');
+        }
+
+        //finished DOM insertions//////////////////////////////////////
+
+        //set up module labels:
         this.moduleLabels = [];
-        for(i=0; i<window.parameters.moduleSizes.length; i++){
+        for(i=0; i<16; i++){
             this.moduleLabels[i] = 'Slot ' + i;
         }
 
         //adjust height to accommodate card and module labels:
-        this.context.font = Math.min(16, this.cellSide)+'px Raleway';
-        this.longestModuleLabel = 0;
-        for(i = 0; i<this.moduleLabels.length; i++){
-            this.longestModuleLabel = Math.max(this.longestModuleLabel, this.context.measureText(this.moduleLabels[i]).width);
+        for(i=0; i<this.nCrates; i++){
+            this.context[i].font = Math.min(16, this.cellSide[i])+'px Raleway';
+            this.longestModuleLabel = 0;
+            for(j = 0; j<window.parameters.moduleSizes[i].length; j++){
+                this.longestModuleLabel = Math.max(this.longestModuleLabel, this.context[i].measureText(this.moduleLabels[j]).width);
+            }
+            this.totalHeight[i] += this.longestModuleLabel + 50;
+            this.canvas[i].setAttribute('height', this.totalHeight[i]);
         }
-        this.totalHeight += this.longestModuleLabel + 50;
-        this.canvas.setAttribute('height', this.totalHeight);
 
         //waffle dimensions; leave gutters for labels & title
-        this.waffleWidth = this.cellSide*this.cols;
-        this.waffleHeight = this.totalHeight;
-        //want waffle and navbar centered nicely:
-        this.leftEdge = (this.totalWidth - (this.waffleWidth + 1.5*this.context.measureText('Prim').width))/2;
-        //push navbar over to match:
-        document.getElementById(this.linkWrapperID).setAttribute('style', 'left:'+(24 + 100*this.leftEdge/$('#'+this.wrapperDiv).width() )+'%;')
+        this.waffleWidth = [];
+        this.waffleHeight = [];
+        this.leftEdge = [];
+        for(i=0; i<this.nCrates; i++){
+            this.waffleWidth[i] = this.cellSide[i]*this.cols[i];
+            this.waffleHeight[i] = this.totalHeight[i];
+            //want waffle and navbar centered nicely:
+            this.leftEdge[i] = (this.totalWidth - (this.waffleWidth[i] + 1.5*this.context[i].measureText('Prim').width))/2;
+            //push navbar over to match:
+            document.getElementById(this.linkWrapperID+i).setAttribute('style', 'left:'+(24 + 100*this.leftEdge[i]/$('#'+this.wrapperDiv).width() )+'%;');
+        }
 
-        //make a tooltip for this object:
-        this.tooltip = new Tooltip(this.canvasID, 'MFTT', this.wrapperDiv, window.parameters.prefix, window.parameters.postfix);
-        //give the tooltip a pointer back to this object:
-        this.tooltip.obj = that;
-        //tooltip looks for members canvasWidth and canvasHeight to make sure its in a valid place:
-        this.canvasWidth = document.getElementById(this.canvasID).width;
-        this.canvasHeight = document.getElementById(this.canvasID).height;
+        //make a tooltip for each crate:
+        this.tooltip = [];
+        for(i=0; i<this.nCrates; i++){
+            this.tooltip[i] = new Tooltip(this.canvasID[i], 'MFTT'+i, this.wrapperDiv, window.parameters.prefix, window.parameters.postfix);
+            //give the tooltip a pointer back to this object:
+            this.tooltip[i].obj = that;
+            //tooltip looks for members canvasWidth and canvasHeight to make sure its in a valid place:
+            this.canvasWidth = document.getElementById(this.canvasID[0]).width;
+            this.canvasHeight = document.getElementById(this.canvasID[0]).height;
+        }
 
         //establish animation parameters:
         this.FPS = 30;
@@ -200,105 +248,123 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
 
         //style card nav buttons
         var newRule;
-        for(i=0; i<this.moduleLabels.length; i++){
-            var buttonWidth, fontsize;
-            buttonWidth = Math.max(window.parameters.moduleSizes[i],1)*0.9*this.cellSide + (Math.max(window.parameters.moduleSizes[i],1)-1)*0.1*this.cellSide;
-            if(window.parameters.moduleSizes[i] == 4) fontsize = 0.9*this.cellSide*0.5;
-            else fontsize = 0.9*this.cellSide*0.3;
+        for(j=0; j<this.nCrates; j++){
+            for(i=0; i<this.window.parameters.moduleSizes[j]; i++){
+                var buttonWidth, fontsize;
+                buttonWidth = Math.max(window.parameters.moduleSizes[j][i],1)*0.9*this.cellSide[j] + (Math.max(window.parameters.moduleSizes[j][i],1)-1)*0.1*this.cellSide[j];
+                if(window.parameters.moduleSizes[j][i] == 4) fontsize = 0.9*this.cellSide[j]*0.5;
+                else fontsize = 0.9*this.cellSide[j]*0.3;
 
-            if(window.parameters.moduleSizes[i] != 0)
-                newRule = "width:"+buttonWidth+"px; height:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; margin-top:"+0.05*this.cellSide+"px; float:left; border-radius: 5px; display: inline; font-family: 'Raleway', sans-serif; font-size:"+fontsize+"px; padding:0px;";
-            else{ 
-                newRule = "width:"+buttonWidth+"px; height:"+0.9*this.cellSide+"px; margin-right:"+0.05*this.cellSide+"px; margin-left:"+0.05*this.cellSide+"px; margin-top:"+0.05*this.cellSide+"px; float:left; border-radius: 5px; display: inline; font-family: 'Raleway', sans-serif; font-size:"+this.cellSide/2+"px; padding:0px; color:#CC0000;";
-                document.getElementById('card'+i).setAttribute('onclick', '');
-                document.getElementById('card'+i).innerHTML = 'X'
+                if(window.parameters.moduleSizes[j][i] != 0)
+                    newRule = "width:"+buttonWidth+"px; height:"+0.9*this.cellSide[j]+"px; margin-right:"+0.05*this.cellSide[j]+"px; margin-left:"+0.05*this.cellSide[j]+"px; margin-top:"+0.05*this.cellSide[j]+"px; float:left; border-radius: 5px; display: inline; font-family: 'Raleway', sans-serif; font-size:"+fontsize+"px; padding:0px;";
+                else{ 
+                    newRule = "width:"+buttonWidth+"px; height:"+0.9*this.cellSide[j]+"px; margin-right:"+0.05*this.cellSide[j]+"px; margin-left:"+0.05*this.cellSide[j]+"px; margin-top:"+0.05*this.cellSide[j]+"px; float:left; border-radius: 5px; display: inline; font-family: 'Raleway', sans-serif; font-size:"+this.cellSide[j]/2+"px; padding:0px; color:#CC0000;";
+                    document.getElementById('crate'+j+'card'+i).setAttribute('onclick', '');
+                    document.getElementById('crate'+j+'card'+i).innerHTML = 'X'
+                }
+                document.getElementById('crate'+j+'card'+i).setAttribute('style', newRule);
             }
-            document.getElementById('card'+i).setAttribute('style', newRule);
         }
 
         //header size:
-        this.headerHeight = $('#'+this.headerDiv).height();
+        //this.headerHeight = $('#'+this.headerDiv).height();  //TODO depricated?
         //make the vertical spacing between the waffle and nav header nice:
-        $('#'+this.canvasID).css('top', (this.headerHeight)+'px !important;' );
+        //$('#'+this.canvasID).css('top', (this.headerHeight)+'px !important;' );
 
         //declare bar charts & canvases to paint them on:
         this.barCharts = [];
         var newCanvas;
-        for(i=0; i<window.parameters.moduleSizes.length; i++){
-            insertDOM('canvas', 'bar'+i, 'monitor', '', this.wrapperDiv, '', '')
-            document.getElementById('bar'+i).setAttribute('width', this.totalWidth);
-            document.getElementById('bar'+i).setAttribute('height', this.totalHeight);
-            this.barCharts[i] = new BarGraph('bar'+i, i, Math.max(window.parameters.moduleSizes[i],1)*12, 'Slot '+i, 'Reported Voltage [V]', 0, window.parameters.scaleMaxima[0], window.parameters.barChartPrecision, that);
+        for(j=0; j<this.nCrates; j++){
+            this.barCharts[j] = [];
+            for(i=0; i<window.parameters.moduleSizes[j].length; i++){
+                insertDOM('canvas', 'crate'+j+'bar'+i, 'monitor', '', this.wrapperDiv, '', '');
+                document.getElementById('crate'+j+'bar'+i).setAttribute('width', this.totalWidth);
+                document.getElementById('crate'+j+'bar'+i).setAttribute('height', this.totalHeight[i]);
+                this.barCharts[j][i] = new BarGraph('crate'+j+'bar'+i, i, Math.max(window.parameters.moduleSizes[j][i],1)*12, 'Slot '+i, 'Reported Voltage [V]', 0, window.parameters.scaleMaxima[0], window.parameters.barChartPrecision, that);
+            }
         }
 
         //set up arrays:
         this.startColor = [];
         this.endColor = [];
-        for(i=0; i<this.rows; i++){
-    	    this.startColor[i] = [];
-        	this.endColor[i] = [];
+        for(j=0; j<this.nCrates; j++){
+            this.startColor[j] = [];
+            this.endColor[j] = [];
+            for(i=0; i<this.rows; i++){
+        	    this.startColor[j][i] = [];
+            	this.endColor[j][i] = [];
+            }
         }
 
         //declare alarmStatus and prevAlarmStatus as arrays of appropriate dimension:
         this.alarmStatus = [];
         this.prevAlarmStatus = [];
-        for(i=0; i<this.rows; i++){
-            this.alarmStatus[i] = [];
-            this.prevAlarmStatus[i] = [];
-            //primary row spans multi-columns:
-            if(i==0) columns = window.parameters.moduleSizes.length;
-            else columns = this.cols;
-            for(j=0; j<columns; j++){
-                this.alarmStatus[i][j] = [];
-                this.prevAlarmStatus[i][j] = [];
-                for(var n=0; n<3; n++){
-                    this.alarmStatus[i][j][n] = 0;
-                    this.prevAlarmStatus[i][j][n] = 0;
+        for(k=0; k<this.nCrates; k++){
+            this.alarmStatus[k] = [];
+            this.prevAlarmStatus[k] = [];
+            for(i=0; i<this.rows; i++){
+                this.alarmStatus[k][i] = [];
+                this.prevAlarmStatus[k][i] = [];
+                //primary row spans multi-columns:
+                if(i==0) columns = window.parameters.moduleSizes[k].length;
+                else columns = this.cols[k];
+                for(j=0; j<columns; j++){
+                    this.alarmStatus[k][i][j] = [];
+                    this.prevAlarmStatus[k][i][j] = [];
+                    for(var n=0; n<3; n++){
+                        this.alarmStatus[k][i][j][n] = 0;
+                        this.prevAlarmStatus[k][i][j][n] = 0;
+                    }
                 }
             }
         }
 
         //array of values from the waffle to report in the tooltip
-        this.reportedValues = [this.dataBus.demandVoltage, this.dataBus.reportVoltage, this.dataBus.reportCurrent, this.dataBus.demandVrampUp, this.dataBus.demandVrampDown, this.dataBus.reportTemperature, this.dataBus.rampStatus];
+        this.reportedValues = [];
+        for(i=0; i<this.nCrates; i++){
+            this.reportedValues[i] = [this.dataBus[i].demandVoltage, this.dataBus[i].reportVoltage, this.dataBus[i].reportCurrent, this.dataBus[i].demandVrampUp, this.dataBus[i].demandVrampDown, this.dataBus[i].reportTemperature, this.dataBus[i].rampStatus];
+        }
 
         //make waffles clickable to set a variable for a channel:
-        this.canvas.onclick = function(event){clickWaffle(event, that)};
+        for(i=0; i<this.nCrates; i++){
+            this.canvas[i].onclick = function(event){clickWaffle(event, that)};
+        }
         
         //decide which canvas to present:
         this.view = function(){
             if(this.viewStatus == -1)
-                return this.canvasID;
-            else return 'bar'+this.viewStatus;
+                return this.canvasID+window.HVview;
+            else return 'crate'+window.HVview+'bar'+this.viewStatus;
         };
 
         //determine per cell color info for start and finish.
         //Color info is packed as four numbers: red, green, blue, alpha
-        this.cellColorUpdate = function(){
+        this.cellColorUpdate = function(crate){
             var R, G, B, A, color, primary;
             for(var i=0; i<this.rows; i++){
                 //primary row spans multi-columns:
-                if(i==0) columns = window.parameters.moduleSizes.length;
-                else columns = this.cols;
+                if(i==0) columns = window.parameters.moduleSizes[crate].length;
+                else columns = this.cols[crate];
             	for(var j=0; j<columns; j++){
                     if(i > 0)
-                        primary = primaryBin(window.parameters.moduleSizes,j);
+                        primary = primaryBin(window.parameters.moduleSizes[crate],j);
                     else primary = j;
 
     	         	//start values:
                     //show green on all clear:
-    	            if( this.prevAlarmStatus[i][j][0] == 0 && this.prevAlarmStatus[i][j][1] == 0 && this.prevAlarmStatus[i][j][2] == 0){
+    	            if( this.prevAlarmStatus[crate][i][j][0] == 0 && this.prevAlarmStatus[crate][i][j][1] == 0 && this.prevAlarmStatus[crate][i][j][2] == 0){
                         R = 0;
                         G = 255;
                         B = 0;
                         A = 0.3;
                     //else show grey if the channel is off:
-                    } else if(this.prevAlarmStatus[i][j][0] == -1){
+                    } else if(this.prevAlarmStatus[crate][i][j][0] == -1){
                         R = 0;
                         G = 0;
                         B = 0;
                         A = 0.3;
                     //else show yellow if channel is ramping & no temperature or current alarms:
-                    } else if(this.prevAlarmStatus[i][j][0] == -2 && this.prevAlarmStatus[i][j][1] == 0 && this.prevAlarmStatus[i][j][2] == 0){
+                    } else if(this.prevAlarmStatus[crate][i][j][0] == -2 && this.prevAlarmStatus[crate][i][j][1] == 0 && this.prevAlarmStatus[crate][i][j][2] == 0){
                         R = 255;
                         G = 255;
                         B = 0;
@@ -308,30 +374,30 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                         R = 255;
                         G = 0;
                         B = 0;
-                        A = Math.max(this.prevAlarmStatus[i][j][0], this.prevAlarmStatus[i][j][1], this.prevAlarmStatus[i][j][2])*0.7 + 0.3;  //enforce minimum 0.3 to make it clearly red
+                        A = Math.max(this.prevAlarmStatus[crate][i][j][0], this.prevAlarmStatus[crate][i][j][1], this.prevAlarmStatus[crate][i][j][2])*0.7 + 0.3;  //enforce minimum 0.3 to make it clearly red
                         if(A>1) {A = 1;}
     	            }
                     //12-channel cards don't have primary channels, show black (also empty slots):
-                    if( (i==0 && window.parameters.moduleSizes[j] == 1) || window.parameters.moduleSizes[primary] == 0 ){
+                    if( (i==0 && window.parameters.moduleSizes[crate][j] == 1) || window.parameters.moduleSizes[crate][primary] == 0 ){
                         R = 0;
                         G = 0;
                         B = 0;
                         A = 0.9;
                     }
-                    this.startColor[i][j] = [R,G,B,A];
+                    this.startColor[crate][i][j] = [R,G,B,A];
 
                     //end values:
-                    if(this.alarmStatus[i][j][0] == 0 && this.alarmStatus[i][j][1] == 0 && this.alarmStatus[i][j][2] == 0){
+                    if(this.alarmStatus[crate][i][j][0] == 0 && this.alarmStatus[crate][i][j][1] == 0 && this.alarmStatus[crate][i][j][2] == 0){
                         R = 0;
                         G = 255;
                         B = 0;
                         A = 0.3;
-                    } else if(this.alarmStatus[i][j][0] == -1){
+                    } else if(this.alarmStatus[crate][i][j][0] == -1){
                         R = 0;
                         G = 0;
                         B = 0;
                         A = 0.3;
-                    } else if(this.alarmStatus[i][j][0] == -2 && this.alarmStatus[i][j][1] == 0 && this.alarmStatus[i][j][2] == 0){
+                    } else if(this.alarmStatus[crate][i][j][0] == -2 && this.alarmStatus[crate][i][j][1] == 0 && this.alarmStatus[crate][i][j][2] == 0){
                         R = 255; 
                         G = 255;
                         B = 0;
@@ -340,16 +406,16 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                         R = 255;
                         G = 0;
                         B = 0;
-                        A = Math.max(this.alarmStatus[i][j][0], this.alarmStatus[i][j][1], this.alarmStatus[i][j][2])*0.7 + 0.3;  //enforce minimum 0.3 to make it clearly red
+                        A = Math.max(this.alarmStatus[crate][i][j][0], this.alarmStatus[crate][i][j][1], this.alarmStatus[crate][i][j][2])*0.7 + 0.3;  //enforce minimum 0.3 to make it clearly red
                         if(A>1) {A = 1;}
                     }
-                    if( (i==0 && window.parameters.moduleSizes[j] == 1) || window.parameters.moduleSizes[primary] == 0 ){
+                    if( (i==0 && window.parameters.moduleSizes[crate][j] == 1) || window.parameters.moduleSizes[crate][primary] == 0 ){
                         R = 0;
                         G = 0;
                         B = 0;
                         A = 0.9;
                     }
-                    this.endColor[i][j] = [R,G,B,A];
+                    this.endColor[crate][i][j] = [R,G,B,A];
     	       }
             }
         };
@@ -363,36 +429,36 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
             var cornerX, cornerY;
 
             //whiteout old canvas:
-            this.context.globalAlpha = 1;
-            this.context.clearRect(this.leftEdge,0,this.totalWidth,this.totalHeight);
-            this.context.fillStyle = "rgba(255,255,255,1)"
-            this.context.fillRect(this.leftEdge,0,this.cellSide*this.cols,this.cellSide*this.rows);
+            this.context[window.HVview].globalAlpha = 1;
+            this.context[window.HVview].clearRect(this.leftEdge[window.HVview],0,this.totalWidth,this.totalHeight[window.HVview]);
+            this.context[window.HVview].fillStyle = "rgba(255,255,255,1)"
+            this.context[window.HVview].fillRect(this.leftEdge[window.HVview],0,this.cellSide[window.HVview]*this.cols[window.HVview],this.cellSide[window.HVview]*this.rows);
 
             for(i=0; i<this.rows; i++){
                 //primary row spans multi-columns:
-                if(i==0) columns = window.parameters.moduleSizes.length;
-                else columns = this.cols;
+                if(i==0) columns = window.parameters.moduleSizes[window.HVview].length;
+                else columns = this.cols[window.HVview];
                 for(var j=0; j<columns; j++){
-                    R = this.startColor[i][j][0] + (this.endColor[i][j][0] - this.startColor[i][j][0])*frame/this.nFrames;
-                    G = this.startColor[i][j][1] + (this.endColor[i][j][1] - this.startColor[i][j][1])*frame/this.nFrames;
-                    B = this.startColor[i][j][2] + (this.endColor[i][j][2] - this.startColor[i][j][2])*frame/this.nFrames;
-                    A = this.startColor[i][j][3] + (this.endColor[i][j][3] - this.startColor[i][j][3])*frame/this.nFrames;
+                    R = this.startColor[window.HVview][i][j][0] + (this.endColor[window.HVview][i][j][0] - this.startColor[window.HVview][i][j][0])*frame/this.nFrames;
+                    G = this.startColor[window.HVview][i][j][1] + (this.endColor[window.HVview][i][j][1] - this.startColor[window.HVview][i][j][1])*frame/this.nFrames;
+                    B = this.startColor[window.HVview][i][j][2] + (this.endColor[window.HVview][i][j][2] - this.startColor[window.HVview][i][j][2])*frame/this.nFrames;
+                    A = this.startColor[window.HVview][i][j][3] + (this.endColor[window.HVview][i][j][3] - this.startColor[window.HVview][i][j][3])*frame/this.nFrames;
                     color = "rgba("+R+","+G+","+B+","+A+")";
             
-                    this.context.fillStyle = color;
-                    cornerY = i*this.cellSide;
+                    this.context[window.HVview].fillStyle = color;
+                    cornerY = i*this.cellSide[window.HVview];
                     //primary row has different size bins than the rest:
                     if(i != 0){
-                        cornerX = this.leftEdge + j*this.cellSide;
-                        this.context.fillRect(cornerX, cornerY,this.cellSide,this.cellSide);
+                        cornerX = this.leftEdge[window.HVview] + j*this.cellSide[window.HVview];
+                        this.context[window.HVview].fillRect(cornerX, cornerY,this.cellSide[window.HVview],this.cellSide[window.HVview]);
                     }
                     else{
                         cornerX = 0;
                         for(var sum=0; sum<j; sum++){
-                            cornerX = cornerX + Math.max(window.parameters.moduleSizes[sum],1);
+                            cornerX = cornerX + Math.max(window.parameters.moduleSizes[window.HVview][sum],1);
                         }
-                        cornerX = this.leftEdge + cornerX*this.cellSide;
-                        this.context.fillRect(cornerX, cornerY,this.cellSide*Math.max(window.parameters.moduleSizes[j],1),this.cellSide);
+                        cornerX = this.leftEdge[window.HVview] + cornerX*this.cellSide[window.HVview];
+                        this.context[window.HVview].fillRect(cornerX, cornerY,this.cellSide[window.HVview]*Math.max(window.parameters.moduleSizes[window.HVview][j],1),this.cellSide[window.HVview]);
                     }
                 }
             }
@@ -406,43 +472,42 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
             var i, j;
 
             var modDivCopy = [0];
-            for(i=0; i < window.parameters.moduleSizes.length; i++){
-                modDivCopy[i+1] = modDivCopy[i] + Math.max(window.parameters.moduleSizes[i],1);
+            for(i=0; i < window.parameters.moduleSizes[window.HVview].length; i++){
+                modDivCopy[i+1] = modDivCopy[i] + Math.max(window.parameters.moduleSizes[window.HVview][i],1);
             }
             modDivCopy.shift();
 
             //style lines:
-            this.context.fillStyle = 'rgba(0,0,0,1)';
-            this.context.lineWidth = 1;
+            this.context[window.HVview].fillStyle = 'rgba(0,0,0,1)';
+            this.context[window.HVview].lineWidth = 1;
 
             //draw border:
-            this.context.strokeRect(this.leftEdge,0,this.cellSide*this.cols, this.cellSide*this.rows);
+            this.context[window.HVview].strokeRect(this.leftEdge[window.HVview],0,this.cellSide[window.HVview]*this.cols[window.HVview], this.cellSide[window.HVview]*this.rows);
 
             //draw inner lines:
             for(i=1; i<this.rows; i++){
-                this.context.beginPath();
-                if(i==1) this.context.lineWidth = 3;
-                else this.context.lineWidth = 1;
-                this.context.moveTo(this.leftEdge,i*this.cellSide);
-                this.context.lineTo(this.leftEdge + this.cellSide*this.cols,i*this.cellSide);
-                this.context.stroke();       
+                this.context[window.HVview].beginPath();
+                if(i==1) this.context[window.HVview].lineWidth = 3;
+                else this.context[window.HVview].lineWidth = 1;
+                this.context[window.HVview].moveTo(this.leftEdge[window.HVview],i*this.cellSide[window.HVview]);
+                this.context[window.HVview].lineTo(this.leftEdge[window.HVview] + this.cellSide[window.HVview]*this.cols[window.HVview],i*this.cellSide[window.HVview]);
+                this.context[window.HVview].stroke();       
             }
-            for(j=1; j<this.cols; j++){
-                this.context.beginPath();
+            for(j=1; j<this.cols[window.HVview]; j++){
+                this.context[window.HVview].beginPath();
                 if(j==modDivCopy[0]){
-                    this.context.lineWidth = 3;
+                    this.context[window.HVview].lineWidth = 3;
                     modDivCopy.shift();
                 }
-                else this.context.lineWidth = 1;
-                if(this.context.lineWidth == 1){
-                    this.context.moveTo(this.leftEdge + j*this.cellSide,this.cellSide);
-                    this.context.lineTo(this.leftEdge + j*this.cellSide,this.cellSide*this.rows);
+                else this.context[window.HVview].lineWidth = 1;
+                if(this.context[window.HVview].lineWidth == 1){
+                    this.context[window.HVview].moveTo(this.leftEdge[window.HVview] + j*this.cellSide[window.HVview],this.cellSide[window.HVview]);
+                    this.context[window.HVview].lineTo(this.leftEdge[window.HVview] + j*this.cellSide[window.HVview],this.cellSide*this.rows);
                 } else {
-                    this.context.moveTo(this.leftEdge + j*this.cellSide,0);
-                    //this.context.lineTo(j*this.cellSide,this.cellSide*this.rows + this.longestColTitle + this.longestModuleLabel + 25);
-                    this.context.lineTo(this.leftEdge + j*this.cellSide,this.cellSide*this.rows);
+                    this.context[window.HVview].moveTo(this.leftEdge[window.HVview] + j*this.cellSide[window.HVview],0);
+                    this.context[window.HVview].lineTo(this.leftEdge[window.HVview] + j*this.cellSide[window.HVview],this.cellSide[window.HVview]*this.rows);
                 }
-                this.context.stroke();
+                this.context[window.HVview].stroke();
             }
         };
 
@@ -450,27 +515,27 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
             var i, j;
             var moduleWidth, modRotation, modAlign, modHeight;
             
-            this.context.fillStyle = 'white'; //'black'
-            this.context.globalAlpha = 0.3;    //0.6
+            this.context[window.HVview].fillStyle = 'white'; //'black'
+            this.context[window.HVview].globalAlpha = 0.3;    //0.6
 
             //channel labels:
-            var labelFontSize = Math.min(16, this.cellSide);
-            this.context.font=labelFontSize+"px Raleway";
-            this.context.fillText('Prim', this.leftEdge + this.cellSide*this.cols+10, this.cellSide/2 +8 );
+            var labelFontSize = Math.min(16, this.cellSide[window.HVview]);
+            this.context[window.HVview].font=labelFontSize+"px Raleway";
+            this.context[window.HVview].fillText('Prim', this.leftEdge[window.HVview] + this.cellSide[window.HVview]*this.cols[window.HVview]+10, this.cellSide[window.HVview]/2 +8 );
             for(i=1; i<this.rows; i++){
-                this.context.fillText(i-1, this.leftEdge + this.cellSide*this.cols+10, i*this.cellSide + this.cellSide/2 +8 );
+                this.context[window.HVview].fillText(i-1, this.leftEdge[window.HVview] + this.cellSide[window.HVview]*this.cols[window.HVview]+10, i*this.cellSide[window.HVview] + this.cellSide[window.HVview]/2 +8 );
             }
 
             //module labels:
             var moduleDivisions = [0];
             var vertOffset;
-            for(i=0; i < window.parameters.moduleSizes.length; i++){
-                moduleDivisions[i+1] = moduleDivisions[i] + Math.max(window.parameters.moduleSizes[i],1);
+            for(i=0; i < window.parameters.moduleSizes[window.HVview].length; i++){
+                moduleDivisions[i+1] = moduleDivisions[i] + Math.max(window.parameters.moduleSizes[window.HVview][i],1);
             }
             for(j=1; j<moduleDivisions.length; j++){
                 var moduleWidth = moduleDivisions[j] - moduleDivisions[j-1];
 
-                if(moduleWidth*this.cellSide < 1.2*this.context.measureText(this.moduleLabels[j-1]).width){
+                if(moduleWidth*this.cellSide[window.HVview] < 1.2*this.context[window.HVview].measureText(this.moduleLabels[j-1]).width){
                     modRotation = -Math.PI/2;  //2.4
                     modAlign = 'right';
                     modHeight = 0;
@@ -481,50 +546,56 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                     modHeight = labelFontSize;
                     vertOffset = 25;
                 }
-                this.context.save();
-                this.context.translate(this.leftEdge + (moduleWidth/2 + moduleDivisions[j-1])*this.cellSide, this.rows*this.cellSide+vertOffset);
-                this.context.rotate(modRotation);
-                this.context.textAlign = modAlign;
-                this.context.fillText(this.moduleLabels[j-1], 0,labelFontSize/2);
-                this.context.restore();
+                this.context[window.HVview].save();
+                this.context[window.HVview].translate(this.leftEdge[window.HVview] + (moduleWidth/2 + moduleDivisions[j-1])*this.cellSide[window.HVview], this.rows*this.cellSide[window.HVview]+vertOffset);
+                this.context[window.HVview].rotate(modRotation);
+                this.context[window.HVview].textAlign = modAlign;
+                this.context[window.HVview].fillText(this.moduleLabels[j-1], 0,labelFontSize/2);
+                this.context[window.HVview].restore();
             }
         };        
 
         //wrapper for transition from old state to new state via this.animate:
         this.update = function(){
-            var i,j,columns;
+            var i,j,k,columns;
 
             this.fetchNewData();
  
             //update alarms & colors to prepare for animation transition:
-            for(i=0; i<this.rows; i++){
-                //primary row spans multi-columns:
-                if(i==0) columns = window.parameters.moduleSizes.length;
-                else columns = this.cols;
-                for(j=0; j<columns; j++){
+            for(k=0; k<this.nCrates; k++){
+                for(i=0; i<this.rows; i++){
+                    //primary row spans multi-columns:
+                    if(i==0) columns = window.parameters.moduleSizes[k].length;
+                    else columns = this.cols[k];
+                    for(j=0; j<columns; j++){
 
-                    this.prevAlarmStatus[i][j][0] = this.alarmStatus[i][j][0];
-                    this.prevAlarmStatus[i][j][1] = this.alarmStatus[i][j][1];
-                    this.prevAlarmStatus[i][j][2] = this.alarmStatus[i][j][2];
-                    this.alarmStatus[i][j][0] = this.dataBus.alarmStatus[i][j][0];
-                    this.alarmStatus[i][j][1] = this.dataBus.alarmStatus[i][j][1];
-                    this.alarmStatus[i][j][2] = this.dataBus.alarmStatus[i][j][2];
-                    this.cellColorUpdate();
+                        this.prevAlarmStatus[k][i][j][0] = this.alarmStatus[k][i][j][0];
+                        this.prevAlarmStatus[k][i][j][1] = this.alarmStatus[k][i][j][1];
+                        this.prevAlarmStatus[k][i][j][2] = this.alarmStatus[k][i][j][2];
+                        this.alarmStatus[k][i][j][0] = this.dataBus.alarmStatus[k][i][j][0];
+                        this.alarmStatus[k][i][j][1] = this.dataBus.alarmStatus[k][i][j][1];
+                        this.alarmStatus[k][i][j][2] = this.dataBus.alarmStatus[k][i][j][2];
+                        this.cellColorUpdate(k);
+                    }
                 }
             }
 
             //update peripherals:
-            for(i=0; i<this.barCharts.length; i++){
-                for(j=0; j<this.barCharts[i].nBars; j++){
-                    var arrayCoords = getPointer(i, j, that);
-                    this.barCharts[i].dataBus.barChartData[j] = this.dataBus.reportVoltage[arrayCoords[0]][arrayCoords[1]];
-                    this.barCharts[i].dataBus.barChartAlarms[j] = this.dataBus.alarmStatus[arrayCoords[0]][arrayCoords[1]];
+            for(k=0; k<this.nCrates; k++){
+                for(i=0; i<this.barCharts[k].length; i++){
+                    for(j=0; j<this.barCharts[k][i].nBars; j++){
+                        var arrayCoords = getPointer(i, j, that);
+                        this.barCharts[k][i].dataBus.barChartData[j] = this.dataBus[k].reportVoltage[arrayCoords[0]][arrayCoords[1]];
+                        this.barCharts[k][i].dataBus.barChartAlarms[j] = this.dataBus[k].alarmStatus[arrayCoords[0]][arrayCoords[1]];
+                    }
+                    this.barCharts[k][i].update(this.barCharts[k][i].dataBus.barChartData, this.barCharts[k][i].dataBus.barChartAlarms);
                 }
-                this.barCharts[i].update(this.barCharts[i].dataBus.barChartData, this.barCharts[i].dataBus.barChartAlarms);
             }
 
             channelSelect(that);
-            this.tooltip.update();
+            for(i=0; i<this.nCrates; i++){
+                this.tooltip[i].update();
+            }
 
         };
 
@@ -532,18 +603,18 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         this.findCell = function(x, y){
             var cell, slot;
 
-            var chx = Math.floor((x-this.leftEdge) / this.cellSide);
-            var chy = Math.floor(y / this.cellSide);
-            slot = primaryBin(window.parameters.moduleSizes, chx)
+            var chx = Math.floor((x-this.leftEdge[window.HVview]) / this.cellSide[window.HVview]);
+            var chy = Math.floor(y / this.cellSide[window.HVview]);
+            slot = primaryBin(window.parameters.moduleSizes[window.HVview], chx)
 
-            if(chx < this.cols && chx > -1 && chy < this.rows && chy > -1){
+            if(chx < this.cols[window.HVview] && chx > -1 && chy < this.rows && chy > -1){
                 cell = [];
                 if(chy == 0){
                     chx = slot;
                 }
                 cell[0] = chy;
                 cell[1] = chx;
-                if( (chy == 0 && window.parameters.moduleSizes[chx] == 1) || window.parameters.moduleSizes[slot] == 0 ) cell = -1;
+                if( (chy == 0 && window.parameters.moduleSizes[window.HVview][chx] == 1) || window.parameters.moduleSizes[window.HVview][slot] == 0 ) cell = -1;
             } else 
                 cell = -1;
 
@@ -562,10 +633,10 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
 
             //decide which card we're pointing at:
             if(row == 0) cardIndex = col;
-            else cardIndex = primaryBin(window.parameters.moduleSizes, col);
+            else cardIndex = primaryBin(window.parameters.moduleSizes[window.HVview], col);
 
             //Title for normal channels:
-            if(row != 0) nextLine = this.moduleLabels[cardIndex]+', '+window.parameters.rowTitles[0]+' '+channelMap(col, row, window.parameters.moduleSizes, this.rows)+'<br>';
+            if(row != 0) nextLine = this.moduleLabels[cardIndex]+', '+window.parameters.rowTitles[0]+' '+channelMap(col, row, window.parameters.moduleSizes[window.HVview], this.rows)+'<br>';
             //Title for primary channels:
             else nextLine = this.moduleLabels[cardIndex]+' Primary <br>';
             toolTipContent += nextLine;
@@ -575,22 +646,22 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
             toolTipContent += nextLine;            
 
             //fill out tooltip content:
-            for(i=0; i<this.reportedValues.length; i++){
+            for(i=0; i<this.reportedValues[window.HVview].length; i++){
                 //establish prefix:
-                nextLine = '<br/>'+this.tooltip.prefix[i];
-                if(this.tooltip.prefix[i] !== '') nextLine += ' ';
+                nextLine = '<br/>'+this.tooltip[window.HVview].prefix[i];
+                if(this.tooltip[window.HVview].prefix[i] !== '') nextLine += ' ';
 
                 //pull in content; special cases for the status word and reported current:
                 //status word:
                 if(i == 6){
-                    nextLine += parseStatusWord(this.reportedValues[i][row][col]);
+                    nextLine += parseStatusWord(this.reportedValues[window.HVview][i][row][col]);
                 }
                 //current:
                 else if(i == 2){
-                        if(window.parameters.moduleSizes[cardIndex]==4 && row!=0) nextLine += '--';
-                        else nextLine += Math.round( this.reportedValues[i][row][col]*1000)/1000 + ' ' + this.tooltip.postfix[i];                
+                        if(window.parameters.moduleSizes[window.HVview][cardIndex]==4 && row!=0) nextLine += '--';
+                        else nextLine += Math.round( this.reportedValues[window.HVview][i][row][col]*1000)/1000 + ' ' + this.tooltip[window.HVview].postfix[i];                
                 } else {
-                    nextLine += Math.round( this.reportedValues[i][row][col]*1000)/1000 + ' ' + this.tooltip.postfix[i];
+                    nextLine += Math.round( this.reportedValues[window.HVview][i][row][col]*1000)/1000 + ' ' + this.tooltip[window.HVview].postfix[i];
                 }
 
                 //append to tooltip:
@@ -598,132 +669,132 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
  
             }
             toolTipContent += '<br><br>';
-            document.getElementById(this.tooltip.ttDivID).innerHTML = toolTipContent;
+            document.getElementById(this.tooltip[window.HVview].ttDivID).innerHTML = toolTipContent;
 
             return 0;
         };
 
         //get new data:
         this.fetchNewData = function(){
-            var testParameter, i, j, ODBindex, columns, slot;
+            var testParameter, i, j, k, ODBindex, columns, slot, variablesRecord, settingsRecord,
+            chName = [],
+            reqVoltage = [],
+            measVoltage = [],
+            measCurrent = [],
+            rampUp = [],
+            rampDown = [],
+            measTemperature = [],
+            repoChState = [],
+            repoChStatus = [],
+            voltageLimit = [],
+            currentLimit = [];
+        
             //batch fetch all in one big lump:
 
             if(!window.parameters.devMode){
-                var variablesRecord = ODBGetRecord(window.parameters.ODBkeys[0]);
-                var settingsRecord  = ODBGetRecord(window.parameters.ODBkeys[1]);
-    
-                var chName          = ODBExtractRecord(settingsRecord,  window.parameters.ODBkeys[12])
-                var reqVoltage      = ODBExtractRecord(variablesRecord, window.parameters.ODBkeys[2]);
-                var measVoltage     = ODBExtractRecord(variablesRecord, window.parameters.ODBkeys[3]);
-                var measCurrent     = ODBExtractRecord(variablesRecord, window.parameters.ODBkeys[4]);
-                var rampUp          = ODBExtractRecord(settingsRecord,  window.parameters.ODBkeys[5]);
-                var rampDown        = ODBExtractRecord(settingsRecord,  window.parameters.ODBkeys[6]);
-                var measTemperature = ODBExtractRecord(variablesRecord, window.parameters.ODBkeys[7]);
-                var repoChState     = ODBExtractRecord(settingsRecord,  window.parameters.ODBkeys[8]);
-                var repoChStatus    = ODBExtractRecord(variablesRecord, window.parameters.ODBkeys[9]);
-                var voltageLimit    = ODBExtractRecord(settingsRecord,  window.parameters.ODBkeys[10]);
-                var currentLimit    = ODBExtractRecord(settingsRecord,  window.parameters.ODBkeys[11]);
+                for(k=0; k<this.nCrates; k++){
+                    variablesRecord = ODBGetRecord('/Equipment/'+window.parameters.HVequipmentNames[k]+'/Variables');  //ODBGetRecord(window.parameters.ODBkeys[0]);
+                    settingsRecord  = ODBGetRecord('/Equipment/'+window.parameters.HVequipmentNames[k]+'/Settings'); //ODBGetRecord(window.parameters.ODBkeys[1]);
+            
+                    chName[k]          = ODBExtractRecord(settingsRecord,  window.parameters.ODBkeys[12])
+                    reqVoltage[k]      = ODBExtractRecord(variablesRecord, window.parameters.ODBkeys[2]);
+                    measVoltage[k]     = ODBExtractRecord(variablesRecord, window.parameters.ODBkeys[3]);
+                    measCurrent[k]     = ODBExtractRecord(variablesRecord, window.parameters.ODBkeys[4]);
+                    rampUp[k]          = ODBExtractRecord(settingsRecord,  window.parameters.ODBkeys[5]);
+                    rampDown[k]        = ODBExtractRecord(settingsRecord,  window.parameters.ODBkeys[6]);
+                    measTemperature[k] = ODBExtractRecord(variablesRecord, window.parameters.ODBkeys[7]);
+                    repoChState[k]     = ODBExtractRecord(settingsRecord,  window.parameters.ODBkeys[8]);
+                    repoChStatus[k]    = ODBExtractRecord(variablesRecord, window.parameters.ODBkeys[9]);
+                    voltageLimit[k]    = ODBExtractRecord(settingsRecord,  window.parameters.ODBkeys[10]);
+                    currentLimit[k]    = ODBExtractRecord(settingsRecord,  window.parameters.ODBkeys[11]);
+                }
 
             }
 
-            for(i=0; i<this.rows; i++){
-                //primary row spans multi-columns, only has entries for 48 channel cards:        
-                if(i==0) columns = window.parameters.moduleSizes.length;
-                else columns = this.cols;
+            for(k=0; k<this.nCrates; k++){
+                for(i=0; i<this.rows; i++){
+                    //primary row spans multi-columns, only has entries for 48 channel cards:        
+                    if(i==0) columns = window.parameters.moduleSizes[k].length;
+                    else columns = this.cols[k];
 
-                for(j=0; j<columns; j++){
+                    for(j=0; j<columns; j++){
                   
-                    if (i>0) slot = primaryBin(window.parameters.moduleSizes, j);
-                    else slot = j;
-                    //don't populate the primary of a 12 channel card, or any channel corresponding to an empty slot:
-                    if( (i!=0 || window.parameters.moduleSizes[j]==4) && window.parameters.moduleSizes[slot]!=0 ){
-                        if(!window.parameters.devMode){
-                           
-                            this.dataBus.channelName[i][j] = 'channel'+i+j;
-                            this.dataBus.demandVoltage[i][j] = -9999;
-                            this.dataBus.reportVoltage[i][j] = -9999;
-                            this.dataBus.reportCurrent[i][j] = -9999;
-                            this.dataBus.demandVrampUp[i][j] = -9999;
-                            this.dataBus.demandVrampDown[i][j] = -9999;
-                            this.dataBus.reportTemperature[i][j] = -9999;
-                            this.dataBus.channelMask[i][j] = 1;
-                            this.dataBus.rampStatus[i][j] = 7;
-                            this.dataBus.voltLimit[i][j] = -9999;
-                            this.dataBus.currentLimit[i][j] = -9999;
+                        if (i>0) slot = primaryBin(window.parameters.moduleSizes[k], j);
+                        else slot = j;
+                        //don't populate the primary of a 12 channel card, or any channel corresponding to an empty slot:
+                        if( (i!=0 || window.parameters.moduleSizes[k][j]==4) && window.parameters.moduleSizes[k][slot]!=0 ){
+                            if(!window.parameters.devMode){
+                               
+                                this.dataBus[k].channelName[i][j] = 'channel'+i+j;
+                                this.dataBus[k].demandVoltage[i][j] = -9999;
+                                this.dataBus[k].reportVoltage[i][j] = -9999;
+                                this.dataBus[k].reportCurrent[i][j] = -9999;
+                                this.dataBus[k].demandVrampUp[i][j] = -9999;
+                                this.dataBus[k].demandVrampDown[i][j] = -9999;
+                                this.dataBus[k].reportTemperature[i][j] = -9999;
+                                this.dataBus[k].channelMask[i][j] = 1;
+                                this.dataBus[k].rampStatus[i][j] = 7;
+                                this.dataBus[k].voltLimit[i][j] = -9999;
+                                this.dataBus[k].currentLimit[i][j] = -9999;
 
-                            ODBindex = getMIDASindex(i, j);
-                            this.dataBus.channelName[i][j]       = chName[ODBindex];
-                            this.dataBus.demandVoltage[i][j]     = parseFloat(reqVoltage[ODBindex]);
-                            this.dataBus.reportVoltage[i][j]     = parseFloat(measVoltage[ODBindex]);   
-                            this.dataBus.reportCurrent[i][j]     = parseFloat(measCurrent[ODBindex]);
-                            this.dataBus.demandVrampUp[i][j]     = parseFloat(rampUp[ODBindex]);
-                            this.dataBus.demandVrampDown[i][j]   = parseFloat(rampDown[ODBindex]);
-                            this.dataBus.reportTemperature[i][j] = parseFloat(measTemperature[ODBindex]);
-                            this.dataBus.channelMask[i][j]       = parseFloat(repoChState[ODBindex]);
-                            this.dataBus.rampStatus[i][j]        = parseFloat(repoChStatus[ODBindex]);
-                            this.dataBus.voltLimit[i][j]         = parseFloat(voltageLimit[ODBindex]);
-                            this.dataBus.currentLimit[i][j]      = parseFloat(currentLimit[ODBindex]);
+                                ODBindex = getMIDASindex(i, j);
+                                this.dataBus[k].channelName[i][j]       = chName[k][ODBindex];
+                                this.dataBus[k].demandVoltage[i][j]     = parseFloat(reqVoltage[k][ODBindex]);
+                                this.dataBus[k].reportVoltage[i][j]     = parseFloat(measVoltage[k][ODBindex]);   
+                                this.dataBus[k].reportCurrent[i][j]     = parseFloat(measCurrent[k][ODBindex]);
+                                this.dataBus[k].demandVrampUp[i][j]     = parseFloat(rampUp[k][ODBindex]);
+                                this.dataBus[k].demandVrampDown[i][j]   = parseFloat(rampDown[k][ODBindex]);
+                                this.dataBus[k].reportTemperature[i][j] = parseFloat(measTemperature[k][ODBindex]);
+                                this.dataBus[k].channelMask[i][j]       = parseFloat(repoChState[k][ODBindex]);
+                                this.dataBus[k].rampStatus[i][j]        = parseFloat(repoChStatus[k][ODBindex]);
+                                this.dataBus[k].voltLimit[i][j]         = parseFloat(voltageLimit[k][ODBindex]);
+                                this.dataBus[k].currentLimit[i][j]      = parseFloat(currentLimit[k][ODBindex]);
 
-                            //48ch cards report the currents in mA, convert to uA: 
-                            if(i==0){
-                                this.dataBus.reportCurrent[i][j] = this.dataBus.reportCurrent[i][j]*1000;
-                                this.dataBus.currentLimit[i][j] = this.dataBus.currentLimit[i][j]*1000;
+                                //48ch cards report the currents in mA, convert to uA: 
+                                if(i==0){
+                                    this.dataBus[k].reportCurrent[i][j] = this.dataBus[k].reportCurrent[i][j]*1000;
+                                    this.dataBus[k].currentLimit[i][j] = this.dataBus[k].currentLimit[i][j]*1000;
+                                }
+                                
+                            } else{
+                                this.dataBus[k].channelName[i][j]   = 'channel'+i+j;
+                                this.dataBus[k].demandVoltage[i][j] = -9999;
+                                this.dataBus[k].reportVoltage[i][j] = -9999;
+                                this.dataBus[k].reportCurrent[i][j] = -9999;
+                                this.dataBus[k].demandVrampUp[i][j] = -9999;
+                                this.dataBus[k].demandVrampDown[i][j] = -9999;
+                                this.dataBus[k].reportTemperature[i][j] = -9999;
+                                this.dataBus[k].channelMask[i][j] = 1;
+                                this.dataBus[k].rampStatus[i][j] = 7;
+                                this.dataBus[k].voltLimit[i][j] = -9999;
+                                this.dataBus[k].currentLimit[i][j] = -9999;
                             }
-                            
-                        } else{
-                            //fake data for offline demo
-                            /*
-                            this.dataBus.demandVoltage[i][j] = Math.random();
-                            this.dataBus.reportVoltage[i][j] = Math.random();
-                            this.dataBus.reportCurrent[i][j] = Math.random();
-                            this.dataBus.demandVrampUp[i][j] = Math.random();
-                            this.dataBus.demandVrampDown[i][j] = Math.random();
-                            this.dataBus.reportTemperature[i][j] = Math.random();
-                            this.dataBus.channelMask[i][j] = Math.random();
-                            if (this.dataBus.channelMask[i][j] < 0.1) this.dataBus.channelMask[i][j] = 0;
-                            else this.dataBus.channelMask[i][j] = 1;
-                            this.dataBus.rampStatus[i][j] = Math.floor(10*Math.random());
-                            this.dataBus.voltLimit[i][j] = 1+Math.random();
-                            this.dataBus.currentLimit[i][j] = 1+Math.random();
-                            */
-                            //no randoms in live experimental tests:
-                            this.dataBus.channelName[i][j]   = 'channel'+i+j;
-                            this.dataBus.demandVoltage[i][j] = -9999;
-                            this.dataBus.reportVoltage[i][j] = -9999;
-                            this.dataBus.reportCurrent[i][j] = -9999;
-                            this.dataBus.demandVrampUp[i][j] = -9999;
-                            this.dataBus.demandVrampDown[i][j] = -9999;
-                            this.dataBus.reportTemperature[i][j] = -9999;
-                            this.dataBus.channelMask[i][j] = 1;
-                            this.dataBus.rampStatus[i][j] = 7;
-                            this.dataBus.voltLimit[i][j] = -9999;
-                            this.dataBus.currentLimit[i][j] = -9999;
+                        } else if (i!=0 || window.parameters.moduleSizes[k][j]==4){  //keep the array filled, even for empty slots to avoid unpredictable behavior
+                            this.dataBus[k].channelName[i][j] = 'channel'+i+j;
+                            this.dataBus[k].demandVoltage[i][j] = 0;
+                            this.dataBus[k].reportVoltage[i][j] = 0;
+                            this.dataBus[k].reportCurrent[i][j] = 0;
+                            this.dataBus[k].demandVrampUp[i][j] = 0;
+                            this.dataBus[k].demandVrampDown[i][j] = 0;
+                            this.dataBus[k].reportTemperature[i][j] = 0;
+                            this.dataBus[k].channelMask[i][j] = 0;
+                            this.dataBus[k].rampStatus[i][j] = 0;
+                            this.dataBus[k].voltLimit[i][j] = 0;
+                            this.dataBus[k].currentLimit[i][j] = 0;
                         }
-                    } else if (i!=0 || window.parameters.moduleSizes[j]==4){  //keep the array filled, even for empty slots to avoid unpredictable behavior
-                        this.dataBus.channelName[i][j] = 'channel'+i+j;
-                        this.dataBus.demandVoltage[i][j] = 0;
-                        this.dataBus.reportVoltage[i][j] = 0;
-                        this.dataBus.reportCurrent[i][j] = 0;
-                        this.dataBus.demandVrampUp[i][j] = 0;
-                        this.dataBus.demandVrampDown[i][j] = 0;
-                        this.dataBus.reportTemperature[i][j] = 0;
-                        this.dataBus.channelMask[i][j] = 0;
-                        this.dataBus.rampStatus[i][j] = 0;
-                        this.dataBus.voltLimit[i][j] = 0;
-                        this.dataBus.currentLimit[i][j] = 0;
-                    }
 
-                    //give the necessary information to the AlarmService, so it can report the state of any channel that trips an alarm below:
-                    if(j==0){
-                        this.AlarmServices.demandVoltage[i] = [];
-                        this.AlarmServices.reportVoltage[i] = [];
-                        this.AlarmServices.reportCurrent[i] = [];
-                        this.AlarmServices.reportTemperature[i] = [];
+                        //give the necessary information to the AlarmService, so it can report the state of any channel that trips an alarm below:
+                        if(j==0){
+                            this.AlarmServices.demandVoltage[k][i] = [];
+                            this.AlarmServices.reportVoltage[k][i] = [];
+                            this.AlarmServices.reportCurrent[k][i] = [];
+                            this.AlarmServices.reportTemperature[k][i] = [];
+                        }
+                        this.AlarmServices.demandVoltage[k][i][j] = this.dataBus[k].demandVoltage[i][j];
+                        this.AlarmServices.reportVoltage[k][i][j] = this.dataBus[k].reportVoltage[i][j];
+                        this.AlarmServices.reportCurrent[k][i][j] = this.dataBus[k].reportCurrent[i][j];
+                        this.AlarmServices.reportTemperature[k][i][j] = this.dataBus[k].reportTemperature[i][j];
                     }
-                    this.AlarmServices.demandVoltage[i][j] = this.dataBus.demandVoltage[i][j];
-                    this.AlarmServices.reportVoltage[i][j] = this.dataBus.reportVoltage[i][j];
-                    this.AlarmServices.reportCurrent[i][j] = this.dataBus.reportCurrent[i][j];
-                    this.AlarmServices.reportTemperature[i][j] = this.dataBus.reportTemperature[i][j];
                 }
             }
 
@@ -733,67 +804,70 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
 
         //push problems out to the alarm service
         this.raiseAlarm = function(){
+            var i, j, k;
             //determine alarm status
-            for(i=0; i<this.rows; i++){
-                //primary row spans multi-columns:
-                if(i==0) columns = window.parameters.moduleSizes.length;
-                else columns = this.cols;
-                for(j=0; j<columns; j++){
-                    //construct the parameter to be tested against the voltage alarm:
-                    testParameter = Math.abs(this.dataBus.demandVoltage[i][j] - this.dataBus.reportVoltage[i][j]); 
+            for(k=0; k<this.nCrates; k++){
+                for(i=0; i<this.rows; i++){
+                    //primary row spans multi-columns:
+                    if(i==0) columns = window.parameters.moduleSizes[k].length;
+                    else columns = this.cols[k];
+                    for(j=0; j<columns; j++){
+                        //construct the parameter to be tested against the voltage alarm:
+                        testParameter = Math.abs(this.dataBus[k].demandVoltage[i][j] - this.dataBus[k].reportVoltage[i][j]); 
 
-                    //determine alarm status for each cell, recorded as [i][j][voltage alarm, current alarm, temperature alarm]
-                    //alarmStatus == 0 indicates all clear, 0 < alarmStatus <= 1 indicates alarm intensity, alarmStatus = -1 indicates channel off,
-                    //and alarmStatus == -2 for the voltage alarm indicates voltage ramping.
-                    if(testParameter < window.parameters.alarmThresholds[0])  this.dataBus.alarmStatus[i][j][0] = 0;
-                    else  this.dataBus.alarmStatus[i][j][0] = Math.min( (testParameter - window.parameters.alarmThresholds[0]) / window.parameters.scaleMaxima[0], 1);
-                    if(this.dataBus.rampStatus[i][j] == 3 || this.dataBus.rampStatus[i][j] == 5){
-                        this.dataBus.alarmStatus[i][j][0] = -2;
-                    }
+                        //determine alarm status for each cell, recorded as [i][j][voltage alarm, current alarm, temperature alarm]
+                        //alarmStatus == 0 indicates all clear, 0 < alarmStatus <= 1 indicates alarm intensity, alarmStatus = -1 indicates channel off,
+                        //and alarmStatus == -2 for the voltage alarm indicates voltage ramping.
+                        if(testParameter < window.parameters.alarmThresholds[0])  this.dataBus[k].alarmStatus[i][j][0] = 0;
+                        else  this.dataBus[k].alarmStatus[i][j][0] = Math.min( (testParameter - window.parameters.alarmThresholds[0]) / window.parameters.scaleMaxima[0], 1);
+                        if(this.dataBus[k].rampStatus[i][j] == 3 || this.dataBus[k].rampStatus[i][j] == 5){
+                            this.dataBus[k].alarmStatus[i][j][0] = -2;
+                        }
 
-                    if(this.dataBus.reportCurrent[i][j] < window.parameters.alarmThresholds[1])  this.dataBus.alarmStatus[i][j][1] = 0;
-                    else  this.dataBus.alarmStatus[i][j][1] = Math.min( (this.dataBus.reportCurrent[i][j] - window.parameters.alarmThresholds[1]) / window.parameters.scaleMaxima[1], 1);
+                        if(this.dataBus[k].reportCurrent[i][j] < window.parameters.alarmThresholds[1])  this.dataBus[k].alarmStatus[i][j][1] = 0;
+                        else  this.dataBus[k].alarmStatus[i][j][1] = Math.min( (this.dataBus[k].reportCurrent[i][j] - window.parameters.alarmThresholds[1]) / window.parameters.scaleMaxima[1], 1);
 
-                    if(this.dataBus.reportTemperature[i][j] < window.parameters.alarmThresholds[2])  this.dataBus.alarmStatus[i][j][2] = 0;
-                    else  this.dataBus.alarmStatus[i][j][2] = Math.min( (this.dataBus.reportTemperature[i][j] - window.parameters.alarmThresholds[2]) / window.parameters.scaleMaxima[2], 1);
+                        if(this.dataBus[k].reportTemperature[i][j] < window.parameters.alarmThresholds[2])  this.dataBus[k].alarmStatus[i][j][2] = 0;
+                        else  this.dataBus[k].alarmStatus[i][j][2] = Math.min( (this.dataBus[k].reportTemperature[i][j] - window.parameters.alarmThresholds[2]) / window.parameters.scaleMaxima[2], 1);
 
-                    if(this.dataBus.channelMask[i][j] == 0){
-                        this.dataBus.alarmStatus[i][j][0] = -1;
-                        this.dataBus.alarmStatus[i][j][1] = -1;
-                        this.dataBus.alarmStatus[i][j][2] = -1;
-                    }
+                        if(this.dataBus[k].channelMask[i][j] == 0){
+                            this.dataBus[k].alarmStatus[i][j][0] = -1;
+                            this.dataBus[k].alarmStatus[i][j][1] = -1;
+                            this.dataBus[k].alarmStatus[i][j][2] = -1;
+                        }
 
-                    //fire an event at the AlarmServices object for every alarm:
-                    //voltage alarms:
+                        //fire an event at the AlarmServices object for every alarm:
+                        //voltage alarms:
             
-                    if(this.dataBus.alarmStatus[i][j][0] > 0){
-                        var voltageAlarm = new  CustomEvent("alarmTrip", {
-                                                    detail: {
-                                                        alarmType: 'voltage',
-                                                        alarmStatus: [i,j,this.dataBus.alarmStatus[i][j][0]]        
-                                                    }
-                                                });
-                        AlarmServices.div.dispatchEvent(voltageAlarm);
-                    }
-                    //current alarms:
-                    if(this.dataBus.alarmStatus[i][j][1] > 0){
-                        var currentAlarm = new  CustomEvent("alarmTrip", {
-                                                    detail: {
-                                                        alarmType: 'current',
-                                                        alarmStatus: [i,j,this.dataBus.alarmStatus[i][j][1]]        
-                                                    }
-                                                });
-                        AlarmServices.div.dispatchEvent(currentAlarm);
-                    }
-                    //temperature alarms:
-                    if(this.dataBus.alarmStatus[i][j][2] > 0){
-                        var temperatureAlarm = new  CustomEvent("alarmTrip", {
+                        if(this.dataBus[k].alarmStatus[i][j][0] > 0){
+                            var voltageAlarm = new  CustomEvent("alarmTrip", {
                                                         detail: {
-                                                            alarmType: 'temperature',
-                                                            alarmStatus: [i,j,this.dataBus.alarmStatus[i][j][2]]        
+                                                            alarmType: 'voltage',
+                                                            alarmStatus: [i,j,this.dataBus[k].alarmStatus[i][j][0]]        
                                                         }
                                                     });
-                        AlarmServices.div.dispatchEvent(temperatureAlarm);
+                            AlarmServices.div.dispatchEvent(voltageAlarm);
+                        }
+                        //current alarms:
+                        if(this.dataBus[k].alarmStatus[i][j][1] > 0){
+                            var currentAlarm = new  CustomEvent("alarmTrip", {
+                                                        detail: {
+                                                            alarmType: 'current',
+                                                            alarmStatus: [i,j,this.dataBus[k].alarmStatus[i][j][1]]        
+                                                        }
+                                                    });
+                            AlarmServices.div.dispatchEvent(currentAlarm);
+                        }
+                        //temperature alarms:
+                        if(this.dataBus[k].alarmStatus[i][j][2] > 0){
+                            var temperatureAlarm = new  CustomEvent("alarmTrip", {
+                                                            detail: {
+                                                                alarmType: 'temperature',
+                                                                alarmStatus: [i,j,this.dataBus[k].alarmStatus[i][j][2]]        
+                                                            }
+                                                        });
+                            AlarmServices.div.dispatchEvent(temperatureAlarm);
+                        }
                     }
                 }
             }
@@ -805,7 +879,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         };
 
         this.animate = function(){
-            if(window.onDisplay == this.canvasID || window.freshLoad) animate(this, 0);
+            if(window.onDisplay.slice(0,6) == 'HVgrid' || window.freshLoad) animate(this, 0);
             else this.draw(this.nFrames);
         };
 
@@ -831,15 +905,15 @@ function clickWaffle(event, obj){
 
             //form coordinate system chx, chy with origin at the upper left corner of the div, and 
             //bin as the waffle binning: 
-            var chx = Math.floor( (event.pageX - obj.leftEdge - superDiv.offsetLeft - obj.canvas.offsetLeft) / obj.cellSide);
-            var chy = Math.floor( (event.pageY - superDiv.offsetTop - obj.canvas.offsetTop) / obj.cellSide);
+            var chx = Math.floor( (event.pageX - obj.leftEdge[window.HVview] - superDiv.offsetLeft - obj.canvas[window.HVview].offsetLeft) / obj.cellSide[window.HVview]);
+            var chy = Math.floor( (event.pageY - superDiv.offsetTop - obj.canvas[window.HVview].offsetTop) / obj.cellSide[window.HVview]);
 
             //are we on the primary of a card that doesn't have a primary, or an empty slot??
             var suppressClick = 0;
-            var cardIndex = primaryBin(window.parameters.moduleSizes, chx);
-            if( (chy==0 && window.parameters.moduleSizes[cardIndex] == 1) || window.parameters.moduleSizes[cardIndex] == 0 ) suppressClick = 1;
+            var cardIndex = primaryBin(window.parameters.moduleSizes[window.HVview], chx);
+            if( (chy==0 && window.parameters.moduleSizes[window.HVview][cardIndex] == 1) || window.parameters.moduleSizes[window.HVview][cardIndex] == 0 ) suppressClick = 1;
 
-            if(chx<obj.cols && chx>=0 && chy<obj.rows && chy>=0 && window.onDisplay == obj.canvasID && suppressClick==0){
+            if(chx<obj.cols[window.HVview] && chx>=0 && chy<obj.rows && chy>=0 && window.onDisplay == obj.canvasID[window.HVview] && suppressClick==0){
                 obj.chx = chx;
                 obj.chy = chy;
                 channelSelect(obj);
@@ -856,19 +930,19 @@ function getMIDASindex(row, col){
     if(row != 0){
         //count up regular channels
         MIDASindex += window.parameters.rows*col + row-1;
-        moduleNumber = primaryBin(window.parameters.moduleSizes, col);
+        moduleNumber = primaryBin(window.parameters.moduleSizes[window.HVview], col);
         for(i=0; i<moduleNumber+1; i++){
             //add on primary channels
-            if(window.parameters.moduleSizes[i] == 4) MIDASindex++;
+            if(window.parameters.moduleSizes[window.HVview][i] == 4) MIDASindex++;
             //remove overcounting for empty cards:
-            if(window.parameters.moduleSizes[i] == 0) MIDASindex -= 12;
+            if(window.parameters.moduleSizes[window.HVview][i] == 0) MIDASindex -= 12;
         }
     } else{
         moduleNumber = col;
         //add up all the channels from previous cards:
         for(i=0; i<moduleNumber; i++){
-            if(window.parameters.moduleSizes[i] == 1) MIDASindex += 12;
-            if(window.parameters.moduleSizes[i] == 4) MIDASindex += 49;
+            if(window.parameters.moduleSizes[window.HVview][i] == 1) MIDASindex += 12;
+            if(window.parameters.moduleSizes[window.HVview][i] == 4) MIDASindex += 49;
         }
         //MIDASindex++;
     }
@@ -884,7 +958,7 @@ function getPointer(module, channel, waffle){
 
     //column:
     for(i=0; i<module; i++){
-        col += Math.max(window.parameters.moduleSizes[i],1);
+        col += Math.max(window.parameters.moduleSizes[window.HVview][i],1);
     }
     col += Math.floor(channel/(waffle.rows-1));
 

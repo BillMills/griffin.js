@@ -73,45 +73,4 @@ function DSSD(){
 
     }
 
-    this.defineText = function(cell){
-    	var key, nextLine, toolTipContent;
-
-        toolTipContent = '<br>'
-        key = this.dataBus.DSSDTTmap[cell];
-        nextLine = key;
-        toolTipContent += nextLine + '<br><br>';
-        toolTipContent += this.baseTTtext(this.dataBus.DSSD[key].HV, this.dataBus.DSSD[key].threshold, this.dataBus.DSSD[key].rate);
-        toolTipContent += '<br>'
-    }
-
-    this.update = function(){
-        var key;
-
-        //get new data
-        this.fetchNewData();
-
-        //parse the new data into colors
-        for(key in this.dataBus.DSSD){
-            this.dataBus.DSSD[key].oldHVcolor = this.dataBus.DSSD[key].HVcolor;
-            this.dataBus.DSSD[key].HVcolor = this.parseColor(this.dataBus.DSSD[key].HV, this.name);
-            this.dataBus.DSSD[key].oldThresholdColor = this.dataBus.DSSD[key].thresholdColor;
-            this.dataBus.DSSD[key].thresholdColor = this.parseColor(this.dataBus.DSSD[key].threshold, this.name);
-            this.dataBus.DSSD[key].oldRateColor = this.dataBus.DSSD[key].rateColor;
-            this.dataBus.DSSD[key].rateColor = this.parseColor(this.dataBus.DSSD[key].rate, this.name);
-        }
-
-		this.tooltip.update();
-    }
-
-    this.fetchNewData = function(){
-        var key;
-
-        //dummy data:
-        for(key in this.dataBus.){
-            this.dataBus.DSSD[key].HV = Math.random();
-            this.dataBus.DSSD[key].threshold = Math.random();
-            this.dataBus.DSSD[key].rate = Math.random();
-        }
-    }
-
 }
