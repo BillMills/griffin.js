@@ -80,8 +80,8 @@ function AlarmService(sidebarDivID, sidebarDetailDivID){
 
     	//define sort function:
     	function sortAlarms(a, b){
-        	if (a[2] > b[2]) return -1;
-        	if (a[2] < b[2]) return 1;
+        	if (a[3] > b[3]) return -1;
+        	if (a[3] < b[3]) return 1;
         	else return 0;
     	}
 
@@ -100,7 +100,7 @@ function AlarmService(sidebarDivID, sidebarDetailDivID){
     	var cahnnel = -1;
     	if(this.voltageAlarms.length != 0) alarmText += 'Voltage Alarms<br>'
     	for(i=0; i<Math.min(this.voltageAlarms.length, this.nAlarms); i++){
-    		slot = primaryBin(window.parameters.moduleSizes[window.HVview], this.voltageAlarms[i][1]);
+    		slot = primaryBin(window.parameters.moduleSizes[this.voltageAlarms[i][2]], this.voltageAlarms[i][1]);
     		channel = channelMap(this.voltageAlarms[i][1], this.voltageAlarms[i][0], window.parameters.moduleSizes[window.HVview], window.parameters.rows + 1);
     		if(channel == -1){
     			alarmText += 'Slot ' + slot + ' Primary' + '<br>';	
@@ -113,7 +113,7 @@ function AlarmService(sidebarDivID, sidebarDetailDivID){
 
     	if(this.currentAlarms.length != 0) alarmText += '<br>Current Alarms<br>'
     	for(i=0; i<Math.min(this.currentAlarms.length, this.nAlarms); i++){
-    		slot = primaryBin(window.parameters.moduleSizes[window.HVview], this.currentAlarms[i][1]);
+    		slot = primaryBin(window.parameters.moduleSizes[this.currentAlarms[i][2]], this.currentAlarms[i][1]);
     		channel = channelMap(this.currentAlarms[i][1], this.currentAlarms[i][0], window.parameters.moduleSizes[window.HVview], window.parameters.rows + 1);
     		if(channel == -1){
     			alarmText += 'Slot ' + slot + ' Primary' + '<br>';	
@@ -124,7 +124,7 @@ function AlarmService(sidebarDivID, sidebarDetailDivID){
 
     	if(this.temperatureAlarms.length != 0) alarmText += '<br>Temperature Alarms<br>'
     	for(i=0; i<Math.min(this.temperatureAlarms.length, this.nAlarms); i++){
-	   		slot = primaryBin(window.parameters.moduleSizes[window.HVview], this.temperatureAlarms[i][1]);
+	   		slot = primaryBin(window.parameters.moduleSizes[this.temperatureAlarms[i][2]], this.temperatureAlarms[i][1]);
     		channel = channelMap(this.temperatureAlarms[i][1], this.temperatureAlarms[i][0], window.parameters.moduleSizes[window.HVview], window.parameters.rows + 1);
     		if(channel == -1){
     			alarmText += 'Slot ' + slot + ' Primary' + '<br>';	
@@ -196,9 +196,9 @@ function registerAlarm(object, e){
 }
 
 function publishAlarms(object){
-	object.sortAlarms();
-	object.printAlarms();
-	object.wipeAlarms();
+	//object.sortAlarms();
+	//object.printAlarms();
+	//object.wipeAlarms();   //TODO - reenable after core HV functionality is back up
 }
 
 

@@ -26,7 +26,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         //member data:
         this.rows = window.parameters.rows + 1;     //number of rows in the waffle; +1 for primary row
         this.canvasID = [];                         //canvas ID to draw the waffles on
-        this.prevAlarmStatus;                       //previous iteration's alarmStatus
+        this.prevAlarmStatus = [];                       //previous iteration's alarmStatus
         this.alarmStatus = [];                           //3D array containing the alarm level for each cell [mainframe][row][column] = alarm level
         this.wrapperDiv = window.parameters.wrapper;//div ID of top level div
         this.InputLayer = InputLayer;               //div ID of wrapper for input fields  TODO: resundant with sidebarID
@@ -52,7 +52,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         this.chx = i;
 
         //generate the canvas IDs:
-        for (i=0; i<window.parameters.HVequipmentNames; i++){
+        for (i=0; i<this.nCrates; i++){
             this.canvasID[i] = 'HVgrid'+i;
         }
 
@@ -167,16 +167,20 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         //inject top level nav button
         insertDOM('button', this.topNavID, 'navLink', '', 'statusLink', function(){swapView('mainframeLinks', 'TestWaffle', 'InputLayer', window.HVpointer.topNavID)}, 'HV Monitor')
 
-        //function to inject the DOM elements needed for the view header
+        //function to inject the DOM elements needed for the view header TODO: only the card buttons really need to be regenerated, separate?
         this.generateHeader = function(crate){
+            var i; 
+
             //wrapper div
             insertDOM('div', this.linkWrapperID+crate, 'navPanel', 'opacity:0; z-index:-10;', this.wrapperDiv, '', '');
             //nav header
-            insertDOM('h1', 'mainframeLinksBanner', 'navPanelHeader', '', this.linkWrapperID+crate, '', window.parameters.ExpName+' HV Mainframes');
-            insertDOM('br', 'break', '', '', this.linkWrapperID, '', '');
+            insertDOM('h1', 'mainframeLinks'+crate+'Banner', 'navPanelHeader', '', this.linkWrapperID+crate, '', window.parameters.ExpName+' HV Mainframes');
+            insertDOM('br', 'break', '', '', this.linkWrapperID+crate, '', '');
             //nav buttons
-            insertDOM('button', 'Main'+(crate+1), (crate==0)? 'navLinkDown' : 'navLink', '', 'mainframeLinks', function(){window.HVpointer.viewStatus=-1; swapFade(this.id, window.HVpointer, 0, window.HVview)}, 'Mainframe '+(crate+1) );
-            insertDOM('br', 'break', '', '', this.linkWrapperID, '', '');
+            for(i=0; i<window.HVpointer.nCrates; i++){
+                insertDOM('button', 'Main'+(i+1), (i==0)? 'navLinkDown' : 'navLink', '', this.linkWrapperID+crate, function(){window.HVpointer.viewStatus=-1; swapFade(this.id, window.HVpointer, 0, window.HVview)}, 'Mainframe '+(i+1) );
+            }
+            insertDOM('br', 'break', '', '', this.linkWrapperID+crate, '', '');
 
             for(i=0; i<window.parameters.moduleSizes[crate].length; i++){
                 //deploy card buttons
@@ -190,10 +194,9 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
             this.generateHeader(i);
 
             //inject canvas into DOM for waffle to paint on:
-            insertDOM('canvas', this.canvasID[i], 'monitor', '', this.wrapperDiv, '', '')
+            insertDOM('canvas', this.canvasID[i], 'monitor', '', this.wrapperDiv, '', '');
             document.getElementById(this.canvasID[i]).setAttribute('width', this.totalWidth);
             document.getElementById(this.canvasID[i]).setAttribute('height', this.totalHeight[i]);
-
             this.canvas[i] = document.getElementById(this.canvasID[i]);
             this.context[i] = this.canvas[i].getContext('2d');
         }
@@ -249,7 +252,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         //style card nav buttons
         var newRule;
         for(j=0; j<this.nCrates; j++){
-            for(i=0; i<this.window.parameters.moduleSizes[j]; i++){
+            for(i=0; i<window.parameters.moduleSizes[j].length; i++){
                 var buttonWidth, fontsize;
                 buttonWidth = Math.max(window.parameters.moduleSizes[j][i],1)*0.9*this.cellSide[j] + (Math.max(window.parameters.moduleSizes[j][i],1)-1)*0.1*this.cellSide[j];
                 if(window.parameters.moduleSizes[j][i] == 4) fontsize = 0.9*this.cellSide[j]*0.5;
@@ -267,9 +270,12 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         }
 
         //header size:
-        //this.headerHeight = $('#'+this.headerDiv).height();  //TODO depricated?
-        //make the vertical spacing between the waffle and nav header nice:
-        //$('#'+this.canvasID).css('top', (this.headerHeight)+'px !important;' );
+        this.headerHeight = [];
+        for(i=0; i<this.nCrates; i++){
+            this.headerHeight[i] = $('#'+this.linkWrapperID+i).height();
+            //make the vertical spacing between the waffle and nav header nice:
+            $('#'+this.canvasID[i]).css('top', (this.headerHeight[i])+'px !important;' );
+        }
 
         //declare bar charts & canvases to paint them on:
         this.barCharts = [];
@@ -280,7 +286,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                 insertDOM('canvas', 'crate'+j+'bar'+i, 'monitor', '', this.wrapperDiv, '', '');
                 document.getElementById('crate'+j+'bar'+i).setAttribute('width', this.totalWidth);
                 document.getElementById('crate'+j+'bar'+i).setAttribute('height', this.totalHeight[i]);
-                this.barCharts[j][i] = new BarGraph('crate'+j+'bar'+i, i, Math.max(window.parameters.moduleSizes[j][i],1)*12, 'Slot '+i, 'Reported Voltage [V]', 0, window.parameters.scaleMaxima[0], window.parameters.barChartPrecision, that);
+                this.barCharts[j][i] = new BarGraph('crate'+j+'bar'+i, i, Math.max(window.parameters.moduleSizes[j][i],1)*12, 'Slot '+i, 'Reported Voltage [V]', 0, window.parameters.scaleMaxima[0], window.parameters.barChartPrecision, that, j);
             }
         }
 
@@ -297,8 +303,6 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         }
 
         //declare alarmStatus and prevAlarmStatus as arrays of appropriate dimension:
-        this.alarmStatus = [];
-        this.prevAlarmStatus = [];
         for(k=0; k<this.nCrates; k++){
             this.alarmStatus[k] = [];
             this.prevAlarmStatus[k] = [];
@@ -502,7 +506,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                 else this.context[window.HVview].lineWidth = 1;
                 if(this.context[window.HVview].lineWidth == 1){
                     this.context[window.HVview].moveTo(this.leftEdge[window.HVview] + j*this.cellSide[window.HVview],this.cellSide[window.HVview]);
-                    this.context[window.HVview].lineTo(this.leftEdge[window.HVview] + j*this.cellSide[window.HVview],this.cellSide*this.rows);
+                    this.context[window.HVview].lineTo(this.leftEdge[window.HVview] + j*this.cellSide[window.HVview],this.cellSide[window.HVview]*this.rows);
                 } else {
                     this.context[window.HVview].moveTo(this.leftEdge[window.HVview] + j*this.cellSide[window.HVview],0);
                     this.context[window.HVview].lineTo(this.leftEdge[window.HVview] + j*this.cellSide[window.HVview],this.cellSide[window.HVview]*this.rows);
@@ -568,13 +572,12 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                     if(i==0) columns = window.parameters.moduleSizes[k].length;
                     else columns = this.cols[k];
                     for(j=0; j<columns; j++){
-
                         this.prevAlarmStatus[k][i][j][0] = this.alarmStatus[k][i][j][0];
                         this.prevAlarmStatus[k][i][j][1] = this.alarmStatus[k][i][j][1];
                         this.prevAlarmStatus[k][i][j][2] = this.alarmStatus[k][i][j][2];
-                        this.alarmStatus[k][i][j][0] = this.dataBus.alarmStatus[k][i][j][0];
-                        this.alarmStatus[k][i][j][1] = this.dataBus.alarmStatus[k][i][j][1];
-                        this.alarmStatus[k][i][j][2] = this.dataBus.alarmStatus[k][i][j][2];
+                        this.alarmStatus[k][i][j][0] = this.dataBus[k].alarmStatus[i][j][0];
+                        this.alarmStatus[k][i][j][1] = this.dataBus[k].alarmStatus[i][j][1]; 
+                        this.alarmStatus[k][i][j][2] = this.dataBus[k].alarmStatus[i][j][2];
                         this.cellColorUpdate(k);
                     }
                 }
@@ -642,7 +645,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
             toolTipContent += nextLine;
 
             //channel Name
-            nextLine = this.dataBus.channelName[row][col]+'<br>';
+            nextLine = this.dataBus[window.HVview].channelName[row][col]+'<br>';
             toolTipContent += nextLine;            
 
             //fill out tooltip content:
@@ -843,7 +846,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                             var voltageAlarm = new  CustomEvent("alarmTrip", {
                                                         detail: {
                                                             alarmType: 'voltage',
-                                                            alarmStatus: [i,j,this.dataBus[k].alarmStatus[i][j][0]]        
+                                                            alarmStatus: [i,j,k,this.dataBus[k].alarmStatus[i][j][0]]        
                                                         }
                                                     });
                             AlarmServices.div.dispatchEvent(voltageAlarm);
@@ -853,7 +856,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                             var currentAlarm = new  CustomEvent("alarmTrip", {
                                                         detail: {
                                                             alarmType: 'current',
-                                                            alarmStatus: [i,j,this.dataBus[k].alarmStatus[i][j][1]]        
+                                                            alarmStatus: [i,j,k,this.dataBus[k].alarmStatus[i][j][1]]        
                                                         }
                                                     });
                             AlarmServices.div.dispatchEvent(currentAlarm);
@@ -863,7 +866,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                             var temperatureAlarm = new  CustomEvent("alarmTrip", {
                                                             detail: {
                                                                 alarmType: 'temperature',
-                                                                alarmStatus: [i,j,this.dataBus[k].alarmStatus[i][j][2]]        
+                                                                alarmStatus: [i,j,k,this.dataBus[k].alarmStatus[i][j][2]]        
                                                             }
                                                         });
                             AlarmServices.div.dispatchEvent(temperatureAlarm);

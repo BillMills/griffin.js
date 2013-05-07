@@ -80,8 +80,10 @@ function masterLoop(callMyself){
         //HV
         if(window.parameters.topDeployment['HV']){
             window.waffle.animate(callMyself);
-            for(i=0; i<window.waffle.barCharts.length; i++)
-                window.waffle.barCharts[i].animate(callMyself);
+            for(i=0; i<window.waffle.barCharts.length; i++){
+                for(j=0; j<window.waffle.barCharts[i].length; j++)
+                    window.waffle.barCharts[i][j].animate(callMyself);
+            }
         }
         //DAQ
         if(window.parameters.topDeployment['DAQ']) window.DAQ.animate(callMyself);

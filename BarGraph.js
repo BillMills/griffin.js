@@ -1,6 +1,9 @@
-function BarGraph(cvas, moduleNumber, nBars, title, yAxisTitle, scaleMin, scaleMax, barChartPrecision, masterWaffle){
+function BarGraph(cvas, moduleNumber, nBars, title, yAxisTitle, scaleMin, scaleMax, barChartPrecision, masterWaffle, crate){
 
 	var i;
+
+	//which crate is this card in?
+	this.crate = crate;
 
 	this.dataBus = new HVBarDS();
 
@@ -25,7 +28,7 @@ function BarGraph(cvas, moduleNumber, nBars, title, yAxisTitle, scaleMin, scaleM
 	//precision:
 	this.precision = barChartPrecision;
 
-	//waffle canvas ID of which these meters are a subset:
+	//waffle of which these meters are a subset:
 	this.masterWaffle = masterWaffle;
 
 	//chart title:
@@ -45,8 +48,8 @@ function BarGraph(cvas, moduleNumber, nBars, title, yAxisTitle, scaleMin, scaleM
 
     //canvas dimensions:
     this.width = masterWaffle.totalWidth;
-    this.height = masterWaffle.waffleHeight;
-    this.headerHeight = masterWaffle.headerHeight;
+    this.height = masterWaffle.waffleHeight[crate];
+    this.headerHeight = masterWaffle.headerHeight[crate];
     $('#'+cvas).attr('width', this.width);
     $('#'+cvas).attr('height', this.height);
     $('#'+cvas).css('top', this.headerHeight);
@@ -113,7 +116,7 @@ function BarGraph(cvas, moduleNumber, nBars, title, yAxisTitle, scaleMin, scaleM
         var channel = Math.floor((event.pageX - superDiv.offsetLeft -  obj.canvas.offsetLeft - obj.width*0.1)/(1.05*obj.barWidth));
         var gridCoords = getPointer(module, channel, obj.masterWaffle);
 
-        if(gridCoords[1]<obj.masterWaffle.cols && gridCoords[0]>0 && gridCoords[0]<obj.masterWaffle.rows && channel<obj.nBars && window.onDisplay == obj.cvas){
+        if(gridCoords[1]<obj.masterWaffle.cols[obj.crate] && gridCoords[0]>0 && gridCoords[0]<obj.masterWaffle.rows && channel<obj.nBars && window.onDisplay == obj.cvas){
             obj.masterWaffle.chx = gridCoords[1];
             obj.masterWaffle.chy = gridCoords[0];
             channelSelect(obj.masterWaffle);
@@ -153,7 +156,7 @@ function BarGraph(cvas, moduleNumber, nBars, title, yAxisTitle, scaleMin, scaleM
     this.update = function(newLevel, alarmStatus){
 
         //set up member variables for animation:
-        this.setNewLevels(newLevel, alarmStatus);
+        //this.setNewLevels(newLevel, alarmStatus);  //TODO reenable once core HV functionality back up
 
         //animate:
         //animate(this, 0);
