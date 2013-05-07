@@ -275,7 +275,7 @@ function BarGraph(cvas, moduleNumber, nBars, title, yAxisTitle, scaleMin, scaleM
 	};
 
     this.animate = function(){
-        if(window.onDisplay == this.cvas || window.freshLoad) animate(this, 0);
+        if(window.onDisplay == this.cvas /*|| window.freshLoad*/) animate(this, 0);
         else this.draw(this.nFrames);
     };
 

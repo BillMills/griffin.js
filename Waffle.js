@@ -165,33 +165,26 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
 
         //DOM insertions////////////////////////////////////
         //inject top level nav button
-        insertDOM('button', this.topNavID, 'navLink', '', 'statusLink', function(){swapView('mainframeLinks', 'TestWaffle', 'InputLayer', window.HVpointer.topNavID)}, 'HV Monitor')
+        insertDOM('button', this.topNavID, 'navLink', '', 'statusLink', function(){swapView(this.linkWrapperID, 'TestWaffle', 'InputLayer', window.HVpointer.topNavID)}, 'HV Monitor')
 
-        //function to inject the DOM elements needed for the view header TODO: only the card buttons really need to be regenerated, separate?
-        this.generateHeader = function(crate){
-            var i; 
-
-            //wrapper div
-            insertDOM('div', this.linkWrapperID+crate, 'navPanel', 'opacity:0; z-index:-10;', this.wrapperDiv, '', '');
-            //nav header
-            insertDOM('h1', 'mainframeLinks'+crate+'Banner', 'navPanelHeader', '', this.linkWrapperID+crate, '', window.parameters.ExpName+' HV Mainframes');
-            insertDOM('br', 'break', '', '', this.linkWrapperID+crate, '', '');
-            //nav buttons
-            for(i=0; i<window.HVpointer.nCrates; i++){
-                insertDOM('button', 'Main'+(i+1), (i==0)? 'navLinkDown' : 'navLink', '', this.linkWrapperID+crate, function(){window.HVpointer.viewStatus=-1; swapFade(this.id, window.HVpointer, 0, window.HVview)}, 'Mainframe '+(i+1) );
-            }
-            insertDOM('br', 'break', '', '', this.linkWrapperID+crate, '', '');
-
-            for(i=0; i<window.parameters.moduleSizes[crate].length; i++){
-                //deploy card buttons
-                insertDOM('button', 'crate'+crate+'card'+i, 'navLink', '', this.linkWrapperID+crate, function(){window.HVpointer.viewStatus=this.cardNumber; swapFade(this.id, window.HVpointer, 0, window.HVview);}, 'Slot '+i, '', 'button');
-                document.getElementById('crate'+crate+'card'+i).cardNumber = i;
-            }
-        };
-
+        //header
+        insertDOM('div', this.linkWrapperID, 'navPanel', '', this.wrapperDiv, '', '');
+        //title
+        insertDOM('h1', this.linkWrapperID+'Banner', 'navPanelHeader', '', this.linkWrapperID, '', window.parameters.ExpName+' HV Mainframes');
+        insertDOM('br', 'break', '', '', this.linkWrapperID, '', '');
+        //mainframe navigation
         for(i=0; i<this.nCrates; i++){
-            //inject a header for each crate:
-            this.generateHeader(i);
+            insertDOM('button', 'Main'+(i+1), (i==0)? 'navLinkDown' : 'navLink', '', this.linkWrapperID, function(){swapHVmainframe(this.crate)}, 'Mainframe '+(i+1) );
+            document.getElementById('Main'+(i+1)).crate = i;
+        }
+        insertDOM('br', 'break', '', '', this.linkWrapperID, '', '');
+        //card navigation
+        for(i=0; i<this.nCrates; i++){
+            insertDOM('div', this.linkWrapperID+i, 'cardNavPanel', '', this.linkWrapperID, '', '');
+            for(j=0; j<window.parameters.moduleSizes[i].length; j++){
+                insertDOM('button', 'crate'+i+'card'+j, 'navLink', '', this.linkWrapperID+i, function(){window.HVpointer.viewStatus=this.cardNumber; swapFade(this.id, window.HVpointer, 0, window.HVview);}, 'Slot '+j, '', 'button');
+                document.getElementById('crate'+i+'card'+j).cardNumber = j;
+            }
 
             //inject canvas into DOM for waffle to paint on:
             insertDOM('canvas', this.canvasID[i], 'monitor', '', this.wrapperDiv, '', '');
@@ -230,7 +223,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
             //want waffle and navbar centered nicely:
             this.leftEdge[i] = (this.totalWidth - (this.waffleWidth[i] + 1.5*this.context[i].measureText('Prim').width))/2;
             //push navbar over to match:
-            document.getElementById(this.linkWrapperID+i).setAttribute('style', 'left:'+(24 + 100*this.leftEdge[i]/$('#'+this.wrapperDiv).width() )+'%;');
+            document.getElementById(this.linkWrapperID).setAttribute('style', 'left:'+(24 + 100*this.leftEdge[i]/$('#'+this.wrapperDiv).width() )+'%;');
         }
 
         //make a tooltip for each crate:
@@ -269,13 +262,19 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
             }
         }
 
+        document.getElementById(this.linkWrapperID+0).style.display = 'block';
         //header size:
         this.headerHeight = [];
         for(i=0; i<this.nCrates; i++){
-            this.headerHeight[i] = $('#'+this.linkWrapperID+i).height();
+            document.getElementById(this.linkWrapperID+i).style.display = 'block';
+            this.headerHeight[i] = $('#'+this.linkWrapperID).height();
+            document.getElementById(this.linkWrapperID+i).style.display = 'none';
             //make the vertical spacing between the waffle and nav header nice:
             $('#'+this.canvasID[i]).css('top', (this.headerHeight[i])+'px !important;' );
         }
+        //turn top crate's slot navigation on:
+        document.getElementById(this.linkWrapperID+window.HVview).style.display = 'block';
+
 
         //declare bar charts & canvases to paint them on:
         this.barCharts = [];
@@ -882,7 +881,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         };
 
         this.animate = function(){
-            if(window.onDisplay.slice(0,6) == 'HVgrid' || window.freshLoad) animate(this, 0);
+            if(window.onDisplay.slice(0,6) == 'HVgrid' /*|| window.freshLoad*/) animate(this, 0);
             else this.draw(this.nFrames);
         };
 
@@ -1065,3 +1064,45 @@ function reconfigureChannelList(moduleLabels, moduleSizes, ChannelListDD){
     else setInput('changeChannel',1,channelNumber);
 
 }
+
+//swap from one mainframe view to another:
+function swapHVmainframe(inbound){
+    var i;
+
+    //fade canvases
+    $('#'+window.HVpointer.canvasID[window.HVview]).css('opacity', 0);
+    $('#'+window.HVpointer.canvasID[inbound]).css('opacity', 1);
+    //switch orders
+    $('#'+window.HVpointer.canvasID[window.HVview]).css('z-index', -1);
+    $('#'+window.HVpointer.canvasID[inbound]).css('z-index', 10);
+    //highlight buttons
+    document.getElementById('Main'+(window.HVview+1)).setAttribute('class', 'navLink');
+    document.getElementById('Main'+(inbound+1)).setAttribute('class', 'navLinkDown');
+    //switch nav bars
+    $('#'+window.HVpointer.linkWrapperID+window.HVview).css('display', 'none');
+    $('#'+window.HVpointer.linkWrapperID+inbound).css('display', 'block');
+    $('#'+window.HVpointer.linkWrapperID+window.HVview).css('z-index', -1);
+    $('#'+window.HVpointer.linkWrapperID+inbound).css('z-index', 10);
+
+    //keep tabs on what's showing where
+    window.HVpointer.viewStatus=-1;
+    window.HVview = inbound;
+
+    //make sure the waffle is pointing at a channel that actually has something in it before the initial populate:
+    window.HVpointer.chy = 1;
+    i=0;
+    while(window.parameters.moduleSizes[inbound][i] == 0) i++;
+    window.HVpointer.chx = i;
+}
+
+
+
+
+
+
+
+
+
+
+
+

@@ -74,7 +74,7 @@ function masterLoop(callMyself){
                 window.Subdetectors[i].update();
         }
 
-        //animate whoever is showing on top, flat draw the rest; force animate for everyone on first pass, since Google fonts don't render in canvas on the first call to draw (investigate):
+        //animate whoever is showing on top, flat draw the rest
         //Dashboard
         window.dashboard.animate(callMyself);
         //HV
