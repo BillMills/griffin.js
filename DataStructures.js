@@ -33,7 +33,7 @@ HVDS = function(rows, cols){
         this.voltLimit[i] = [];
         this.currentLimit[i] = [];
         for(j=0;j<cols;j++){
-        	this.alarmStatus[i][j] = [];
+        	this.alarmStatus[i][j] = [0,0,0];
         }
     }
 }

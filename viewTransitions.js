@@ -1,4 +1,24 @@
-//fade a canvas out:
+//trigger css transition on opacity to fade canvas out, then send it to bottom of stack on completion:
+function fadeOut(canvasID){
+	//set canvas to come off top of stack once it's faded out:
+	document.getElementById(canvasID).addEventListener('webkitTransitionEnd', function(){
+			if( $('#'+canvasID).css('opacity')==0 )
+	            $('#'+canvasID).css('z-index', 0);    
+    });
+
+    //fade the canvas out:
+    $('#'+canvasID).css('opacity', 0);
+}
+
+function fadeIn(canvasID){
+	//kill off the transitionEnd callback that may have been stuck on by fadeOut:
+	//document.getElementById(canvasID).addEventListener('webkitTransitionEnd', function(){return 0});
+
+	$('#'+canvasID).css('z-index', 1);
+	$('#'+canvasID).css('opacity', 1);
+}
+
+/*
 function fadeOut(cvas, frame){
 
 	var duration = 0.5;
@@ -37,6 +57,8 @@ function fadeIn(cvas, frame){
 	    setTimeout(function(){fadeIn(cvas, frame+1)}, 1000/FPS);
 	}
 }
+*/
+
 
 //fade a div out
 function fadeDivOut(navDiv){

@@ -17,7 +17,7 @@ function updateParameter(){
 	}
 
     //determine where this cell falls in MIDAS vector:
-    var ODBindex = getMIDASindex(window.griffinDialogY, window.griffinDialogX);
+    var ODBindex = getMIDASindex(window.griffinDialogY, window.griffinDialogX, window.HVview);
 
     //switch channel on/off
     if(document.getElementById('onButton').checked == true){
@@ -113,6 +113,27 @@ function channelSelect(waffle){
     else inputTitle = 'Parameters for <br>'+waffle.moduleLabels[primaryBin(window.parameters.moduleSizes[window.HVview], waffle.chx)]+' Primary';
     document.getElementById('inputTitle').innerHTML = inputTitle;
 
+    //these objects get updated every masterLoop:
+    //report status word:
+    document.getElementById('status').innerHTML = 'Status: '+parseStatusWord(waffle.dataBus[window.HVview].rampStatus[waffle.chy][xIndex]);
+    //report current & update voltage slider and meter maximum:
+    if(waffle.chy == 0 || window.parameters.moduleSizes[window.HVview][primaryBin(window.parameters.moduleSizes[window.HVview], waffle.chx)]==1){
+        waffle.voltageSlider.max = waffle.dataBus[window.HVview].voltLimit[waffle.chy][xIndex];
+        meter.max = waffle.dataBus[window.HVview].voltLimit[waffle.chy][xIndex];
+        currentMeter.max = waffle.dataBus[window.HVview].currentLimit[waffle.chy][xIndex];
+        currentMeter.update(Math.round(waffle.dataBus[window.HVview].reportCurrent[waffle.chy][xIndex]*10000)/10000)
+    }
+    else{
+        waffle.voltageSlider.max = waffle.dataBus[window.HVview].voltLimit[0][primaryBin(window.parameters.moduleSizes[window.HVview], waffle.chx)];
+        meter.max = waffle.dataBus[window.HVview].voltLimit[0][primaryBin(window.parameters.moduleSizes[window.HVview], waffle.chx)];
+        currentMeter.max = waffle.dataBus[window.HVview].currentLimit[0][primaryBin(window.parameters.moduleSizes[window.HVview], waffle.chx)];
+        currentMeter.update('--');
+    }
+
+    //update meter position after maximum has been adjusted:
+    meter.update(Math.round(waffle.dataBus[window.HVview].reportVoltage[waffle.chy][xIndex]*10000)/10000);
+    temperatureMeter.update(Math.round(waffle.dataBus[window.HVview].reportTemperature[waffle.chy][xIndex]*100)/100);
+
     if(window.refreshInput){
         //set defaults
         if (waffle.dataBus[window.HVview].channelMask[waffle.chy][xIndex] == 1) document.getElementById('onButton').checked = true;
@@ -140,27 +161,6 @@ function channelSelect(waffle){
     if(waffle.chx < waffle.cols && waffle.chy < waffle.rows){
         divFade(inputDiv, 'in', 0);
     }
-
-    //these objects get updated every masterLoop:
-    //report status word:
-    document.getElementById('status').innerHTML = 'Status: '+parseStatusWord(waffle.dataBus[window.HVview].rampStatus[waffle.chy][xIndex]);
-    //report current & update voltage slider and meter maximum:
-    if(waffle.chy == 0 || window.parameters.moduleSizes[window.HVview][primaryBin(window.parameters.moduleSizes[window.HVview], waffle.chx)]==1){
-        waffle.voltageSlider.max = waffle.dataBus[window.HVview].voltLimit[waffle.chy][xIndex];
-        meter.max = waffle.dataBus[window.HVview].voltLimit[waffle.chy][xIndex];
-        currentMeter.max = waffle.dataBus[window.HVview].currentLimit[waffle.chy][xIndex];
-        currentMeter.update(Math.round(waffle.dataBus[window.HVview].reportCurrent[waffle.chy][xIndex]*10000)/10000)
-    }
-    else{
-        waffle.voltageSlider.max = waffle.dataBus[window.HVview].voltLimit[0][primaryBin(window.parameters.moduleSizes[window.HVview], waffle.chx)];
-        meter.max = waffle.dataBus[window.HVview].voltLimit[0][primaryBin(window.parameters.moduleSizes[window.HVview], waffle.chx)];
-        currentMeter.max = waffle.dataBus[window.HVview].currentLimit[0][primaryBin(window.parameters.moduleSizes[window.HVview], waffle.chx)];
-        currentMeter.update('--');
-    }
-
-    //update meter position after maximum has been adjusted:
-    meter.update(Math.round(waffle.dataBus[window.HVview].reportVoltage[waffle.chy][xIndex]*10000)/10000);
-    temperatureMeter.update(Math.round(waffle.dataBus[window.HVview].reportTemperature[waffle.chy][xIndex]*100)/100);
 
     //make sure the right sidebar background adjusts to accomodate the interface
     document.getElementById('SidebarBKG').height = Math.max(renderHeight*0.9, 50+parseInt($('#'+waffle.sidebarID).css('height')) );

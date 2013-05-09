@@ -114,7 +114,7 @@ function BarGraph(cvas, moduleNumber, nBars, title, yAxisTitle, scaleMin, scaleM
 
         var module = obj.modIndex;
         var channel = Math.floor((event.pageX - superDiv.offsetLeft -  obj.canvas.offsetLeft - obj.width*0.1)/(1.05*obj.barWidth));
-        var gridCoords = getPointer(module, channel, obj.masterWaffle);
+        var gridCoords = getPointer(module, channel, obj.masterWaffle, window.HVview);
 
         if(gridCoords[1]<obj.masterWaffle.cols[obj.crate] && gridCoords[0]>0 && gridCoords[0]<obj.masterWaffle.rows && channel<obj.nBars && window.onDisplay == obj.cvas){
             obj.masterWaffle.chx = gridCoords[1];
@@ -156,10 +156,10 @@ function BarGraph(cvas, moduleNumber, nBars, title, yAxisTitle, scaleMin, scaleM
     this.update = function(newLevel, alarmStatus){
 
         //set up member variables for animation:
-        //this.setNewLevels(newLevel, alarmStatus);  //TODO reenable once core HV functionality back up
+        this.setNewLevels(newLevel, alarmStatus);
 
         //animate:
-        //animate(this, 0);
+        animate(this, 0);
 
     };
 
@@ -174,6 +174,10 @@ function BarGraph(cvas, moduleNumber, nBars, title, yAxisTitle, scaleMin, scaleM
 
 		//loop over bars:
 		for(var i=0; i<this.nBars; i++){
+			//adjust scaleMax:
+			if(data[i] > this.scaleMax)
+				this.scaleMax = data[i];
+
 			this.oldLevels[i] = this.levels[i];
 			this.levels[i] = (data[i] - this.scaleMin) / (this.scaleMax - this.scaleMin);
 			if(this.levels[i] <= 0.01) this.levels[i] = 0.01;
@@ -191,7 +195,8 @@ function BarGraph(cvas, moduleNumber, nBars, title, yAxisTitle, scaleMin, scaleM
 	//draw axes and decorations:
 	this.drawFrame = function(){
 
-		var i = 0;
+		var i = 0,
+		longestyLabel = 0;
 
 		//set label font:
 		this.context.font=this.fontscale+"px Raleway";         ///Math.min(16, 0.8*this.barWidth)+"px 'Raleway'";    //0.25*this.barWidth+"px 'Raleway'";
@@ -225,13 +230,14 @@ function BarGraph(cvas, moduleNumber, nBars, title, yAxisTitle, scaleMin, scaleM
 			this.context.lineTo(this.width*0.1 - 10, this.height - this.bottomMargin - i*(this.height - this.topMargin - this.bottomMargin)/(this.yAxisTicks-1) );
 			this.context.stroke();
 			yLabel = ((this.scaleMax-this.scaleMin)/(this.yAxisTicks-1)*i).toFixed(this.precision);
+			if(this.context.measureText(yLabel).width > longestyLabel) longestyLabel = this.context.measureText(yLabel).width;
 			this.context.fillText( yLabel,  this.width*0.1 - this.context.measureText(yLabel).width - 10, this.height - this.bottomMargin - i*(this.height - this.topMargin - this.bottomMargin)/(this.yAxisTicks-1) + 5);
 		}
 
 		//draw y-axis title:
 		this.context.font= 1.5*this.fontscale+'px Raleway';   //Math.max(0.4*this.barWidth,26)+"px 'Raleway'";
 		this.context.save();
-		this.context.translate(this.width*0.05, this.topMargin + this.context.measureText(this.yAxisTitle).width);
+		this.context.translate(this.width*0.1-10-longestyLabel-10, this.topMargin + this.context.measureText(this.yAxisTitle).width);
 		this.context.rotate(-Math.PI/2);
 		this.context.fillText(this.yAxisTitle, 0, 0);
 		this.context.restore();

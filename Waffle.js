@@ -182,7 +182,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         for(i=0; i<this.nCrates; i++){
             insertDOM('div', this.linkWrapperID+i, 'cardNavPanel', '', this.linkWrapperID, '', '');
             for(j=0; j<window.parameters.moduleSizes[i].length; j++){
-                insertDOM('button', 'crate'+i+'card'+j, 'navLink', '', this.linkWrapperID+i, function(){window.HVpointer.viewStatus=this.cardNumber; swapFade(this.id, window.HVpointer, 0, window.HVview);}, 'Slot '+j, '', 'button');
+                insertDOM('button', 'crate'+i+'card'+j, 'navLink', '', this.linkWrapperID+i, function(){barChartButton(this)}, 'Slot '+j, '', 'button');
                 document.getElementById('crate'+i+'card'+j).cardNumber = j;
             }
 
@@ -332,7 +332,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         for(i=0; i<this.nCrates; i++){
             this.canvas[i].onclick = function(event){clickWaffle(event, that)};
         }
-        
+
         //decide which canvas to present:
         this.view = function(){
             if(this.viewStatus == -1)
@@ -380,6 +380,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                         A = Math.max(this.prevAlarmStatus[crate][i][j][0], this.prevAlarmStatus[crate][i][j][1], this.prevAlarmStatus[crate][i][j][2])*0.7 + 0.3;  //enforce minimum 0.3 to make it clearly red
                         if(A>1) {A = 1;}
     	            }
+
                     //12-channel cards don't have primary channels, show black (also empty slots):
                     if( (i==0 && window.parameters.moduleSizes[crate][j] == 1) || window.parameters.moduleSizes[crate][primary] == 0 ){
                         R = 0;
@@ -563,7 +564,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
             var i,j,k,columns;
 
             this.fetchNewData();
- 
+
             //update alarms & colors to prepare for animation transition:
             for(k=0; k<this.nCrates; k++){
                 for(i=0; i<this.rows; i++){
@@ -577,16 +578,17 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                         this.alarmStatus[k][i][j][0] = this.dataBus[k].alarmStatus[i][j][0];
                         this.alarmStatus[k][i][j][1] = this.dataBus[k].alarmStatus[i][j][1]; 
                         this.alarmStatus[k][i][j][2] = this.dataBus[k].alarmStatus[i][j][2];
-                        this.cellColorUpdate(k);
+                        //this.cellColorUpdate(k);
                     }
                 }
+                this.cellColorUpdate(k);
             }
 
             //update peripherals:
             for(k=0; k<this.nCrates; k++){
                 for(i=0; i<this.barCharts[k].length; i++){
                     for(j=0; j<this.barCharts[k][i].nBars; j++){
-                        var arrayCoords = getPointer(i, j, that);
+                        var arrayCoords = getPointer(i, j, that, k);
                         this.barCharts[k][i].dataBus.barChartData[j] = this.dataBus[k].reportVoltage[arrayCoords[0]][arrayCoords[1]];
                         this.barCharts[k][i].dataBus.barChartAlarms[j] = this.dataBus[k].alarmStatus[arrayCoords[0]][arrayCoords[1]];
                     }
@@ -678,7 +680,8 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
 
         //get new data:
         this.fetchNewData = function(){
-            var testParameter, i, j, k, ODBindex, columns, slot, variablesRecord, settingsRecord,
+            
+            var testParameter, i, j, k, data, ODBindex, columns, slot, variablesRecord, settingsRecord,
             chName = [],
             reqVoltage = [],
             measVoltage = [],
@@ -689,28 +692,36 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
             repoChState = [],
             repoChStatus = [],
             voltageLimit = [],
-            currentLimit = [];
+            currentLimit = [],
+            paths = [];
         
             //batch fetch all in one big lump:
 
             if(!window.parameters.devMode){
                 for(k=0; k<this.nCrates; k++){
-                    variablesRecord = ODBGetRecord('/Equipment/'+window.parameters.HVequipmentNames[k]+'/Variables');  //ODBGetRecord(window.parameters.ODBkeys[0]);
-                    settingsRecord  = ODBGetRecord('/Equipment/'+window.parameters.HVequipmentNames[k]+'/Settings'); //ODBGetRecord(window.parameters.ODBkeys[1]);
-            
-                    chName[k]          = ODBExtractRecord(settingsRecord,  window.parameters.ODBkeys[12])
-                    reqVoltage[k]      = ODBExtractRecord(variablesRecord, window.parameters.ODBkeys[2]);
-                    measVoltage[k]     = ODBExtractRecord(variablesRecord, window.parameters.ODBkeys[3]);
-                    measCurrent[k]     = ODBExtractRecord(variablesRecord, window.parameters.ODBkeys[4]);
-                    rampUp[k]          = ODBExtractRecord(settingsRecord,  window.parameters.ODBkeys[5]);
-                    rampDown[k]        = ODBExtractRecord(settingsRecord,  window.parameters.ODBkeys[6]);
-                    measTemperature[k] = ODBExtractRecord(variablesRecord, window.parameters.ODBkeys[7]);
-                    repoChState[k]     = ODBExtractRecord(settingsRecord,  window.parameters.ODBkeys[8]);
-                    repoChStatus[k]    = ODBExtractRecord(variablesRecord, window.parameters.ODBkeys[9]);
-                    voltageLimit[k]    = ODBExtractRecord(settingsRecord,  window.parameters.ODBkeys[10]);
-                    currentLimit[k]    = ODBExtractRecord(settingsRecord,  window.parameters.ODBkeys[11]);
-                }
 
+                    for(i=0; i<window.parameters.ODBkeys.length; i++){
+                        paths[k*window.parameters.ODBkeys.length + i] = '/Equipment/'+window.parameters.HVequipmentNames[k]+'/'+window.parameters.ODBkeys[i]+'[*]';
+                    }
+                    
+                }
+                
+                data = ODBMGet(paths);
+ 
+                for(k=0; k<this.nCrates; k++){
+                    chName[k]          = data[k*window.parameters.ODBkeys.length + 10];
+                    reqVoltage[k]      = data[k*window.parameters.ODBkeys.length + 0];
+                    measVoltage[k]     = data[k*window.parameters.ODBkeys.length + 1];
+                    measCurrent[k]     = data[k*window.parameters.ODBkeys.length + 2];
+                    rampUp[k]          = data[k*window.parameters.ODBkeys.length + 3];
+                    rampDown[k]        = data[k*window.parameters.ODBkeys.length + 4];
+                    measTemperature[k] = data[k*window.parameters.ODBkeys.length + 5];
+                    repoChState[k]     = data[k*window.parameters.ODBkeys.length + 6];
+                    repoChStatus[k]    = data[k*window.parameters.ODBkeys.length + 7];
+                    voltageLimit[k]    = data[k*window.parameters.ODBkeys.length + 8];
+                    currentLimit[k]    = data[k*window.parameters.ODBkeys.length + 9];                    
+                }
+                
             }
 
             for(k=0; k<this.nCrates; k++){
@@ -739,9 +750,10 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                                 this.dataBus[k].voltLimit[i][j] = -9999;
                                 this.dataBus[k].currentLimit[i][j] = -9999;
 
-                                ODBindex = getMIDASindex(i, j);
+                                ODBindex = getMIDASindex(i, j, k);
                                 this.dataBus[k].channelName[i][j]       = chName[k][ODBindex];
                                 this.dataBus[k].demandVoltage[i][j]     = parseFloat(reqVoltage[k][ODBindex]);
+
                                 this.dataBus[k].reportVoltage[i][j]     = parseFloat(measVoltage[k][ODBindex]);   
                                 this.dataBus[k].reportCurrent[i][j]     = parseFloat(measCurrent[k][ODBindex]);
                                 this.dataBus[k].demandVrampUp[i][j]     = parseFloat(rampUp[k][ODBindex]);
@@ -802,6 +814,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
 
             //see if any of the new data raises any alarms:
             this.raiseAlarm();
+
         };
 
         //push problems out to the alarm service
@@ -821,7 +834,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                         //alarmStatus == 0 indicates all clear, 0 < alarmStatus <= 1 indicates alarm intensity, alarmStatus = -1 indicates channel off,
                         //and alarmStatus == -2 for the voltage alarm indicates voltage ramping.
                         if(testParameter < window.parameters.alarmThresholds[0])  this.dataBus[k].alarmStatus[i][j][0] = 0;
-                        else  this.dataBus[k].alarmStatus[i][j][0] = Math.min( (testParameter - window.parameters.alarmThresholds[0]) / window.parameters.scaleMaxima[0], 1);
+                        else this.dataBus[k].alarmStatus[i][j][0] = Math.min( (testParameter - window.parameters.alarmThresholds[0]) / window.parameters.scaleMaxima[0], 1);
                         if(this.dataBus[k].rampStatus[i][j] == 3 || this.dataBus[k].rampStatus[i][j] == 5){
                             this.dataBus[k].alarmStatus[i][j][0] = -2;
                         }
@@ -881,8 +894,26 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         };
 
         this.animate = function(){
-            if(window.onDisplay.slice(0,6) == 'HVgrid' /*|| window.freshLoad*/) animate(this, 0);
-            else this.draw(this.nFrames);
+            var i, 
+            topHV = window.HVview;
+
+            if(window.onDisplay.slice(0,6) == 'HVgrid' /*|| window.freshLoad*/){
+                for(i=0; i<this.nCrates; i++){  
+                    if(i!=topHV){
+                        window.HVview = i;
+                        this.draw(this.nFrames);
+                    }
+                }
+                window.HVview = topHV;
+                animate(this, 0);
+            }
+            else{
+                for(i=0; i<this.nCrates; i++){
+                    window.HVview = i;
+                    this.draw(this.nFrames);      
+                }
+                window.HVview = topHV;
+            } 
         };
 
         //do an initial populate of the waffle:
@@ -890,6 +921,12 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         //also, draw the input sidebar for 0,0 on first call:
         channelSelect(that);
 }
+
+
+
+
+
+
 
 
 
@@ -924,7 +961,7 @@ function clickWaffle(event, obj){
 }
 
 //map the active grid cooridnates onto MIDAS's channel numbering:
-function getMIDASindex(row, col){
+function getMIDASindex(row, col, crate){
     
     var MIDASindex = 0;
     var moduleNumber, i;
@@ -932,19 +969,19 @@ function getMIDASindex(row, col){
     if(row != 0){
         //count up regular channels
         MIDASindex += window.parameters.rows*col + row-1;
-        moduleNumber = primaryBin(window.parameters.moduleSizes[window.HVview], col);
+        moduleNumber = primaryBin(window.parameters.moduleSizes[crate], col);
         for(i=0; i<moduleNumber+1; i++){
             //add on primary channels
-            if(window.parameters.moduleSizes[window.HVview][i] == 4) MIDASindex++;
+            if(window.parameters.moduleSizes[crate][i] == 4) MIDASindex++;
             //remove overcounting for empty cards:
-            if(window.parameters.moduleSizes[window.HVview][i] == 0) MIDASindex -= 12;
+            if(window.parameters.moduleSizes[crate][i] == 0) MIDASindex -= 12;
         }
     } else{
         moduleNumber = col;
         //add up all the channels from previous cards:
         for(i=0; i<moduleNumber; i++){
-            if(window.parameters.moduleSizes[window.HVview][i] == 1) MIDASindex += 12;
-            if(window.parameters.moduleSizes[window.HVview][i] == 4) MIDASindex += 49;
+            if(window.parameters.moduleSizes[crate][i] == 1) MIDASindex += 12;
+            if(window.parameters.moduleSizes[crate][i] == 4) MIDASindex += 49;
         }
         //MIDASindex++;
     }
@@ -953,14 +990,14 @@ function getMIDASindex(row, col){
 }
 
 //given a module number and channel number, return the [row, col] that the corresponding data will be found in in the various waffle.<dataArrays>
-function getPointer(module, channel, waffle){
+function getPointer(module, channel, waffle, crate){
     var i;
     var row = 0;
     var col = 0;
 
     //column:
     for(i=0; i<module; i++){
-        col += Math.max(window.parameters.moduleSizes[window.HVview][i],1);
+        col += Math.max(window.parameters.moduleSizes[crate][i],1);
     }
     col += Math.floor(channel/(waffle.rows-1));
 
@@ -1069,12 +1106,17 @@ function reconfigureChannelList(moduleLabels, moduleSizes, ChannelListDD){
 function swapHVmainframe(inbound){
     var i;
 
-    //fade canvases
-    $('#'+window.HVpointer.canvasID[window.HVview]).css('opacity', 0);
-    $('#'+window.HVpointer.canvasID[inbound]).css('opacity', 1);
-    //switch orders
-    $('#'+window.HVpointer.canvasID[window.HVview]).css('z-index', -1);
-    $('#'+window.HVpointer.canvasID[inbound]).css('z-index', 10);
+    //if a bar chart is showing, dismiss it:
+    if(window.HVpointer.viewStatus >= 0){
+        fadeOut('crate'+window.HVview+'bar'+window.HVpointer.viewStatus)
+        document.getElementById('crate'+window.HVview+'card'+window.HVpointer.viewStatus).setAttribute('class', 'navLink');
+    }
+    window.HVpointer.viewStatus = -1;
+
+    //fade canvases:
+    fadeOut(window.HVpointer.canvasID[window.HVview]);
+    fadeIn(window.HVpointer.canvasID[inbound])
+
     //highlight buttons
     document.getElementById('Main'+(window.HVview+1)).setAttribute('class', 'navLink');
     document.getElementById('Main'+(inbound+1)).setAttribute('class', 'navLinkDown');
@@ -1087,15 +1129,36 @@ function swapHVmainframe(inbound){
     //keep tabs on what's showing where
     window.HVpointer.viewStatus=-1;
     window.HVview = inbound;
+    window.onDisplay = window.HVpointer.canvasID[inbound];
 
     //make sure the waffle is pointing at a channel that actually has something in it before the initial populate:
     window.HVpointer.chy = 1;
     i=0;
     while(window.parameters.moduleSizes[inbound][i] == 0) i++;
     window.HVpointer.chx = i;
+
+    //point the input sidebar at the new crate:
+    channelSelect(window.HVpointer);
 }
 
+//bar chart response:
+function barChartButton(button){
+    var inbound;
 
+    button.setAttribute('class', 'navLinkDown');
+    if(window.HVpointer.viewStatus >= 0){
+        document.getElementById('crate'+window.HVview+'card'+window.HVpointer.viewStatus).setAttribute('class', 'navLink');
+    }
+    window.HVpointer.viewStatus = button.cardNumber;
+
+    inbound = 'crate'+window.HVview+'bar'+window.HVpointer.viewStatus
+
+    if(inbound != window.onDisplay){
+        fadeIn(inbound);
+        fadeOut(window.onDisplay);
+        window.onDisplay = inbound;
+    }
+}
 
 
 

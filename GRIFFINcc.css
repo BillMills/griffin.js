@@ -19,9 +19,9 @@ canvas.monitor{
 	left:24%; 
 	opacity:0; 
 	z-index:-10000;
-	transition:opacity 0.5s, z-index 0.5s;
-	-moz-transition:opacity 0.5s, z-index 0.5s;
-	-webkit-transition:opacity 0.5s, z-index 0.5s;
+	transition:opacity 0.5s;
+	-moz-transition:opacity 0.5s;
+	-webkit-transition:opacity 0.5s;
 }
 
 canvas.navHeader{

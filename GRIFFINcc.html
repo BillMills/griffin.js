@@ -161,12 +161,11 @@
       function main(){
         var i, j;
 
-        //let the MIDAS status link appear:
-        $('#MIDASstatusLink').css('opacity', 1);
-
         //overwrite default parameters with custom ones:
         fetchCustomParameters();
 
+        //let the MIDAS status link appear:
+        $('#MIDASstatusLink').css('opacity', 1);
         //plug in MIDAS status page link:
         document.getElementById('MIDASstatusLink').setAttribute('onclick', "window.location='"+window.parameters.statusURL+"';")
 
@@ -176,7 +175,7 @@
         //Insert branding & navigation:
         Banner('banner', 'youAreHere', 'navBar', window.parameters.ExpName+' Dashboard', 'TRIUMF');
 
-        //plug in links:
+        //plug in links: //TODO - remove?
         statusLink = document.getElementById('statusLink');
         statusLink.setAttribute('action', window.parameters.statusURL);
 

@@ -235,6 +235,7 @@ function Slider(wrapperID, titleID, inputBoxID, sliderContainerID, sliderBackgro
 
         //keep value inbounds:
         var newValue = inputValue;
+
         if(newValue > this.max) newValue = this.max;
         if(newValue < this.min) newValue = this.min;
 
