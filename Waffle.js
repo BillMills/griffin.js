@@ -192,6 +192,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
             document.getElementById(this.canvasID[i]).setAttribute('height', this.totalHeight[i]);
             this.canvas[i] = document.getElementById(this.canvasID[i]);
             this.context[i] = this.canvas[i].getContext('2d');
+
         }
 
         //finished DOM insertions//////////////////////////////////////
@@ -333,6 +334,32 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
             this.canvas[i].onclick = function(event){clickWaffle(event, that)};
         }
 
+        //draw the legends on the main views once only:
+        this.legendTop = [];
+            for(j=0; j<this.nCrates; j++){
+                //draw legend:
+                this.context[j].strokeStyle = '#000000';
+                this.context[j].lineWidth = 2;
+                this.legendTop[j] = this.totalHeight[j]*0.85;
+                var legendColors = ['rgba(0,255,0,0.3)', 'rgba(255,255,0,0.3)', 'rgba(255,0,0,0.5)', 'rgba(0,0,255,0.5)', 'rgba(0,0,0,0.3)', 'rgba(0,0,0,0.9)'];
+                var legendString = ['All OK', 'Ramping', 'Alarm!', 'Ext. Disable', 'Off', 'Absent'];
+                for(i = 0; i<6; i++){
+                    this.context[j].font = Math.min(16, fitFont(this.context[j], legendString[i], (this.canvasWidth*0.8/6 - this.cellSide[j]*1.1)*0.9  )) + 'px Raleway';
+                    this.context[j].fillStyle = '#FFFFFF';
+                    this.context[j].fillRect(this.canvasWidth*0.1 + i*this.canvasWidth*0.8/6, this.legendTop[j], this.cellSide[j], this.cellSide[j]);
+                    this.context[j].fillStyle = legendColors[i];
+                    this.context[j].fillRect(this.canvasWidth*0.1 + i*this.canvasWidth*0.8/6, this.legendTop[j], this.cellSide[j], this.cellSide[j]);
+                    this.context[j].strokeRect(this.canvasWidth*0.1 + i*this.canvasWidth*0.8/6, this.legendTop[j], this.cellSide[j], this.cellSide[j]);
+                    this.context[j].fillStyle = '#999999';
+                    this.context[j].textBaseline = 'middle';
+                    this.context[j].fillText(legendString[i], this.canvasWidth*0.1 + i*this.canvasWidth*0.8/6 + this.cellSide[j]*1.1, this.legendTop[j] + this.cellSide[j]/2);
+                    this.context[j].textBaseline = 'bottom';
+                    
+                }
+            }
+            
+
+        ///////////////////member functions/////////////////////////////////////////////////////////
         //decide which canvas to present:
         this.view = function(){
             if(this.viewStatus == -1)
@@ -360,8 +387,8 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                         G = 255;
                         B = 0;
                         A = 0.3;
-                    //else show grey if the channel is off or external disabled:
-                    } else if(this.prevAlarmStatus[crate][i][j][0] == -1 || this.prevAlarmStatus[crate][i][j][0] == -3){
+                    //else show grey if the channel is off:
+                    } else if(this.prevAlarmStatus[crate][i][j][0] == -1){
                         R = 0;
                         G = 0;
                         B = 0;
@@ -372,6 +399,12 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                         G = 255;
                         B = 0;
                         A = 0.3;
+                    //blue for external disable:
+                    } else if(this.prevAlarmStatus[crate][i][j][0] == -3){
+                        R = 0;
+                        G = 0;
+                        B = 255;
+                        A = 0.5;
                     //else show red for alarm:
                     } else {
                         R = 255;
@@ -396,7 +429,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                         G = 255;
                         B = 0;
                         A = 0.3;
-                    } else if(this.alarmStatus[crate][i][j][0] == -1 || this.alarmStatus[crate][i][j][0] == -3){
+                    } else if(this.alarmStatus[crate][i][j][0] == -1){
                         R = 0;
                         G = 0;
                         B = 0;
@@ -406,6 +439,11 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                         G = 255;
                         B = 0;
                         A =0.3;
+                    } else if(this.alarmStatus[crate][i][j][0] == -3){
+                        R = 0;
+                        G = 0;
+                        B = 255;
+                        A = 0.5;
                     } else {
                         R = 255;
                         G = 0;
@@ -434,7 +472,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
 
             //whiteout old canvas:
             this.context[window.HVview].globalAlpha = 1;
-            this.context[window.HVview].clearRect(this.leftEdge[window.HVview],0,this.totalWidth,this.totalHeight[window.HVview]);
+            this.context[window.HVview].clearRect(this.leftEdge[window.HVview],0,this.totalWidth,this.legendTop[window.HVview]);
             this.context[window.HVview].fillStyle = "rgba(255,255,255,1)"
             this.context[window.HVview].fillRect(this.leftEdge[window.HVview],0,this.cellSide[window.HVview]*this.cols[window.HVview],this.cellSide[window.HVview]*this.rows);
 
@@ -467,11 +505,11 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                 }
             }
 
-            this.drawWaffleDecorations();
+            this.drawWaffleDecorations(frame);
             this.drawWaffleLabels();
         };
 
-        this.drawWaffleDecorations = function(){
+        this.drawWaffleDecorations = function(frame){
 
             var i, j;
 
@@ -513,6 +551,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                 }
                 this.context[window.HVview].stroke();
             }
+
         };
 
         this.drawWaffleLabels = function(){
@@ -628,7 +667,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         //establish the tooltip text for the cell returned by this.findCell; return length of longest line:
         this.defineText = function(cell){
             var toolTipContent = '<br>';
-            var nextLine;
+            var nextLine, buffer;
             var cardIndex;
             var i;
 
@@ -658,7 +697,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                 //pull in content; special cases for the status word and reported current:
                 //status word:
                 if(i == 6){
-                    nextLine += parseStatusWord(this.reportedValues[window.HVview][i][row][col]);
+                    nextLine += ((this.dataBus[window.HVview].channelMask[row][col] == 0) ? 'Off' : parseStatusWord(this.reportedValues[window.HVview][i][row][col]));
                 }
                 //current:
                 else if(i == 2){
@@ -753,9 +792,9 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                                 ODBindex = getMIDASindex(i, j, k);
                                 this.dataBus[k].channelName[i][j]       = chName[k][ODBindex];
                                 this.dataBus[k].demandVoltage[i][j]     = parseFloat(reqVoltage[k][ODBindex]);
-
                                 this.dataBus[k].reportVoltage[i][j]     = parseFloat(measVoltage[k][ODBindex]);   
                                 this.dataBus[k].reportCurrent[i][j]     = parseFloat(measCurrent[k][ODBindex]);
+                                
                                 this.dataBus[k].demandVrampUp[i][j]     = parseFloat(rampUp[k][ODBindex]);
                                 this.dataBus[k].demandVrampDown[i][j]   = parseFloat(rampDown[k][ODBindex]);
                                 this.dataBus[k].reportTemperature[i][j] = parseFloat(measTemperature[k][ODBindex]);

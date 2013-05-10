@@ -115,7 +115,7 @@ function channelSelect(waffle){
 
     //these objects get updated every masterLoop:
     //report status word:
-    document.getElementById('status').innerHTML = 'Status: '+parseStatusWord(waffle.dataBus[window.HVview].rampStatus[waffle.chy][xIndex]);
+    document.getElementById('status').innerHTML = 'Status: '+ ((waffle.dataBus[window.HVview].channelMask[waffle.chy][xIndex] == 0) ? 'Off' : parseStatusWord(waffle.dataBus[window.HVview].rampStatus[waffle.chy][xIndex]));
     //report current & update voltage slider and meter maximum:
     if(waffle.chy == 0 || window.parameters.moduleSizes[window.HVview][primaryBin(window.parameters.moduleSizes[window.HVview], waffle.chx)]==1){
         waffle.voltageSlider.max = waffle.dataBus[window.HVview].voltLimit[waffle.chy][xIndex];
