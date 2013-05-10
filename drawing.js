@@ -352,6 +352,7 @@ function tabBKG(canvasID, side){
 
     var width = $(canvas).width();
     var height = $(canvas).height();
+    //console.log(canvasID + ': ' + height)
     var cornerRad = 20;
     var tailRad = 50;
     var lineWeight = 2;
@@ -359,6 +360,7 @@ function tabBKG(canvasID, side){
     context.clearRect(0,0,width,height);
 
     if(side == 'left'){
+        context.save()
         context.translate(width,0);
         context.scale(-1,1);   
     }
@@ -376,6 +378,10 @@ function tabBKG(canvasID, side){
     context.closePath();
     context.fill();
     context.stroke();
+
+    if(side== 'left'){
+        context.restore();
+    }
 
 }
 

@@ -23,7 +23,7 @@ function AlarmService(sidebarDivID, sidebarDetailDivID){
 	var that = this;
 
 	//number of alarms to report:
-	this.nAlarms = 5000;
+	this.nAlarms = 200;
 
 	//arrays to hold alarm info:
 	this.voltageAlarms = [];
@@ -57,7 +57,8 @@ function AlarmService(sidebarDivID, sidebarDetailDivID){
 	//make detail paragraph disappear onclick:
 	document.getElementById(this.pID).setAttribute('onclick', 'javascript:hideDetail()');
 	//insert button to call out alarm detail:
-    if(!window.parameters.MIDASlegacyMode) insertDOM('button', 'alarmDetailButton', 'alarmButton', '', this.sidebarDivID, 'javascript:showDetail()', 'Alarms')
+    if(window.parameters.topDeployment.HV) insertDOM('button', 'alarmDetailButton', 'alarmButton', '', this.sidebarDivID, function(){showDetail()}, 'Alarms')
+    //document.getElementById('alarmDetailButton').setAttribute('disabled', 'true');
 	//end DOM manipulation//////////////////////////////////////////////////////
 
 	//event listeners///////////////////////////////////////////////////////////
@@ -97,40 +98,42 @@ function AlarmService(sidebarDivID, sidebarDetailDivID){
     	var i;
     	var alarmText = '';
     	var slot = -1;
-    	var cahnnel = -1;
+    	var channel = -1;
+
     	if(this.voltageAlarms.length != 0) alarmText += 'Voltage Alarms<br>'
     	for(i=0; i<Math.min(this.voltageAlarms.length, this.nAlarms); i++){
     		slot = primaryBin(window.parameters.moduleSizes[this.voltageAlarms[i][2]], this.voltageAlarms[i][1]);
-    		channel = channelMap(this.voltageAlarms[i][1], this.voltageAlarms[i][0], window.parameters.moduleSizes[window.HVview], window.parameters.rows + 1);
+    		channel = channelMap(this.voltageAlarms[i][1], this.voltageAlarms[i][0], window.parameters.moduleSizes[this.voltageAlarms[i][2]], window.parameters.rows + 1);
     		if(channel == -1){
     			alarmText += 'Slot ' + slot + ' Primary' + '<br>';	
     		} else
 	    		alarmText += 'Slot ' + slot + ', Ch. ' + channel + '<br>';
-    		alarmText += 'Demand Voltage: ' + (this.demandVoltage[this.voltageAlarms[i][0]][this.voltageAlarms[i][1]]).toFixed(window.parameters.alarmPrecision) + ' V<br>';
-    		alarmText += 'Report Voltage: ' + (this.reportVoltage[this.voltageAlarms[i][0]][this.voltageAlarms[i][1]]).toFixed(window.parameters.alarmPrecision) + ' V<br><br>';
+
+    		alarmText += 'Demand Voltage: ' + (this.demandVoltage[this.voltageAlarms[i][2]][this.voltageAlarms[i][0]][this.voltageAlarms[i][1]]).toFixed(window.parameters.alarmPrecision) + ' V<br>';
+    		alarmText += 'Report Voltage: ' + (this.reportVoltage[this.voltageAlarms[i][2]][this.voltageAlarms[i][0]][this.voltageAlarms[i][1]]).toFixed(window.parameters.alarmPrecision) + ' V<br><br>';
 
     	}
 
     	if(this.currentAlarms.length != 0) alarmText += '<br>Current Alarms<br>'
     	for(i=0; i<Math.min(this.currentAlarms.length, this.nAlarms); i++){
     		slot = primaryBin(window.parameters.moduleSizes[this.currentAlarms[i][2]], this.currentAlarms[i][1]);
-    		channel = channelMap(this.currentAlarms[i][1], this.currentAlarms[i][0], window.parameters.moduleSizes[window.HVview], window.parameters.rows + 1);
+    		channel = channelMap(this.currentAlarms[i][1], this.currentAlarms[i][0], window.parameters.moduleSizes[this.currentAlarms[i][2]], window.parameters.rows + 1);
     		if(channel == -1){
     			alarmText += 'Slot ' + slot + ' Primary' + '<br>';	
     		} else
 	    		alarmText += 'Slot ' + slot + ', Ch. ' + channel + '<br>';
-    		alarmText += (this.reportCurrent[this.currentAlarms[i][0]][this.currentAlarms[i][1]]).toFixed(window.parameters.alarmPrecision) + ' uA<br><br>';
+    		alarmText += (this.reportCurrent[this.currentAlarms[i][2]][this.currentAlarms[i][0]][this.currentAlarms[i][1]]).toFixed(window.parameters.alarmPrecision) + ' uA<br><br>';
     	}
 
     	if(this.temperatureAlarms.length != 0) alarmText += '<br>Temperature Alarms<br>'
     	for(i=0; i<Math.min(this.temperatureAlarms.length, this.nAlarms); i++){
 	   		slot = primaryBin(window.parameters.moduleSizes[this.temperatureAlarms[i][2]], this.temperatureAlarms[i][1]);
-    		channel = channelMap(this.temperatureAlarms[i][1], this.temperatureAlarms[i][0], window.parameters.moduleSizes[window.HVview], window.parameters.rows + 1);
+    		channel = channelMap(this.temperatureAlarms[i][1], this.temperatureAlarms[i][0], window.parameters.moduleSizes[this.temperatureAlarms[i][2]], window.parameters.rows + 1);
     		if(channel == -1){
     			alarmText += 'Slot ' + slot + ' Primary' + '<br>';	
     		} else
 	    		alarmText += 'Slot ' + slot + ', Ch. ' + channel + '<br>';
-    		alarmText += (this.reportTemperature[this.temperatureAlarms[i][0]][this.temperatureAlarms[i][1]]).toFixed(window.parameters.alarmPrecision) + ' C<br><br>';
+    		alarmText += (this.reportTemperature[this.temperatureAlarms[i][2]][this.temperatureAlarms[i][0]][this.temperatureAlarms[i][1]]).toFixed(window.parameters.alarmPrecision) + ' C<br><br>';
     	}
 
     	if(this.rateAlarms.length != 0) alarmText += '<br>Rate Alarms<br>'
@@ -167,15 +170,16 @@ function AlarmService(sidebarDivID, sidebarDetailDivID){
             //	showDetail();
         	//}
         	animate(that, 0);
+            //that.draw(that.nFrames)
     	}, 500);
-
     };
 
     //animate the detail-level background's change in length:
     this.draw = function(frame){
     	var frameHeight = this.bkgCanvasHeight - frame/this.nFrames*(this.bkgCanvasHeight - Math.max($('#'+this.pID).height() + 150, this.minBKGheight))
 		document.getElementById('LeftSidebarDetailBKG').setAttribute('height', frameHeight);
-		tabBKG('LeftSidebarDetailBKG', 'left');	
+        //console.log('frameHeight = ' + frameHeight)
+		tabBKG('LeftSidebarDetailBKG', 'left');
 		if(frame == this.nFrames)
 			this.bkgCanvasHeight = Math.max($('#'+this.pID).height() + 150, this.minBKGheight);
     }
@@ -196,20 +200,29 @@ function registerAlarm(object, e){
 }
 
 function publishAlarms(object){
-	//object.sortAlarms();
-	//object.printAlarms();
-	//object.wipeAlarms();   //TODO - reenable after core HV functionality is back up
+	object.sortAlarms();
+	object.printAlarms();
+	object.wipeAlarms();
 }
 
 
 function showDetail(){
-	//document.getElementById('LeftSidebarDetailBKG').setAttribute('height', Math.max($('#alarmText').height() + 150, this.minBKGheight) );
 	//tabBKG('LeftSidebarDetailBKG', 'left');
+
+    //$('#LeftSidebarDetailBKG').css('z-index', '0');
+    //$('#LeftSidebarDetailBKG').css('opacity', '1');
+
 	$('#leftSidebarDetail').css('z-index', '10');
 	$('#leftSidebarDetail').css('opacity', '1');
+
+    $('#leftSidebar').css('z-index', '-1');
+    $('#leftSidebar').css('opacity', '0');
 }
 
 function hideDetail(){
 	$('#leftSidebarDetail').css('z-index', '-1');
 	$('#leftSidebarDetail').css('opacity', '0');
+
+    $('#leftSidebar').css('z-index', '10');
+    $('#leftSidebar').css('opacity', '1');
 }

@@ -45,9 +45,9 @@
 
     <!--Bounce to the right mirror - necessary to accomodate legacy MIDAS & mhttpd-->
     <script type="text/JavaScript">
-      if(document.URL.search('http://midtig06.triumf.ca:8082') == -1){
+      if(document.URL.search('http://midtig06.triumf.ca:8081') == -1){
         console.log('redirecting...')
-        window.location = 'http://midtig06.triumf.ca:8082/CS/Dashboard'
+        window.location = 'http://midtig06.triumf.ca:8081/CS/Dashboard'
       }
     </script>
 
@@ -204,7 +204,7 @@
 
         //HV monitor
         if(window.parameters.topDeployment['HV'])
-          window.waffle = new Waffle("InputLayer",'mainframeLinks', AlarmServices);
+          window.waffle = new Waffle("InputLayer",'mainframeLinks', window.AlarmServices);
 
         //Subsystems:
         if(window.parameters.topDeployment['Subsystems']){

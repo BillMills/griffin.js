@@ -270,7 +270,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
             this.headerHeight[i] = $('#'+this.linkWrapperID).height();
             document.getElementById(this.linkWrapperID+i).style.display = 'none';
             //make the vertical spacing between the waffle and nav header nice:
-            $('#'+this.canvasID[i]).css('top', (this.headerHeight[i])+'px !important;' );
+            $('#'+this.canvasID[i]).css('top', ((this.headerHeight[i])+5)+'px !important;' );
         }
         //turn top crate's slot navigation on:
         document.getElementById(this.linkWrapperID+window.HVview).style.display = 'block';
@@ -360,8 +360,8 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                         G = 255;
                         B = 0;
                         A = 0.3;
-                    //else show grey if the channel is off:
-                    } else if(this.prevAlarmStatus[crate][i][j][0] == -1){
+                    //else show grey if the channel is off or external disabled:
+                    } else if(this.prevAlarmStatus[crate][i][j][0] == -1 || this.prevAlarmStatus[crate][i][j][0] == -3){
                         R = 0;
                         G = 0;
                         B = 0;
@@ -396,7 +396,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                         G = 255;
                         B = 0;
                         A = 0.3;
-                    } else if(this.alarmStatus[crate][i][j][0] == -1){
+                    } else if(this.alarmStatus[crate][i][j][0] == -1 || this.alarmStatus[crate][i][j][0] == -3){
                         R = 0;
                         G = 0;
                         B = 0;
@@ -832,12 +832,14 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
 
                         //determine alarm status for each cell, recorded as [i][j][voltage alarm, current alarm, temperature alarm]
                         //alarmStatus == 0 indicates all clear, 0 < alarmStatus <= 1 indicates alarm intensity, alarmStatus = -1 indicates channel off,
-                        //and alarmStatus == -2 for the voltage alarm indicates voltage ramping.
+                        //and alarmStatus == -2 for the voltage alarm indicates voltage ramping, -3 for misc disabled conditions:
                         if(testParameter < window.parameters.alarmThresholds[0])  this.dataBus[k].alarmStatus[i][j][0] = 0;
                         else this.dataBus[k].alarmStatus[i][j][0] = Math.min( (testParameter - window.parameters.alarmThresholds[0]) / window.parameters.scaleMaxima[0], 1);
                         if(this.dataBus[k].rampStatus[i][j] == 3 || this.dataBus[k].rampStatus[i][j] == 5){
                             this.dataBus[k].alarmStatus[i][j][0] = -2;
                         }
+                        if(this.dataBus[k].rampStatus[i][j] == 256)
+                            this.dataBus[k].alarmStatus[i][j][0] = -3;
 
                         if(this.dataBus[k].reportCurrent[i][j] < window.parameters.alarmThresholds[1])  this.dataBus[k].alarmStatus[i][j][1] = 0;
                         else  this.dataBus[k].alarmStatus[i][j][1] = Math.min( (this.dataBus[k].reportCurrent[i][j] - window.parameters.alarmThresholds[1]) / window.parameters.scaleMaxima[1], 1);
@@ -1154,8 +1156,8 @@ function barChartButton(button){
     inbound = 'crate'+window.HVview+'bar'+window.HVpointer.viewStatus
 
     if(inbound != window.onDisplay){
-        fadeIn(inbound);
         fadeOut(window.onDisplay);
+        fadeIn(inbound);
         window.onDisplay = inbound;
     }
 }

@@ -16,6 +16,7 @@ function fadeIn(canvasID){
 
 	$('#'+canvasID).css('z-index', 1);
 	$('#'+canvasID).css('opacity', 1);
+	//window.onDisplay = canvasID;
 }
 
 /*
@@ -79,7 +80,7 @@ function fadeDivIn(navDiv){
 
 }
 
-//swap two canvases:
+//swap two canvases, for use in subdetector view transitions:
 function swapFade(buttonID, object, leaveOff, representationIndex){
 	var i;
 	//parse which view is requested, and fetch the corresponding canvas ID to bring to the front:
@@ -97,8 +98,8 @@ function swapFade(buttonID, object, leaveOff, representationIndex){
 	document.getElementById(object.topNavID).setAttribute('onclick', "javascript:swapView('"+object.linkWrapperID+"', '"+inbound+"', '"+object.sidebarID+"', '"+object.topNavID+"')");
 
 	if(inbound != window.onDisplay){
-		fadeIn(inbound, 0);
-		fadeOut(window.onDisplay, 0);
+		fadeIn(inbound);
+		fadeOut(window.onDisplay);
 		window.onDisplay = inbound;
 	}
 }
@@ -153,16 +154,4 @@ function swapView(inboundNav, inboundCanvas, inboundSidebar, buttonID){
 		document.getElementById('youAreHere').innerHTML = title;
 
 	}
-}
-
-//simple canvas swap in / out:
-function swapCanv(inID, outID){
-    
-    $('#'+inID).css('z-index', '1');
-    $('#'+inID).css('opacity', '1');
-    $('#'+outID).css('z-index', '-1');
-    $('#'+outID).css('opacity', '0');
-
-    window.onDisplay = inID;
-    
 }
