@@ -90,7 +90,8 @@
       window.JSONPstatus = [];
 
       function loadParameters(dataWeGotViaJsonp){
-        for (var key in dataWeGotViaJsonp) {
+        var key;
+        for (key in dataWeGotViaJsonp) {
           if (dataWeGotViaJsonp.hasOwnProperty(key)) {
             window.parameters[key] = dataWeGotViaJsonp[key];
           }
@@ -98,16 +99,15 @@
       }
 
       //define function to fetch from JSONP service
-      var i,j,k;
       window.JSONPstore = {};
       function parseResponse(dataWeGotViaJsonp){
-        var i;
-        for (var key in dataWeGotViaJsonp) {
+        var i, key, subkey;
+        for (key in dataWeGotViaJsonp) {
           if (dataWeGotViaJsonp.hasOwnProperty(key)) {
             window.JSONPstore[key] = [];
             for(i=0; i<dataWeGotViaJsonp[key].length; i++){
               window.JSONPstore[key][window.JSONPstore[key].length] = {};
-              for(var subkey in dataWeGotViaJsonp[key][i]){
+              for(subkey in dataWeGotViaJsonp[key][i]){
                 if(dataWeGotViaJsonp[key][i].hasOwnProperty(subkey)){
                   window.JSONPstore[key][i][subkey] = dataWeGotViaJsonp[key][i][subkey];
                 }
@@ -121,27 +121,28 @@
     <script type="text/javascript">
       //load the webfonts, and block the page until they're ready or failed - otherwise lots of rendering bugs happen!
       WebFontConfig = { google: { families: [ 'Orbitron', 'Raleway' ] },
-      loading: function(){
-        //set the spinner going:
-        drawSpinner('spinner');
-      },
-      active: function() {
-        var initScript  = document.createElement('script');
-        initScript.setAttribute('src', 'parameters.json');
-        initScript.onload = function(){
-          loadJSONP(window.Gatekeeper, "main");
+        loading: function(){
+          //set the spinner going:
+          drawSpinner('spinner');
+        },
+        active: function() {
+          var initScript  = document.createElement('script');
+          initScript.setAttribute('src', 'parameters.json');
+          initScript.onload = function(){
+            loadJSONP(window.Gatekeeper, "main");
+          }
+          document.head.appendChild(initScript);
+        },
+        inactive: function() {
+          var initScript  = document.createElement('script');
+          initScript.setAttribute('src', 'parameters.json');
+          initScript.onload = function(){
+            loadJSONP(window.Gatekeeper, "main");
+          }
+          document.head.appendChild(initScript);
         }
-        document.head.appendChild(initScript);
-      },
-      inactive: function() {
-        var initScript  = document.createElement('script');
-        initScript.setAttribute('src', 'parameters.json');
-        initScript.onload = function(){
-          loadJSONP(window.Gatekeeper, "main");
-        }
-        document.head.appendChild(initScript);
-      }
       };
+      //thx paul:
       (function() {
         var wf = document.createElement('script');
         wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
@@ -153,13 +154,11 @@
       })();
     </script>
 
-    <!--script src='parameters.json' onload='loadJSONP(window.Gatekeeper, "main");'>//experimental parameters loaded here//</script-->
-
     <!--Main routine/////////////////////////////////////////////////////////////////////-->
     <script id='main' type="text/JavaScript">
 
       function main(){
-        var i, j;
+        var i, j, k;
 
         //overwrite default parameters with custom ones:
         fetchCustomParameters();
@@ -175,20 +174,11 @@
         //Insert branding & navigation:
         Banner('banner', 'youAreHere', 'navBar', window.parameters.ExpName+' Dashboard', 'TRIUMF');
 
-        //plug in links: //TODO - remove?
-        statusLink = document.getElementById('statusLink');
-        statusLink.setAttribute('action', window.parameters.statusURL);
-
         //set up wrapper div dimensions; minimum rendering width = 1440px, height 900px:
         window.renderWidth = Math.max(1440, window.innerWidth);
         window.renderHeight = Math.max(900*0.85,window.innerHeight*0.85)
         $('#'+window.parameters.wrapper).width(window.renderWidth);
         $('#'+window.parameters.wrapper).height(window.renderHeight);
-
-        //Waffle onclick event will throw x and y positions up to these globals, so that
-        //updateParameter() can use them to determine which channel to update.
-        window.griffinDialogX;
-        window.griffinDialogY;
 
         //declare objects:
 

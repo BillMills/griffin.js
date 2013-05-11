@@ -45,6 +45,10 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         this.viewStatus = -1;                       //indicates which view is on top: -1=summary, n>-1=bar chart n.  TODO: redundant with window.HVview?
         this.canvas = [];
         this.context = [];
+        //index address of where the input panel is pointing:
+        this.dialogX;
+        this.dialogY;
+
 
         //make sure the waffle is pointing at a channel that actually has something in it before the initial populate:
         i=0;

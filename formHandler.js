@@ -17,7 +17,7 @@ function updateParameter(){
 	}
 
     //determine where this cell falls in MIDAS vector:
-    var ODBindex = getMIDASindex(window.griffinDialogY, window.griffinDialogX, window.HVview);
+    var ODBindex = getMIDASindex(window.HVpointer.dialogY, window.HVpointer.dialogX, window.HVview);
 
     //switch channel on/off
     if(document.getElementById('onButton').checked == true){
@@ -102,8 +102,8 @@ function channelSelect(waffle){
     else xIndex = waffle.chx;
 
     //Throw up to global so the setter remembers where we're pointing.  TODO: refactor without globals?
-    window.griffinDialogX = xIndex;//waffle.chx;
-    window.griffinDialogY = waffle.chy;
+    window.HVpointer.dialogX = xIndex;//waffle.chx;
+    window.HVpointer.dialogY = waffle.chy;
 	
     var superDiv = document.getElementById(waffle.wrapperDiv);
     var inputDiv = document.getElementById(waffle.InputLayer);
