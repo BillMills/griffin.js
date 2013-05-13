@@ -70,7 +70,7 @@ masterCodex = function(){
         }
     }
 
-
+    console.log(this.F)
 
         /*
         newToken = 1;
