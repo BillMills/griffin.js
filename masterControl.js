@@ -296,7 +296,9 @@ function fetchCustomParameters(){
     
 }
 
-
+//wrap ODBMGet in a function that accepts a key value store populated with ODBpaths, and returns the same object
+//with paths replaced by actual values fetched from the ODB
+//coming soon
 
 
 

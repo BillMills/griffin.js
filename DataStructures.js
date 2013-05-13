@@ -53,9 +53,9 @@ function cloverDS(nClovers, mode){
 		//loop over quadrants
 		for(j=0; j<4; j++){
 			this.HPGe[pfx+'G'+( (i<10) ? '0'+i : i)+this.colorQuads[j]+'N00A'] = {
-				'HV'		: 500*j,		//note both A and B carry the same HV for GRIFFIN style HPGe
-				'threshold' : 500,
-				'rate'		: 1000,
+				'HV'		: 0,		//note both A and B carry the same HV for GRIFFIN style HPGe
+				'threshold' : 0,
+				'rate'		: 0,
 				'index'     : ((mode== 'TIGRESS')? 10:2)*j+((mode== 'TIGRESS')? 60:30)*(i-1),
 
 				'oldHVcolor' : '#000000',
@@ -66,9 +66,9 @@ function cloverDS(nClovers, mode){
 				'rateColor' : '#000000'				
 			}
 			this.HPGe[pfx+'G'+( (i<10) ? '0'+i : i)+this.colorQuads[j]+'N00B'] = {
-				'HV'		: 500*j,		//note both A and B carry the same HV for GRIFFIN style HPGe
-				'threshold' : 500,
-				'rate'		: 1000,
+				'HV'		: 0,		//note both A and B carry the same HV for GRIFFIN style HPGe
+				'threshold' : 0,
+				'rate'		: 0,
 				'index'		: ((mode== 'TIGRESS')? 10:2)*j+1+((mode== 'TIGRESS')? 60:30)*(i-1),
 
 				'oldHVcolor' : '#000000',
@@ -82,10 +82,10 @@ function cloverDS(nClovers, mode){
 			if(mode == 'TIGRESS'){
 				for(k=1; k<9; k++){
 					this.HPGe['TIG'+( (i<10) ? '0'+i : i)+this.colorQuads[j]+'P0'+k+'X'] = {
-						'HV'		: 500*j,
-						'threshold' : 500,
-						'rate'		: 1000,
-						'index'     : 10*j+1+k + 60*(i-1),
+						'HV'		: 0,
+						'threshold' : 0,
+						'rate'		: 0,
+						'index'     : 0,
 
 						'oldHVcolor' : '#000000',
 						'HVcolor'	 : '#000000',
@@ -110,10 +110,10 @@ function cloverDS(nClovers, mode){
 				if(k==4) ID = ((mode== 'TIGRESS')? 44:12)+2*j;
 				if(k==5) ID = ((mode== 'TIGRESS')? 40:8)+j; 		//back suppressors
 				this.HPGe[pfx+'S'+( (i<10) ? '0'+i : i)+this.colorQuads[j]+'N0'+k+'X'] = {
-				'HVA'		: 1000,		//each rate channel has two HV hookups.
-				'HVB'		: 2000,
-				'threshold' : 500,
-				'rate'		: 1000*k,
+				'HVA'		: 0,		//each rate channel has two HV hookups.
+				'HVB'		: 0,
+				'threshold' : 0,
+				'rate'		: 0,
 				'index'		: ID+((mode== 'TIGRESS')? 60:30)*(i-1),
 
 				'oldHVAcolor' : '#000000',
@@ -326,9 +326,9 @@ TIPDS = function(){
 	for(i=1; i<25; i++){
 		var name = (i<10) ? 'TPW00'+i+'P00X' : 'TPW0'+i+'P00X';
 		this.CsIwall[name] = {
-			'HV'		: 0.3,
-			'threshold' : 500,
-			'rate' 		: 100*i,
+			'HV'		: 0,
+			'threshold' : 0,
+			'rate' 		: 0,
 
 			'oldHVcolor' : '#000000',
 			'HVcolor'	 : '#000000',

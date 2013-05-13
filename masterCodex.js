@@ -7,9 +7,18 @@ masterCodex = function(){
 
 	//pull the table info in from the ODB
     if(window.parameters.devMode == 0){
-        this.FSPC  = ODBExtractRecord('/Analyzer/Parameters/Cathode/config', 'FSCP');//ODBGet('/Analyzer/Parameters/Cathode/config/FSCP[*]');
-        this.Name  = ODBExtractRecord('/Analyzer/Parameters/Cathode/config', 'Name');///ODBGet('/Analyzer/Parameters/Cathode/config/Name[*]');
-        this.nRows = ODBExtractRecord('/Analyzer/Parameters/Cathode/config', 'N')//ODBGet('/Analyzer/Parameters/Cathode/config/N');
+        this.DAQpath = ['/Analyzer/Parameters/Cathode/Config/FSCP[*]', '/Analyzer/Parameters/Cathode/Config/Name[*]', '/Analyzer/Parameters/Cathode/Config/N'];
+        
+        //this.DAQdata = ODBMGet(this.DAQpath);
+        //console.log(this.DAQdata[0])
+
+        this.DAQtable = ODBMGet(this.DAQpath);
+
+        this.FSPC  = this.DAQtable[0]; //ODBExtractRecord('/Analyzer/Parameters/Cathode/Config', 'FSCP');//ODBGet('/Analyzer/Parameters/Cathode/config/FSCP[*]');
+        this.Name  = this.DAQtable[1]; //ODBExtractRecord('/Analyzer/Parameters/Cathode/Config', 'Name');///ODBGet('/Analyzer/Parameters/Cathode/config/Name[*]');
+        this.nRows = this.DAQtable[2]; //ODBExtractRecord('/Analyzer/Parameters/Cathode/Config', 'N')//ODBGet('/Analyzer/Parameters/Cathode/config/N');
+
+        //console.log(this.nRows)
     } else{
         //put the tables in by hand for now:
         this.FSPC = [0x0700700,0x0700701,0x0700702,0x0700703,0x0700704,0x0700705,0x0700706,0x0700707,0x0700708,0x0700709,0x0700800,0x0700801,0x0700802,0x0700803,0x0700804,0x0700805,0x0700806,0x0700807,0x0700808,0x0700809,0x0700900,0x0700901,0x0700902,0x0700903,0x0700904,0x0700905,0x0700906,0x0700907,0x0700908,0x0700909,0x0800700,0x0800701,0x0800702,0x0800703,0x0800704,0x0800705,0x0800706,0x0800707,0x0800708,0x0800709,0x0800800,0x0800801,0x0800802,0x0800803,0x0800804,0x0800805,0x0800806,0x0800807,0x0800808,0x0800809,0x0800900,0x0800901,0x0800902,0x0800903,0x0800904,0x0800905,0x0800906,0x0800907,0x0800908,0x0800909,0x0900700,0x0900701,0x0900702,0x0900703,0x0900704,0x0900705,0x0900706,0x0900707,0x0900708,0x0900709];
@@ -27,12 +36,43 @@ masterCodex = function(){
     var Pseen = [];
     var Cseen = [];
     var newToken;
+    this.DAQmap = {};
+
+    //loop over all rows, creating a 4-level JS object that reflects the structure of the DAQ:
     for(i=0; i<this.nRows; i++){
         this.F[i] = Math.floor(this.FSPC[i] / 0x10000000);                                          //first digit (on left)
         this.S[i] = Math.floor(this.FSPC[i] / 0x100000) - this.F[i]*0x100;                          //second
         this.P[i] = Math.floor(this.FSPC[i] / 0x100) - this.F[i]*0x100000 - this.S[i]*0x1000;       //third-fifth
         this.C[i] = this.FSPC[i] - this.F[i]*0x10000000 - this.S[i]*0x100000 - this.P[i]*0x100;     //sixth and seventh
 
+        Fkey = '0x'+this.F[i]+'XXXXXX';
+        Skey = '0x'+this.F[i]+this.S[i]+'XXXXX';
+        Pkey = '0x'+this.F[i]+this.S[i]+'00'+this.P[i]+'XX';
+        Ckey = '0x'+this.F[i]+this.S[i]+'00'+this.P[i]+'0'+this.C[i];
+
+        if(this.DAQmap[Fkey]){
+            if(this.DAQmap[Fkey][Skey]){
+                if(this.DAQmap[Fkey][Skey][Pkey]){
+                    this.DAQmap[Fkey][Skey][Pkey][Ckey] = {'detector' : this.Name[m]};
+                } else {
+                    this.DAQmap[Fkey][Skey][Pkey] = {};
+                    i--;
+                }
+            } else {
+                this.DAQmap[Fkey][Skey] = {};
+                //console.log(Skey)
+                i--;
+            }
+        } else {
+            this.DAQmap[Fkey] = {};
+            console.log(Fkey)
+            i--;
+        }
+    }
+
+
+
+        /*
         newToken = 1;
         for(j=0; j<Fseen.length; j++){
             if(this.F[i] == Fseen[j]){
@@ -71,6 +111,7 @@ masterCodex = function(){
 
     }
 
+    
     //construct a 4-level key value array that reproduces the DAQ structure:
     this.DAQmap = {};
     for(i=0; i<this.F.length; i++){
@@ -99,7 +140,7 @@ masterCodex = function(){
             }
         }
     }
-
+*/
     this.nCollectors = 0;
     for(Skey in this.DAQmap['0x0XXXXXX']) this.nCollectors++;
     this.nDigitizers = 0;
@@ -113,39 +154,6 @@ masterCodex = function(){
         }
         i++;
     }
-
-
-/*
-    //now decide how many digitizers are plugged into each collector identified:
-    var localDigitizers = [];
-    this.nDigitizersPerCollector = [];
-
-    //loop through each unique collector
-    for(i=0; i<Sseen.length; i++){
-        localDigitizers = [];
-        //identify all unique digitizers that match this collector
-        for(j=0; j<this.nRows; j++){
-            if(this.S[j] == Sseen[i]){  //collector matches
-                newToken = 1;
-                for(k=0; k<localDigitizers.length; k++){  //see if this digitizers has already been found
-                    if(localDigitizers[k] == this.C[j])
-                        newToken = 0;
-                }
-                if(newToken == 1)
-                    localDigitizers[localDigitizers.length] = this.C[j]
-            }
-        }
-        this.nDigitizersPerCollector[i] = localDigitizers.length;
-    }
-
-    this.nCollectors = Sseen.length;
-    this.nDigitizers = 0;
-    for(i=0; i<this.nDigitizersPerCollector.length; i++)
-        this.nDigitizers += this.nDigitizersPerCollector[i];
-*/
-    //finished DAQ///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 
 }
 

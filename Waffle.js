@@ -802,7 +802,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                                 this.dataBus[k].demandVrampUp[i][j]     = parseFloat(rampUp[k][ODBindex]);
                                 this.dataBus[k].demandVrampDown[i][j]   = parseFloat(rampDown[k][ODBindex]);
                                 this.dataBus[k].reportTemperature[i][j] = parseFloat(measTemperature[k][ODBindex]);
-                                this.dataBus[k].channelMask[i][j]       = parseFloat(repoChState[k][ODBindex]);
+                                this.dataBus[k].channelMask[i][j]       = ( parseFloat(repoChState[k][ODBindex]) && parseFloat(repoChStatus[k][ODBindex]) ) ? 1 : 0 ;
                                 this.dataBus[k].rampStatus[i][j]        = parseFloat(repoChStatus[k][ODBindex]);
                                 this.dataBus[k].voltLimit[i][j]         = parseFloat(voltageLimit[k][ODBindex]);
                                 this.dataBus[k].currentLimit[i][j]      = parseFloat(currentLimit[k][ODBindex]);
