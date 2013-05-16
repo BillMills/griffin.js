@@ -33,7 +33,7 @@ function HPGe(){
                                         that.detailShowing = 0;
                                         swapFade(null, that, 1000, 0);
                                     } else{
-                                        parameterDialogue(that.name, [['HPGe', window.parameters[that.name].minima['HPGe'], window.parameters[that.name].maxima['HPGe']], ['BGO', window.parameters[that.name].minima['BGO'], window.parameters[that.name].maxima['BGO']]]);
+                                        parameterDialogue(that.name, [['HPGe', window.parameters[that.name].minima['HPGe'][window.subdetectorView], window.parameters[that.name].maxima['HPGe'][window.subdetectorView], window.parameters.subdetectorUnit[window.subdetectorView], '/DashboardConfig/HPGe/'+scaleType()+'[0]', '/DashboardConfig/HPGe/'+scaleType()+'[1]'], ['BGO', window.parameters[that.name].minima['BGO'][window.subdetectorView], window.parameters[that.name].maxima['BGO'][window.subdetectorView],  window.parameters.subdetectorUnit[window.subdetectorView], '/DashboardConfig/HPGe/BGO'+scaleType()+'[0]', '/DashboardConfig/HPGe/BGO'+scaleType()+'[1]'] ], window.parameters.colorScale[window.subdetectorView]);
                                     }
                                 };
     this.canvas.onclick =   function(event){
@@ -51,8 +51,9 @@ function HPGe(){
                                     that.drawDetail(that.TTdetailContext, that.nFrames);
                                     that.detailShowing = 1;
                                     swapFade(null, that, 1000, 0)
-                                } else if(y > that.canvasHeight - that.scaleHeight)
-                                    parameterDialogue(that.name, [['HPGe', window.parameters[that.name].minima['HPGe'], window.parameters[that.name].maxima['HPGe']], ['BGO', window.parameters[that.name].minima['BGO'], window.parameters[that.name].maxima['BGO']]]);
+                                } else if(y > that.canvasHeight - that.scaleHeight){
+                                    parameterDialogue(that.name, [['HPGe', window.parameters[that.name].minima['HPGe'][window.subdetectorView], window.parameters[that.name].maxima['HPGe'][window.subdetectorView], window.parameters.subdetectorUnit[window.subdetectorView], '/DashboardConfig/HPGe/'+scaleType()+'[0]', '/DashboardConfig/HPGe/'+scaleType()+'[1]'], ['BGO', window.parameters[that.name].minima['BGO'][window.subdetectorView], window.parameters[that.name].maxima['BGO'][window.subdetectorView],  window.parameters.subdetectorUnit[window.subdetectorView], '/DashboardConfig/HPGe/BGO'+scaleType()+'[0]', '/DashboardConfig/HPGe/BGO'+scaleType()+'[1]'] ], window.parameters.colorScale[window.subdetectorView]);
+                                }
                             };
 
 

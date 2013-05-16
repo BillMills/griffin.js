@@ -27,7 +27,7 @@ function TIP(){
                                         that.detailShowing = 0;
                                         swapFade(null, that, 1000, 0);
                                     } else {
-                                        parameterDialogue(that.name, [['CsI', window.parameters[that.name].minima['CsI'], window.parameters[that.name].maxima['CsI']], ['HPGe', window.parameters[that.name].minima['HPGe'], window.parameters[that.name].maxima['HPGe']], ['BGO', window.parameters[that.name].minima['BGO'], window.parameters[that.name].maxima['BGO']]]);
+                                        parameterDialogue(that.name, [ ['HPGe', window.parameters[that.name].minima['HPGe'][window.subdetectorView], window.parameters[that.name].maxima['HPGe'][window.subdetectorView],  window.parameters.subdetectorUnit[window.subdetectorView], '/DashboardConfig/TIP/HPGe'+scaleType()+'[0]', '/DashboardConfig/TIP/HPGe'+scaleType()+'[1]'], ['BGO', window.parameters[that.name].minima['BGO'][window.subdetectorView], window.parameters[that.name].maxima['BGO'][window.subdetectorView],  window.parameters.subdetectorUnit[window.subdetectorView], '/DashboardConfig/TIP/BGO'+scaleType()+'[0]', '/DashboardConfig/TIP/BGO'+scaleType()+'[1]']], window.parameters.colorScale[window.subdetectorView]);
                                     }
                                 };
     this.canvas.onclick =   function(event){
@@ -44,9 +44,9 @@ function TIP(){
                                     that.drawDetail(that.TTdetailContext, that.nFrames);
                                     that.detailShowing = 1;
                                     swapFade(null, that, 1000, 0)
-                                } else if(y > that.canvasHeight - that.scaleHeight)
-                                    //parameterDialogue([['CsI', window.parameters.TIPCsIminima, window.parameters.TIPCsImaxima], ['HPGe', window.parameters.TIPHPGeminima, window.parameters.TIPHPGemaxima], ['BGO',window.parameters.TIPBGOminima, window.parameters.TIPBGOmaxima]]);
-                                    parameterDialogue(that.name, [['CsI', window.parameters[that.name].minima['CsI'], window.parameters[that.name].maxima['CsI']], ['HPGe', window.parameters[that.name].minima['HPGe'], window.parameters[that.name].maxima['HPGe']], ['BGO', window.parameters[that.name].minima['BGO'], window.parameters[that.name].maxima['BGO']]]);
+                                } else if(y > that.canvasHeight - that.scaleHeight){
+                                    parameterDialogue(that.name, [['CsI', window.parameters[that.name].minima['CsI'][window.subdetectorView], window.parameters[that.name].maxima['CsI'][window.subdetectorView], window.parameters.subdetectorUnit[window.subdetectorView], '/DashboardConfig/TIP/CsI'+scaleType()+'[0]', '/DashboardConfig/TIP/CsI'+scaleType()+'[1]' ], ['HPGe', window.parameters[that.name].minima['HPGe'][window.subdetectorView], window.parameters[that.name].maxima['HPGe'][window.subdetectorView],  window.parameters.subdetectorUnit[window.subdetectorView], '/DashboardConfig/TIP/HPGe'+scaleType()+'[0]', '/DashboardConfig/TIP/HPGe'+scaleType()+'[1]'], ['BGO', window.parameters[that.name].minima['BGO'][window.subdetectorView], window.parameters[that.name].maxima['BGO'][window.subdetectorView],  window.parameters.subdetectorUnit[window.subdetectorView], '/DashboardConfig/TIP/BGO'+scaleType()+'[0]', '/DashboardConfig/TIP/BGO'+scaleType()+'[1]']], window.parameters.colorScale[window.subdetectorView]);
+                                }
                             };
 
     //drawing parameters
@@ -183,6 +183,7 @@ function TIP(){
 
     //overhauled data fetcher for new key value packing
     this.fetchNewData = function(){
+        /*
         //CsI
         for(key in this.dataBus.CsIwall){
             if(window.JSONPstore['parameters'])
@@ -193,6 +194,7 @@ function TIP(){
         
         //HPGe
         this.fetchHPGeData();
+        */  //suppressed until overhaul of data throuhput complete
     };
 
     //do an initial populate:

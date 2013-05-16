@@ -220,6 +220,15 @@ function fetchCustomParameters(){
     paths[60] = '/DashboardConfig/TIP/CsIrateScale[*]'
     paths[61] = '/DashboardConfig/TIP/HPGerateScale[*]'
     paths[62] = '/DashboardConfig/TIP/BGOrateScale[*]'              
+
+    paths[63] = '/DashboardConfig/DAQ/rateMinTopView';
+    paths[64] = '/DashboardConfig/DAQ/rateMaxTopView';
+    paths[65] = '/DashboardConfig/DAQ/rateMinDetailView';
+    paths[66] = '/DashboardConfig/DAQ/rateMaxDetailView';
+    paths[67] = '/DashboardConfig/DAQ/transferMinTopView';
+    paths[68] = '/DashboardConfig/DAQ/transferMaxTopView';
+    paths[69] = '/DashboardConfig/DAQ/transferMinDetailView';
+    paths[70] = '/DashboardConfig/DAQ/transferMaxDetailView';
     
     //fetch:
     var data = ODBMGet(paths);
@@ -293,6 +302,9 @@ function fetchCustomParameters(){
     window.parameters.TIP.maxima.CsI = [parseFloat(data[54][1]), parseFloat(data[57][1]), parseFloat(data[60][1])];
     window.parameters.TIP.maxima.HPGe = [parseFloat(data[55][1]), parseFloat(data[58][1]), parseFloat(data[61][1])];
     window.parameters.TIP.maxima.BGO = [parseFloat(data[56][1]), parseFloat(data[59][1]), parseFloat(data[62][1])];
+
+    window.parameters.DAQminima = [parseFloat(data[63]), parseFloat(data[67]), parseFloat(data[65]), parseFloat(data[69])];
+    window.parameters.DAQmaxima = [parseFloat(data[64]), parseFloat(data[68]), parseFloat(data[66]), parseFloat(data[70])];
     
 }
 

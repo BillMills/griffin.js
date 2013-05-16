@@ -55,12 +55,13 @@ function Subsystem(){
     //what fraction of the canvas does the scale take up?  need this for onclick behavior:
     this.scaleHeight = this.canvasHeight*0.2;
     //set up scale adjust dialog:
+    
     this.canvas.onclick = function(event){
         var y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;
         if(y > that.canvasHeight - that.scaleHeight)
-            parameterDialogue(that.name, [[that.name, window.parameters[that.name].minima[that.name], window.parameters[that.name].maxima[that.name]]]);
+            parameterDialogue(that.name, [[that.name, window.parameters[that.name].minima[that.name][window.subdetectorView], window.parameters[that.name].maxima[that.name][window.subdetectorView], window.parameters.subdetectorUnit[window.subdetectorView], '/DashboardConfig/'+that.name+'/'+scaleType()+'[0]', '/DashboardConfig/'+that.name+'/'+scaleType()+'[1]']], window.parameters.colorScale[window.subdetectorView]);
     }
-
+    
     //member functions
     //determine which color <scalar> corresponds to
     this.parseColor = function(scalar, detector){
@@ -215,8 +216,9 @@ function Subsystem(){
     };
 
     //generic update routine.  Again, some subsystems are more complcated versions of this:
-    /*  broken 'this' in here somewhere...
+    //broken 'this' in here somewhere...
     this.update = function(){
+        /*
         var key;
 
         //get new data
@@ -233,10 +235,12 @@ function Subsystem(){
         }
 
         this.tooltip.update();
+        */
     };
     
     //write the simplest possible subsystem tooltip contents:
     this.defineText = function(cell){
+        /*
         var key, nextLine, toolTipContent;
 
         toolTipContent = '<br>'
@@ -245,8 +249,9 @@ function Subsystem(){
         toolTipContent += nextLine + '<br><br>';
         toolTipContent += this.baseTTtext(this.dataBus.[this.name][key].HV, this.dataBus.[this.name][key].threshold, this.dataBus.[this.name][key].rate);
         toolTipContent += '<br>'
+        */
     };
-    */
+    
 }
 
 

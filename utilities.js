@@ -76,15 +76,14 @@ function insertDOM(element, id, classTag, style, wrapperID, onclick, content, na
     document.getElementById(id).onclick = onclick;
 }
 
-
-//summon a dialogue to change some parameter values.  mostly hardcoded for scale min/max, todo: generalize
-function parameterDialogue(detName, scales){
+//devName = device Name, scales = [ [scale title, parameter service minima, parameter service maxima, unit, ODBminpath, ODBmaxpath], ...]
+function parameterDialogue(devName, scales, currentColorScale){
     var i, j, ODBpath;
 
     //insert div and title
     insertDOM('div', 'tempDiv', '', 'z-index:10; position:absolute; text-align:center; opacity:0; transition:opacity 0.5s; -moz-transition:opacity 0.5s; -webkit-transition:opacity 0.5s; background:rgba(0,0,0,0.7); border: 5px solid; border-radius:10px;', 'waffleplate', '', '', '');
     var dialogue = document.getElementById('tempDiv');
-    insertDOM('h2', 'dialogHeader', '', 'position:relative; font:24px Orbitron; top:10px; margin-bottom:6%', 'tempDiv', '', 'Adjust '+detName+' Scale');
+    insertDOM('h2', 'dialogHeader', '', 'position:relative; font:24px Orbitron; top:10px; margin-bottom:6%', 'tempDiv', '', 'Adjust '+devName+' Scale');
 
     //fix dimensions
     var width = 0.35*window.innerWidth;
@@ -98,32 +97,34 @@ function parameterDialogue(detName, scales){
     for(i=0; i<scales.length; i++){
         insertDOM('p', 'title'+i, '', 'font-size:16px; margin-top:3%;', 'dialogueValues', '', scales[i][0]+'<br>');
         insertDOM('p', 'minlabel'+i, '', 'display:inline;', 'dialogueValues', '', 'Minimum: ');
-        insertDOM('input', 'minfield'+i, '', 'display:inline;', 'dialogueValues', '', '', 'textbox', 'number', scales[i][1][window.subdetectorView]);
+        insertDOM('input', 'minfield'+i, '', 'display:inline;', 'dialogueValues', '', '', 'textbox', 'number', scales[i][1]);
         document.getElementById('minfield'+i).setAttribute('size', 6);
-        insertDOM('p', 'minunit'+i, '', 'display:inline; margin-right:3%', 'dialogueValues', '', window.parameters.subdetectorUnit[window.subdetectorView]);
+        insertDOM('p', 'minunit'+i, '', 'display:inline; margin-right:3%', 'dialogueValues', '', scales[i][3]);
         insertDOM('p', 'maxlabel'+i, '', 'display:inline', 'dialogueValues', '', 'Maximum: ');
-        insertDOM('input', 'maxfield'+i, '', 'display:inline;', 'dialogueValues', '', '', 'textbox', 'number', scales[i][2][window.subdetectorView])
+        insertDOM('input', 'maxfield'+i, '', 'display:inline;', 'dialogueValues', '', '', 'textbox', 'number', scales[i][2])
         document.getElementById('maxfield'+i).setAttribute('size', 6);
-        insertDOM('p', 'maxunit'+i, '', 'display:inline;', 'dialogueValues', '', window.parameters.subdetectorUnit[window.subdetectorView] + '<br>');
+        insertDOM('p', 'maxunit'+i, '', 'display:inline;', 'dialogueValues', '', scales[i][3] + '<br>');
         //don't allow min > max:
         document.getElementById('minfield'+i).onchange = function(){document.getElementById('maxfield'+this.id[8]).min = document.getElementById(this.id).valueAsNumber;};
 
     }
 
     //insert color scale picker:
-    insertDOM('p', 'colorPickerLabel', '', 'display:inline', 'dialogueValues', '', '<br><br>Palette: ');
-    var colorScales = ['Greyscale', 'ROOT Rainbow', 'Sunset'];
-    insertDOM('select', 'colorOptions', '', '', 'dialogueValues', '', '');
-    var colorDD = document.getElementById('colorOptions');
-    var option = [];
-    for(i=0; i<colorScales.length; i++){
-        option[i] = document.createElement('option');
-        option[i].text = colorScales[i];
-        option[i].value = colorScales[i];
-        colorDD.add(option[i], null);
+    if(currentColorScale){
+        insertDOM('p', 'colorPickerLabel', '', 'display:inline', 'dialogueValues', '', '<br><br>Palette: ');
+        var colorScales = ['Greyscale', 'ROOT Rainbow', 'Sunset'];
+        insertDOM('select', 'colorOptions', '', '', 'dialogueValues', '', '');
+        var colorDD = document.getElementById('colorOptions');
+        var option = [];
+        for(i=0; i<colorScales.length; i++){
+            option[i] = document.createElement('option');
+            option[i].text = colorScales[i];
+            option[i].value = colorScales[i];
+            colorDD.add(option[i], null);
+        }
+        colorDD.value = currentColorScale;
+        insertDOM('br', 'break', '', '', 'dialogueValues', '', '');
     }
-    colorDD.value = window.parameters.colorScale[window.subdetectorView];
-    insertDOM('br', 'break', '', '', 'dialogueValues', '', '');
 
     //insert submit button
     insertDOM('input', 'updateParameters', 'bigButton', 'width:20%; margin-right:2%; margin-top:6%', 'dialogueValues', '', '', '', 'button', 'Commit')
@@ -133,19 +134,16 @@ function parameterDialogue(detName, scales){
         var i;
         if(document.getElementById('dialogueValues').checkValidity()){
             for(i=0; i<scales.length; i++){
-                //commit to local parameter service:
-                scales[i][1][window.subdetectorView] = parseFloat(document.getElementById('minfield'+i).value);
-                scales[i][2][window.subdetectorView] = parseFloat(document.getElementById('maxfield'+i).value);
-
-                //commit to ODB:
-                ODBpath = '/DashboardConfig/'+detName+'/'
-                if(scales[i][0] != detName) ODBpath += scales[i][0];
-                if(window.subdetectorView == 0) ODBpath += 'HVscale[*]';
-                else if(window.subdetectorView == 1) ODBpath += 'thresholdScale[*]';
-                else if(window.subdetectorView == 2) ODBpath += 'rateScale[*]';
-                ODBSet(ODBpath, [ scales[i][1][window.subdetectorView], scales[i][2][window.subdetectorView] ]);
+                //commit
+                scales[i][1] = parseFloat(document.getElementById('minfield'+i).value);
+                scales[i][2] = parseFloat(document.getElementById('maxfield'+i).value);
+                ODBSet(scales[i][4], scales[i][1]);
+                ODBSet(scales[i][5], scales[i][2]);
+                fetchCustomParameters(); //pushes back to the parameter store
             }
-            window.parameters.colorScale[window.subdetectorView] = colorDD.value;
+            //color scale picker currently only for subdetectors
+            if(currentColorScale)
+                window.parameters.colorScale[window.subdetectorView] = colorDD.value;
 
             //remove dialogue
             document.getElementById('tempDiv').style.opacity = 0;
@@ -172,6 +170,24 @@ function parameterDialogue(detName, scales){
     //fade the div in:
     dialogue.style.opacity = 1
 }
+
+//help build the ODB path string for the above parameter dialogue:
+function scaleType(){
+    if (window.subdetectorView == 0) return 'HVscale';
+    else if (window.subdetectorView == 1) return 'thresholdScale';
+    else if (window.subdetectorView == 2) return 'rateScale';    
+}
+
+
+
+
+
+
+
+
+
+
+
 
 //Crockford's prototype magics:
 function DCobject(o) {

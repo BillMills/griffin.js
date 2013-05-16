@@ -400,6 +400,7 @@ DAQDS = function(){
 	var Fkey, Skey, Pkey, Ckey;
 	var i = 0;
 	var j = 0;
+	var k = 0;
 	for(Fkey in window.codex.DAQmap){
 		this.key[i] = [Fkey];
 		i++;
@@ -410,8 +411,14 @@ DAQDS = function(){
 				j++;
 			}
 		}
+
+		for(k=0; k<j; k++){
+			this.key[i+k] = this.key[1+k];
+		}
 		i += j //leave an index for a summary node to go with each collector node
 		j = 0;
+
+
 		//now count through digitizers, starting with the first collector:
 		for(Skey in window.codex.DAQmap[Fkey]){
 			if(window.codex.dataKeys.indexOf(Skey) == -1){

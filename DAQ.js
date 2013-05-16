@@ -13,8 +13,6 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     this.sidebarID = 'DAQsidebar'                //ID of right sidebar to associate with this object
     this.TTcanvasID = 'DAQTTcanvas'
     this.TTdetailCanvasID = 'DAQdetailTTcanvas'
-	this.minima = window.parameters.DAQminima;   //minima of element scales: [top level view rate, top level transfer, detail view rate, detail view transfer];
-	this.maxima = window.parameters.DAQmaxima;   //as minima.
     this.detailShowing = 0;                      //is the detail canvas showing?
     this.dataBus = new DAQDS();
 
@@ -88,10 +86,19 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     this.TTdetailCanvas.setAttribute('height', this.canvasHeight);    
     //finished adding to the DOM////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    this.scaleHeight = this.canvasHeight*0.2;//110;
+    this.vertAdjust = -0.1*this.canvasHeight;
+
     //onclick switch between top and detail view:
     this.detailCanvas.onclick = function(event){
-                                    that.detailShowing = 0;
-                                    swapFade('DAQToplink', that, 0, 0);
+                                    var y;
+                                    y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;
+                                    if(y>that.canvasHeight - that.scaleHeight){
+                                        parameterDialogue('DAQ', [ ['Transfer Rate', window.parameters.DAQminima[3], window.parameters.DAQmaxima[3], 'bps', '/DashboardConfig/DAQ/transferMinDetailView', '/DashboardConfig/DAQ/transferMaxDetailView' ], ['Trigger Rate', window.parameters.DAQminima[2], window.parameters.DAQmaxima[2], 'Hz', '/DashboardConfig/DAQ/rateMinDetailView', '/DashboardConfig/DAQ/rateMaxDetailView']  ]);
+                                    } else {
+                                        that.detailShowing = 0;
+                                        swapFade('DAQToplink', that, 0, 0);
+                                    }
                                 };
     this.canvas.onclick =   function(event){
                                 //use TT layer to decide which clover user clicked on
@@ -106,6 +113,10 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                                     that.drawDetail(that.detailContext, that.nFrames);
                                     that.detailShowing = 1;
                                     swapFade('Collector'+(digiGroupClicked - that.nCollectors - 1), that, 0, 1)
+                                }
+                                //set up scale range dialogue:
+                                if(y>that.canvasHeight - that.scaleHeight){
+                                    parameterDialogue('DAQ', [ ['Transfer Rate', window.parameters.DAQminima[1], window.parameters.DAQmaxima[1], 'bps', '/DashboardConfig/DAQ/transferMinTopView', '/DashboardConfig/DAQ/transferMaxTopView' ], ['Trigger Rate', window.parameters.DAQminima[0], window.parameters.DAQmaxima[0], 'Hz', '/DashboardConfig/DAQ/rateMinTopView', '/DashboardConfig/DAQ/rateMaxTopView']  ]);
                                 }
                             };
 
@@ -134,9 +145,6 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 
     this.cellColor = '#4C4C4C';
     this.lineweight = 2;
-
-    this.scaleHeight = this.canvasHeight*0.2;//110;
-    this.vertAdjust = -0.1*this.canvasHeight;
 
     this.margin = 30;
     this.collectorGutter = 0.1*this.collectorWidth;
@@ -276,10 +284,10 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 
 	};
 
-	//parse scalar into a color on a color scale bounded by the entries in this.minima[index] and this.maxima[index] 
+	//parse scalar into a color on a color scale bounded by the entries in window.parameters.DAQminima[index] and window.parameters.DAQmaxima[index] 
 	this.parseColor = function(scalar, index){
 		//how far along the scale are we?
-		var scale = (scalar - this.minima[index]) / (this.maxima[index] - this.minima[index]);
+		var scale = (scalar - window.parameters.DAQminima[index]) / (window.parameters.DAQmaxima[index] - window.parameters.DAQminima[index]);
         if(scale<0) scale = 0;
         if(scale>1) scale = 1;
 
@@ -351,7 +359,8 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 	};
 
     this.drawScale = function(context){
-        var i, j, string; 
+
+        var i, j, string, unit; 
 
         context.clearRect(0, this.canvasHeight - this.scaleHeight + this.vertAdjust, this.canvasWidth, this.canvasHeight);
 
@@ -366,36 +375,53 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         context.lineWidth = 1;
         context.font="12px 'Raleway'";
 
+        //transfer rate
+        //determine unit
+        unit = ((context == this.detailContext) ? window.parameters.DAQmaxima[3] : window.parameters.DAQmaxima [1]);
+        if(unit > 1000000) unit = ' Mbps';
+        else if(unit > 1000) unit = ' kbps';
+        else unit = ' bps';
+
         context.beginPath();
         context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2 + this.vertAdjust);
         context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2-10 + this.vertAdjust);
         context.stroke();
-        context.fillText('0 Mb/s', this.canvasWidth*0.05 - context.measureText('0 Mb/s').width/2, this.canvasHeight-this.scaleHeight/2-15 + this.vertAdjust);
+        context.fillText( ((context == this.detailContext) ? window.parameters.DAQminima[3] : window.parameters.DAQminima [1])+unit, this.canvasWidth*0.05 - context.measureText('0'+unit).width/2, this.canvasHeight-this.scaleHeight/2-15 + this.vertAdjust);
 
         context.beginPath();
         context.moveTo(this.canvasWidth*0.95-1, this.canvasHeight - this.scaleHeight/2 + this.vertAdjust);
         context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - this.scaleHeight/2-10 + this.vertAdjust); 
         context.stroke();  
 
-        string = ((context == this.detailContext) ? this.maxima[3] : this.maxima [1]);
-        if(string > 1000) string = string/1000 +' kbps';
-        else string = string + ' bps';            
+        string = ((context == this.detailContext) ? window.parameters.DAQmaxima[3] : window.parameters.DAQmaxima [1]);
+        if(string > 1000000) string = string/1000000 + unit;
+        else if(string > 1000) string = string/1000 + unit;
+        else string = string + unit;            
         context.fillText(string, this.canvasWidth*0.95 - context.measureText(string).width/2, this.canvasHeight-this.scaleHeight/2-15 + this.vertAdjust);
+
+
+        //trigger rate
+        //determine unit:
+        unit = ((context == this.detailContext) ? window.parameters.DAQmaxima[2] : window.parameters.DAQmaxima [0]);
+        if(unit > 1000000) unit = ' MHz';
+        else if(unit > 1000) unit = ' kHz';
+        else unit = ' Hz';        
 
         context.beginPath();
         context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2 + 20 + this.vertAdjust);
         context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2 + 20 + 10 + this.vertAdjust);
         context.stroke();
-        context.fillText('0 Hz', this.canvasWidth*0.05 - context.measureText('0 Hz').width/2, this.canvasHeight-this.scaleHeight/2 + 45 + this.vertAdjust);
+        context.fillText( ((context == this.detailContext) ? window.parameters.DAQminima[2] : window.parameters.DAQminima [0])+unit, this.canvasWidth*0.05 - context.measureText('0'+unit).width/2, this.canvasHeight-this.scaleHeight/2 + 45 + this.vertAdjust);
 
         context.beginPath();
         context.moveTo(this.canvasWidth*0.95-1, this.canvasHeight - this.scaleHeight/2 + 20 + this.vertAdjust);
         context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - this.scaleHeight/2 + 20 + 10 + this.vertAdjust); 
         context.stroke();
 
-        string = ((context == this.detailContext) ? this.maxima[2] : this.maxima [0]);
-        if(string > 1000) string = string/1000 +' kHz';
-        else string = string + ' Hz';
+        string = ((context == this.detailContext) ? window.parameters.DAQmaxima[2] : window.parameters.DAQmaxima [0]);
+        if(string > 1000000) string = string/1000000 + unit;
+        else if(string > 1000) string = string/1000 + unit;
+        else string = string + unit;
         context.fillText(string, this.canvasWidth*0.95 - context.measureText(string).width/2, this.canvasHeight-this.scaleHeight/2 + 45 + this.vertAdjust);
 
         for(i=0; i<3000; i++){
@@ -634,9 +660,13 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         i=0; j=0;
         for(Fkey in window.codex.DAQmap){
             if(window.codex.dataKeys.indexOf(Fkey) == -1){
+                this.dataBus.master[0] = window.codex.DAQmap[Fkey].trigRequestRate;
                 for(Skey in window.codex.DAQmap[Fkey]){
                     if(window.codex.dataKeys.indexOf(Skey) == -1){
                         this.dataBus.collectors[j] = window.codex.DAQmap[Fkey][Skey].trigRequestRate;
+                        this.dataBus.digitizerSummaries[j] = window.codex.DAQmap[Fkey][Skey].trigRequestRate;  //currently the same as the collector level since no filtering.
+                        this.dataBus.collectorLinks[j] = window.codex.DAQmap[Fkey][Skey].dataRate;
+                        this.dataBus.digitizerGroupSummaryLinks[j] = window.codex.DAQmap[Fkey][Skey].dataRate;  //again, redundant with collectors until some busy blocking or something is available
                         j++;
                         for(Pkey in window.codex.DAQmap[Fkey][Skey]){
                             if(window.codex.dataKeys.indexOf(Pkey) == -1){
@@ -678,19 +708,19 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 
             //collectors
             if(this.dataBus.key[cell].length == 2){
-                nextLine += 'Trig Request Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]]['trigRequestRate'] + ' Hz';                
+                nextLine += 'Trig Request Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]]['trigRequestRate'].toFixed(1) + ' Hz';                
             }
 
             //digitizers
             if(this.dataBus.key[cell].length == 3){
-                nextLine += 'Total Trig Request Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]]['trigRequestRate'] + ' Hz<br>';
-                nextLine += 'Total Outbound Data Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]]['dataRate'] + ' bps<br><br>';
+                nextLine += 'Total Trig Request Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]]['trigRequestRate'].toFixed(1) + ' Hz<br>';
+                nextLine += 'Total Outbound Data Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]]['dataRate'].toFixed(1) + ' bps<br><br>';
 
                 for(key in window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]]){
                     if(window.codex.dataKeys.indexOf(key) == -1){
                         nextLine +=  window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]][key]['FSPC'] + ': ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]][key]['detector'];
                         nextLine += '<br>';
-                        nextLine += 'Trig Request Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]][key]['trigRequestRate'] + ' Hz; Data Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]][key]['dataRate'] + ' bps';
+                        nextLine += 'Trig Request Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]][key]['trigRequestRate'].toFixed(1) + ' Hz; Data Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]][key]['dataRate'].toFixed(1) + ' bps';
                         nextLine += '<br><br>'
                     }
                 }
@@ -717,9 +747,6 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         else this.drawDetail(this.nFrames);
     };
 }
-
-
-
 
 
 
