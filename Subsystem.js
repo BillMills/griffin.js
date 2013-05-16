@@ -776,7 +776,7 @@ function HPGeAssets(){
 
     this.fetchHPGeData = function(){
         var i, j, key;
-
+        
         //HPGe + BGO detail
         for(key in this.dataBus.HPGe){
             if(window.JSONPstore['parameters'])
@@ -815,6 +815,7 @@ function HPGeAssets(){
                 }
             }
         }
+        
     };
 
     this.defineHPGeText = function(cell){
@@ -891,6 +892,7 @@ function HPGeAssets(){
                 toolTipContent = '<br>' + title + '<br><br>' + nextLine;
 
             } else {
+                
                 channelName = this.dataBus.HPGeTTmap[(this.cloverShowing-1)*((this.mode=='TIGRESS')? 60:30) + cell];
                 detName = channelName.slice(0,5);
 
@@ -899,6 +901,7 @@ function HPGeAssets(){
                     toolTipContent += this.baseTTtext(this.dataBus.HPGe[channelName].HV, this.dataBus.HPGe[channelName].threshold, this.dataBus.HPGe[channelName].rate);
                 else if(detName.slice(2,3) == 'S')
                     toolTipContent += this.baseTTtext(this.dataBus.HPGe[channelName].HVA, this.dataBus.HPGe[channelName].threshold, this.dataBus.HPGe[channelName].rate, this.dataBus.HPGe[channelName].HVB);
+                
             }
         }
 

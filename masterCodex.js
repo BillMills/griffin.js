@@ -1,161 +1,171 @@
 //masterCodex imports a table from which DAQ and (eventually) HV information can be parsed and mapped.
 
 masterCodex = function(){
-	var i, j, k, m, Fkey, Skey, Pkey, Ckey;
+	var i, Fkey, Skey, Pkey, Ckey;
 
     //Parse DAQ Assets///////////////////////////////////////////////////////////////////////
+	//pull the FSPC table info in from the ODB
+    this.DAQpath = ['/Analyzer/Parameters/Cathode/Config/FSCP[*]', '/Analyzer/Parameters/Cathode/Config/Name[*]', '/Analyzer/Parameters/Cathode/Config/N'];       
+    this.DAQtable = ODBMGet(this.DAQpath);
+    this.FSPC  = this.DAQtable[0];
+    this.Name  = this.DAQtable[1];
+    this.nRows = this.DAQtable[2]; 
 
-	//pull the table info in from the ODB
-    if(window.parameters.devMode == 0){
-        this.DAQpath = ['/Analyzer/Parameters/Cathode/Config/FSCP[*]', '/Analyzer/Parameters/Cathode/Config/Name[*]', '/Analyzer/Parameters/Cathode/Config/N'];
-        
-        //this.DAQdata = ODBMGet(this.DAQpath);
-        //console.log(this.DAQdata[0])
-
-        this.DAQtable = ODBMGet(this.DAQpath);
-
-        this.FSPC  = this.DAQtable[0]; //ODBExtractRecord('/Analyzer/Parameters/Cathode/Config', 'FSCP');//ODBGet('/Analyzer/Parameters/Cathode/config/FSCP[*]');
-        this.Name  = this.DAQtable[1]; //ODBExtractRecord('/Analyzer/Parameters/Cathode/Config', 'Name');///ODBGet('/Analyzer/Parameters/Cathode/config/Name[*]');
-        this.nRows = this.DAQtable[2]; //ODBExtractRecord('/Analyzer/Parameters/Cathode/Config', 'N')//ODBGet('/Analyzer/Parameters/Cathode/config/N');
-
-        //console.log(this.nRows)
-    } else{
-        //put the tables in by hand for now:
-        this.FSPC = [0x0700700,0x0700701,0x0700702,0x0700703,0x0700704,0x0700705,0x0700706,0x0700707,0x0700708,0x0700709,0x0700800,0x0700801,0x0700802,0x0700803,0x0700804,0x0700805,0x0700806,0x0700807,0x0700808,0x0700809,0x0700900,0x0700901,0x0700902,0x0700903,0x0700904,0x0700905,0x0700906,0x0700907,0x0700908,0x0700909,0x0800700,0x0800701,0x0800702,0x0800703,0x0800704,0x0800705,0x0800706,0x0800707,0x0800708,0x0800709,0x0800800,0x0800801,0x0800802,0x0800803,0x0800804,0x0800805,0x0800806,0x0800807,0x0800808,0x0800809,0x0800900,0x0800901,0x0800902,0x0800903,0x0800904,0x0800905,0x0800906,0x0800907,0x0800908,0x0800909,0x0900700,0x0900701,0x0900702,0x0900703,0x0900704,0x0900705,0x0900706,0x0900707,0x0900708,0x0900709];
-        this.Name = ['TPW001P00X','TPW002P00X','TPW003P00X','TPW004P00X','TPW005P00X','TPW006P00X','TPW007P00X','TPW008P00X','TPW009P00X','TPW010P00X','TPW011P00X','TPW012P00X','TPW013P00X','TPW014P00X','TPW015P00X','TPW016P00X','TPW017P00X','TPW018P00X','TPW019P00X','TPW020P00X','TPW021P00X','TPW022P00X','TPW023P00X','TPW024P00X','TPW025P00X','TPW026P00X','TPW027P00X','TPW028P00X','TPW029P00X','TPW030P00X','GRG01BN00A','GRG01GN00A','GRG01RN00A','GRG01WN00A','GRGXXXXXXX','GRG01BN00B','GRG01GN00B','GRG01RN00B','GRG01WN00B','GRGXXXXXXX','GRG02BN00A','GRG02GN00A','GRG02RN00A','GRG02WN00A','GRGXXXXXXX','GRG02BN00B','GRG02GN00B','GRG02RN00B','GRG02WN00B','GRGXXXXXXX','GRG03BN00A','GRG03GN00A','GRG03RN00A','GRG03WN00A','GRGXXXXXXX','GRG03BN00B','GRG03GN00B','GRG03RN00B','GRG03WN00B','GRGXXXXXXX','RFL00XS00X','RFLXXXXXXX','RFLXXXXXXX','RFLXXXXXXX','RFLXXXXXXX','RFLXXXXXXX','RFLXXXXXXX','RFLXXXXXXX','RFLXXXXXXX','RFLXXXXXXX'];
-        this.nRows = 70;
-    }
-
-    //parse out FSCP into F, S, C and P, and decide how many of each thing there are: //////////////////////////////////////////////
+    //parse into DAQ levels, and sort:    
+    this.table = [];
     this.F = [];
     this.S = [];
     this.P = [];
     this.C = [];
-    var Fseen = [];
-    var Sseen = [];
-    var Pseen = [];
-    var Cseen = [];
-    var newToken;
     this.DAQmap = {};
 
-    //loop over all rows, creating a 4-level JS object that reflects the structure of the DAQ:
     for(i=0; i<this.nRows; i++){
         this.F[i] = Math.floor(this.FSPC[i] / 0x10000000);                                          //first digit (on left)
         this.S[i] = Math.floor(this.FSPC[i] / 0x100000) - this.F[i]*0x100;                          //second
         this.P[i] = Math.floor(this.FSPC[i] / 0x100) - this.F[i]*0x100000 - this.S[i]*0x1000;       //third-fifth
         this.C[i] = this.FSPC[i] - this.F[i]*0x10000000 - this.S[i]*0x100000 - this.P[i]*0x100;     //sixth and seventh
+        if(this.S[i] <= 12){
+            this.table.push({
+                F : this.F[i],
+                S : this.S[i],
+                P : this.P[i],
+                C : this.C[i],
+                Name : this.Name[i]
+            })
+        }
+    }
 
-        Fkey = '0x'+this.F[i]+'XXXXXX';
-        Skey = '0x'+this.F[i]+this.S[i]+'XXXXX';
-        Pkey = '0x'+this.F[i]+this.S[i]+'00'+this.P[i]+'XX';
-        Ckey = '0x'+this.F[i]+this.S[i]+'00'+this.P[i]+'0'+this.C[i];
+    function sortFSPC(a, b){
+        if(a.F == b.F){
+            if(a.S == b.S){
+                if(a.P == b.P){
+                    if(a.C == b.C){
+                        return -9999; //this should never happen
+                    } else {
+                        if (a.C > b.C) return 1;
+                        if (a.C < b.C) return -1;
+                        else return 0;                        
+                    }                 
+                } else {
+                    if (a.P > b.P) return 1;
+                    if (a.P < b.P) return -1;
+                    else return 0;                    
+                }
+            } else {
+                if (a.S > b.S) return 1;
+                if (a.S < b.S) return -1;
+                else return 0;                
+            }
+        } else {
+            if (a.F > b.F) return 1;
+            if (a.F < b.F) return -1;
+            else return 0;          
+        }
+    } 
+
+    this.table.sort(sortFSPC);  
+    this.F = []; this.S = []; this.P = []; this.C = []; this.Name = [];
+
+    for(i=0; i<this.table.length; i++){
+        this.F[i] = this.table[i].F;
+        this.S[i] = this.table[i].S;
+        this.C[i] = this.table[i].C;
+        this.P[i] = this.table[i].P;
+        this.Name[i] = this.table[i].Name.slice(0,10).toUpperCase();        
+    }
+    this.nRows = this.table.length;
+
+    //loop over all rows, creating a 4-level object that reflects the structure of the DAQ:
+    for(i=0; i<this.nRows; i++){
+
+        Fkey = '0x'+this.F[i].toString(16).toUpperCase()+'XXXXXX';
+        Skey = '0x'+this.F[i].toString(16).toUpperCase()+this.S[i].toString(16).toUpperCase()+'XXXXX';
+        Pkey = '0x'+this.F[i].toString(16).toUpperCase()+this.S[i].toString(16).toUpperCase()+'00'+this.P[i].toString(16).toUpperCase()+'XX';
+        Ckey = '0x'+this.F[i].toString(16).toUpperCase()+this.S[i].toString(16).toUpperCase()+'00'+this.P[i].toString(16).toUpperCase()+'0'+this.C[i].toString(16).toUpperCase();
 
         if(this.DAQmap[Fkey]){
+            this.DAQmap[Fkey].trigRequestRate = 0;
             if(this.DAQmap[Fkey][Skey]){
+                this.DAQmap[Fkey][Skey].trigRequestRate = 0;
+                this.DAQmap[Fkey][Skey].dataRate = 0;  //how much data is this collector pushing upstream?
                 if(this.DAQmap[Fkey][Skey][Pkey]){
-                    this.DAQmap[Fkey][Skey][Pkey][Ckey] = {'detector' : this.Name[m]};
+                    this.DAQmap[Fkey][Skey][Pkey].trigRequestRate = 0;
+                    this.DAQmap[Fkey][Skey][Pkey].dataRate = 0;  //how much data is this digitizer pushing upstream?
+                    this.DAQmap[Fkey][Skey][Pkey][Ckey] = {'detector' : this.Name[i], 'FSPC' : Ckey, 'trigRequestRate' : 0, 'dataRate' : 0};
                 } else {
                     this.DAQmap[Fkey][Skey][Pkey] = {};
                     i--;
                 }
             } else {
                 this.DAQmap[Fkey][Skey] = {};
-                //console.log(Skey)
                 i--;
             }
         } else {
             this.DAQmap[Fkey] = {};
-            console.log(Fkey)
             i--;
         }
     }
 
-    console.log(this.F)
+    //keep track of all the key names in the DAQmap that contain data directly, and aren't part of the hierarchy, so we can ignore them when traversing the DAQ tree:
+    this.dataKeys = ['detector', 'FSPC', 'trigRequestRate', 'dataRate'];
 
-        /*
-        newToken = 1;
-        for(j=0; j<Fseen.length; j++){
-            if(this.F[i] == Fseen[j]){
-                newToken = 0;
-                break;
-            }
-        }
-        if(newToken == 1) Fseen[Fseen.length] = this.F[i];
-
-        newToken = 1;
-        for(j=0; j<Sseen.length; j++){
-            if(this.S[i] == Sseen[j]){
-                newToken = 0;
-                break;
-            }
-        }
-        if(newToken == 1) Sseen[Sseen.length] = this.S[i];
-
-        newToken = 1;
-        for(j=0; j<Pseen.length; j++){
-            if(this.P[i] == Pseen[j]){
-                newToken = 0;
-                break;
-            }
-        }
-        if(newToken == 1) Pseen[Pseen.length] = this.P[i];
-
-        newToken = 1;
-        for(j=0; j<Cseen.length; j++){
-            if(this.C[i] == Cseen[j]){
-                newToken = 0;
-                break;
-            }
-        }
-        if(newToken == 1) Cseen[Cseen.length] = this.C[i];
-
-    }
-
-    
-    //construct a 4-level key value array that reproduces the DAQ structure:
-    this.DAQmap = {};
-    for(i=0; i<this.F.length; i++){
-        Fkey = '0x'+this.F[i]+'XXXXXX';
-        this.DAQmap[Fkey] = {};
-
-        for(j=0; j<this.S.length; j++){
-            if(this.F[j] == this.F[i]){
-                Skey = '0x'+this.F[i]+this.S[j]+'XXXXX';
-                this.DAQmap[Fkey][Skey] = {}
-
-                for(k=0; k<this.P.length; k++){
-                    if(this.F[k] == this.F[i] && this.S[k] == this.S[j]){
-                        Pkey = '0x'+this.F[i]+this.S[j]+'00'+this.P[k]+'XX';
-                        this.DAQmap[Fkey][Skey][Pkey] = {};
-
-                        for(m=0; m<this.C.length; m++){
-                            if(this.F[m] == this.F[i] && this.S[m] == this.S[j] && this.P[m] == this.P[k]){
-                                Ckey = '0x'+this.F[i]+this.S[j]+'00'+this.P[k]+'0'+this.C[m];
-                                //alert(Pkey)
-                                this.DAQmap[Fkey][Skey][Pkey][Ckey] = {'detector' : this.Name[m]};
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-*/
+    //0x0XXXXXX == currently hard coded to only look at one master, loop over Fkey to generalize
     this.nCollectors = 0;
-    for(Skey in this.DAQmap['0x0XXXXXX']) this.nCollectors++;
+    for(Skey in this.DAQmap['0x0XXXXXX']){
+        if(this.dataKeys.indexOf(Skey) == -1)
+            this.nCollectors++;
+    }
     this.nDigitizers = 0;
     this.nDigitizersPerCollector = [];
     i = 0;
     for(Skey in this.DAQmap['0x0XXXXXX']){
-        this.nDigitizersPerCollector[i] = 0;
-        for(Pkey in this.DAQmap['0x0XXXXXX'][Skey]){ 
-            this.nDigitizers++;
-            this.nDigitizersPerCollector[i]++;
+        if(this.dataKeys.indexOf(Skey) == -1){
+            this.nDigitizersPerCollector[i] = 0;
+            for(Pkey in this.DAQmap['0x0XXXXXX'][Skey]){
+                if(this.dataKeys.indexOf(Pkey) == -1){
+                    this.nDigitizers++;
+                    this.nDigitizersPerCollector[i]++;
+                }
+            }
+            i++;
         }
-        i++;
     }
 
+    //populate this.DAQmap with all the relevant information from the JSONPstore.
+    this.update = function(){
+        
+        var Fkey, Skey, Pkey, Ckey;
+
+        for(Fkey in this.DAQmap){
+            if(this.dataKeys.indexOf(Fkey) == -1){
+                this.DAQmap[Fkey].trigRequestRate = 0;
+                for(Skey in this.DAQmap[Fkey]){
+                    if(this.dataKeys.indexOf(Skey) == -1){
+                        this.DAQmap[Fkey][Skey].trigRequestRate = 0;
+                        this.DAQmap[Fkey][Skey].dataRate = 0;
+                        for(Pkey in this.DAQmap[Fkey][Skey]){
+                            if(this.dataKeys.indexOf(Pkey) == -1){
+                                this.DAQmap[Fkey][Skey][Pkey].trigRequestRate = 0;
+                                this.DAQmap[Fkey][Skey][Pkey].dataRate = 0;
+                                for(Ckey in this.DAQmap[Fkey][Skey][Pkey]){
+                                    if( window.JSONPstore['scalar'][this.DAQmap[Fkey][Skey][Pkey][Ckey].detector] ){
+                                        this.DAQmap[Fkey][Skey][Pkey][Ckey].trigRequestRate = window.JSONPstore['scalar'][this.DAQmap[Fkey][Skey][Pkey][Ckey].detector]['TRIGREQ'];
+                                        this.DAQmap[Fkey][Skey][Pkey][Ckey].dataRate = window.JSONPstore['scalar'][this.DAQmap[Fkey][Skey][Pkey][Ckey].detector]['dataRate'];
+                                        this.DAQmap[Fkey][Skey][Pkey].trigRequestRate += this.DAQmap[Fkey][Skey][Pkey][Ckey].trigRequestRate;
+                                        this.DAQmap[Fkey][Skey][Pkey].dataRate += this.DAQmap[Fkey][Skey][Pkey][Ckey].dataRate;
+                                    }
+                                }
+                                this.DAQmap[Fkey][Skey].trigRequestRate += this.DAQmap[Fkey][Skey][Pkey].trigRequestRate;
+                                this.DAQmap[Fkey][Skey].dataRate += this.DAQmap[Fkey][Skey][Pkey].dataRate;
+                            }
+                        }
+                        this.DAQmap[Fkey].trigRequestRate += this.DAQmap[Fkey][Skey].trigRequestRate;
+                    }
+                }
+            }
+        }
+        
+    };
+
 }
-
-
 

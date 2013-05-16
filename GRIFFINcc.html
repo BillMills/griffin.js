@@ -100,8 +100,10 @@
 
       //define function to fetch from JSONP service
       window.JSONPstore = {};
+      
       function parseResponse(dataWeGotViaJsonp){
-        var i, key, subkey;
+        var key, subkey;
+        /*
         for (key in dataWeGotViaJsonp) {
           if (dataWeGotViaJsonp.hasOwnProperty(key)) {
             window.JSONPstore[key] = [];
@@ -115,6 +117,20 @@
             }
           }
         }
+        */
+
+        for(key in dataWeGotViaJsonp){
+          if (dataWeGotViaJsonp.hasOwnProperty(key)) {
+            window.JSONPstore[key] = {};
+            for(subkey in dataWeGotViaJsonp[key]){
+              if(dataWeGotViaJsonp[key].hasOwnProperty(subkey)){
+                window.JSONPstore[key][subkey.toUpperCase()] = dataWeGotViaJsonp[key][subkey]
+              }
+            }
+          }
+        }
+
+
       } 
     </script>
 

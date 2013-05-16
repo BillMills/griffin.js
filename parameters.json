@@ -1,10 +1,10 @@
 loadParameters({
 				"devMode" : 0,
 				"MIDASlegacyMode" : 0,
-				"ExpName" : "DEMO",
+				"ExpName" : "TIGRESS",
 				"statusURL" : "http://midtig06.triumf.ca:8081/",
 				"topDeployment" : {"HV":0, "Subsystems":1, "DAQ":1, "Clock":0, "Trigger":0},
-				"deployment" : {"BAMBINO":1, "DANTE":1, "DESCANT":1, "HPGe":1, "PACES":1, "SCEPTAR":1, "SHARC":1, "SPICE":1, "TIP":1},
+				"deployment" : {"BAMBINO":0, "DANTE":0, "DESCANT":0, "HPGe":1, "PACES":0, "SCEPTAR":0, "SHARC":0, "SPICE":0, "TIP":0},
 				"wrapper" : "waffleplate",
 				"subdetectorUnit" : ["V", "ADC units", "Hz"],
 				"monitorValues" : ["HV", "Thresholds", "Rate"],
@@ -144,10 +144,12 @@ loadParameters({
 				"TIPmode" : "Wall",
 
 
-				"DAQminima" : [0,0,0,0,0,0,0,0,0],
-				"DAQmaxima" : [1,1,1,1,1,1,1,1,1],
+				//"DAQminima" : [0,0,0,0,0,0,0,0,0],
+				//"DAQmaxima" : [1,1,1,1,1,1,1,1,100000],
+				"DAQminima" : [0, 0, 0, 0],
+				"DAQmaxima" : [1000000, 100000, 1000, 1000],
 
-				"JSONPrepos" : ["http://alphadon.triumf.ca:8092/parameters?jsonp=parseResponse", "http://alphadon.triumf.ca:8091/scalar?jsonp=parseResponse"]
+				"JSONPrepos" : ["http://alphadon.triumf.ca:8092/parameters?jsonp=parseResponse", "http://midtig06.triumf.ca:8091/scalar?jsonp=parseResponse"]
 				})
 
 /*Parameter Dictionary//////////////////////////////////////

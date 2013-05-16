@@ -13,7 +13,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     this.sidebarID = 'DAQsidebar'                //ID of right sidebar to associate with this object
     this.TTcanvasID = 'DAQTTcanvas'
     this.TTdetailCanvasID = 'DAQdetailTTcanvas'
-	this.minima = window.parameters.DAQminima;   //minima of element scalea: [master, master group, master link, collector, digi summary link, digi summary node, digi group link, digi transfer, digitizer]
+	this.minima = window.parameters.DAQminima;   //minima of element scales: [top level view rate, top level transfer, detail view rate, detail view transfer];
 	this.maxima = window.parameters.DAQmaxima;   //as minima.
     this.detailShowing = 0;                      //is the detail canvas showing?
     this.dataBus = new DAQDS();
@@ -53,7 +53,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     insertDOM('p', 'DAQcollectorTitle', '', 'display:inline; color:#999999; margin-right:5px;', 'DAQlinks', '', 'Slave')
     //deploy collector buttons
     for(i=0; i<this.nCollectors; i++){
-        insertDOM('button', 'Collector'+i, 'navLink', '', this.linkWrapperID, function(){swapFade(this.id, window.DAQpointer, 0, 1); window.DAQpointer.detailShowing=1; animateDetail(window.DAQpointer, 0); window.DAQdetail=this.collectorNumber;}, i, '', 'button')
+        insertDOM('button', 'Collector'+i, 'navLink', '', this.linkWrapperID, function(){swapFade(this.id, window.DAQpointer, 0, 1); window.DAQpointer.detailShowing=1; animateDetail(window.DAQpointer, 0); window.DAQdetail=this.collectorNumber;}, i+1, '', 'button')
         $('#Collector'+i).width( ( 0.95*this.canvasWidth - $('#DAQcollectorTitle').width()) / this.nCollectors );
         document.getElementById('Collector'+i).collectorNumber = i;
     }
@@ -175,9 +175,11 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     //links from collectors to master
     this.masterLinkColor = [];
     this.oldMasterLinkColor = [];
-    //collectors
+    //collectors; different colors for top level view and detail view:
     this.collectorColor = [];
     this.oldCollectorColor = [];
+    this.detailCollectorColor = [];
+    this.oldDetailCollectorColor = [];
     //links from digitizer summary node to collector
     this.collectorLinkColor = [];
     this.oldCollectorLinkColor = [];
@@ -203,6 +205,8 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         this.oldMasterLinkColor[i] = '#000000';
         this.collectorColor[i] = '#000000';
         this.oldCollectorColor[i] = '#000000';
+        this.detailCollectorColor[i] = '#000000';
+        this.oldDetailCollectorColor[i] = '#000000';
         this.collectorLinkColor[i] = '#000000';
         this.oldCollectorLinkColor[i] = '#000000';
         this.digiSummaryColor[i] = '#000000';
@@ -246,22 +250,25 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         for(i=0; i<this.nCollectors; i++){
             this.oldMasterLinkColor[i] = this.masterLinkColor[i];
             this.oldCollectorColor[i] = this.collectorColor[i];
+            this.oldDetailCollectorColor[i] = this.detailCollectorColor[i];
             this.oldCollectorLinkColor[i] = this.collectorLinkColor[i];
             this.oldDigiSummaryColor[i] = this.digiSummaryColor[i];
-            this.masterLinkColor[i] = this.parseColor(this.dataBus.collectorLinks[i], 2);
-            this.collectorColor[i] = this.parseColor(this.dataBus.collectors[i], 3);
-            this.collectorLinkColor[i] = this.parseColor(this.dataBus.digitizerGroupSummaryLinks[i],4);
-            this.digiSummaryColor[i] = this.parseColor(this.dataBus.digitizerSummaries[i],5);
+            this.masterLinkColor[i] = this.parseColor(this.dataBus.collectorLinks[i], 1);
+            this.collectorColor[i] = this.parseColor(this.dataBus.collectors[i], 0);
+            this.detailCollectorColor[i] = this.parseColor(this.dataBus.collectors[i], 2);
+            this.collectorLinkColor[i] = this.parseColor(this.dataBus.digitizerGroupSummaryLinks[i],1);
+            this.digiSummaryColor[i] = this.parseColor(this.dataBus.digitizerSummaries[i],0);
+
         }
         for(i=0; i<this.nDigitizerGroups; i++){
             this.oldDigiGroupSummaryColor[i] = this.digiGroupSummaryColor[i];
-            this.digiGroupSummaryColor[i] = this.parseColor(this.dataBus.digitizerGroupLinks[i], 6);
+            this.digiGroupSummaryColor[i] = this.parseColor(this.dataBus.digitizerGroupLinks[i], 3);
         }
         for(i=0; i<this.nDigitizers; i++){
             this.oldDigitizerLinkColor[i] = this.digitizerLinkColor[i];
             this.oldDigitizerColor[i] = this.digitizerColor[i]; 
-            this.digitizerLinkColor[i] = this.parseColor(this.dataBus.digitizerLinks[i], 7);
-            this.digitizerColor[i] = this.parseColor(this.dataBus.digitizers[i], 8); 
+            this.digitizerLinkColor[i] = this.parseColor(this.dataBus.digitizerLinks[i], 3);
+            this.digitizerColor[i] = this.parseColor(this.dataBus.digitizers[i], 2); 
         }
 
         this.tooltip.update();
@@ -293,11 +300,10 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
             this.context.fillText('Collectors', -this.collectorBottom - 0.25*this.collectorWidth,0.7*this.margin);
             this.context.restore();
 
-            fontSize = fitFont(this.context, 'Summary', 2*this.collectorWidth);
+            fontSize = fitFont(this.context, 'Digi Summary', 2*this.collectorWidth);
             this.context.font = fontSize + 'px Raleway';
             this.context.save();
             this.context.rotate(-Math.PI/2);
-            //this.context.fillText('Digi', -(this.digiSummaryBottom + this.digiSummaryTop + this.context.measureText('Digi').width)/2,0.8*this.margin-fontSize);
             this.context.fillText('Digi Summary', -(this.digiSummaryBottom + this.digiSummaryTop + this.context.measureText('Digi Summary').width)/2,0.7*this.margin);
             this.context.restore();  
 
@@ -345,7 +351,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 	};
 
     this.drawScale = function(context){
-        var i, j; 
+        var i, j, string; 
 
         context.clearRect(0, this.canvasHeight - this.scaleHeight + this.vertAdjust, this.canvasWidth, this.canvasHeight);
 
@@ -353,7 +359,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         context.fillStyle = '#999999';
         context.font="24px 'Orbitron'";
         context.fillText('Transfer Rate', this.canvasWidth/2 - context.measureText('Transfer Rate').width/2, this.canvasHeight-this.scaleHeight/2-10 + this.vertAdjust);
-        context.fillText('Trigger Rate', this.canvasWidth/2 - context.measureText('Trigger Rate').width/2, this.canvasHeight-8 + this.vertAdjust);
+        context.fillText('Trigger Rate', this.canvasWidth/2 - context.measureText('Trigger Rate').width/2, this.canvasHeight-20 + this.vertAdjust);
 
         //tickmark;
         context.strokeStyle = '#999999';
@@ -369,8 +375,12 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         context.beginPath();
         context.moveTo(this.canvasWidth*0.95-1, this.canvasHeight - this.scaleHeight/2 + this.vertAdjust);
         context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - this.scaleHeight/2-10 + this.vertAdjust); 
-        context.stroke();      
-        context.fillText('100 Mb/s', this.canvasWidth*0.95 - context.measureText('100 Mb/s').width/2, this.canvasHeight-this.scaleHeight/2-15 + this.vertAdjust);
+        context.stroke();  
+
+        string = ((context == this.detailContext) ? this.maxima[3] : this.maxima [1]);
+        if(string > 1000) string = string/1000 +' kbps';
+        else string = string + ' bps';            
+        context.fillText(string, this.canvasWidth*0.95 - context.measureText(string).width/2, this.canvasHeight-this.scaleHeight/2-15 + this.vertAdjust);
 
         context.beginPath();
         context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2 + 20 + this.vertAdjust);
@@ -381,8 +391,12 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         context.beginPath();
         context.moveTo(this.canvasWidth*0.95-1, this.canvasHeight - this.scaleHeight/2 + 20 + this.vertAdjust);
         context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - this.scaleHeight/2 + 20 + 10 + this.vertAdjust); 
-        context.stroke();      
-        context.fillText('1 MHz', this.canvasWidth*0.95 - context.measureText('1 MHz').width/2, this.canvasHeight-this.scaleHeight/2 + 45 + this.vertAdjust);
+        context.stroke();
+
+        string = ((context == this.detailContext) ? this.maxima[2] : this.maxima [0]);
+        if(string > 1000) string = string/1000 +' kHz';
+        else string = string + ' Hz';
+        context.fillText(string, this.canvasWidth*0.95 - context.measureText(string).width/2, this.canvasHeight-this.scaleHeight/2 + 45 + this.vertAdjust);
 
         for(i=0; i<3000; i++){
             context.fillStyle = redScale(0.001*(i%1000));
@@ -507,7 +521,6 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     };
 
     this.drawDetail = function(context, frame){
-        
         var color, i, j;
 
         var topMargin = 30;
@@ -567,6 +580,13 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
             }
         } else {  //TIGRESS mode:
             for(i=this.prevDigi[clctr]; i<this.prevDigi[clctr] + this.nDigitizersPerCollector[clctr]; i++){
+                //digitizer to collector link:
+                this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.oldDigitizerLinkColor[i]), parseHexColor(this.digitizerLinkColor[i]), frame/this.nFrames);
+                this.detailContext.beginPath();
+                this.detailContext.moveTo(this.margin + ((i-this.prevDigi[clctr])+0.5)*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector[clctr], this.canvasHeight*0.6 + topMargin);
+                this.detailContext.lineTo( this.canvasWidth/2 - this.collectorWidth/2 + ((i-this.prevDigi[clctr])+0.5)*this.collectorWidth/this.nDigitizersPerCollector[clctr], topMargin + this.collectorHeight);
+                this.detailContext.stroke();
+
                 //digitizers:
                 this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.oldDigitizerColor[i]), parseHexColor(this.digitizerColor[i]), frame/this.nFrames);
                 roundBox(this.detailContext, this.margin + ((i-this.prevDigi[clctr])+0.5)*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector[clctr] - 0.02*this.canvasWidth , this.canvasHeight*0.6 + topMargin, 0.04*this.canvasWidth, 0.04*this.canvasWidth, 5);
@@ -575,17 +595,11 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                 //tooltip layer:
                 this.TTdetailContext.fillStyle = 'rgba('+(i+1+2*this.nCollectors)+','+(i+1+2*this.nCollectors)+','+(i+1+2*this.nCollectors)+',1)';
                 this.TTdetailContext.fillRect(Math.round(this.margin + ((i-this.prevDigi[clctr])+0.5)*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector[clctr] - 0.02*this.canvasWidth), Math.round(this.canvasHeight*0.6 + topMargin), Math.round(0.04*this.canvasWidth), Math.round(0.04*this.canvasWidth));
-
-                //digitizer to collector link:
-                this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.oldDigitizerLinkColor[i]), parseHexColor(this.digitizerLinkColor[i]), frame/this.nFrames);
-                this.detailContext.moveTo(this.margin + ((i-this.prevDigi[clctr])+0.5)*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector[clctr], this.canvasHeight*0.6 + topMargin);
-                this.detailContext.lineTo( this.canvasWidth/2 - this.collectorWidth/2 + ((i-this.prevDigi[clctr])+0.5)*this.collectorWidth/this.nDigitizersPerCollector[clctr], topMargin + this.collectorHeight);
-                this.detailContext.stroke();
             }
         }
 
         //parent collector:
-        this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.oldCollectorColor[clctr]), parseHexColor(this.collectorColor[clctr]), frame/this.nFrames);
+        this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.oldDetailCollectorColor[clctr]), parseHexColor(this.detailCollectorColor[clctr]), frame/this.nFrames);
         roundBox(this.detailContext, this.canvasWidth/2 - this.collectorWidth/2, topMargin, this.collectorWidth, this.collectorHeight, 5);
         this.detailContext.fill();
         this.detailContext.stroke();
@@ -596,7 +610,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     };
 
     this.fetchNewData = function(){
-        var i;
+        var i, j, Fkey, Skey, Pkey;
 
         //fake demo data
         this.dataBus.master[0] = -9999//Math.random();
@@ -613,6 +627,27 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         for(i=0; i<this.nDigitizers; i++){
             this.dataBus.digitizerLinks[i] = -9999//Math.random();
             this.dataBus.digitizers[i] = -9999//Math.random();
+        }
+
+        //real data from the codex:
+        window.codex.update();
+        i=0; j=0;
+        for(Fkey in window.codex.DAQmap){
+            if(window.codex.dataKeys.indexOf(Fkey) == -1){
+                for(Skey in window.codex.DAQmap[Fkey]){
+                    if(window.codex.dataKeys.indexOf(Skey) == -1){
+                        this.dataBus.collectors[j] = window.codex.DAQmap[Fkey][Skey].trigRequestRate;
+                        j++;
+                        for(Pkey in window.codex.DAQmap[Fkey][Skey]){
+                            if(window.codex.dataKeys.indexOf(Pkey) == -1){
+                                this.dataBus.digitizers[i] = window.codex.DAQmap[Fkey][Skey][Pkey].trigRequestRate;
+                                this.dataBus.digitizerLinks[i] = window.codex.DAQmap[Fkey][Skey][Pkey].dataRate;
+                                i++;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
     };
@@ -636,19 +671,33 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         var cardIndex;
         var i, key;
 
+        
         nextLine = '';
         if(this.dataBus.key[cell]){
             nextLine = 'FSPC: ' + this.dataBus.key[cell][this.dataBus.key[cell].length-1] + '<br><br>';
 
+            //collectors
+            if(this.dataBus.key[cell].length == 2){
+                nextLine += 'Trig Request Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]]['trigRequestRate'] + ' Hz';                
+            }
+
+            //digitizers
             if(this.dataBus.key[cell].length == 3){
+                nextLine += 'Total Trig Request Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]]['trigRequestRate'] + ' Hz<br>';
+                nextLine += 'Total Outbound Data Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]]['dataRate'] + ' bps<br><br>';
+
                 for(key in window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]]){
-                    nextLine += window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]][key]['detector']
-                    nextLine += '<br>'
+                    if(window.codex.dataKeys.indexOf(key) == -1){
+                        nextLine +=  window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]][key]['FSPC'] + ': ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]][key]['detector'];
+                        nextLine += '<br>';
+                        nextLine += 'Trig Request Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]][key]['trigRequestRate'] + ' Hz; Data Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]][key]['dataRate'] + ' bps';
+                        nextLine += '<br><br>'
+                    }
                 }
             } 
         }
+        
         toolTipContent += nextLine;
-
         toolTipContent += '<br><br>';
         if(this.detailShowing){
             document.getElementById(this.detailTooltip.ttDivID).innerHTML = toolTipContent;

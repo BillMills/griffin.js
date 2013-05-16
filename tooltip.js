@@ -43,6 +43,8 @@ function Tooltip(ttCanvasID, ttDivID, wrapperID, prefix, postfix){
         //only continue if the cursor is actually on a valid channel; x and y>0 suppresses an antialiasing bug:
         if(cellIndex != -1 && x>1 && y>1 && x<that.obj.canvasWidth-1 && y<that.obj.canvasHeight-1){
 
+            document.body.style.cursor = 'pointer';
+
             //establish text:
             that.obj.defineText(cellIndex);
 
@@ -52,7 +54,7 @@ function Tooltip(ttCanvasID, ttDivID, wrapperID, prefix, postfix){
 
             //make the tool tip follow the mouse, but keep it on the screen:
             that.ttDiv.style.top = Math.min(event.pageY - 10, window.innerHeight + window.pageYOffset - that.ttDiv.offsetHeight);
-            if(event.pageX < that.canvas.offsetWidth){
+            if(event.pageX < that.canvas.offsetWidth || window.renderWidth>1500){
                 that.ttDiv.style.right = 'auto'
                 that.ttDiv.style.left = event.pageX  + 10;
             }else{
@@ -66,8 +68,10 @@ function Tooltip(ttCanvasID, ttDivID, wrapperID, prefix, postfix){
             that.oldCellIndex = cellIndex;
             that.allowUpdate = 1;
 
-        } else that.allowUpdate = 0;
-
+        } else {
+            document.body.style.cursor = 'auto';
+            that.allowUpdate = 0;
+        }
     }
 
     //turn the tool tip off if it's outside the canvas:

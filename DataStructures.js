@@ -85,7 +85,7 @@ function cloverDS(nClovers, mode){
 						'HV'		: 0,
 						'threshold' : 0,
 						'rate'		: 0,
-						'index'     : 0,
+						'index'     : 10*j+1+k + 60*(i-1),
 
 						'oldHVcolor' : '#000000',
 						'HVcolor'	 : '#000000',
@@ -326,9 +326,9 @@ TIPDS = function(){
 	for(i=1; i<25; i++){
 		var name = (i<10) ? 'TPW00'+i+'P00X' : 'TPW0'+i+'P00X';
 		this.CsIwall[name] = {
-			'HV'		: 0,
-			'threshold' : 0,
-			'rate' 		: 0,
+			'HV'		: 0.3,
+			'threshold' : 500,
+			'rate' 		: 100*i,
 
 			'oldHVcolor' : '#000000',
 			'HVcolor'	 : '#000000',
@@ -404,23 +404,23 @@ DAQDS = function(){
 		this.key[i] = [Fkey];
 		i++;
 		for(Skey in window.codex.DAQmap[Fkey]){
-			this.key[i] = [Fkey, Skey];
-			i++;
-			j++
+			if(window.codex.dataKeys.indexOf(Skey) == -1){
+				this.key[i] = [Fkey, Skey];
+				i++;
+				j++;
+			}
 		}
 		i += j //leave an index for a summary node to go with each collector node
 		j = 0;
 		//now count through digitizers, starting with the first collector:
 		for(Skey in window.codex.DAQmap[Fkey]){
-			for(Pkey in window.codex.DAQmap[Fkey][Skey]){
-				this.key[i] = [Fkey, Skey, Pkey];
-				i++;
-				/*
-				for(Ckey in window.codex.DAQmap[Fkey][Skey][Pkey]){
-					this.key[i] = [Fkey, Skey, Pkey, Ckey];
-					i++;
+			if(window.codex.dataKeys.indexOf(Skey) == -1){
+				for(Pkey in window.codex.DAQmap[Fkey][Skey]){
+					if(window.codex.dataKeys.indexOf(Pkey) == -1){
+						this.key[i] = [Fkey, Skey, Pkey];
+						i++;
+					}
 				}
-				*/
 			}
 		}
 	}
