@@ -1,5 +1,5 @@
 function DAQ(canvas, detailCanvas, prefix, postfix){
-	var i, j, k, m;
+	var i, j, k, m, nBars, key;
 
 	var that = this;
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
@@ -34,7 +34,17 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     //scale & insert DAQ canvases & navigation//////////////////////////////////////////////////////////////////////////////////////
     this.monitor = document.getElementById(this.monitorID);
     this.canvasWidth = 0.48*$(this.monitor).width();
-    this.canvasHeight = 0.8*$(this.monitor).height();
+    this.collectorWidth = 0.9*(this.canvasWidth-10) / 16;
+    this.collectorHeight = 1.5*this.collectorWidth;
+
+    //height adjusts to accomodate bar chart in master node:
+    nBars = 0;
+    for(key in window.codex.detSummary){
+        if(window.parameters.validDetectors.indexOf(key) != -1)
+            nBars++
+    }
+
+    this.canvasHeight = 0.8*$(this.monitor).height() + (nBars-1)*this.collectorHeight/2;
 
     //navigation
     //top level nav button
@@ -140,8 +150,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 
 
     //drawing parameters//////////////////////////////////////////////
-    this.collectorWidth = 0.9*(this.canvasWidth-10) / 16;
-    this.collectorHeight = 1.5*this.collectorWidth;
+
 
     this.cellColor = '#4C4C4C';
     this.lineweight = 2;
@@ -150,7 +159,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     this.collectorGutter = 0.1*this.collectorWidth;
 
     this.masterTop = 5;
-    this.masterBottom = this.masterTop+1.5*this.collectorHeight;
+    this.masterBottom = this.masterTop+ (1+nBars/2)*this.collectorHeight;
     this.masterGroupLinkTop = this.masterBottom;
     this.masterGroupLinkBottom = this.masterGroupLinkTop + this.collectorHeight/2;
     this.masterLinkTop = this.masterGroupLinkBottom;
@@ -295,8 +304,9 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 	};
 
 	this.draw = function(frame){
-		var color, i, j, k, fontSize;
+		var color, i, j, k, fontSize, headerString;
 
+        this.context.textBaseline = 'alphabetic';
 		if(frame==0){
             this.context.clearRect(0,0, this.canvasWidth, this.canvasHeight - this.scaleHeight - 0.1*this.canvasHeight);
             //labels:
@@ -315,11 +325,11 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
             this.context.fillText('Digi Summary', -(this.digiSummaryBottom + this.digiSummaryTop + this.context.measureText('Digi Summary').width)/2,0.7*this.margin);
             this.context.restore();  
 
-            fontSize = fitFont(this.context, 'Master', 0.8*(this.masterBottom - this.masterTop));
+            fontSize = fitFont(this.context, 'Master', 2*this.collectorWidth);
             this.context.font = fontSize + 'px Raleway';
             this.context.save();
             this.context.rotate(-Math.PI/2);
-            this.context.fillText('Master', -this.masterBottom*0.9,0.7*this.margin);
+            this.context.fillText('Master', -( (this.masterBottom-this.masterTop)/2 + this.context.measureText('Master').width/2 ),0.7*this.margin);
             this.context.restore();
 
         }
@@ -355,6 +365,17 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         //master node:
         color = interpolateColor(parseHexColor(this.oldMasterColor), parseHexColor(this.masterColor), frame/this.nFrames);
         this.drawMasterNode(color);
+
+        //trigger & event builder reporting:
+        headerString = 'TRIGGER: Events: ' + parseFloat(window.codex.triggerRate).toFixed(0) + ' Hz; Data: ' + parseFloat(window.codex.triggerDataRate/1000).toFixed(0) + ' Mb/s  EVENT BUILDER: ' + parseFloat(window.codex.EBrate).toFixed(0) + ' Hz; Data: ' + parseFloat(window.codex.EBdataRate/1000).toFixed(0) + ' Mb/s'
+        this.context.textBaseline = 'top';
+        this.context.fillStyle = '#FFFFFF';
+        this.context.font = fitFont(this.context, headerString, this.canvasWidth*0.8)+'px Raleway';
+        this.context.fillText(headerString, this.canvasWidth/2 - this.context.measureText(headerString).width/2, this.masterTop*2);
+        this.context.textBaseline = 'alphabetic';
+
+        //rate chart
+        rateChart(frame, window.codex.detSummary, this.context, this.collectorHeight, (this.masterBottom - this.masterTop)*0.7, this.canvasWidth*0.6, this.collectorWidth/2 )
 
 	};
 
@@ -746,6 +767,94 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         if(window.onDisplay == this.detailCanvasID || window.freshLoad) animateDetail(this, 0);
         else this.drawDetail(this.nFrames);
     };
+}
+
+
+//horizontal bar chart for DAQ data, x0 y0 represent bottom left corner of rendered area:
+function rateChart(frame, data, context, x0, y0, maxLength, barWidth){
+
+    var fontSize = 0.8*barWidth,
+    row = 0,  //counts up from bottom
+    key, 
+    rateScale = window.parameters.DAQmaxima[0]*5,
+    dataScale = window.parameters.DAQmaxima[1]*5;
+
+    context.font = fontSize+'px Raleway';
+    context.lineWidth = 1;
+
+    //draw chart
+    for(key in data){
+        
+        if(window.parameters.validDetectors.indexOf(key) != -1){  //only accept reports from actual devices listed in the parameters
+            context.fillStyle = '#FFFFFF';
+            context.textBaseline = 'middle';
+            context.font = fontSize+'px Raleway';
+            context.fillText(key+':', 2*x0 - context.measureText(key+':').width, y0 - (barWidth+4)*(row+1/2) );
+            drawTrigBar(key, frame);
+            drawDataBar(key, frame);
+
+            row++;
+        }
+        
+    }
+
+    function drawTrigBar(key, frame){
+        var length = data[key].prevTrigReqRate/rateScale*maxLength + (data[key].totalTrigRequestRate/rateScale - data[key].prevTrigReqRate/rateScale)*maxLength*frame/window.DAQpointer.nFrames;
+        console.log()
+        context.strokeStyle = '#00FF00';
+        context.fillStyle = '#222222';
+        context.fillRect(2.1*x0, y0 - (barWidth+4)*(row+1), length, barWidth/2-2);
+        context.strokeRect(2.1*x0, y0 - (barWidth+4)*(row+1), length, barWidth/2-2);
+        context.fillStyle = '#FFFFFF';
+        context.font = fontSize*0.6+'px Raleway';
+        context.fillText( (data[key].totalTrigRequestRate/1000).toFixed(0) + ' kHz', 2.1*x0 + length + 5,  y0 - (barWidth+4)*(row+1) + barWidth/4 - 1);
+    }
+
+    function drawDataBar(key, frame){
+        var length = data[key].prevDataRate/dataScale*maxLength + (data[key].totalDataRate/dataScale - data[key].prevDataRate/dataScale)*maxLength*frame/window.DAQpointer.nFrames;
+        context.strokeStyle = '#0000FF';
+        context.fillStyle = '#222222';
+        context.fillRect(2.1*x0, y0 - (barWidth+4)*(row+1) + barWidth/2+2, length, barWidth/2-2);
+        context.strokeRect(2.1*x0, y0 - (barWidth+4)*(row+1) + barWidth/2+2, length, barWidth/2-2);
+        context.fillStyle = '#FFFFFF';
+        context.font = fontSize*0.6+'px Raleway';
+        context.fillText( (data[key].totalDataRate/1000).toFixed(0) + ' kbps', 2.1*x0 + length + 5,  y0 - (barWidth+4)*(row+1) + barWidth/2+2 + barWidth/4 - 1);
+    }    
+
+    //draw decorations:
+    context.strokeStyle = '#FFFFFF';
+    context.fillStyle = '#FFFFFF';
+    context.beginPath();
+    context.moveTo(2.1*x0-2, y0 - (barWidth+4)*row);
+    context.lineTo(2.1*x0-2, y0);
+    context.lineTo(2.1*x0+maxLength, y0);
+    context.lineTo(2.1*x0+maxLength, y0+5);
+    context.stroke();
+    context.moveTo(2.1*x0-2, y0);
+    context.lineTo(2.1*x0-2, y0+5);
+    context.stroke();
+
+    context.font = fontSize*0.7+'px Raleway';
+    //trig request labels
+    context.fillText('Trig Requests: 0 kHz', 2.1*x0-2 - context.measureText('Trig Requests: 0 kHz').width/2, y0+5+fontSize*0.7 );
+    context.fillText('Trig Requests: '+(rateScale/1000).toFixed(0)+' kHz', 2.1*x0+maxLength - context.measureText('Trig Requests: '+(rateScale/1000).toFixed(0)+' kHz').width/2, y0+5+fontSize*0.7 );
+    context.fillStyle = '#222222';
+    context.strokeStyle = '#00FF00';
+    context.fillRect(2.1*x0+maxLength - context.measureText('Trig Requests: '+(rateScale/1000).toFixed(0)+' kHz').width/2 - fontSize*0.7*1.5, y0+5+fontSize*0.35, fontSize*0.7, fontSize*0.7);
+    context.strokeRect(2.1*x0+maxLength - context.measureText('Trig Requests: '+(rateScale/1000).toFixed(0)+' kHz').width/2 - fontSize*0.7*1.5, y0+5+fontSize*0.35, fontSize*0.7, fontSize*0.7);
+    context.fillRect(2.1*x0-2 - context.measureText('Trig Requests: 0 kHz').width/2 - fontSize*0.7*1.5, y0+5+fontSize*0.35, fontSize*0.7, fontSize*0.7);
+    context.strokeRect(2.1*x0-2 - context.measureText('Trig Requests: 0 kHz').width/2 - fontSize*0.7*1.5, y0+5+fontSize*0.35, fontSize*0.7, fontSize*0.7);
+
+    //data rate labels, left aligned with trig request labels
+    context.fillStyle = '#FFFFFF';
+    context.fillText('Data Rate: 0 kbps', 2.1*x0-2 - context.measureText('Trig Requests: 0 kHz').width/2, y0+10+2*fontSize*0.7 );
+    context.fillText('Data Rate: '+(dataScale/1000).toFixed(0)+' kbps', 2.1*x0+maxLength - context.measureText('Trig Requests: '+(rateScale/1000).toFixed(0)+' kHz').width/2, y0+10+2*fontSize*0.7 );
+    context.fillStyle = '#222222';
+    context.strokeStyle = '#0000FF';
+    context.fillRect(2.1*x0+maxLength - context.measureText('Trig Requests: '+(rateScale/1000).toFixed(0)+' kHz').width/2 - fontSize*0.7*1.5, y0+10+fontSize*1.05, fontSize*0.7, fontSize*0.7);
+    context.strokeRect(2.1*x0+maxLength - context.measureText('Trig Requests: '+(rateScale/1000).toFixed(0)+' kHz').width/2 - fontSize*0.7*1.5, y0+10+fontSize*1.05, fontSize*0.7, fontSize*0.7);
+    context.fillRect(2.1*x0-2 - context.measureText('Trig Requests: 0 kHz').width/2 - fontSize*0.7*1.5, y0+10+fontSize*1.05, fontSize*0.7, fontSize*0.7);
+    context.strokeRect(2.1*x0-2 - context.measureText('Trig Requests: 0 kHz').width/2 - fontSize*0.7*1.5, y0+10+fontSize*1.05, fontSize*0.7, fontSize*0.7);
 }
 
 

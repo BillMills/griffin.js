@@ -18,6 +18,7 @@ masterCodex = function(){
     this.P = [];
     this.C = [];
     this.DAQmap = {};
+    this.detSummary = {};
 
     for(i=0; i<this.nRows; i++){
         this.F[i] = Math.floor(this.FSPC[i] / 0x10000000);                                          //first digit (on left)
@@ -92,6 +93,7 @@ masterCodex = function(){
                     this.DAQmap[Fkey][Skey][Pkey].trigRequestRate = 0;
                     this.DAQmap[Fkey][Skey][Pkey].dataRate = 0;  //how much data is this digitizer pushing upstream?
                     this.DAQmap[Fkey][Skey][Pkey][Ckey] = {'detector' : this.Name[i], 'FSPC' : Ckey, 'trigRequestRate' : 0, 'dataRate' : 0};
+                    this.detSummary[this.Name[i].slice(0,3)] = {'totalTrigRequestRate' : 0, 'prevTrigReqRate' : 0, 'totalDataRate' : 0, 'prevDataRate' : 0};
                 } else {
                     this.DAQmap[Fkey][Skey][Pkey] = {};
                     i--;
@@ -134,8 +136,27 @@ masterCodex = function(){
     //populate this.DAQmap with all the relevant information from the JSONPstore.
     this.update = function(){
         
-        var Fkey, Skey, Pkey, Ckey;
+        var key, Fkey, Skey, Pkey, Ckey, ODBpaths, data;
 
+        //get summary data from ODB
+        ODBpaths = ['/Equipment/Trigger/Statistics/Events per sec.', '/Equipment/Trigger/Statistics/kBytes per sec.', '/Equipment/Event Builder/Statistics/Events per sec.', '/Equipment/Event Builder/Statistics/kBytes per sec.']
+        data = ODBMGet(ODBpaths);
+        this.triggerRate = parseFloat(data[0]).toFixed(1);
+        this.triggerDataRate = parseFloat(data[1]).toFixed(1);
+        this.EBrate = parseFloat(data[2]).toFixed(1);
+        this.EBdataRate = parseFloat(data[3]).toFixed(1);
+
+
+        //zero out the detector totals from last iteration:
+        for(key in this.detSummary){
+            this.detSummary[key].prevTrigReqRate = this.detSummary[key].totalTrigRequestRate;
+            this.detSummary[key].totalTrigRequestRate = 0;
+
+            this.detSummary[key].prevDataRate = this.detSummary[key].totalDataRate;
+            this.detSummary[key].totalDataRate = 0;            
+        }
+
+        //map data from the JSONP store into the DAQ object, summing rates as we move upstream:
         for(Fkey in this.DAQmap){
             if(this.dataKeys.indexOf(Fkey) == -1){
                 this.DAQmap[Fkey].trigRequestRate = 0;
@@ -153,6 +174,8 @@ masterCodex = function(){
                                         this.DAQmap[Fkey][Skey][Pkey][Ckey].dataRate = window.JSONPstore['scalar'][this.DAQmap[Fkey][Skey][Pkey][Ckey].detector]['dataRate'];
                                         this.DAQmap[Fkey][Skey][Pkey].trigRequestRate += this.DAQmap[Fkey][Skey][Pkey][Ckey].trigRequestRate;
                                         this.DAQmap[Fkey][Skey][Pkey].dataRate += this.DAQmap[Fkey][Skey][Pkey][Ckey].dataRate;
+                                        this.detSummary[ this.DAQmap[Fkey][Skey][Pkey][Ckey].detector.slice(0,3) ].totalTrigRequestRate += this.DAQmap[Fkey][Skey][Pkey][Ckey].trigRequestRate;
+                                        this.detSummary[ this.DAQmap[Fkey][Skey][Pkey][Ckey].detector.slice(0,3) ].totalDataRate += this.DAQmap[Fkey][Skey][Pkey][Ckey].dataRate;
                                     }
                                 }
                                 this.DAQmap[Fkey][Skey].trigRequestRate += this.DAQmap[Fkey][Skey][Pkey].trigRequestRate;
@@ -163,8 +186,7 @@ masterCodex = function(){
                     }
                 }
             }
-        }
-        
+        }   
     };
 
 }

@@ -505,9 +505,22 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                         }
                         cornerX = this.leftEdge[window.HVview] + cornerX*this.cellSide[window.HVview];
                         this.context[window.HVview].fillRect(cornerX, cornerY,this.cellSide[window.HVview]*Math.max(window.parameters.moduleSizes[window.HVview][j],1),this.cellSide[window.HVview]);
+
                     }
                 }
             }
+
+            /*
+            //highlight cell in focus:
+            this.context[window.HVview].strokeStyle = '#FFFFFF';
+            this.context[window.HVview].lineWidth = 3;
+            this.context[window.HVview].strokeRect(this.leftEdge[window.HVview],0,this.cellSide[window.HVview],this.cellSide[window.HVview])
+            //this.context[window.HVview].strokeRect(this.leftEdge[window.HVview] + this.cellSide[window.HVview]*this.chx, this.cellSide[window.HVview]*this.chy, this.cellSide[window.HVview]*Math.max(window.parameters.moduleSizes[window.HVview][j],1),this.cellSide[window.HVview]);
+            this.context[window.HVview].stroke();
+            this.context[window.HVview].strokeStyle = '#000000';
+            this.context[window.HVview].lineWidth = 1;
+            */
+                        
 
             this.drawWaffleDecorations(frame);
             this.drawWaffleLabels();

@@ -375,6 +375,7 @@ TIPDS = function(){
 
 
 DAQDS = function(){
+
 	//data arrays:
 	this.master = [];
 	this.collectorGroups = [];
