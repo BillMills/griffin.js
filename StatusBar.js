@@ -73,61 +73,51 @@ function StatusBar(wrapper){
     this.update = function(){
         if(!window.parameters.MIDASlegacyMode){
             var i;
-        	//experiment title
-    	   if(window.parameters.devMode) this.expTitle = 'Offline Demo Experiment'; 
-            else this.expTitle = ODBGet('/Experiment/Name') + ' Experiment';
+        	//experiment title 
+            this.expTitle = window.localODB.expTitle + ' Experiment';
         	document.getElementById(this.titleID).innerHTML = this.expTitle;
 
-    	   //run #
-        	if(window.parameters.devMode) var runInfo = 'Run #1337'; 
-            else var runInfo = 'Run # '+ODBGet('/Runinfo/Run number');
+    	    //run # 
+            this.runInfo = 'Run # '+window.localODB.runInfo;
 
         	//run state
-        	runInfo += ': ';
-    	   if(window.parameters.devMode) var runstate = 3; 
-            else var runstate = ODBGet('/Runinfo/State');
-        	if(runstate == 1){ 
-                runInfo += 'Stopped';
+        	this.runInfo += ': ';
+            this.runstate = window.localODB.runstate;
+        	if(this.runstate == 1){ 
+                this.runInfo += 'Stopped';
                 $('#statusHeader').css('border-color', '#FF3333');
             }
-        	else if(runstate == 2){
-                runInfo += 'Paused';
+        	else if(this.runstate == 2){
+                this.runInfo += 'Paused';
                 $('#statusHeader').css('border-color', '#FFFF33');   
             }
-        	else if (runstate == 3){
-                runInfo += 'Live';
+        	else if (this.runstate == 3){
+                this.runInfo += 'Live';
                 $('#statusHeader').css('border-color', '#66FF66');
             }
-        	else runInfo += 'State Unknown';
+        	else this.runInfo += 'State Unknown';
         
-    	   //run time
-        	var startInfo = 'Start: ';
-        	if(window.parameters.devMode) startInfo += '00:00:00 January 1, 1970'
-            else startInfo += ODBGet('/Runinfo/Start time');
-        	var elapsed;
-        	if(runstate == 1){
-    	   	    elapsed = 'Stop: '
-                if(window.parameters.devMode) elapsed += '00:00:00 January 1, 1970'; 
-                else elapsed += ODBGet('Runinfo/Stop time');
+    	    //run time
+        	this.startInfo = 'Start: '+window.localODB.startInfo;
+        	this.elapsed;
+        	if(this.runstate == 1){
+    	   	    this.elapsed = 'Stop: '+window.localODB.elapsed;
     	    } else {
-                elapsed = 'Up: ';
-                if(window.parameters.devMode) var binaryStart = 0; 
-                else var binaryStart = ODBGet('Runinfo/Start time binary');
+                this.elapsed = 'Up: ';
+                this.binaryStart = window.localODB.binaryStart;
                 var date = new Date(); 
                 var now = date.getTime() / 1000;
-                var uptime = now - binaryStart;
+                var uptime = now - this.binaryStart;
                 var hours = Math.floor(uptime / 3600);
                 var minutes = Math.floor( (uptime%3600)/60 );
                 var seconds = Math.floor(uptime%60);
-                elapsed += hours + ' h, ' + minutes + ' m, ' + seconds +' s'
+                this.elapsed += hours + ' h, ' + minutes + ' m, ' + seconds +' s'
   		    }
 
             //run comment
-            var comment;
-            if(window.parameters.devMode) comment = 'No Comment';
-            else comment = ODBGet('/Experiment/Run Parameters/Comment');
+            this.comment = window.localODB.comment;
 
-            document.getElementById(this.runInfoID).innerHTML = '<br>' + runInfo + '<br>' + startInfo + '<br>' + elapsed + '<br><br>' + comment + '<br><br>';
+            document.getElementById(this.runInfoID).innerHTML = '<br>' + this.runInfo + '<br>' + this.startInfo + '<br>' + this.elapsed + '<br><br>' + this.comment + '<br><br>';
         }
 
         //JSONP monitor:

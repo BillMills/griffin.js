@@ -61,6 +61,9 @@ function masterLoop(callMyself){
     var i,j;
 	if(!document.webkitHidden && !document.mozHidden){
 
+        //one big ODB grab:
+        ODBgrab();
+
         //update all assets
         //status bar
         window.statusBar.update();
@@ -138,6 +141,30 @@ function detectCards(){
 function forceUpdate(){
     clearTimeout(window.loop);
     startLoop(1);
+}
+
+//handle everybody's interval-based fetch from the ODB in one network request:
+function ODBgrab(){
+    var paths = [], 
+    data;
+
+    paths[0] = '/Experiment/Name';
+    paths[1] = '/Runinfo/Run number';
+    paths[2] = '/Runinfo/State';
+    paths[3] = '/Runinfo/Start time';
+    paths[4] = 'Runinfo/Stop time';
+    paths[5] = 'Runinfo/Start time binary';
+    paths[6] = '/Experiment/Run Parameters/Comment';
+
+    data = ODBMGet(paths);
+
+    window.localODB.expTitle = data[0];
+    window.localODB.runInfo = data[1];
+    window.localODB.runstate = data[2];
+    window.localODB.startInfo = data[3];
+    window.localODB.elapsed = data[4];
+    window.localODB.binaryStart = data[5];
+    window.localODB.comment = data[6];    
 }
 
 //handle pulling the initial config parameters out of the ODB and replacing the default values in the JSONP-loaded parameter store:

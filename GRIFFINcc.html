@@ -89,36 +89,11 @@
       window.Gatekeeper = new gatekeeper();
       window.JSONPstatus = [];
 
-      function loadParameters(dataWeGotViaJsonp){
-        var key;
-        for (key in dataWeGotViaJsonp) {
-          if (dataWeGotViaJsonp.hasOwnProperty(key)) {
-            window.parameters[key] = dataWeGotViaJsonp[key];
-          }
-        }
-      }
-
       //define function to fetch from JSONP service
       window.JSONPstore = {};
       
       function parseResponse(dataWeGotViaJsonp){
         var key, subkey;
-        /*
-        for (key in dataWeGotViaJsonp) {
-          if (dataWeGotViaJsonp.hasOwnProperty(key)) {
-            window.JSONPstore[key] = [];
-            for(i=0; i<dataWeGotViaJsonp[key].length; i++){
-              window.JSONPstore[key][window.JSONPstore[key].length] = {};
-              for(subkey in dataWeGotViaJsonp[key][i]){
-                if(dataWeGotViaJsonp[key][i].hasOwnProperty(subkey)){
-                  window.JSONPstore[key][i][subkey] = dataWeGotViaJsonp[key][i][subkey];
-                }
-              }
-            }
-          }
-        }
-        */
-
         for(key in dataWeGotViaJsonp){
           if (dataWeGotViaJsonp.hasOwnProperty(key)) {
             window.JSONPstore[key] = {};
@@ -142,20 +117,12 @@
           drawSpinner('spinner');
         },
         active: function() {
-          var initScript  = document.createElement('script');
-          initScript.setAttribute('src', 'parameters.json');
-          initScript.onload = function(){
-            loadJSONP(window.Gatekeeper, "main");
-          }
-          document.head.appendChild(initScript);
+          loadParameters();
+          loadJSONP(window.Gatekeeper, "main");
         },
         inactive: function() {
-          var initScript  = document.createElement('script');
-          initScript.setAttribute('src', 'parameters.json');
-          initScript.onload = function(){
-            loadJSONP(window.Gatekeeper, "main");
-          }
-          document.head.appendChild(initScript);
+          loadParameters();
+          loadJSONP(window.Gatekeeper, "main");
         }
       };
       //thx paul:
@@ -178,6 +145,10 @@
 
         //overwrite default parameters with custom ones:
         fetchCustomParameters();
+
+        //load things from the ODB
+        window.localODB = {};
+        ODBgrab();
 
         //let the MIDAS status link appear:
         $('#MIDASstatusLink').css('opacity', 1);

@@ -800,7 +800,8 @@ function rateChart(frame, data, context, x0, y0, maxLength, barWidth){
 
     function drawTrigBar(key, frame){
         var length = data[key].prevTrigReqRate/rateScale*maxLength + (data[key].totalTrigRequestRate/rateScale - data[key].prevTrigReqRate/rateScale)*maxLength*frame/window.DAQpointer.nFrames;
-        console.log()
+        if(length > maxLength) length = maxLength;
+        if(length < 0) length = 0;
         context.strokeStyle = '#00FF00';
         context.fillStyle = '#222222';
         context.fillRect(2.1*x0, y0 - (barWidth+4)*(row+1), length, barWidth/2-2);
@@ -812,6 +813,8 @@ function rateChart(frame, data, context, x0, y0, maxLength, barWidth){
 
     function drawDataBar(key, frame){
         var length = data[key].prevDataRate/dataScale*maxLength + (data[key].totalDataRate/dataScale - data[key].prevDataRate/dataScale)*maxLength*frame/window.DAQpointer.nFrames;
+        if(length > maxLength) length = maxLength;
+        if(length < 0) length = 0;
         context.strokeStyle = '#0000FF';
         context.fillStyle = '#222222';
         context.fillRect(2.1*x0, y0 - (barWidth+4)*(row+1) + barWidth/2+2, length, barWidth/2-2);

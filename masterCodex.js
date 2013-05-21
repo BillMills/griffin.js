@@ -186,7 +186,8 @@ masterCodex = function(){
                     }
                 }
             }
-        }   
+        }
+
     };
 
 }
