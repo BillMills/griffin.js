@@ -247,7 +247,7 @@ function HPGe(){
     };
 
     this.fetchNewData = function(){
-        //this.fetchHPGeData();
+        this.fetchHPGeData();
     };
 
     //do an initial populate

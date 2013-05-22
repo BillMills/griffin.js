@@ -786,8 +786,8 @@ function HPGeAssets(){
         for(key in this.dataBus.HPGe){
             if(window.JSONPstore['parameters'])
                 this.dataBus.HPGe[key]['threshold'] = window.JSONPstore['parameters'][key]['threshold'];
-            if(window.JSONPstore['scalar'])
-                this.dataBus.HPGe[key]['rate'] = window.JSONPstore['scalar'][key]['rate'];            
+            if(window.JSONPstore['scalar'][key])
+                this.dataBus.HPGe[key]['rate'] = window.JSONPstore['scalar'][key]['TRIGREQ'];
         }
 
         //HPGe + BGO summary

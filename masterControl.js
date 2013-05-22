@@ -148,6 +148,7 @@ function ODBgrab(){
     var paths = [], 
     data;
 
+    //sidebar
     paths[0] = '/Experiment/Name';
     paths[1] = '/Runinfo/Run number';
     paths[2] = '/Runinfo/State';
@@ -155,16 +156,27 @@ function ODBgrab(){
     paths[4] = 'Runinfo/Stop time';
     paths[5] = 'Runinfo/Start time binary';
     paths[6] = '/Experiment/Run Parameters/Comment';
+    //DAQ
+    paths[7] = '/Equipment/Trigger/Statistics/Events per sec.';
+    paths[8] = '/Equipment/Trigger/Statistics/kBytes per sec.';
+    paths[9] = '/Equipment/Event Builder/Statistics/Events per sec.';
+    paths[10] = '/Equipment/Event Builder/Statistics/kBytes per sec.';
 
     data = ODBMGet(paths);
 
+    //sidebar
     window.localODB.expTitle = data[0];
     window.localODB.runInfo = data[1];
     window.localODB.runstate = data[2];
     window.localODB.startInfo = data[3];
     window.localODB.elapsed = data[4];
     window.localODB.binaryStart = data[5];
-    window.localODB.comment = data[6];    
+    window.localODB.comment = data[6];
+    //DAQ
+    window.localODB.TrigEPS = data[7];
+    window.localODB.TrigDPS = data[8];
+    window.localODB.EBEPS = data[9];
+    window.localODB.EBDPS = data[10];  
 }
 
 //handle pulling the initial config parameters out of the ODB and replacing the default values in the JSONP-loaded parameter store:

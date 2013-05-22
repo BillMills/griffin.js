@@ -139,12 +139,12 @@ masterCodex = function(){
         var key, Fkey, Skey, Pkey, Ckey, ODBpaths, data;
 
         //get summary data from ODB
-        ODBpaths = ['/Equipment/Trigger/Statistics/Events per sec.', '/Equipment/Trigger/Statistics/kBytes per sec.', '/Equipment/Event Builder/Statistics/Events per sec.', '/Equipment/Event Builder/Statistics/kBytes per sec.']
-        data = ODBMGet(ODBpaths);
-        this.triggerRate = parseFloat(data[0]).toFixed(1);
-        this.triggerDataRate = parseFloat(data[1]).toFixed(1);
-        this.EBrate = parseFloat(data[2]).toFixed(1);
-        this.EBdataRate = parseFloat(data[3]).toFixed(1);
+        //ODBpaths = ['/Equipment/Trigger/Statistics/Events per sec.', '/Equipment/Trigger/Statistics/kBytes per sec.', '/Equipment/Event Builder/Statistics/Events per sec.', '/Equipment/Event Builder/Statistics/kBytes per sec.']
+        //data = ODBMGet(ODBpaths);
+        this.triggerRate = parseFloat(window.localODB.TrigEPS).toFixed(1);
+        this.triggerDataRate = parseFloat(window.localODB.TrigDPS).toFixed(1);
+        this.EBrate = parseFloat(window.localODB.EBEPS).toFixed(1);
+        this.EBdataRate = parseFloat(window.localODB.EBDPS).toFixed(1);
 
 
         //zero out the detector totals from last iteration:
