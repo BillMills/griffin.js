@@ -118,11 +118,11 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                                 y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;
                                 digiGroupClicked = that.findCell(x,y);
                                 //draw and swap out if user clicked on a valid clover
-                                if(digiGroupClicked > that.nCollectors){
-                                    window.DAQdetail = digiGroupClicked - that.nCollectors - 1;
+                                if(digiGroupClicked > 0){
+                                    window.DAQdetail = (digiGroupClicked-1)%that.nCollectors;
                                     that.drawDetail(that.detailContext, that.nFrames);
                                     that.detailShowing = 1;
-                                    swapFade('Collector'+(digiGroupClicked - that.nCollectors - 1), that, 0, 1)
+                                    swapFade('Collector'+(window.DAQdetail), that, 0, 1)
                                 }
                                 //set up scale range dialogue:
                                 if(y>that.canvasHeight - that.scaleHeight){
@@ -761,7 +761,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     };
 
     this.animate = function(){
-        if(window.onDisplay == this.canvasID) animate(this, 0);
+        if(window.onDisplay == this.canvasID || window.freshLoad) animate(this, 0);
         else this.draw(this.nFrames);
 
         if(window.onDisplay == this.detailCanvasID || window.freshLoad) animateDetail(this, 0);

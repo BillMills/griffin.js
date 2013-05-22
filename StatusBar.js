@@ -162,6 +162,13 @@ function StatusBar(wrapper){
                 //change some colors - tags don't have IDs so easiest to do this as text:
                 response = response.replace(/#E0E0FF/g, '#333333');
 
+                //replace some font colors to make them legible against their backgrounds
+                response = response.replace(/bgcolor="#00FF00"/g, 'bgcolor="#00FF00" style="color:#000000;"'); //green backgrounds
+                response = response.replace(/bgcolor="00FF00"/g, 'bgcolor="#00FF00" style="color:#000000;"'); //green backgrounds, sometimes MIDAS leaves off the hash...
+                response = response.replace(/bgcolor="#FFFF00"/g, 'bgcolor="#FFFF00" style="color:#000000;"'); //yellow backgrounds
+                response = response.replace(/bgcolor="FFFF00"/g, 'bgcolor="#FFFF00" style="color:#000000;"'); //yellow backgrounds, sometimes MIDAS leaves off the hash...
+                response = response.replace(/bgcolor=#FFFF00/g, 'bgcolor="#FFFF00" style="color:#000000;"'); //yellow backgrounds, sometimes MIDAS leaves off the quotes...
+
                 //stick the result in the TT - html parsing happens now:
                 document.getElementById('leftSidebarTT').innerHTML = response;
 
@@ -174,6 +181,7 @@ function StatusBar(wrapper){
                         rowNode.parentNode.removeChild(rowNode);                    
                     }
                 }
+
                 $('#leftSidebarTT').css('padding', 0);
 
             });
