@@ -203,29 +203,7 @@ scalepickr = function(scale, palette){
     if(H<0) H=0;
     var R, G, B;
     var start0, start1, start2, start3, start4, start5;
-    if(palette == 'thermalScope'){
-        start0 = [0,0,0];
-        start1 = [0x5C,0,0xB8];
-        start2 = [255,0,0];
-        start3 = [255,0x66,0];
-        start4 = [255,255,0];
-        start5 = [255,255,255];
-    } else if(palette == 'rainbow'){
-        start0 = [255,0,0];
-        start1 = [255,255,0];
-        start2 = [0,255,0];
-        start3 = [0,255,255];
-        start4 = [0,0,255];
-        start5 = [255,0,255];
-        H = -1*(H-5);
-    } else if(palette == 'twighlight'){
-        start0 = [0,0,0];
-        start1 = [0,0,0x52];
-        start2 = [0xE6,0,0x5C];        
-        start3 = [255,0,0];
-        start4 = [255,0x66,0];
-        start5 = [255,255,255];
-    } else if (palette == 'Sunset'){
+    if (palette == 'Sunset'){
         start0 = [0,0,0];
         start1 = [0,0,0x52];
         start2 = [0xE6,0,0x5C];
@@ -247,7 +225,14 @@ scalepickr = function(scale, palette){
         start3 = [0x88,0x88,0x88];        
         start4 = [0xBB,0xBB,0xBB];
         start5 = [0xFF,0xFF,0xFF];
-    }
+    } else if (palette == 'Red Scale'){
+        start0 = [0x00,0x00,0x00];
+        start1 = [0x33,0x00,0x00];
+        start2 = [0x66,0x00,0x00];
+        start3 = [0x99,0x00,0x00];        
+        start4 = [0xCC,0x00,0x00];
+        start5 = [0xFF,0x00,0x00];
+    } 
     if(H>=0 && H<1){
         R = start0[0] + Math.round(H*(start1[0]-start0[0]));
         G = start0[1] + Math.round(H*(start1[1]-start0[1]));

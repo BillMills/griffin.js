@@ -81,7 +81,7 @@ function parameterDialogue(devName, scales, currentColorScale){
     var i, j, ODBpath;
 
     //insert div and title
-    insertDOM('div', 'tempDiv', '', 'z-index:10; position:absolute; text-align:center; opacity:0; transition:opacity 0.5s; -moz-transition:opacity 0.5s; -webkit-transition:opacity 0.5s; background:rgba(0,0,0,0.7); border: 5px solid; border-radius:10px;', 'waffleplate', '', '', '');
+    insertDOM('div', 'tempDiv', '', 'z-index:10; position:absolute; text-align:center; opacity:0; transition:opacity 0.5s; -moz-transition:opacity 0.5s; -webkit-transition:opacity 0.5s; background:rgba(0,0,0,0.8); border: 5px solid; border-radius:10px;', 'waffleplate', '', '', '');
     var dialogue = document.getElementById('tempDiv');
     insertDOM('h2', 'dialogHeader', '', 'position:relative; font:24px Orbitron; top:10px; margin-bottom:6%', 'tempDiv', '', 'Adjust '+devName+' Scale');
 
@@ -112,7 +112,7 @@ function parameterDialogue(devName, scales, currentColorScale){
     //insert color scale picker:
     if(currentColorScale){
         insertDOM('p', 'colorPickerLabel', '', 'display:inline', 'dialogueValues', '', '<br><br>Palette: ');
-        var colorScales = ['Greyscale', 'ROOT Rainbow', 'Sunset'];
+        var colorScales = window.parameters.colorScale;
         insertDOM('select', 'colorOptions', '', '', 'dialogueValues', '', '');
         var colorDD = document.getElementById('colorOptions');
         var option = [];
@@ -141,9 +141,14 @@ function parameterDialogue(devName, scales, currentColorScale){
                 ODBSet(scales[i][5], scales[i][2]);
                 fetchCustomParameters(); //pushes back to the parameter store
             }
-            //color scale picker currently only for subdetectors
-            if(currentColorScale)
-                window.parameters.colorScale[window.subdetectorView] = colorDD.value;
+            
+            if(currentColorScale){
+                if(window.onDisplay.slice(0,3) == 'DAQ'){
+                    window.DAQpointer.DAQcolor = window.parameters.colorScale.indexOf(colorDD.value);
+                } else {
+                    window.parameters.colorScale[window.subdetectorView] = colorDD.value;
+                }
+            }
 
             //remove dialogue
             document.getElementById('tempDiv').style.opacity = 0;

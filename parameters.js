@@ -37,7 +37,7 @@ function loadParameters(){
 				"temperatureUnit" : "C",
 				"HVequipmentNames" : ["HV-0", "HV-1", "HV-2"],
 				"moduleSizes" : [],
-				"colorScale"  : ["ROOT Rainbow", "Greyscale", "Sunset"],
+				"colorScale"  : ["ROOT Rainbow", "Greyscale", "Sunset", "Red Scale"],
 				"validDetectors" : ["TIG", "TIS", "GRG", "GRS", "HPG", "HPS", "BAE", "BAZ", "SHQ", "SHB", "MAD", "MAM", "CSD", "CSM", "SPI", "SPE", "DSC", "SEP", "SET", "PAC", "DAL", "DAB", "DAS", "TPC", "TPW", "TPP", "TPG", "TPE", "ZDS", "ZDP", "ZDM", "ZDD", "TBR", "YBP", "YBB", "TRF", "RFL", "RFS"],
 
 				"BAMBINO" : {

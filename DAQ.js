@@ -15,6 +15,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     this.TTdetailCanvasID = 'DAQdetailTTcanvas'
     this.detailShowing = 0;                      //is the detail canvas showing?
     this.dataBus = new DAQDS();
+    this.DAQcolor = 3;
 
     this.nCollectorGroups = 0;  //fixed for now
     this.nCollectors = window.codex.nCollectors;
@@ -102,7 +103,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                                     var y;
                                     y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;
                                     if(y>that.canvasHeight - that.scaleHeight){
-                                        parameterDialogue('DAQ', [ ['Transfer Rate', window.parameters.DAQminima[3], window.parameters.DAQmaxima[3], 'bps', '/DashboardConfig/DAQ/transferMinDetailView', '/DashboardConfig/DAQ/transferMaxDetailView' ], ['Trigger Rate', window.parameters.DAQminima[2], window.parameters.DAQmaxima[2], 'Hz', '/DashboardConfig/DAQ/rateMinDetailView', '/DashboardConfig/DAQ/rateMaxDetailView']  ]);
+                                        parameterDialogue('DAQ', [ ['Transfer Rate', window.parameters.DAQminima[3], window.parameters.DAQmaxima[3], 'bps', '/DashboardConfig/DAQ/transferMinDetailView', '/DashboardConfig/DAQ/transferMaxDetailView' ], ['Trigger Rate', window.parameters.DAQminima[2], window.parameters.DAQmaxima[2], 'Hz', '/DashboardConfig/DAQ/rateMinDetailView', '/DashboardConfig/DAQ/rateMaxDetailView']  ], window.parameters.colorScale[window.DAQpointer.DAQcolor]);
                                     } else {
                                         that.detailShowing = 0;
                                         swapFade('DAQToplink', that, 0, 0);
@@ -124,7 +125,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                                 }
                                 //set up scale range dialogue:
                                 if(y>that.canvasHeight - that.scaleHeight){
-                                    parameterDialogue('DAQ', [ ['Transfer Rate', window.parameters.DAQminima[1], window.parameters.DAQmaxima[1], 'bps', '/DashboardConfig/DAQ/transferMinTopView', '/DashboardConfig/DAQ/transferMaxTopView' ], ['Trigger Rate', window.parameters.DAQminima[0], window.parameters.DAQmaxima[0], 'Hz', '/DashboardConfig/DAQ/rateMinTopView', '/DashboardConfig/DAQ/rateMaxTopView']  ]);
+                                    parameterDialogue('DAQ', [ ['Transfer Rate', window.parameters.DAQminima[1], window.parameters.DAQmaxima[1], 'bps', '/DashboardConfig/DAQ/transferMinTopView', '/DashboardConfig/DAQ/transferMaxTopView' ], ['Trigger Rate', window.parameters.DAQminima[0], window.parameters.DAQmaxima[0], 'Hz', '/DashboardConfig/DAQ/rateMinTopView', '/DashboardConfig/DAQ/rateMaxTopView']  ], window.parameters.colorScale[window.DAQpointer.DAQcolor]);
                                 }
                             };
 
@@ -151,7 +152,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 
 
     this.cellColor = '#4C4C4C';
-    this.lineweight = 2;
+    this.lineweight = 5;
 
     this.margin = 30;
     this.collectorGutter = 0.1*this.collectorWidth;
@@ -198,9 +199,11 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     this.oldCollectorColor = [];
     this.detailCollectorColor = [];
     this.oldDetailCollectorColor = [];
-    //links from digitizer summary node to collector
+    //links from digitizer summary node to collector in top level view, and from all digitizers to collector in detail view
     this.collectorLinkColor = [];
     this.oldCollectorLinkColor = [];
+    this.detailCollectorLinkColor = [];
+    this.oldDetailCollectorLinkColor = [];
     //digitizer summary node
     this.digiSummaryColor = [];
     this.oldDigiSummaryColor = [];
@@ -227,6 +230,8 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         this.oldDetailCollectorColor[i] = '#000000';
         this.collectorLinkColor[i] = '#000000';
         this.oldCollectorLinkColor[i] = '#000000';
+        this.detailCollectorLinkColor[i] = '#000000';
+        this.oldDetailCollectorLinkColor[i] = '#000000';
         this.digiSummaryColor[i] = '#000000';
         this.oldDigiSummaryColor[i] = '#000000';        
     }
@@ -270,11 +275,13 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
             this.oldCollectorColor[i] = this.collectorColor[i];
             this.oldDetailCollectorColor[i] = this.detailCollectorColor[i];
             this.oldCollectorLinkColor[i] = this.collectorLinkColor[i];
+            this.oldDetailCollectorLinkColor[i] = this.detailCollectorLinkColor[i];
             this.oldDigiSummaryColor[i] = this.digiSummaryColor[i];
             this.masterLinkColor[i] = this.parseColor(this.dataBus.collectorLinks[i], 1);
             this.collectorColor[i] = this.parseColor(this.dataBus.collectors[i], 0);
             this.detailCollectorColor[i] = this.parseColor(this.dataBus.collectors[i], 2);
-            this.collectorLinkColor[i] = this.parseColor(this.dataBus.digitizerGroupSummaryLinks[i],1);
+            this.collectorLinkColor[i]       = this.parseColor(this.dataBus.digitizerGroupSummaryLinks[i],1);
+            this.detailCollectorLinkColor[i] = this.parseColor(this.dataBus.digitizerGroupSummaryLinks[i],3);
             this.digiSummaryColor[i] = this.parseColor(this.dataBus.digitizerSummaries[i],0);
 
         }
@@ -301,7 +308,8 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         if(scale<0) scale = 0;
         if(scale>1) scale = 1;
 
-		return redScale(scale);
+		//return redScale(scale);
+        return scalepickr(scale, window.parameters.colorScale[this.DAQcolor])
 	};
 
 	this.draw = function(frame){
@@ -389,8 +397,10 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         //titles
         context.fillStyle = '#999999';
         context.font="24px 'Orbitron'";
-        context.fillText('Transfer Rate', this.canvasWidth/2 - context.measureText('Transfer Rate').width/2, this.canvasHeight-this.scaleHeight/2-8);
-        context.fillText('Trigger Rate', this.canvasWidth/2 - context.measureText('Trigger Rate').width/2, this.canvasHeight - 8);
+        context.textBaseline = 'middle';
+        context.fillText('Transfer Rate', this.canvasWidth/2 - context.measureText('Transfer Rate').width/2, this.canvasHeight-this.scaleHeight/2 - 15);
+        context.fillText('Trigger Rate', this.canvasWidth/2 - context.measureText('Trigger Rate').width/2, this.canvasHeight-this.scaleHeight/2 + 20 + 20);
+        context.textBaseline = 'alphabetic';
 
         //tickmark;
         context.strokeStyle = '#999999';
@@ -447,7 +457,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         context.fillText(string, this.canvasWidth*0.95 - context.measureText(string).width/2, this.canvasHeight-this.scaleHeight/2 + 45);
 
         for(i=0; i<3000; i++){
-            context.fillStyle = redScale(0.001*(i%1000));
+            context.fillStyle = scalepickr(0.001*(i%1000), window.parameters.colorScale[this.DAQcolor])//redScale(0.001*(i%1000));
             context.fillRect(this.canvasWidth*0.05 + this.canvasWidth*0.9/1000*(i%1000), this.canvasHeight-this.scaleHeight/2, this.canvasWidth*0.9/1000, 20);
         }
 
@@ -547,7 +557,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
      	  	this.context.lineTo(this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups + (index%4 - 1.5)*(this.collectorWidth + this.collectorGutter), this.masterLinkBottom);
         } else { //TIGRESS mode:
             this.context.moveTo(this.margin + (index + 0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectors, this.masterGroupLinkTop );
-            this.context.lineTo(this.margin + (index + 0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectors, this.masterLinkBottom );
+            this.context.lineTo(this.margin + (index + 0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectors, this.masterLinkBottom -this.lineweight/2 );
         }
         this.context.closePath();
  		this.context.stroke();
@@ -562,7 +572,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         	this.context.lineTo(this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups + (index%4 - 1.5)*(this.collectorWidth + this.collectorGutter), this.digiSummaryLinkBottom);
         } else {  //TIGRESS mode:
             this.context.moveTo(this.margin + (index + 0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectors, this.digiSummaryLinkTop);
-            this.context.lineTo(this.margin + (index + 0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectors, this.digiSummaryLinkBottom);
+            this.context.lineTo(this.margin + (index + 0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectors, this.digiSummaryLinkBottom - this.lineweight/2);
         }
         this.context.closePath();
     	this.context.stroke();
@@ -631,10 +641,14 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                 //digitizer to collector link:
                 this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.oldDigitizerLinkColor[i]), parseHexColor(this.digitizerLinkColor[i]), frame/this.nFrames);
                 this.detailContext.beginPath();
+                //old style, direct from digitizer to collector:
+                //this.detailContext.moveTo(this.margin + ((i-this.prevDigi[clctr])+0.5)*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector[clctr], this.canvasHeight*0.6 + topMargin);
+                //this.detailContext.lineTo( this.canvasWidth/2 - this.collectorWidth/2 + ((i-this.prevDigi[clctr])+0.5)*this.collectorWidth/this.nDigitizersPerCollector[clctr], topMargin + this.collectorHeight);
+                //two-tiered links:
+                //from digitizers:
                 this.detailContext.moveTo(this.margin + ((i-this.prevDigi[clctr])+0.5)*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector[clctr], this.canvasHeight*0.6 + topMargin);
-                this.detailContext.lineTo( this.canvasWidth/2 - this.collectorWidth/2 + ((i-this.prevDigi[clctr])+0.5)*this.collectorWidth/this.nDigitizersPerCollector[clctr], topMargin + this.collectorHeight);
+                this.detailContext.lineTo(this.margin + ((i-this.prevDigi[clctr])+0.5)*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector[clctr], (this.canvasHeight*0.6 - this.collectorHeight)/2+topMargin+this.collectorHeight);
                 this.detailContext.stroke();
-
                 //digitizers:
                 this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.oldDigitizerColor[i]), parseHexColor(this.digitizerColor[i]), frame/this.nFrames);
                 roundBox(this.detailContext, this.margin + ((i-this.prevDigi[clctr])+0.5)*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector[clctr] - 0.02*this.canvasWidth , this.canvasHeight*0.6 + topMargin, 0.04*this.canvasWidth, 0.04*this.canvasWidth, 5);
@@ -651,6 +665,17 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         roundBox(this.detailContext, this.canvasWidth/2 - this.collectorWidth/2, topMargin, this.collectorWidth, this.collectorHeight, 5);
         this.detailContext.fill();
         this.detailContext.stroke();
+
+        //total data transfer:
+        this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.oldDetailCollectorLinkColor[clctr]), parseHexColor(this.detailCollectorLinkColor[clctr]), frame/this.nFrames);
+        this.detailContext.lineWidth = 2*this.lineweight;
+        this.detailContext.beginPath();
+        this.detailContext.moveTo(this.margin + 0.5*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector[clctr] - this.lineweight/2, (this.canvasHeight*0.6 - this.collectorHeight)/2+topMargin+this.collectorHeight);
+        this.detailContext.lineTo(this.margin + ((this.nDigitizersPerCollector[clctr]-1)+0.5)*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector[clctr] + this.lineweight/2, (this.canvasHeight*0.6 - this.collectorHeight)/2+topMargin+this.collectorHeight);
+        this.detailContext.moveTo(this.canvasWidth/2, (this.canvasHeight*0.6 - this.collectorHeight)/2+topMargin+this.collectorHeight);
+        this.detailContext.lineTo(this.canvasWidth/2, topMargin+this.collectorHeight + this.lineweight/2);
+        this.detailContext.stroke();
+
         //tooltip layer:
         this.TTdetailContext.fillStyle = 'rgba('+(clctr+1)+','+(clctr+1)+','+(clctr+1)+',1)';
         this.TTdetailContext.fillRect(Math.round(this.canvasWidth/2 - this.collectorWidth/2), Math.round(topMargin), Math.round(this.collectorWidth), Math.round(this.collectorHeight));
@@ -730,7 +755,8 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 
             //collectors
             if(this.dataBus.key[cell].length == 2){
-                nextLine += 'Trig Request Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]]['trigRequestRate'].toFixed(1) + ' Hz';                
+                nextLine += 'Trig Request Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]]['trigRequestRate'].toFixed(1) + ' Hz<br>';
+                nextLine += 'Inbound Data Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]]['dataRate'].toFixed(1) + ' bps';
             }
 
             //digitizers
@@ -809,7 +835,9 @@ function rateChart(frame, data, context, x0, y0, maxLength, barWidth){
         context.strokeRect(1.1*x0, y0 - (barWidth+4)*(row+1), length, barWidth/2-2);
         context.fillStyle = '#FFFFFF';
         context.font = fontSize*0.6+'px Raleway';
-        context.fillText( (data[key].totalTrigRequestRate/1000).toFixed(0) + ' kHz', 1.1*x0 + length + 5,  y0 - (barWidth+4)*(row+1) + barWidth/4 - 1);
+        var text = (data[key].totalTrigRequestRate/1000 > 9999) ? (data[key].totalTrigRequestRate/1000).toExponential(0) : (data[key].totalTrigRequestRate/1000).toFixed(0);
+        text += ' kHz';
+        context.fillText( text, 1.1*x0 + length + 5,  y0 - (barWidth+4)*(row+1) + barWidth/4 - 1);
     }
 
     function drawDataBar(key, frame){
@@ -822,7 +850,9 @@ function rateChart(frame, data, context, x0, y0, maxLength, barWidth){
         context.strokeRect(1.1*x0, y0 - (barWidth+4)*(row+1) + barWidth/2+2, length, barWidth/2-2);
         context.fillStyle = '#FFFFFF';
         context.font = fontSize*0.6+'px Raleway';
-        context.fillText( (data[key].totalDataRate/1000).toFixed(0) + ' kbps', 1.1*x0 + length + 5,  y0 - (barWidth+4)*(row+1) + barWidth/2+2 + barWidth/4 - 1);
+        var text = (data[key].totalDataRate/1000 > 9999) ? (data[key].totalDataRate/1000).toExponential(0) : (data[key].totalDataRate/1000).toFixed(0);
+        text += ' kbps';
+        context.fillText( text, 1.1*x0 + length + 5,  y0 - (barWidth+4)*(row+1) + barWidth/2+2 + barWidth/4 - 1);
     }    
 
     //draw decorations:

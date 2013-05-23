@@ -1,7 +1,7 @@
 //trigger css transition on opacity to fade canvas out, then send it to bottom of stack on completion:
 function fadeOut(canvasID){
 	//set canvas to come off top of stack once it's faded out:
-	document.getElementById(canvasID).addEventListener('webkitTransitionEnd', function(){
+	document.getElementById(canvasID).addEventListener('transitionend', function(){
 			if( $('#'+canvasID).css('opacity')==0 )
 	            $('#'+canvasID).css('z-index', 0);    
     });
