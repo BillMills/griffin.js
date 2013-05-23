@@ -5,8 +5,8 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
     window.DAQpointer = that;
 
-	this.monitorID = window.parameters.wrapper;  //div ID of wrapper div
-	this.canvasID = 'DAQcanvas';			     //ID of canvas to draw DAQ on
+    this.monitorID = window.parameters.wrapper;  //div ID of wrapper div
+    this.canvasID = 'DAQcanvas';			     //ID of canvas to draw DAQ on
     this.detailCanvasID = 'DAQdetailCanvas';     //ID of canvas to draw detailed view on
     this.linkWrapperID = 'DAQlinks'              //ID of wrapper div for DAQ links
     this.topNavID = 'DAQbutton'                  //ID of button to navigate here in the top nav menu
@@ -35,7 +35,6 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     this.monitor = document.getElementById(this.monitorID);
     this.canvasWidth = 0.48*$(this.monitor).width();
     this.collectorWidth = 0.9*(this.canvasWidth-10) / 16;
-    this.collectorHeight = 1.5*this.collectorWidth;
 
     //height adjusts to accomodate bar chart in master node:
     nBars = 0;
@@ -44,7 +43,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
             nBars++
     }
 
-    this.canvasHeight = 0.8*$(this.monitor).height() + (nBars-1)*this.collectorHeight/2;
+    this.canvasHeight = 0.7*$(this.monitor).height() + this.collectorWidth/2*nBars;
 
     //navigation
     //top level nav button
@@ -97,7 +96,6 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     //finished adding to the DOM////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     this.scaleHeight = this.canvasHeight*0.2;//110;
-    this.vertAdjust = -0.1*this.canvasHeight;
 
     //onclick switch between top and detail view:
     this.detailCanvas.onclick = function(event){
@@ -158,16 +156,19 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     this.margin = 30;
     this.collectorGutter = 0.1*this.collectorWidth;
 
+
+    this.collectorHeight = this.canvasHeight*0.1;   
     this.masterTop = 5;
-    this.masterBottom = this.masterTop+ (1+nBars/2)*this.collectorHeight;
+    this.masterBottom = this.masterTop + (1+nBars/2)*this.collectorHeight;
+    this.cableLength = (this.canvasHeight*0.7 - (this.masterBottom-this.masterTop) - 2*this.collectorHeight)/2;
     this.masterGroupLinkTop = this.masterBottom;
-    this.masterGroupLinkBottom = this.masterGroupLinkTop + this.collectorHeight/2;
+    this.masterGroupLinkBottom = this.masterGroupLinkTop + ( (this.nCollectorGroups == 0) ? this.cableLength : this.cableLength/2 ) //this.collectorHeight/2;
     this.masterLinkTop = this.masterGroupLinkBottom;
-    this.masterLinkBottom = this.masterLinkTop + this.collectorHeight/2;
+    this.masterLinkBottom = this.masterLinkTop + this.cableLength/2   //this.collectorHeight/2;
     this.collectorTop = this.masterLinkBottom;
     this.collectorBottom = this.collectorTop + this.collectorHeight;
     this.digiSummaryLinkTop = this.collectorBottom;
-    this.digiSummaryLinkBottom = this.digiSummaryLinkTop + this.collectorHeight;
+    this.digiSummaryLinkBottom = this.digiSummaryLinkTop + this.cableLength; //this.collectorHeight;
     this.digiSummaryTop = this.digiSummaryLinkBottom;
     this.digiSummaryBottom = this.digiSummaryTop + this.collectorHeight;
 
@@ -308,17 +309,17 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 
         this.context.textBaseline = 'alphabetic';
 		if(frame==0){
-            this.context.clearRect(0,0, this.canvasWidth, this.canvasHeight - this.scaleHeight - 0.1*this.canvasHeight);
+            this.context.clearRect(0,0, this.canvasWidth, this.canvasHeight - this.scaleHeight);
             //labels:
             this.context.fillStyle = '#FFFFFF';
-            fontSize = fitFont(this.context, 'Collectors', 2*this.collectorWidth);
+            fontSize = fitFont(this.context, 'Collectors', this.collectorHeight);
             this.context.font = fontSize + 'px Raleway';
             this.context.save();
             this.context.rotate(-Math.PI/2);
-            this.context.fillText('Collectors', -this.collectorBottom - 0.25*this.collectorWidth,0.7*this.margin);
+            this.context.fillText('Collectors', -this.collectorBottom,0.7*this.margin);
             this.context.restore();
 
-            fontSize = fitFont(this.context, 'Digi Summary', 2*this.collectorWidth);
+            fontSize = fitFont(this.context, 'Digi Summary', this.collectorHeight)*1.2;
             this.context.font = fontSize + 'px Raleway';
             this.context.save();
             this.context.rotate(-Math.PI/2);
@@ -375,7 +376,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         this.context.textBaseline = 'alphabetic';
 
         //rate chart
-        rateChart(frame, window.codex.detSummary, this.context, this.collectorHeight, (this.masterBottom - this.masterTop)*0.7, this.canvasWidth*0.6, this.collectorWidth/2 )
+        rateChart(frame, window.codex.detSummary, this.context, this.canvasWidth*0.2, this.masterTop + nBars*this.collectorWidth/2+50, this.canvasWidth*0.6, this.collectorWidth/2 )
 
 	};
 
@@ -383,13 +384,13 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 
         var i, j, string, unit; 
 
-        context.clearRect(0, this.canvasHeight - this.scaleHeight + this.vertAdjust, this.canvasWidth, this.canvasHeight);
+        context.clearRect(0, this.canvasHeight - this.scaleHeight, this.canvasWidth, this.canvasHeight);
 
         //titles
         context.fillStyle = '#999999';
         context.font="24px 'Orbitron'";
-        context.fillText('Transfer Rate', this.canvasWidth/2 - context.measureText('Transfer Rate').width/2, this.canvasHeight-this.scaleHeight/2-10 + this.vertAdjust);
-        context.fillText('Trigger Rate', this.canvasWidth/2 - context.measureText('Trigger Rate').width/2, this.canvasHeight-20 + this.vertAdjust);
+        context.fillText('Transfer Rate', this.canvasWidth/2 - context.measureText('Transfer Rate').width/2, this.canvasHeight-this.scaleHeight/2-8);
+        context.fillText('Trigger Rate', this.canvasWidth/2 - context.measureText('Trigger Rate').width/2, this.canvasHeight - 8);
 
         //tickmark;
         context.strokeStyle = '#999999';
@@ -404,21 +405,21 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         else unit = ' bps';
 
         context.beginPath();
-        context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2 + this.vertAdjust);
-        context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2-10 + this.vertAdjust);
+        context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2);
+        context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2-10);
         context.stroke();
-        context.fillText( ((context == this.detailContext) ? window.parameters.DAQminima[3] : window.parameters.DAQminima [1])+unit, this.canvasWidth*0.05 - context.measureText('0'+unit).width/2, this.canvasHeight-this.scaleHeight/2-15 + this.vertAdjust);
+        context.fillText( ((context == this.detailContext) ? window.parameters.DAQminima[3] : window.parameters.DAQminima [1])+unit, this.canvasWidth*0.05 - context.measureText('0'+unit).width/2, this.canvasHeight-this.scaleHeight/2-15);
 
         context.beginPath();
-        context.moveTo(this.canvasWidth*0.95-1, this.canvasHeight - this.scaleHeight/2 + this.vertAdjust);
-        context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - this.scaleHeight/2-10 + this.vertAdjust); 
+        context.moveTo(this.canvasWidth*0.95-1, this.canvasHeight - this.scaleHeight/2);
+        context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - this.scaleHeight/2-10); 
         context.stroke();  
 
         string = ((context == this.detailContext) ? window.parameters.DAQmaxima[3] : window.parameters.DAQmaxima [1]);
         if(string > 1000000) string = string/1000000 + unit;
         else if(string > 1000) string = string/1000 + unit;
         else string = string + unit;            
-        context.fillText(string, this.canvasWidth*0.95 - context.measureText(string).width/2, this.canvasHeight-this.scaleHeight/2-15 + this.vertAdjust);
+        context.fillText(string, this.canvasWidth*0.95 - context.measureText(string).width/2, this.canvasHeight-this.scaleHeight/2-15);
 
 
         //trigger rate
@@ -429,25 +430,25 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         else unit = ' Hz';        
 
         context.beginPath();
-        context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2 + 20 + this.vertAdjust);
-        context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2 + 20 + 10 + this.vertAdjust);
+        context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2 + 20);
+        context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2 + 20 + 10);
         context.stroke();
-        context.fillText( ((context == this.detailContext) ? window.parameters.DAQminima[2] : window.parameters.DAQminima [0])+unit, this.canvasWidth*0.05 - context.measureText('0'+unit).width/2, this.canvasHeight-this.scaleHeight/2 + 45 + this.vertAdjust);
+        context.fillText( ((context == this.detailContext) ? window.parameters.DAQminima[2] : window.parameters.DAQminima [0])+unit, this.canvasWidth*0.05 - context.measureText('0'+unit).width/2, this.canvasHeight-this.scaleHeight/2 + 45);
 
         context.beginPath();
-        context.moveTo(this.canvasWidth*0.95-1, this.canvasHeight - this.scaleHeight/2 + 20 + this.vertAdjust);
-        context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - this.scaleHeight/2 + 20 + 10 + this.vertAdjust); 
+        context.moveTo(this.canvasWidth*0.95-1, this.canvasHeight - this.scaleHeight/2 + 20);
+        context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - this.scaleHeight/2 + 20 + 10); 
         context.stroke();
 
         string = ((context == this.detailContext) ? window.parameters.DAQmaxima[2] : window.parameters.DAQmaxima [0]);
         if(string > 1000000) string = string/1000000 + unit;
         else if(string > 1000) string = string/1000 + unit;
         else string = string + unit;
-        context.fillText(string, this.canvasWidth*0.95 - context.measureText(string).width/2, this.canvasHeight-this.scaleHeight/2 + 45 + this.vertAdjust);
+        context.fillText(string, this.canvasWidth*0.95 - context.measureText(string).width/2, this.canvasHeight-this.scaleHeight/2 + 45);
 
         for(i=0; i<3000; i++){
             context.fillStyle = redScale(0.001*(i%1000));
-            context.fillRect(this.canvasWidth*0.05 + this.canvasWidth*0.9/1000*(i%1000), this.canvasHeight-this.scaleHeight/2 + this.vertAdjust, this.canvasWidth*0.9/1000, 20);
+            context.fillRect(this.canvasWidth*0.05 + this.canvasWidth*0.9/1000*(i%1000), this.canvasHeight-this.scaleHeight/2, this.canvasWidth*0.9/1000, 20);
         }
 
     };
@@ -574,7 +575,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         var leftMargin = 5;
 
         //if(frame == 0){
-            this.detailContext.clearRect(0,0,this.canvasWidth, this.canvasHeight - this.scaleHeight + this.vertAdjust);
+            this.detailContext.clearRect(0,0,this.canvasWidth, this.canvasHeight - this.scaleHeight);
         //}
 
         if(frame == this.nFrames){
@@ -789,7 +790,7 @@ function rateChart(frame, data, context, x0, y0, maxLength, barWidth){
             context.fillStyle = '#FFFFFF';
             context.textBaseline = 'middle';
             context.font = fontSize+'px Raleway';
-            context.fillText(key+':', 2*x0 - context.measureText(key+':').width, y0 - (barWidth+4)*(row+1/2) );
+            context.fillText(key+':', x0 - context.measureText(key+':').width, y0 - (barWidth+4)*(row+1/2) );
             drawTrigBar(key, frame);
             drawDataBar(key, frame);
 
@@ -804,11 +805,11 @@ function rateChart(frame, data, context, x0, y0, maxLength, barWidth){
         if(length < 0) length = 0;
         context.strokeStyle = '#00FF00';
         context.fillStyle = '#222222';
-        context.fillRect(2.1*x0, y0 - (barWidth+4)*(row+1), length, barWidth/2-2);
-        context.strokeRect(2.1*x0, y0 - (barWidth+4)*(row+1), length, barWidth/2-2);
+        context.fillRect(1.1*x0, y0 - (barWidth+4)*(row+1), length, barWidth/2-2);
+        context.strokeRect(1.1*x0, y0 - (barWidth+4)*(row+1), length, barWidth/2-2);
         context.fillStyle = '#FFFFFF';
         context.font = fontSize*0.6+'px Raleway';
-        context.fillText( (data[key].totalTrigRequestRate/1000).toFixed(0) + ' kHz', 2.1*x0 + length + 5,  y0 - (barWidth+4)*(row+1) + barWidth/4 - 1);
+        context.fillText( (data[key].totalTrigRequestRate/1000).toFixed(0) + ' kHz', 1.1*x0 + length + 5,  y0 - (barWidth+4)*(row+1) + barWidth/4 - 1);
     }
 
     function drawDataBar(key, frame){
@@ -817,47 +818,47 @@ function rateChart(frame, data, context, x0, y0, maxLength, barWidth){
         if(length < 0) length = 0;
         context.strokeStyle = '#0000FF';
         context.fillStyle = '#222222';
-        context.fillRect(2.1*x0, y0 - (barWidth+4)*(row+1) + barWidth/2+2, length, barWidth/2-2);
-        context.strokeRect(2.1*x0, y0 - (barWidth+4)*(row+1) + barWidth/2+2, length, barWidth/2-2);
+        context.fillRect(1.1*x0, y0 - (barWidth+4)*(row+1) + barWidth/2+2, length, barWidth/2-2);
+        context.strokeRect(1.1*x0, y0 - (barWidth+4)*(row+1) + barWidth/2+2, length, barWidth/2-2);
         context.fillStyle = '#FFFFFF';
         context.font = fontSize*0.6+'px Raleway';
-        context.fillText( (data[key].totalDataRate/1000).toFixed(0) + ' kbps', 2.1*x0 + length + 5,  y0 - (barWidth+4)*(row+1) + barWidth/2+2 + barWidth/4 - 1);
+        context.fillText( (data[key].totalDataRate/1000).toFixed(0) + ' kbps', 1.1*x0 + length + 5,  y0 - (barWidth+4)*(row+1) + barWidth/2+2 + barWidth/4 - 1);
     }    
 
     //draw decorations:
     context.strokeStyle = '#FFFFFF';
     context.fillStyle = '#FFFFFF';
     context.beginPath();
-    context.moveTo(2.1*x0-2, y0 - (barWidth+4)*row);
-    context.lineTo(2.1*x0-2, y0);
-    context.lineTo(2.1*x0+maxLength, y0);
-    context.lineTo(2.1*x0+maxLength, y0+5);
+    context.moveTo(1.1*x0-2, y0 - (barWidth+4)*row);
+    context.lineTo(1.1*x0-2, y0);
+    context.lineTo(1.1*x0+maxLength, y0);
+    context.lineTo(1.1*x0+maxLength, y0+5);
     context.stroke();
-    context.moveTo(2.1*x0-2, y0);
-    context.lineTo(2.1*x0-2, y0+5);
+    context.moveTo(1.1*x0-2, y0);
+    context.lineTo(1.1*x0-2, y0+5);
     context.stroke();
 
     context.font = fontSize*0.7+'px Raleway';
     //trig request labels
-    context.fillText('Trig Requests: 0 kHz', 2.1*x0-2 - context.measureText('Trig Requests: 0 kHz').width/2, y0+5+fontSize*0.7 );
-    context.fillText('Trig Requests: '+(rateScale/1000).toFixed(0)+' kHz', 2.1*x0+maxLength - context.measureText('Trig Requests: '+(rateScale/1000).toFixed(0)+' kHz').width/2, y0+5+fontSize*0.7 );
+    context.fillText('Trig Requests: 0 kHz', 1.1*x0-2 - context.measureText('Trig Requests: 0 kHz').width/2, y0+5+fontSize*0.7 );
+    context.fillText('Trig Requests: '+(rateScale/1000).toFixed(0)+' kHz', 1.1*x0+maxLength - context.measureText('Trig Requests: '+(rateScale/1000).toFixed(0)+' kHz').width/2, y0+5+fontSize*0.7 );
     context.fillStyle = '#222222';
     context.strokeStyle = '#00FF00';
-    context.fillRect(2.1*x0+maxLength - context.measureText('Trig Requests: '+(rateScale/1000).toFixed(0)+' kHz').width/2 - fontSize*0.7*1.5, y0+5+fontSize*0.35, fontSize*0.7, fontSize*0.7);
-    context.strokeRect(2.1*x0+maxLength - context.measureText('Trig Requests: '+(rateScale/1000).toFixed(0)+' kHz').width/2 - fontSize*0.7*1.5, y0+5+fontSize*0.35, fontSize*0.7, fontSize*0.7);
-    context.fillRect(2.1*x0-2 - context.measureText('Trig Requests: 0 kHz').width/2 - fontSize*0.7*1.5, y0+5+fontSize*0.35, fontSize*0.7, fontSize*0.7);
-    context.strokeRect(2.1*x0-2 - context.measureText('Trig Requests: 0 kHz').width/2 - fontSize*0.7*1.5, y0+5+fontSize*0.35, fontSize*0.7, fontSize*0.7);
+    context.fillRect(1.1*x0+maxLength - context.measureText('Trig Requests: '+(rateScale/1000).toFixed(0)+' kHz').width/2 - fontSize*0.7*1.5, y0+5+fontSize*0.35, fontSize*0.7, fontSize*0.7);
+    context.strokeRect(1.1*x0+maxLength - context.measureText('Trig Requests: '+(rateScale/1000).toFixed(0)+' kHz').width/2 - fontSize*0.7*1.5, y0+5+fontSize*0.35, fontSize*0.7, fontSize*0.7);
+    context.fillRect(1.1*x0-2 - context.measureText('Trig Requests: 0 kHz').width/2 - fontSize*0.7*1.5, y0+5+fontSize*0.35, fontSize*0.7, fontSize*0.7);
+    context.strokeRect(1.1*x0-2 - context.measureText('Trig Requests: 0 kHz').width/2 - fontSize*0.7*1.5, y0+5+fontSize*0.35, fontSize*0.7, fontSize*0.7);
 
     //data rate labels, left aligned with trig request labels
     context.fillStyle = '#FFFFFF';
-    context.fillText('Data Rate: 0 kbps', 2.1*x0-2 - context.measureText('Trig Requests: 0 kHz').width/2, y0+10+2*fontSize*0.7 );
-    context.fillText('Data Rate: '+(dataScale/1000).toFixed(0)+' kbps', 2.1*x0+maxLength - context.measureText('Trig Requests: '+(rateScale/1000).toFixed(0)+' kHz').width/2, y0+10+2*fontSize*0.7 );
+    context.fillText('Data Rate: 0 kbps', 1.1*x0-2 - context.measureText('Trig Requests: 0 kHz').width/2, y0+10+2*fontSize*0.7 );
+    context.fillText('Data Rate: '+(dataScale/1000).toFixed(0)+' kbps', 1.1*x0+maxLength - context.measureText('Trig Requests: '+(rateScale/1000).toFixed(0)+' kHz').width/2, y0+10+2*fontSize*0.7 );
     context.fillStyle = '#222222';
     context.strokeStyle = '#0000FF';
-    context.fillRect(2.1*x0+maxLength - context.measureText('Trig Requests: '+(rateScale/1000).toFixed(0)+' kHz').width/2 - fontSize*0.7*1.5, y0+10+fontSize*1.05, fontSize*0.7, fontSize*0.7);
-    context.strokeRect(2.1*x0+maxLength - context.measureText('Trig Requests: '+(rateScale/1000).toFixed(0)+' kHz').width/2 - fontSize*0.7*1.5, y0+10+fontSize*1.05, fontSize*0.7, fontSize*0.7);
-    context.fillRect(2.1*x0-2 - context.measureText('Trig Requests: 0 kHz').width/2 - fontSize*0.7*1.5, y0+10+fontSize*1.05, fontSize*0.7, fontSize*0.7);
-    context.strokeRect(2.1*x0-2 - context.measureText('Trig Requests: 0 kHz').width/2 - fontSize*0.7*1.5, y0+10+fontSize*1.05, fontSize*0.7, fontSize*0.7);
+    context.fillRect(1.1*x0+maxLength - context.measureText('Trig Requests: '+(rateScale/1000).toFixed(0)+' kHz').width/2 - fontSize*0.7*1.5, y0+10+fontSize*1.05, fontSize*0.7, fontSize*0.7);
+    context.strokeRect(1.1*x0+maxLength - context.measureText('Trig Requests: '+(rateScale/1000).toFixed(0)+' kHz').width/2 - fontSize*0.7*1.5, y0+10+fontSize*1.05, fontSize*0.7, fontSize*0.7);
+    context.fillRect(1.1*x0-2 - context.measureText('Trig Requests: 0 kHz').width/2 - fontSize*0.7*1.5, y0+10+fontSize*1.05, fontSize*0.7, fontSize*0.7);
+    context.strokeRect(1.1*x0-2 - context.measureText('Trig Requests: 0 kHz').width/2 - fontSize*0.7*1.5, y0+10+fontSize*1.05, fontSize*0.7, fontSize*0.7);
 }
 
 
