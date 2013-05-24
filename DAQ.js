@@ -15,8 +15,6 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     this.TTdetailCanvasID = 'DAQdetailTTcanvas'
     this.detailShowing = 0;                      //is the detail canvas showing?
     window.codex = new DAQcodex();               //builds a map of the DAQ
-    this.dataBus = new DAQDS();
-    this.DAQcolor = 3;
 
     this.nCollectorGroups = 0;  //fixed for now
     this.nCollectors = window.codex.nCollectors;
@@ -32,6 +30,9 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     for(i=1; i<this.nCollectors; i++){
         this.prevDigi[i] = this.prevDigi[i-1] + this.nDigitizersPerCollector[i-1];
     }
+
+    this.dataBus = new DAQDS();
+    this.DAQcolor = 3;
 
     //scale & insert DAQ canvases & navigation//////////////////////////////////////////////////////////////////////////////////////
     this.monitor = document.getElementById(this.monitorID);
@@ -184,71 +185,6 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     this.inboundCollector = -1;
     this.presentCollector = -1;
 
-    //establish animation transition to detailed view:
-    //this.canvas.onclick = function(event){that.swapDetail(event.pageX - that.canvas.offsetLeft - that.monitor.offsetLeft, event.pageY - that.canvas.offsetTop - that.monitor.offsetTop)};
-
-    //establish data buffers////////////////////////////////////////////////////////////////////////////
-    //master
-    this.masterColor = '#000000';
-    this.oldMasterColor = '#000000';
-    //master group links
-    this.masterGroupColor = [];
-    this.oldMasterGroupColor = [];
-    //links from collectors to master
-    this.masterLinkColor = [];
-    this.oldMasterLinkColor = [];
-    //collectors; different colors for top level view and detail view:
-    this.collectorColor = [];
-    this.oldCollectorColor = [];
-    this.detailCollectorColor = [];
-    this.oldDetailCollectorColor = [];
-    //links from digitizer summary node to collector in top level view, and from all digitizers to collector in detail view
-    this.collectorLinkColor = [];
-    this.oldCollectorLinkColor = [];
-    this.detailCollectorLinkColor = [];
-    this.oldDetailCollectorLinkColor = [];
-    //digitizer summary node
-    this.digiSummaryColor = [];
-    this.oldDigiSummaryColor = [];
-    //links from digitizer group to digitizer summary node
-    this.digiGroupSummaryColor = [];
-    this.oldDigiGroupSummaryColor = [];
-    //links from digitizers to digitizer group
-    this.digitizerLinkColor = [];
-    this.oldDigitizerLinkColor = [];
-    //digitizers
-    this.digitizerColor = [];
-    this.oldDigitizerColor = [];
-
-    for(i=0; i<Math.ceil(this.nCollectors/4); i++){
-        this.masterGroupColor[i] = '#000000';
-        this.oldMasterGroupColor[i] = '#000000';        
-    }
-    for(i=0; i<4*Math.ceil(this.nCollectors/4); i++){
-        this.masterLinkColor[i] = '#000000';
-        this.oldMasterLinkColor[i] = '#000000';
-        this.collectorColor[i] = '#000000';
-        this.oldCollectorColor[i] = '#000000';
-        this.detailCollectorColor[i] = '#000000';
-        this.oldDetailCollectorColor[i] = '#000000';
-        this.collectorLinkColor[i] = '#000000';
-        this.oldCollectorLinkColor[i] = '#000000';
-        this.detailCollectorLinkColor[i] = '#000000';
-        this.oldDetailCollectorLinkColor[i] = '#000000';
-        this.digiSummaryColor[i] = '#000000';
-        this.oldDigiSummaryColor[i] = '#000000';        
-    }
-    for(i=0; i<4*4*Math.ceil(this.nCollectors/4); i++){
-        this.digiGroupSummaryColor[i] = '#000000';
-        this.oldDigiGroupSummaryColor[i] = '#000000';        
-    }
-    for(i=0; i<4*4*4*Math.ceil(this.nCollectors/4); i++){
-        this.digitizerLinkColor[i] = '#000000';
-        this.oldDigitizerLinkColor[i] = '#000000';
-        this.digitizerColor[i] = '#000000';
-        this.oldDigitizerColor[i] = '#000000';        
-    }
-
     //member functions///////////////////////////////////////////////
 
     //decide which view to transition to when this object is navigated to
@@ -266,37 +202,37 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         this.fetchNewData();
 
         //parse the new data into colors
-        this.oldMasterColor = this.masterColor;
-        this.masterColor = this.parseColor(this.dataBus.master[0], 0)
+        this.dataBus.oldMasterColor = this.dataBus.masterColor;
+        this.dataBus.masterColor = this.parseColor(this.dataBus.master[0], 0)
     
         for(i=0; i<this.nCollectorGroups; i++){
-            this.oldMasterGroupColor[i] = this.masterGroupColor[i];
-            this.masterGroupColor[i] = this.parseColor(this.dataBus.collectorGroups[i],1);
+            this.dataBus.oldMasterGroupColor[i] = this.dataBus.masterGroupColor[i];
+            this.dataBus.masterGroupColor[i] = this.parseColor(this.dataBus.collectorGroups[i],1);
         }
         for(i=0; i<this.nCollectors; i++){
-            this.oldMasterLinkColor[i] = this.masterLinkColor[i];
-            this.oldCollectorColor[i] = this.collectorColor[i];
-            this.oldDetailCollectorColor[i] = this.detailCollectorColor[i];
-            this.oldCollectorLinkColor[i] = this.collectorLinkColor[i];
-            this.oldDetailCollectorLinkColor[i] = this.detailCollectorLinkColor[i];
-            this.oldDigiSummaryColor[i] = this.digiSummaryColor[i];
-            this.masterLinkColor[i] = this.parseColor(this.dataBus.collectorLinks[i], 1);
-            this.collectorColor[i] = this.parseColor(this.dataBus.collectors[i], 0);
-            this.detailCollectorColor[i] = this.parseColor(this.dataBus.collectors[i], 2);
-            this.collectorLinkColor[i]       = this.parseColor(this.dataBus.digitizerGroupSummaryLinks[i],1);
-            this.detailCollectorLinkColor[i] = this.parseColor(this.dataBus.digitizerGroupSummaryLinks[i],3);
-            this.digiSummaryColor[i] = this.parseColor(this.dataBus.digitizerSummaries[i],0);
+            this.dataBus.oldMasterLinkColor[i] = this.dataBus.masterLinkColor[i];
+            this.dataBus.oldCollectorColor[i] = this.dataBus.collectorColor[i];
+            this.dataBus.oldDetailCollectorColor[i] = this.dataBus.detailCollectorColor[i];
+            this.dataBus.oldCollectorLinkColor[i] = this.dataBus.collectorLinkColor[i];
+            this.dataBus.oldDetailCollectorLinkColor[i] = this.dataBus.detailCollectorLinkColor[i];
+            this.dataBus.oldDigiSummaryColor[i] = this.dataBus.digiSummaryColor[i];
+            this.dataBus.masterLinkColor[i] = this.parseColor(this.dataBus.collectorLinks[i], 1);
+            this.dataBus.collectorColor[i] = this.parseColor(this.dataBus.collectors[i], 0);
+            this.dataBus.detailCollectorColor[i] = this.parseColor(this.dataBus.collectors[i], 2);
+            this.dataBus.collectorLinkColor[i]       = this.parseColor(this.dataBus.digitizerGroupSummaryLinks[i],1);
+            this.dataBus.detailCollectorLinkColor[i] = this.parseColor(this.dataBus.digitizerGroupSummaryLinks[i],3);
+            this.dataBus.digiSummaryColor[i] = this.parseColor(this.dataBus.digitizerSummaries[i],0);
 
         }
         for(i=0; i<this.nDigitizerGroups; i++){
-            this.oldDigiGroupSummaryColor[i] = this.digiGroupSummaryColor[i];
-            this.digiGroupSummaryColor[i] = this.parseColor(this.dataBus.digitizerGroupLinks[i], 3);
+            this.dataBus.oldDigiGroupSummaryColor[i] = this.dataBus.digiGroupSummaryColor[i];
+            this.dataBus.digiGroupSummaryColor[i] = this.dataBus.parseColor(this.dataBus.digitizerGroupLinks[i], 3);
         }
         for(i=0; i<this.nDigitizers; i++){
-            this.oldDigitizerLinkColor[i] = this.digitizerLinkColor[i];
-            this.oldDigitizerColor[i] = this.digitizerColor[i]; 
-            this.digitizerLinkColor[i] = this.parseColor(this.dataBus.digitizerLinks[i], 3);
-            this.digitizerColor[i] = this.parseColor(this.dataBus.digitizers[i], 2); 
+            this.dataBus.oldDigitizerLinkColor[i] = this.dataBus.digitizerLinkColor[i];
+            this.dataBus.oldDigitizerColor[i] = this.dataBus.digitizerColor[i]; 
+            this.dataBus.digitizerLinkColor[i] = this.parseColor(this.dataBus.digitizerLinks[i], 3);
+            this.dataBus.digitizerColor[i] = this.parseColor(this.dataBus.digitizers[i], 2); 
         }
 
         this.tooltip.update();
@@ -355,27 +291,27 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         if(this.nCollectorGroups != 0){
     		for(i=0; i<this.nCollectorGroups; i++){
                 //master group links
-                color = interpolateColor(parseHexColor(this.oldMasterGroupColor[i]), parseHexColor(this.masterGroupColor[i]), frame/this.nFrames);
+                color = interpolateColor(parseHexColor(this.dataBus.oldMasterGroupColor[i]), parseHexColor(this.dataBus.masterGroupColor[i]), frame/this.nFrames);
                 this.drawMasterGroupLink(i, color);
             }
         }
         for(i=0; i<this.nCollectors; i++){
     		//digi summary nodes:
-    		color = interpolateColor(parseHexColor(this.oldDigiSummaryColor[i]), parseHexColor(this.digiSummaryColor[i]), frame/this.nFrames);
+    		color = interpolateColor(parseHexColor(this.dataBus.oldDigiSummaryColor[i]), parseHexColor(this.dataBus.digiSummaryColor[i]), frame/this.nFrames);
 	   		this.drawSummaryDigitizerNode(i, color);
     		//collector-digi summary links:
-    		color = interpolateColor(parseHexColor(this.oldCollectorLinkColor[i]), parseHexColor(this.collectorLinkColor[i]), frame/this.nFrames);
+    		color = interpolateColor(parseHexColor(this.dataBus.oldCollectorLinkColor[i]), parseHexColor(this.dataBus.collectorLinkColor[i]), frame/this.nFrames);
     		this.drawSummaryDigitizerNodeLink(i, color);
 	   		//collecter nodes:
-    		color = interpolateColor(parseHexColor(this.oldCollectorColor[i]), parseHexColor(this.collectorColor[i]), frame/this.nFrames);
+    		color = interpolateColor(parseHexColor(this.dataBus.oldCollectorColor[i]), parseHexColor(this.dataBus.collectorColor[i]), frame/this.nFrames);
 			this.drawCollectorNode(i, color);   		    		
     		//collector links:
-	    	color = interpolateColor(parseHexColor(this.oldMasterLinkColor[i]), parseHexColor(this.masterLinkColor[i]), frame/this.nFrames);
+	    	color = interpolateColor(parseHexColor(this.dataBus.oldMasterLinkColor[i]), parseHexColor(this.dataBus.masterLinkColor[i]), frame/this.nFrames);
     		this.drawMasterLink(i, color); 
 		}
 
         //master node:
-        color = interpolateColor(parseHexColor(this.oldMasterColor), parseHexColor(this.masterColor), frame/this.nFrames);
+        color = interpolateColor(parseHexColor(this.dataBus.oldMasterColor), parseHexColor(this.dataBus.masterColor), frame/this.nFrames);
         this.drawMasterNode(color);
 
         //trigger & event builder reporting:
@@ -610,7 +546,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
             
             j=0;
             for(i=4*clctr; i<4*clctr + 4; i++){
-                this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.oldDigiGroupSummaryColor[i]), parseHexColor(this.digiGroupSummaryColor[i]), frame/this.nFrames);
+                this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.dataBus.oldDigiGroupSummaryColor[i]), parseHexColor(this.dataBus.digiGroupSummaryColor[i]), frame/this.nFrames);
                 this.detailContext.beginPath();
                 this.detailContext.moveTo(this.canvasWidth/2 - this.collectorWidth*0.3 + this.collectorWidth*0.2*j, topMargin+this.collectorHeight);
                 this.detailContext.lineTo( 0.12*this.canvasWidth + 0.76/3*this.canvasWidth*j, this.canvasHeight*0.4 + topMargin);
@@ -621,7 +557,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
             
             //digitizer connecters:
             for(i=this.prevDigi[clctr]; i<this.prevDigi[clctr]+this.nDigitizersPerCollector[clctr]; i++){
-                this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.oldDigitizerLinkColor[i]), parseHexColor(this.digitizerLinkColor[i]), frame/this.nFrames);
+                this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.dataBus.oldDigitizerLinkColor[i]), parseHexColor(this.dataBus.digitizerLinkColor[i]), frame/this.nFrames);
                 this.detailContext.beginPath();
                 this.detailContext.moveTo( Math.floor( (i - this.prevDigi[clctr])/4 )*0.76/3*this.canvasWidth + 0.12*this.canvasWidth, this.canvasHeight*0.4 + topMargin );
                 this.detailContext.lineTo( Math.floor( (i - this.prevDigi[clctr])/4 )*0.76/3*this.canvasWidth + 0.12*this.canvasWidth - this.canvasWidth*0.09 + (i%4)*this.canvasWidth*0.06, this.canvasHeight*0.6 + topMargin );
@@ -631,7 +567,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 
             //digitizers:
             for(i=this.prevDigi[clctr]; i<this.nDigitizersPerCollector[clctr]*clctr+this.nDigitizersPerCollector[clctr]; i++){
-                this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.oldDigitizerColor[i]), parseHexColor(this.digitizerColor[i]), frame/this.nFrames);
+                this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.dataBus.oldDigitizerColor[i]), parseHexColor(this.dataBus.digitizerColor[i]), frame/this.nFrames);
                 roundBox(this.detailContext, Math.floor( (i - this.prevDigi[clctr])/4 )*0.76/3*this.canvasWidth + 0.12*this.canvasWidth - this.canvasWidth*0.09 + (i%4)*this.canvasWidth*0.06 - 0.02*this.canvasWidth , this.canvasHeight*0.6 + topMargin, 0.04*this.canvasWidth, 0.04*this.canvasWidth, 5);
                 this.detailContext.fill();
                 this.detailContext.stroke();
@@ -642,7 +578,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         } else {  //TIGRESS mode:
             for(i=this.prevDigi[clctr]; i<this.prevDigi[clctr] + this.nDigitizersPerCollector[clctr]; i++){
                 //digitizer to collector link:
-                this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.oldDigitizerLinkColor[i]), parseHexColor(this.digitizerLinkColor[i]), frame/this.nFrames);
+                this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.dataBus.oldDigitizerLinkColor[i]), parseHexColor(this.dataBus.digitizerLinkColor[i]), frame/this.nFrames);
                 this.detailContext.beginPath();
                 //old style, direct from digitizer to collector:
                 //this.detailContext.moveTo(this.margin + ((i-this.prevDigi[clctr])+0.5)*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector[clctr], this.canvasHeight*0.6 + topMargin);
@@ -653,7 +589,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                 this.detailContext.lineTo(this.margin + ((i-this.prevDigi[clctr])+0.5)*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector[clctr], (this.canvasHeight*0.6 - this.collectorHeight)/2+topMargin+this.collectorHeight);
                 this.detailContext.stroke();
                 //digitizers:
-                this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.oldDigitizerColor[i]), parseHexColor(this.digitizerColor[i]), frame/this.nFrames);
+                this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.dataBus.oldDigitizerColor[i]), parseHexColor(this.dataBus.digitizerColor[i]), frame/this.nFrames);
                 roundBox(this.detailContext, this.margin + ((i-this.prevDigi[clctr])+0.5)*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector[clctr] - 0.02*this.canvasWidth , this.canvasHeight*0.6 + topMargin, 0.04*this.canvasWidth, 0.04*this.canvasWidth, 5);
                 this.detailContext.fill();
                 this.detailContext.stroke();
@@ -664,13 +600,13 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         }
 
         //parent collector:
-        this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.oldDetailCollectorColor[clctr]), parseHexColor(this.detailCollectorColor[clctr]), frame/this.nFrames);
+        this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.dataBus.oldDetailCollectorColor[clctr]), parseHexColor(this.dataBus.detailCollectorColor[clctr]), frame/this.nFrames);
         roundBox(this.detailContext, this.canvasWidth/2 - this.collectorWidth/2, topMargin, this.collectorWidth, this.collectorHeight, 5);
         this.detailContext.fill();
         this.detailContext.stroke();
 
         //total data transfer:
-        this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.oldDetailCollectorLinkColor[clctr]), parseHexColor(this.detailCollectorLinkColor[clctr]), frame/this.nFrames);
+        this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.dataBus.oldDetailCollectorLinkColor[clctr]), parseHexColor(this.dataBus.detailCollectorLinkColor[clctr]), frame/this.nFrames);
         this.detailContext.lineWidth = 2*this.lineweight;
         this.detailContext.beginPath();
         this.detailContext.moveTo(this.margin + 0.5*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector[clctr] - this.lineweight/2, (this.canvasHeight*0.6 - this.collectorHeight)/2+topMargin+this.collectorHeight);
@@ -688,24 +624,6 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     this.fetchNewData = function(){
         var i, j, Fkey, Skey, Pkey;
 
-        //fake demo data
-        this.dataBus.master[0] = -9999//Math.random();
-        for(i=0; i<this.nCollectorGroups; i++)
-            this.dataBus.collectorGroups[i] = -9999//Math.random();
-        for(i=0; i<this.nCollectors; i++){
-            this.dataBus.collectorLinks[i] = -9999//Math.random();
-            this.dataBus.collectors[i] = -9999//Math.random();
-            this.dataBus.digitizerGroupSummaryLinks[i] = -9999//Math.random();
-            this.dataBus.digitizerSummaries[i] = -9999//Math.random();
-        }
-        for(i=0; i<this.nDigitizerGroups; i++)
-            this.dataBus.digitizerGroupLinks[i] = -9999//Math.random();
-        for(i=0; i<this.nDigitizers; i++){
-            this.dataBus.digitizerLinks[i] = -9999//Math.random();
-            this.dataBus.digitizers[i] = -9999//Math.random();
-        }
-
-        //real data from the codex:
         window.codex.update();
         i=0; j=0;
         for(Fkey in window.codex.DAQmap){
@@ -1038,8 +956,6 @@ DAQcodex = function(){
         var key, Fkey, Skey, Pkey, Ckey, ODBpaths, data;
 
         //get summary data from ODB
-        //ODBpaths = ['/Equipment/Trigger/Statistics/Events per sec.', '/Equipment/Trigger/Statistics/kBytes per sec.', '/Equipment/Event Builder/Statistics/Events per sec.', '/Equipment/Event Builder/Statistics/kBytes per sec.']
-        //data = ODBMGet(ODBpaths);
         this.triggerRate = parseFloat(window.localODB.TrigEPS).toFixed(1);
         this.triggerDataRate = parseFloat(window.localODB.TrigDPS).toFixed(1);
         this.EBrate = parseFloat(window.localODB.EBEPS).toFixed(1);

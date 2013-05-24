@@ -146,7 +146,7 @@ function parameterDialogue(devName, scales, currentColorScale){
                 if(window.onDisplay.slice(0,3) == 'DAQ'){
                     window.DAQpointer.DAQcolor = window.parameters.colorScale.indexOf(colorDD.value);
                 } else {
-                    window.parameters.colorScale[window.subdetectorView] = colorDD.value;
+                    window.parameters.subdetectorColors[window.subdetectorView] = colorDD.value;
                 }
             }
 

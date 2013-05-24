@@ -17,7 +17,7 @@ function DANTE(){
     this.canvas.onclick = function(event){
         var y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;
         if(y > that.canvasHeight - that.scaleHeight)
-            parameterDialogue(that.name, [['BaF', window.parameters[that.name].minima['BaF'][window.subdetectorView], window.parameters[that.name].maxima['BaF'][window.subdetectorView], window.parameters.subdetectorUnit[window.subdetectorView], '/DashboardConfig/DANTE/BaF'+scaleType()+'[0]', '/DashboardConfig/DANTE/BaF'+scaleType()+'[1]'],   ['BGO', window.parameters[that.name].minima['BGO'][window.subdetectorView], window.parameters[that.name].maxima['BGO'][window.subdetectorView], window.parameters.subdetectorUnit[window.subdetectorView], '/DashboardConfig/DANTE/BGO'+scaleType()+'[0]', '/DashboardConfig/DANTE/BGO'+scaleType()+'[1]'] ], window.parameters.colorScale[window.subdetectorView]);
+            parameterDialogue(that.name, [['BaF', window.parameters[that.name].minima['BaF'][window.subdetectorView], window.parameters[that.name].maxima['BaF'][window.subdetectorView], window.parameters.subdetectorUnit[window.subdetectorView], '/DashboardConfig/DANTE/BaF'+scaleType()+'[0]', '/DashboardConfig/DANTE/BaF'+scaleType()+'[1]'],   ['BGO', window.parameters[that.name].minima['BGO'][window.subdetectorView], window.parameters[that.name].maxima['BGO'][window.subdetectorView], window.parameters.subdetectorUnit[window.subdetectorView], '/DashboardConfig/DANTE/BGO'+scaleType()+'[0]', '/DashboardConfig/DANTE/BGO'+scaleType()+'[1]'] ], window.parameters.subdetectorColors[window.subdetectorView]);
     }
 
     //drawing parameters/////////////////////////////////

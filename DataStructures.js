@@ -387,6 +387,67 @@ DAQDS = function(){
 	this.digitizerLinks = [];
 	this.digitizers = [];
 
+    //master
+    this.masterColor = '#000000';
+    this.oldMasterColor = '#000000';
+    //master group links
+    this.masterGroupColor = [];
+    this.oldMasterGroupColor = [];
+    //links from collectors to master
+    this.masterLinkColor = [];
+    this.oldMasterLinkColor = [];
+    //collectors; different colors for top level view and detail view:
+    this.collectorColor = [];
+    this.oldCollectorColor = [];
+    this.detailCollectorColor = [];
+    this.oldDetailCollectorColor = [];
+    //links from digitizer summary node to collector in top level view, and from all digitizers to collector in detail view
+    this.collectorLinkColor = [];
+    this.oldCollectorLinkColor = [];
+    this.detailCollectorLinkColor = [];
+    this.oldDetailCollectorLinkColor = [];
+    //digitizer summary node
+    this.digiSummaryColor = [];
+    this.oldDigiSummaryColor = [];
+    //links from digitizer group to digitizer summary node
+    this.digiGroupSummaryColor = [];
+    this.oldDigiGroupSummaryColor = [];
+    //links from digitizers to digitizer group
+    this.digitizerLinkColor = [];
+    this.oldDigitizerLinkColor = [];
+    //digitizers
+    this.digitizerColor = [];
+    this.oldDigitizerColor = [];
+
+    for(i=0; i<Math.ceil(window.DAQpointer.nCollectors/4); i++){
+        this.masterGroupColor[i] = '#000000';
+        this.oldMasterGroupColor[i] = '#000000';        
+    }
+    for(i=0; i<4*Math.ceil(window.DAQpointer.nCollectors/4); i++){
+        this.masterLinkColor[i] = '#000000';
+        this.oldMasterLinkColor[i] = '#000000';
+        this.collectorColor[i] = '#000000';
+        this.oldCollectorColor[i] = '#000000';
+        this.detailCollectorColor[i] = '#000000';
+        this.oldDetailCollectorColor[i] = '#000000';
+        this.collectorLinkColor[i] = '#000000';
+        this.oldCollectorLinkColor[i] = '#000000';
+        this.detailCollectorLinkColor[i] = '#000000';
+        this.oldDetailCollectorLinkColor[i] = '#000000';
+        this.digiSummaryColor[i] = '#000000';
+        this.oldDigiSummaryColor[i] = '#000000';        
+    }
+    for(i=0; i<4*4*Math.ceil(window.DAQpointer.nCollectors/4); i++){
+        this.digiGroupSummaryColor[i] = '#000000';
+        this.oldDigiGroupSummaryColor[i] = '#000000';        
+    }
+    for(i=0; i<4*4*4*Math.ceil(window.DAQpointer.nCollectors/4); i++){
+        this.digitizerLinkColor[i] = '#000000';
+        this.oldDigitizerLinkColor[i] = '#000000';
+        this.digitizerColor[i] = '#000000';
+        this.oldDigitizerColor[i] = '#000000';        
+    }
+
 	/*
 	key map, format: key[griffin.js index number] = array containing parsed FSPC keys from masterCodex for this node, down to digitizer level
 

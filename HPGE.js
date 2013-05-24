@@ -33,7 +33,7 @@ function HPGe(){
                                         that.detailShowing = 0;
                                         swapFade(null, that, 1000, 0);
                                     } else{
-                                        parameterDialogue(that.name, [['HPGe', window.parameters[that.name].minima['HPGe'][window.subdetectorView], window.parameters[that.name].maxima['HPGe'][window.subdetectorView], window.parameters.subdetectorUnit[window.subdetectorView], '/DashboardConfig/HPGe/'+scaleType()+'[0]', '/DashboardConfig/HPGe/'+scaleType()+'[1]'], ['BGO', window.parameters[that.name].minima['BGO'][window.subdetectorView], window.parameters[that.name].maxima['BGO'][window.subdetectorView],  window.parameters.subdetectorUnit[window.subdetectorView], '/DashboardConfig/HPGe/BGO'+scaleType()+'[0]', '/DashboardConfig/HPGe/BGO'+scaleType()+'[1]'] ], window.parameters.colorScale[window.subdetectorView]);
+                                        parameterDialogue(that.name, [['HPGe', window.parameters[that.name].minima['HPGe'][window.subdetectorView], window.parameters[that.name].maxima['HPGe'][window.subdetectorView], window.parameters.subdetectorUnit[window.subdetectorView], '/DashboardConfig/HPGe/'+scaleType()+'[0]', '/DashboardConfig/HPGe/'+scaleType()+'[1]'], ['BGO', window.parameters[that.name].minima['BGO'][window.subdetectorView], window.parameters[that.name].maxima['BGO'][window.subdetectorView],  window.parameters.subdetectorUnit[window.subdetectorView], '/DashboardConfig/HPGe/BGO'+scaleType()+'[0]', '/DashboardConfig/HPGe/BGO'+scaleType()+'[1]'] ], window.parameters.subdetectorColors[window.subdetectorView]);
                                     }
                                 };
     this.canvas.onclick =   function(event){
@@ -52,7 +52,7 @@ function HPGe(){
                                     that.detailShowing = 1;
                                     swapFade(null, that, 1000, 0)
                                 } else if(y > that.canvasHeight - that.scaleHeight){
-                                    parameterDialogue(that.name, [['HPGe', window.parameters[that.name].minima['HPGe'][window.subdetectorView], window.parameters[that.name].maxima['HPGe'][window.subdetectorView], window.parameters.subdetectorUnit[window.subdetectorView], '/DashboardConfig/HPGe/'+scaleType()+'[0]', '/DashboardConfig/HPGe/'+scaleType()+'[1]'], ['BGO', window.parameters[that.name].minima['BGO'][window.subdetectorView], window.parameters[that.name].maxima['BGO'][window.subdetectorView],  window.parameters.subdetectorUnit[window.subdetectorView], '/DashboardConfig/HPGe/BGO'+scaleType()+'[0]', '/DashboardConfig/HPGe/BGO'+scaleType()+'[1]'] ], window.parameters.colorScale[window.subdetectorView]);
+                                    parameterDialogue(that.name, [['HPGe', window.parameters[that.name].minima['HPGe'][window.subdetectorView], window.parameters[that.name].maxima['HPGe'][window.subdetectorView], window.parameters.subdetectorUnit[window.subdetectorView], '/DashboardConfig/HPGe/'+scaleType()+'[0]', '/DashboardConfig/HPGe/'+scaleType()+'[1]'], ['BGO', window.parameters[that.name].minima['BGO'][window.subdetectorView], window.parameters[that.name].maxima['BGO'][window.subdetectorView],  window.parameters.subdetectorUnit[window.subdetectorView], '/DashboardConfig/HPGe/BGO'+scaleType()+'[0]', '/DashboardConfig/HPGe/BGO'+scaleType()+'[1]'] ], window.parameters.subdetectorColors[window.subdetectorView]);
                                 }
                             };
 
@@ -61,54 +61,7 @@ function HPGe(){
     this.centerX = this.canvasWidth/2;
     this.centerY = this.canvasHeight*0.4;
     this.lineWeight = 1;
-/*
-    //summary view
-    this.BGOouter = 0.1*this.canvasWidth;
-    this.BGOinner = 0.67*this.BGOouter;
-    this.HPGeside = 0.4*this.BGOouter;
-    //establish coords of each detector summary; start array index at 1 to correspond to actual detector numbering in TIGRESS:
-    
-    this.firstRow = this.canvasHeight*0.05;
-    this.secondRow = this.canvasHeight*0.22;
-    this.thirdRow = this.canvasHeight*0.39;
-    this.fourthRow = this.canvasHeight*0.56;
-    this.firstCol = this.canvasWidth*0.061;
-    this.secondCol = this.canvasWidth*0.201;
-    this.thirdCol = this.canvasWidth*0.341;
-    this.fourthCol = this.canvasWidth*0.561;
-    this.fifthCol = this.canvasWidth*0.701;
-    this.sixthCol = this.canvasWidth*0.841;
 
-    this.summaryCoord = [];
-    this.summaryCoord[5] = [this.secondCol, this.secondRow, 'north'];
-    this.summaryCoord[6] = [this.secondCol, this.firstRow, 'north'];
-    this.summaryCoord[7] = [this.fifthCol, this.firstRow, 'south'];
-    this.summaryCoord[8] = [this.fifthCol, this.secondRow, 'south'];
-    this.summaryCoord[9] = [this.fifthCol, this.thirdRow, 'south']; 
-    this.summaryCoord[10] = [this.fifthCol, this.fourthRow, 'south'];
-    this.summaryCoord[11] = [this.secondCol, this.fourthRow, 'north'];
-    this.summaryCoord[12] = [this.secondCol, this.thirdRow, 'north'];
-    if(this.mode == 'TIGRESS'){
-        this.summaryCoord[1] = [this.thirdCol, this.secondRow, 'north'];
-        this.summaryCoord[2] = [this.fourthCol, this.firstRow, 'south'];
-        this.summaryCoord[3] = [this.fourthCol, this.thirdRow, 'south'];
-        this.summaryCoord[4] = [this.thirdCol, this.fourthRow, 'north'];
-        this.summaryCoord[13] = [this.firstCol, this.secondRow, 'north'];
-        this.summaryCoord[14] = [this.sixthCol, this.firstRow, 'south'];
-        this.summaryCoord[15] = [this.sixthCol, this.thirdRow, 'south'];
-        this.summaryCoord[16] = [this.firstCol, this.fourthRow, 'north'];
-    } else if(this.mode == 'GRIFFIN'){
-        this.summaryCoord[1] = [this.thirdCol, this.firstRow, 'north'];
-        this.summaryCoord[2] = [this.fourthCol, this.secondRow, 'south'];
-        this.summaryCoord[3] = [this.fourthCol, this.fourthRow, 'south'];
-        this.summaryCoord[4] = [this.thirdCol, this.thirdRow, 'north'];
-        this.summaryCoord[13] = [this.firstCol, this.firstRow, 'north'];
-        this.summaryCoord[14] = [this.sixthCol, this.secondRow, 'south'];
-        this.summaryCoord[15] = [this.sixthCol, this.fourthRow, 'south'];
-        this.summaryCoord[16] = [this.firstCol, this.thirdRow, 'north'];
-    }
-    */
-///////////////////////////////////////////////////////////////////
     this.BGOouter = 0.09*this.canvasWidth;
     this.BGOinner = 0.67*this.BGOouter;
     this.HPGeside = 0.4*this.BGOouter;
@@ -154,7 +107,7 @@ function HPGe(){
         this.summaryCoord[15] = [this.eighthCol, this.thirdRow, 'south'];
         this.summaryCoord[16] = [this.secondCol, this.thirdRow, 'north'];
     }
-/////////////////////////////////////////////////////////////////
+
     //detail view
     this.crystalSide = this.canvasWidth*0.1*0.8;
     this.suppressorWidth = this.canvasWidth*0.03*0.8;

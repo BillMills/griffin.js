@@ -37,7 +37,8 @@ function loadParameters(){
 				"temperatureUnit" : "C",
 				"HVequipmentNames" : ["HV-0", "HV-1", "HV-2"],
 				"moduleSizes" : [],
-				"colorScale"  : ["ROOT Rainbow", "Greyscale", "Sunset", "Red Scale"],
+				"colorScale"  : ["ROOT Rainbow", "Greyscale", "Sunset", "Red Scale", "Mayfair"],
+				"subdetectorColors" : ["ROOT Rainbow", "ROOT Rainbow", "Sunset"],
 				"validDetectors" : ["TIG", "TIS", "GRG", "GRS", "HPG", "HPS", "BAE", "BAZ", "SHQ", "SHB", "MAD", "MAM", "CSD", "CSM", "SPI", "SPE", "DSC", "SEP", "SET", "PAC", "DAL", "DAB", "DAS", "TPC", "TPW", "TPP", "TPG", "TPE", "ZDS", "ZDP", "ZDM", "ZDD", "TBR", "YBP", "YBB", "TRF", "RFL", "RFS"],
 
 				"BAMBINO" : {
@@ -148,7 +149,7 @@ function loadParameters(){
 				"DAQminima" : [0, 0, 0, 0, 0, 0], //minima of element scales: [top level view rate, top level transfer, detail view rate, detail view transfer, master rate, master transfer]
 				"DAQmaxima" : [10000, 100000, 1000, 1000, 50000, 50000],
 
-				"JSONPrepos" : ["http://alphadon.triumf.ca:8092/parameters?jsonp=parseResponse", "http://midtig06.triumf.ca:8091/scalar?jsonp=parseResponse"]
+				"JSONPrepos" : ["http://midtig06.triumf.ca:8092/parameters?jsonp=parseThreshold", "http://midtig06.triumf.ca:8091/scalar?jsonp=parseResponse"]
 				}
 
 			}

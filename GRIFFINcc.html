@@ -91,6 +91,7 @@
       //define function to fetch from JSONP service
       window.JSONPstore = {};
       
+      //for the scalar service (and anything with the same hierarchy):
       function parseResponse(dataWeGotViaJsonp){
         var key, subkey;
         for(key in dataWeGotViaJsonp){
@@ -98,14 +99,24 @@
             window.JSONPstore[key] = {};
             for(subkey in dataWeGotViaJsonp[key]){
               if(dataWeGotViaJsonp[key].hasOwnProperty(subkey)){
-                window.JSONPstore[key][subkey.toUpperCase()] = dataWeGotViaJsonp[key][subkey]
+                window.JSONPstore[key][subkey.toUpperCase()] = dataWeGotViaJsonp[key][subkey];
               }
             }
           }
         }
+      }
 
+      //similar function for the threshold service:
+      function parseThreshold(data){
+        var key;
 
-      } 
+        if(data['parameters']['thresholds']['fMap']){
+          window.JSONPstore['thresholds'] = {};
+          for(key in data['parameters']['thresholds']['fMap']){
+            window.JSONPstore['thresholds'][key.toUpperCase().slice(0,10)] = data['parameters']['thresholds']['fMap'][key];
+          }
+        }
+      }
     </script>
 
     <script type="text/javascript">
