@@ -14,6 +14,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     this.TTcanvasID = 'DAQTTcanvas'
     this.TTdetailCanvasID = 'DAQdetailTTcanvas'
     this.detailShowing = 0;                      //is the detail canvas showing?
+    window.codex = new DAQcodex();               //builds a map of the DAQ
     this.dataBus = new DAQDS();
     this.DAQcolor = 3;
 
@@ -126,6 +127,8 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                                 //set up scale range dialogue:
                                 if(y>that.canvasHeight - that.scaleHeight){
                                     parameterDialogue('DAQ', [ ['Transfer Rate', window.parameters.DAQminima[1], window.parameters.DAQmaxima[1], 'bps', '/DashboardConfig/DAQ/transferMinTopView', '/DashboardConfig/DAQ/transferMaxTopView' ], ['Trigger Rate', window.parameters.DAQminima[0], window.parameters.DAQmaxima[0], 'Hz', '/DashboardConfig/DAQ/rateMinTopView', '/DashboardConfig/DAQ/rateMaxTopView']  ], window.parameters.colorScale[window.DAQpointer.DAQcolor]);
+                                } else if(y<that.masterBottom){
+                                    parameterDialogue('Device Summary',[ ['Trig Requests', window.parameters.DAQminima[4], window.parameters.DAQmaxima[5], 'Hz', '/DashboardConfig/DAQ/rateMinMaster', '/DashboardConfig/DAQ/rateMaxMaster'], ['Data Rate', window.parameters.DAQminima[5], window.parameters.DAQmaxima[5], 'bps', '/DashboardConfig/DAQ/transferMinMaster', '/DashboardConfig/DAQ/transferMaxMaster']  ]);
                                 }
                             };
 
@@ -802,9 +805,11 @@ function rateChart(frame, data, context, x0, y0, maxLength, barWidth){
 
     var fontSize = 0.8*barWidth,
     row = 0,  //counts up from bottom
-    key, 
-    rateScale = window.parameters.DAQmaxima[0]*5,
-    dataScale = window.parameters.DAQmaxima[1]*5;
+    key,
+    rateScaleMin = window.parameters.DAQminima[4],
+    dataScaleMin = window.parameters.DAQminima[5];    
+    rateScaleMax = window.parameters.DAQmaxima[4],
+    dataScaleMax = window.parameters.DAQmaxima[5];
 
     context.font = fontSize+'px Raleway';
     context.lineWidth = 1;
@@ -826,7 +831,7 @@ function rateChart(frame, data, context, x0, y0, maxLength, barWidth){
     }
 
     function drawTrigBar(key, frame){
-        var length = data[key].prevTrigReqRate/rateScale*maxLength + (data[key].totalTrigRequestRate/rateScale - data[key].prevTrigReqRate/rateScale)*maxLength*frame/window.DAQpointer.nFrames;
+        var length = (data[key].prevTrigReqRate-rateScaleMin)/(rateScaleMax-rateScaleMin)*maxLength + ((data[key].totalTrigRequestRate-rateScaleMin)/(rateScaleMax-rateScaleMin) - (data[key].prevTrigReqRate-rateScaleMin)/(rateScaleMax-rateScaleMin))*maxLength*frame/window.DAQpointer.nFrames;
         if(length > maxLength) length = maxLength;
         if(length < 0) length = 0;
         context.strokeStyle = '#00FF00';
@@ -841,7 +846,7 @@ function rateChart(frame, data, context, x0, y0, maxLength, barWidth){
     }
 
     function drawDataBar(key, frame){
-        var length = data[key].prevDataRate/dataScale*maxLength + (data[key].totalDataRate/dataScale - data[key].prevDataRate/dataScale)*maxLength*frame/window.DAQpointer.nFrames;
+        var length = (data[key].prevDataRate-dataScaleMin)/(dataScaleMax-dataScaleMin)*maxLength + ((data[key].totalDataRate-dataScaleMin)/(dataScaleMax-dataScaleMin) - (data[key].prevDataRate-dataScaleMin)/(dataScaleMax-dataScaleMin))*maxLength*frame/window.DAQpointer.nFrames;
         if(length > maxLength) length = maxLength;
         if(length < 0) length = 0;
         context.strokeStyle = '#0000FF';
@@ -853,7 +858,7 @@ function rateChart(frame, data, context, x0, y0, maxLength, barWidth){
         var text = (data[key].totalDataRate/1000 > 9999) ? (data[key].totalDataRate/1000).toExponential(0) : (data[key].totalDataRate/1000).toFixed(0);
         text += ' kbps';
         context.fillText( text, 1.1*x0 + length + 5,  y0 - (barWidth+4)*(row+1) + barWidth/2+2 + barWidth/4 - 1);
-    }    
+    }
 
     //draw decorations:
     context.strokeStyle = '#FFFFFF';
@@ -870,28 +875,221 @@ function rateChart(frame, data, context, x0, y0, maxLength, barWidth){
 
     context.font = fontSize*0.7+'px Raleway';
     //trig request labels
-    context.fillText('Trig Requests: 0 kHz', 1.1*x0-2 - context.measureText('Trig Requests: 0 kHz').width/2, y0+5+fontSize*0.7 );
-    context.fillText('Trig Requests: '+(rateScale/1000).toFixed(0)+' kHz', 1.1*x0+maxLength - context.measureText('Trig Requests: '+(rateScale/1000).toFixed(0)+' kHz').width/2, y0+5+fontSize*0.7 );
+    context.fillText('Trig Requests: '+(rateScaleMin/1000).toFixed(0)+' kHz', 1.1*x0-2 - context.measureText('Trig Requests: 0 kHz').width/2, y0+5+fontSize*0.7 );
+    context.fillText('Trig Requests: '+(rateScaleMax/1000).toFixed(0)+' kHz', 1.1*x0+maxLength - context.measureText('Trig Requests: '+(rateScaleMax/1000).toFixed(0)+' kHz').width/2, y0+5+fontSize*0.7 );
     context.fillStyle = '#222222';
     context.strokeStyle = '#00FF00';
-    context.fillRect(1.1*x0+maxLength - context.measureText('Trig Requests: '+(rateScale/1000).toFixed(0)+' kHz').width/2 - fontSize*0.7*1.5, y0+5+fontSize*0.35, fontSize*0.7, fontSize*0.7);
-    context.strokeRect(1.1*x0+maxLength - context.measureText('Trig Requests: '+(rateScale/1000).toFixed(0)+' kHz').width/2 - fontSize*0.7*1.5, y0+5+fontSize*0.35, fontSize*0.7, fontSize*0.7);
-    context.fillRect(1.1*x0-2 - context.measureText('Trig Requests: 0 kHz').width/2 - fontSize*0.7*1.5, y0+5+fontSize*0.35, fontSize*0.7, fontSize*0.7);
-    context.strokeRect(1.1*x0-2 - context.measureText('Trig Requests: 0 kHz').width/2 - fontSize*0.7*1.5, y0+5+fontSize*0.35, fontSize*0.7, fontSize*0.7);
+    context.fillRect(1.1*x0+maxLength - context.measureText('Trig Requests: '+(rateScaleMax/1000).toFixed(0)+' kHz').width/2 - fontSize*0.7*1.5, y0+5+fontSize*0.35, fontSize*0.7, fontSize*0.7);
+    context.strokeRect(1.1*x0+maxLength - context.measureText('Trig Requests: '+(rateScaleMax/1000).toFixed(0)+' kHz').width/2 - fontSize*0.7*1.5, y0+5+fontSize*0.35, fontSize*0.7, fontSize*0.7);
+    context.fillRect(1.1*x0-2 - context.measureText('Trig Requests: '+(rateScaleMin/1000).toFixed(0)+' kHz').width/2 - fontSize*0.7*1.5, y0+5+fontSize*0.35, fontSize*0.7, fontSize*0.7);
+    context.strokeRect(1.1*x0-2 - context.measureText('Trig Requests: '+(rateScaleMin/1000).toFixed(0)+' kHz').width/2 - fontSize*0.7*1.5, y0+5+fontSize*0.35, fontSize*0.7, fontSize*0.7);
 
     //data rate labels, left aligned with trig request labels
     context.fillStyle = '#FFFFFF';
-    context.fillText('Data Rate: 0 kbps', 1.1*x0-2 - context.measureText('Trig Requests: 0 kHz').width/2, y0+10+2*fontSize*0.7 );
-    context.fillText('Data Rate: '+(dataScale/1000).toFixed(0)+' kbps', 1.1*x0+maxLength - context.measureText('Trig Requests: '+(rateScale/1000).toFixed(0)+' kHz').width/2, y0+10+2*fontSize*0.7 );
+    context.fillText('Data Rate: '+(dataScaleMin/1000).toFixed(0)+' kbps', 1.1*x0-2 - context.measureText('Trig Requests: 0 kHz').width/2, y0+10+2*fontSize*0.7 );
+    context.fillText('Data Rate: '+(dataScaleMax/1000).toFixed(0)+' kbps', 1.1*x0+maxLength - context.measureText('Trig Requests: '+(rateScaleMax/1000).toFixed(0)+' kHz').width/2, y0+10+2*fontSize*0.7 );
     context.fillStyle = '#222222';
     context.strokeStyle = '#0000FF';
-    context.fillRect(1.1*x0+maxLength - context.measureText('Trig Requests: '+(rateScale/1000).toFixed(0)+' kHz').width/2 - fontSize*0.7*1.5, y0+10+fontSize*1.05, fontSize*0.7, fontSize*0.7);
-    context.strokeRect(1.1*x0+maxLength - context.measureText('Trig Requests: '+(rateScale/1000).toFixed(0)+' kHz').width/2 - fontSize*0.7*1.5, y0+10+fontSize*1.05, fontSize*0.7, fontSize*0.7);
-    context.fillRect(1.1*x0-2 - context.measureText('Trig Requests: 0 kHz').width/2 - fontSize*0.7*1.5, y0+10+fontSize*1.05, fontSize*0.7, fontSize*0.7);
-    context.strokeRect(1.1*x0-2 - context.measureText('Trig Requests: 0 kHz').width/2 - fontSize*0.7*1.5, y0+10+fontSize*1.05, fontSize*0.7, fontSize*0.7);
+    context.fillRect(1.1*x0+maxLength - context.measureText('Trig Requests: '+(rateScaleMax/1000).toFixed(0)+' kHz').width/2 - fontSize*0.7*1.5, y0+10+fontSize*1.05, fontSize*0.7, fontSize*0.7);
+    context.strokeRect(1.1*x0+maxLength - context.measureText('Trig Requests: '+(rateScaleMax/1000).toFixed(0)+' kHz').width/2 - fontSize*0.7*1.5, y0+10+fontSize*1.05, fontSize*0.7, fontSize*0.7);
+    context.fillRect(1.1*x0-2 - context.measureText('Trig Requests: '+(rateScaleMin/1000).toFixed(0)+' kHz').width/2 - fontSize*0.7*1.5, y0+10+fontSize*1.05, fontSize*0.7, fontSize*0.7);
+    context.strokeRect(1.1*x0-2 - context.measureText('Trig Requests: '+(rateScaleMin/1000).toFixed(0)+' kHz').width/2 - fontSize*0.7*1.5, y0+10+fontSize*1.05, fontSize*0.7, fontSize*0.7);
 }
 
 
+
+//masterCodex imports a table from which the DAQ is mapped
+DAQcodex = function(){
+    var i, Fkey, Skey, Pkey, Ckey;
+
+    //Parse DAQ Assets///////////////////////////////////////////////////////////////////////
+    //pull the FSPC table info in from the ODB
+    this.DAQpath = ['/Analyzer/Parameters/Cathode/Config/FSCP[*]', '/Analyzer/Parameters/Cathode/Config/Name[*]', '/Analyzer/Parameters/Cathode/Config/N'];       
+    this.DAQtable = ODBMGet(this.DAQpath);
+    this.FSPC  = this.DAQtable[0];
+    this.Name  = this.DAQtable[1];
+    this.nRows = this.DAQtable[2]; 
+
+    //parse into DAQ levels, and sort:    
+    this.table = [];
+    this.F = [];
+    this.S = [];
+    this.P = [];
+    this.C = [];
+    this.DAQmap = {};
+    this.detSummary = {};
+
+    for(i=0; i<this.nRows; i++){
+        this.F[i] = Math.floor(this.FSPC[i] / 0x10000000);                                          //first digit (on left)
+        this.S[i] = Math.floor(this.FSPC[i] / 0x100000) - this.F[i]*0x100;                          //second
+        this.P[i] = Math.floor(this.FSPC[i] / 0x100) - this.F[i]*0x100000 - this.S[i]*0x1000;       //third-fifth
+        this.C[i] = this.FSPC[i] - this.F[i]*0x10000000 - this.S[i]*0x100000 - this.P[i]*0x100;     //sixth and seventh
+        if(this.S[i] <= 12){
+            this.table.push({
+                F : this.F[i],
+                S : this.S[i],
+                P : this.P[i],
+                C : this.C[i],
+                Name : this.Name[i]
+            })
+        }
+    }
+
+    function sortFSPC(a, b){
+        if(a.F == b.F){
+            if(a.S == b.S){
+                if(a.P == b.P){
+                    if(a.C == b.C){
+                        return -9999; //this should never happen
+                    } else {
+                        if (a.C > b.C) return 1;
+                        if (a.C < b.C) return -1;
+                        else return 0;                        
+                    }                 
+                } else {
+                    if (a.P > b.P) return 1;
+                    if (a.P < b.P) return -1;
+                    else return 0;                    
+                }
+            } else {
+                if (a.S > b.S) return 1;
+                if (a.S < b.S) return -1;
+                else return 0;                
+            }
+        } else {
+            if (a.F > b.F) return 1;
+            if (a.F < b.F) return -1;
+            else return 0;          
+        }
+    } 
+
+    this.table.sort(sortFSPC);  
+    this.F = []; this.S = []; this.P = []; this.C = []; this.Name = [];
+
+    for(i=0; i<this.table.length; i++){
+        this.F[i] = this.table[i].F;
+        this.S[i] = this.table[i].S;
+        this.C[i] = this.table[i].C;
+        this.P[i] = this.table[i].P;
+        this.Name[i] = this.table[i].Name.slice(0,10).toUpperCase();        
+    }
+    this.nRows = this.table.length;
+
+    //loop over all rows, creating a 4-level object that reflects the structure of the DAQ:
+    for(i=0; i<this.nRows; i++){
+
+        Fkey = '0x'+this.F[i].toString(16).toUpperCase()+'XXXXXX';
+        Skey = '0x'+this.F[i].toString(16).toUpperCase()+this.S[i].toString(16).toUpperCase()+'XXXXX';
+        Pkey = '0x'+this.F[i].toString(16).toUpperCase()+this.S[i].toString(16).toUpperCase()+'00'+this.P[i].toString(16).toUpperCase()+'XX';
+        Ckey = '0x'+this.F[i].toString(16).toUpperCase()+this.S[i].toString(16).toUpperCase()+'00'+this.P[i].toString(16).toUpperCase()+'0'+this.C[i].toString(16).toUpperCase();
+
+        if(this.DAQmap[Fkey]){
+            this.DAQmap[Fkey].trigRequestRate = 0;
+            if(this.DAQmap[Fkey][Skey]){
+                this.DAQmap[Fkey][Skey].trigRequestRate = 0;
+                this.DAQmap[Fkey][Skey].dataRate = 0;  //how much data is this collector pushing upstream?
+                if(this.DAQmap[Fkey][Skey][Pkey]){
+                    this.DAQmap[Fkey][Skey][Pkey].trigRequestRate = 0;
+                    this.DAQmap[Fkey][Skey][Pkey].dataRate = 0;  //how much data is this digitizer pushing upstream?
+                    this.DAQmap[Fkey][Skey][Pkey][Ckey] = {'detector' : this.Name[i], 'FSPC' : Ckey, 'trigRequestRate' : 0, 'dataRate' : 0};
+                    this.detSummary[this.Name[i].slice(0,3)] = {'totalTrigRequestRate' : 0, 'prevTrigReqRate' : 0, 'totalDataRate' : 0, 'prevDataRate' : 0};
+                } else {
+                    this.DAQmap[Fkey][Skey][Pkey] = {};
+                    i--;
+                }
+            } else {
+                this.DAQmap[Fkey][Skey] = {};
+                i--;
+            }
+        } else {
+            this.DAQmap[Fkey] = {};
+            i--;
+        }
+    }
+
+    //keep track of all the key names in the DAQmap that contain data directly, and aren't part of the hierarchy, so we can ignore them when traversing the DAQ tree:
+    this.dataKeys = ['detector', 'FSPC', 'trigRequestRate', 'dataRate'];
+
+    //0x0XXXXXX == currently hard coded to only look at one master, loop over Fkey to generalize
+    this.nCollectors = 0;
+    for(Skey in this.DAQmap['0x0XXXXXX']){
+        if(this.dataKeys.indexOf(Skey) == -1)
+            this.nCollectors++;
+    }
+    this.nDigitizers = 0;
+    this.nDigitizersPerCollector = [];
+    i = 0;
+    for(Skey in this.DAQmap['0x0XXXXXX']){
+        if(this.dataKeys.indexOf(Skey) == -1){
+            this.nDigitizersPerCollector[i] = 0;
+            for(Pkey in this.DAQmap['0x0XXXXXX'][Skey]){
+                if(this.dataKeys.indexOf(Pkey) == -1){
+                    this.nDigitizers++;
+                    this.nDigitizersPerCollector[i]++;
+                }
+            }
+            i++;
+        }
+    }
+
+    //populate this.DAQmap with all the relevant information from the JSONPstore.
+    this.update = function(){
+        
+        var key, Fkey, Skey, Pkey, Ckey, ODBpaths, data;
+
+        //get summary data from ODB
+        //ODBpaths = ['/Equipment/Trigger/Statistics/Events per sec.', '/Equipment/Trigger/Statistics/kBytes per sec.', '/Equipment/Event Builder/Statistics/Events per sec.', '/Equipment/Event Builder/Statistics/kBytes per sec.']
+        //data = ODBMGet(ODBpaths);
+        this.triggerRate = parseFloat(window.localODB.TrigEPS).toFixed(1);
+        this.triggerDataRate = parseFloat(window.localODB.TrigDPS).toFixed(1);
+        this.EBrate = parseFloat(window.localODB.EBEPS).toFixed(1);
+        this.EBdataRate = parseFloat(window.localODB.EBDPS).toFixed(1);
+
+
+        //zero out the detector totals from last iteration:
+        for(key in this.detSummary){
+            this.detSummary[key].prevTrigReqRate = this.detSummary[key].totalTrigRequestRate;
+            this.detSummary[key].totalTrigRequestRate = 0;
+
+            this.detSummary[key].prevDataRate = this.detSummary[key].totalDataRate;
+            this.detSummary[key].totalDataRate = 0;            
+        }
+
+        //map data from the JSONP store into the DAQ object, summing rates as we move upstream:
+        for(Fkey in this.DAQmap){
+            if(this.dataKeys.indexOf(Fkey) == -1){
+                this.DAQmap[Fkey].trigRequestRate = 0;
+                for(Skey in this.DAQmap[Fkey]){
+                    if(this.dataKeys.indexOf(Skey) == -1){
+                        this.DAQmap[Fkey][Skey].trigRequestRate = 0;
+                        this.DAQmap[Fkey][Skey].dataRate = 0;
+                        for(Pkey in this.DAQmap[Fkey][Skey]){
+                            if(this.dataKeys.indexOf(Pkey) == -1){
+                                this.DAQmap[Fkey][Skey][Pkey].trigRequestRate = 0;
+                                this.DAQmap[Fkey][Skey][Pkey].dataRate = 0;
+                                for(Ckey in this.DAQmap[Fkey][Skey][Pkey]){
+                                    if( window.JSONPstore['scalar'][this.DAQmap[Fkey][Skey][Pkey][Ckey].detector] ){
+                                        this.DAQmap[Fkey][Skey][Pkey][Ckey].trigRequestRate = window.JSONPstore['scalar'][this.DAQmap[Fkey][Skey][Pkey][Ckey].detector]['TRIGREQ'];
+                                        this.DAQmap[Fkey][Skey][Pkey][Ckey].dataRate = window.JSONPstore['scalar'][this.DAQmap[Fkey][Skey][Pkey][Ckey].detector]['dataRate'];
+                                        this.DAQmap[Fkey][Skey][Pkey].trigRequestRate += this.DAQmap[Fkey][Skey][Pkey][Ckey].trigRequestRate;
+                                        this.DAQmap[Fkey][Skey][Pkey].dataRate += this.DAQmap[Fkey][Skey][Pkey][Ckey].dataRate;
+                                        this.detSummary[ this.DAQmap[Fkey][Skey][Pkey][Ckey].detector.slice(0,3) ].totalTrigRequestRate += this.DAQmap[Fkey][Skey][Pkey][Ckey].trigRequestRate;
+                                        this.detSummary[ this.DAQmap[Fkey][Skey][Pkey][Ckey].detector.slice(0,3) ].totalDataRate += this.DAQmap[Fkey][Skey][Pkey][Ckey].dataRate;
+                                    }
+                                }
+                                this.DAQmap[Fkey][Skey].trigRequestRate += this.DAQmap[Fkey][Skey][Pkey].trigRequestRate;
+                                this.DAQmap[Fkey][Skey].dataRate += this.DAQmap[Fkey][Skey][Pkey].dataRate;
+                            }
+                        }
+                        this.DAQmap[Fkey].trigRequestRate += this.DAQmap[Fkey][Skey].trigRequestRate;
+                    }
+                }
+            }
+        }
+
+    };
+
+}
 
 
 

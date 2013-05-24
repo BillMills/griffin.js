@@ -269,6 +269,11 @@ function fetchCustomParameters(){
     paths[69] = '/DashboardConfig/DAQ/transferMinDetailView';
     paths[70] = '/DashboardConfig/DAQ/transferMaxDetailView';
     
+    paths[71] = '/DashboardConfig/DAQ/rateMinMaster';
+    paths[72] = '/DashboardConfig/DAQ/rateMaxMaster';
+    paths[73] = '/DashboardConfig/DAQ/transferMinMaster';
+    paths[74] = '/DashboardConfig/DAQ/transferMaxMaster';
+
     //fetch:
     var data = ODBMGet(paths);
 
@@ -342,8 +347,8 @@ function fetchCustomParameters(){
     window.parameters.TIP.maxima.HPGe = [parseFloat(data[55][1]), parseFloat(data[58][1]), parseFloat(data[61][1])];
     window.parameters.TIP.maxima.BGO = [parseFloat(data[56][1]), parseFloat(data[59][1]), parseFloat(data[62][1])];
 
-    window.parameters.DAQminima = [parseFloat(data[63]), parseFloat(data[67]), parseFloat(data[65]), parseFloat(data[69])];
-    window.parameters.DAQmaxima = [parseFloat(data[64]), parseFloat(data[68]), parseFloat(data[66]), parseFloat(data[70])];
+    window.parameters.DAQminima = [parseFloat(data[63]), parseFloat(data[67]), parseFloat(data[65]), parseFloat(data[69]), parseFloat(data[71]), parseFloat(data[73])];
+    window.parameters.DAQmaxima = [parseFloat(data[64]), parseFloat(data[68]), parseFloat(data[66]), parseFloat(data[70]), parseFloat(data[72]), parseFloat(data[74])];
     
 }
 

@@ -145,11 +145,8 @@ function loadParameters(){
 						},
 				"TIPmode" : "Wall",
 
-
-				//"DAQminima" : [0,0,0,0,0,0,0,0,0],
-				//"DAQmaxima" : [1,1,1,1,1,1,1,1,100000],
-				"DAQminima" : [0, 0, 0, 0], //minima of element scales: [top level view rate, top level transfer, detail view rate, detail view transfer]
-				"DAQmaxima" : [10000, 100000, 1000, 1000],
+				"DAQminima" : [0, 0, 0, 0, 0, 0], //minima of element scales: [top level view rate, top level transfer, detail view rate, detail view transfer, master rate, master transfer]
+				"DAQmaxima" : [10000, 100000, 1000, 1000, 50000, 50000],
 
 				"JSONPrepos" : ["http://alphadon.triumf.ca:8092/parameters?jsonp=parseResponse", "http://midtig06.triumf.ca:8091/scalar?jsonp=parseResponse"]
 				}
