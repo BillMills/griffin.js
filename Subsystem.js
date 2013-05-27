@@ -205,20 +205,28 @@ function Subsystem(){
 
     //simple data fetcher.  Some subsystems will have more sophisticated data routing.
     this.fetchNewData = function(){
+        
         var key;
 
-        //dummy data:
         for(key in this.dataBus[this.name]){
-            this.dataBus[this.name][key].HV = Math.random();
-            this.dataBus[this.name][key].threshold = Math.random();
-            this.dataBus[this.name][key].rate = Math.random();
+            
+            if(window.JSONPstore['thresholds']){
+                if(window.JSONPstore['thresholds'][key])
+                    this.dataBus[this.name][key]['threshold'] = window.JSONPstore['thresholds'][key];
+            }
+
+            if(window.JSONPstore['scalar']){
+                if(window.JSONPstore['scalar'][key])
+                    this.dataBus[this.name][key]['rate'] = window.JSONPstore['scalar'][key]['TRIGREQ'];
+            }
+
         }
+        
     };
 
     //generic update routine.  Again, some subsystems are more complcated versions of this:
-    //broken 'this' in here somewhere...
     this.update = function(){
-        /*
+        
         var key;
 
         //get new data
@@ -226,30 +234,30 @@ function Subsystem(){
 
         //parse the new data into colors
         for(key in this.dataBus[this.name]){
-            this.dataBus.[this.name][key].oldHVcolor = this.dataBus.[this.name][key].HVcolor;
-            this.dataBus.[this.name][key].HVcolor = this.parseColor(this.dataBus.[this.name][key].HV, this.name);
-            this.dataBus.[this.name][key].oldThresholdColor = this.dataBus.[this.name][key].thresholdColor;
-            this.dataBus.[this.name][key].thresholdColor = this.parseColor(this.dataBus.[this.name][key].threshold, this.name);
-            this.dataBus.[this.name][key].oldRateColor = this.dataBus.[this.name][key].rateColor;
-            this.dataBus.[this.name][key].rateColor = this.parseColor(this.dataBus.[this.name][key].rate, this.name);
+            this.dataBus[this.name][key].oldHVcolor = this.dataBus[this.name][key].HVcolor;
+            this.dataBus[this.name][key].HVcolor = this.parseColor(this.dataBus[this.name][key].HV, this.name);
+            this.dataBus[this.name][key].oldThresholdColor = this.dataBus[this.name][key].thresholdColor;
+            this.dataBus[this.name][key].thresholdColor = this.parseColor(this.dataBus[this.name][key].threshold, this.name);
+            this.dataBus[this.name][key].oldRateColor = this.dataBus[this.name][key].rateColor;
+            this.dataBus[this.name][key].rateColor = this.parseColor(this.dataBus[this.name][key].rate, this.name);
         }
 
         this.tooltip.update();
-        */
+        
     };
     
     //write the simplest possible subsystem tooltip contents:
     this.defineText = function(cell){
-        /*
+        
         var key, nextLine, toolTipContent;
 
         toolTipContent = '<br>'
         key = this.dataBus.TTmap[cell];
         nextLine = key;
         toolTipContent += nextLine + '<br><br>';
-        toolTipContent += this.baseTTtext(this.dataBus.[this.name][key].HV, this.dataBus.[this.name][key].threshold, this.dataBus.[this.name][key].rate);
+        toolTipContent += this.baseTTtext(this.dataBus[this.name][key].HV, this.dataBus[this.name][key].threshold, this.dataBus[this.name][key].rate);
         toolTipContent += '<br>'
-        */
+        
     };
     
 }
@@ -784,10 +792,15 @@ function HPGeAssets(){
         
         //HPGe + BGO detail
         for(key in this.dataBus.HPGe){
-            if(window.JSONPstore['thresholds'][key])
-                this.dataBus.HPGe[key]['threshold'] = window.JSONPstore['thresholds'][key];
-            if(window.JSONPstore['scalar'][key])
-                this.dataBus.HPGe[key]['rate'] = window.JSONPstore['scalar'][key]['TRIGREQ'];
+            if(window.JSONPstore['thresholds']){
+                if(window.JSONPstore['thresholds'][key])
+                    this.dataBus.HPGe[key]['threshold'] = window.JSONPstore['thresholds'][key];
+            }
+
+            if(window.JSONPstore['scalar']){
+                if(window.JSONPstore['scalar'][key])
+                    this.dataBus.HPGe[key]['rate'] = window.JSONPstore['scalar'][key]['TRIGREQ'];
+            }
         }
 
         //HPGe + BGO summary

@@ -33,6 +33,7 @@
     <script src="SCEPTAR.js" type="text/javascript"></script>
     <script src="SPICE.js" type="text/javascript"></script>
     <script src="TIP.js" type="text/javascript"></script>
+    <script src="DSSD.js" type="text/javascript"></script>
 
     <link rel="stylesheet" type="text/css" href="GRIFFINcc.css" />
 
@@ -218,6 +219,7 @@
           if(window.parameters.deployment["SCEPTAR"]) window.Subdetectors[window.Subdetectors.length] = new SCEPTAR();
           if(window.parameters.deployment["SPICE"]) window.Subdetectors[window.Subdetectors.length] = new SPICE();
           if(window.parameters.deployment["TIP"]) window.Subdetectors[window.Subdetectors.length] = new TIP();
+          if(window.parameters.deployment["DSSD"]) window.Subdetectors[window.Subdetectors.length] = new DSSD();
 
           insertDOM('br', 'break', '', '', 'SubsystemLinks');
           //nav for different reported values:

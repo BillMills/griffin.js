@@ -105,7 +105,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                                     var y;
                                     y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;
                                     if(y>that.canvasHeight - that.scaleHeight){
-                                        parameterDialogue('DAQ', [ ['Transfer Rate', window.parameters.DAQminima[3], window.parameters.DAQmaxima[3], 'bps', '/DashboardConfig/DAQ/transferMinDetailView', '/DashboardConfig/DAQ/transferMaxDetailView' ], ['Trigger Rate', window.parameters.DAQminima[2], window.parameters.DAQmaxima[2], 'Hz', '/DashboardConfig/DAQ/rateMinDetailView', '/DashboardConfig/DAQ/rateMaxDetailView']  ], window.parameters.colorScale[window.DAQpointer.DAQcolor]);
+                                        parameterDialogue('DAQ', [ ['Transfer Rate', window.parameters.DAQminima[3], window.parameters.DAQmaxima[3], 'Bps', '/DashboardConfig/DAQ/transferMinDetailView', '/DashboardConfig/DAQ/transferMaxDetailView' ], ['Trigger Rate', window.parameters.DAQminima[2], window.parameters.DAQmaxima[2], 'Hz', '/DashboardConfig/DAQ/rateMinDetailView', '/DashboardConfig/DAQ/rateMaxDetailView']  ], window.parameters.colorScale[window.DAQpointer.DAQcolor]);
                                     } else {
                                         that.detailShowing = 0;
                                         swapFade('DAQToplink', that, 0, 0);
@@ -127,9 +127,9 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                                 }
                                 //set up scale range dialogue:
                                 if(y>that.canvasHeight - that.scaleHeight){
-                                    parameterDialogue('DAQ', [ ['Transfer Rate', window.parameters.DAQminima[1], window.parameters.DAQmaxima[1], 'bps', '/DashboardConfig/DAQ/transferMinTopView', '/DashboardConfig/DAQ/transferMaxTopView' ], ['Trigger Rate', window.parameters.DAQminima[0], window.parameters.DAQmaxima[0], 'Hz', '/DashboardConfig/DAQ/rateMinTopView', '/DashboardConfig/DAQ/rateMaxTopView']  ], window.parameters.colorScale[window.DAQpointer.DAQcolor]);
+                                    parameterDialogue('DAQ', [ ['Transfer Rate', window.parameters.DAQminima[1], window.parameters.DAQmaxima[1], 'Bps', '/DashboardConfig/DAQ/transferMinTopView', '/DashboardConfig/DAQ/transferMaxTopView' ], ['Trigger Rate', window.parameters.DAQminima[0], window.parameters.DAQmaxima[0], 'Hz', '/DashboardConfig/DAQ/rateMinTopView', '/DashboardConfig/DAQ/rateMaxTopView']  ], window.parameters.colorScale[window.DAQpointer.DAQcolor]);
                                 } else if(y<that.masterBottom){
-                                    parameterDialogue('Device Summary',[ ['Trig Requests', window.parameters.DAQminima[4], window.parameters.DAQmaxima[5], 'Hz', '/DashboardConfig/DAQ/rateMinMaster', '/DashboardConfig/DAQ/rateMaxMaster'], ['Data Rate', window.parameters.DAQminima[5], window.parameters.DAQmaxima[5], 'bps', '/DashboardConfig/DAQ/transferMinMaster', '/DashboardConfig/DAQ/transferMaxMaster']  ]);
+                                    parameterDialogue('Device Summary',[ ['Trig Requests', window.parameters.DAQminima[4], window.parameters.DAQmaxima[5], 'Hz', '/DashboardConfig/DAQ/rateMinMaster', '/DashboardConfig/DAQ/rateMaxMaster'], ['Data Rate', window.parameters.DAQminima[5], window.parameters.DAQmaxima[5], 'Bps', '/DashboardConfig/DAQ/transferMinMaster', '/DashboardConfig/DAQ/transferMaxMaster']  ]);
                                 }
                             };
 
@@ -349,9 +349,9 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         //transfer rate
         //determine unit
         unit = ((context == this.detailContext) ? window.parameters.DAQmaxima[3] : window.parameters.DAQmaxima [1]);
-        if(unit > 1000000) unit = ' Mbps';
-        else if(unit > 1000) unit = ' kbps';
-        else unit = ' bps';
+        if(unit > 1000000) unit = ' MBps';
+        else if(unit > 1000) unit = ' kBps';
+        else unit = ' Bps';
 
         context.beginPath();
         context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2);
@@ -677,19 +677,19 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
             //collectors
             if(this.dataBus.key[cell].length == 2){
                 nextLine += 'Trig Request Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]]['trigRequestRate'].toFixed(1) + ' Hz<br>';
-                nextLine += 'Inbound Data Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]]['dataRate'].toFixed(1) + ' bps';
+                nextLine += 'Inbound Data Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]]['dataRate'].toFixed(1) + ' Bps';
             }
 
             //digitizers
             if(this.dataBus.key[cell].length == 3){
                 nextLine += 'Total Trig Request Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]]['trigRequestRate'].toFixed(1) + ' Hz<br>';
-                nextLine += 'Total Outbound Data Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]]['dataRate'].toFixed(1) + ' bps<br><br>';
+                nextLine += 'Total Outbound Data Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]]['dataRate'].toFixed(1) + ' Bps<br><br>';
 
                 for(key in window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]]){
                     if(window.codex.dataKeys.indexOf(key) == -1){
                         nextLine +=  window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]][key]['FSPC'] + ': ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]][key]['detector'];
                         nextLine += '<br>';
-                        nextLine += 'Trig Request Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]][key]['trigRequestRate'].toFixed(1) + ' Hz; Data Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]][key]['dataRate'].toFixed(1) + ' bps';
+                        nextLine += 'Trig Request Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]][key]['trigRequestRate'].toFixed(1) + ' Hz; Data Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]][key]['dataRate'].toFixed(1) + ' Bps';
                         nextLine += '<br><br>'
                     }
                 }
@@ -773,8 +773,10 @@ function rateChart(frame, data, context, x0, y0, maxLength, barWidth){
         context.strokeRect(1.1*x0, y0 - (barWidth+4)*(row+1) + barWidth/2+2, length, barWidth/2-2);
         context.fillStyle = '#FFFFFF';
         context.font = fontSize*0.6+'px Raleway';
+       //console.log(data[key].totalDataRate/1000)
+// window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]]['dataRate'].toFixed(1)
         var text = (data[key].totalDataRate/1000 > 9999) ? (data[key].totalDataRate/1000).toExponential(0) : (data[key].totalDataRate/1000).toFixed(0);
-        text += ' kbps';
+        text += ' kBps';
         context.fillText( text, 1.1*x0 + length + 5,  y0 - (barWidth+4)*(row+1) + barWidth/2+2 + barWidth/4 - 1);
     }
 
@@ -804,8 +806,8 @@ function rateChart(frame, data, context, x0, y0, maxLength, barWidth){
 
     //data rate labels, left aligned with trig request labels
     context.fillStyle = '#FFFFFF';
-    context.fillText('Data Rate: '+(dataScaleMin/1000).toFixed(0)+' kbps', 1.1*x0-2 - context.measureText('Trig Requests: 0 kHz').width/2, y0+10+2*fontSize*0.7 );
-    context.fillText('Data Rate: '+(dataScaleMax/1000).toFixed(0)+' kbps', 1.1*x0+maxLength - context.measureText('Trig Requests: '+(rateScaleMax/1000).toFixed(0)+' kHz').width/2, y0+10+2*fontSize*0.7 );
+    context.fillText('Data Rate: '+(dataScaleMin/1000).toFixed(0)+' kBps', 1.1*x0-2 - context.measureText('Trig Requests: 0 kHz').width/2, y0+10+2*fontSize*0.7 );
+    context.fillText('Data Rate: '+(dataScaleMax/1000).toFixed(0)+' kBps', 1.1*x0+maxLength - context.measureText('Trig Requests: '+(rateScaleMax/1000).toFixed(0)+' kHz').width/2, y0+10+2*fontSize*0.7 );
     context.fillStyle = '#222222';
     context.strokeStyle = '#0000FF';
     context.fillRect(1.1*x0+maxLength - context.measureText('Trig Requests: '+(rateScaleMax/1000).toFixed(0)+' kHz').width/2 - fontSize*0.7*1.5, y0+10+fontSize*1.05, fontSize*0.7, fontSize*0.7);

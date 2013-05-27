@@ -18,7 +18,7 @@ function DSSD(){
     this.topMargin = 0.05*this.canvasHeight;
     this.bottomMargin = 0.05*this.canvasHeight;
     this.leftMargin = 0.05*this.canvasWidth;
-    tihs.rightMargin = 0.05*this.canvasWidth;
+    this.rightMargin = 0.05*this.canvasWidth;
 
     this.horizGutter = 0.02*this.canvasHeight;
     this.vertGutter = 0.01*this.canvasWidth;
@@ -34,6 +34,13 @@ function DSSD(){
 
     //member functions////////////////////////////////////////////////////////////////////////////////////
     this.draw = function(frame){
+
+        this.context.clearRect(0,0,this.canvasWidth,this.canvasHeight);
+        this.context.font = '24px Orbitron';
+        this.context.fillStyle = '#999999';
+        this.context.fillText('DSSD Monitor Coming Soon', this.canvasWidth/2 - this.context.measureText('DSSD Monitor Coming Soon').width/2, this.canvasHeight*0.4);
+
+        /*
     	var key, orientation, x, y;
     	this.context.strokeStyle = '#999999';
     	this.TTcontext.strokeStyle = '#123456';
@@ -70,7 +77,11 @@ function DSSD(){
             //scale
             this.drawScale(this.context);
         }
-
+        */
     }
+
+
+
+
 
 }

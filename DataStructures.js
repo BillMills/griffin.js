@@ -234,30 +234,42 @@ DANTEDS = function(){
 	//todo
 }
 
-DSSD = function(){
+DSSDDS = function(){
 
-	var i, name;
+	var i, j, name, layer, charge, 
+	index = 0,
+	prefix = 'MAD',
+	layers = ['D', 'E', 'F'],
+	charges = ['N', 'P'];
 
 	this.DSSD = {};
 	this.TTmap = [];
-	for(i=1; i<16*2*4; i++){
-		var name = 'x'+i;
-		this.DESCANT[name] = {
-			'HV'		: 0,
-			'threshold' : 0,
-			'rate' 		: 0,
-			'index'		: i,
+	
+	for(i=0; i<7; i++){
+		for(layer=0; layer<3; layer++){
+			for(charge=0; charge<2; charge++){
+				for(j=0; j<16; j++){
+					name = prefix + ((i<10) ? '0'+i : i) + layers[layer] + charges[charge] + ((j<10) ? '0'+j : j) + 'X';
+					this.DSSD[name] = {
+						'HV'		: 0,
+						'threshold' : 0,
+						'rate' 		: 0,
+						'index'		: index,
 
-			'oldHVcolor' : '#000000',
-			'HVcolor'	 : '#000000',
-			'oldThresholdColor' : '#000000',
-			'thresholdColor' : '#000000',
-			'oldRateColor' : '#000000',
-			'rateColor' : '#000000'	
+						'oldHVcolor' : '#000000',
+						'HVcolor'	 : '#000000',
+						'oldThresholdColor' : '#000000',
+						'thresholdColor' : '#000000',
+						'oldRateColor' : '#000000',
+						'rateColor' : '#000000'	
+					}
+					this.TTmap[index] = name;
+					index++;
+				}
+			}
 		}
-		this.TTmap[i] = name;
 	}
-
+	
 }
 
 BAMBINODS = function(mode){
