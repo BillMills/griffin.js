@@ -274,6 +274,10 @@ function fetchCustomParameters(){
     paths[73] = '/DashboardConfig/DAQ/transferMinMaster';
     paths[74] = '/DashboardConfig/DAQ/transferMaxMaster';
 
+    paths[75] = '/DashboardConfig/DSSD/HVscale[*]'
+    paths[76] = '/DashboardConfig/DSSD/thresholdScale[*]'
+    paths[77] = '/DashboardConfig/DSSD/rateScale[*]'
+
     //fetch:
     var data = ODBMGet(paths);
 
@@ -349,6 +353,9 @@ function fetchCustomParameters(){
 
     window.parameters.DAQminima = [parseFloat(data[63]), parseFloat(data[67]), parseFloat(data[65]), parseFloat(data[69]), parseFloat(data[71]), parseFloat(data[73])];
     window.parameters.DAQmaxima = [parseFloat(data[64]), parseFloat(data[68]), parseFloat(data[66]), parseFloat(data[70]), parseFloat(data[72]), parseFloat(data[74])];
+
+    window.parameters.DSSD.minima.DSSD = [parseFloat(data[75][0]), parseFloat(data[76][0]), parseFloat(data[77][0])];
+    window.parameters.DSSD.maxima.DSSD = [parseFloat(data[75][1]), parseFloat(data[76][1]), parseFloat(data[77][1])];
     
 }
 

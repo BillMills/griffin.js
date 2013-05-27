@@ -239,35 +239,58 @@ DSSDDS = function(){
 	var i, j, name, layer, charge, 
 	index = 0,
 	prefix = 'MAD',
-	layers = ['D', 'E', 'F'],
+	layers = ['D', 'E'],
 	charges = ['N', 'P'];
 
 	this.DSSD = {};
 	this.TTmap = [];
 	
-	for(i=0; i<7; i++){
-		for(layer=0; layer<3; layer++){
+	//quick hack only supports what's getting used in Madrid experiment May/June 2013 - last time this will ever be used?
+	for(i=1; i<5; i++){
+		for(layer=0; layer<2; layer++){
 			for(charge=0; charge<2; charge++){
 				for(j=0; j<16; j++){
-					name = prefix + ((i<10) ? '0'+i : i) + layers[layer] + charges[charge] + ((j<10) ? '0'+j : j) + 'X';
-					this.DSSD[name] = {
-						'HV'		: 0,
-						'threshold' : 0,
-						'rate' 		: 0,
-						'index'		: index,
+					if( !(layer==1 && (i==1 || i==2 || i==3)) ){
+						name = prefix + ((i<10) ? '0'+i : i) + layers[layer] + charges[charge] + ((j<10) ? '0'+j : j) + 'X';
+						this.DSSD[name] = {
+							'HV'		: 0,
+							'threshold' : 0,
+							'rate' 		: 0,
+							'index'		: index,
 
-						'oldHVcolor' : '#000000',
-						'HVcolor'	 : '#000000',
-						'oldThresholdColor' : '#000000',
-						'thresholdColor' : '#000000',
-						'oldRateColor' : '#000000',
-						'rateColor' : '#000000'	
+							'oldHVcolor' : '#000000',
+							'HVcolor'	 : '#000000',
+							'oldThresholdColor' : '#000000',
+							'thresholdColor' : '#000000',
+							'oldRateColor' : '#000000',
+							'rateColor' : '#000000'	
+						}
+						this.TTmap[index] = name;
+						index++;
 					}
-					this.TTmap[index] = name;
-					index++;
 				}
 			}
 		}
+	}
+
+	//pads:
+	var padID = ['MAD00ENXXX', 'MAD01ENXXX'];
+	for(i=0; i<2; i++){
+						this.DSSD[padID[i]] = {
+							'HV'		: 0,
+							'threshold' : 0,
+							'rate' 		: 0,
+							'index'		: index,
+
+							'oldHVcolor' : '#000000',
+							'HVcolor'	 : '#000000',
+							'oldThresholdColor' : '#000000',
+							'thresholdColor' : '#000000',
+							'oldRateColor' : '#000000',
+							'rateColor' : '#000000'	
+						}
+						this.TTmap[index] = padID[i];
+						index++;
 	}
 	
 }

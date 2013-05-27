@@ -256,7 +256,9 @@ function Subsystem(){
         nextLine = key;
         toolTipContent += nextLine + '<br><br>';
         toolTipContent += this.baseTTtext(this.dataBus[this.name][key].HV, this.dataBus[this.name][key].threshold, this.dataBus[this.name][key].rate);
-        toolTipContent += '<br>'
+        toolTipContent += '<br><br>'
+
+        document.getElementById(this.tooltip.ttDivID).innerHTML = toolTipContent;
         
     };
     
