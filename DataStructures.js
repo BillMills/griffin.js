@@ -195,7 +195,7 @@ DESCANTDS = function(){
 	this.DESCANT = {};
 	this.TTmap = [];
 	for(i=1; i<71; i++){
-		var name = (i<10) ? 'DSC00'+i+'P00X' : 'DSC0'+i+'P00X';
+		name = (i<10) ? 'DSC00'+i+'P00X' : 'DSC0'+i+'P00X';
 		this.DESCANT[name] = {
 			'HV'		: 0,
 			'threshold' : 0,
@@ -274,8 +274,8 @@ DSSDDS = function(){
 	}
 
 	//pads:
-	var padID = ['MAD00ENXXX', 'MAD01ENXXX'];
-	for(i=0; i<2; i++){
+	var padID = ['MAD01ENXXX', 'MAD01ENXXX', 'MAD02ENXXX'];
+	for(i=0; i<3; i++){
 						this.DSSD[padID[i]] = {
 							'HV'		: 0,
 							'threshold' : 0,
@@ -296,20 +296,30 @@ DSSDDS = function(){
 }
 
 BAMBINODS = function(mode){
-	//data arrays:
-	this.HV = [];
-	this.thresholds = [];
-	this.rate = [];
+	var i, name, 
+	prefix = ((mode=='S2') ? 'BAZ0' : 'BAE0'),
+	waypoints = ['D', 'E', 'F'];
 
-	//key map
-	/*
-	this.key = [];
-	if(mode == 'S2'){
 
-	} else if(mode == 'S3'){
+	this.BAMBINO = {};
+	this.TTmap = [];
+	for(i=1; i<3; i++){
+		name = '???'  //prefix + i + waypoints + N or P + segment + 'X'
+		this.BAMBINO[name] = {
+			'HV'		: 0,
+			'threshold' : 0,
+			'rate' 		: 0,
+			'index'		: i,
 
+			'oldHVcolor' : '#000000',
+			'HVcolor'	 : '#000000',
+			'oldThresholdColor' : '#000000',
+			'thresholdColor' : '#000000',
+			'oldRateColor' : '#000000',
+			'rateColor' : '#000000'	
+		}
+		this.TTmap[i] = name;
 	}
-	*/
 }
 
 SCEPTARDS = function(){
@@ -333,24 +343,29 @@ SCEPTARDS = function(){
 }
 
 SPICEDS = function(){
-	var i;
+	var i, name;
 
-	//data arrays:
-	this.HV = [];
-	this.thresholds = [];
-	this.rate = [];
+	this.SPICE = {};
+	this.TTmap = [];
+	for(i=1; i<121; i++){
+		name = 'SPI00XN';
+		if(i<10) name += '00'+i;
+		else if(i<100) name += '0'+i;
+		else name += i;
+		this.SPICE[name] = {
+			'HV'		: 0,
+			'threshold' : 0,
+			'rate' 		: 0,
+			'index'		: i,
 
-	//key map
-	this.key = [];
-	for(i=0; i<120; i++){
-		this.key[i] = [];
-		//generate names
-		if(i<10)
-			this.key[i][0] = 'SPI00XN00'+i;
-		else if(i<100)
-			this.key[i][0] = 'SPI00XN0'+i;
-		else 
-			this.key[i][0] = 'SPI00XN'+i;
+			'oldHVcolor' : '#000000',
+			'HVcolor'	 : '#000000',
+			'oldThresholdColor' : '#000000',
+			'thresholdColor' : '#000000',
+			'oldRateColor' : '#000000',
+			'rateColor' : '#000000'	
+		}
+		this.TTmap[i] = name;
 	}
 }
 

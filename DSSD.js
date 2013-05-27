@@ -131,7 +131,7 @@ function DSSD(){
         this.context.textBaseline = 'top';
         this.context.fillStyle = '#999999';
         this.context.clearRect(x0, y0+this.DSSDside+2 , this.DSSDside, this.gutterSize*0.8);
-        this.context.fillText(DSSDid+'XXX', x0+this.DSSDside/2 - this.context.measureText(DSSDid+'XXX').width/2, y0+this.DSSDside+5 );
+        this.context.fillText(DSSDid, x0+this.DSSDside/2 - this.context.measureText(DSSDid).width/2, y0+this.DSSDside+5 );
     };
 
     //generate the keys for one set of 16 DSSD strips from minimal info, return in an array:

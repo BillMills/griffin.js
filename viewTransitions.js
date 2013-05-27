@@ -1,83 +1,19 @@
-//trigger css transition on opacity to fade canvas out, then send it to bottom of stack on completion:
-function fadeOut(canvasID){
-	//set canvas to come off top of stack once it's faded out:
-	document.getElementById(canvasID).addEventListener('transitionend', function(){
-			if( $('#'+canvasID).css('opacity')==0 )
-	            $('#'+canvasID).css('z-index', 0);    
+//trigger css transition on opacity to fade element out, then send it to bottom of stack on completion:
+function fadeOut(elementID){
+	//set element to come off top of stack once it's faded out:
+	document.getElementById(elementID).addEventListener('transitionend', function(){
+			if( $('#'+elementID).css('opacity')==0 )
+	            $('#'+elementID).css('z-index', 0);    
     });
 
-    //fade the canvas out:
-    $('#'+canvasID).css('opacity', 0);
+    //fade the element out:
+    $('#'+elementID).css('opacity', 0);
 }
 
-function fadeIn(canvasID){
-	//kill off the transitionEnd callback that may have been stuck on by fadeOut:
-	//document.getElementById(canvasID).addEventListener('webkitTransitionEnd', function(){return 0});
-
-	$('#'+canvasID).css('z-index', 1);
-	$('#'+canvasID).css('opacity', 1);
+function fadeIn(elementID){
+	$('#'+elementID).css('z-index', 1);
+	$('#'+elementID).css('opacity', 1);
 	//window.onDisplay = canvasID;
-}
-
-/*
-function fadeOut(cvas, frame){
-
-	var duration = 0.5;
-	var FPS = 30;
-	var nFrames = duration*FPS;
-
-    canvas = document.getElementById(cvas);
-    context = canvas.getContext('2d');
-
-    var newOpacity = (nFrames - frame) / nFrames;
-    if(newOpacity == 0) newOpacity = 0.00000001;
-    $(canvas).css('opacity', newOpacity);
-    $(canvas).css('z-index', 0);
-
-    if(frame<nFrames+1){
-	    setTimeout(function(){fadeOut(cvas, frame+1)}, 1000/FPS);
-	}
-}
-
-//fade a canvas in:
-function fadeIn(cvas, frame){
-
-	var duration = 0.5;
-	var FPS = 30;
-	var nFrames = duration*FPS;
-
-    canvas = document.getElementById(cvas);
-    context = canvas.getContext('2d');
-
-    var newOpacity = frame / nFrames;
-    if(newOpacity == 0) newOpacity = 0.00000001;
-    $(canvas).css('opacity', newOpacity);
-    $(canvas).css('z-index', 1);
-
-    if(frame<nFrames+1){
-	    setTimeout(function(){fadeIn(cvas, frame+1)}, 1000/FPS);
-	}
-}
-*/
-
-
-//fade a div out
-function fadeDivOut(navDiv){
-
-	$('#'+navDiv).css('z-index', -1);
-
-	div = document.getElementById(navDiv);
-	div.style.opacity = 0;
-
-}
-
-//fade a div in
-function fadeDivIn(navDiv){
-
-	$('#'+navDiv).css('z-index', 1);
-	div = document.getElementById(navDiv);
-	div.style.opacity = 1;
-
 }
 
 //swap two canvases, for use in subdetector view transitions:
@@ -132,12 +68,12 @@ function swapView(inboundNav, inboundCanvas, inboundSidebar, buttonID){
 		fadeOut(window.onDisplay, 0);
 		window.onDisplay = inboundCanvas;
 
-		fadeDivIn(inboundNav);
-		fadeDivOut(window.navOnDisplay);
+		fadeIn(inboundNav);
+		fadeOut(window.navOnDisplay);
 		window.navOnDisplay = inboundNav;
 
-		fadeDivIn(inboundSidebar);
-		fadeDivOut(window.sidebarOnDisplay);
+		fadeIn(inboundSidebar);
+		fadeOut(window.sidebarOnDisplay);
 		window.sidebarOnDisplay = inboundSidebar;
 
 		document.getElementById(window.viewState).setAttribute('class', 'navLink');

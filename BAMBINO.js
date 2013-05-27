@@ -6,22 +6,17 @@ function BAMBINO(){
     this.name = 'BAMBINO';
     var that = this;
     Subsystem.call(this);
-    this.dataBus = new BAMBINODS(this.mode);
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
     window.BAMBINOpointer = that;
 
     //member variables///////////////////////////////////
     this.mode = window.parameters.BAMBINOmode;      //'S2' or 'S3'
+    this.dataBus = new BAMBINODS(this.mode);
     this.nRadial = 24;
     if(this.mode=='S2')
     	this.nAzimuthal = 16;
     else if(this.mode=='S3')
         this.nAzimuthal = 32;
-
-
-
-
-
 
     //drawing parameters//////////////////////////////////////////////////
     this.centerX = this.canvasWidth/2;
@@ -157,57 +152,6 @@ function BAMBINO(){
             this.context.fillText('Upstream', this.centerRight - this.context.measureText('Upstream').width/2, 0.85*this.canvasHeight);
         }
 
-    };
-
-    this.defineText = function(cell){
-        var toolTipContent = '<br>';
-        var nextLine;
-        var cardIndex;
-        var i;
-
-        nextLine = 'Channel '+cell;
-        toolTipContent += nextLine;
-        
-        toolTipContent += '<br><br>';
-        document.getElementById(this.tooltip.ttDivID).innerHTML = toolTipContent;
-
-        return 0;
-    };
-
-    this.update = function(){
-        var i;
-
-        //get new data
-        this.fetchNewData();
-
-        //parse the new data into colors
-        for(i=0; i<this.dataBus.HV.length; i++){
-            this.oldHVcolor[i] = this.HVcolor[i];
-            this.HVcolor[i] = this.parseColor(this.dataBus.HV[i], 'BAMBINO');
-        }
-        for(i=0; i<this.dataBus.thresholds.length; i++){
-            this.oldThresholdColor[i] = this.thresholdColor[i];
-            this.thresholdColor[i] = this.parseColor(this.dataBus.thresholds[i], 'BAMBINO');
-        }
-        for(i=0; i<this.dataBus.rate.length; i++){
-            this.oldRateColor[i] = this.rateColor[i];
-            this.rateColor[i] = this.parseColor(this.dataBus.rate[i], 'BAMBINO');
-        }
-
-        this.tooltip.update();
-    };
-
-
-    this.fetchNewData = function(){
-        var i;
-        var nChannels = 2*this.nRadial + 2*this.nAzimuthal;
-
-        //dummy data:
-        for(i=0; i<nChannels; i++){
-            this.dataBus.HV[i] = Math.random();
-            this.dataBus.thresholds[i] = Math.random();
-            this.dataBus.rate[i] = Math.random();
-        }
     };
 
     //do an initial populate:

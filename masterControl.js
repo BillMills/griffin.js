@@ -274,17 +274,18 @@ function fetchCustomParameters(){
     paths[73] = '/DashboardConfig/DAQ/transferMinMaster';
     paths[74] = '/DashboardConfig/DAQ/transferMaxMaster';
 
-    paths[75] = '/DashboardConfig/DSSD/HVscale[*]'
-    paths[76] = '/DashboardConfig/DSSD/thresholdScale[*]'
-    paths[77] = '/DashboardConfig/DSSD/rateScale[*]'
+    paths[75] = '/DashboardConfig/DSSD/HVscale[*]';
+    paths[76] = '/DashboardConfig/DSSD/thresholdScale[*]';
+    paths[77] = '/DashboardConfig/DSSD/rateScale[*]';
+
+    //paths[78] = 'abc123'
 
     //fetch:
     var data = ODBMGet(paths);
+    //console.log(data[78].slice(0,11) == '<DB_NO_KEY>')
 
     //alert(data[0].slice(data[0].length-1,data[0].length).charCodeAt(0));  //ODBGet sticks a \n onto the end of all returned strings :(
     //also all numbers are returned as strings with \n suffix, and all arrays have an empty array position stuck on the back :( :( :(
-
-    //console.log(ODBGet(paths[62]))
 
     //plug data in
     

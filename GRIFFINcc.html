@@ -85,13 +85,15 @@
     <!--Set up JSONP services, then synchronously load parameters->data stores->main routine////////////////////////////////////////////////////-->
     <script id='parameterLoad' type="text/JavaScript">
 
+      //declare the global namespaces / objects that will see heavy use
       window.parameters = {};
       window.Gatekeeper = new gatekeeper();
       window.JSONPstatus = [];
+      window.JSONPstore = {};
+      window.localODB = {};
+      window.state = {};
 
       //define function to fetch from JSONP service
-      window.JSONPstore = {};
-      
       //for the scalar service (and anything with the same hierarchy):
       function parseResponse(dataWeGotViaJsonp){
         var key, subkey;
@@ -128,8 +130,8 @@
           drawSpinner('spinner');
         },
         active: function() {
-          loadParameters();
-          loadJSONP(window.Gatekeeper, "main");
+          loadParameters();  //plugs in some defaults
+          loadJSONP(window.Gatekeeper, "main"); //waits to fire main() until all the JSONPs have reported up or down
         },
         inactive: function() {
           loadParameters();
@@ -158,7 +160,6 @@
         fetchCustomParameters();
 
         //load things from the ODB
-        window.localODB = {};
         ODBgrab();
 
         //let the MIDAS status link appear:

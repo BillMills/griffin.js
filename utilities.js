@@ -183,17 +183,6 @@ function scaleType(){
     else if (window.subdetectorView == 2) return 'rateScale';    
 }
 
-
-
-
-
-
-
-
-
-
-
-
 //Crockford's prototype magics:
 function DCobject(o) {
     function F() {}

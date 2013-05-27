@@ -155,8 +155,8 @@ function loadParameters(){
 										   },
 						},
 
-				"DAQminima" : [0, 0, 0, 0, 0, 0], //minima of element scales: [top level view rate, top level transfer, detail view rate, detail view transfer, master rate, master transfer]
-				"DAQmaxima" : [10000, 100000, 1000, 1000, 50000, 50000],
+				//"DAQminima" : [0, 0, 0, 0, 0, 0], //minima of element scales: [top level view rate, top level transfer, detail view rate, detail view transfer, master rate, master transfer]
+				//"DAQmaxima" : [10000, 100000, 1000, 1000, 50000, 50000],
 
 				"JSONPrepos" : ["http://midtig06.triumf.ca:8092/parameters?jsonp=parseThreshold", "http://midtig06.triumf.ca:8091/scalar?jsonp=parseResponse"]
 				}
