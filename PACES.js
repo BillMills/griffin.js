@@ -35,23 +35,23 @@ function PACES(){
 
         //Thresholds & Rate view///////////////////////////////////////
         //once for the display canvas....
-        if(window.subdetectorView == 1 || window.subdetectorView == 2){
+        if(window.state.subdetectorView == 1 || window.state.subdetectorView == 2){
     	for(i=0; i<5; i++){
 
     		this.context.save();
     		this.context.translate(this.centerX, this.centerY);
     		this.context.rotate(i*Math.PI*72/180);
 
-            if(window.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[2*i]), parseHexColor(this.thresholdColor[2*i]), frame/this.nFrames);
-            else if(window.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[2*i]), parseHexColor(this.rateColor[2*i]), frame/this.nFrames);
+            if(window.state.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[2*i]), parseHexColor(this.thresholdColor[2*i]), frame/this.nFrames);
+            else if(window.state.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[2*i]), parseHexColor(this.rateColor[2*i]), frame/this.nFrames);
     		this.context.beginPath();
     		this.context.arc(0, -this.arrayRadius, this.SiLiRadius, 0, Math.PI);
     		this.context.closePath();
             this.context.fill();
     		this.context.stroke();
 
-            if(window.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[2*i+1]), parseHexColor(this.thresholdColor[2*i+1]), frame/this.nFrames);
-            else if(window.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[2*i+1]), parseHexColor(this.rateColor[2*i+1]), frame/this.nFrames);
+            if(window.state.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[2*i+1]), parseHexColor(this.thresholdColor[2*i+1]), frame/this.nFrames);
+            else if(window.state.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[2*i+1]), parseHexColor(this.rateColor[2*i+1]), frame/this.nFrames);
             this.context.beginPath();
             this.context.arc(0, -this.arrayRadius, this.SiLiRadius, Math.PI, 0);
             this.context.closePath();
@@ -84,7 +84,7 @@ function PACES(){
         }
 
         //HV view///////////////////////////////////////////
-        if(window.subdetectorView == 0){
+        if(window.state.subdetectorView == 0){
         for(i=0; i<5; i++){
             this.context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[i]), parseHexColor(this.HVcolor[i]), frame/this.nFrames);
             this.context.save();
@@ -110,9 +110,9 @@ function PACES(){
         var index = -1;
         if(imageData.data[0] == imageData.data[1] && imageData.data[0] == imageData.data[2]) index = imageData.data[0];
         //different behvior for rate VS. HV views:
-        if(window.subdetectorView == 1 || window.subdetectorView == 2 || index == -1)
+        if(window.state.subdetectorView == 1 || window.state.subdetectorView == 2 || index == -1)
             return index;
-        else if(window.subdetectorView == 0)
+        else if(window.state.subdetectorView == 0)
             return Math.floor(index/2);
     };
 

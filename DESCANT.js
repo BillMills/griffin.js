@@ -48,9 +48,9 @@ function DESCANT(){
 			this.context.translate(this.centerX, this.centerY);
 			this.context.rotate(this.drawRules[i][3]);
 
-            if(window.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.DESCANT[key].oldHVcolor), parseHexColor(this.dataBus.DESCANT[key].HVcolor), frame/this.nFrames);
-            else if(window.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.DESCANT[key].oldThresholdColor), parseHexColor(this.dataBus.DESCANT[key].thresholdColor), frame/this.nFrames);
-			else if(window.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.DESCANT[key].oldRateColor), parseHexColor(this.dataBus.DESCANT[key].rateColor), frame/this.nFrames);
+            if(window.state.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.DESCANT[key].oldHVcolor), parseHexColor(this.dataBus.DESCANT[key].HVcolor), frame/this.nFrames);
+            else if(window.state.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.DESCANT[key].oldThresholdColor), parseHexColor(this.dataBus.DESCANT[key].thresholdColor), frame/this.nFrames);
+			else if(window.state.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.DESCANT[key].oldRateColor), parseHexColor(this.dataBus.DESCANT[key].rateColor), frame/this.nFrames);
 
 			if(this.drawRules[i][0] == 'white')whiteDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, 0);
 			else if(this.drawRules[i][0] == 'red') redDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 0);

@@ -146,7 +146,7 @@ function parameterDialogue(devName, scales, currentColorScale){
                 if(window.onDisplay.slice(0,3) == 'DAQ'){
                     window.DAQpointer.DAQcolor = window.parameters.colorScale.indexOf(colorDD.value);
                 } else {
-                    window.parameters.subdetectorColors[window.subdetectorView] = colorDD.value;
+                    window.parameters.subdetectorColors[window.state.subdetectorView] = colorDD.value;
                 }
             }
 
@@ -178,9 +178,9 @@ function parameterDialogue(devName, scales, currentColorScale){
 
 //help build the ODB path string for the above parameter dialogue:
 function scaleType(){
-    if (window.subdetectorView == 0) return 'HVscale';
-    else if (window.subdetectorView == 1) return 'thresholdScale';
-    else if (window.subdetectorView == 2) return 'rateScale';    
+    if (window.state.subdetectorView == 0) return 'HVscale';
+    else if (window.state.subdetectorView == 1) return 'thresholdScale';
+    else if (window.state.subdetectorView == 2) return 'rateScale';    
 }
 
 //Crockford's prototype magics:

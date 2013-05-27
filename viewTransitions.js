@@ -20,7 +20,7 @@ function fadeIn(elementID){
 function swapFade(buttonID, object, leaveOff, representationIndex){
 	var i;
 	//parse which view is requested, and fetch the corresponding canvas ID to bring to the front:
-	//var inbound = object.scalarViewCanvas[window.subdetectorView];
+	//var inbound = object.scalarViewCanvas[window.state.subdetectorView];
 	var inbound = object.view(representationIndex);
 
 	//turn off other buttons, except for some at the end:
@@ -53,7 +53,7 @@ function swapSubsystemView(buttonID, navWrapperID, viewIndex){
 	document.getElementById(buttonID).setAttribute('class','navLinkDown');
 
 	//change the corresponding state variable:
-	window.subdetectorView = viewIndex;
+	window.state.subdetectorView = viewIndex;
 
 	//imediately update the display:
 	forceUpdate();

@@ -27,7 +27,7 @@ function TIP(){
                                         that.detailShowing = 0;
                                         swapFade(null, that, 1000, 0);
                                     } else {
-                                        parameterDialogue(that.name, [ ['HPGe', window.parameters[that.name].minima['HPGe'][window.subdetectorView], window.parameters[that.name].maxima['HPGe'][window.subdetectorView],  window.parameters.subdetectorUnit[window.subdetectorView], '/DashboardConfig/TIP/HPGe'+scaleType()+'[0]', '/DashboardConfig/TIP/HPGe'+scaleType()+'[1]'], ['BGO', window.parameters[that.name].minima['BGO'][window.subdetectorView], window.parameters[that.name].maxima['BGO'][window.subdetectorView],  window.parameters.subdetectorUnit[window.subdetectorView], '/DashboardConfig/TIP/BGO'+scaleType()+'[0]', '/DashboardConfig/TIP/BGO'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.subdetectorView]);
+                                        parameterDialogue(that.name, [ ['HPGe', window.parameters[that.name].minima['HPGe'][window.state.subdetectorView], window.parameters[that.name].maxima['HPGe'][window.state.subdetectorView],  window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/TIP/HPGe'+scaleType()+'[0]', '/DashboardConfig/TIP/HPGe'+scaleType()+'[1]'], ['BGO', window.parameters[that.name].minima['BGO'][window.state.subdetectorView], window.parameters[that.name].maxima['BGO'][window.state.subdetectorView],  window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/TIP/BGO'+scaleType()+'[0]', '/DashboardConfig/TIP/BGO'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.state.subdetectorView]);
                                     }
                                 };
     this.canvas.onclick =   function(event){
@@ -45,7 +45,7 @@ function TIP(){
                                     that.detailShowing = 1;
                                     swapFade(null, that, 1000, 0)
                                 } else if(y > that.canvasHeight - that.scaleHeight){
-                                    parameterDialogue(that.name, [['CsI', window.parameters[that.name].minima['CsI'][window.subdetectorView], window.parameters[that.name].maxima['CsI'][window.subdetectorView], window.parameters.subdetectorUnit[window.subdetectorView], '/DashboardConfig/TIP/CsI'+scaleType()+'[0]', '/DashboardConfig/TIP/CsI'+scaleType()+'[1]' ], ['HPGe', window.parameters[that.name].minima['HPGe'][window.subdetectorView], window.parameters[that.name].maxima['HPGe'][window.subdetectorView],  window.parameters.subdetectorUnit[window.subdetectorView], '/DashboardConfig/TIP/HPGe'+scaleType()+'[0]', '/DashboardConfig/TIP/HPGe'+scaleType()+'[1]'], ['BGO', window.parameters[that.name].minima['BGO'][window.subdetectorView], window.parameters[that.name].maxima['BGO'][window.subdetectorView],  window.parameters.subdetectorUnit[window.subdetectorView], '/DashboardConfig/TIP/BGO'+scaleType()+'[0]', '/DashboardConfig/TIP/BGO'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.subdetectorView]);
+                                    parameterDialogue(that.name, [['CsI', window.parameters[that.name].minima['CsI'][window.state.subdetectorView], window.parameters[that.name].maxima['CsI'][window.state.subdetectorView], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/TIP/CsI'+scaleType()+'[0]', '/DashboardConfig/TIP/CsI'+scaleType()+'[1]' ], ['HPGe', window.parameters[that.name].minima['HPGe'][window.state.subdetectorView], window.parameters[that.name].maxima['HPGe'][window.state.subdetectorView],  window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/TIP/HPGe'+scaleType()+'[0]', '/DashboardConfig/TIP/HPGe'+scaleType()+'[1]'], ['BGO', window.parameters[that.name].minima['BGO'][window.state.subdetectorView], window.parameters[that.name].maxima['BGO'][window.state.subdetectorView],  window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/TIP/BGO'+scaleType()+'[0]', '/DashboardConfig/TIP/BGO'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.state.subdetectorView]);
                                 }
                             };
 
@@ -93,9 +93,9 @@ function TIP(){
             iAdj = this.dataBus.CsIwall[key].index;
             if (iAdj>11) iAdj++;
 
-            if(window.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.CsIwall[key].oldHVcolor), parseHexColor(this.dataBus.CsIwall[key].HVcolor), frame/this.nFrames);
-            else if(window.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.CsIwall[key].oldThresholdColor), parseHexColor(this.dataBus.CsIwall[key].thresholdColor), frame/this.nFrames);
-            else if(window.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.CsIwall[key].oldRateColor), parseHexColor(this.dataBus.CsIwall[key].rateColor), frame/this.nFrames);
+            if(window.state.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.CsIwall[key].oldHVcolor), parseHexColor(this.dataBus.CsIwall[key].HVcolor), frame/this.nFrames);
+            else if(window.state.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.CsIwall[key].oldThresholdColor), parseHexColor(this.dataBus.CsIwall[key].thresholdColor), frame/this.nFrames);
+            else if(window.state.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.CsIwall[key].oldRateColor), parseHexColor(this.dataBus.CsIwall[key].rateColor), frame/this.nFrames);
 
             this.context.fillRect(this.CsIx0 + this.CsIcellSide*(iAdj%5), this.CsIy0 + this.CsIcellSide*Math.floor(iAdj/5), this.CsIcellSide, this.CsIcellSide);
             this.context.strokeRect(this.CsIx0 + this.CsIcellSide*(iAdj%5), this.CsIy0 + this.CsIcellSide*Math.floor(iAdj/5), this.CsIcellSide, this.CsIcellSide);

@@ -17,7 +17,7 @@ function DANTE(){
     this.canvas.onclick = function(event){
         var y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;
         if(y > that.canvasHeight - that.scaleHeight)
-            parameterDialogue(that.name, [['BaF', window.parameters[that.name].minima['BaF'][window.subdetectorView], window.parameters[that.name].maxima['BaF'][window.subdetectorView], window.parameters.subdetectorUnit[window.subdetectorView], '/DashboardConfig/DANTE/BaF'+scaleType()+'[0]', '/DashboardConfig/DANTE/BaF'+scaleType()+'[1]'],   ['BGO', window.parameters[that.name].minima['BGO'][window.subdetectorView], window.parameters[that.name].maxima['BGO'][window.subdetectorView], window.parameters.subdetectorUnit[window.subdetectorView], '/DashboardConfig/DANTE/BGO'+scaleType()+'[0]', '/DashboardConfig/DANTE/BGO'+scaleType()+'[1]'] ], window.parameters.subdetectorColors[window.subdetectorView]);
+            parameterDialogue(that.name, [['BaF', window.parameters[that.name].minima['BaF'][window.state.subdetectorView], window.parameters[that.name].maxima['BaF'][window.state.subdetectorView], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/DANTE/BaF'+scaleType()+'[0]', '/DashboardConfig/DANTE/BaF'+scaleType()+'[1]'],   ['BGO', window.parameters[that.name].minima['BGO'][window.state.subdetectorView], window.parameters[that.name].maxima['BGO'][window.state.subdetectorView], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/DANTE/BGO'+scaleType()+'[0]', '/DashboardConfig/DANTE/BGO'+scaleType()+'[1]'] ], window.parameters.subdetectorColors[window.state.subdetectorView]);
     }
 
     //drawing parameters/////////////////////////////////
@@ -61,9 +61,9 @@ function DANTE(){
     		y0 = this.canvasHeight*0.4 - this.ringRadius*Math.sin(Math.PI/2*j);
 
             //suppressors
-            if(window.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[j*2+1]), parseHexColor(this.HVcolor[j*2+1]), frame/this.nFrames);
-            else if(window.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[j*2+1]), parseHexColor(this.thresholdColor[j*2+1]), frame/this.nFrames);
-            else if(window.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[j*2+1]), parseHexColor(this.rateColor[j*2+1]), frame/this.nFrames);
+            if(window.state.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[j*2+1]), parseHexColor(this.HVcolor[j*2+1]), frame/this.nFrames);
+            else if(window.state.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[j*2+1]), parseHexColor(this.thresholdColor[j*2+1]), frame/this.nFrames);
+            else if(window.state.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[j*2+1]), parseHexColor(this.rateColor[j*2+1]), frame/this.nFrames);
     		this.context.beginPath();
     		this.context.arc(x0,y0,this.shieldOuterRadius,0,2*Math.PI);
     		this.context.closePath();
@@ -78,9 +78,9 @@ function DANTE(){
     		this.context.stroke();
 
             //inner detectors
-            if(window.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[j*2]), parseHexColor(this.HVcolor[j*2]), frame/this.nFrames);
-            else if(window.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[j*2]), parseHexColor(this.thresholdColor[j*2]), frame/this.nFrames);
-            else if(window.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[j*2]), parseHexColor(this.rateColor[j*2]), frame/this.nFrames);
+            if(window.state.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[j*2]), parseHexColor(this.HVcolor[j*2]), frame/this.nFrames);
+            else if(window.state.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[j*2]), parseHexColor(this.thresholdColor[j*2]), frame/this.nFrames);
+            else if(window.state.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[j*2]), parseHexColor(this.rateColor[j*2]), frame/this.nFrames);
     		this.context.beginPath();
     		this.context.arc(x0,y0,this.detectorRadius,0,2*Math.PI);
     		this.context.closePath();

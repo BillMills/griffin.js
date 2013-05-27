@@ -102,9 +102,9 @@ function SHARC(){
 	    			xCorner += (j%this.nStrips)*this.vertStripWidth;
     			}
 
-                if(window.subdetectorView == 0) context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[i]), parseHexColor(this.HVcolor[i]), frame/this.nFrames);
-                else if(window.subdetectorView == 1) context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[i]), parseHexColor(this.thresholdColor[i]), frame/this.nFrames);
-				else if(window.subdetectorView == 2) context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[i]), parseHexColor(this.rateColor[i]), frame/this.nFrames);
+                if(window.state.subdetectorView == 0) context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[i]), parseHexColor(this.HVcolor[i]), frame/this.nFrames);
+                else if(window.state.subdetectorView == 1) context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[i]), parseHexColor(this.thresholdColor[i]), frame/this.nFrames);
+				else if(window.state.subdetectorView == 2) context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[i]), parseHexColor(this.rateColor[i]), frame/this.nFrames);
 				if(context == this.TTcontext) context.fillStyle = 'rgba('+(i-half*totalChannels)+','+(i-half*totalChannels)+','+(i-half*totalChannels)+',1)';
 				if(half == 0){
 					context.fillRect(xCorner, yCorner, this.detectorWidth, this.horizStripWidth);
@@ -117,9 +117,9 @@ function SHARC(){
 
 			//loop for top elliptical wheels:
 			for(i=half*totalChannels + this.rows*this.columns*this.nStrips; i<half*totalChannels + this.rows*this.columns*this.nStrips + this.nEllipticalChannelsHoriz; i++){
-                if(window.subdetectorView == 0) context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[i]), parseHexColor(this.HVcolor[i]), frame/this.nFrames);
-                else if(window.subdetectorView == 1) context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[i]), parseHexColor(this.thresholdColor[i]), frame/this.nFrames);
-				else if(window.subdetectorView == 2) context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[i]), parseHexColor(this.rateColor[i]), frame/this.nFrames);
+                if(window.state.subdetectorView == 0) context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[i]), parseHexColor(this.HVcolor[i]), frame/this.nFrames);
+                else if(window.state.subdetectorView == 1) context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[i]), parseHexColor(this.thresholdColor[i]), frame/this.nFrames);
+				else if(window.state.subdetectorView == 2) context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[i]), parseHexColor(this.rateColor[i]), frame/this.nFrames);
 				if(context == this.TTcontext) context.fillStyle = 'rgba('+(i-half*totalChannels)+','+(i-half*totalChannels)+','+(i-half*totalChannels)+',1)';
 
 				//index modulo half channels:
@@ -147,9 +147,9 @@ function SHARC(){
 
 			//loop for bottom elliptical wheels:
 			for(i=half*totalChannels + this.rows*this.columns*this.nStrips + this.nEllipticalChannelsHoriz; i<half*totalChannels + totalChannels; i++){
-                if(window.subdetectorView == 0) context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[i]), parseHexColor(this.HVcolor[i]), frame/this.nFrames);
-                else if(window.subdetectorView == 1) context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[i]), parseHexColor(this.thresholdColor[i]), frame/this.nFrames);
-				else if(window.subdetectorView == 2) context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[i]), parseHexColor(this.rateColor[i]), frame/this.nFrames);
+                if(window.state.subdetectorView == 0) context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[i]), parseHexColor(this.HVcolor[i]), frame/this.nFrames);
+                else if(window.state.subdetectorView == 1) context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[i]), parseHexColor(this.thresholdColor[i]), frame/this.nFrames);
+				else if(window.state.subdetectorView == 2) context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[i]), parseHexColor(this.rateColor[i]), frame/this.nFrames);
 				if(context == this.TTcontext) context.fillStyle = 'rgba('+(i-half*totalChannels)+','+(i-half*totalChannels)+','+(i-half*totalChannels)+',1)';
 
 				//index modulo half channels:

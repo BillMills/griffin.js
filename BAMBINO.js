@@ -61,9 +61,9 @@ function BAMBINO(){
 	    	if(i == 0 || i == 2){
 	    		for(j=0; j<this.nRadial; j++){
     				this.context.beginPath()
-                    if(window.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[i/2*(this.nRadial+this.nAzimuthal)+j]), parseHexColor(this.HVcolor[i/2*(this.nRadial+this.nAzimuthal)+j]), frame/this.nFrames);
-                    else if(window.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[i/2*(this.nRadial+this.nAzimuthal)+j]), parseHexColor(this.thresholdColor[i/2*(this.nRadial+this.nAzimuthal)+j]), frame/this.nFrames);
-                    else if(window.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[i/2*(this.nRadial+this.nAzimuthal)+j]), parseHexColor(this.rateColor[i/2*(this.nRadial+this.nAzimuthal)+j]), frame/this.nFrames);
+                    if(window.state.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[i/2*(this.nRadial+this.nAzimuthal)+j]), parseHexColor(this.HVcolor[i/2*(this.nRadial+this.nAzimuthal)+j]), frame/this.nFrames);
+                    else if(window.state.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[i/2*(this.nRadial+this.nAzimuthal)+j]), parseHexColor(this.thresholdColor[i/2*(this.nRadial+this.nAzimuthal)+j]), frame/this.nFrames);
+                    else if(window.state.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[i/2*(this.nRadial+this.nAzimuthal)+j]), parseHexColor(this.rateColor[i/2*(this.nRadial+this.nAzimuthal)+j]), frame/this.nFrames);
 	    			this.context.arc(x0, y0, this.CDradius - j*this.radialWidth, 0, 2*Math.PI);
 	    			this.context.closePath();
     				this.context.fill();
@@ -80,9 +80,9 @@ function BAMBINO(){
     
 	    		for(j=0; j<this.nAzimuthal; j++){
     				this.context.beginPath()
-                    if(window.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[this.nRadial+(i-1)/2*(this.nRadial+this.nAzimuthal)+j]), parseHexColor(this.HVcolor[this.nRadial+(i-1)/2*(this.nRadial+this.nAzimuthal)+j]), frame/this.nFrames);
-                    else if(window.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[this.nRadial+(i-1)/2*(this.nRadial+this.nAzimuthal)+j]), parseHexColor(this.thresholdColor[this.nRadial+(i-1)/2*(this.nRadial+this.nAzimuthal)+j]), frame/this.nFrames);
-                    else if(window.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[this.nRadial+(i-1)/2*(this.nRadial+this.nAzimuthal)+j]), parseHexColor(this.rateColor[this.nRadial+(i-1)/2*(this.nRadial+this.nAzimuthal)+j]), frame/this.nFrames);
+                    if(window.state.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[this.nRadial+(i-1)/2*(this.nRadial+this.nAzimuthal)+j]), parseHexColor(this.HVcolor[this.nRadial+(i-1)/2*(this.nRadial+this.nAzimuthal)+j]), frame/this.nFrames);
+                    else if(window.state.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[this.nRadial+(i-1)/2*(this.nRadial+this.nAzimuthal)+j]), parseHexColor(this.thresholdColor[this.nRadial+(i-1)/2*(this.nRadial+this.nAzimuthal)+j]), frame/this.nFrames);
+                    else if(window.state.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[this.nRadial+(i-1)/2*(this.nRadial+this.nAzimuthal)+j]), parseHexColor(this.rateColor[this.nRadial+(i-1)/2*(this.nRadial+this.nAzimuthal)+j]), frame/this.nFrames);
                     this.context.moveTo(x0 + this.CDinnerRadius*Math.cos(j*this.azimuthalArc), y0 - this.CDinnerRadius*Math.sin(j*this.azimuthalArc));
                     this.context.arc(x0,y0, this.CDinnerRadius, -j*this.azimuthalArc, -(j+1)*this.azimuthalArc, true);
                     this.context.lineTo(x0 + this.CDradius*Math.cos((j+1)*this.azimuthalArc), y0 - this.CDradius*Math.sin((j+1)*this.azimuthalArc));

@@ -168,7 +168,7 @@
         document.getElementById('MIDASstatusLink').setAttribute('onclick', "window.location='"+window.parameters.statusURL+"';")
 
         //state variables for what the subdetector view is showing: 0->HV, 1->Thresholds, 2->Rate
-        window.subdetectorView = 2;  //rate by default
+        window.state.subdetectorView = 2;  //rate by default
 
         //Insert branding & navigation:
         Banner('banner', 'youAreHere', 'navBar', window.parameters.ExpName+' Dashboard', 'TRIUMF');

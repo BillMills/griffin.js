@@ -44,9 +44,9 @@ function SPICE(){
     		sector = i%12;
     		ring = Math.floor(i/12);
 
-            if(window.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.SPICE[key].oldHVcolor), parseHexColor(this.dataBus.SPICE[key].HVcolor), frame/this.nFrames);
-            else if(window.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.SPICE[key].oldThresholdColor), parseHexColor(this.dataBus.SPICE[key].thresholdColor), frame/this.nFrames);
-            else if(window.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.SPICE[key].oldRateColor), parseHexColor(this.dataBus.SPICE[key].rateColor), frame/this.nFrames);
+            if(window.state.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.SPICE[key].oldHVcolor), parseHexColor(this.dataBus.SPICE[key].HVcolor), frame/this.nFrames);
+            else if(window.state.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.SPICE[key].oldThresholdColor), parseHexColor(this.dataBus.SPICE[key].thresholdColor), frame/this.nFrames);
+            else if(window.state.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.SPICE[key].oldRateColor), parseHexColor(this.dataBus.SPICE[key].rateColor), frame/this.nFrames);
 
 		    this.context.beginPath();
 		    this.context.arc(this.centerX, this.centerY, this.innerRadius + ring*this.radialStep, -sector*this.azimuthalStep, -(sector+1)*this.azimuthalStep, true);

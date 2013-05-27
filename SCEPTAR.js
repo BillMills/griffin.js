@@ -18,8 +18,8 @@ function SCEPTAR(){
     this.canvas.onclick = function(event){
         var y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;
         if(y > that.canvasHeight - that.scaleHeight){
-            if(that.config[2]) parameterDialogue(that.name, [['SCEPTAR', window.parameters[that.name].minima['SCEPTAR'][window.subdetectorView], window.parameters[that.name].maxima['SCEPTAR'][window.subdetectorView], window.parameters.subdetectorUnit[window.subdetectorView], '/DashboardConfig/SCEPTAR/'+scaleType()+'[0]', '/DashboardConfig/SCEPTAR/'+scaleType()+'[1]'],   ['ZDS', window.parameters[that.name].minima['ZDS'][window.subdetectorView], window.parameters[that.name].maxima['ZDS'][window.subdetectorView], window.parameters.subdetectorUnit[window.subdetectorView], '/DashboardConfig/ZDS/'+scaleType()+'[0]', '/DashboardConfig/ZDS/'+scaleType()+'[1]'] ], window.parameters.subdetectorColors[window.subdetectorView]);
-            else parameterDialogue(that.name, [['SCEPTAR', window.parameters[that.name].minima['SCEPTAR'][window.subdetectorView], window.parameters[that.name].maxima['SCEPTAR'][window.subdetectorView], window.parameters.subdetectorUnit[window.subdetectorView], '/DashboardConfig/SCEPTAR/'+scaleType()+'[0]', '/DashboardConfig/SCEPTAR/'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.subdetectorView]);
+            if(that.config[2]) parameterDialogue(that.name, [['SCEPTAR', window.parameters[that.name].minima['SCEPTAR'][window.state.subdetectorView], window.parameters[that.name].maxima['SCEPTAR'][window.state.subdetectorView], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/SCEPTAR/'+scaleType()+'[0]', '/DashboardConfig/SCEPTAR/'+scaleType()+'[1]'],   ['ZDS', window.parameters[that.name].minima['ZDS'][window.state.subdetectorView], window.parameters[that.name].maxima['ZDS'][window.state.subdetectorView], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/ZDS/'+scaleType()+'[0]', '/DashboardConfig/ZDS/'+scaleType()+'[1]'] ], window.parameters.subdetectorColors[window.state.subdetectorView]);
+            else parameterDialogue(that.name, [['SCEPTAR', window.parameters[that.name].minima['SCEPTAR'][window.state.subdetectorView], window.parameters[that.name].maxima['SCEPTAR'][window.state.subdetectorView], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/SCEPTAR/'+scaleType()+'[0]', '/DashboardConfig/SCEPTAR/'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.state.subdetectorView]);
 
         }
     }
@@ -65,9 +65,9 @@ function SCEPTAR(){
         }
     	//ZDS
         if(this.config[2] == 1){
-            if(window.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[20]), parseHexColor(this.HVcolor[20]), frame/this.nFrames);
-            else if(window.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[20]), parseHexColor(this.thresholdColor[20]), frame/this.nFrames);
-            else if(window.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[20]), parseHexColor(this.rateColor[20]), frame/this.nFrames);
+            if(window.state.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[20]), parseHexColor(this.HVcolor[20]), frame/this.nFrames);
+            else if(window.state.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[20]), parseHexColor(this.thresholdColor[20]), frame/this.nFrames);
+            else if(window.state.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[20]), parseHexColor(this.rateColor[20]), frame/this.nFrames);
         	this.context.beginPath();
     	    this.context.arc(this.ZDScenterX, this.ZDScenterY, this.ZDSradius, 0, 2*Math.PI);
         	this.context.closePath();
@@ -133,9 +133,9 @@ function SCEPTAR(){
 
         for(i=0; i<10; i++){
             if(context == this.context){
-                if(window.subdetectorView == 0) context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[i+indexStart]), parseHexColor(this.HVcolor[i+indexStart]), frame/this.nFrames);
-                else if(window.subdetectorView == 1) context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[i+indexStart]), parseHexColor(this.thresholdColor[i+indexStart]), frame/this.nFrames);
-                else if(window.subdetectorView == 2) context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[i+indexStart]), parseHexColor(this.rateColor[i+indexStart]), frame/this.nFrames);
+                if(window.state.subdetectorView == 0) context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[i+indexStart]), parseHexColor(this.HVcolor[i+indexStart]), frame/this.nFrames);
+                else if(window.state.subdetectorView == 1) context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[i+indexStart]), parseHexColor(this.thresholdColor[i+indexStart]), frame/this.nFrames);
+                else if(window.state.subdetectorView == 2) context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[i+indexStart]), parseHexColor(this.rateColor[i+indexStart]), frame/this.nFrames);
             }
             else if(context == this.TTcontext) context.fillStyle = '#123456'; //anti-antialiasing
             context.save();
