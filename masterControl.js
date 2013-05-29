@@ -1,41 +1,54 @@
 function loadJSONP(gatekeeper, callback) {
     var i;
 
-    for(i=0; i<window.parameters.JSONPrepos.length; i++){
+    if(!window.parameters.devMode){
+        for(i=0; i<window.parameters.JSONPrepos.length; i++){
 
-        var script  = document.createElement('script');
-        script.setAttribute('src', window.parameters.JSONPrepos[i]);    //fetch the ith repo
-        script.setAttribute('id', 'tempScript'+i);
+            var script  = document.createElement('script');
+            script.setAttribute('src', window.parameters.JSONPrepos[i]);    //fetch the ith repo
+            script.setAttribute('id', 'tempScript'+i);
 
-        script.onload = function(){
-            for(var i=0; i<window.parameters.JSONPrepos.length; i++){
-                if (window.parameters.JSONPrepos[i] == this.src) window.JSONPstatus[i] = 'Online';
+            script.onload = function(){
+                for(var i=0; i<window.parameters.JSONPrepos.length; i++){
+                    if (window.parameters.JSONPrepos[i] == this.src) window.JSONPstatus[i] = 'Online';
+                }
+                //post to GK:
+                var gatekeeperReport = new  CustomEvent("gatekeeperReport", {
+                                                detail: {
+                                                    status: 'loaded',
+                                                    cb: callback        
+                                                }
+                                            });
+                gatekeeper.listener.dispatchEvent(gatekeeperReport);
             }
-            //post to GK:
-            var gatekeeperReport = new  CustomEvent("gatekeeperReport", {
-                                            detail: {
-                                                status: 'loaded',
-                                                cb: callback        
-                                            }
-                                        });
-            gatekeeper.listener.dispatchEvent(gatekeeperReport);
+
+            script.onerror = function(){
+                for(var i=0; i<window.parameters.JSONPrepos.length; i++){
+                    if (window.parameters.JSONPrepos[i] == this.src) window.JSONPstatus[i] = 'Not Responding';
+                }
+                //post to GK:
+                var gatekeeperReport = new  CustomEvent("gatekeeperReport", {
+                                                detail: {
+                                                    status: 'failed',        
+                                                    cb: callback
+                                                }
+                                            });
+                gatekeeper.listener.dispatchEvent(gatekeeperReport);
+            }
+
+            document.head.appendChild(script);
+        }
+    } else { //send some dummy reports to the gatekeeper so it doesn't hang forever:
+        for(i=0; i<window.parameters.JSONPrepos.length; i++){
+                var gatekeeperReport = new  CustomEvent("gatekeeperReport", {
+                                                detail: {
+                                                    status: 'offline',        
+                                                    cb: callback
+                                                }
+                                            });
+                gatekeeper.listener.dispatchEvent(gatekeeperReport);            
         }
 
-        script.onerror = function(){
-            for(var i=0; i<window.parameters.JSONPrepos.length; i++){
-                if (window.parameters.JSONPrepos[i] == this.src) window.JSONPstatus[i] = 'Not Responding';
-            }
-            //post to GK:
-            var gatekeeperReport = new  CustomEvent("gatekeeperReport", {
-                                            detail: {
-                                                status: 'failed',        
-                                                cb: callback
-                                            }
-                                        });
-            gatekeeper.listener.dispatchEvent(gatekeeperReport);
-        }
-
-        document.head.appendChild(script);
     }
 }
 
@@ -62,7 +75,7 @@ function masterLoop(callMyself){
 	if(!document.webkitHidden && !document.mozHidden){
 
         //one big ODB grab:
-        ODBgrab();
+        if(!window.parameters.devMode) ODBgrab();
 
         //update all assets
         //status bar
@@ -105,7 +118,8 @@ function masterLoop(callMyself){
     //remove all temporary scripts from the head so they don't accrue:
     for(i=0; i<window.parameters.JSONPrepos.length; i++){
         var element = document.getElementById('tempScript'+i);
-        element.parentNode.removeChild(element);
+        if(element)
+            element.parentNode.removeChild(element);
     }
 
     window.freshLoad = 0;

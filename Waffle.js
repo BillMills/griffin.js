@@ -828,16 +828,16 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                                 
                             } else{
                                 this.dataBus[k].channelName[i][j]   = 'channel'+i+j;
-                                this.dataBus[k].demandVoltage[i][j] = -9999;
-                                this.dataBus[k].reportVoltage[i][j] = -9999;
-                                this.dataBus[k].reportCurrent[i][j] = -9999;
-                                this.dataBus[k].demandVrampUp[i][j] = -9999;
-                                this.dataBus[k].demandVrampDown[i][j] = -9999;
-                                this.dataBus[k].reportTemperature[i][j] = -9999;
+                                this.dataBus[k].demandVoltage[i][j] = 0;
+                                this.dataBus[k].reportVoltage[i][j] = 0;
+                                this.dataBus[k].reportCurrent[i][j] = 0;
+                                this.dataBus[k].demandVrampUp[i][j] = 0;
+                                this.dataBus[k].demandVrampDown[i][j] = 0;
+                                this.dataBus[k].reportTemperature[i][j] = 0;
                                 this.dataBus[k].channelMask[i][j] = 1;
-                                this.dataBus[k].rampStatus[i][j] = 7;
-                                this.dataBus[k].voltLimit[i][j] = -9999;
-                                this.dataBus[k].currentLimit[i][j] = -9999;
+                                this.dataBus[k].rampStatus[i][j] = 1;
+                                this.dataBus[k].voltLimit[i][j] = 0;
+                                this.dataBus[k].currentLimit[i][j] = 0;
                             }
                         } else if (i!=0 || window.parameters.moduleSizes[k][j]==4){  //keep the array filled, even for empty slots to avoid unpredictable behavior
                             this.dataBus[k].channelName[i][j] = 'channel'+i+j;

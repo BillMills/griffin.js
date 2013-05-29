@@ -274,7 +274,7 @@ DSSDDS = function(){
 	}
 
 	//pads:
-	var padID = ['MAD01ENXXX', 'MAD01ENXXX', 'MAD02ENXXX'];
+	var padID = ['MAD01ENXXX', 'MAD02ENXXX', 'MAD03ENXXX'];
 	for(i=0; i<3; i++){
 						this.DSSD[padID[i]] = {
 							'HV'		: 0,

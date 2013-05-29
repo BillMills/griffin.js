@@ -24,11 +24,6 @@ function DSSD(){
     this.draw = function(frame){
         this.context.font = '14px Raleway'
         this.context.clearRect(0,0,this.canvasWidth,this.canvasHeight*0.8);
-        /*
-        this.context.font = '24px Orbitron';
-        this.context.fillStyle = '#999999';
-        this.context.fillText('DSSD Monitor Coming Soon', this.canvasWidth/2 - this.context.measureText('DSSD Monitor Coming Soon').width/2, this.canvasHeight*0.4);
-        */
         
         //DSSDs:
         //column 1:
@@ -52,7 +47,7 @@ function DSSD(){
         var pads = ['MAD01ENXXX', 'MAD02ENXXX', 'MAD03ENXXX'], key;
         for(var i=0; i<3; i++){
             key = pads[i];
-            if(window.JSONPstore['scalar'][key]){
+            //if(window.JSONPstore['scalar'][key]){
                 //choose fill color:
                 if(window.state.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.DSSD[key].oldHVcolor), parseHexColor(this.dataBus.DSSD[key].HVcolor), frame/this.nFrames);
                 else if(window.state.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.DSSD[key].oldThresholdColor), parseHexColor(this.dataBus.DSSD[key].thresholdColor), frame/this.nFrames);
@@ -69,7 +64,7 @@ function DSSD(){
                 this.context.clearRect(this.margin+i*(this.DSSDside+this.gutterSize), 3*this.gutterSize+3*this.DSSDside+2 , this.DSSDside, this.gutterSize*0.8);
                 this.context.fillText(pads[i], this.margin+i*(this.DSSDside+this.gutterSize)+this.DSSDside/2 - this.context.measureText(pads[i]).width/2, 3*this.gutterSize+3*this.DSSDside+5 );
                 this.context.closePath();
-            }
+            //}
         }        
 
         //titles

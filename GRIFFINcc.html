@@ -6,6 +6,7 @@
     <script src="masterControl.js" type="text/javascript"></script>
     <script src="viewTransitions.js" type="text/javascript"></script>
     <script src="drawing.js" type="text/javascript"></script>
+    <script src="parameters.js" type="text/javascript"></script>
 
     <script src="Dashboard.js" type="text/javascript"></script>
     <script src="Waffle.js" type="text/javascript"></script>
@@ -45,10 +46,12 @@
 
     <!--Bounce to the right mirror - necessary to accomodate legacy MIDAS & mhttpd-->
     <script type="text/JavaScript">
+    
       if(document.URL.search('http://midtig06.triumf.ca:8081') == -1){
         console.log('redirecting...')
         window.location = 'http://midtig06.triumf.ca:8081/CS/Dashboard'
       }
+      
     </script>
 
     <!--Branding///////////////////////////////////////////////////////////-->
@@ -112,11 +115,10 @@
       //similar function for the threshold service:
       function parseThreshold(data){
         var key;
-
-        if(data['parameters']['thresholds']['fMap']){
+        if(data['parameters']['thresholds']){
           window.JSONPstore['thresholds'] = {};
-          for(key in data['parameters']['thresholds']['fMap']){
-            window.JSONPstore['thresholds'][key.toUpperCase().slice(0,10)] = data['parameters']['thresholds']['fMap'][key];
+          for(key in data['parameters']['thresholds']){
+            window.JSONPstore['thresholds'][key.toUpperCase().slice(0,10)] = data['parameters']['thresholds'][key];
           }
         }
       }
@@ -157,10 +159,10 @@
         var i, j, k;
 
         //overwrite default parameters with custom ones:
-        fetchCustomParameters();
+        if(!window.parameters.devMode) fetchCustomParameters();
 
         //load things from the ODB
-        ODBgrab();
+        if(!window.parameters.devMode) ODBgrab();
 
         //let the MIDAS status link appear:
         $('#MIDASstatusLink').css('opacity', 1);
@@ -304,13 +306,11 @@
         window.commitBlink = 0;
         //end globals//////////////////////////////////////////////////////////////////////////////////
 
-        if(window.parameters.devMode == 0){
-          //hack to put subsystems on top until Dashboard view is implemented:
-          if(window.parameters.topDeployment['Subsystems']) swapView('SubsystemLinks', window.Subdetectors[0].canvasID, 'SubsystemSidebar', 'SubsystemsButton')
-          else if(!window.parameters.topDeployment['Trigger']) swapView('mainframeLinks', 'HVgrid0', 'InputLayer', 'HVmonitorButton');
-          //hack to patch in HV assets:
-          insertDOM('button', 'HVhackButton', 'navLink', '', 'statusLink', function(){window.location="http://alphadon.triumf.ca:8082/CS/Dashboard"}, 'HV Status', '', 'submit');
-        }
+        //hack to put subsystems on top until Dashboard view is implemented:
+        if(window.parameters.topDeployment['Subsystems']) swapView('SubsystemLinks', window.Subdetectors[0].canvasID, 'SubsystemSidebar', 'SubsystemsButton')
+        else if(!window.parameters.topDeployment['Trigger']) swapView('mainframeLinks', 'HVgrid0', 'InputLayer', 'HVmonitorButton');
+        //hack to patch in HV assets:
+        insertDOM('button', 'HVhackButton', 'navLink', '', 'statusLink', function(){window.location="http://alphadon.triumf.ca:8082/CS/Dashboard"}, 'HV Status', '', 'submit');
 
         startLoop(); 
 
