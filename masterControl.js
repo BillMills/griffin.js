@@ -1,11 +1,20 @@
 function loadJSONP(gatekeeper, callback) {
     var i;
 
-    if(!window.parameters.devMode){
         for(i=0; i<window.parameters.JSONPrepos.length; i++){
 
             var script  = document.createElement('script');
-            script.setAttribute('src', window.parameters.JSONPrepos[i]);    //fetch the ith repo
+
+            //either make some fake data to replace the JSONP service offline in devMode, or use the real thing online:
+            if(window.parameters.devMode){
+                script.setAttribute('src', ' ');
+                if(callback != 'main'){
+                    parseResponse(fakeScalars());
+                    parseThreshold(fakeThresholds());
+                }
+            } else
+                script.setAttribute('src', window.parameters.JSONPrepos[i]);    //fetch the ith repo
+
             script.setAttribute('id', 'tempScript'+i);
 
             script.onload = function(){
@@ -38,18 +47,6 @@ function loadJSONP(gatekeeper, callback) {
 
             document.head.appendChild(script);
         }
-    } else { //send some dummy reports to the gatekeeper so it doesn't hang forever:
-        for(i=0; i<window.parameters.JSONPrepos.length; i++){
-                var gatekeeperReport = new  CustomEvent("gatekeeperReport", {
-                                                detail: {
-                                                    status: 'offline',        
-                                                    cb: callback
-                                                }
-                                            });
-                gatekeeper.listener.dispatchEvent(gatekeeperReport);            
-        }
-
-    }
 }
 
 //an object to block the page update until all the JSONP requests have reported back. 

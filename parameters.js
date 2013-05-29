@@ -6,7 +6,7 @@ function loadParameters(){
 				"ExpName" : "TIGRESS",
 				"statusURL" : "http://midtig06.triumf.ca:8081/",
 				"topDeployment" : {"HV":0, "Subsystems":1, "DAQ":1, "Clock":0, "Trigger":0},
-				"deployment" : {"BAMBINO":0, "DANTE":0, "DESCANT":1, "HPGe":1, "PACES":0, "SCEPTAR":0, "SHARC":0, "SPICE":0, "TIP":0, "DSSD":1},
+				"deployment" : {"BAMBINO":0, "DANTE":0, "DESCANT":0, "HPGe":1, "PACES":0, "SCEPTAR":0, "SHARC":0, "SPICE":0, "TIP":0, "DSSD":1},
 				"wrapper" : "waffleplate",
 				"subdetectorUnit" : ["V", "ADC units", "Hz"],
 				"monitorValues" : ["HV", "Thresholds", "Rate"],

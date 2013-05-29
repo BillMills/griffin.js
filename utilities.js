@@ -213,4 +213,34 @@ function getTag(tag, parentID){
     return null;
 }
 
+//generate a fake JSONP scalar post to use for offline development:
+function fakeScalars(){
+    
+    var JSONP = {'scalar' : {} };
+
+    if(window.parameters.deployment.HPGe){
+        for(key in window.HPGepointer.dataBus.HPGe){
+            JSONP.scalar[key] = {"TRIGREQ" : 100};
+
+        }
+    }
+
+    return JSONP;
+    
+}
+//like fake scalars, but now thresholds:
+function fakeThresholds(){
+
+    var JSONP = {'parameters' : {'thresholds' : {} } };
+
+    if(window.parameters.deployment.HPGe){
+        for(key in window.HPGepointer.dataBus.HPGe){
+            JSONP.parameters.thresholds[key] = 50;
+
+        }
+    }
+
+    return JSONP;
+
+}
 
