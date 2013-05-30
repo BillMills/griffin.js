@@ -243,7 +243,12 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 	//parse scalar into a color on a color scale bounded by the entries in window.parameters.DAQminima[index] and window.parameters.DAQmaxima[index] 
 	this.parseColor = function(scalar, index){
 		//how far along the scale are we?
-		var scale = (scalar - window.parameters.DAQminima[index]) / (window.parameters.DAQmaxima[index] - window.parameters.DAQminima[index]);
+		var scale 
+        if(window.parameters.detectorLogMode.DAQbutton){
+            scale = (Math.log(scalar) - Math.log(window.parameters.DAQminima[index])) / (Math.log(window.parameters.DAQmaxima[index]) - Math.log(window.parameters.DAQminima[index]));
+        } else {
+            scale = (scalar - window.parameters.DAQminima[index]) / (window.parameters.DAQmaxima[index] - window.parameters.DAQminima[index]);
+        }
         if(scale<0) scale = 0;
         if(scale>1) scale = 1;
 
@@ -329,7 +334,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 
     this.drawScale = function(context){
 
-        var i, j, string, unit; 
+        var i, j, string, unit, transferTitle, triggerTitle; 
 
         context.clearRect(0, this.canvasHeight - this.scaleHeight, this.canvasWidth, this.canvasHeight);
 
@@ -337,8 +342,15 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         context.fillStyle = '#999999';
         context.font="24px 'Orbitron'";
         context.textBaseline = 'middle';
-        context.fillText('Transfer Rate', this.canvasWidth/2 - context.measureText('Transfer Rate').width/2, this.canvasHeight-this.scaleHeight/2 - 15);
-        context.fillText('Trigger Rate', this.canvasWidth/2 - context.measureText('Trigger Rate').width/2, this.canvasHeight-this.scaleHeight/2 + 20 + 20);
+        if(window.parameters.detectorLogMode.DAQbutton){
+            transferTitle = 'log(Transfer Rate)';
+            triggerTitle = 'log(Trigger Rate)';
+        } else {
+            transferTitle = 'Transfer Rate';
+            triggerTitle = 'Trigger Rate';
+        }
+        context.fillText(transferTitle, this.canvasWidth/2 - context.measureText(transferTitle).width/2, this.canvasHeight-this.scaleHeight/2 - 15);
+        context.fillText(triggerTitle, this.canvasWidth/2 - context.measureText(triggerTitle).width/2, this.canvasHeight-this.scaleHeight/2 + 20 + 20);
         context.textBaseline = 'alphabetic';
 
         //tickmark;
@@ -352,12 +364,15 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         if(unit > 1000000) unit = ' MBps';
         else if(unit > 1000) unit = ' kBps';
         else unit = ' Bps';
+        if(window.parameters.detectorLogMode.DAQbutton) unit = ' log(Bps)';
 
         context.beginPath();
         context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2);
         context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2-10);
         context.stroke();
-        context.fillText( ((context == this.detailContext) ? window.parameters.DAQminima[3] : window.parameters.DAQminima [1])+unit, this.canvasWidth*0.05 - context.measureText('0'+unit).width/2, this.canvasHeight-this.scaleHeight/2-15);
+        if(window.parameters.detectorLogMode.DAQbutton) string = Math.log( ((context == this.detailContext) ? window.parameters.DAQminima[3] : window.parameters.DAQminima [1]) ) + ' log(Bps)';
+        else string = ((context == this.detailContext) ? window.parameters.DAQminima[3] : window.parameters.DAQminima [1]) + ' Bps';
+        context.fillText( string, this.canvasWidth*0.05 - context.measureText(string).width/2, this.canvasHeight-this.scaleHeight/2-15);
 
         context.beginPath();
         context.moveTo(this.canvasWidth*0.95-1, this.canvasHeight - this.scaleHeight/2);
@@ -365,9 +380,13 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         context.stroke();  
 
         string = ((context == this.detailContext) ? window.parameters.DAQmaxima[3] : window.parameters.DAQmaxima [1]);
-        if(string > 1000000) string = string/1000000 + unit;
-        else if(string > 1000) string = string/1000 + unit;
-        else string = string + unit;            
+        if(window.parameters.detectorLogMode.DAQbutton){
+            string = Math.log(string).toFixed(1) + unit;
+        } else{
+            if(string > 1000000) string = string/1000000 + unit;
+            else if(string > 1000) string = string/1000 + unit;
+            else string = string + unit;
+        }            
         context.fillText(string, this.canvasWidth*0.95 - context.measureText(string).width/2, this.canvasHeight-this.scaleHeight/2-15);
 
 
@@ -376,13 +395,16 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         unit = ((context == this.detailContext) ? window.parameters.DAQmaxima[2] : window.parameters.DAQmaxima [0]);
         if(unit > 1000000) unit = ' MHz';
         else if(unit > 1000) unit = ' kHz';
-        else unit = ' Hz';        
+        else unit = ' Hz';
+        if(window.parameters.detectorLogMode.DAQbutton) unit = ' log(Hz)';
 
         context.beginPath();
         context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2 + 20);
         context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2 + 20 + 10);
         context.stroke();
-        context.fillText( ((context == this.detailContext) ? window.parameters.DAQminima[2] : window.parameters.DAQminima [0])+unit, this.canvasWidth*0.05 - context.measureText('0'+unit).width/2, this.canvasHeight-this.scaleHeight/2 + 45);
+        if(window.parameters.detectorLogMode.DAQbutton) string = Math.log( ((context == this.detailContext) ? window.parameters.DAQminima[2] : window.parameters.DAQminima [0]) ) + ' log(Hz)';
+        else string = ((context == this.detailContext) ? window.parameters.DAQminima[2] : window.parameters.DAQminima [0]) + ' Hz';
+        context.fillText( string, this.canvasWidth*0.05 - context.measureText(string).width/2, this.canvasHeight-this.scaleHeight/2 + 45);
 
         context.beginPath();
         context.moveTo(this.canvasWidth*0.95-1, this.canvasHeight - this.scaleHeight/2 + 20);
@@ -390,9 +412,13 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         context.stroke();
 
         string = ((context == this.detailContext) ? window.parameters.DAQmaxima[2] : window.parameters.DAQmaxima [0]);
-        if(string > 1000000) string = string/1000000 + unit;
-        else if(string > 1000) string = string/1000 + unit;
-        else string = string + unit;
+        if(window.parameters.detectorLogMode.DAQbutton){
+            string = Math.log(string).toFixed(1) + unit;
+        } else {
+            if(string > 1000000) string = string/1000000 + unit;
+            else if(string > 1000) string = string/1000 + unit;
+            else string = string + unit;
+        }
         context.fillText(string, this.canvasWidth*0.95 - context.measureText(string).width/2, this.canvasHeight-this.scaleHeight/2 + 45);
 
         for(i=0; i<3000; i++){

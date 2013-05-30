@@ -127,16 +127,14 @@ function parameterDialogue(devName, scales, currentColorScale){
     }
 
     //insert scale linear / log choice:
-    if(window.navOnDisplay == 'SubsystemLinks'){ //hack to only do this for subdetectors for now
     insertDOM('p', 'scalePickerLabel', '', 'display:inline; margin-right:2%', 'dialogueValues', '', '<br><br>Scale: ');
     insertDOM('p', 'linearRadioLabel', '', 'display:inline', 'dialogueValues', '', 'Linear');
     insertDOM('input', 'linearRadio', '', 'display:inline; margin-right:2%;', 'dialogueValues', '', '', 'scaleSwitch', 'radio', 'linear');
     insertDOM('p', 'logRadioLabel', '', 'display:inline;', 'dialogueValues', '', 'Log');
     insertDOM('input', 'logRadio', '', 'display:inline;', 'dialogueValues', '', '', 'scaleSwitch', 'radio', 'log');
     insertDOM('br', 'break', '', '', 'dialogueValues', '', '');
-    if (window.parameters.detectorLogMode == 1) document.getElementById('logRadio').checked = true;
+    if (window.parameters.detectorLogMode[window.viewState] == 1) document.getElementById('logRadio').checked = true;
     else document.getElementById('linearRadio').checked = true;
-    }
 
     //insert submit button
     insertDOM('input', 'updateParameters', 'bigButton', 'width:20%; margin-right:2%; margin-top:6%', 'dialogueValues', '', '', '', 'button', 'Commit')
@@ -162,11 +160,9 @@ function parameterDialogue(devName, scales, currentColorScale){
                 }
             }
 
-            if(window.navOnDisplay == 'SubsystemLinks'){
-            if(document.getElementById('logRadio').checked) window.parameters.detectorLogMode = 1;
-            else if(document.getElementById('linearRadio').checked) window.parameters.detectorLogMode = 0;
-            }
-            
+            if(document.getElementById('logRadio').checked) window.parameters.detectorLogMode[window.viewState] = 1;
+            else if(document.getElementById('linearRadio').checked) window.parameters.detectorLogMode[window.viewState] = 0;
+
             //remove dialogue
             document.getElementById('tempDiv').style.opacity = 0;
             setTimeout(function(){

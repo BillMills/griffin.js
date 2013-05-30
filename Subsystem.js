@@ -67,7 +67,7 @@ function Subsystem(){
     this.parseColor = function(scalar, detector){
         var scale;
         //how far along the scale are we?  Technically this will produce the wrong color for canvases not currently on display.
-        if(window.parameters.detectorLogMode){
+        if(window.parameters.detectorLogMode.SubsystemsButton){
             scale = (Math.log(scalar) - Math.log(window.parameters[this.name].minima[detector][window.state.subdetectorView])) / (Math.log(window.parameters[this.name].maxima[detector][window.state.subdetectorView]) - Math.log(window.parameters[this.name].minima[detector][window.state.subdetectorView]));
         } else {
             scale = (scalar - window.parameters[this.name].minima[detector][window.state.subdetectorView]) / (window.parameters[this.name].maxima[detector][window.state.subdetectorView] - window.parameters[this.name].minima[detector][window.state.subdetectorView]);
@@ -92,9 +92,9 @@ function Subsystem(){
         var minTicks = [];
         var maxTicks = [];
         title = window.parameters.monitorValues[window.state.subdetectorView];
-        if(window.parameters.detectorLogMode) title = 'log(' + title + ')';
+        if(window.parameters.detectorLogMode.SubsystemsButton) title = 'log(' + title + ')';
         for(key in window.parameters[this.name].minima){
-            if(window.parameters.detectorLogMode){
+            if(window.parameters.detectorLogMode.SubsystemsButton){
                 //minimas
                 minTicks[key] = key+': ' + Math.log(window.parameters[this.name].minima[key][window.state.subdetectorView]).toFixed(1) + ' log(' + window.parameters.subdetectorUnit[window.state.subdetectorView]+')';
                 //maximas:

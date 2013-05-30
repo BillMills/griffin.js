@@ -40,7 +40,7 @@ function loadParameters(){
 				"colorScale"  : ["ROOT Rainbow", "Greyscale", "Sunset", "Red Scale", "Mayfair"],
 				"subdetectorColors" : ["ROOT Rainbow", "ROOT Rainbow", "Sunset"],
 				"validDetectors" : ["TIG", "TIS", "GRG", "GRS", "HPG", "HPS", "BAE", "BAZ", "SHQ", "SHB", "MAD", "MAM", "CSD", "CSM", "SPI", "SPE", "DSC", "SEP", "SET", "PAC", "DAL", "DAB", "DAS", "TPC", "TPW", "TPP", "TPG", "TPE", "ZDS", "ZDP", "ZDM", "ZDD", "TBR", "YBP", "YBB", "TRF", "RFL", "RFS"],
-				"detectorLogMode" : 1,
+				"detectorLogMode" : {'SubsystemsButton' : 1, 'DAQbutton' : 0},  //log state a function of ID of button used to summon current view state 
 
 
 				"BAMBINO" : {
