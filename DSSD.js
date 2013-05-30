@@ -52,6 +52,7 @@ function DSSD(){
                 if(window.state.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.DSSD[key].oldHVcolor), parseHexColor(this.dataBus.DSSD[key].HVcolor), frame/this.nFrames);
                 else if(window.state.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.DSSD[key].oldThresholdColor), parseHexColor(this.dataBus.DSSD[key].thresholdColor), frame/this.nFrames);
                 else if(window.state.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.DSSD[key].oldRateColor), parseHexColor(this.dataBus.DSSD[key].rateColor), frame/this.nFrames); 
+                if(this.context.fillStyle == 0xDEADBEEF) this.context.fillStyle = this.context.createPattern(window.parameters.warningFill, 'repeat');
                 this.TTcontext.fillStyle = 'rgba('+this.dataBus.DSSD[key].index+','+this.dataBus.DSSD[key].index+','+this.dataBus.DSSD[key].index+',1)';
 
                 this.context.fillRect(this.margin+i*(this.DSSDside+this.gutterSize), 3*this.gutterSize+2*this.DSSDside, this.DSSDside, this.DSSDside );
@@ -101,7 +102,8 @@ function DSSD(){
             if(window.state.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.DSSD[key].oldHVcolor), parseHexColor(this.dataBus.DSSD[key].HVcolor), frame/this.nFrames);
             else if(window.state.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.DSSD[key].oldThresholdColor), parseHexColor(this.dataBus.DSSD[key].thresholdColor), frame/this.nFrames);
             else if(window.state.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.DSSD[key].oldRateColor), parseHexColor(this.dataBus.DSSD[key].rateColor), frame/this.nFrames);
-
+            if(this.context.fillStyle == 0xDEADBEEF) this.context.fillStyle = this.context.createPattern(window.parameters.warningFill, 'repeat');
+            
             //also for TT layer:
             this.TTcontext.fillStyle = 'rgba('+this.dataBus.DSSD[key].index+','+this.dataBus.DSSD[key].index+','+this.dataBus.DSSD[key].index+',1)';
 

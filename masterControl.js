@@ -1,52 +1,53 @@
 function loadJSONP(gatekeeper, callback) {
     var i;
 
-        for(i=0; i<window.parameters.JSONPrepos.length; i++){
+    window.JSONPstore = {}; //dump the old store so old junk doesn't persist.
+    for(i=0; i<window.parameters.JSONPrepos.length; i++){
 
-            var script  = document.createElement('script');
+        var script  = document.createElement('script');
 
-            //either make some fake data to replace the JSONP service offline in devMode, or use the real thing online:
-            if(window.parameters.devMode){
-                script.setAttribute('src', ' ');
-                if(callback != 'main'){
-                    parseResponse(fakeScalars());
-                    parseThreshold(fakeThresholds());
-                }
-            } else
-                script.setAttribute('src', window.parameters.JSONPrepos[i]);    //fetch the ith repo
-
-            script.setAttribute('id', 'tempScript'+i);
-
-            script.onload = function(){
-                for(var i=0; i<window.parameters.JSONPrepos.length; i++){
-                    if (window.parameters.JSONPrepos[i] == this.src) window.JSONPstatus[i] = 'Online';
-                }
-                //post to GK:
-                var gatekeeperReport = new  CustomEvent("gatekeeperReport", {
-                                                detail: {
-                                                    status: 'loaded',
-                                                    cb: callback        
-                                                }
-                                            });
-                gatekeeper.listener.dispatchEvent(gatekeeperReport);
+        //either make some fake data to replace the JSONP service offline in devMode, or use the real thing online:
+        if(window.parameters.devMode){
+            script.setAttribute('src', ' ');
+            if(callback != 'main'){
+                parseResponse(fakeScalars());
+                parseThreshold(fakeThresholds());
             }
+        } else
+            script.setAttribute('src', window.parameters.JSONPrepos[i]);    //fetch the ith repo
 
-            script.onerror = function(){
-                for(var i=0; i<window.parameters.JSONPrepos.length; i++){
-                    if (window.parameters.JSONPrepos[i] == this.src) window.JSONPstatus[i] = 'Not Responding';
-                }
-                //post to GK:
-                var gatekeeperReport = new  CustomEvent("gatekeeperReport", {
-                                                detail: {
-                                                    status: 'failed',        
-                                                    cb: callback
-                                                }
-                                            });
-                gatekeeper.listener.dispatchEvent(gatekeeperReport);
+        script.setAttribute('id', 'tempScript'+i);
+
+        script.onload = function(){
+            for(var i=0; i<window.parameters.JSONPrepos.length; i++){
+                if (window.parameters.JSONPrepos[i] == this.src) window.JSONPstatus[i] = 'Online';
             }
-
-            document.head.appendChild(script);
+            //post to GK:
+            var gatekeeperReport = new  CustomEvent("gatekeeperReport", {
+                                            detail: {
+                                                status: 'loaded',
+                                                cb: callback        
+                                            }
+                                        });
+            gatekeeper.listener.dispatchEvent(gatekeeperReport);
         }
+
+        script.onerror = function(){
+            for(var i=0; i<window.parameters.JSONPrepos.length; i++){
+                if (window.parameters.JSONPrepos[i] == this.src) window.JSONPstatus[i] = 'Not Responding';
+            }
+            //post to GK:
+            var gatekeeperReport = new  CustomEvent("gatekeeperReport", {
+                                            detail: {
+                                                status: 'failed',        
+                                                cb: callback
+                                            }
+                                        });
+            gatekeeper.listener.dispatchEvent(gatekeeperReport);
+        }
+
+        document.head.appendChild(script);
+    }
 }
 
 //an object to block the page update until all the JSONP requests have reported back. 

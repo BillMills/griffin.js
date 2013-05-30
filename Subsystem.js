@@ -66,6 +66,9 @@ function Subsystem(){
     //determine which color <scalar> corresponds to
     this.parseColor = function(scalar, detector){
         var scale;
+
+        if(scalar == 0xDEADBEEF) return 0xDEADBEEF
+
         //how far along the scale are we?  Technically this will produce the wrong color for canvases not currently on display.
         if(window.parameters.detectorLogMode.SubsystemsButton){
             scale = (Math.log(scalar) - Math.log(window.parameters[this.name].minima[detector][window.state.subdetectorView])) / (Math.log(window.parameters[this.name].maxima[detector][window.state.subdetectorView]) - Math.log(window.parameters[this.name].minima[detector][window.state.subdetectorView]));
@@ -191,11 +194,13 @@ function Subsystem(){
 
         //Thresholds
         nextLine = window.parameters.monitorValues[1] + ': ';
-        nextLine += thresh.toFixed() + ' ' + window.parameters.subdetectorUnit[1];
+        if(thresh >= 0xDEADBEEF) nextLine += 'Not Reporting';
+        else nextLine += thresh.toFixed() + ' ' + window.parameters.subdetectorUnit[1];
         toolTipContent += nextLine + '<br>';
         //Rate
         nextLine = window.parameters.monitorValues[2] + ': ';
-        nextLine += rate.toFixed() + ' ' + window.parameters.subdetectorUnit[2];
+        if(rate >= 0xDEADBEEF) nextLine += 'Not Reporting';
+        else nextLine += rate.toFixed() + ' ' + window.parameters.subdetectorUnit[2];
         toolTipContent += nextLine;
 
         return toolTipContent;
@@ -622,6 +627,8 @@ function HPGeAssets(){
                             fillColor  = interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeKey+'N00A'].oldRateColor), parseHexColor(this.dataBus.HPGe[HPGeKey+'N00A'].rateColor), frame/this.nFrames );
                             fillColor2 = interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeKey+'N00B'].oldRateColor), parseHexColor(this.dataBus.HPGe[HPGeKey+'N00B'].rateColor), frame/this.nFrames );
                         }
+                        if(fillColor==0xDEADBEEF) fillColor = this.detailContext.createPattern(window.parameters.warningFill, 'repeat');
+                        if(fillColor2==0xDEADBEEF) fillColor2 = this.detailContext.createPattern(window.parameters.warningFill, 'repeat');
                     } else {
                         fillColor  = 'rgba('+10*i+', '+10*i+', '+10*i+', 1)';
                         fillColor2 = 'rgba('+(10*i+1)+', '+(10*i+1)+', '+(10*i+1)+', 1)';
@@ -643,7 +650,7 @@ function HPGeAssets(){
                         if(context == this.detailContext){
                             if(window.state.subdetectorView == 1) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeKey+'P0'+jprime+'X'].oldThresholdColor), parseHexColor(this.dataBus.HPGe[HPGeKey+'P0'+jprime+'X'].thresholdColor), frame/this.nFrames);
                             else if(window.state.subdetectorView == 2) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeKey+'P0'+jprime+'X'].oldRateColor), parseHexColor(this.dataBus.HPGe[HPGeKey+'P0'+jprime+'X'].rateColor), frame/this.nFrames);
-    
+                            if(fillColor==0xDEADBEEF) fillColor = this.detailContext.createPattern(window.parameters.warningFill, 'repeat');
                         } else
                             fillColor = 'rgba('+(this.nHPGesegments/4*i+jprime+1)+', '+(this.nHPGesegments/4*i+jprime+1)+', '+(this.nHPGesegments/4*i+jprime+1)+', 1)';
                         this.drawL(context, j*Math.PI/2, this.crystalSide/6, 1/3*this.crystalSide, this.centerX + PBC*this.lineWeight + NAD*(-NAD2)*5/6*this.crystalSide + NAD*PBC2*1/6*this.crystalSide + PBC*(-NAD2)*1/6*this.crystalSide + PBC*PBC2*5/6*this.crystalSide, this.centerY + NAB*(-NAB2)*5/6*this.crystalSide + NAB*PCD2*1/6*this.crystalSide + PCD*(-NAB2)*1/6*this.crystalSide + PCD*PCD2*5/6*this.crystalSide + PCD*this.lineWeight, colorWheel[i], fillColor);
@@ -652,6 +659,7 @@ function HPGeAssets(){
                         if(context == this.detailContext){
                             if(window.state.subdetectorView == 1) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeKey+'P0'+(jprime+4)+'X'].oldThresholdColor), parseHexColor(this.dataBus.HPGe[HPGeKey+'P0'+(jprime+4)+'X'].thresholdColor), frame/this.nFrames);
                             else if(window.state.subdetectorView == 2) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeKey+'P0'+(jprime+4)+'X'].oldRateColor), parseHexColor(this.dataBus.HPGe[HPGeKey+'P0'+(jprime+4)+'X'].rateColor), frame/this.nFrames);
+                            if(fillColor==0xDEADBEEF) fillColor = this.detailContext.createPattern(window.parameters.warningFill, 'repeat');
                         } else
                             fillColor = 'rgba('+(this.nHPGesegments/4*i+jprime+1+4)+', '+(this.nHPGesegments/4*i+jprime+1+4)+', '+(this.nHPGesegments/4*i+jprime+1+4)+', 1)';
                         this.drawL(context, j*Math.PI/2, this.crystalSide/6, this.crystalSide/2, this.centerX + (-NAD)*NAD2*this.crystalSide + PBC*PBC2*this.crystalSide + PBC*this.lineWeight, this.centerY + (-NAB)*NAB2*this.crystalSide + PCD*PCD2*this.crystalSide + PCD*this.lineWeight, colorWheel[i], fillColor);
@@ -671,6 +679,8 @@ function HPGeAssets(){
                             fillColor  = interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeKey+'N00A'].oldRateColor), parseHexColor(this.dataBus.HPGe[HPGeKey+'N00A'].rateColor), frame/this.nFrames );
                             fillColor2 = interpolateColor(parseHexColor(this.dataBus.HPGe[HPGeKey+'N00B'].oldRateColor), parseHexColor(this.dataBus.HPGe[HPGeKey+'N00B'].rateColor), frame/this.nFrames );
                         }
+                        if(fillColor==0xDEADBEEF) fillColor = this.detailContext.createPattern(window.parameters.warningFill, 'repeat');
+                        if(fillColor2==0xDEADBEEF) fillColor2 = this.detailContext.createPattern(window.parameters.warningFill, 'repeat');
                     } else {
                         fillColor  = 'rgba('+2*i+', '+2*i+', '+2*i+', 1)';
                         fillColor2 = 'rgba('+(2*i+1)+', '+(2*i+1)+', '+(2*i+1)+', 1)';
@@ -696,9 +706,10 @@ function HPGeAssets(){
 
                 //back suppressors
                 if(context == this.detailContext){
-                    if(window.state.subdetectorView == 0) fillColor  = interpolateColor(parseHexColor(this.dataBus.HPGe[BGOkey+'N05X']['old'+HVchan+'color']), parseHexColor(this.dataBus.HPGe[BGOkey+'N05X'][HVchan+'color']), frame/this.nFrames);
+                    if(window.state.subdetectorView == 0) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[BGOkey+'N05X']['old'+HVchan+'color']), parseHexColor(this.dataBus.HPGe[BGOkey+'N05X'][HVchan+'color']), frame/this.nFrames);
                     else if(window.state.subdetectorView == 1) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[BGOkey+'N05X'].oldThresholdColor), parseHexColor(this.dataBus.HPGe[BGOkey+'N05X'].thresholdColor), frame/this.nFrames);
                     else if(window.state.subdetectorView == 2) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[BGOkey+'N05X'].oldRateColor), parseHexColor(this.dataBus.HPGe[BGOkey+'N05X'].rateColor), frame/this.nFrames);
+                    if(fillColor==0xDEADBEEF) fillColor = this.detailContext.createPattern(window.parameters.warningFill, 'repeat');
 
                 } else{
                     if(window.state.subdetectorView == 0){
@@ -722,6 +733,8 @@ function HPGeAssets(){
                     }
                     else if(window.state.subdetectorView == 1) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[BGOkey+BGOsuffix].oldThresholdColor), parseHexColor(this.dataBus.HPGe[BGOkey+BGOsuffix].thresholdColor), frame/this.nFrames);
                     else if(window.state.subdetectorView == 2) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[BGOkey+BGOsuffix].oldRateColor), parseHexColor(this.dataBus.HPGe[BGOkey+BGOsuffix].rateColor), frame/this.nFrames);
+                    if(fillColor==0xDEADBEEF) fillColor = this.detailContext.createPattern(window.parameters.warningFill, 'repeat');
+                    if(fillColor2==0xDEADBEEF) fillColor2 = this.detailContext.createPattern(window.parameters.warningFill, 'repeat');
                 } else{
                     if(window.state.subdetectorView == 0){
                         fillColor  = 'rgba('+(4+8+4*i+2*j)+', '+(4+8+4*i+2*j)+', '+(4+8+4*i+2*j)+', 1)';
@@ -741,6 +754,8 @@ function HPGeAssets(){
                     }
                     else if(window.state.subdetectorView == 1) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[BGOkey+BGOsuffix].oldThresholdColor), parseHexColor(this.dataBus.HPGe[BGOkey+BGOsuffix].thresholdColor), frame/this.nFrames);
                     else if(window.state.subdetectorView == 2) fillColor = interpolateColor(parseHexColor(this.dataBus.HPGe[BGOkey+BGOsuffix].oldRateColor), parseHexColor(this.dataBus.HPGe[BGOkey+BGOsuffix].rateColor), frame/this.nFrames);
+                    if(fillColor==0xDEADBEEF) fillColor = this.detailContext.createPattern(window.parameters.warningFill, 'repeat');
+                    if(fillColor2==0xDEADBEEF) fillColor2 = this.detailContext.createPattern(window.parameters.warningFill, 'repeat');
                 } else{
                     if(window.state.subdetectorView == 0){
                         fillColor  = 'rgba('+(4+8+16+4*i+2*j)+', '+(4+8+16+4*i+2*j)+', '+(4+8+16+4*i+2*j)+', 1)';
@@ -809,11 +824,15 @@ function HPGeAssets(){
             if(window.JSONPstore['thresholds']){
                 if(window.JSONPstore['thresholds'][key])
                     this.dataBus.HPGe[key]['threshold'] = window.JSONPstore['thresholds'][key];
+                else
+                    this.dataBus.HPGe[key]['threshold'] = 0xDEADBEEF;
             }
 
             if(window.JSONPstore['scalar']){
                 if(window.JSONPstore['scalar'][key])
                     this.dataBus.HPGe[key]['rate'] = window.JSONPstore['scalar'][key]['TRIGREQ'];
+                else 
+                    this.dataBus.HPGe[key]['rate'] = 0xDEADBEEF;
             }
         }
 
@@ -833,6 +852,8 @@ function HPGeAssets(){
                             this.dataBus.summary[key].threshold += this.dataBus.HPGe[key+'P0'+j+'X']['threshold'];
                             this.dataBus.summary[key].rate += this.dataBus.HPGe[key+'P0'+j+'X']['rate'];
                         }
+                        this.dataBus.summary[key].threshold = this.dataBus.summary[key].threshold%0xDEADBEEF;  //drop any DEADBEEF that got added in
+                        this.dataBus.summary[key].rate = this.dataBus.summary[key].rate%0xDEADBEEF;
                         this.dataBus.summary[key].threshold /= 10;
                         this.dataBus.summary[key].rate /= 10;
                     }
@@ -842,8 +863,10 @@ function HPGeAssets(){
                         this.dataBus.summary[key].HV += this.dataBus.HPGe[key+'N0'+j+'A'] / 10;
                         this.dataBus.summary[key].HV += this.dataBus.HPGe[key+'N0'+j+'B'] / 10;
                     }
-                    this.dataBus.summary[key].threshold = (this.dataBus.HPGe[key+'N01X']['threshold'] + this.dataBus.HPGe[key+'N02X']['threshold'] + this.dataBus.HPGe[key+'N03X']['threshold'] + this.dataBus.HPGe[key+'N04X']['threshold'] + this.dataBus.HPGe[key+'N05X']['threshold'])/5;
-                    this.dataBus.summary[key].rate = (this.dataBus.HPGe[key+'N01X']['rate'] + this.dataBus.HPGe[key+'N02X']['rate'] + this.dataBus.HPGe[key+'N03X']['rate'] + this.dataBus.HPGe[key+'N04X']['rate'] + this.dataBus.HPGe[key+'N05X']['rate'])/5;
+                    this.dataBus.summary[key].threshold = this.dataBus.HPGe[key+'N01X']['threshold'] + this.dataBus.HPGe[key+'N02X']['threshold'] + this.dataBus.HPGe[key+'N03X']['threshold'] + this.dataBus.HPGe[key+'N04X']['threshold'] + this.dataBus.HPGe[key+'N05X']['threshold'];
+                    this.dataBus.summary[key].rate = this.dataBus.HPGe[key+'N01X']['rate'] + this.dataBus.HPGe[key+'N02X']['rate'] + this.dataBus.HPGe[key+'N03X']['rate'] + this.dataBus.HPGe[key+'N04X']['rate'] + this.dataBus.HPGe[key+'N05X']['rate'];
+                    this.dataBus.summary[key].threshold = (this.dataBus.summary[key].threshold%0xDEADBEEF)/5;  //drop any DEADBEEF that got added in
+                    this.dataBus.summary[key].rate = (this.dataBus.summary[key].rate%0xDEADBEEF)/5;
                 }
             }
         }
@@ -964,16 +987,16 @@ function HPGeAssets(){
         insertDOM('tr', 'coreThreshold', '', '', 'tigressTTtable', '', '');
         insertDOM('td', 'coreThresholdTitle', '', 'text-align:right;', 'coreThreshold', '', window.parameters.monitorValues[1])
         insertDOM('td', 'spacer', '', 'width:10px', 'coreThreshold', '', '');
-        insertDOM('td', 'coreAthreshold', '', '', 'coreThreshold', '', dataBus.HPGe[cloverLeaf+'N00A'].threshold + ' ' + window.parameters.subdetectorUnit[1]);
+        insertDOM('td', 'coreAthreshold', '', '', 'coreThreshold', '', ( (dataBus.HPGe[cloverLeaf+'N00A'].threshold < 0xDEADBEEF) ? dataBus.HPGe[cloverLeaf+'N00A'].threshold + ' ' + window.parameters.subdetectorUnit[1] : 'Not Reporting') );
         insertDOM('td', 'spacer', '', 'width:50px', 'coreThreshold', '', '');
-        insertDOM('td', 'coreBthreshold', '', '', 'coreThreshold', '', dataBus.HPGe[cloverLeaf+'N00B'].threshold + ' ' + window.parameters.subdetectorUnit[1]); 
+        insertDOM('td', 'coreBthreshold', '', '', 'coreThreshold', '', ( (dataBus.HPGe[cloverLeaf+'N00B'].threshold < 0xDEADBEEF) ? dataBus.HPGe[cloverLeaf+'N00B'].threshold + ' ' + window.parameters.subdetectorUnit[1] : 'Not Reporting') ); 
 
         insertDOM('tr', 'coreRate', '', '', 'tigressTTtable', '', '');
         insertDOM('td', 'coreRateTitle', '', 'text-align:right;', 'coreRate', '', window.parameters.monitorValues[2])
         insertDOM('td', 'spacer', '', 'width:10px', 'coreRate', '', '');
-        insertDOM('td', 'coreArate', '', '', 'coreRate', '', dataBus.HPGe[cloverLeaf+'N00A'].rate + ' ' + window.parameters.subdetectorUnit[2]);
+        insertDOM('td', 'coreArate', '', '', 'coreRate', '', ( (dataBus.HPGe[cloverLeaf+'N00A'].rate < 0xDEADBEEF) ? dataBus.HPGe[cloverLeaf+'N00A'].rate + ' ' + window.parameters.subdetectorUnit[2] : 'Not Reporting') );
         insertDOM('td', 'spacer', '', 'width:50px;', 'coreRate', '', '');
-        insertDOM('td', 'coreBrate', '', '', 'coreRate', '', dataBus.HPGe[cloverLeaf+'N00B'].rate + ' ' + window.parameters.subdetectorUnit[2]); 
+        insertDOM('td', 'coreBrate', '', '', 'coreRate', '', ((dataBus.HPGe[cloverLeaf+'N00B'].rate < 0xDEADBEEF) ? dataBus.HPGe[cloverLeaf+'N00B'].rate + ' ' + window.parameters.subdetectorUnit[2] : 'Not Reporting') ); 
 
         insertDOM('tr', 'divider', '', '', 'tigressTTtable', '', '');
         insertDOM('td', 'line', '', 'border-bottom-style:solid; border-color:white; border-width:1px;', 'divider', '', '');
@@ -1001,16 +1024,16 @@ function HPGeAssets(){
             insertDOM('tr', elt+'Threshold', '', '', 'tigressTTtable', '', '');
             insertDOM('td', elt+'ThresholdTitle', '', 'text-align:right;', elt+'Threshold', '', window.parameters.monitorValues[1])
             insertDOM('td', 'spacer', '', 'width:10px', elt+'Threshold', '', '');
-            insertDOM('td', elt+'Athreshold', '', '', elt+'Threshold', '', dataBus.HPGe[eltName1].threshold + ' ' + window.parameters.subdetectorUnit[1]);
+            insertDOM('td', elt+'Athreshold', '', '', elt+'Threshold', '', ((dataBus.HPGe[eltName1].threshold < 0xDEADBEEF) ? dataBus.HPGe[eltName1].threshold + ' ' + window.parameters.subdetectorUnit[1] : 'Not Reporting') );
             insertDOM('td', 'spacer', '', 'width:50px', elt+'Threshold', '', '');
-            insertDOM('td', elt+'Bthreshold', '', '', elt+'Threshold', '', dataBus.HPGe[eltName2].threshold + ' ' + window.parameters.subdetectorUnit[1]); 
+            insertDOM('td', elt+'Bthreshold', '', '', elt+'Threshold', '', ( (dataBus.HPGe[eltName2].threshold < 0xDEADBEEF) ? dataBus.HPGe[eltName2].threshold + ' ' + window.parameters.subdetectorUnit[1] : 'Not Reporting') ); 
 
             insertDOM('tr', elt+'Rate', '', '', 'tigressTTtable', '', '');
             insertDOM('td', elt+'RateTitle', '', 'text-align:right;', elt+'Rate', '', window.parameters.monitorValues[2])
             insertDOM('td', 'spacer', '', 'width:10px', elt+'Rate', '', '');
-            insertDOM('td', elt+'Arate', '', '', elt+'Rate', '', dataBus.HPGe[eltName1].rate + ' ' + window.parameters.subdetectorUnit[2]);
+            insertDOM('td', elt+'Arate', '', '', elt+'Rate', '', ( (dataBus.HPGe[eltName1].rate < 0xDEADBEEF) ? dataBus.HPGe[eltName1].rate + ' ' + window.parameters.subdetectorUnit[2] : 'Not Reporting') );
             insertDOM('td', 'spacer', '', 'width:50px;', elt+'Rate', '', '');
-            insertDOM('td', elt+'Brate', '', '', elt+'Rate', '', dataBus.HPGe[eltName2].rate + ' ' + window.parameters.subdetectorUnit[2]); 
+            insertDOM('td', elt+'Brate', '', '', elt+'Rate', '', ( (dataBus.HPGe[eltName2].rate < 0xDEADBEEF) ? dataBus.HPGe[eltName2].rate + ' ' + window.parameters.subdetectorUnit[2] : 'Not Reporting') ); 
 
             if(i!=3){
                 insertDOM('tr', elt+'divider', '', '', 'tigressTTtable', '', '');

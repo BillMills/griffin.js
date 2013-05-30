@@ -278,6 +278,9 @@ scalepickr = function(scale, palette){
 
 function interpolateColor(oldColor, newColor, scale){
     var R, G, B;
+
+    if(oldColor == 0xDEADBEEF || newColor == 0xDEADBEEF) return 0xDEADBEEF;
+
     R = Math.round((newColor[0] - oldColor[0])*scale + oldColor[0]);
     G = Math.round((newColor[1] - oldColor[1])*scale + oldColor[1]);
     B = Math.round((newColor[2] - oldColor[2])*scale + oldColor[2]);
@@ -317,6 +320,8 @@ function strokePolygon(context, nSides, x0, y0, spoke, phi){
 function parseHexColor(color){
     var R, G, B;
 
+    if(color==0xDEADBEEF) return 0xDEADBEEF
+        
     var number = String(color).slice(1,7)
 
     R = parseInt(number.slice(0,2), 16);
