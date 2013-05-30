@@ -65,9 +65,13 @@ function Subsystem(){
     //member functions
     //determine which color <scalar> corresponds to
     this.parseColor = function(scalar, detector){
-
+        var scale;
         //how far along the scale are we?  Technically this will produce the wrong color for canvases not currently on display.
-        var scale = (scalar - window.parameters[this.name].minima[detector][window.state.subdetectorView]) / (window.parameters[this.name].maxima[detector][window.state.subdetectorView] - window.parameters[this.name].minima[detector][window.state.subdetectorView]);
+        if(window.parameters.detectorLogMode){
+            scale = (Math.log(scalar) - Math.log(window.parameters[this.name].minima[detector][window.state.subdetectorView])) / (Math.log(window.parameters[this.name].maxima[detector][window.state.subdetectorView]) - Math.log(window.parameters[this.name].minima[detector][window.state.subdetectorView]));
+        } else {
+            scale = (scalar - window.parameters[this.name].minima[detector][window.state.subdetectorView]) / (window.parameters[this.name].maxima[detector][window.state.subdetectorView] - window.parameters[this.name].minima[detector][window.state.subdetectorView]);
+        }
 
         //different scales for different meters to aid visual recognition:
         if(window.state.subdetectorView==0) return scalepickr(scale, window.parameters.subdetectorColors[0]);
@@ -88,13 +92,21 @@ function Subsystem(){
         var minTicks = [];
         var maxTicks = [];
         title = window.parameters.monitorValues[window.state.subdetectorView];
+        if(window.parameters.detectorLogMode) title = 'log(' + title + ')';
         for(key in window.parameters[this.name].minima){
-            //minimas
-            if(window.parameters[this.name].minima[key][window.state.subdetectorView] < 1000) minTicks[key] = key+': ' + window.parameters[this.name].minima[key][window.state.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.state.subdetectorView];
-            else minTicks[key] = key + ': ' + window.parameters[this.name].minima[key][window.state.subdetectorView]/1000 + scaleUnit[window.state.subdetectorView] + window.parameters.subdetectorUnit[window.state.subdetectorView];
-            //maximas:
-            if(window.parameters[this.name].maxima[key][window.state.subdetectorView] < 1000) maxTicks[key] = key+': ' + window.parameters[this.name].maxima[key][window.state.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.state.subdetectorView];
-            else maxTicks[key] = key + ': ' + window.parameters[this.name].maxima[key][window.state.subdetectorView]/1000 + scaleUnit[window.state.subdetectorView] + window.parameters.subdetectorUnit[window.state.subdetectorView];
+            if(window.parameters.detectorLogMode){
+                //minimas
+                minTicks[key] = key+': ' + Math.log(window.parameters[this.name].minima[key][window.state.subdetectorView]).toFixed(1) + ' log(' + window.parameters.subdetectorUnit[window.state.subdetectorView]+')';
+                //maximas:
+                maxTicks[key] = key+': ' + Math.log(window.parameters[this.name].maxima[key][window.state.subdetectorView]).toFixed(1) + ' log(' + window.parameters.subdetectorUnit[window.state.subdetectorView]+')';
+            } else {
+                //minimas
+                if(window.parameters[this.name].minima[key][window.state.subdetectorView] < 1000) minTicks[key] = key+': ' + window.parameters[this.name].minima[key][window.state.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.state.subdetectorView];
+                else minTicks[key] = key + ': ' + window.parameters[this.name].minima[key][window.state.subdetectorView]/1000 + scaleUnit[window.state.subdetectorView] + window.parameters.subdetectorUnit[window.state.subdetectorView];
+                //maximas:
+                if(window.parameters[this.name].maxima[key][window.state.subdetectorView] < 1000) maxTicks[key] = key+': ' + window.parameters[this.name].maxima[key][window.state.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.state.subdetectorView];
+                else maxTicks[key] = key + ': ' + window.parameters[this.name].maxima[key][window.state.subdetectorView]/1000 + scaleUnit[window.state.subdetectorView] + window.parameters.subdetectorUnit[window.state.subdetectorView];
+            }
         }
 
         //titles
