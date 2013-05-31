@@ -612,7 +612,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                 //two-tiered links:
                 //from digitizers:
                 this.detailContext.moveTo(this.margin + ((i-this.prevDigi[clctr])+0.5)*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector[clctr], this.canvasHeight*0.6 + topMargin);
-                this.detailContext.lineTo(this.margin + ((i-this.prevDigi[clctr])+0.5)*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector[clctr], (this.canvasHeight*0.6 - this.collectorHeight)/2+topMargin+this.collectorHeight);
+                this.detailContext.lineTo(this.margin + ((i-this.prevDigi[clctr])+0.5)*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector[clctr], this.canvasHeight*0.6 + topMargin - this.collectorHeight);
                 this.detailContext.stroke();
                 //digitizers:
                 this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.dataBus.oldDigitizerColor[i]), parseHexColor(this.dataBus.digitizerColor[i]), frame/this.nFrames);
@@ -628,7 +628,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         //parent collector:
         this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.dataBus.oldDetailCollectorColor[clctr]), parseHexColor(this.dataBus.detailCollectorColor[clctr]), frame/this.nFrames);
         //roundBox(this.detailContext, this.canvasWidth/2 - this.collectorWidth/2, topMargin, this.collectorWidth, this.collectorHeight, 5);
-        roundBox(this.detailContext, this.margin, topMargin, this.canvasWidth - 2*this.margin, 0.25*this.canvasHeight, 5)
+        roundBox(this.detailContext, this.margin, topMargin, this.canvasWidth - 2*this.margin, 0.40*this.canvasHeight, 5)
         this.detailContext.fill();
         this.detailContext.stroke();
 
@@ -636,10 +636,10 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.dataBus.oldDetailCollectorLinkColor[clctr]), parseHexColor(this.dataBus.detailCollectorLinkColor[clctr]), frame/this.nFrames);
         this.detailContext.lineWidth = 2*this.lineweight;
         this.detailContext.beginPath();
-        this.detailContext.moveTo(this.margin + 0.5*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector[clctr] - this.lineweight/2, (this.canvasHeight*0.6 - this.collectorHeight)/2+topMargin+this.collectorHeight);
-        this.detailContext.lineTo(this.margin + ((this.nDigitizersPerCollector[clctr]-1)+0.5)*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector[clctr] + this.lineweight/2, (this.canvasHeight*0.6 - this.collectorHeight)/2+topMargin+this.collectorHeight);
-        this.detailContext.moveTo(this.canvasWidth/2, (this.canvasHeight*0.6 - this.collectorHeight)/2+topMargin+this.collectorHeight);
-        this.detailContext.lineTo(this.canvasWidth/2, topMargin+ 0.25*this.canvasHeight + this.lineweight/2);
+        this.detailContext.moveTo(this.margin + 0.5*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector[clctr] - this.lineweight/2, this.canvasHeight*0.6 + topMargin - this.collectorHeight);
+        this.detailContext.lineTo(this.margin + ((this.nDigitizersPerCollector[clctr]-1)+0.5)*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector[clctr] + this.lineweight/2, this.canvasHeight*0.6 + topMargin - this.collectorHeight);
+        this.detailContext.moveTo(this.canvasWidth/2, this.canvasHeight*0.6 + topMargin - this.collectorHeight);
+        this.detailContext.lineTo(this.canvasWidth/2, topMargin+ 0.40*this.canvasHeight + this.lineweight/2);
         this.detailContext.stroke();
 
         //tooltip layer:
@@ -660,7 +660,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         this.detailContext.font = fontSize + 'px Raleway';
         this.detailContext.save();
         this.detailContext.rotate(-Math.PI/2);
-        this.detailContext.fillText('Slave '+(window.DAQdetail+1), -( 0.25*this.canvasHeight/2 + topMargin + this.detailContext.measureText('Slave '+(window.DAQdetail+1)).width/2 ),0.7*this.margin);
+        this.detailContext.fillText('Slave '+(window.DAQdetail+1), -( 0.40*this.canvasHeight/2 + topMargin + this.detailContext.measureText('Slave '+(window.DAQdetail+1)).width/2 ),0.7*this.margin);
         this.detailContext.restore();
 
         //generate slave chart:
@@ -675,7 +675,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                 oldTransfers[oldTransfers.length] = window.codex.DAQmap['0x0XXXXXX']['0x0'+(window.DAQdetail+1)+'XXXXX'][key].oldDataRate;
             }
         }
-        slaveChart(frame,this.detailContext, this.margin + 0.1*(this.canvasWidth-2*this.margin), topMargin+0.21*this.canvasHeight, FSPC, triggers, transfers, oldTriggers, oldTransfers);
+        slaveChart(frame,this.detailContext, this.margin + 0.1*(this.canvasWidth-2*this.margin), topMargin+0.36*this.canvasHeight, FSPC, triggers, transfers, oldTriggers, oldTransfers);
 
 
 
@@ -780,7 +780,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 //vertical bar chart for digitizer data; x0 y0 represents origin of chart
 function slaveChart(frame, context, x0, y0, FSPC, triggers, transfers, oldTriggers, oldTransfers){
     var chartWidth = (window.DAQpointer.canvasWidth - 2*window.DAQpointer.margin)*0.8,
-    chartHeight = 0.18*window.DAQpointer.canvasHeight,
+    chartHeight = 0.25*window.DAQpointer.canvasHeight,
     nDigitizers = window.DAQpointer.nDigitizersPerCollector[window.DAQdetail],
     barWidth = chartWidth / (nDigitizers*2) *0.95,
     tickmarkLength = 5,
@@ -846,7 +846,14 @@ function slaveChart(frame, context, x0, y0, FSPC, triggers, transfers, oldTrigge
         context.strokeStyle = '#0000FF';
         context.fillStyle = '#222222';
         context.fillRect(x0,y0-height,barWidth,height)
-        context.strokeRect(x0,y0-height,barWidth,height)
+        context.strokeRect(x0,y0-height,barWidth,height);
+        context.save();
+        context.translate(x0+barWidth/2, y0-height-2);
+        context.rotate(-Math.PI/2);
+        context.textBaseline = 'middle';
+        context.fillStyle = '#FFFFFF';
+        context.fillText(level.toFixed(0) + ' Bps', 0,0);
+        context.restore();
     }
 
     function triggerBar(frame, oldLevel, level, x0, y0){
@@ -856,7 +863,14 @@ function slaveChart(frame, context, x0, y0, FSPC, triggers, transfers, oldTrigge
         context.strokeStyle = '#00FF00';
         context.fillStyle = '#222222';
         context.fillRect(x0,y0-height,barWidth,height);
-        context.strokeRect(x0,y0-height,barWidth,height);        
+        context.strokeRect(x0,y0-height,barWidth,height);   
+        context.save();
+        context.translate(x0+barWidth/2, y0-height-2);
+        context.rotate(-Math.PI/2);
+        context.textBaseline = 'middle';
+        context.fillStyle = '#FFFFFF';
+        context.fillText(level.toFixed(0) + ' Hz', 0,0);
+        context.restore();     
     }
 }
 
