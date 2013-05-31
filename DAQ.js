@@ -158,7 +158,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     this.cellColor = '#4C4C4C';
     this.lineweight = 5;
 
-    this.margin = 30;
+    this.margin = this.canvasWidth*0.05;
     this.collectorGutter = 0.1*this.collectorWidth;
 
 
@@ -264,11 +264,11 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
             this.context.clearRect(0,0, this.canvasWidth, this.canvasHeight - this.scaleHeight);
             //labels:
             this.context.fillStyle = '#FFFFFF';
-            fontSize = fitFont(this.context, 'Collectors', this.collectorHeight);
+            fontSize = fitFont(this.context, 'Slaves', this.collectorHeight);
             this.context.font = fontSize + 'px Raleway';
             this.context.save();
             this.context.rotate(-Math.PI/2);
-            this.context.fillText('Collectors', -this.collectorBottom,0.7*this.margin);
+            this.context.fillText('Slaves', -this.collectorBottom,0.7*this.margin);
             this.context.restore();
 
             fontSize = fitFont(this.context, 'Digi Summary', this.collectorHeight)*1.2;
@@ -544,7 +544,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     };
 
     this.drawDetail = function(context, frame){
-        var color, i, j;
+        var color, i, j, key;
 
         var topMargin = 30;
         var leftMargin = 5;
@@ -627,7 +627,8 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 
         //parent collector:
         this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.dataBus.oldDetailCollectorColor[clctr]), parseHexColor(this.dataBus.detailCollectorColor[clctr]), frame/this.nFrames);
-        roundBox(this.detailContext, this.canvasWidth/2 - this.collectorWidth/2, topMargin, this.collectorWidth, this.collectorHeight, 5);
+        //roundBox(this.detailContext, this.canvasWidth/2 - this.collectorWidth/2, topMargin, this.collectorWidth, this.collectorHeight, 5);
+        roundBox(this.detailContext, this.margin, topMargin, this.canvasWidth - 2*this.margin, 0.25*this.canvasHeight, 5)
         this.detailContext.fill();
         this.detailContext.stroke();
 
@@ -638,13 +639,46 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         this.detailContext.moveTo(this.margin + 0.5*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector[clctr] - this.lineweight/2, (this.canvasHeight*0.6 - this.collectorHeight)/2+topMargin+this.collectorHeight);
         this.detailContext.lineTo(this.margin + ((this.nDigitizersPerCollector[clctr]-1)+0.5)*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector[clctr] + this.lineweight/2, (this.canvasHeight*0.6 - this.collectorHeight)/2+topMargin+this.collectorHeight);
         this.detailContext.moveTo(this.canvasWidth/2, (this.canvasHeight*0.6 - this.collectorHeight)/2+topMargin+this.collectorHeight);
-        this.detailContext.lineTo(this.canvasWidth/2, topMargin+this.collectorHeight + this.lineweight/2);
+        this.detailContext.lineTo(this.canvasWidth/2, topMargin+ 0.25*this.canvasHeight + this.lineweight/2);
         this.detailContext.stroke();
 
         //tooltip layer:
         this.TTdetailContext.fillStyle = 'rgba('+(clctr+1)+','+(clctr+1)+','+(clctr+1)+',1)';
-        this.TTdetailContext.fillRect(Math.round(this.canvasWidth/2 - this.collectorWidth/2), Math.round(topMargin), Math.round(this.collectorWidth), Math.round(this.collectorHeight));
-        
+        this.TTdetailContext.fillRect(Math.round(this.margin), Math.round(topMargin), Math.round(this.canvasWidth-2*this.margin), Math.round(0.25*this.canvasHeight));
+
+        //title
+        this.detailContext.fillStyle = '#FFFFFF';
+        this.detailContext.textBaseline = 'alphabetic'
+        fontSize = fitFont(this.detailContext, 'Digitizers', this.collectorHeight)*1.2;
+        this.detailContext.font = fontSize + 'px Raleway';
+        this.detailContext.save();
+        this.detailContext.rotate(-Math.PI/2);
+        this.detailContext.fillText('Digitizers', -this.canvasHeight*0.6 - topMargin - 0.02*this.canvasWidth - this.detailContext.measureText('Digitizers').width/2,0.7*this.margin);
+        this.detailContext.restore();  
+
+        fontSize = fitFont(this.detailContext, 'Slave '+(window.DAQdetail+1), 2*this.collectorWidth);
+        this.detailContext.font = fontSize + 'px Raleway';
+        this.detailContext.save();
+        this.detailContext.rotate(-Math.PI/2);
+        this.detailContext.fillText('Slave '+(window.DAQdetail+1), -( 0.25*this.canvasHeight/2 + topMargin + this.detailContext.measureText('Slave '+(window.DAQdetail+1)).width/2 ),0.7*this.margin);
+        this.detailContext.restore();
+
+        //generate slave chart:
+        //make list of digitizer FSPCs:
+        var FSPC = [], triggers = [], transfers = [], oldTriggers = [], oldTransfers = [];
+        for(key in window.codex.DAQmap['0x0XXXXXX']['0x0'+(window.DAQdetail+1)+'XXXXX']){
+            if(key.slice(7,9)=='XX'){
+                FSPC[FSPC.length] = key.slice(6,7);
+                triggers[triggers.length] = window.codex.DAQmap['0x0XXXXXX']['0x0'+(window.DAQdetail+1)+'XXXXX'][key].trigRequestRate;
+                transfers[transfers.length] = window.codex.DAQmap['0x0XXXXXX']['0x0'+(window.DAQdetail+1)+'XXXXX'][key].dataRate;
+                oldTriggers[oldTriggers.length] = window.codex.DAQmap['0x0XXXXXX']['0x0'+(window.DAQdetail+1)+'XXXXX'][key].oldTrigRequestRate;
+                oldTransfers[oldTransfers.length] = window.codex.DAQmap['0x0XXXXXX']['0x0'+(window.DAQdetail+1)+'XXXXX'][key].oldDataRate;
+            }
+        }
+        slaveChart(frame,this.detailContext, this.margin + 0.1*(this.canvasWidth-2*this.margin), topMargin+0.21*this.canvasHeight, FSPC, triggers, transfers, oldTriggers, oldTransfers);
+
+
+
     };
 
     this.fetchNewData = function(){
@@ -741,6 +775,89 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         if(window.onDisplay == this.detailCanvasID || window.freshLoad) animateDetail(this, 0);
         else this.drawDetail(this.nFrames);
     };
+}
+
+//vertical bar chart for digitizer data; x0 y0 represents origin of chart
+function slaveChart(frame, context, x0, y0, FSPC, triggers, transfers, oldTriggers, oldTransfers){
+    var chartWidth = (window.DAQpointer.canvasWidth - 2*window.DAQpointer.margin)*0.8,
+    chartHeight = 0.18*window.DAQpointer.canvasHeight,
+    nDigitizers = window.DAQpointer.nDigitizersPerCollector[window.DAQdetail],
+    barWidth = chartWidth / (nDigitizers*2) *0.95,
+    tickmarkLength = 5,
+    innerMargin = (window.DAQpointer.canvasWidth - chartWidth - 2*window.DAQpointer.margin)/2,
+    i;
+
+    context.font = Math.min( 12, fitFont(context, '9.9kBps', innerMargin/1.1 ) ) +'px Raleway';
+    //label horizontal axis & draw bars
+    context.textBaseline = 'top';
+    for(i=0; i<nDigitizers; i++){
+        context.fillStyle = '#FFFFFF';
+        context.lineWidth = 1;
+        context.fillText(FSPC[i], x0+barWidth+i*chartWidth/nDigitizers-context.measureText(FSPC[i]).width/2, y0+2);
+        triggerBar(frame, oldTriggers[i], triggers[i], x0+i*chartWidth/nDigitizers, y0);
+        transferBar(frame, oldTransfers[i], transfers[i], x0+barWidth+i*chartWidth/nDigitizers+1, y0);
+    }
+
+    //draw frame
+    context.lineWidth = 1;
+    context.fillStyle = '#FFFFFF'
+    context.strokeStyle = '#FFFFFF';
+    context.beginPath();
+    context.moveTo(x0-tickmarkLength,y0 - chartHeight);
+    context.lineTo(x0, y0-chartHeight);
+    context.lineTo(x0,y0);
+    context.moveTo(x0-tickmarkLength,y0);
+    context.lineTo(x0+chartWidth+tickmarkLength, y0);
+    context.moveTo(x0+chartWidth, y0);
+    context.lineTo(x0+chartWidth, y0 - chartHeight);
+    context.lineTo(x0+chartWidth+tickmarkLength, y0-chartHeight);
+    context.stroke();
+
+    //label vertical axes
+    context.textBaseline = 'middle';
+    context.fillText(window.parameters.DAQminima[3]/1000 + ' kBps', x0-tickmarkLength-context.measureText(window.parameters.DAQminima[3]/1000 + ' kBps').width, y0 );
+    context.fillText(window.parameters.DAQmaxima[3]/1000 + ' kBps', x0-tickmarkLength-context.measureText(window.parameters.DAQmaxima[3]/1000 + ' kBps').width, y0-chartHeight );
+    context.fillText(window.parameters.DAQminima[2]/1000 + ' kHz', x0+chartWidth+tickmarkLength, y0);
+    context.fillText(window.parameters.DAQmaxima[2]/1000 + ' kHz', x0+chartWidth+tickmarkLength, y0-chartHeight);
+    context.save();
+    context.translate(x0-innerMargin/2, y0-chartHeight/2)
+    context.rotate(-Math.PI/2);
+    context.fillText('Transfer', -context.measureText('Transfer').width/2,0);
+    context.fillStyle = '#222222';
+    context.strokeStyle = '#0000FF';
+    context.fillRect(-context.measureText('Transfer').width/2 - innerMargin/5-3,-innerMargin/5/2,innerMargin/5,innerMargin/5);
+    context.strokeRect(-context.measureText('Transfer').width/2 - innerMargin/5-3,-innerMargin/5/2,innerMargin/5,innerMargin/5);
+    context.restore();
+    context.save();
+    context.translate(x0+chartWidth+innerMargin/2, y0-chartHeight/2)
+    context.rotate(Math.PI/2);
+    context.fillText('Triggers', -context.measureText('Triggers').width/2,0);
+    context.fillStyle = '#222222';
+    context.strokeStyle = '#00FF00';
+    context.fillRect(-context.measureText('Triggers').width/2 - innerMargin/5-3,-innerMargin/5/2,innerMargin/5,innerMargin/5);
+    context.strokeRect(-context.measureText('Triggers').width/2 - innerMargin/5-3,-innerMargin/5/2,innerMargin/5,innerMargin/5);
+    context.restore();
+
+
+    function transferBar(frame, oldLevel, level, x0, y0){
+        var height = (oldLevel - window.parameters.DAQminima[3]) / (window.parameters.DAQmaxima[3] - window.parameters.DAQminima[3])*chartHeight + (  (level - window.parameters.DAQminima[3])/(window.parameters.DAQmaxima[3] - window.parameters.DAQminima[3]) - (oldLevel - window.parameters.DAQminima[3]) / (window.parameters.DAQmaxima[3] - window.parameters.DAQminima[3]) )*chartHeight*frame/window.DAQpointer.nFrames;
+        if(height>chartHeight) height = chartHeight;
+        if(height<0) height = 0;
+        context.strokeStyle = '#0000FF';
+        context.fillStyle = '#222222';
+        context.fillRect(x0,y0-height,barWidth,height)
+        context.strokeRect(x0,y0-height,barWidth,height)
+    }
+
+    function triggerBar(frame, oldLevel, level, x0, y0){
+        var height = (oldLevel - window.parameters.DAQminima[2]) / (window.parameters.DAQmaxima[2] - window.parameters.DAQminima[2])*chartHeight + (  (level - window.parameters.DAQminima[2])/(window.parameters.DAQmaxima[2] - window.parameters.DAQminima[2]) - (oldLevel - window.parameters.DAQminima[2]) / (window.parameters.DAQmaxima[2] - window.parameters.DAQminima[2]) )*chartHeight*frame/window.DAQpointer.nFrames;
+        if(height>chartHeight) height = chartHeight;
+        if(height<0) height = 0;
+        context.strokeStyle = '#00FF00';
+        context.fillStyle = '#222222';
+        context.fillRect(x0,y0-height,barWidth,height);
+        context.strokeRect(x0,y0-height,barWidth,height);        
+    }
 }
 
 
@@ -937,6 +1054,8 @@ DAQcodex = function(){
                 if(this.DAQmap[Fkey][Skey][Pkey]){
                     this.DAQmap[Fkey][Skey][Pkey].trigRequestRate = 0;
                     this.DAQmap[Fkey][Skey][Pkey].dataRate = 0;  //how much data is this digitizer pushing upstream?
+                    this.DAQmap[Fkey][Skey][Pkey].oldTrigRequestRate = 0;  //values from previous iteration
+                    this.DAQmap[Fkey][Skey][Pkey].oldDataRate = 0;
                     this.DAQmap[Fkey][Skey][Pkey][Ckey] = {'detector' : this.Name[i], 'FSPC' : Ckey, 'trigRequestRate' : 0, 'dataRate' : 0};
                     this.detSummary[this.Name[i].slice(0,3)] = {'totalTrigRequestRate' : 0, 'prevTrigReqRate' : 0, 'totalDataRate' : 0, 'prevDataRate' : 0};
                 } else {
@@ -954,7 +1073,7 @@ DAQcodex = function(){
     }
 
     //keep track of all the key names in the DAQmap that contain data directly, and aren't part of the hierarchy, so we can ignore them when traversing the DAQ tree:
-    this.dataKeys = ['detector', 'FSPC', 'trigRequestRate', 'dataRate'];
+    this.dataKeys = ['detector', 'FSPC', 'trigRequestRate', 'dataRate', 'oldTrigRequestRate', 'oldDataRate'];
 
     //0x0XXXXXX == currently hard coded to only look at one master, loop over Fkey to generalize
     this.nCollectors = 0;
@@ -1009,6 +1128,8 @@ DAQcodex = function(){
                         this.DAQmap[Fkey][Skey].dataRate = 0;
                         for(Pkey in this.DAQmap[Fkey][Skey]){
                             if(this.dataKeys.indexOf(Pkey) == -1){
+                                this.DAQmap[Fkey][Skey][Pkey].oldTrigRequestRate = this.DAQmap[Fkey][Skey][Pkey].trigRequestRate;
+                                this.DAQmap[Fkey][Skey][Pkey].oldDataRate = this.DAQmap[Fkey][Skey][Pkey].dataRate;
                                 this.DAQmap[Fkey][Skey][Pkey].trigRequestRate = 0;
                                 this.DAQmap[Fkey][Skey][Pkey].dataRate = 0;
                                 for(Ckey in this.DAQmap[Fkey][Skey][Pkey]){
