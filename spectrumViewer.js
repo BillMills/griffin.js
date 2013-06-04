@@ -54,7 +54,7 @@ function SetLimitsByMouse(){
 	if(SVparam.XaxisLimitMax>SVparam.XaxisLimitAbsMax) SVparam.XaxisLimitMax=SVparam.XaxisLimitAbsMax;
 	document.getElementById("LowerXLimit").value=SVparam.XaxisLimitMin;
 	document.getElementById("UpperXLimit").value=SVparam.XaxisLimitMax;
-	
+
 	drawXaxis();
 	SVparam.YaxisLimitMax=5;
 
@@ -789,7 +789,7 @@ function plot_data(RefreshNow){
 	if(SVparam.AxisType==1)
 		drawYaxisLog();
 
-	drawFrame();
+	paintCanvas();
 
 	// Now the limits are set loop through and plot the data points
 	for(thisSpec=0; thisSpec<SVparam.DisplayedSpecs.length; thisSpec++){
@@ -891,20 +891,59 @@ function plot_data(RefreshNow){
 ///////////////////////////////
 
 //reproduce the results of plot_data in a canvas, no svg allowed:
-function paintCanvas(RefreshNow){
-	return 0;
+function paintCanvas(){
+	
+	//determine bin render width
+	SVparam.binWidth = SVparam.xAxisPixLength / (SVparam.XaxisLimitMax - SVparam.XaxisLimitMin);
+
+	//paint axes & decorations
+	drawFrame();
 }
 
 //draw the plot frame
 function drawFrame(){
+	var binsPerTick, i, label;
+
+	//clear canvas
+	SVparam.context.clearRect(0,0,SVparam.canvWidth, SVparam.canvHeight);
 
 	//draw principle axes:
 	SVparam.context.strokeStyle = '#000000';
+	SVparam.context.fillStyle = '#000000';
 	SVparam.context.beginPath();
 	SVparam.context.moveTo(SVparam.leftMargin, SVparam.topMargin);
 	SVparam.context.lineTo(SVparam.leftMargin, SVparam.canvas.height-SVparam.bottomMargin);
 	SVparam.context.lineTo(SVparam.canvas.width - SVparam.rightMargin, SVparam.canvas.height - SVparam.bottomMargin);
 	SVparam.context.stroke();
+
+	//decide how many ticks to draw on the x axis:
+	SVparam.nXticks = 6;
+	//draw at most one tick per bin:
+	if(SVparam.XaxisLength < (SVparam.nXticks-1) )
+		SVparam.nXticks = SVparam.XaxisLength+1
+	//come as close to a factor of the number of bins as possible for small ranges:
+	while( (SVparam.XaxisLength / SVparam.nXticks) == (SVparam.XaxisLength / (SVparam.nXticks-1)) )
+		SVparam.nXticks--;
+	
+	//how many bins should there be between each tick?
+	//binsPerTick = Math.ceil((SVparam.XaxisLimitMax - SVparam.XaxisLimitMin) / (SVparam.nXticks-1));
+	binsPerTick = Math.floor((SVparam.XaxisLimitMax - SVparam.XaxisLimitMin) / (SVparam.nXticks-1));
+
+//binsPerTick < (SVparam.XaxisLimitMax - SVparam.XaxisLimitMin) / SVparam.nXticks
+
+	//draw x axis ticks & labels:
+	for(i=0; i<SVparam.nXticks; i++){
+		//ticks
+		SVparam.context.beginPath();
+		SVparam.context.moveTo(SVparam.leftMargin + i*binsPerTick*SVparam.binWidth, SVparam.canvas.height - SVparam.bottomMargin);
+		SVparam.context.lineTo(SVparam.leftMargin + i*binsPerTick*SVparam.binWidth, SVparam.canvas.height - SVparam.bottomMargin + SVparam.tickLength);
+		SVparam.context.stroke();
+
+		//labels
+		label = (SVparam.XaxisLimitMin + i*binsPerTick).toFixed(0);
+		SVparam.context.textBaseline = 'top';
+		SVparam.context.fillText(label, SVparam.leftMargin + i*binsPerTick*SVparam.binWidth - SVparam.context.measureText(label).width/2, SVparam.canvas.height - SVparam.bottomMargin + SVparam.tickLength + SVparam.xLabelOffset);
+	}
 }
 
 function FitTimeData(){

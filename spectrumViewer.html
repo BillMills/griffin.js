@@ -160,7 +160,13 @@
 				"leftMargin" : 100,					//left gutter of plot area
 				"bottomMargin" : 50, 				//bottom gutter of plot area
 				"rightMargin" : 100,				//right gutter of plot area
-				"topMargin" : 10 					//top gutter of plot area
+				"topMargin" : 20, 					//top gutter of plot area
+				"xAxisPixLength" : 0,				//in pixels
+				"yAxisPixLength" : 0,				//in pixels
+				"tickLength" : 5, 					//axis tickmark length
+				"nXticks" : 6,						//number of ticks on the x axis
+				"xLabelOffset" : 5, 				//x axis labels sit this far below the bottom of their tick
+				"binWidth" : 0 						//width of histo bin in pixels
 			};
 			SVparam.XaxisLength = SVparam.XaxisLimitMax-SVparam.XaxisLimitMin;
 			SVparam.XaxisLabelPos = SVparam.Yoffset+20;
@@ -170,6 +176,9 @@
 			SVparam.canvas.setAttribute('width', SVparam.canvWidth);
 			SVparam.canvas.setAttribute('height', SVparam.canvHeight);
 			SVparam.context = SVparam.canvas.getContext('2d');
+			SVparam.context.font = '16px Arial';
+			SVparam.xAxisPixLength = SVparam.canvas.width - SVparam.leftMargin - SVparam.rightMargin;
+			SVparam.yAxisPixLength = SVparam.canvas.height - SVparam.bottomMargin - SVparam.topMargin;
 
 			//fake data for dev mode:
 			SVfakeData = {
