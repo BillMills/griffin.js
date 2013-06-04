@@ -231,10 +231,29 @@ function mod_gate_params(){
 }
 
 function refreshAll(){
-	var this_run_num = ODBGet("/Runinfo/Run number"),
-		running=ODBGet("/Runinfo/State"),
-		img, Num, h, t, x, y, z, rate, obj, currentTime, hrs, mins, secs, TimeNow,
-		newLevels = [];
+	var this_run_num,// = ODBGet("/Runinfo/Run number"),
+		running,//=ODBGet("/Runinfo/State"),
+		data, img, Num, h, t, x, y, z, rate, obj, currentTime, hrs, mins, secs, TimeNow,
+		newLevels = [],
+		paths = [];
+
+		paths[0] = "/Runinfo/Run number";
+		paths[1] = "/Runinfo/State";
+		paths[2] = "/Analyzer/Parameters/Statistics/TotalRate";
+		paths[3] = "/Analyzer/Parameters/Statistics/TotalInt";
+		paths[4] = "/Analyzer/Parameters/Statistics/GateRate";
+		paths[5] = "/Analyzer/Parameters/Statistics/GateInt";
+		paths[6] = "/Analyzer/Parameters/Statistics/GateRate1";
+		paths[7] = "/Analyzer/Parameters/Statistics/GateInt1";
+		paths[8] = "/Analyzer/Parameters/Statistics/GateRate2";
+		paths[9] = "/Analyzer/Parameters/Statistics/GateInt2";
+		paths[10] = "/Analyzer/Parameters/Statistics/GateRate3";
+		paths[11] = "/Analyzer/Parameters/Statistics/GateInt3";
+		paths[12] = "/Analyzer/Parameters/Gate0/Zoom";
+
+		data = ODBMGet(paths);
+		this_run_num = data[0];
+		running = data[1];
 
 	if(running==1){
 		document.getElementById("run_status").bgColor="red";
@@ -250,16 +269,16 @@ function refreshAll(){
 
 	for(Num=4; Num>=0; Num--){
 		if(Num==0){ 
-			h=ODBGet("/Analyzer/Parameters/Statistics/TotalRate");
-			t=ODBGet("/Analyzer/Parameters/Statistics/TotalInt");
+			h=data[2]//ODBGet("/Analyzer/Parameters/Statistics/TotalRate");
+			t=data[3]//ODBGet("/Analyzer/Parameters/Statistics/TotalInt");
 		} else if(Num==1){ 
-			h=ODBGet("/Analyzer/Parameters/Statistics/GateRate"); 
-			t=ODBGet("/Analyzer/Parameters/Statistics/GateInt");
+			h=data[4]//ODBGet("/Analyzer/Parameters/Statistics/GateRate"); 
+			t=data[5]//ODBGet("/Analyzer/Parameters/Statistics/GateInt");
 		} else{ 
-			x="/Analyzer/Parameters/Statistics/GateRate"+(Num-1); 
-			h=ODBGet(x); 
-			x='/Analyzer/Parameters/Statistics/GateInt'+(Num-1); 
-			t=ODBGet(x);
+			//x="/Analyzer/Parameters/Statistics/GateRate"+(Num-1); 
+			h=data[6+2*(Num-2)]//ODBGet(x); 
+			//x='/Analyzer/Parameters/Statistics/GateInt'+(Num-1); 
+			t=data[6+2*(Num-2)+1]//ODBGet(x);
 		}
 		TBparam.rate[Num] = h;
 		TBparam.int[Num] = t;
@@ -297,7 +316,7 @@ function refreshAll(){
 
 	//obj=document.getElementById("2Dplot");  //intended to force a source refresh?  Very slow.
 	//obj.src=obj.src;
-	document.getElementById("zoom_drop").selectedIndex=ODBGet("/Analyzer/Parameters/Gate0/Zoom")-1;
+	document.getElementById("zoom_drop").selectedIndex=parseFloat(data[12])-1//ODBGet("/Analyzer/Parameters/Gate0/Zoom")-1;
 
 
 	// Print the time of the refresh
@@ -315,7 +334,7 @@ function refreshAll(){
 
 	document.getElementById("Time_display").innerHTML=(Math.floor(currentTime.getTime()/1000)-TBparam.ResetTime);
 
-	setTimeout("refreshAll()",5*1000);
+	setTimeout("refreshAll()",1*1000);
 }
 
 function updateBars(frame){

@@ -25,6 +25,8 @@ function SetupMouseValues(){
 }
 
 function SetLimitsByMouse(){
+	var loc;
+
 	if(SVparam.Fitted==1){
 		document.getElementById('fitbox').innerHTML = '';
 		SVparam.img.removeChild(SVparam.img.getElementById("PeakFitLine"));
@@ -42,16 +44,17 @@ function SetLimitsByMouse(){
 
 	if(SVparam.XMouseLimitxMax>SVparam.XMouseLimitxMin){
 		SVparam.XaxisLimitMax=Math.floor(((SVparam.XMouseLimitxMax-SVparam.Xoffset)/SVparam.XaxisCompression))+SVparam.XaxisLimitMin;
-		XaxisLimitMin=Math.floor(((SVparam.XMouseLimitxMin-SVparam.Xoffset)/SVparam.XaxisCompression))+SVparam.XaxisLimitMin;
+		SVparam.XaxisLimitMin=Math.floor(((SVparam.XMouseLimitxMin-SVparam.Xoffset)/SVparam.XaxisCompression))+SVparam.XaxisLimitMin;
 	} else {
 		SVparam.XaxisLimitMax=Math.floor(((SVparam.XMouseLimitxMin-SVparam.Xoffset)/SVparam.XaxisCompression))+SVparam.XaxisLimitMin;
-		XaxisLimitMin=Math.floor(((SVparam.XMouseLimitxMax-SVparam.Xoffset)/SVparam.XaxisCompression))+SVparam.XaxisLimitMin;
+		SVparam.XaxisLimitMin=Math.floor(((SVparam.XMouseLimitxMax-SVparam.Xoffset)/SVparam.XaxisCompression))+SVparam.XaxisLimitMin;
 	}
 
 	if(SVparam.XaxisLimitMin<0) SVparam.XaxisLimitMin=0; 
 	if(SVparam.XaxisLimitMax>SVparam.XaxisLimitAbsMax) SVparam.XaxisLimitMax=SVparam.XaxisLimitAbsMax;
 	document.getElementById("LowerXLimit").value=SVparam.XaxisLimitMin;
 	document.getElementById("UpperXLimit").value=SVparam.XaxisLimitMax;
+	
 	drawXaxis();
 	SVparam.YaxisLimitMax=5;
 
@@ -73,7 +76,8 @@ function SetUpperLimitByInput(input){
 	}
 	SVparam.XaxisLimitMax=input;
 
-	if(SVparam.XaxisLimitMax>SVparam.XaxisLimitAbsMax){SVparam.XaxisLimitMax=SVparam.XaxisLimitAbsMax;}
+	if(SVparam.XaxisLimitMax>SVparam.XaxisLimitAbsMax)
+		SVparam.XaxisLimitMax=SVparam.XaxisLimitAbsMax;
 	drawXaxis();
 	SVparam.YaxisLimitMax=5;
 
@@ -386,8 +390,8 @@ function startup(evt){
 	x.setAttribute('style','opacity:0.0; cursor:pointer');
 	x.textContent="<title>This is my title</title>";
 	SVparam.img.appendChild(x);
-	document.getElementById('xaxisbox').onmousedown = function(){SVparam.XMouseLimitxMin=window.event.clientX};
-	document.getElementById('xaxisbox').onmouseup = function(){SVparam.XMouseLimitxMax=window.event.clientX; SetLimitsByMouse()};
+	document.getElementById('xaxisbox').onmousedown = function(event){SVparam.XMouseLimitxMin=event.clientX;};
+	document.getElementById('xaxisbox').onmouseup = function(event){SVparam.XMouseLimitxMax=event.clientX; SetLimitsByMouse();};
 
 	drawXaxis();
 
@@ -785,6 +789,8 @@ function plot_data(RefreshNow){
 	if(SVparam.AxisType==1)
 		drawYaxisLog();
 
+	drawFrame();
+
 	// Now the limits are set loop through and plot the data points
 	for(thisSpec=0; thisSpec<SVparam.DisplayedSpecs.length; thisSpec++){
 		SVparam.data=thisData[thisSpec].slice();
@@ -883,6 +889,23 @@ function plot_data(RefreshNow){
 ///////////////////////////////
 // End of plot_data function //
 ///////////////////////////////
+
+//reproduce the results of plot_data in a canvas, no svg allowed:
+function paintCanvas(RefreshNow){
+	return 0;
+}
+
+//draw the plot frame
+function drawFrame(){
+
+	//draw principle axes:
+	SVparam.context.strokeStyle = '#000000';
+	SVparam.context.beginPath();
+	SVparam.context.moveTo(SVparam.leftMargin, SVparam.topMargin);
+	SVparam.context.lineTo(SVparam.leftMargin, SVparam.canvas.height-SVparam.bottomMargin);
+	SVparam.context.lineTo(SVparam.canvas.width - SVparam.rightMargin, SVparam.canvas.height - SVparam.bottomMargin);
+	SVparam.context.stroke();
+}
 
 function FitTimeData(){
 	var a, b, i, x, y, r, xyr,
@@ -1249,7 +1272,7 @@ function GetList(newhost){
 			row.setAttribute('id', "row"+i);
 			row.setAttribute('bgcolor', "white");
 			row.setAttribute('style', "display:block;cursor:default");
-		iframeDoc.getElementById('row'+i).onclick = function(event){ parent.Menu_MakeselectSpectrum(event, parseInt(this.id.slice(3,this.id.length+1))  )};
+			iframeDoc.getElementById('row'+i).onclick = function(event){ parent.Menu_MakeselectSpectrum(event, parseInt(this.id.slice(3,this.id.length+1))  )};
 			iframeDoc.getElementById('row'+i).ondblclick = function(){parent.displaySpectrum( parseInt(this.id.slice(3,this.id.length+1)) )};
 			row.innerHTML ="Spectrum Name "+i;
 			SVparam.spectrum_names[i]="Spectrum Name "+i;

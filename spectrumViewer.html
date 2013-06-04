@@ -96,6 +96,8 @@
 			<tr><b>Recently Viewed Spectra:</b><br></tr>
 		</table>
 
+		<canvas id='testCanv'></canvas>
+
 		<script type="text/javascript">
 			//namespace all the global variables in their own object:
 			SVparam = {
@@ -148,12 +150,26 @@
 				"word" : 'Hello there',
 				"data" : [],
 				"KnownHostnames" : ["midtig03:9095", "localhost:9092"],
-				"refreshMap" : [0,1,2,5,10]
+				"refreshMap" : [0,1,2,5,10],
+
+				"canvasID" : 'testCanv',			//id of canvas to draw spectra in
+				"canvas" : 0,
+				"context" : 0,
+				'canvWidth' : 800,					//spectrum canvas width
+				'canvHeight' : 350,					//  "" height
+				"leftMargin" : 100,					//left gutter of plot area
+				"bottomMargin" : 50, 				//bottom gutter of plot area
+				"rightMargin" : 100,				//right gutter of plot area
+				"topMargin" : 10 					//top gutter of plot area
 			};
 			SVparam.XaxisLength = SVparam.XaxisLimitMax-SVparam.XaxisLimitMin;
 			SVparam.XaxisLabelPos = SVparam.Yoffset+20;
 			SVparam.XaxisTitlePos = SVparam.Yoffset+40;
 			SVparam.YaxisLength = SVparam.YaxisLimitMax-SVparam.YaxisLimitMin;
+			SVparam.canvas = document.getElementById(SVparam.canvasID);
+			SVparam.canvas.setAttribute('width', SVparam.canvWidth);
+			SVparam.canvas.setAttribute('height', SVparam.canvHeight);
+			SVparam.context = SVparam.canvas.getContext('2d');
 
 			//fake data for dev mode:
 			SVfakeData = {
