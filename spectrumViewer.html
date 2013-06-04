@@ -151,6 +151,7 @@
 				"data" : [],
 				"KnownHostnames" : ["midtig03:9095", "localhost:9092"],
 				"refreshMap" : [0,1,2,5,10],
+				"totalEntries" : 0,
 
 				"canvasID" : 'testCanv',			//id of canvas to draw spectra in
 				"canvas" : 0,
@@ -165,8 +166,13 @@
 				"yAxisPixLength" : 0,				//in pixels
 				"tickLength" : 5, 					//axis tickmark length
 				"nXticks" : 6,						//number of ticks on the x axis
+				"nYticks" : 5,						//number of ticks on the y axis
 				"xLabelOffset" : 5, 				//x axis labels sit this far below the bottom of their tick
-				"binWidth" : 0 						//width of histo bin in pixels
+				"yLabelOffset" : 5, 				//y axis labels sit this many pix to the left of their tick
+				"binWidth" : 0, 					//width of histo bin in pixels
+				"countHeight" : 0, 					//height in pix accrued by a bin for each count
+				"baseFont" : '16px Arial',			//default font
+				"expFont" : '12px Arial'			//exponent font
 			};
 			SVparam.XaxisLength = SVparam.XaxisLimitMax-SVparam.XaxisLimitMin;
 			SVparam.XaxisLabelPos = SVparam.Yoffset+20;
@@ -176,7 +182,7 @@
 			SVparam.canvas.setAttribute('width', SVparam.canvWidth);
 			SVparam.canvas.setAttribute('height', SVparam.canvHeight);
 			SVparam.context = SVparam.canvas.getContext('2d');
-			SVparam.context.font = '16px Arial';
+			SVparam.context.font = SVparam.baseFont;
 			SVparam.xAxisPixLength = SVparam.canvas.width - SVparam.leftMargin - SVparam.rightMargin;
 			SVparam.yAxisPixLength = SVparam.canvas.height - SVparam.bottomMargin - SVparam.topMargin;
 

@@ -742,7 +742,6 @@ function drawYaxisLog(){
 /////////////////////////////////////////////////////////////////////
 function plot_data(RefreshNow){
 	var a, c, i, j, data, thisSpec, y,
-	total = 0,
 	thisData = [];
 
 	SVparam.maxYvalue=SVparam.YaxisLimitMax;
@@ -766,11 +765,11 @@ function plot_data(RefreshNow){
 
 		// Find the sum of everything in the current x range
 		data = thisData[thisSpec].slice(  Math.floor(SVparam.XaxisLimitMin),Math.floor(SVparam.XaxisLimitMax)   );
-		total = 0;
+		SVparam.totalEntries = 0;
 		for(j=0; j<data.length; j++ ){
-			total += data[j];
+			SVparam.totalEntries += data[j];
 		}
-		SVparam.img.getElementById('title'+thisSpec).textContent="Entries: "+total;
+		SVparam.img.getElementById('title'+thisSpec).textContent="Entries: "+SVparam.totalEntries;
 
 	}// End of for loop
 
@@ -895,6 +894,8 @@ function paintCanvas(){
 	
 	//determine bin render width
 	SVparam.binWidth = SVparam.xAxisPixLength / (SVparam.XaxisLimitMax - SVparam.XaxisLimitMin);
+	//determine the scale render height per count:
+	SVparam.countHeight = SVparam.yAxisPixLength / SVparam.YaxisLength;
 
 	//paint axes & decorations
 	drawFrame();
@@ -902,7 +903,7 @@ function paintCanvas(){
 
 //draw the plot frame
 function drawFrame(){
-	var binsPerTick, i, label;
+	var binsPerTick, countsPerTick, i, label;
 
 	//clear canvas
 	SVparam.context.clearRect(0,0,SVparam.canvWidth, SVparam.canvHeight);
@@ -916,20 +917,18 @@ function drawFrame(){
 	SVparam.context.lineTo(SVparam.canvas.width - SVparam.rightMargin, SVparam.canvas.height - SVparam.bottomMargin);
 	SVparam.context.stroke();
 
+	//Decorate x axis////////////////////////////////////////////////////////
 	//decide how many ticks to draw on the x axis:
 	SVparam.nXticks = 6;
 	//draw at most one tick per bin:
 	if(SVparam.XaxisLength < (SVparam.nXticks-1) )
 		SVparam.nXticks = SVparam.XaxisLength+1
-	//come as close to a factor of the number of bins as possible for small ranges:
-	while( (SVparam.XaxisLength / SVparam.nXticks) == (SVparam.XaxisLength / (SVparam.nXticks-1)) )
+	//come as close to a factor of the number of bins as possible:
+	while( Math.floor(SVparam.XaxisLength / SVparam.nXticks) == Math.floor(SVparam.XaxisLength / (SVparam.nXticks-1)) )
 		SVparam.nXticks--;
-	
-	//how many bins should there be between each tick?
-	//binsPerTick = Math.ceil((SVparam.XaxisLimitMax - SVparam.XaxisLimitMin) / (SVparam.nXticks-1));
-	binsPerTick = Math.floor((SVparam.XaxisLimitMax - SVparam.XaxisLimitMin) / (SVparam.nXticks-1));
 
-//binsPerTick < (SVparam.XaxisLimitMax - SVparam.XaxisLimitMin) / SVparam.nXticks
+	//how many bins should there be between each tick?
+	binsPerTick = Math.floor((SVparam.XaxisLimitMax - SVparam.XaxisLimitMin) / (SVparam.nXticks-1));
 
 	//draw x axis ticks & labels:
 	for(i=0; i<SVparam.nXticks; i++){
@@ -944,6 +943,59 @@ function drawFrame(){
 		SVparam.context.textBaseline = 'top';
 		SVparam.context.fillText(label, SVparam.leftMargin + i*binsPerTick*SVparam.binWidth - SVparam.context.measureText(label).width/2, SVparam.canvas.height - SVparam.bottomMargin + SVparam.tickLength + SVparam.xLabelOffset);
 	}
+
+	//Decorate Y axis/////////////////////////////////////////////////////////
+	//decide how many ticks to draw on the y axis:
+	SVparam.nYticks = 5;
+	//come as close to a factor of the number of bins as possible:
+	while( Math.floor(SVparam.YaxisLength / SVparam.nYticks) == Math.floor(SVparam.YaxisLength / (SVparam.nYticks-1)) )
+		SVparam.nYticks--;
+
+	//how many counts should each tick increment?
+	countsPerTick = Math.floor(SVparam.YaxisLength / (SVparam.nYticks-1));
+
+	//draw y axis ticks and labels:
+	for(i=0; i<SVparam.nYticks; i++){
+		//ticks
+		SVparam.context.beginPath();
+		SVparam.context.moveTo(SVparam.leftMargin, SVparam.canvas.height - SVparam.bottomMargin - i*countsPerTick*SVparam.countHeight);
+		SVparam.context.lineTo(SVparam.leftMargin - SVparam.tickLength, SVparam.canvas.height - SVparam.bottomMargin - i*countsPerTick*SVparam.countHeight);
+		SVparam.context.stroke();
+
+		//labels
+		SVparam.context.textBaseline = 'middle';
+		if(SVparam.AxisType == 0){ //linear scale
+			label = (i*countsPerTick).toFixed(0);
+			SVparam.context.fillText(label, SVparam.leftMargin - SVparam.tickLength - SVparam.yLabelOffset - SVparam.context.measureText(label).width, SVparam.canvas.height - SVparam.bottomMargin - i*countsPerTick*SVparam.countHeight);
+		} else {  //log scale
+			label = i*countsPerTick-1;
+			//exponent
+			SVparam.context.font = SVparam.expFont;
+			SVparam.context.fillText(label, SVparam.leftMargin - SVparam.tickLength - SVparam.yLabelOffset - SVparam.context.measureText(label).width, SVparam.canvas.height - SVparam.bottomMargin - i*countsPerTick*SVparam.countHeight - 10);
+			//base
+			SVparam.context.font = SVparam.baseFont;
+			SVparam.context.fillText('10', SVparam.leftMargin - SVparam.tickLength - SVparam.yLabelOffset - SVparam.context.measureText('10'+label).width, SVparam.canvas.height - SVparam.bottomMargin - i*countsPerTick*SVparam.countHeight);
+		}
+	}
+
+	//global decorations
+	//report number of entries:
+	label = 'Entries: ' + SVparam.totalEntries;
+	SVparam.context.textBaseline = 'top';
+	SVparam.context.fillText(label, SVparam.canvas.width - SVparam.rightMargin - SVparam.context.measureText(label).width, 0);
+
+	//x axis title:
+	SVparam.context.textBaseline = 'bottom';
+	SVparam.context.fillText('Channels', SVparam.canvas.width - SVparam.rightMargin - SVparam.context.measureText('Channels').width, SVparam.canvas.height);
+
+	//y axis title:
+	SVparam.context.textBaseline = 'alphabetic';
+	SVparam.context.save();
+	SVparam.context.translate(SVparam.leftMargin*0.25, SVparam.context.measureText('Counts').width + SVparam.topMargin );
+	SVparam.context.rotate(-Math.PI/2);
+	SVparam.context.fillText('Counts', 0,0);
+	SVparam.context.restore();
+
 }
 
 function FitTimeData(){
