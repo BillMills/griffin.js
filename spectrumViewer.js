@@ -47,7 +47,13 @@ function reportSpectrumBin(){
         }
 
         //change cursor to indicate draggable region:
-        if(y>SVparam.canvas.height-SVparam.bottomMargin) 
+        if(SVparam.fitModeEngage){
+        	if(yBin>0)
+	        	document.body.style.cursor = 's-resize';
+	        else 
+	        	document.body.style.cursor = 'n-resize';
+	    }
+        else if(y>SVparam.canvas.height-SVparam.bottomMargin) 
         	document.body.style.cursor = 'pointer';
         else
         	document.body.style.cursor = 'default';
@@ -143,10 +149,17 @@ function ClickWindow(bin){
 		SVparam.clickBounds[0] = bin;
 	} else if(SVparam.clickBounds.length == 1){
 		SVparam.clickBounds[1] = bin;
-		//use the mouse drag function to achieve the same effect for clicking:
-		SVparam.XMouseLimitxMin = SVparam.clickBounds[0];
-		SVparam.XMouseLimitxMax = SVparam.clickBounds[1];
-		DragWindow();	
+		//fit mode
+		if(SVparam.fitModeEngage){
+			SVparam.FitLimitLower = Math.min(SVparam.clickBounds[0], SVparam.clickBounds[1]);
+			SVparam.FitLimitUpper = Math.max(SVparam.clickBounds[0], SVparam.clickBounds[1]);
+			FitData();
+		} else {  //zoom mode
+			//use the mouse drag function to achieve the same effect for clicking:
+			SVparam.XMouseLimitxMin = SVparam.clickBounds[0];
+			SVparam.XMouseLimitxMax = SVparam.clickBounds[1];
+			DragWindow();
+		}
 	}
 }
 
@@ -488,7 +501,6 @@ function startup(evt){
 			SVparam.XMouseLimitxMax   = parseInt((event.pageX-SVparam.canvas.offsetLeft-SVparam.leftMargin)/SVparam.binWidth + SVparam.XaxisLimitMin); 
 			DragWindow();
 			ClickWindow( parseInt((event.pageX-SVparam.canvas.offsetLeft-SVparam.leftMargin)/SVparam.binWidth + SVparam.XaxisLimitMin) );
-				console.log(SVparam.clickBounds)
 		}
 
 	//document.getElementById(SVparam.canvasID).onclick = function(event){ClickWindow( parseInt((event.pageX-SVparam.canvas.offsetLeft-SVparam.leftMargin)/SVparam.binWidth + SVparam.XaxisLimitMin) )}
@@ -1047,6 +1059,7 @@ function drawFrame(){
 	//draw principle axes:
 	SVparam.context.strokeStyle = '#000000';
 	SVparam.context.fillStyle = '#000000';
+	SVparam.context.lineWidth = 1;
 	SVparam.context.beginPath();
 	SVparam.context.moveTo(SVparam.leftMargin, SVparam.topMargin);
 	SVparam.context.lineTo(SVparam.leftMargin, SVparam.canvas.height-SVparam.bottomMargin);
@@ -1255,6 +1268,9 @@ function FitPeakData(){
 function RequestFitLimits(){
 	var x;
 
+	//enter fit mode:
+	SVparam.fitModeEngage = 1;
+
 	// Remove a previous fit
 	if(SVparam.Fitted==1){
 		document.getElementById('fitbox').innerHTML = '';
@@ -1262,8 +1278,6 @@ function RequestFitLimits(){
 		SVparam.Fitted=0;
 	}
 
-	//SVparam.FitLimitLower=SVparam.XaxisLimitMin;
-	//SVparam.FitLimitUpper=SVparam.XaxisLimitMax;
 	SVparam.FitLimitLower=-1;
 	SVparam.FitLimitUpper=-1;
 
@@ -1276,6 +1290,7 @@ function RequestFitLimits(){
 	x.setAttribute('height','300');
 	x.setAttribute('style','opacity:0.0;cursor:s-resize');
 	SVparam.img.appendChild(x);
+
 	document.getElementById('LimitsBox').onmouseup = function(){
 			SVparam.FitLimitLower=window.event.clientX; 
 			document.getElementById("LimitsBox").onmouseup = function(){ 
@@ -1288,10 +1303,11 @@ function RequestFitLimits(){
 }
 
 function FitData(){
-	var cent, fitdata, i, loc, max, Points, width, x, y;
+	var cent, fitdata, i, loc, max, Points, width, x, y, height;
 
 	SVparam.img.removeChild(SVparam.img.getElementById("LimitsBox"));
 
+/*
 	SVparam.point.x = SVparam.FitLimitLower;
 	// Translate to the right coordinates
 	loc = SVparam.point.matrixTransform(SVparam.img.getScreenCTM().inverse());
@@ -1309,13 +1325,12 @@ function FitData(){
 		SVparam.FitLimitUpper=SVparam.FitLimitLower;
 		SVparam.FitLimitLower=x;
 	}
-
+*/
 	if(SVparam.FitLimitLower<0) SVparam.FitLimitLower=0;
 	if(SVparam.FitLimitUpper>SVparam.XaxisLimitAbsMax) SVparam.FitLimitUpper=SVparam.XaxisLimitAbsMax;
 
 	max=1;
 
-	//data=ODBGet("/Analyzer/Parameters/Statistics/SpectrumData[*]","%d");
 	fitdata=getSpecData(SVparam.DisplayedSpecs[0]);
 	fitdata=fitdata.slice(SVparam.FitLimitLower,SVparam.FitLimitUpper);
 
@@ -1342,6 +1357,13 @@ function FitData(){
 
 	cent=cent+SVparam.FitLimitLower+0.5;
 	Points="";
+
+	//set up canvas for drawing fit line
+	SVparam.context.lineWidth = 3;
+	SVparam.context.strokeStyle = '#FF0000';
+	SVparam.context.beginPath();
+	SVparam.context.moveTo( SVparam.leftMargin + (SVparam.FitLimitLower-SVparam.XaxisLimitMin)*SVparam.binWidth, SVparam.canvas.height - SVparam.bottomMargin - max*Math.exp(-1*(((SVparam.FitLimitLower-cent)*(SVparam.FitLimitLower-cent))/(2*width*width)))*SVparam.countHeight);
+
 	for(i=0;i<fitdata.length;i+=0.2){
 		x=i+SVparam.FitLimitLower;
 		y = max*Math.exp(-1*(((x-cent)*(x-cent))/(2*width*width)));
@@ -1364,7 +1386,24 @@ function FitData(){
 
 		x=(SVparam.Xoffset+(x*SVparam.XaxisCompression)-(SVparam.XaxisLimitMin*SVparam.XaxisCompression));
 		Points=Points+" "+Math.round(x,1)+","+Math.round(y,1);
+
+		//draw fit line on canvas:
+		x=i+SVparam.FitLimitLower;
+		y = max*Math.exp(-1*(((x-cent)*(x-cent))/(2*width*width)));
+		if(i!=0){
+			if(SVparam.AxisType == 0){
+				SVparam.context.lineTo( SVparam.leftMargin + (SVparam.FitLimitLower-SVparam.XaxisLimitMin)*SVparam.binWidth + i*SVparam.binWidth, SVparam.canvas.height - SVparam.bottomMargin - y*SVparam.countHeight);
+			} else if(SVparam.AxisType == 1){
+				if(y<=0) height = 0;
+				else height = Math.log10(y) - Math.log10(SVparam.YaxisLimitMin);
+				if(height<0) height = 0;
+
+				SVparam.context.lineTo( SVparam.leftMargin + (SVparam.FitLimitLower-SVparam.XaxisLimitMin)*SVparam.binWidth + i*SVparam.binWidth, SVparam.canvas.height - SVparam.bottomMargin - height*SVparam.countHeight);
+			}
+		}
 	}
+
+	SVparam.context.stroke();
 
 	SVparam.word = 'Height = ' + max + ' Width = ' + width.toFixed(3) + ' Centroid = ' + cent;
 	document.getElementById('fitbox').innerHTML = SVparam.word;
