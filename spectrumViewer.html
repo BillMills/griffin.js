@@ -73,8 +73,8 @@
 
 			<tr>
 				<td colspan=1 align=left bgcolor='#E0E0FF'>
-					x axis limits: <input type="text" id="LowerXLimit" style="width:42px;" onchange="SetLowerLimitByInput(this.value)">
-					<input type="text" id="UpperXLimit" style="width:42px;" onchange="SetUpperLimitByInput(this.value)">
+					x axis limits: <input type="text" id="LowerXLimit" style="width:42px;" onchange="SetLowerLimitByInput(parseInt(this.value))">
+					<input type="text" id="UpperXLimit" style="width:42px;" onchange="SetUpperLimitByInput(parseInt(this.value))">
 					<input type="button" value="<<" onclick="ShiftLimitBigLeft()">
 					<input type="button" value="<" onclick="ShiftLimitLeft()">
 					<input type="button" value=">" onclick="ShiftLimitRight()">
@@ -172,7 +172,8 @@
 				"binWidth" : 0, 					//width of histo bin in pixels
 				"countHeight" : 0, 					//height in pix accrued by a bin for each count
 				"baseFont" : '16px Arial',			//default font
-				"expFont" : '12px Arial'			//exponent font
+				"expFont" : '12px Arial',			//exponent font
+				"clickBounds" : []					//bounds clicked by the user
 			};
 			SVparam.XaxisLength = SVparam.XaxisLimitMax-SVparam.XaxisLimitMin;
 			SVparam.XaxisLabelPos = SVparam.Yoffset+20;

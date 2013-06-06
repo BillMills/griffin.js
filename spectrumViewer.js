@@ -24,6 +24,41 @@ function SetupMouseValues(){
 	},false);
 }
 
+function reportSpectrumBin(){
+	SVparam.canvas.addEventListener('mousemove', function(event){
+		var x, y, xBin, yBin;
+
+        x = event.pageX - SVparam.canvas.offsetLeft;   
+        y = event.pageY - SVparam.canvas.offsetTop;
+
+        if(x > SVparam.leftMargin && x < SVparam.canvas.width - SVparam.rightMargin && y > SVparam.topMargin){
+	        xBin = Math.floor((x-SVparam.leftMargin)/SVparam.binWidth) + SVparam.XaxisLimitMin;
+    	    
+    	    if(SVparam.AxisType == 1){
+    	    	yBin = (SVparam.canvas.height-SVparam.bottomMargin - y) / SVparam.countHeight;
+    	    	yBin = Math.floor(Math.pow(10,yBin)/10);
+    	    } else {
+    	    	yBin = Math.floor((SVparam.canvas.height-SVparam.bottomMargin - y) / SVparam.countHeight);
+    	    }
+
+        	document.getElementById('mousebox').innerHTML = 'x=' + xBin.toFixed(0) + ' y=' + yBin.toFixed(0);
+        } else {
+        	document.getElementById('mousebox').innerHTML = '';
+        }
+
+        //change cursor to indicate draggable region:
+        if(y>SVparam.canvas.height-SVparam.bottomMargin) 
+        	document.body.style.cursor = 'pointer';
+        else
+        	document.body.style.cursor = 'default';
+
+	}, false);
+
+	SVparam.canvas.onmouseout = function(event){
+		document.body.style.cursor = 'default';
+	};
+}
+
 function SetLimitsByMouse(){
 	var loc;
 
@@ -59,6 +94,60 @@ function SetLimitsByMouse(){
 	SVparam.YaxisLimitMax=5;
 
 	plot_data(0);
+}
+
+function DragWindow(){
+	var buffer;
+
+	//don't even try if there's only one bin selected:
+	if(SVparam.XMouseLimitxMin != SVparam.XMouseLimitxMax){
+		//don't confuse the click limits with the click and drag limits:
+		SVparam.clickBounds[0] = 'abort';
+
+		//Make sure the max is actually the max:
+		if(SVparam.XMouseLimitxMax < SVparam.XMouseLimitxMin){
+			buffer = SVparam.XMouseLimitxMax;
+			SVparam.XMouseLimitxMax = SVparam.XMouseLimitxMin;
+			SVparam.XMouseLimitxMin = buffer;
+		}
+
+		//keep things in range
+		if(SVparam.XMouseLimitxMin < 0) SVparam.XMouseLimitxMin = 0;
+		if(SVparam.XMouseLimitxMax > SVparam.XaxisLimitAbsMax) SVparam.XMouseLimitxMax = SVparam.XaxisLimitAbsMax;
+
+		//stick into the appropriate globals
+		SVparam.XaxisLimitMin = parseInt(SVparam.XMouseLimitxMin);
+		SVparam.XaxisLimitMax = parseInt(SVparam.XMouseLimitxMax);
+
+		//populate the text fields:
+		document.getElementById("LowerXLimit").value=SVparam.XaxisLimitMin;
+		document.getElementById("UpperXLimit").value=SVparam.XaxisLimitMax;	
+
+		drawXaxis();
+		SVparam.YaxisLimitMax=5;
+
+		plot_data(0);
+
+	}
+}
+
+function ClickWindow(bin){
+
+	//if there's no limits clicked yet, or two old ones, just hold onto this one:
+	if(SVparam.clickBounds.length == 0){
+		SVparam.clickBounds[0] = bin;
+	} else if(SVparam.clickBounds[0] == 'abort'){
+		SVparam.clickBounds = [];
+	} else if(SVparam.clickBounds.length == 2 ){
+		SVparam.clickBounds = [];
+		SVparam.clickBounds[0] = bin;
+	} else if(SVparam.clickBounds.length == 1){
+		SVparam.clickBounds[1] = bin;
+		//use the mouse drag function to achieve the same effect for clicking:
+		SVparam.XMouseLimitxMin = SVparam.clickBounds[0];
+		SVparam.XMouseLimitxMax = SVparam.clickBounds[1];
+		DragWindow();	
+	}
 }
 
 function SetUpperLimitByInput(input){
@@ -99,7 +188,7 @@ function SetLowerLimitByInput(input){
 	}
 	SVparam.XaxisLimitMin=input;
 
-	if(SVparam.XaxisLimitMin<0){SVparam.XaxisLimitMin=0;}
+	if(SVparam.XaxisLimitMin<0) SVparam.XaxisLimitMin=0;
 	drawXaxis();
 
 	SVparam.YaxisLimitMax=5;
@@ -319,6 +408,7 @@ function startup(evt){
 
 	// Setup the nouse coordinate printing on the screen
 	SetupMouseValues();
+	reportSpectrumBin();
 
 	// Create the X axis
 	x = document.createElementNS(SVparam.svgns,'line');
@@ -392,6 +482,16 @@ function startup(evt){
 	SVparam.img.appendChild(x);
 	document.getElementById('xaxisbox').onmousedown = function(event){SVparam.XMouseLimitxMin=event.clientX;};
 	document.getElementById('xaxisbox').onmouseup = function(event){SVparam.XMouseLimitxMax=event.clientX; SetLimitsByMouse();};
+
+	document.getElementById(SVparam.canvasID).onmousedown = function(event){SVparam.XMouseLimitxMin = parseInt((event.pageX-SVparam.canvas.offsetLeft-SVparam.leftMargin)/SVparam.binWidth + SVparam.XaxisLimitMin);};
+	document.getElementById(SVparam.canvasID).onmouseup = function(event){
+			SVparam.XMouseLimitxMax   = parseInt((event.pageX-SVparam.canvas.offsetLeft-SVparam.leftMargin)/SVparam.binWidth + SVparam.XaxisLimitMin); 
+			DragWindow();
+			ClickWindow( parseInt((event.pageX-SVparam.canvas.offsetLeft-SVparam.leftMargin)/SVparam.binWidth + SVparam.XaxisLimitMin) );
+				console.log(SVparam.clickBounds)
+		}
+
+	//document.getElementById(SVparam.canvasID).onclick = function(event){ClickWindow( parseInt((event.pageX-SVparam.canvas.offsetLeft-SVparam.leftMargin)/SVparam.binWidth + SVparam.XaxisLimitMin) )}
 
 	drawXaxis();
 
@@ -741,8 +841,9 @@ function drawYaxisLog(){
 // below the limit then the axis will be redrawn                   //
 /////////////////////////////////////////////////////////////////////
 function plot_data(RefreshNow){
-	var a, c, i, j, data, thisSpec, y,
+	var a, c, i, j, data, thisSpec, y, 
 	thisData = [];
+	SVparam.entries = [];
 
 	SVparam.maxYvalue=SVparam.YaxisLimitMax;
 	// Loop through to get the data and set the Y axis limits
@@ -771,6 +872,9 @@ function plot_data(RefreshNow){
 		}
 		SVparam.img.getElementById('title'+thisSpec).textContent="Entries: "+SVparam.totalEntries;
 
+		//report number of entries on canvas:
+		SVparam.entries[thisSpec] = SVparam.totalEntries;
+
 	}// End of for loop
 
 	// Adjust the Y axis limit and compression and redraw the axis
@@ -792,6 +896,11 @@ function plot_data(RefreshNow){
 
 	// Now the limits are set loop through and plot the data points
 	for(thisSpec=0; thisSpec<SVparam.DisplayedSpecs.length; thisSpec++){
+
+		SVparam.context.textBaseline = 'top';
+		SVparam.context.fillStyle = SVparam.dataColor[thisSpec];
+		SVparam.context.fillText('Entries: '+SVparam.entries[thisSpec], SVparam.canvas.width - SVparam.rightMargin - SVparam.context.measureText('Entries: '+SVparam.entries[thisSpec]).width, thisSpec*16);
+
 		SVparam.data=thisData[thisSpec].slice();
 
 		// Reset the coordinates string for the polyline
@@ -806,12 +915,16 @@ function plot_data(RefreshNow){
 		}
 
 		// Loop through the data spectrum that we have
+		//start the canvas path:
+		SVparam.context.strokeStyle = SVparam.dataColor[thisSpec];
+		SVparam.context.beginPath();
+		SVparam.context.moveTo(SVparam.leftMargin, SVparam.canvas.height - SVparam.bottomMargin);
 		for(i=Math.floor(SVparam.XaxisLimitMin); i<Math.floor(SVparam.XaxisLimitMax); i++){
 
 			// Protection at the end of the spectrum (minimum and maximum X)
 			if(i<SVparam.XaxisLimitMin || i>SVparam.XaxisLimitMax) continue;
 
-			// Protection in Overlay mode for spectra which are short (in x) than the longest spectrum overlayed.
+			// Protection in Overlay mode for spectra which are shorter (in x) than the longest spectrum overlayed.
 			if(i>=SVparam.data.length) continue;
 
 			// If using Stairs data display
@@ -822,6 +935,12 @@ function plot_data(RefreshNow){
 					// Protect against overflow at the top of the y axis
 					if(SVparam.data[i]<SVparam.YaxisLimitMax) y=(SVparam.Yoffset-(SVparam.data[i]*SVparam.YaxisCompression));
 					else y=(SVparam.Yoffset-(SVparam.YaxisLimitMax*SVparam.YaxisCompression));
+
+					//draw canvas line:
+					//left side of bar
+					SVparam.context.lineTo( SVparam.leftMargin + (i-SVparam.XaxisLimitMin)*SVparam.binWidth, SVparam.canvas.height - SVparam.bottomMargin - SVparam.data[i]*SVparam.countHeight );
+					//top of bar
+					SVparam.context.lineTo( SVparam.leftMargin + (i+1-SVparam.XaxisLimitMin)*SVparam.binWidth, SVparam.canvas.height - SVparam.bottomMargin - SVparam.data[i]*SVparam.countHeight );
 				}
 
 				if(SVparam.AxisType==1){
@@ -830,6 +949,19 @@ function plot_data(RefreshNow){
 					else if((Math.log10(SVparam.data[i])-Math.log10(SVparam.YaxisLimitMin))<Math.log10(SVparam.YaxisLimitMax)) y=(SVparam.Yoffset-((Math.log10(SVparam.data[i])-Math.log10(SVparam.YaxisLimitMin))*SVparam.YaxisCompression));
 					// and protect against overflow at the top of the y axis
 					else y=(SVparam.Yoffset-((Math.log10(SVparam.YaxisLimitMax)-Math.log10(SVparam.YaxisLimitMin))*SVparam.YaxisCompression));
+
+					//draw canvas line:
+					if(SVparam.data[i] > 0){
+						//left side of bar
+						SVparam.context.lineTo( SVparam.leftMargin + (i-SVparam.XaxisLimitMin)*SVparam.binWidth, SVparam.canvas.height - SVparam.bottomMargin - (Math.log10(SVparam.data[i]) - Math.log10(SVparam.YaxisLimitMin))*SVparam.countHeight );
+						//top of bar
+						SVparam.context.lineTo( SVparam.leftMargin + (i+1-SVparam.XaxisLimitMin)*SVparam.binWidth, SVparam.canvas.height - SVparam.bottomMargin - (Math.log10(SVparam.data[i]) - Math.log10(SVparam.YaxisLimitMin))*SVparam.countHeight );
+					} else {
+						//drop to the x axis
+						SVparam.context.lineTo( SVparam.leftMargin + (i-SVparam.XaxisLimitMin)*SVparam.binWidth, SVparam.canvas.height - SVparam.bottomMargin );
+						//crawl along x axis until log-able data is found:
+						SVparam.context.lineTo( SVparam.leftMargin + (i+1-SVparam.XaxisLimitMin)*SVparam.binWidth, SVparam.canvas.height - SVparam.bottomMargin );
+					}
 				}
 
 				SVparam.DataLinePoints=SVparam.DataLinePoints+(SVparam.Xoffset+(i*SVparam.XaxisCompression)-(SVparam.XaxisLimitMin*SVparam.XaxisCompression))+","+y+" ";
@@ -859,6 +991,10 @@ function plot_data(RefreshNow){
 				}
 			}
 		}
+		//finish the canvas path:
+		SVparam.context.lineTo(SVparam.canvas.width - SVparam.rightMargin, SVparam.canvas.height - SVparam.bottomMargin );
+		SVparam.context.closePath();
+		SVparam.context.stroke();
 
 		// If using Stairs data display
 		if(SVparam.DataType==0){
@@ -894,7 +1030,7 @@ function paintCanvas(){
 	
 	//determine bin render width
 	SVparam.binWidth = SVparam.xAxisPixLength / (SVparam.XaxisLimitMax - SVparam.XaxisLimitMin);
-	//determine the scale render height per count:
+	//determine the scale render height per count for linear view:
 	SVparam.countHeight = SVparam.yAxisPixLength / SVparam.YaxisLength;
 
 	//paint axes & decorations
@@ -965,7 +1101,7 @@ function drawFrame(){
 		//labels
 		SVparam.context.textBaseline = 'middle';
 		if(SVparam.AxisType == 0){ //linear scale
-			label = (i*countsPerTick).toFixed(0);
+			label = (SVparam.YaxisLimitMax<10000) ? (i*countsPerTick).toFixed(0) : (i*countsPerTick).toExponential(1);
 			SVparam.context.fillText(label, SVparam.leftMargin - SVparam.tickLength - SVparam.yLabelOffset - SVparam.context.measureText(label).width, SVparam.canvas.height - SVparam.bottomMargin - i*countsPerTick*SVparam.countHeight);
 		} else {  //log scale
 			label = i*countsPerTick-1;
@@ -980,9 +1116,9 @@ function drawFrame(){
 
 	//global decorations
 	//report number of entries:
-	label = 'Entries: ' + SVparam.totalEntries;
-	SVparam.context.textBaseline = 'top';
-	SVparam.context.fillText(label, SVparam.canvas.width - SVparam.rightMargin - SVparam.context.measureText(label).width, 0);
+	//label = 'Entries: ' + SVparam.totalEntries;
+	//SVparam.context.textBaseline = 'top';
+	//SVparam.context.fillText(label, SVparam.canvas.width - SVparam.rightMargin - SVparam.context.measureText(label).width, 0);
 
 	//x axis title:
 	SVparam.context.textBaseline = 'bottom';
@@ -997,6 +1133,8 @@ function drawFrame(){
 	SVparam.context.restore();
 
 }
+
+
 
 function FitTimeData(){
 	var a, b, i, x, y, r, xyr,
