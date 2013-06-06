@@ -1,29 +1,3 @@
-function SetupMouseValues(){
-	SVparam.img.addEventListener('mousemove',function(evt){
-		var Xpos, Ypos;
-		// Get point in global SVG space
-		SVparam.pt.x = evt.clientX; SVparam.pt.y = evt.clientY;
-		// Translate to the right coordinates
-		loc = SVparam.pt.matrixTransform(SVparam.img.getScreenCTM().inverse());
-
-		// Adjust for this spectrum coordinates 
-		Xpos = Math.floor(((loc.x-SVparam.Xoffset)/SVparam.XaxisCompression))+SVparam.XaxisLimitMin;
-		if(SVparam.AxisType==0){ // Linear y axis
-			Ypos = Math.floor((SVparam.Yoffset-(loc.y))/SVparam.YaxisCompression);
-		}
-		if(SVparam.AxisType==1){ // log y axis
-			Ypos = Math.floor((Math.pow(10,(((SVparam.Yoffset-(loc.y))/SVparam.YaxisCompression)))-Math.pow(10,SVparam.YaxisLimitMin))/10.0);
-		}
-
-		// Only print coordinates if mouse is over the actual spectrum
-		if(SVparam.NumSpecsDisplayed>0 && (loc.x>SVparam.Xoffset-1) && (loc.y<SVparam.Yoffset+30) && (loc.x<SVparam.Xoffset+SVparam.XaxisPixelLength) && (loc.y>	SVparam.Yoffset-SVparam.YaxisPixelLength)){
-			document.getElementById('mousebox').innerHTML = 'x=' + Xpos + ' y=' + Ypos;
-		} else {
-			document.getElementById('mousebox').innerHTML = "";
-		}
-	},false);
-}
-
 function reportSpectrumBin(){
 	SVparam.canvas.addEventListener('mousemove', function(event){
 		var x, y, xBin, yBin;
@@ -48,7 +22,7 @@ function reportSpectrumBin(){
 
         //change cursor to indicate draggable region:
         if(SVparam.fitModeEngage){
-        	if(yBin>0)
+        	if( y < (SVparam.canvas.height - SVparam.bottomMargin) )
 	        	document.body.style.cursor = 's-resize';
 	        else 
 	        	document.body.style.cursor = 'n-resize';
@@ -63,43 +37,6 @@ function reportSpectrumBin(){
 	SVparam.canvas.onmouseout = function(event){
 		document.body.style.cursor = 'default';
 	};
-}
-
-function SetLimitsByMouse(){
-	var loc;
-
-	if(SVparam.Fitted==1){
-		document.getElementById('fitbox').innerHTML = '';
-		SVparam.img.removeChild(SVparam.img.getElementById("PeakFitLine"));
-		SVparam.Fitted=0;
-	}
-
-	SVparam.point.x = SVparam.XMouseLimitxMin;
-	// Translate to the right coordinates - PROBLEM IS HERE USING .Y
-	loc = SVparam.point.matrixTransform(SVparam.img.getScreenCTM().inverse());
-	SVparam.XMouseLimitxMin=loc.x; 
-	SVparam.point.x = SVparam.XMouseLimitxMax;
-	// Translate to the right coordinates - PROBLEM IS HERE USING .Y
-	loc = SVparam.point.matrixTransform(SVparam.img.getScreenCTM().inverse());
-	SVparam.XMouseLimitxMax=loc.x; 
-
-	if(SVparam.XMouseLimitxMax>SVparam.XMouseLimitxMin){
-		SVparam.XaxisLimitMax=Math.floor(((SVparam.XMouseLimitxMax-SVparam.Xoffset)/SVparam.XaxisCompression))+SVparam.XaxisLimitMin;
-		SVparam.XaxisLimitMin=Math.floor(((SVparam.XMouseLimitxMin-SVparam.Xoffset)/SVparam.XaxisCompression))+SVparam.XaxisLimitMin;
-	} else {
-		SVparam.XaxisLimitMax=Math.floor(((SVparam.XMouseLimitxMin-SVparam.Xoffset)/SVparam.XaxisCompression))+SVparam.XaxisLimitMin;
-		SVparam.XaxisLimitMin=Math.floor(((SVparam.XMouseLimitxMax-SVparam.Xoffset)/SVparam.XaxisCompression))+SVparam.XaxisLimitMin;
-	}
-
-	if(SVparam.XaxisLimitMin<0) SVparam.XaxisLimitMin=0; 
-	if(SVparam.XaxisLimitMax>SVparam.XaxisLimitAbsMax) SVparam.XaxisLimitMax=SVparam.XaxisLimitAbsMax;
-	document.getElementById("LowerXLimit").value=SVparam.XaxisLimitMin;
-	document.getElementById("UpperXLimit").value=SVparam.XaxisLimitMax;
-
-	drawXaxis();
-	SVparam.YaxisLimitMax=5;
-
-	plot_data(0);
 }
 
 function DragWindow(){
@@ -129,7 +66,7 @@ function DragWindow(){
 		document.getElementById("LowerXLimit").value=SVparam.XaxisLimitMin;
 		document.getElementById("UpperXLimit").value=SVparam.XaxisLimitMax;	
 
-		drawXaxis();
+		//drawXaxis();
 		SVparam.YaxisLimitMax=5;
 
 		plot_data(0);
@@ -139,10 +76,10 @@ function DragWindow(){
 
 function ClickWindow(bin){
 
-	//if there's no limits clicked yet, or two old ones, just hold onto this one:
+	//decide what to do with the clicked limits - zoom or fit?
 	if(SVparam.clickBounds.length == 0){
 		SVparam.clickBounds[0] = bin;
-	} else if(SVparam.clickBounds[0] == 'abort'){
+	} else if(SVparam.clickBounds[0] == 'abort' && !SVparam.fitModeEngage){
 		SVparam.clickBounds = [];
 	} else if(SVparam.clickBounds.length == 2 ){
 		SVparam.clickBounds = [];
@@ -159,6 +96,7 @@ function ClickWindow(bin){
 			SVparam.XMouseLimitxMin = SVparam.clickBounds[0];
 			SVparam.XMouseLimitxMax = SVparam.clickBounds[1];
 			DragWindow();
+			SVparam.clickBounds = [];
 		}
 	}
 }
@@ -167,7 +105,6 @@ function SetUpperLimitByInput(input){
 	document.getElementById("limitMistake").innerHTML="";
 	if(SVparam.Fitted==1){
 		document.getElementById('fitbox').innerHTML = '';
-		SVparam.img.removeChild(SVparam.img.getElementById("PeakFitLine"));
 		SVparam.Fitted=0;
 	}
 
@@ -180,7 +117,7 @@ function SetUpperLimitByInput(input){
 
 	if(SVparam.XaxisLimitMax>SVparam.XaxisLimitAbsMax)
 		SVparam.XaxisLimitMax=SVparam.XaxisLimitAbsMax;
-	drawXaxis();
+
 	SVparam.YaxisLimitMax=5;
 
 	plot_data(0);
@@ -190,7 +127,6 @@ function SetLowerLimitByInput(input){
 	document.getElementById("limitMistake").innerHTML="";
 	if(SVparam.Fitted==1){
 		document.getElementById('fitbox').innerHTML = '';
-		SVparam.img.removeChild(SVparam.img.getElementById("PeakFitLine"));
 		SVparam.Fitted=0;
 	}
 
@@ -202,7 +138,6 @@ function SetLowerLimitByInput(input){
 	SVparam.XaxisLimitMin=input;
 
 	if(SVparam.XaxisLimitMin<0) SVparam.XaxisLimitMin=0;
-	drawXaxis();
 
 	SVparam.YaxisLimitMax=5;
 	plot_data(0);
@@ -211,7 +146,6 @@ function SetLowerLimitByInput(input){
 function ShiftLimitLeft(){
 	if(SVparam.Fitted==1){
 		document.getElementById('fitbox').innerHTML = '';
-		SVparam.img.removeChild(SVparam.img.getElementById("PeakFitLine"));
 		SVparam.Fitted=0;
 	}
 	SVparam.XaxisLimitMin--;
@@ -222,7 +156,6 @@ function ShiftLimitLeft(){
 	if(SVparam.XaxisLimitMax>=SVparam.XaxisLimitAbsMax) SVparam.XaxisLimitMax=SVparam.XaxisLimitAbsMax; 
 	if(SVparam.XaxisLimitMin>=SVparam.XaxisLimitMax) SVparam.XaxisLimitMin=(SVparam.XaxisLimitMax-5);
 	if(SVparam.XaxisLimitMax<=SVparam.XaxisLimitMin) SVparam.XaxisLimitMax=(SVparam.XaxisLimitMin+5); 
-	drawXaxis();
 	document.getElementById("LowerXLimit").value=SVparam.XaxisLimitMin;
 	document.getElementById("UpperXLimit").value=SVparam.XaxisLimitMax;
 
@@ -233,7 +166,6 @@ function ShiftLimitLeft(){
 function ShiftLimitRight(){
 	if(SVparam.Fitted==1){
 		document.getElementById('fitbox').innerHTML = '';
-		SVparam.img.removeChild(SVparam.img.getElementById("PeakFitLine"));
 		SVparam.Fitted=0;
 	}
 	SVparam.XaxisLimitMin++;
@@ -244,7 +176,6 @@ function ShiftLimitRight(){
 	if(SVparam.XaxisLimitMax>SVparam.XaxisLimitAbsMax) SVparam.XaxisLimitMax=SVparam.XaxisLimitAbsMax; 
 	if(SVparam.XaxisLimitMin>=(SVparam.XaxisLimitMax-5)) SVparam.XaxisLimitMin=(SVparam.XaxisLimitMax-5);
 	if(SVparam.XaxisLimitMax<=SVparam.XaxisLimitMin) SVparam.XaxisLimitMax=(SVparam.XaxisLimitMin+5);
-	drawXaxis();
 	document.getElementById("LowerXLimit").value=SVparam.XaxisLimitMin;
 	document.getElementById("UpperXLimit").value=SVparam.XaxisLimitMax;
 
@@ -255,7 +186,6 @@ function ShiftLimitRight(){
 function ShiftLimitBigLeft(){
 	if(SVparam.Fitted==1){
 		document.getElementById('fitbox').innerHTML = '';
-		SVparam.img.removeChild(SVparam.img.getElementById("PeakFitLine"));
 		SVparam.Fitted=0;
 	}
 	length=SVparam.XaxisLimitMax-SVparam.XaxisLimitMin;
@@ -267,7 +197,6 @@ function ShiftLimitBigLeft(){
 	if(SVparam.XaxisLimitMax>=SVparam.XaxisLimitAbsMax) SVparam.XaxisLimitMax=SVparam.XaxisLimitAbsMax;
 	if(SVparam.XaxisLimitMin>=SVparam.XaxisLimitMax) SVparam.XaxisLimitMin=(SVparam.XaxisLimitMax-5);
 	if(SVparam.XaxisLimitMax<=SVparam.XaxisLimitMin) SVparam.XaxisLimitMax=(SVparam.XaxisLimitMin+5);
-	drawXaxis();
 	document.getElementById("LowerXLimit").value=SVparam.XaxisLimitMin;
 	document.getElementById("UpperXLimit").value=SVparam.XaxisLimitMax;
 
@@ -278,7 +207,6 @@ function ShiftLimitBigLeft(){
 function ShiftLimitBigRight(){
 	if(SVparam.Fitted==1){
 		document.getElementById('fitbox').innerHTML = '';
-		SVparam.img.removeChild(SVparam.img.getElementById("PeakFitLine"));
 		SVparam.Fitted=0;
 	}
 	length=SVparam.XaxisLimitMax-SVparam.XaxisLimitMin;
@@ -290,7 +218,6 @@ function ShiftLimitBigRight(){
 	if(SVparam.XaxisLimitMax>SVparam.XaxisLimitAbsMax) SVparam.XaxisLimitMax=SVparam.XaxisLimitAbsMax; 
 	if(SVparam.XaxisLimitMin>=SVparam.XaxisLimitMax) SVparam.XaxisLimitMin=(SVparam.XaxisLimitMax-5); 
 	if(SVparam.XaxisLimitMax<=SVparam.XaxisLimitMin) SVparam.XaxisLimitMax=(SVparam.XaxisLimitMin+5); 
-	drawXaxis();
 	document.getElementById("LowerXLimit").value=SVparam.XaxisLimitMin;
 	document.getElementById("UpperXLimit").value=SVparam.XaxisLimitMax;
 
@@ -298,11 +225,10 @@ function ShiftLimitBigRight(){
 	plot_data(0);
 }
 
-function resetXaxis(){
+function unzoom(){
 	document.getElementById("limitMistake").innerHTML="";
 	if(SVparam.Fitted==1){
 		document.getElementById('fitbox').innerHTML = '';
-		SVparam.img.removeChild(SVparam.img.getElementById("PeakFitLine"));
 		SVparam.Fitted=0;
 	}
 
@@ -310,63 +236,8 @@ function resetXaxis(){
 	SVparam.XaxisLimitMax=SVparam.XaxisLimitAbsMax;
 	document.getElementById("LowerXLimit").value=SVparam.XaxisLimitMin;
 	document.getElementById("UpperXLimit").value=SVparam.XaxisLimitMax;
-	drawXaxis();
 
 	SVparam.YaxisLimitMax=5;
-	plot_data(0);
-}
-
-/////////////////////////////////////////////////////////////////////
-// set_SVparam.DataType function                                   //
-// Function to change to and from Stairs or Points data display    //
-// Stairs style is like a histogram                                //
-// Points style is like a xy scatter plot                          //
-/////////////////////////////////////////////////////////////////////
-function set_DataType_radios(word){
-	var a, i, x; 
-
-	if(SVparam.Fitted==1){
-		document.getElementById('fitbox').innerHTML = '';
-		SVparam.img.removeChild(SVparam.img.getElementById("PeakFitLine"));
-		SVparam.Fitted=0;
-	}
-
-	x=word.id;
-	SVparam.DataType=x.substring(1,2);
-	x=x.substring(0,1)+"0"; document.getElementById(x+"").checked=false;
-	x=x.substring(0,1)+"1"; document.getElementById(x+"").checked=false;
-	x=word.id; document.getElementById(x+"").checked=true;
-
-	if(SVparam.DataType==0){
-		// This needs to change for variable spectrum length
-		for(i=0; i<512; i++){
-			if(i>SVparam.XaxisLength) break;
-			a = SVparam.img.getElementById("datapoint"+i);
-			a.setAttribute("cx", (SVparam.Xoffset+i));
-			a.setAttribute("cy", "");
-			a.setAttribute("r", "");
-			a.setAttribute("fill", "");
-		}
-	}
-
-	if(SVparam.DataType==1){
-		SVparam.img.getElementById("dataline0").setAttribute("points","");
-
-		// This needs to change for variable spectrum length
-		for(i=0; i<1028; i++){
-			x = document.createElementNS(SVparam.svgns,'circle');
-			x.setAttribute('id',"datapoint"+i);
-			SVparam.img.appendChild(x);
-		}
-	}
-
-	if(SVparam.DataType==0){
-		// This needs to change for variable spectrum length
-		for(i=0; i<1028; i++){
-			SVparam.img.removeChild(SVparam.img.getElementById("datapoint"+i));
-		}
-	}
-
 	plot_data(0);
 }
 
@@ -379,10 +250,10 @@ function set_AxisType(word){
 
 	if(SVparam.Fitted==1){
 		document.getElementById('fitbox').innerHTML = '';
-		SVparam.img.removeChild(SVparam.img.getElementById("PeakFitLine"));
 		SVparam.Fitted=0;
 	}
 
+	//TODO: overkill, simplify:
 	x=word.id;
 	SVparam.AxisType=x.substring(1,2);
 	x=x.substring(0,1)+"0"; document.getElementById(x+"").checked=false;
@@ -393,13 +264,11 @@ function set_AxisType(word){
 	if(SVparam.AxisType==0){
 		SVparam.YaxisLimitMin=0;
 		SVparam.YaxisLimitMax=500;
-		drawYaxisLinear();
 	}
 
 	if(SVparam.AxisType==1){
 		SVparam.YaxisLimitMin=0.1;
 		SVparam.YaxisLimitMax=SVparam.YaxisLimitMax*100;
-		drawYaxisLog();
 	}	
 	plot_data(0);
 }
@@ -412,100 +281,18 @@ function set_AxisType(word){
 // startup function                                                //
 // Function to draw everything the first time when page is loaded  //
 /////////////////////////////////////////////////////////////////////
-function startup(evt){
+function startup(){
 	var i, iframe, iframeDoc, row, table, x;
-	// Connect to the svg image so we can manipulate its elements
-	SVparam.img = document.getElementById("svgimage");
-	SVparam.pt = SVparam.img.createSVGPoint();
-	SVparam.point = SVparam.img.createSVGPoint();
 
 	// Setup the nouse coordinate printing on the screen
-	SetupMouseValues();
 	reportSpectrumBin();
-
-	// Create the X axis
-	x = document.createElementNS(SVparam.svgns,'line');
-	x.setAttribute('id','xaxis');
-	x.setAttribute("x1", SVparam.Xoffset); 
-	x.setAttribute("y1", SVparam.Yoffset); 
-	x.setAttribute("x2", (SVparam.Xoffset+SVparam.XaxisPixelLength)); 
-	x.setAttribute("y2", SVparam.Yoffset); 
-	x.setAttribute("stroke", "rgb(0,0,0)");
-	x.setAttribute("stroke-width", "2");
-	SVparam.img.appendChild(x);
-	x = document.createElementNS(SVparam.svgns,'text');
-	x.setAttribute('id','yaxisTitle');
-	x.setAttribute("x", SVparam.YaxisTitlePos); 
-	x.setAttribute("y", 100); 
-	x.setAttribute("style", 'writing-mode:tb');
-	x.setAttribute("transform", 'rotate(180,10,100)');
-	x.textContent="Counts";  
-	SVparam.img.appendChild(x);
-
-	// Create the Y axis
-	x = document.createElementNS(SVparam.svgns,'line');
-	x.setAttribute('id','yaxis');
-	x.setAttribute("x1", SVparam.Xoffset); 
-	x.setAttribute("y1", (SVparam.Yoffset-SVparam.YaxisPixelLength)); 	
-	x.setAttribute("x2", SVparam.Xoffset); 
-	x.setAttribute("y2", SVparam.Yoffset); 
-	x.setAttribute("stroke", "rgb(0,0,0)");
-	x.setAttribute("stroke-width", "2");
-	SVparam.img.appendChild(x);
-	x = document.createElementNS(SVparam.svgns,'text');
-	x.setAttribute('id','xaxisTitle');
-	x.setAttribute("x", 600); 
-	x.setAttribute("y", SVparam.XaxisTitlePos);
-	x.textContent="Channels";  
-	SVparam.img.appendChild(x);
-
-	// Create data line for first series
-	x = document.createElementNS(SVparam.svgns,'polyline');
-	x.setAttribute('id','dataline0');
-	SVparam.img.appendChild(x);
-	SVparam.NumSpecsDisplayed=0;
-
-	// Create title text for first series
-	x=document.createElementNS(SVparam.svgns,'text');
-	x.setAttribute('id','title0');
-	x.setAttribute('x','790');
-	x.setAttribute('y','15');
-	x.setAttribute('text-anchor', "end"); 
-	SVparam.img.appendChild(x);
-
-	for(i=0; i<6; i++){
-		x = document.createElementNS(SVparam.svgns,'text');
-		x.setAttribute('id', "Xlabel"+i);
-		x.setAttribute('style','cursor:pointer');
-		SVparam.img.appendChild(x);
-		x = document.createElementNS(SVparam.svgns,'line');
-		x.setAttribute('id',"Xtick"+i);
-		SVparam.img.appendChild(x);
-	}
-
-	// Create the X axis zoom box
-	x = document.createElementNS(SVparam.svgns,'rect');
-	x.setAttribute('id','xaxisbox');
-	x.setAttribute('x','0');
-	x.setAttribute('y','300');
-	x.setAttribute('width','720');
-	x.setAttribute('height','50');
-	x.setAttribute('style','opacity:0.0; cursor:pointer');
-	x.textContent="<title>This is my title</title>";
-	SVparam.img.appendChild(x);
-	document.getElementById('xaxisbox').onmousedown = function(event){SVparam.XMouseLimitxMin=event.clientX;};
-	document.getElementById('xaxisbox').onmouseup = function(event){SVparam.XMouseLimitxMax=event.clientX; SetLimitsByMouse();};
 
 	document.getElementById(SVparam.canvasID).onmousedown = function(event){SVparam.XMouseLimitxMin = parseInt((event.pageX-SVparam.canvas.offsetLeft-SVparam.leftMargin)/SVparam.binWidth + SVparam.XaxisLimitMin);};
 	document.getElementById(SVparam.canvasID).onmouseup = function(event){
-			SVparam.XMouseLimitxMax   = parseInt((event.pageX-SVparam.canvas.offsetLeft-SVparam.leftMargin)/SVparam.binWidth + SVparam.XaxisLimitMin); 
+			SVparam.XMouseLimitxMax = parseInt((event.pageX-SVparam.canvas.offsetLeft-SVparam.leftMargin)/SVparam.binWidth + SVparam.XaxisLimitMin); 
 			DragWindow();
 			ClickWindow( parseInt((event.pageX-SVparam.canvas.offsetLeft-SVparam.leftMargin)/SVparam.binWidth + SVparam.XaxisLimitMin) );
 		}
-
-	//document.getElementById(SVparam.canvasID).onclick = function(event){ClickWindow( parseInt((event.pageX-SVparam.canvas.offsetLeft-SVparam.leftMargin)/SVparam.binWidth + SVparam.XaxisLimitMin) )}
-
-	drawXaxis();
 
 	iframe = document.getElementById('menu_iframe');
 	iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
@@ -544,24 +331,11 @@ function resetData(){
 
 	if(SVparam.Fitted==1){
 		document.getElementById('fitbox').innerHTML = '';
-		SVparam.img.removeChild(SVparam.img.getElementById("PeakFitLine"));
 		SVparam.Fitted=0;
 	}
 
 	// Zero the data array
 	for(i=0; i<512; i++) SVparam.data[i]=0;
-
-	// In Points display, reset the data points
-	if(SVparam.DataType==1){
-		for(i=0; i<512; i++){
-			if(i>SVparam.XaxisLength) break;
-			a = SVparam.img.getElementById("datapoint"+i);
-			a.setAttribute("cx", (SVparam.Xoffset+i));
-			a.setAttribute("cy", "");
-			a.setAttribute("r", "");
-			a.setAttribute("fill", "");
-		}
-	}
 
 	// Redraw with the zeroed data values 
 	plot_data(0);
@@ -569,277 +343,6 @@ function resetData(){
 ///////////////////////////////
 // End of resetData function //
 ///////////////////////////////
-
-/////////////////////////////////////////////////////////////////////
-// drawXaxis function                                              //
-// Function to draw the X axis line, ticks and labels              //
-// Only linear is possible at the moment                           //
-/////////////////////////////////////////////////////////////////////
-function drawXaxis(){
-	var a, i;
-
-	// Calculate the compression factor for the labels and ticks
-	SVparam.XaxisLength=SVparam.XaxisLimitMax-SVparam.XaxisLimitMin;
-	SVparam.XaxisLabelFactor=Math.round(SVparam.XaxisLength/5);
-
-	// Set the X compression factor appropriate for diplaying/calculating the data points
-	SVparam.XaxisCompression=1.0/((SVparam.XaxisLength)/SVparam.XaxisPixelLength);
-
-	// Draw x axis labels and ticks
-	for(i=0; i<6; i++){
-		if(((((i*SVparam.XaxisLabelFactor)*SVparam.XaxisCompression)+SVparam.Xoffset)<SVparam.Xoffset) || ((((i*SVparam.XaxisLabelFactor)*SVparam.XaxisCompression)+SVparam.Xoffset)>(SVparam.XaxisPixelLength+SVparam.Xoffset))){
-			a = SVparam.img.getElementById("Xtick"+i);
-			a.setAttribute("x1", '0'); 
-			a.setAttribute("y1", '0'); 
-			a.setAttribute("x2", '0'); 
-			a.setAttribute("y2", '0');
-			a = SVparam.img.getElementById("Xlabel"+i); // only 0 to 5
-			a.setAttribute("x", ""); 
-			a.setAttribute("y", ""); 
-			a.textContent=""; 
-			continue;
-		}
-		a = SVparam.img.getElementById("Xtick"+i);
-		a.setAttribute("x1", (((i*SVparam.XaxisLabelFactor)*SVparam.XaxisCompression)+SVparam.Xoffset));
-		a.setAttribute("y1", SVparam.Yoffset); 
-		a.setAttribute("x2", (((i*SVparam.XaxisLabelFactor)*SVparam.XaxisCompression)+SVparam.Xoffset));
-		a.setAttribute("y2", SVparam.Yoffset-5); 
-		a.setAttribute("stroke", "rgb(0,0,0)");
-		a.setAttribute("stroke-width", "2");
-		a = SVparam.img.getElementById("Xlabel"+i); // only 0 to 5
-		a.setAttribute("x", (((i*SVparam.XaxisLabelFactor)*SVparam.XaxisCompression)+SVparam.Xoffset));
-		a.setAttribute("y", SVparam.XaxisLabelPos);
-		a.setAttribute('text-anchor', "middle"); 
-		a.textContent=Math.floor((i*SVparam.XaxisLabelFactor)+(SVparam.XaxisLimitMin*1.0)); 
-	}
-}
-///////////////////////////////
-// End of drawXaxis function //
-///////////////////////////////
-
-/////////////////////////////////////////////////////////////////////
-// drawYaxisLinear function                                        //
-// Function to draw the Y axis line, ticks and labels              //
-// Draws the Y axis in Linear style                                //
-/////////////////////////////////////////////////////////////////////
-function drawYaxisLinear(){
-	var a, b, i, j, label,
-		lastNum=SVparam.NumYAxisLabels; // Remember the number of labels and ticks which already exist
-
-	// Calculate the compression factor for the labels and ticks
-	SVparam.YaxisLength=SVparam.YaxisLimitMax-SVparam.YaxisLimitMin;
-	SVparam.YaxisLabelFactor=Math.round(SVparam.YaxisLength/4.1);
-	if(SVparam.YaxisLabelFactor==0) SVparam.YaxisLabelFactor=1.0;
-	SVparam.YaxisCompression=(SVparam.YaxisLabelFactor/SVparam.YaxisLength)*SVparam.YaxisPixelLength;
-
-	//word="comp="+(SVparam.YaxisCompression)+", length="+SVparam.YaxisLength+", factor="+SVparam.YaxisLabelFactor+", max="+SVparam.YaxisLimitMax+", min="+SVparam.YaxisLimitMin+"<BR> LOGmax="+(Math.log10(SVparam.YaxisLimitMax))+", LOGmin="+(Math.log10(SVparam.YaxisLimitMin));
-
-
-	// Create the power labels if they do not exist
-	if(SVparam.PowerLabels==0 && SVparam.YaxisLimitMax>=10000){
-		for(j=0; j<lastNum; j++){
-			b = document.createElementNS(SVparam.svgns,'text');
-			b.setAttribute("id", "Ylabelpower"+j);
-			SVparam.img.appendChild(b);
-		}
-		// Activate the flag
-		SVparam.PowerLabels=1;
-	}
-	// Remove the power labels if they exist
-	if(SVparam.PowerLabels==1 && SVparam.YaxisLimitMax<10000){ 
-		for(j=0; j<lastNum; j++){
-			SVparam.img.removeChild(SVparam.img.getElementById("Ylabelpower"+j));
-		}
-		// Deactivate the flag
-		SVparam.PowerLabels=0;
-	}
-
-	// Draw Y axis labels and ticks
-	i=0;
-	while((i*SVparam.YaxisLabelFactor)<=SVparam.YaxisLimitMax) {
-		// If the tick and label elements do not exist, create them
-		if(i>=SVparam.NumYAxisLabels){
-			// Create next label 
-			a = document.createElementNS(SVparam.svgns,'line');
-			a.setAttribute("id", "Ytick"+i);
-			SVparam.img.appendChild(a);
-			a = document.createElementNS(SVparam.svgns,'text');
-			a.setAttribute("id", "Ylabel"+i);
-			SVparam.img.appendChild(a);
-
-			if(SVparam.PowerLabels==1){
-				a = document.createElementNS(SVparam.svgns,'text');
-				a.setAttribute("id", "Ylabelpower"+i);
-				SVparam.img.appendChild(a);
-			}
-			SVparam.NumYAxisLabels++;
-		}
-
-		// Set the details of the Y tick
-		a=SVparam.img.getElementById("Ytick"+i);
-		a.setAttribute("x1", SVparam.Xoffset); 
-		a.setAttribute("y1", SVparam.Yoffset-Math.floor(i*SVparam.YaxisCompression)); 
-		a.setAttribute("x2", SVparam.Xoffset+5); 
-		a.setAttribute("y2", SVparam.Yoffset-Math.floor(i*SVparam.YaxisCompression)); 
-		a.setAttribute("stroke", "rgb(0,1,0)");
-		a.setAttribute("stroke-width", "2");
-
-		// Set the details of the Y label
-		a=SVparam.img.getElementById("Ylabel"+i);
-		a.setAttribute("x", SVparam.YaxisLabelPos-SVparam.YaxisLabelxOffset); 
-		a.setAttribute("y", SVparam.Yoffset-Math.round(i*SVparam.YaxisCompression)+5); 
-		a.setAttribute('text-anchor', "end");
-		if(SVparam.YaxisLimitMax<10000){
-			label=(i*SVparam.YaxisLabelFactor);
-		} else {
-			// Set the main text label
-			if((i*SVparam.YaxisLabelFactor)==0) label="0";
-			else label=(parseFloat((i*SVparam.YaxisLabelFactor)/(Math.pow(10,Math.floor(Math.log10(i*SVparam.YaxisLabelFactor))))).toFixed(1))+"x10";
-			//word=word+"<BR>i="+i+", "+(i*SVparam.YaxisLabelFactor);
-			// Connect to label for the power
-			b=SVparam.img.getElementById("Ylabelpower"+i);
-			a.setAttribute("x", SVparam.YaxisLabelPos-SVparam.YaxisLabelxOffset-2); 
-			b.setAttribute("x", SVparam.YaxisLabelPos-SVparam.YaxisLabelxOffset-2); 
-			b.setAttribute("y", SVparam.Yoffset-Math.round(i*SVparam.YaxisCompression)); 
-			b.setAttribute('text-anchor', "start");
-			if((i*SVparam.YaxisLabelFactor)>0) b.textContent=(Math.floor(Math.log10(i*SVparam.YaxisLabelFactor))); 
-			SVparam.img.appendChild(b);
-		}
-		a.textContent=label; 
-		i++;
-	}
-
-	//document.getElementById("textbox").innerHTML=word;
-
-	// Save the number of required labels
-	SVparam.NumYAxisLabels=i;
-
-	// Remove extra labels
-	while(i<lastNum){
-		SVparam.img.removeChild(SVparam.img.getElementById("Ytick"+i));
-		SVparam.img.removeChild(SVparam.img.getElementById("Ylabel"+i));
-		if(SVparam.PowerLabels==1) SVparam.img.removeChild(SVparam.img.getElementById("Ylabelpower"+i));
-		i++;
-	}
-
-	// Set the Y compression factor appropriate for diplaying/calculating the data points
-	SVparam.YaxisCompression=1.0/((SVparam.YaxisLength)/SVparam.YaxisPixelLength);
-
-}
-/////////////////////////////////////
-// End of drawYaxisLinear function //
-/////////////////////////////////////
-
-/////////////////////////////////////////////////////////////////////
-// drawYaxisLog function                                           //
-// Function to draw the Y axis line, ticks and labels              //
-// Draws the axis in Logarithmic style                             //
-/////////////////////////////////////////////////////////////////////
-function drawYaxisLog(){
-	
-	var a, b, i, j, label, value,
-		lastNum=SVparam.NumYAxisLabels; // Remember the number of labels and ticks which already exist
-
-	// Calculate the compression factor for the labels and ticks
-	SVparam.YaxisLength=Math.log10(SVparam.YaxisLimitMax-SVparam.YaxisLimitMin);
-	SVparam.YaxisLabelFactor=Math.round(SVparam.YaxisLength/4.0);
-	if(SVparam.YaxisLabelFactor==0) SVparam.YaxisLabelFactor=1.0;
-	SVparam.YaxisCompression=1.0/((SVparam.YaxisLength)/SVparam.YaxisPixelLength);
-
-	// Create the power labels if they do not exist
-	if(SVparam.PowerLabels==0 && SVparam.YaxisLimitMax>=10000){
-		for(j=0; j<lastNum; j++){
-			b = document.createElementNS(SVparam.svgns,'text');
-			b.setAttribute("id", "Ylabelpower"+j);
-			SVparam.img.appendChild(b);
-		}
-		// Activate the flag
-		SVparam.PowerLabels=1;
-	}
-	// Remove the power labels if they exist
-	if(SVparam.PowerLabels==1 && SVparam.YaxisLimitMax<10000){ 
-		for(j=0; j<lastNum; j++){
-			SVparam.img.removeChild(SVparam.img.getElementById("Ylabelpower"+j));
-		}
-		// Deactivate the flag
-		SVparam.PowerLabels=0;
-	}
-
-	//word="comp="+(SVparam.YaxisCompression)+", length="+SVparam.YaxisLength+", factor="+SVparam.YaxisLabelFactor+", max="+SVparam.YaxisLimitMax+", min="+SVparam.YaxisLimitMin+"<BR> LOGmax="+(Math.log10(SVparam.YaxisLimitMax))+", LOGmin="+(Math.log10(SVparam.YaxisLimitMin));
-
-	// Draw Y axis labels and ticks
-	value=Math.log10(SVparam.YaxisLimitMin);
-	i=0;
-	while((value-Math.log10(SVparam.YaxisLimitMin))<=Math.log10(SVparam.YaxisLimitMax)) {
-		// If the tick and label elements do not exist, create them
-		if(i>=SVparam.NumYAxisLabels){
-			// Create next label 
-			a = document.createElementNS(SVparam.svgns,'line');
-			a.setAttribute("id", "Ytick"+i);
-			SVparam.img.appendChild(a);
-			a = document.createElementNS(SVparam.svgns,'text');
-			a.setAttribute("id", "Ylabel"+i);
-			SVparam.img.appendChild(a);
-			if(SVparam.PowerLabels==1){
-				a = document.createElementNS(SVparam.svgns,'text');
-				a.setAttribute("id", "Ylabelpower"+i);
-				SVparam.img.appendChild(a);
-			}
-			SVparam.NumYAxisLabels++;
-		}
-
-		// Set the details of the Y tick
-		a=SVparam.img.getElementById("Ytick"+i);
-		a.setAttribute("x1", SVparam.Xoffset); 
-		a.setAttribute("y1", SVparam.Yoffset-Math.floor((value-Math.log10(SVparam.YaxisLimitMin))*SVparam.YaxisCompression)); 
-		a.setAttribute("x2", SVparam.Xoffset+5); 
-		a.setAttribute("y2", SVparam.Yoffset-Math.floor((value-Math.log10(SVparam.YaxisLimitMin))*SVparam.YaxisCompression)); 
-		a.setAttribute("stroke", "rgb(0,1,0)");
-		a.setAttribute("stroke-width", "2");
-
-		// Set the details of the Y label
-		a=SVparam.img.getElementById("Ylabel"+i);
-		a.setAttribute("x", SVparam.YaxisLabelPos-SVparam.YaxisLabelxOffset); 
-		a.setAttribute("y", SVparam.Yoffset-Math.round((value-Math.log10(SVparam.YaxisLimitMin))*SVparam.YaxisCompression)+5);
-		a.setAttribute('text-anchor', "end"); 
-		if(value<0) b=1;
-		else b=0;
-		if(SVparam.YaxisLimitMax<10000) label=(parseFloat(Math.round((Math.pow(10,value)) * 100) / 100).toFixed(b));
-		else{
-			// Set the main text label
-			label="10";
-			//   word=word+"<BR>"+(parseFloat(Math.round((Math.pow(10,value)) * 100) / 100).toFixed(b))+", "+value;
-
-			// Connect to label for the power
-			b=SVparam.img.getElementById("Ylabelpower"+i);
-			a.setAttribute("x", SVparam.YaxisLabelPos-SVparam.YaxisLabelxOffset-2); 
-			b.setAttribute("x", SVparam.YaxisLabelPos-SVparam.YaxisLabelxOffset-2); 
-			b.setAttribute("y", SVparam.Yoffset-Math.round((value-Math.log10(SVparam.YaxisLimitMin))*SVparam.YaxisCompression)); 
-			b.setAttribute('text-anchor', "start");
-			b.textContent=Math.floor(value);
-			SVparam.img.appendChild(b);
-		}
-		a.textContent=label; 
-		i++;
-		value=value+SVparam.YaxisLabelFactor;
-		if((value-Math.log10(SVparam.YaxisLimitMin))>=Math.log10(SVparam.YaxisLimitMax)) break;
-	}
-
-	// Save the number of required labels
-	SVparam.NumYAxisLabels=i;
-
-	// Remove extra labels
-	while(i<lastNum){
-		SVparam.img.removeChild(SVparam.img.getElementById("Ytick"+i));
-		SVparam.img.removeChild(SVparam.img.getElementById("Ylabel"+i));
-		if(SVparam.PowerLabels==1) SVparam.img.removeChild(SVparam.img.getElementById("Ylabelpower"+i));
-		i++;
-	}
-	//document.getElementById("textbox").innerHTML=word;
-}
-//////////////////////////////////
-// End of drawYaxisLog function //
-//////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////
 // plot_data function                                              //
@@ -882,7 +385,7 @@ function plot_data(RefreshNow){
 		for(j=0; j<data.length; j++ ){
 			SVparam.totalEntries += data[j];
 		}
-		SVparam.img.getElementById('title'+thisSpec).textContent="Entries: "+SVparam.totalEntries;
+		//SVparam.img.getElementById('title'+thisSpec).textContent="Entries: "+SVparam.totalEntries;
 
 		//report number of entries on canvas:
 		SVparam.entries[thisSpec] = SVparam.totalEntries;
@@ -899,10 +402,10 @@ function plot_data(RefreshNow){
 	}
 
 	if(SVparam.AxisType==0)
-		drawYaxisLinear();
+		SVparam.YaxisLength=SVparam.YaxisLimitMax-SVparam.YaxisLimitMin;
 
 	if(SVparam.AxisType==1)
-		drawYaxisLog();
+		SVparam.YaxisLength=Math.log10(SVparam.YaxisLimitMax-SVparam.YaxisLimitMin);
 
 	paintCanvas();
 
@@ -917,14 +420,6 @@ function plot_data(RefreshNow){
 
 		// Reset the coordinates string for the polyline
 		SVparam.DataLinePoints="";
-
-		// Reset the data points
-		if(SVparam.DataType==1){
-			for(i=0; i<1028; i++){
-				a = SVparam.img.getElementById("datapoint"+i);
-				a.setAttribute("r", "0");
-			}
-		}
 
 		// Loop through the data spectrum that we have
 		//start the canvas path:
@@ -945,8 +440,8 @@ function plot_data(RefreshNow){
 			if(SVparam.DataType==0){
 				if(SVparam.AxisType==0){
 					// Protect against overflow at the top of the y axis
-					if(SVparam.data[i]<SVparam.YaxisLimitMax) y=(SVparam.Yoffset-(SVparam.data[i]*SVparam.YaxisCompression));
-					else y=(SVparam.Yoffset-(SVparam.YaxisLimitMax*SVparam.YaxisCompression));
+					//if(SVparam.data[i]<SVparam.YaxisLimitMax) y=(SVparam.Yoffset-(SVparam.data[i]*SVparam.YaxisCompression));
+					//else y=(SVparam.Yoffset-(SVparam.YaxisLimitMax*SVparam.YaxisCompression));
 
 					//draw canvas line:
 					//left side of bar
@@ -957,10 +452,10 @@ function plot_data(RefreshNow){
 
 				if(SVparam.AxisType==1){
 					// Protect against overflow at bottom of y axis
-					if(SVparam.data[i]<=0) y=(SVparam.Yoffset);
-					else if((Math.log10(SVparam.data[i])-Math.log10(SVparam.YaxisLimitMin))<Math.log10(SVparam.YaxisLimitMax)) y=(SVparam.Yoffset-((Math.log10(SVparam.data[i])-Math.log10(SVparam.YaxisLimitMin))*SVparam.YaxisCompression));
+					//if(SVparam.data[i]<=0) y=(SVparam.Yoffset);
+					//else if((Math.log10(SVparam.data[i])-Math.log10(SVparam.YaxisLimitMin))<Math.log10(SVparam.YaxisLimitMax)) y=(SVparam.Yoffset-((Math.log10(SVparam.data[i])-Math.log10(SVparam.YaxisLimitMin))*SVparam.YaxisCompression));
 					// and protect against overflow at the top of the y axis
-					else y=(SVparam.Yoffset-((Math.log10(SVparam.YaxisLimitMax)-Math.log10(SVparam.YaxisLimitMin))*SVparam.YaxisCompression));
+					//else y=(SVparam.Yoffset-((Math.log10(SVparam.YaxisLimitMax)-Math.log10(SVparam.YaxisLimitMin))*SVparam.YaxisCompression));
 
 					//draw canvas line:
 					if(SVparam.data[i] > 0){
@@ -976,57 +471,13 @@ function plot_data(RefreshNow){
 					}
 				}
 
-				SVparam.DataLinePoints=SVparam.DataLinePoints+(SVparam.Xoffset+(i*SVparam.XaxisCompression)-(SVparam.XaxisLimitMin*SVparam.XaxisCompression))+","+y+" ";
-				SVparam.DataLinePoints=SVparam.DataLinePoints+(SVparam.Xoffset+((i+1)*SVparam.XaxisCompression)-(SVparam.XaxisLimitMin*SVparam.XaxisCompression))+","+y+" ";
 			}
 
-			// If using Points data display
-			// Set the coordinates of this data point
-			if(SVparam.DataType==1){
-				if(SVparam.AxisType==0){
-					if(SVparam.data[i]>0 && SVparam.data[i]<SVparam.YaxisLimitMax){
-						a = SVparam.img.getElementById("datapoint"+i);
-						a.setAttribute("cx", (SVparam.Xoffset+(i*SVparam.XaxisCompression)-(SVparam.XaxisLimitMin*SVparam.XaxisCompression)));
-						a.setAttribute("cy", (SVparam.Yoffset-(SVparam.data[i]*SVparam.YaxisCompression)));
-						a.setAttribute("r", "1");
-						a.setAttribute("fill", SVparam.dataColor[SVparam.dataColorx]);
-					}
-				}
-				if(SVparam.AxisType==1){
-					if(SVparam.data[i]>0 && ((Math.log10(SVparam.data[i])-Math.log10(SVparam.YaxisLimitMin))<Math.log10(SVparam.YaxisLimitMax))){
-						a = SVparam.img.getElementById("datapoint"+i);
-						a.setAttribute("cx", (SVparam.Xoffset+(i*SVparam.XaxisCompression)-(SVparam.XaxisLimitMin*SVparam.XaxisCompression)));
-						a.setAttribute("cy", (SVparam.Yoffset-((Math.log10(SVparam.data[i])-Math.log10(SVparam.YaxisLimitMin))*SVparam.YaxisCompression)));
-						a.setAttribute("r", "1");
-						a.setAttribute("fill", SVparam.dataColor[SVparam.dataColorx]);
-					}
-				}
-			}
 		}
 		//finish the canvas path:
 		SVparam.context.lineTo(SVparam.canvas.width - SVparam.rightMargin, SVparam.canvas.height - SVparam.bottomMargin );
 		SVparam.context.closePath();
 		SVparam.context.stroke();
-
-		// If using Stairs data display
-		if(SVparam.DataType==0){
-			// Set the first and last data point on the line to zero at the end
-			SVparam.DataLinePoints=(SVparam.Xoffset)+","+SVparam.Yoffset+" "+SVparam.DataLinePoints;
-			SVparam.DataLinePoints=SVparam.DataLinePoints+(SVparam.Xoffset+((i)*SVparam.XaxisCompression)-(SVparam.XaxisLimitMin*SVparam.XaxisCompression))+","+SVparam.Yoffset+" ";
-
-			// Set the data coordinates of the svg polyline element to display the spectrum
-			a = SVparam.img.getElementById("dataline"+thisSpec);
-			a.setAttribute("points", SVparam.DataLinePoints);
-			c=SVparam.dataColor[thisSpec];
-			a.setAttribute("style", "fill:none;stroke:"+c+";stroke-width:1");
-		}
-
-		// If using Points data display
-		// Change the color of the data for debugging the refresh functions
-		if(SVparam.DataType==1){
-			if(SVparam.dataColorx==0) SVparam.dataColorx=1;
-			else SVparam.dataColorx=0;
-		}
 
 	} // End of for loop
 
@@ -1127,12 +578,6 @@ function drawFrame(){
 		}
 	}
 
-	//global decorations
-	//report number of entries:
-	//label = 'Entries: ' + SVparam.totalEntries;
-	//SVparam.context.textBaseline = 'top';
-	//SVparam.context.fillText(label, SVparam.canvas.width - SVparam.rightMargin - SVparam.context.measureText(label).width, 0);
-
 	//x axis title:
 	SVparam.context.textBaseline = 'bottom';
 	SVparam.context.fillText('Channels', SVparam.canvas.width - SVparam.rightMargin - SVparam.context.measureText('Channels').width, SVparam.canvas.height);
@@ -1147,124 +592,6 @@ function drawFrame(){
 
 }
 
-
-
-function FitTimeData(){
-	var a, b, i, x, y, r, xyr,
-		sumx = 0,
-		sumy = 0,
-		sumx2 = 0,
-		sumy2 = 0,
-		sumxy = 0,
-		sumr = 0;
-
-	SVparam.FitLimitLower=0;
-	SVparam.FitLimitUpper=10;
-
-	xyr=SVfakeData.timedata.slice(SVparam.FitLimitLower,SVparam.FitLimitUpper);
-
-	for(i=0;i<xyr.length;i++){   
-		// this is our data pair
-		//  x = xyr[i][0]; y = xyr[i][1];
-		x=i;
-		y=xyr[i];
-
-		// this is the weight for that pair
-		// set to 1 (and simplify code accordingly, ie, sumr becomes xy.length) if weighting is not needed
-		// r = xyr[i][2];
-		r=1;
-
-		// consider checking for NaN in the x, y and r variables here 
-		// (add a continue statement in that case)
-
-		sumr += r;
-		sumx += r*x;
-		sumx2 += r*(x*x);
-		sumy += r*y;
-		sumy2 += r*(y*y);
-		sumxy += r*(x*y);
-	}
-
-	// note: the denominator is the variance of the random variable X
-	// the only case when it is 0 is the degenerate case X==constant
-	b = (sumy*sumx2 - sumx*sumxy)/(sumr*sumx2-sumx*sumx);
-	a = (sumr*sumxy - sumx*sumy)/(sumr*sumx2-sumx*sumx);
-
-	alert(a+", "+b);
-}
-
-function FitPeakData(){
-	//SVparam.FitLimitLower=1;
-	//SVparam.FitLimitUpper=6;
-	SVparam.FitLimitLower=5;
-	SVparam.FitLimitUpper=25;
-
-	var a, b, i, r, x, y, Points,
-		sumx = 0,
-		sumy = 0,
-		sumx2 = 0,
-		sumy2 = 0,
-		sumxy = 0,
-		sumr = 0,
-		testdata=[0,50,100,200,100,50],
-		xyr=SVfakeData.energydata0.slice(SVparam.FitLimitLower,SVparam.FitLimitUpper);
-
-	for(i=0;i<xyr.length;i++){   
-		// this is our data pair
-		//  x = xyr[i][0]; y = xyr[i][1];
-		x=i;
-		y=xyr[i];
-
-		// this is the weight for that pair
-		// set to 1 (and simplify code accordingly, ie, sumr becomes xy.length) if weighting is not needed
-		// r = xyr[i][2];
-		r=0.1;
-
-		// consider checking for NaN in the x, y and r variables here 
-		// (add a continue statement in that case)
-
-		sumr += r;
-		sumx += r*x;
-		sumx2 += r*(x*x);
-		sumy += r*y;
-		sumy2 += r*(y*y);
-		sumxy += r*(x*y);
-	}
-
-	// note: the denominator is the variance of the random variable X
-	// the only case when it is 0 is the degenerate case X==constant 
-	a = (sumy*sumx2 - sumxy*sumx)/(sumr*sumx2-sumx*sumx);
-	b = (sumr*sumxy - sumx*sumy)/(sumr*sumx2-sumx*sumx);
-
-	a=Math.pow(2.718,a);
-	// b=Math.sqrt(-1/(2*b));
-
-	// alert(a+", "+b);
-
-	Points="";
-	for(i=0;i<xyr.length;i++){
-		x=i+SVparam.FitLimitLower;
-		y = a*Math.exp(-1*(((x-17)*(x-17))/(2*b*b)));
-		y = 500*Math.exp(-1*(((x-17)*(x-17))/(2*2.2*2.2)));
-
-		if(y<SVparam.YaxisLimitMax) y=(SVparam.Yoffset-(y*SVparam.YaxisCompression));
-		else y=(SVparam.Yoffset-(SVparam.YaxisLimitMax*SVparam.YaxisCompression));
-		x=(SVparam.Xoffset+(x*SVparam.XaxisCompression)-(SVparam.XaxisLimitMin*SVparam.XaxisCompression));
-		Points += " "+Math.round(x,1)+","+Math.round(y,1);
-	}
-
-	//document.getElementById('fitbox').innerHTML = 'Height = ' + a + ' Width = ' + b + '<BR>'+Points;
-	document.getElementById('fitbox').innerHTML = ''+'Height = ' + a + ' Width = ' + b + '<br>'+Points;
-
-	// Create the dataline element needed
-	x = document.createElementNS(SVparam.svgns,'polyline');
-	x.setAttribute('id','PeakFitLine');
-	SVparam.img.appendChild(x);
-	SVparam.img.getElementById("PeakFitLine").setAttribute("points",Points);
-	SVparam.img.getElementById("PeakFitLine").setAttribute("style","fill:none;stroke:red");
-
-}
-
 function RequestFitLimits(){
 	var x;
 
@@ -1274,58 +601,20 @@ function RequestFitLimits(){
 	// Remove a previous fit
 	if(SVparam.Fitted==1){
 		document.getElementById('fitbox').innerHTML = '';
-		SVparam.img.removeChild(SVparam.img.getElementById("PeakFitLine"));
+		//SVparam.img.removeChild(SVparam.img.getElementById("PeakFitLine"));
 		SVparam.Fitted=0;
 	}
 
 	SVparam.FitLimitLower=-1;
 	SVparam.FitLimitUpper=-1;
 
-	// Create the X axis zoom box
-	x = document.createElementNS(SVparam.svgns,'rect');
-	x.setAttribute('id','LimitsBox');
-	x.setAttribute('x','0');
-	x.setAttribute('y','10');
-	x.setAttribute('width','720');
-	x.setAttribute('height','300');
-	x.setAttribute('style','opacity:0.0;cursor:s-resize');
-	SVparam.img.appendChild(x);
-
-	document.getElementById('LimitsBox').onmouseup = function(){
-			SVparam.FitLimitLower=window.event.clientX; 
-			document.getElementById("LimitsBox").onmouseup = function(){ 
-				SVparam.FitLimitUpper=window.event.clientX;
-				FitData();
-			}
-		}
-
 	document.getElementById('fitbox').innerHTML = 'Select fit region with Mouse clicks';
+
 }
 
 function FitData(){
 	var cent, fitdata, i, loc, max, Points, width, x, y, height;
 
-	SVparam.img.removeChild(SVparam.img.getElementById("LimitsBox"));
-
-/*
-	SVparam.point.x = SVparam.FitLimitLower;
-	// Translate to the right coordinates
-	loc = SVparam.point.matrixTransform(SVparam.img.getScreenCTM().inverse());
-	SVparam.FitLimitLower=loc.x;
-	SVparam.point.x = SVparam.FitLimitUpper;
-	// Translate to the right coordinates
-	loc = SVparam.point.matrixTransform(SVparam.img.getScreenCTM().inverse());
-	SVparam.FitLimitUpper=loc.x;
-
-	SVparam.FitLimitLower=Math.floor(((SVparam.FitLimitLower-SVparam.Xoffset)/SVparam.XaxisCompression))+SVparam.XaxisLimitMin;
-	SVparam.FitLimitUpper=Math.floor(((SVparam.FitLimitUpper-SVparam.Xoffset)/SVparam.XaxisCompression))+SVparam.XaxisLimitMin;
-
-	if(SVparam.FitLimitUpper<SVparam.FitLimitLower){
-		x=SVparam.FitLimitUpper;
-		SVparam.FitLimitUpper=SVparam.FitLimitLower;
-		SVparam.FitLimitLower=x;
-	}
-*/
 	if(SVparam.FitLimitLower<0) SVparam.FitLimitLower=0;
 	if(SVparam.FitLimitUpper>SVparam.XaxisLimitAbsMax) SVparam.FitLimitUpper=SVparam.XaxisLimitAbsMax;
 
@@ -1410,14 +699,8 @@ function FitData(){
 	SVparam.word = 'H=' + max + ',W=' + width.toFixed(3) + ',C=' + cent + "; ";
 	document.getElementById('spec_fits0').innerHTML = SVparam.word+document.getElementById('spec_fits0').innerHTML;
 
-	// Create the dataline element needed
-	x = document.createElementNS(SVparam.svgns,'polyline');
-	x.setAttribute('id','PeakFitLine');
-	SVparam.img.appendChild(x);
-	SVparam.img.getElementById("PeakFitLine").setAttribute("points",Points);
-	SVparam.img.getElementById("PeakFitLine").setAttribute("style","fill:none;stroke:red;stroke-width:3");
-
 	SVparam.Fitted=1;
+	SVparam.fitModeEngage = 0;
 }
 
 function Menu_unSelectAll(){
@@ -1487,18 +770,10 @@ function SetupGetList(){
 function GetList(newhost){
 	var i, iframe, iframeDoc, Num, row, table,
 		RemoveTable = 0;
-	// Remove the prompt window
-	//document.getElementById('holder').removeChild(hostnamebox);
-	//document.getElementById('holder').removeChild(hostnameblankbox);
 
 	// Check if a list is already loaded by the hostname being defined
 	// if yes then set a flag for the old list to be removed later in this function
 	if(SVparam.hostname.length>0) RemoveTable=1; 
-
-	// If Cancel was pressed exit this function here 
-	//if(newhost==null){return;}
-	//if(newhost.length==0){return;}
-	//else{hostname=newhost;}
 
 	// Set the hostname at the top of the page
 	document.getElementById('host_text').innerHTML=" - Hostname: "+SVparam.hostname;
@@ -1569,7 +844,7 @@ function DisplaySpecs(){
 	document.getElementById("displayMistake").innerHTML="";
 	if(SVparam.Fitted==1){
 		document.getElementById('fitbox').innerHTML = '';
-		SVparam.img.removeChild(SVparam.img.getElementById("PeakFitLine"));
+		//SVparam.img.removeChild(SVparam.img.getElementById("PeakFitLine"));
 		SVparam.Fitted=0;
 	}
 	if(SVparam.Specs.length>1){
@@ -1584,14 +859,6 @@ function DisplaySpecs(){
 	reset_list_color();
 	SVparam.word="";
 	num=(SVparam.Specs.length-1);
-
-	if(SVparam.Specs.length<SVparam.NumSpecsDisplayed){
-		for(j=1; j<SVparam.NumSpecsDisplayed; j++){
-			// Remove the dataline elements that are not needed
-			SVparam.img.removeChild(SVparam.img.getElementById('dataline'+j));
-			SVparam.img.removeChild(SVparam.img.getElementById('title'+j));
-		}
-	}
 
 	if(num>=0){
 		while(num>=0){
@@ -1614,29 +881,12 @@ function OverlaySpecs(){
 	document.getElementById("displayMistake").innerHTML="";
 	if(SVparam.Fitted==1){
 		document.getElementById('fitbox').innerHTML = '';
-		SVparam.img.removeChild(SVparam.img.getElementById("PeakFitLine"));
+		//SVparam.img.removeChild(SVparam.img.getElementById("PeakFitLine"));
 		SVparam.Fitted=0;
 	}	
 	if((SVparam.Specs.length+SVparam.NumSpecsDisplayed)>10){
 		document.getElementById("displayMistake").innerHTML="Maximum of 10 spectra can be overlayed";
 		return;
-	}
-
-	if((SVparam.Specs.length+SVparam.NumSpecsDisplayed)>SVparam.NumSpecsDisplayed){
-		for(j=SVparam.NumSpecsDisplayed; j<(SVparam.Specs.length+SVparam.NumSpecsDisplayed); j++){
-			// Create the dataline element needed
-			x = document.createElementNS(SVparam.svgns,'polyline');
-			x.setAttribute('id','dataline'+j);
-			SVparam.img.appendChild(x);
-			// Create title text for first series
-			x=document.createElementNS(SVparam.svgns,'text');
-			x.setAttribute('id','title'+j);
-			x.setAttribute('x','790');
-			x.setAttribute('y', (15+(j*20)));
-			x.setAttribute('style', 'fill:'+SVparam.dataColor[j]); 
-			x.setAttribute('text-anchor', "end"); 
-			SVparam.img.appendChild(x);
-		}
 	}
 
 	// Plot the spectra
@@ -1655,7 +905,6 @@ function Menu_MakeselectSpectrum(oEvent,id){
 
 	//alert("MakeSelection: "+id);
 	if (oEvent.shiftKey){
-		//alert("Multi: "+SVparam.DisplayedSpecs.length+", "+id);
 		// Multi-select with mouse button and Shift key 
 		if(SVparam.Specs.length>0){
 			// Call Menu_selectSpectrum multiple times
@@ -1681,7 +930,7 @@ function Menu_selectSpectrum(id){
 	document.getElementById("displayMistake").innerHTML="";
 	if(SVparam.Fitted==1){
 		document.getElementById('fitbox').innerHTML = '';
-		SVparam.img.removeChild(SVparam.img.getElementById("PeakFitLine"));
+		//SVparam.img.removeChild(SVparam.img.getElementById("PeakFitLine"));
 		SVparam.Fitted=0;
 	}
 
@@ -1746,7 +995,7 @@ function displaySpectrum(id){
 	document.getElementById("displayMistake").innerHTML="";
 	if(SVparam.Fitted==1){
 		document.getElementById('fitbox').innerHTML = '';
-		SVparam.img.removeChild(SVparam.img.getElementById("PeakFitLine"));
+		//SVparam.img.removeChild(SVparam.img.getElementById("PeakFitLine"));
 		SVparam.Fitted=0;
 	}
 	SVparam.XaxisLimitAbsMax=500;
@@ -1755,13 +1004,7 @@ function displaySpectrum(id){
 	Menu_unSelectAll();
 	SVparam.Specs[0]=id;
 	List_update(id,0);
-	if(SVparam.Specs.length<SVparam.NumSpecsDisplayed){
-		for(j=1; j<SVparam.NumSpecsDisplayed; j++){
-			// Remove the dataline elements that are not needed
-			SVparam.img.removeChild(SVparam.img.getElementById('dataline'+j));
-			SVparam.img.removeChild(SVparam.img.getElementById('title'+j));
-		}
-	}
+
 	SVparam.DisplayedSpecs=SVparam.Specs.slice();
 	SVparam.NumSpecsDisplayed=1;
 	plot_data(0);
@@ -1773,7 +1016,7 @@ function overlaySpectrum(id){
 	document.getElementById("displayMistake").innerHTML="";
 	if(SVparam.Fitted==1){
 		document.getElementById('fitbox').innerHTML = '';
-		SVparam.img.removeChild(SVparam.img.getElementById("PeakFitLine"));
+		//SVparam.img.removeChild(SVparam.img.getElementById("PeakFitLine"));
 		SVparam.Fitted=0;
 	}
 
@@ -1797,23 +1040,6 @@ function overlaySpectrum(id){
 	if((SVparam.Specs.length+SVparam.NumSpecsDisplayed)>10){
 		document.getElementById("displayMistake").innerHTML="Maximum of 10 spectra can be overlayed";
 		return;
-	}
-
-	if((SVparam.Specs.length+SVparam.NumSpecsDisplayed)>SVparam.NumSpecsDisplayed){
-		for(j=SVparam.NumSpecsDisplayed; j<(SVparam.Specs.length+SVparam.NumSpecsDisplayed); j++){
-			// Create the dataline element needed
-			x = document.createElementNS(SVparam.svgns,'polyline');
-			x.setAttribute('id','dataline'+j);
-			SVparam.img.appendChild(x);
-			// Create title text for first series
-			x=document.createElementNS(SVparam.svgns,'text');
-			x.setAttribute('id','title'+j);
-			x.setAttribute('x','790');
-			x.setAttribute('y', (15+(j*20)));
-			x.setAttribute('style', 'fill:'+SVparam.dataColor[j]); 
-			x.setAttribute('text-anchor', "end"); 
-			SVparam.img.appendChild(x);
-		}
 	}
 
 	// Plot the spectra
@@ -1857,23 +1083,14 @@ function clearSpecs(){
 
 	if(SVparam.Fitted==1){
 		document.getElementById('fitbox').innerHTML = '';
-		SVparam.img.removeChild(SVparam.img.getElementById("PeakFitLine"));
 		SVparam.Fitted=0;
 	}
 	reset_list_color();
 	SVparam.Specs=new Array();
-	if(SVparam.Specs.length<SVparam.NumSpecsDisplayed){
-		for(j=1; j<SVparam.NumSpecsDisplayed; j++){
-			// Remove the dataline elements that are not needed
-			SVparam.img.removeChild(SVparam.img.getElementById('dataline'+j));
-			SVparam.img.removeChild(SVparam.img.getElementById('title'+j));
-		}
-	}
-	SVparam.img.getElementById('title0').textContent="";
+
 	SVparam.DisplayedSpecs=SVparam.Specs.slice();
 	SVparam.NumSpecsDisplayed=0;
-	a = SVparam.img.getElementById("dataline0");
-	a.setAttribute("points", (SVparam.Xoffset)+","+SVparam.Yoffset+" "+(SVparam.Xoffset)+","+SVparam.Yoffset);
+
 }
 
 function getSpecData(x){

@@ -62,7 +62,8 @@
 
 			<tr>
 				<td width="800px" colspan=2>
-					<svg xmlns="http://www.w3.org/2000/svg" height=350 width=800 id='svgimage' onload="startup(evt)"></svg>
+					<canvas id='testCanv'></canvas>
+					<!--svg xmlns="http://www.w3.org/2000/svg" height=350 width=800 id='svgimage'></svg-->
 					<br><br><p id="textbox"></p>
 				</td>
 
@@ -79,7 +80,7 @@
 					<input type="button" value="<" onclick="ShiftLimitLeft()">
 					<input type="button" value=">" onclick="ShiftLimitRight()">
 					<input type="button" value=">>" onclick="ShiftLimitBigRight()">
-					<input type="button" value="Unzoom" onclick="resetXaxis()">
+					<input type="button" value="Unzoom" onclick="unzoom()">
 					<div id="limitMistake" style="color:red"></div>
 				</td>
 
@@ -95,8 +96,6 @@
 		<table id="recent_list">
 			<tr><b>Recently Viewed Spectra:</b><br></tr>
 		</table>
-
-		<canvas id='testCanv'></canvas>
 
 		<script type="text/javascript">
 			//namespace all the global variables in their own object:
@@ -204,6 +203,10 @@
 			// Display initial x axis limits in input boxes 
 			document.getElementById("LowerXLimit").value=SVparam.XaxisLimitMin;
 			document.getElementById("UpperXLimit").value=SVparam.XaxisLimitMax;
+
+			//initialize
+			startup();
+
 		</script>
 	</body>
 </html>
