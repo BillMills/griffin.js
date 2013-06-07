@@ -991,7 +991,14 @@ function clearSpecs(){
 }
 
 function getSpecData(x){
-	//return getData(parseInt(x));
+	/*
+	if(SVparam.dataBuffer[parseInt(x)]){
+		return SVparam.dataBuffer[parseInt(x)];
+	} else {
+		SVparam.dataBuffer[parseInt(x)] = getData(parseInt(x));
+		return SVparam.dataBuffer[parseInt(x)];
+	}
+	*/
 	if(x==0) return SVfakeData.energydata0;
 	if(x==1) return SVfakeData.energydata1;
 	if(x==2) return SVfakeData.energydata2;

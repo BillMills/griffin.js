@@ -148,7 +148,8 @@
 				"baseFont" : '16px Arial',			//default font
 				"expFont" : '12px Arial',			//exponent font
 				"clickBounds" : [],					//bounds clicked by the user
-				"fitModeEngage" : 0 				//determines if the event listeners on the canvas initiate zoom (0) or fit (1) procedures
+				"fitModeEngage" : 0, 				//determines if the event listeners on the canvas initiate zoom (0) or fit (1) procedures
+				"dataBuffer" : []					//buffer data so we don't re-fetch it.
 			};
 			SVparam.XaxisLength = SVparam.XaxisLimitMax-SVparam.XaxisLimitMin;
 			SVparam.YaxisLength = SVparam.YaxisLimitMax-SVparam.YaxisLimitMin;
