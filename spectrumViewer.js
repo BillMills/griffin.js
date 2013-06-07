@@ -1,9 +1,10 @@
 function reportSpectrumBin(){
 	SVparam.canvas.addEventListener('mousemove', function(event){
-		var x, y, xBin, yBin;
+		var coords, x, y, xBin, yBin;
 
-        x = event.pageX - SVparam.canvas.offsetLeft;   
-        y = event.pageY - SVparam.canvas.offsetTop;
+		coords = document.getElementById(SVparam.canvasID).relMouseCoords(event);
+		x = coords.x;
+		y = coords.y;
 
         if(x > SVparam.leftMargin && x < SVparam.canvas.width - SVparam.rightMargin && y > SVparam.topMargin){
 	        xBin = Math.floor((x-SVparam.leftMargin)/SVparam.binWidth) + SVparam.XaxisLimitMin;
@@ -103,10 +104,6 @@ function ClickWindow(bin){
 
 function SetUpperLimitByInput(input){
 	document.getElementById("limitMistake").innerHTML="";
-	if(SVparam.Fitted==1){
-		document.getElementById('fitbox').innerHTML = '';
-		SVparam.Fitted=0;
-	}
 
 	if(parseInt(input)<=parseInt(SVparam.XaxisLimitMin)){
 		document.getElementById("limitMistake").innerHTML="Error: Upper limit must be larger than the lower limit fool! ";
@@ -125,10 +122,6 @@ function SetUpperLimitByInput(input){
 
 function SetLowerLimitByInput(input){
 	document.getElementById("limitMistake").innerHTML="";
-	if(SVparam.Fitted==1){
-		document.getElementById('fitbox').innerHTML = '';
-		SVparam.Fitted=0;
-	}
 
 	if(parseInt(input)>=parseInt(SVparam.XaxisLimitMax)){
 		document.getElementById("limitMistake").innerHTML="Error: Lower limit must be smaller than the upper limit fool! ";
@@ -144,10 +137,7 @@ function SetLowerLimitByInput(input){
 }
 
 function ShiftLimitLeft(){
-	if(SVparam.Fitted==1){
-		document.getElementById('fitbox').innerHTML = '';
-		SVparam.Fitted=0;
-	}
+
 	SVparam.XaxisLimitMin--;
 	SVparam.XaxisLimitMax--;
 
@@ -164,10 +154,7 @@ function ShiftLimitLeft(){
 }
 
 function ShiftLimitRight(){
-	if(SVparam.Fitted==1){
-		document.getElementById('fitbox').innerHTML = '';
-		SVparam.Fitted=0;
-	}
+
 	SVparam.XaxisLimitMin++;
 	SVparam.XaxisLimitMax++;
 
@@ -184,10 +171,7 @@ function ShiftLimitRight(){
 }
 
 function ShiftLimitBigLeft(){
-	if(SVparam.Fitted==1){
-		document.getElementById('fitbox').innerHTML = '';
-		SVparam.Fitted=0;
-	}
+
 	length=SVparam.XaxisLimitMax-SVparam.XaxisLimitMin;
 	SVparam.XaxisLimitMin=SVparam.XaxisLimitMin-length;
 	SVparam.XaxisLimitMax=SVparam.XaxisLimitMax-length;
@@ -205,10 +189,7 @@ function ShiftLimitBigLeft(){
 }
 
 function ShiftLimitBigRight(){
-	if(SVparam.Fitted==1){
-		document.getElementById('fitbox').innerHTML = '';
-		SVparam.Fitted=0;
-	}
+
 	length=SVparam.XaxisLimitMax-SVparam.XaxisLimitMin;
 	SVparam.XaxisLimitMin=SVparam.XaxisLimitMin+length;
 	SVparam.XaxisLimitMax=SVparam.XaxisLimitMax+length;
@@ -227,13 +208,10 @@ function ShiftLimitBigRight(){
 
 function unzoom(){
 	document.getElementById("limitMistake").innerHTML="";
-	if(SVparam.Fitted==1){
-		document.getElementById('fitbox').innerHTML = '';
-		SVparam.Fitted=0;
-	}
 
 	SVparam.XaxisLimitMin=0;
 	SVparam.XaxisLimitMax=SVparam.XaxisLimitAbsMax;
+
 	document.getElementById("LowerXLimit").value=SVparam.XaxisLimitMin;
 	document.getElementById("UpperXLimit").value=SVparam.XaxisLimitMax;
 
@@ -247,11 +225,6 @@ function unzoom(){
 /////////////////////////////////////////////////////////////////////
 function set_AxisType(word){
 	var x;
-
-	if(SVparam.Fitted==1){
-		document.getElementById('fitbox').innerHTML = '';
-		SVparam.Fitted=0;
-	}
 
 	//TODO: overkill, simplify:
 	x=word.id;
@@ -287,11 +260,13 @@ function startup(){
 	// Setup the nouse coordinate printing on the screen
 	reportSpectrumBin();
 
-	document.getElementById(SVparam.canvasID).onmousedown = function(event){SVparam.XMouseLimitxMin = parseInt((event.pageX-SVparam.canvas.offsetLeft-SVparam.leftMargin)/SVparam.binWidth + SVparam.XaxisLimitMin);};
+	document.getElementById(SVparam.canvasID).onmousedown = function(event){
+			SVparam.XMouseLimitxMin = parseInt((document.getElementById(SVparam.canvasID).relMouseCoords(event).x-SVparam.leftMargin)/SVparam.binWidth + SVparam.XaxisLimitMin);
+		};
 	document.getElementById(SVparam.canvasID).onmouseup = function(event){
-			SVparam.XMouseLimitxMax = parseInt((event.pageX-SVparam.canvas.offsetLeft-SVparam.leftMargin)/SVparam.binWidth + SVparam.XaxisLimitMin); 
+			SVparam.XMouseLimitxMax = parseInt((document.getElementById(SVparam.canvasID).relMouseCoords(event).x-SVparam.leftMargin)/SVparam.binWidth + SVparam.XaxisLimitMin); 
 			DragWindow();
-			ClickWindow( parseInt((event.pageX-SVparam.canvas.offsetLeft-SVparam.leftMargin)/SVparam.binWidth + SVparam.XaxisLimitMin) );
+			ClickWindow( parseInt((document.getElementById(SVparam.canvasID).relMouseCoords(event).x-SVparam.leftMargin)/SVparam.binWidth + SVparam.XaxisLimitMin) );
 		}
 
 	iframe = document.getElementById('menu_iframe');
@@ -329,11 +304,6 @@ function resetData(){
 	// Zero the data array in the ODB
 	// ODBSet("/Analyzer/Parameters/Gate0/reset",1);
 
-	if(SVparam.Fitted==1){
-		document.getElementById('fitbox').innerHTML = '';
-		SVparam.Fitted=0;
-	}
-
 	// Zero the data array
 	for(i=0; i<512; i++) SVparam.data[i]=0;
 
@@ -359,6 +329,12 @@ function plot_data(RefreshNow){
 	var a, c, i, j, data, thisSpec, y, 
 	thisData = [];
 	SVparam.entries = [];
+		
+	//abandon the fit when re-drawing the plot
+	if(SVparam.Fitted==1){
+		document.getElementById('fitbox').innerHTML = '';
+		SVparam.Fitted=0;
+	}
 
 	SVparam.maxYvalue=SVparam.YaxisLimitMax;
 	// Loop through to get the data and set the Y axis limits
@@ -598,13 +574,6 @@ function RequestFitLimits(){
 	//enter fit mode:
 	SVparam.fitModeEngage = 1;
 
-	// Remove a previous fit
-	if(SVparam.Fitted==1){
-		document.getElementById('fitbox').innerHTML = '';
-		//SVparam.img.removeChild(SVparam.img.getElementById("PeakFitLine"));
-		SVparam.Fitted=0;
-	}
-
 	SVparam.FitLimitLower=-1;
 	SVparam.FitLimitUpper=-1;
 
@@ -842,11 +811,7 @@ function DisplaySpecs(){
 	SVparam.XaxisLimitAbsMax=500;
 	SVparam.YaxisLimitMax=5;
 	document.getElementById("displayMistake").innerHTML="";
-	if(SVparam.Fitted==1){
-		document.getElementById('fitbox').innerHTML = '';
-		//SVparam.img.removeChild(SVparam.img.getElementById("PeakFitLine"));
-		SVparam.Fitted=0;
-	}
+
 	if(SVparam.Specs.length>1){
 		document.getElementById("displayMistake").innerHTML="Only one spectrum can be displayed! (use Overlay for multiple spectra)";
 		return;
@@ -879,11 +844,7 @@ function OverlaySpecs(){
 	SVparam.XaxisLimitAbsMax=500;
 	SVparam.YaxisLimitMax=5;
 	document.getElementById("displayMistake").innerHTML="";
-	if(SVparam.Fitted==1){
-		document.getElementById('fitbox').innerHTML = '';
-		//SVparam.img.removeChild(SVparam.img.getElementById("PeakFitLine"));
-		SVparam.Fitted=0;
-	}	
+
 	if((SVparam.Specs.length+SVparam.NumSpecsDisplayed)>10){
 		document.getElementById("displayMistake").innerHTML="Maximum of 10 spectra can be overlayed";
 		return;
@@ -928,11 +889,6 @@ function Menu_selectSpectrum(id){
 	var iframe, iframeDoc, j, rowID;
 
 	document.getElementById("displayMistake").innerHTML="";
-	if(SVparam.Fitted==1){
-		document.getElementById('fitbox').innerHTML = '';
-		//SVparam.img.removeChild(SVparam.img.getElementById("PeakFitLine"));
-		SVparam.Fitted=0;
-	}
 
 	// Check for duplicates
 	j=0;
@@ -993,11 +949,7 @@ function displaySpectrum(id){
 	var j;
 
 	document.getElementById("displayMistake").innerHTML="";
-	if(SVparam.Fitted==1){
-		document.getElementById('fitbox').innerHTML = '';
-		//SVparam.img.removeChild(SVparam.img.getElementById("PeakFitLine"));
-		SVparam.Fitted=0;
-	}
+
 	SVparam.XaxisLimitAbsMax=500;
 	SVparam.YaxisLimitMax=5;
 	reset_list_color();
@@ -1014,11 +966,6 @@ function overlaySpectrum(id){
 	var j, x;
 
 	document.getElementById("displayMistake").innerHTML="";
-	if(SVparam.Fitted==1){
-		document.getElementById('fitbox').innerHTML = '';
-		//SVparam.img.removeChild(SVparam.img.getElementById("PeakFitLine"));
-		SVparam.Fitted=0;
-	}
 
 	// Check for duplicates
 	j=0;
@@ -1081,10 +1028,6 @@ function Menu_unselectSpectrum(id){
 function clearSpecs(){
 	var a, j;
 
-	if(SVparam.Fitted==1){
-		document.getElementById('fitbox').innerHTML = '';
-		SVparam.Fitted=0;
-	}
 	reset_list_color();
 	SVparam.Specs=new Array();
 
@@ -1101,6 +1044,27 @@ function getSpecData(x){
 	if(x==3) return SVfakeData.energydata3;
 	if(x==4) return SVfakeData.energydata4;
 }
+
+function relMouseCoords(event){
+    var totalOffsetX = 0;
+    var totalOffsetY = 0;
+    var canvasX = 0;
+    var canvasY = 0;
+    var currentElement = this;
+
+    do{
+        totalOffsetX += currentElement.offsetLeft - currentElement.scrollLeft;
+        totalOffsetY += currentElement.offsetTop - currentElement.scrollTop;
+    }
+    while(currentElement = currentElement.offsetParent)
+
+    canvasX = event.pageX - totalOffsetX;
+    canvasY = event.pageY - totalOffsetY;
+
+    return {x:canvasX, y:canvasY}
+}
+HTMLCanvasElement.prototype.relMouseCoords = relMouseCoords;
+
 
 // To do list:
 // 
