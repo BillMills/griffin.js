@@ -63,7 +63,6 @@
 			<tr>
 				<td width="800px" colspan=2>
 					<canvas id='testCanv'></canvas>
-					<!--svg xmlns="http://www.w3.org/2000/svg" height=350 width=800 id='svgimage'></svg-->
 					<br><br><p id="textbox"></p>
 				</td>
 
@@ -100,45 +99,21 @@
 		<script type="text/javascript">
 			//namespace all the global variables in their own object:
 			SVparam = {
-				"svgns" : 'http://www.w3.org/2000/svg',
-				"img" : [],
-				"pt" : 0,
-				"point" : 0,
 				"hostname" : "localhost:9092",
 				"RefreshTime" : 0,
-				"Xoffset" : 90,
-				"Yoffset" : 300,
 				"XaxisLimitMin" : 0,
 				"XaxisLimitMax" : 500,
 				"XaxisLimitAbsMax" : 512,
 				"XaxisLength" : 0,
-				"XaxisPixelLength" : 600,
-				"XaxisCompression" : 1,
-				"XaxisLabelPos" : 0,
-				"XaxisTitlePos" : 0,
-				"XaxisLabelFactor" : 100,
-				"XaxisLabelxOffset" : 8,
-				"XaxisLabelyOffset" : 8,
 				"YaxisLimitMin" : 0,
 				"YaxisLimitMax" : 204,
 				"YaxisLength" : 0,
-				"YaxisPixelLength" : 280,
-				"YaxisCompression" : 1,
-				"YaxisLabelPos" : 75,
-				"YaxisTitlePos" : 10,
-				"YaxisLabelFactor" : 50,
-				"YaxisLabelxOffset" : 4,
-				"YaxisLabelyOffset" : 4,
 				"maxYvalue" : 200,
-				"NumYAxisLabels" : 0,
 				"dataColor" : ["#000000", "#FF0000", "#0000FF", "#00FF00", "#FF9900", "#00FFFF", "#FFFF00", "#FF00CC", "#00CC00", "#990099"],
-				"dataColorx" : 0,
 				"XMouseLimitxMin" : 0,
 				"XMouseLimitxMax" : 0,
-				"DataLinePoints" : 0,
 				"DataType" : 0,
 				"AxisType" : 0,
-				"PowerLabels" : 0,
 				"Specs" : [],
 				"DisplayedSpecs" : [],
 				"spectrum_names" : [],
@@ -176,8 +151,6 @@
 				"fitModeEngage" : 0 				//determines if the event listeners on the canvas initiate zoom (0) or fit (1) procedures
 			};
 			SVparam.XaxisLength = SVparam.XaxisLimitMax-SVparam.XaxisLimitMin;
-			SVparam.XaxisLabelPos = SVparam.Yoffset+20;
-			SVparam.XaxisTitlePos = SVparam.Yoffset+40;
 			SVparam.YaxisLength = SVparam.YaxisLimitMax-SVparam.YaxisLimitMin;
 			SVparam.canvas = document.getElementById(SVparam.canvasID);
 			SVparam.canvas.setAttribute('width', SVparam.canvWidth);

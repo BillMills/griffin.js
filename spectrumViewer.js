@@ -220,7 +220,7 @@ function unzoom(){
 }
 
 /////////////////////////////////////////////////////////////////////
-// set_SVparam.AxisType function                                           //
+// set_SVparam.AxisType function                                   //
 // Function to change to and from Linear and Logarithmic Y axis    //
 /////////////////////////////////////////////////////////////////////
 function set_AxisType(word){
@@ -241,7 +241,7 @@ function set_AxisType(word){
 
 	if(SVparam.AxisType==1){
 		SVparam.YaxisLimitMin=0.1;
-		SVparam.YaxisLimitMax=SVparam.YaxisLimitMax*100;
+		SVparam.YaxisLimitMax=SVparam.YaxisLimitMax*100;  //?? okay I guess...
 	}	
 	plot_data(0);
 }
@@ -255,7 +255,7 @@ function set_AxisType(word){
 // Function to draw everything the first time when page is loaded  //
 /////////////////////////////////////////////////////////////////////
 function startup(){
-	var i, iframe, iframeDoc, row, table, x;
+	var iframe, iframeDoc, row, table;
 
 	// Setup the nouse coordinate printing on the screen
 	reportSpectrumBin();
@@ -272,7 +272,7 @@ function startup(){
 	iframe = document.getElementById('menu_iframe');
 	iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
 	iframeDoc.open();
-	iframeDoc.write('<body bgcolor=#E0FFE0><TABLE id="main_table" width=100% bgcolor=#E0FFE0></TABLE></body>');
+	iframeDoc.write('<body bgcolor="#E0FFE0"><table id="main_table" width=100% bgcolor="#E0FFE0"></table></body>');
 	iframeDoc.close();
 
 	table = iframeDoc.getElementById("main_table");
@@ -300,7 +300,7 @@ Math.log10 = function(n) {
 // Function to zero the data array and in the ODB                  //
 /////////////////////////////////////////////////////////////////////
 function resetData(){
-	var a, i;
+	var i;
 	// Zero the data array in the ODB
 	// ODBSet("/Analyzer/Parameters/Gate0/reset",1);
 
@@ -326,7 +326,7 @@ function resetData(){
 // below the limit then the axis will be redrawn                   //
 /////////////////////////////////////////////////////////////////////
 function plot_data(RefreshNow){
-	var a, c, i, j, data, thisSpec, y, 
+	var i, j, data, thisSpec,
 	thisData = [];
 	SVparam.entries = [];
 		
@@ -361,7 +361,6 @@ function plot_data(RefreshNow){
 		for(j=0; j<data.length; j++ ){
 			SVparam.totalEntries += data[j];
 		}
-		//SVparam.img.getElementById('title'+thisSpec).textContent="Entries: "+SVparam.totalEntries;
 
 		//report number of entries on canvas:
 		SVparam.entries[thisSpec] = SVparam.totalEntries;
@@ -383,7 +382,7 @@ function plot_data(RefreshNow){
 	if(SVparam.AxisType==1)
 		SVparam.YaxisLength=Math.log10(SVparam.YaxisLimitMax-SVparam.YaxisLimitMin);
 
-	paintCanvas();
+	drawFrame();
 
 	// Now the limits are set loop through and plot the data points
 	for(thisSpec=0; thisSpec<SVparam.DisplayedSpecs.length; thisSpec++){
@@ -393,9 +392,6 @@ function plot_data(RefreshNow){
 		SVparam.context.fillText('Entries: '+SVparam.entries[thisSpec], SVparam.canvas.width - SVparam.rightMargin - SVparam.context.measureText('Entries: '+SVparam.entries[thisSpec]).width, thisSpec*16);
 
 		SVparam.data=thisData[thisSpec].slice();
-
-		// Reset the coordinates string for the polyline
-		SVparam.DataLinePoints="";
 
 		// Loop through the data spectrum that we have
 		//start the canvas path:
@@ -415,10 +411,6 @@ function plot_data(RefreshNow){
 			// The coordinates are set following this for loop
 			if(SVparam.DataType==0){
 				if(SVparam.AxisType==0){
-					// Protect against overflow at the top of the y axis
-					//if(SVparam.data[i]<SVparam.YaxisLimitMax) y=(SVparam.Yoffset-(SVparam.data[i]*SVparam.YaxisCompression));
-					//else y=(SVparam.Yoffset-(SVparam.YaxisLimitMax*SVparam.YaxisCompression));
-
 					//draw canvas line:
 					//left side of bar
 					SVparam.context.lineTo( SVparam.leftMargin + (i-SVparam.XaxisLimitMin)*SVparam.binWidth, SVparam.canvas.height - SVparam.bottomMargin - SVparam.data[i]*SVparam.countHeight );
@@ -427,12 +419,6 @@ function plot_data(RefreshNow){
 				}
 
 				if(SVparam.AxisType==1){
-					// Protect against overflow at bottom of y axis
-					//if(SVparam.data[i]<=0) y=(SVparam.Yoffset);
-					//else if((Math.log10(SVparam.data[i])-Math.log10(SVparam.YaxisLimitMin))<Math.log10(SVparam.YaxisLimitMax)) y=(SVparam.Yoffset-((Math.log10(SVparam.data[i])-Math.log10(SVparam.YaxisLimitMin))*SVparam.YaxisCompression));
-					// and protect against overflow at the top of the y axis
-					//else y=(SVparam.Yoffset-((Math.log10(SVparam.YaxisLimitMax)-Math.log10(SVparam.YaxisLimitMin))*SVparam.YaxisCompression));
-
 					//draw canvas line:
 					if(SVparam.data[i] > 0){
 						//left side of bar
@@ -464,21 +450,14 @@ function plot_data(RefreshNow){
 // End of plot_data function //
 ///////////////////////////////
 
-//reproduce the results of plot_data in a canvas, no svg allowed:
-function paintCanvas(){
-	
+//draw the plot frame
+function drawFrame(){
+	var binsPerTick, countsPerTick, i, label;
+
 	//determine bin render width
 	SVparam.binWidth = SVparam.xAxisPixLength / (SVparam.XaxisLimitMax - SVparam.XaxisLimitMin);
 	//determine the scale render height per count for linear view:
 	SVparam.countHeight = SVparam.yAxisPixLength / SVparam.YaxisLength;
-
-	//paint axes & decorations
-	drawFrame();
-}
-
-//draw the plot frame
-function drawFrame(){
-	var binsPerTick, countsPerTick, i, label;
 
 	//clear canvas
 	SVparam.context.clearRect(0,0,SVparam.canvWidth, SVparam.canvHeight);
@@ -582,7 +561,7 @@ function RequestFitLimits(){
 }
 
 function FitData(){
-	var cent, fitdata, i, loc, max, Points, width, x, y, height;
+	var cent, fitdata, i, max, width, x, y, height;
 
 	if(SVparam.FitLimitLower<0) SVparam.FitLimitLower=0;
 	if(SVparam.FitLimitUpper>SVparam.XaxisLimitAbsMax) SVparam.FitLimitUpper=SVparam.XaxisLimitAbsMax;
@@ -614,7 +593,6 @@ function FitData(){
 	width/=2.35;
 
 	cent=cent+SVparam.FitLimitLower+0.5;
-	Points="";
 
 	//set up canvas for drawing fit line
 	SVparam.context.lineWidth = 3;
@@ -623,28 +601,6 @@ function FitData(){
 	SVparam.context.moveTo( SVparam.leftMargin + (SVparam.FitLimitLower-SVparam.XaxisLimitMin)*SVparam.binWidth, SVparam.canvas.height - SVparam.bottomMargin - max*Math.exp(-1*(((SVparam.FitLimitLower-cent)*(SVparam.FitLimitLower-cent))/(2*width*width)))*SVparam.countHeight);
 
 	for(i=0;i<fitdata.length;i+=0.2){
-		x=i+SVparam.FitLimitLower;
-		y = max*Math.exp(-1*(((x-cent)*(x-cent))/(2*width*width)));
-
-		if(SVparam.AxisType==0){
-			if(y<SVparam.YaxisLimitMax) y=(SVparam.Yoffset-(y*SVparam.YaxisCompression));
-			else y=(SVparam.Yoffset-(SVparam.YaxisLimitMax*SVparam.YaxisCompression));
-		}
-
-		if(SVparam.AxisType==1){
-			// Protect against overflow at bottom of y axis
-			if(y<=0) y=(SVparam.Yoffset);
-			else if((Math.log10(y)-Math.log10(SVparam.YaxisLimitMin))<Math.log10(SVparam.YaxisLimitMax)) y=(SVparam.Yoffset-((Math.log10(y)-Math.log10(SVparam.YaxisLimitMin))*SVparam.YaxisCompression));
-			// and protect against overflow at the top of the y axis
-			else y=(SVparam.Yoffset-((Math.log10(SVparam.YaxisLimitMax)-Math.log10(SVparam.YaxisLimitMin))*SVparam.YaxisCompression));
-
-			// protect at bottom of log axis
-			if(y>SVparam.Yoffset) y=SVparam.Yoffset;
-		}
-
-		x=(SVparam.Xoffset+(x*SVparam.XaxisCompression)-(SVparam.XaxisLimitMin*SVparam.XaxisCompression));
-		Points=Points+" "+Math.round(x,1)+","+Math.round(y,1);
-
 		//draw fit line on canvas:
 		x=i+SVparam.FitLimitLower;
 		y = max*Math.exp(-1*(((x-cent)*(x-cent))/(2*width*width)));
@@ -678,7 +634,6 @@ function Menu_unSelectAll(){
 	document.getElementById("displayMistake").innerHTML="";
 	iframe = document.getElementById('menu_iframe');
 	iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-	//Nrows=iframeDoc.getElementById("main_table").getElementsByTagName("TR").length;
 
 	// Reset the properties of the rows which were selected
 	j=0;
@@ -1026,10 +981,9 @@ function Menu_unselectSpectrum(id){
 }
 
 function clearSpecs(){
-	var a, j;
 
 	reset_list_color();
-	SVparam.Specs=new Array();
+	SVparam.Specs=[];
 
 	SVparam.DisplayedSpecs=SVparam.Specs.slice();
 	SVparam.NumSpecsDisplayed=0;
@@ -1046,11 +1000,11 @@ function getSpecData(x){
 }
 
 function relMouseCoords(event){
-    var totalOffsetX = 0;
-    var totalOffsetY = 0;
-    var canvasX = 0;
-    var canvasY = 0;
-    var currentElement = this;
+    var totalOffsetX = 0,
+    totalOffsetY = 0,
+    canvasX = 0,
+    canvasY = 0,
+    currentElement = this;
 
     do{
         totalOffsetX += currentElement.offsetLeft - currentElement.scrollLeft;
