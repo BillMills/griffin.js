@@ -272,12 +272,12 @@ function startup(){
 	iframe = document.getElementById('menu_iframe');
 	iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
 	iframeDoc.open();
-	iframeDoc.write('<body bgcolor="#E0FFE0"><table id="main_table" width=100% bgcolor="#E0FFE0"></table></body>');
+	iframeDoc.write('<body style="background:#333333; color:#999999; font-family:'+ "'" +'Raleway'+ "'" +', sans-serif;"> <table id="main_table" width="100%"></table></body>');
 	iframeDoc.close();
 
 	table = iframeDoc.getElementById("main_table");
 	row = table.insertRow(0);
-	row.innerHTML ="Welcome! To begin click 'Load 1D Spectrum List' below.";
+	row.innerHTML ="Welcome! To begin click 'Load Spectra' below.";
 
 }
 ///////////////////////////////
@@ -463,8 +463,8 @@ function drawFrame(){
 	SVparam.context.clearRect(0,0,SVparam.canvWidth, SVparam.canvHeight);
 
 	//draw principle axes:
-	SVparam.context.strokeStyle = '#000000';
-	SVparam.context.fillStyle = '#000000';
+	SVparam.context.strokeStyle = '#FFFFFF';
+	SVparam.context.fillStyle = '#FFFFFF';
 	SVparam.context.lineWidth = 1;
 	SVparam.context.beginPath();
 	SVparam.context.moveTo(SVparam.leftMargin, SVparam.topMargin);
@@ -640,7 +640,7 @@ function Menu_unSelectAll(){
 	if(SVparam.Specs.length>0){
 		while(j<SVparam.Specs.length){
 			i=SVparam.Specs[j];
-			iframeDoc.getElementById("row"+i).setAttribute('bgcolor', "white");
+			iframeDoc.getElementById("row"+i).setAttribute('bgcolor', "#333333");
 			iframeDoc.getElementById("row"+i).setAttribute('onclick', 'parent.Menu_MakeselectSpectrum(event,'+i+')');
 			j++;
 		}
@@ -700,7 +700,7 @@ function GetList(newhost){
 	if(SVparam.hostname.length>0) RemoveTable=1; 
 
 	// Set the hostname at the top of the page
-	document.getElementById('host_text').innerHTML=" - Hostname: "+SVparam.hostname;
+	document.getElementById('youAreHere').innerHTML="Spectrum Viewer - "+SVparam.hostname;
 
 	// Attach to the table for the spectrum list in the iframe
 	iframe = document.getElementById('menu_iframe');
@@ -737,7 +737,7 @@ function GetList(newhost){
 		for(i=0; i<50; i++){
 			row = table.insertRow(i);
 			row.setAttribute('id', "row"+i);
-			row.setAttribute('bgcolor', "white");
+			row.setAttribute('bgcolor', "#333333");
 			row.setAttribute('style', "display:block;cursor:default");
 			iframeDoc.getElementById('row'+i).onclick = function(event){ parent.Menu_MakeselectSpectrum(event, parseInt(this.id.slice(3,this.id.length+1))  )};
 			iframeDoc.getElementById('row'+i).ondblclick = function(){parent.displaySpectrum( parseInt(this.id.slice(3,this.id.length+1)) )};
@@ -881,8 +881,9 @@ function Menu_selectSpectrum(id){
 function List_update(id,colorID) {
 	var i, table, row;
 
-	SVparam.word='<td width="25px" align="center" id="box'+colorID+'" style="display:inline-block;width:20px;background-color:'+SVparam.dataColor[colorID]+';color:'+SVparam.dataColor[colorID]+'">:-)</td><td width="150px" align="center"><input type="button" value="Display" onclick="displaySpectrum('+id+')">'+' <input type="button" value="Overlay" onclick="overlaySpectrum('+id+')"></td><td width="225px"> '+SVparam.spectrum_names[id]+' </td><td width="800px" id="spec_fits'+colorID+'"></td>';
+	SVparam.word='<td width="25px" align="center" id="box'+colorID+'" style="display:inline-block;width:20px;background-color:'+SVparam.dataColor[colorID]+';color:'+SVparam.dataColor[colorID]+'">:-)</td><td width="150px" align="center"><button type="button" class="navLink" value="Display" onclick="displaySpectrum('+id+')">Display</button>'+' <button type="button" class="navLink" value="Overlay" onclick="overlaySpectrum('+id+')">Overlay</button></td><td width="225px">'+SVparam.spectrum_names[id]+' </td><td id="spec_fits'+colorID+'"></td>';
 	table = document.getElementById("recent_list");
+	table.setAttribute('style', 'display:block; margin-top:10px;')
 	row = table.insertRow(0);
 	row.innerHTML =SVparam.word;
 
@@ -895,7 +896,7 @@ function reset_list_color(){
 
 	for(j=0; j<SVparam.NumSpecsDisplayed; j++){
 		x=document.getElementById("box"+j);
-		x.setAttribute('style', "background-color:white;color:white");
+		x.setAttribute('style', "background-color:#333333;color:#333333");
 		x.setAttribute('id', "");
 	}
 }
@@ -961,7 +962,7 @@ function Menu_unselectSpectrum(id){
 	document.getElementById("displayMistake").innerHTML="";
 	iframe = document.getElementById('menu_iframe');
 	iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-	iframeDoc.getElementById("row"+id).setAttribute('bgcolor', "white");
+	iframeDoc.getElementById("row"+id).setAttribute('bgcolor', "#333333");
 	iframeDoc.getElementById("row"+id).setAttribute('onclick', "parent.Menu_selectSpectrum("+id+")");
 
 	// Remove this spectrum from the parent.Spec array
@@ -1011,21 +1012,27 @@ function relMouseCoords(event){
     totalOffsetY = 0,
     canvasX = 0,
     canvasY = 0,
-    currentElement = this;
+    currentElement = this,
+    test = [],
+    elts = [];
+
+	if (event.offsetX !== undefined && event.offsetY !== undefined) { return {x:event.offsetX, y:event.offsetY}; }
 
     do{
         totalOffsetX += currentElement.offsetLeft - currentElement.scrollLeft;
         totalOffsetY += currentElement.offsetTop - currentElement.scrollTop;
+        test[test.length] = currentElement.offsetLeft - currentElement.scrollLeft
+        elts[elts.length] = currentElement
     }
     while(currentElement = currentElement.offsetParent)
-
+console.log(test)
+console.log(elts)
     canvasX = event.pageX - totalOffsetX;
     canvasY = event.pageY - totalOffsetY;
 
     return {x:canvasX, y:canvasY}
 }
 HTMLCanvasElement.prototype.relMouseCoords = relMouseCoords;
-
 
 // To do list:
 // 

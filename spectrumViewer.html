@@ -11,14 +11,161 @@
 				ival,
 				my_expt="midas";
 		</script>
+
+		<style type='text/css'>
+			button.navLink{
+				background: #4C4C4C; 
+				color: #999999;
+				border-color: #333333; 
+				border-radius: 5px;
+			    display: inline;
+			    font-family: 'Raleway', sans-serif;
+			    font-size:14px;
+			}
+
+			table.mainElement{
+				border:5px solid; 
+				border-radius:25px; 
+				padding:10px;
+			}
+
+			body.standard{
+				background:#333333; 
+				color:#999999; 
+				font-family: "Raleway", sans-serif;				
+			}
+		</style>
 	</head>
 
-	<body>
-		<table border=3 cellpadding=2 width=100%> 
-			<tr>
-				<th colspan=1 bgcolor='#A0A0FF'>MIDAS experiment </th> 
-				<th colspan=2 bgcolor='#A0A0FF'>Browser-Based Spectrum Viewer </th>
+	<body class='standard'>
+
+	    <script type="text/javascript">
+	      //load the webfonts, and block the page until they're ready or failed - otherwise lots of rendering bugs happen!
+	      WebFontConfig = { google: { families: [ 'Orbitron', 'Raleway' ] },
+	        loading: function(){
+
+	        },
+	        active: function() {
+	          main();
+	        },
+	        inactive: function() {
+	          main();
+	        }
+	      };
+	      //thx paul:
+	      (function() {
+	        var wf = document.createElement('script');
+	        wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+	            '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+	        wf.type = 'text/javascript';
+	        wf.async = 'true';
+	        var s = document.getElementsByTagName('script')[0];
+	        s.parentNode.insertBefore(wf, s);
+	      })();
+	    </script>
+
+		<div id='branding' style='width:100%; height:100; border-color:#999999; border-left-style:solid; border-bottom-style:solid; border-left-width:5px; border-bottom-width:5px; border-bottom-left-radius:25px; background-color:#333333; margin-bottom:5px;'>
+			<img id='logo' height='80px' width='80px' src='triumf.gif' style='opacity:0.5625; padding-left:10px;'></img>
+			<h1 id='title' style='position:relative; display:inline; font: 80px Raleway; top:-10px'></h1>
+		</div>
+
+		<div id='navbar' style='width: 100%; height: 30px; margin-bottom:10px;'>
+			<button id='statusPage' class='navLink' type="submit"></button>
+			<h2 id='youAreHere' style='position:absolute; display:inline; margin:0px; right:20px;'></h2>
+		</div>
+
+		<table id='x6' width='100%' style='padding-top:0px;'>
+			<tr id='x5'>
+				<td id='x4'>
+					<table id='x3' class='mainElement'>
+						<caption style='font: 20px Raleway'>Spectrum Control</caption>
+
+						<tr id='x2'>
+							<td id='x1' width="800px" colspan=2>
+								<canvas id='testCanv'></canvas>
+								<br><br><p id="textbox"></p>
+							</td>
+						</tr>
+
+						<tr>
+							<td align='left' style='padding:none;'>
+								x axis limits: 
+								<input type="text" id="LowerXLimit" style="width:42px;" onchange="SetLowerLimitByInput(parseInt(this.value))"></button>
+								<input type="text" id="UpperXLimit" style="width:42px;" onchange="SetUpperLimitByInput(parseInt(this.value))"></button>
+								<button id='bigLeft' class='navLink' type="button" value="<<" onclick="ShiftLimitBigLeft()"></button>
+								<button id='smallLeft' class='navLink' type="button" value="<" onclick="ShiftLimitLeft()"></button>
+								<button id='smallRight' class='navLink' type="button" value=">" onclick="ShiftLimitRight()"></button>
+								<button id='bigRight' class='navLink' type="button" value=">>" onclick="ShiftLimitBigRight()"></button>
+								<button id='unzoom' class='navLink' type="button" value="Unzoom" onclick="unzoom()"></button>
+								<div id="limitMistake" style="color:'#00FFFF'"></div>
+							</td>
+
+							<td colspan=1 width='200px' align='left' style='padding:none;'>
+								<p id="mousebox" style='margin:none;'></p>
+							</td>
+
+						</tr>
+
+						<tr>
+							<td>
+								y axis: Lin<input type="radio" id="a0" value="0" onclick="set_AxisType(this)" checked="true">|<input type="radio" id="a1" value="1" onclick="set_AxisType(this)">Log
+							</td>
+						</tr>
+
+						<tr>
+							<td width="400px" align='left'>
+								Refresh Rate: 
+								<select id="refreshRate" onchange="SVparam.RefreshTime=this.value;">
+									<option id="r0" value="0">Off</option>
+									<option id="r1" value="1">1s</option>
+									<option id="r2" value="2">2s</option>
+									<option id="r3" value="5">5s</option>
+									<option id="r4" value="10">10s</option>
+								</select>
+								<button id='refresh' class='navLink' type="button" value="Refresh Now" onclick="plot_data(0)"></button>
+							</td>
+						</tr>
+
+						<tr>
+							<td colspan=1 align='left' style='padding:none;'>
+								<button id='clearSpec' class='navLink' type="button" value="Clear Spectra" onclick="clearSpecs()"></button>
+								<button id='fitPeak' class='navLink' type="button" value="Fit a Peak" onclick="RequestFitLimits()"></button>
+							</td>
+
+							<td>
+								<p id="fitbox"></p>
+							</td>
+						</tr>
+
+					</table>
+				</td>
+
+				<td>
+					<table class='mainElement'>
+						<caption style='font: 20px Raleway'>Spectrum Menu</caption>
+
+						<tr>
+							<td width="534px" align='left'>
+								<iframe id="menu_iframe" width='99%' height='475px' frameborder=0></iframe>
+							</td>
+						</tr>
+
+						<tr>
+							<td style='text-align:center;'>
+								<button id='loadB' class='navLink' type="button" value="Load 1D Spectrum List" onclick='GetList("localhost:9092")'></button>
+								<button id='displayB' class='navLink' type="button" value="Display" onclick="DisplaySpecs()"></button>
+								<button id='overlayB' class='navLink' type="button" value="Overlay" onclick="OverlaySpecs()"></button>
+								<button id='clearB' class='navLink' type="button" value="Clear Selected" onclick="Menu_unSelectAll()"></button>
+								<div id="displayMistake" style="color:#00FFFF"></div>
+								<div id="holder"></div>
+							</td>
+						</tr>																		
+					</table>
+				</td>
 			</tr>
+		</table>
+
+		<!--table border=3 cellpadding=2 width=100%> 
 
 			<tr>
 				<td width="400px" align=left bgcolor='#E0E0FF'>
@@ -33,9 +180,7 @@
 					<input type="button" value="Refresh Now" onclick="plot_data(0)">
 				</td>
 
-				<td width="400px" align=left bgcolor='#E0E0FF'>
-
-				</td>
+				<td width="400px" align=left bgcolor='#E0E0FF'></td>
 
 				<th width="400px" align=left bgcolor='#E0FFE0'>
 					Spectrum Menu<span id="host_text"></span>
@@ -48,10 +193,7 @@
 			</td>
 
 			<td colspan=1 align=left bgcolor='#E0E0FF'>
-				<!-- <input type="button" value="Zero Counts" onclick="resetData()"> -->
 				<input type="button" value="Clear Spectra" onclick="clearSpecs()">
-				<!-- <input type="button" value="Fit Data" onclick="FitTimeData()"> -->
-				<!-- <input type="button" value="Fit Peak" onclick="FitPeakData()"> -->
 				<input type="button" value="Fit a Peak" onclick="RequestFitLimits()">
 				<p id="fitbox"></p>
 			</td>
@@ -85,102 +227,122 @@
 
 				<td colspan=1 align=left bgcolor='#E0E0FF'> <p id="mousebox"></p></td>
 				<td colspan=1 bgcolor='#E0FFE0'>
-					<!--  <input type="button" value="Load 1D Spectrum List" onclick="SetupGetList()"><div id="holder"></div> -->
 					<input type="button" value="Load 1D Spectrum List" onclick='GetList("localhost:9092")'><div id="holder"></div>
 
 				</td>
 			</tr>
-		</table>
+		</table-->
 
-		<table id="recent_list">
-			<tr><b>Recently Viewed Spectra:</b><br></tr>
+		<table id="recent_list" class='mainElement' style='display:none; margin-top:10px'>
+			<caption style='font: 20px Raleway'>Recently Viewed Spectra:</caption>
 		</table>
 
 		<script type="text/javascript">
-			//namespace all the global variables in their own object:
-			SVparam = {
-				"hostname" : "localhost:9092",
-				"RefreshTime" : 0,
-				"XaxisLimitMin" : 0,
-				"XaxisLimitMax" : 500,
-				"XaxisLimitAbsMax" : 512,
-				"XaxisLength" : 0,
-				"YaxisLimitMin" : 0,
-				"YaxisLimitMax" : 204,
-				"YaxisLength" : 0,
-				"maxYvalue" : 200,
-				"dataColor" : ["#000000", "#FF0000", "#0000FF", "#00FF00", "#FF9900", "#00FFFF", "#FFFF00", "#FF00CC", "#00CC00", "#990099"],
-				"XMouseLimitxMin" : 0,
-				"XMouseLimitxMax" : 0,
-				"DataType" : 0,
-				"AxisType" : 0,
-				"Specs" : [],
-				"DisplayedSpecs" : [],
-				"spectrum_names" : [],
-				"NumSpecsDisplayed" : 0,
-				"Fitted" : 0,
-				"FitLimitLower" : -1,
-				"FitLimitUpper" : -1,
-				"word" : 'Hello there',
-				"data" : [],
-				"KnownHostnames" : ["midtig03:9095", "localhost:9092"],
-				"refreshMap" : [0,1,2,5,10],
-				"totalEntries" : 0,
+			function main(){
+				//fill in the some text elements:
+				document.getElementById('title').innerHTML = 'TRIUMF';
+				document.getElementById('youAreHere').innerHTML = 'Spectrum Viewer';
+				document.getElementById('statusPage').innerHTML = 'MIDAS Status';
+				document.getElementById('loadB').innerHTML = 'Load Spectra';
+				document.getElementById('displayB').innerHTML = 'Display';
+				document.getElementById('overlayB').innerHTML = 'Overlay';
+				document.getElementById('clearB').innerHTML = 'Clear';
+				document.getElementById('bigLeft').innerHTML = '<<';
+				document.getElementById('smallLeft').innerHTML = '<';
+				document.getElementById('smallRight').innerHTML = '>';
+				document.getElementById('bigRight').innerHTML = '>>';
+				document.getElementById('unzoom').innerHTML = 'Unzoom';
+				document.getElementById('clearSpec').innerHTML = 'Clear Spectra';
+				document.getElementById('fitPeak').innerHTML = 'Fit Peak';
+				document.getElementById('refresh').innerHTML = 'Refresh Now';
 
-				"canvasID" : 'testCanv',			//id of canvas to draw spectra in
-				"canvas" : 0,
-				"context" : 0,
-				'canvWidth' : 800,					//spectrum canvas width
-				'canvHeight' : 350,					//  "" height
-				"leftMargin" : 100,					//left gutter of plot area
-				"bottomMargin" : 50, 				//bottom gutter of plot area
-				"rightMargin" : 100,				//right gutter of plot area
-				"topMargin" : 20, 					//top gutter of plot area
-				"xAxisPixLength" : 0,				//in pixels
-				"yAxisPixLength" : 0,				//in pixels
-				"tickLength" : 5, 					//axis tickmark length
-				"nXticks" : 6,						//number of ticks on the x axis
-				"nYticks" : 5,						//number of ticks on the y axis
-				"xLabelOffset" : 5, 				//x axis labels sit this far below the bottom of their tick
-				"yLabelOffset" : 5, 				//y axis labels sit this many pix to the left of their tick
-				"binWidth" : 0, 					//width of histo bin in pixels
-				"countHeight" : 0, 					//height in pix accrued by a bin for each count
-				"baseFont" : '16px Arial',			//default font
-				"expFont" : '12px Arial',			//exponent font
-				"clickBounds" : [],					//bounds clicked by the user
-				"fitModeEngage" : 0, 				//determines if the event listeners on the canvas initiate zoom (0) or fit (1) procedures
-				"dataBuffer" : []					//buffer data so we don't re-fetch it.
-			};
-			SVparam.XaxisLength = SVparam.XaxisLimitMax-SVparam.XaxisLimitMin;
-			SVparam.YaxisLength = SVparam.YaxisLimitMax-SVparam.YaxisLimitMin;
-			SVparam.canvas = document.getElementById(SVparam.canvasID);
-			SVparam.canvas.setAttribute('width', SVparam.canvWidth);
-			SVparam.canvas.setAttribute('height', SVparam.canvHeight);
-			SVparam.context = SVparam.canvas.getContext('2d');
-			SVparam.context.font = SVparam.baseFont;
-			SVparam.xAxisPixLength = SVparam.canvas.width - SVparam.leftMargin - SVparam.rightMargin;
-			SVparam.yAxisPixLength = SVparam.canvas.height - SVparam.bottomMargin - SVparam.topMargin;
+				//namespace all the global variables in their own object:
+				SVparam = {
+					"statusURL" : 'http://alphadon.triumf.ca:8082',
+					"hostname" : "localhost:9092",
+					"RefreshTime" : 0,
+					"XaxisLimitMin" : 0,
+					"XaxisLimitMax" : 500,
+					"XaxisLimitAbsMax" : 512,
+					"XaxisLength" : 0,
+					"YaxisLimitMin" : 0,
+					"YaxisLimitMax" : 204,
+					"YaxisLength" : 0,
+					"maxYvalue" : 200,
+					"dataColor" : ["#FFFFFF", "#FF0000", "#00FFFF", "#00FF00", "#FF9900", "#0000FF", "#FFFF00", "#FF00CC", "#00CC00", "#990099"],
+					"XMouseLimitxMin" : 0,
+					"XMouseLimitxMax" : 0,
+					"DataType" : 0,
+					"AxisType" : 0,
+					"Specs" : [],
+					"DisplayedSpecs" : [],
+					"spectrum_names" : [],
+					"NumSpecsDisplayed" : 0,
+					"Fitted" : 0,
+					"FitLimitLower" : -1,
+					"FitLimitUpper" : -1,
+					"word" : 'Hello there',
+					"data" : [],
+					"KnownHostnames" : ["midtig03:9095", "localhost:9092"],
+					"refreshMap" : [0,1,2,5,10],
+					"totalEntries" : 0,
 
-			//fake data for dev mode:
-			SVfakeData = {
-				"energydata0" : [200,48,42,48,58,57,59,72,85,68,61,60,72,147,263,367,512,499,431,314,147,78,35,22,13,9,16,7,10,13,5,5,3,1,2,4,0,1,1,1,0,1,0,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,111,200,80,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,40,80,120,70,20,20,20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,300,650,200,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-				"energydata1" : [200,48,42,48,58,57,59,72,85,68,61,60,72,147,263,367,512,499,431,314,147,78,35,22,13,9,16,7,10,13,5,5,3,1,2,4,0,1,1,1,0,1,0,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,111,200,80,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,40,80,120,70,20,20,20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,300,650,200,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-				"energydata2" : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,200,48,42,48,58,57,59,72,85,68,61,60,72,147,263,367,512,499,431,314,147,78,35,22,13,9,16,7,10,13,5,5,3,1,2,4,0,1,1,1,0,1,0,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,111,200,80,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10000000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,40,80,120,70,20,20,20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,300,650,200,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-				"energydata3" : [0,0,0,0,0,0,0,0,0,111,200,80,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,200,48,42,48,58,57,59,72,85,68,61,60,72,147,263,367,512,499,431,314,147,78,35,22,13,9,16,7,10,13,5,5,3,1,2,4,0,1,1,1,0,1,0,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1000000000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,40,80,120,70,20,20,20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,300,650,200,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-				"energydata4" : [0,0,0,0,0,0,0,0,0,111,200,80,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,200,48,42,48,58,57,59,72,85,68,61,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,60,72,147,263,367,512,499,431,314,147,78,35,22,13,9,16,7,10,13,5,5,3,1,2,4,0,1,1,1,0,1,0,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,40,80,12000,70,20,20,20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,300,650,200,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,111,200,80,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,200,48,42,48,58,57,59,72,85,68,61,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,60,72,147,263,367,512,499,431,314,147,78,35,22,13,9,16,7,10,13,5,5,3,1,2,4,0,1,1,1,0,1,0,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,40,80,12000,70,20,20,20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,300,650,200,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+					"canvasID" : 'testCanv',			//id of canvas to draw spectra in
+					"canvas" : 0,
+					"context" : 0,
+					'canvWidth' : 800,					//spectrum canvas width
+					'canvHeight' : 350,					//  "" height
+					"leftMargin" : 100,					//left gutter of plot area
+					"bottomMargin" : 50, 				//bottom gutter of plot area
+					"rightMargin" : 100,				//right gutter of plot area
+					"topMargin" : 20, 					//top gutter of plot area
+					"xAxisPixLength" : 0,				//in pixels
+					"yAxisPixLength" : 0,				//in pixels
+					"tickLength" : 5, 					//axis tickmark length
+					"nXticks" : 6,						//number of ticks on the x axis
+					"nYticks" : 5,						//number of ticks on the y axis
+					"xLabelOffset" : 5, 				//x axis labels sit this far below the bottom of their tick
+					"yLabelOffset" : 5, 				//y axis labels sit this many pix to the left of their tick
+					"binWidth" : 0, 					//width of histo bin in pixels
+					"countHeight" : 0, 					//height in pix accrued by a bin for each count
+					"baseFont" : '16px Arial',			//default font
+					"expFont" : '12px Arial',			//exponent font
+					"clickBounds" : [],					//bounds clicked by the user
+					"fitModeEngage" : 0, 				//determines if the event listeners on the canvas initiate zoom (0) or fit (1) procedures
+					"dataBuffer" : []					//buffer data so we don't re-fetch it.
+				};
+				SVparam.XaxisLength = SVparam.XaxisLimitMax-SVparam.XaxisLimitMin;
+				SVparam.YaxisLength = SVparam.YaxisLimitMax-SVparam.YaxisLimitMin;
+				SVparam.canvas = document.getElementById(SVparam.canvasID);
+				SVparam.canvas.setAttribute('width', SVparam.canvWidth);
+				SVparam.canvas.setAttribute('height', SVparam.canvHeight);
+				SVparam.context = SVparam.canvas.getContext('2d');
+				SVparam.context.font = SVparam.baseFont;
+				SVparam.xAxisPixLength = SVparam.canvas.width - SVparam.leftMargin - SVparam.rightMargin;
+				SVparam.yAxisPixLength = SVparam.canvas.height - SVparam.bottomMargin - SVparam.topMargin;
+				document.getElementById('statusPage').setAttribute('onclick', "window.location='"+SVparam.statusURL+"';");
 
-				"timedata" : [1019,980,962,946,919,883,869,850,835,800,793,764,748,739,708,701,682,656,641,641,608,604,591,569,555,547,531,515,501,488,481,465,449,453,445,436,417,410,397,382,372,373,353,355,342,332,327,314,304,302,287,292,280,282,268,258,259,252,244,239,226,228,231,225,206,202,208,200,200,194,183,169,172,172,167,154,161,153,150,147,152,136,137,129,126,137,129,114,116,111,116,106,103,105,108,97,97,105,95,100,83,89,88,88,75,91,88,84,76,85,83,66,66,73,75,71,71,60,63,57,52,48,47,66,59,50,50,44,42,47,44,38,42,49,43,41,51,42,40,47,36,46,31,47,31,34,26,40,27,29,24,36,23,28,31,29,25,33,29,19,37,22,30,35,22,34,29,22,20,22,25,31,26,14,17,30,14,31,19,15,29,24,15,24,12,24,25,14,28,24,9,17,28,18,14,9,15,16,21,7,11,20,7,20,22,14,12,22,22,6,20,9,24,9,21,15,23,12,8,18,11,13,8,9,4,10,15,13,14,19,9,22,13,13,9,10,20,21,8,13,19,13,3,11,7,16,17,21,7,17,21,17,2,13,15,15,14,20,3,16,2,9,4,3,1,7,3,17,6,6,1,13,20,6,20,19,15,12,6,1,9,19,14,11,9,19,20,8,1,2,15,2,9,5,13,4,9,0,14,15,5,0,2,13,6,15,9,5,19,9,13,14,8,11,11,19,7,1,3,17,8,11,9,17,13,1,3,11,4,19,16,2,3,12,7,9,15,11,15,17,7,11,11,0,15,6,4,19,8,6,3,2,17,10,17,2,16,1,16,2,3,14,12,10,11,14,7,1,0,11,2,13,5,4,16,13,0,15,0,14,14,13,4,0,9,11,0,2,4,10,12,6,16,13,9,6,9,3,1,16,16,18,17,11,13,11,13,18,14,16,12,5,10,16,15,12,15,10,4,14,9,13,2,10,3,5,17,0,1,16,2,7,12,12,12,10,15,5,17,17,6,14,9,16,15,7,4,5,12,8,17,8,7,1,5,14,19,11,0,17,7,17,11,5,16,19,8,6,12,0,2,12,2,11,5,13,0,10,18,10,5,13,1,16,18,3,12,7,13,15,9,5,12,16,11,8,7,5,6,9]
+				//fake data for dev mode:
+				SVfakeData = {
+					"energydata0" : [200,48,42,48,58,57,59,72,85,68,61,60,72,147,263,367,512,499,431,314,147,78,35,22,13,9,16,7,10,13,5,5,3,1,2,4,0,1,1,1,0,1,0,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,111,200,80,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,40,80,120,70,20,20,20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,300,650,200,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+					"energydata1" : [200,48,42,48,58,57,59,72,85,68,61,60,72,147,263,367,512,499,431,314,147,78,35,22,13,9,16,7,10,13,5,5,3,1,2,4,0,1,1,1,0,1,0,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,111,200,80,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,40,80,120,70,20,20,20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,300,650,200,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+					"energydata2" : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,200,48,42,48,58,57,59,72,85,68,61,60,72,147,263,367,512,499,431,314,147,78,35,22,13,9,16,7,10,13,5,5,3,1,2,4,0,1,1,1,0,1,0,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,111,200,80,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10000000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,40,80,120,70,20,20,20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,300,650,200,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+					"energydata3" : [0,0,0,0,0,0,0,0,0,111,200,80,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,200,48,42,48,58,57,59,72,85,68,61,60,72,147,263,367,512,499,431,314,147,78,35,22,13,9,16,7,10,13,5,5,3,1,2,4,0,1,1,1,0,1,0,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1000000000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,40,80,120,70,20,20,20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,300,650,200,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+					"energydata4" : [0,0,0,0,0,0,0,0,0,111,200,80,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,200,48,42,48,58,57,59,72,85,68,61,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,60,72,147,263,367,512,499,431,314,147,78,35,22,13,9,16,7,10,13,5,5,3,1,2,4,0,1,1,1,0,1,0,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,40,80,12000,70,20,20,20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,300,650,200,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,111,200,80,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,200,48,42,48,58,57,59,72,85,68,61,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,60,72,147,263,367,512,499,431,314,147,78,35,22,13,9,16,7,10,13,5,5,3,1,2,4,0,1,1,1,0,1,0,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,40,80,12000,70,20,20,20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,300,650,200,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+
+					"timedata" : [1019,980,962,946,919,883,869,850,835,800,793,764,748,739,708,701,682,656,641,641,608,604,591,569,555,547,531,515,501,488,481,465,449,453,445,436,417,410,397,382,372,373,353,355,342,332,327,314,304,302,287,292,280,282,268,258,259,252,244,239,226,228,231,225,206,202,208,200,200,194,183,169,172,172,167,154,161,153,150,147,152,136,137,129,126,137,129,114,116,111,116,106,103,105,108,97,97,105,95,100,83,89,88,88,75,91,88,84,76,85,83,66,66,73,75,71,71,60,63,57,52,48,47,66,59,50,50,44,42,47,44,38,42,49,43,41,51,42,40,47,36,46,31,47,31,34,26,40,27,29,24,36,23,28,31,29,25,33,29,19,37,22,30,35,22,34,29,22,20,22,25,31,26,14,17,30,14,31,19,15,29,24,15,24,12,24,25,14,28,24,9,17,28,18,14,9,15,16,21,7,11,20,7,20,22,14,12,22,22,6,20,9,24,9,21,15,23,12,8,18,11,13,8,9,4,10,15,13,14,19,9,22,13,13,9,10,20,21,8,13,19,13,3,11,7,16,17,21,7,17,21,17,2,13,15,15,14,20,3,16,2,9,4,3,1,7,3,17,6,6,1,13,20,6,20,19,15,12,6,1,9,19,14,11,9,19,20,8,1,2,15,2,9,5,13,4,9,0,14,15,5,0,2,13,6,15,9,5,19,9,13,14,8,11,11,19,7,1,3,17,8,11,9,17,13,1,3,11,4,19,16,2,3,12,7,9,15,11,15,17,7,11,11,0,15,6,4,19,8,6,3,2,17,10,17,2,16,1,16,2,3,14,12,10,11,14,7,1,0,11,2,13,5,4,16,13,0,15,0,14,14,13,4,0,9,11,0,2,4,10,12,6,16,13,9,6,9,3,1,16,16,18,17,11,13,11,13,18,14,16,12,5,10,16,15,12,15,10,4,14,9,13,2,10,3,5,17,0,1,16,2,7,12,12,12,10,15,5,17,17,6,14,9,16,15,7,4,5,12,8,17,8,7,1,5,14,19,11,0,17,7,17,11,5,16,19,8,6,12,0,2,12,2,11,5,13,0,10,18,10,5,13,1,16,18,3,12,7,13,15,9,5,12,16,11,8,7,5,6,9]
+				}
+
+				// Set refresh time select menu for first time
+				document.getElementById("refreshRate").selectedIndex= SVparam.refreshMap.indexOf(SVparam.RefreshTime);
+
+				// Display initial x axis limits in input boxes 
+				document.getElementById("LowerXLimit").value=SVparam.XaxisLimitMin;
+				document.getElementById("UpperXLimit").value=SVparam.XaxisLimitMax;
+
+				//initialize
+				startup();
 			}
-			// Set refresh time select menu for first time
-			document.getElementById("refreshRate").selectedIndex= SVparam.refreshMap.indexOf(SVparam.RefreshTime);
-
-			// Display initial x axis limits in input boxes 
-			document.getElementById("LowerXLimit").value=SVparam.XaxisLimitMin;
-			document.getElementById("UpperXLimit").value=SVparam.XaxisLimitMax;
-
-			//initialize
-			startup();
-
 		</script>
 	</body>
 </html>
