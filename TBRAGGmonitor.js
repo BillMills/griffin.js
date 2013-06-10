@@ -205,6 +205,7 @@ function mod_layout(){
 	mod_gate_params();
 }
 
+//TODO: move the DOM element definitions to HTML, and make this function hide / show as appropriate
 function mod_gate_params(){
 	var font=["#FF0000", "#00FF00", "#FFFF00", "#660099"],
 		obj=document.getElementById("Gate_params"),
@@ -212,7 +213,7 @@ function mod_gate_params(){
 		i, name, cmd;
 
 	for(i=0; i<=TBparam.num_gates; i++){
-		line=line+"<br><font style=\"color: "+font[i]+";\"><b>Gate"+(i+1)+":</b></font> Centre (x,y): <input type=\"text\" id=\"Gatex"+i+"\" style=\"width:40px\"; onchange=\"setGateX(this)\">,<input type=\"text\" id=\"Gatey"+i+"\" style=\"width:40px\"; onchange=\"setGateY(this)\">Size: <input type=\"text\" id=\"GateSize"+i+"\" style=\"width:40px\"; onchange=\"setGateSize(this)\">\n";
+		line=line+"<font style=\"color: "+font[i]+";\"><b>Gate"+(i+1)+":</b></font> Centre (x,y): <input type=\"text\" id=\"Gatex"+i+"\" style=\"width:40px\"; onchange=\"setGateX(this)\">,<input type=\"text\" id=\"Gatey"+i+"\" style=\"width:40px\"; onchange=\"setGateY(this)\">Size: <input type=\"text\" id=\"GateSize"+i+"\" style=\"width:40px; margin-right:20px;\"; onchange=\"setGateSize(this)\">";
 
 	}
 	obj.innerHTML=line;
@@ -251,7 +252,7 @@ function refreshAll(){
 		paths[11] = "/Analyzer/Parameters/Statistics/GateInt3";
 		paths[12] = "/Analyzer/Parameters/Gate0/Zoom";
 
-		data = ODBMGet(paths);
+		data = [100,100,100,100,100,100,100,100,100,100,100,100,100]//ODBMGet(paths);
 		this_run_num = data[0];
 		running = data[1];
 
@@ -262,7 +263,7 @@ function refreshAll(){
 		document.getElementById("run_status").bgColor="lime";
 		document.getElementById("run_status").innerHTML="Data Collecting";
 	}
-	document.getElementById("run_num").innerHTML=this_run_num;
+	document.getElementById("run_num").innerHTML='Run # '+this_run_num;
 
 	// Connect to the svg image element
 	//img = document.getElementById("svgimage");
@@ -354,8 +355,8 @@ function updateBars(frame){
 		height, i, j, string;
 
 		//style context:
-		context.strokeStyle = '#000000';
-		context.fillStyle = '#000000';
+		context.strokeStyle = '#999999';
+		context.fillStyle = '#999999';
 		context.font = '16px Arial';
 		context.lineWidth = lineWidth;
 
@@ -380,7 +381,7 @@ function updateBars(frame){
 				context.lineTo(leftMargin + textGutter + i*(barWidth+textGutter) - tickLength, canvas.height - bottomMargin - j/4*yAxisLength);
 				context.stroke();
 				context.textBaseline = 'middle';
-				context.fillStyle = '#000000'
+				context.fillStyle = '#999999'
 				context.fillText(j*TBparam.GateMax[i]/4, leftMargin + textGutter + i*(barWidth+textGutter) - tickLength - context.measureText(j*TBparam.GateMax[i]/4).width - 5, canvas.height - bottomMargin - j/4*yAxisLength);
 			}
 			//x-axis labels

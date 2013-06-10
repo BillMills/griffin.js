@@ -21,239 +21,238 @@
 			.buff{clear:both; width:100%; height:15px;}
 			.limitBox{width:130px}
 			td{padding:0px;}
+			button.navLink{
+				background: #4C4C4C; 
+				color: #999999;
+				border-color: #333333; 
+				border-radius: 5px;
+			    display: inline;
+			    font-family: 'Raleway', sans-serif;
+			    font-size:14px;
+			}
+
+			table.mainElement{
+				border:5px solid; 
+				border-radius:25px; 
+				padding:10px;
+			}
+
+			body.standard{
+				background:#333333; 
+				color:#999999; 
+				font-family: "Raleway", sans-serif;				
+			}
 		</style>
 	</head>
 
+	<body id='body' class='standard'>
 
-	<body>
-		<b>High Mass Task Force TBragg Monitoring Page</b><br>
-		Created by Adam Garnsworthy with help from others.<br>
-		<hr>
+		<div id='loading' style='width:100px; height:100px; border:5px solid; border-color:#FFFFFF; border-radius:25px; background:#000000; text-align:center; margin-left:auto; margin-right:auto; position:relative; top:300px'><p style='position:relative; top:50px; font:16px Arial'>Loading<p></div>
 
-		<!--script type="text/javascript">
-			//establish global parameter namespace
-			TBparam = {
-				'svgns' : 'http://www.w3.org/2000/svg',
-				//'svgDoc' : img,
-				'num_gates' : 0,
-				'old_num_gates' : 0,
-				'GateMax' : [1000,1000,1000,1000,1000],
-				'ResetTime' : 0,
-				'x' : 0,
-				'obj' : 0,
-				'i' : 0,
-				'img' : 0,
-				'name' : 0,
-				'cmd' : 0
-			};
-			TBparam.num_gates = ODBGet("/Analyzer/Parameters/Gate0/NGates");
-			TBparam.ResetTime = ODBGet("/Analyzer/Parameters/Gate0/ResetTime");
-		</script-->
+	    <script type="text/javascript">
+	      //load the webfonts, and block the page until they're ready or failed - otherwise lots of rendering bugs happen!
+	      WebFontConfig = { google: { families: [ 'Orbitron', 'Raleway' ] },
+	        loading: function(){
 
-		<table width="100%">
+	        },
+	        active: function() {
+	          main();
+	        },
+	        inactive: function() {
+	          main();
+	        }
+	      };
+	      //thx paul:
+	      (function() {
+	        var wf = document.createElement('script');
+	        wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+	            '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+	        wf.type = 'text/javascript';
+	        wf.async = 'true';
+	        var s = document.getElementsByTagName('script')[0];
+	        s.parentNode.insertBefore(wf, s);
+	      })();
+	    </script>
+
+	    <div id='mainBody' style='opacity:0'>
+
+		<div id='branding' style='width:100%; height:100; border-color:#999999; border-left-style:solid; border-bottom-style:solid; border-left-width:5px; border-bottom-width:5px; border-bottom-left-radius:25px; background-color:#333333; margin-bottom:5px;'>
+			<img id='logo' height='80px' width='80px' src='triumf.gif' style='opacity:0.5625; padding-left:10px;'></img>
+			<h1 id='title' style='position:relative; display:inline; font: 80px Raleway; top:-10px'></h1>
+		</div>
+
+		<div id='navbar' style='width: 100%; height: 30px; margin-bottom:10px;'>
+			<button id='startB' class='navLink' name="cmd" value="Start" type="submit" onclick="setResetTime()"></button>
+			<button id='statusB' class='navLink' name="cmd" value="Status" type="submit"></button>
+			<button id='historyB' class='navLink' name="cmd" value="History" type="submit"></button>
+			<input type=hidden name="redir" value="/CS/Monitor">
+			<button id='run5B' class='navLink' type=submit name=customscript value="Start 5 Min Run" onclick="setResetTime()"></button>
+			<h2 id='youAreHere' style='position:absolute; display:inline; margin:0px; right:20px;'></h2>
+		</div>
+
+		<table class='mainElement' width='100%' style='text-align:center'>
+			<caption>Run Status</caption>
 			<tr>
-				<td align=left width=500px>
-					<form method="GET" action="http://midtig04.triumf.ca:8081/CS/Monitor&">
-						<input name="cmd" value="Start" type="submit" onclick="setResetTime()">
-						<input name="cmd" value="Status" type="submit">
-						<input name="cmd" value="History" type="submit">
-						<input type=hidden name="redir" value="/CS/Monitor">
-						<input type=submit name=customscript value="Start 5 Min Run" onclick="setResetTime()">
-						<!-- <input type=submit name=customscript value="Restart DAQ"> -->
-					</form>
-				</td>
-				<td id="run_status" align=center width=200px></td>
-				<td id="run_num"></td>
-				<td id='dateLine'></td>
-				<td align=center>
+				<td id="run_status" align='center' width='33%' style='color:#000000'></td>
+				<td id="run_num" width='34%'></td>
+				<td id='dateLine' width='33%'></td>				
+			</tr>
+		</table>
 
+		<table class='mainElement' width='100%' style='margin-top:10px'>
+			<caption>Gate Parameters</caption>
+			<tr style='text-align:center; margin-bottom:10px;'>
+				<td align='center' width='100%'>
 					Number of Gates: 1<input type="radio" id="g0" value="0" onclick="set_radios(this)"> 
 					2<input type="radio" id="g1" value="1" onclick="set_radios(this)"> 
 					3<input type="radio" id="g2" value="2" onclick="set_radios(this)"> 
 					4<input type="radio" id="g3" value="3" onclick="set_radios(this)"> 
-
-					<!--script type="text/javascript">
-						TBparam.x="g"+TBparam.num_gates;
-						document.getElementById(TBparam.x).checked=true;
-					</script-->
 				</td>
 			</tr>
+			<tr id='Gate_params'></tr>
 		</table>
-		<hr>
 
-		<form name="mainform">
-			<table style='width:1150px; table-layout:fixed;'>
-				<tr>
-					<td align=center style='width:100px; padding:0px;'>
-						<b>2-D Plot</b><br>
-						Zoom: 
-						<select id="zoom_drop" onchange="setZoom(this.value);">
-							<option id="v1" value="1">x1</option>
-							<option id="v2" value="2">x2</option>
-							<option id="v3" value="3">x3</option>
-							<option id="v4" value="4">x4</option>
-						</select>
-
-						<!--script type="text/javascript">
-							TBparam.obj=document.getElementById("zoom_drop");
-							TBparam.obj.selectedIndex=ODBGet("/Analyzer/Parameters/Gate0/Zoom")-1;
-						</script-->
-					</td>
-					<td align=left style='width:300px;'>
-						<b>Gate Parameters:</b><br>
-						<p id="Gate_params">
-							<!--script type="text/javascript">
-								for(i=0; i<TBparam.num_gates; i++){
-									document.write("<br><b>Gate"+(i+1)+":</b> Centre of box (x,y): ");
-									document.write("<input type=\"text\" id=\"Gatex"+i+"\" style=\"width:40px\"; onchange=\"setGateX(this)\">,");
-									document.write("<input type=\"text\" id=\"Gatey"+i+"\" style=\"width:40px\"; onchange=\"setGateY(this)\">");
-									document.write("Size: <input type=\"text\" id=\"GateSize"+i+"\" style=\"width:40px\"; onchange=\"setGateSize(this)\">\n");
-								}
-							</script-->
-						</p>
-					</td>
-					<td stlye='width:100px !important;'></td>
-					<td class='limitBox'>Upper limit<br><input type="text" id="MaxT" style="width:70px" onchange="TBparam.GateMax[0]=this.value;"></td>
-					<td class='limitBox'>Upper limit<br><input type="text" id="MaxG" style="width:70px" onchange="TBparam.GateMax[1]=this.value;"></td>
-					<td class='limitBox' id="l1" style='opacity:0;'>Upper limit<br><input type="text" id="MaxG1" style="width:70px" onchange="TBparam.GateMax[2]=parseInt(this.value);"></td>
-					<td class='limitBox' id="l2" style='opacity:0;'>Upper limit<br><input type="text" id="MaxG2" style="width:70px" onchange="TBparam.GateMax[3]=parseInt(this.value);"></td>
-					<td class='limitBox' id="l3" style='opacity:0;'>Upper limit<br><input type="text" id="MaxG3" style="width:70px" onchange="TBparam.GateMax[4]=parseInt(this.value);"></td>
-					
-				</tr>
-				<tr>
-					<td colspan="2">
-						<img id="2Dplot" src="IDPlot.gif" width=380, height=380>
-					</td>
-					<!--td align=center style="width:320px;"></td-->
-					<!--td id="panel1" align=center colspan="5" style="width:40px;">
-						<svg xmlns='http://www.w3.org/2000/svg' height=610 width=600 id='svgimage'></svg>
-					</td-->
-					<td id='rateBarCell' colspan="6">
-						<canvas id='rateBars'> </canvas>
-					</td>
-
-					<!--script type="text/javascript">
-						//why are these first 3 lines in the JS?
-						//document.write("<td align=center colspan=\"2\" style=\"width:550px;\"><img id=\"2Dplot\" src=\"IDPlot.gif\" width=380, height=380></td>");
-						//document.write("<td align=center style=\"width:320px;\"></td>");
-						//document.write("<td id=\"panel1\" align=center colspan=\"5\" style=\"width:40px;\"><svg xmlns='http://www.w3.org/2000/svg' height=610 width=600 id='svgimage'></svg></td>");
-
-						TBparam.img = document.getElementById("svgimage");
-						TBparam.x = document.createElementNS(TBparam.svgns,'text');
-						TBparam.x.setAttribute('id','ThisTime');
-						TBparam.x.setAttribute('x', 20);
-						TBparam.x.setAttribute('y', 12);
-						TBparam.x.setAttribute('text-anchor', "start"); 
-						TBparam.x.textContent="";
-						TBparam.img.appendChild(x);
-
-						DrawBars(); DrawScaler(0); DrawScaler(1);
-					</script-->
-				</tr>
+		<form name="mainform" style='text-align:center;'>
+			<table style='margin-top:10px; position:relative; margin-left:auto; margin-right:auto;'>
 				<tr>
 					<td>
-						<form method="GET" action="http://midtig04.triumf.ca:8081/CS/Monitor&">
-							<input type=submit name=customscript value="Reset Counts" onclick="setResetTime()">
-							<input type=hidden name="redir" value="/CS/Monitor">
-						</form>
+						<table class='mainElement' style='position:relative; top:-227px;'>
+							<caption>E vs. dE</caption>
+							<tr>
+								<td colspan="3">
+									<img id="2Dplot" src="IDPlot.gif" width=380, height=380>
+								</td>					
+							</tr>
+							<tr>
+								<td>
+									<b>Zoom</b> 
+									<select id="zoom_drop" onchange="setZoom(this.value);">
+										<option id="v1" value="1">x1</option>
+										<option id="v2" value="2">x2</option>
+										<option id="v3" value="3">x3</option>
+										<option id="v4" value="4">x4</option>
+									</select>						
+								</td>
+
+								<td>
+									<form method="GET" action="http://midtig04.triumf.ca:8081/CS/Monitor&">
+										<button id='resetCountsB' class='navLink' type=submit name=customscript value="Reset Counts" onclick="setResetTime()"></button>
+										<input type=hidden name="redir" value="/CS/Monitor">
+									</form>
+								</td>
+
+								<td align=left style="width:100px;">
+									<button id='saveASCIIB' class='navLink' type="button" value="Save ASCII" onclick="dump2D()"></button>
+								</td>
+							</tr>
+
+						</table>
 					</td>
-					<td align=left style="width:100px;"><input type="button" value="Save ASCII" onclick="dump2D()"></td>
-					<td><span id="Time_display"></span> seconds since last reset</td>
-					<td><span id="message"></span></td>
+
+					<td>
+						<table class='mainElement'>
+							<caption>Gate Rates</caption>
+							<tr>
+								<td stlye='width:100px !important;'></td>
+								<td class='limitBox'>Upper limit<br><input type="text" id="MaxT" style="width:70px" onchange="TBparam.GateMax[0]=this.value;"></td>
+								<td class='limitBox'>Upper limit<br><input type="text" id="MaxG" style="width:70px" onchange="TBparam.GateMax[1]=this.value;"></td>
+								<td class='limitBox' id="l1" style='opacity:0;'>Upper limit<br><input type="text" id="MaxG1" style="width:70px" onchange="TBparam.GateMax[2]=parseInt(this.value);"></td>
+								<td class='limitBox' id="l2" style='opacity:0;'>Upper limit<br><input type="text" id="MaxG2" style="width:70px" onchange="TBparam.GateMax[3]=parseInt(this.value);"></td>
+								<td class='limitBox' id="l3" style='opacity:0;'>Upper limit<br><input type="text" id="MaxG3" style="width:70px" onchange="TBparam.GateMax[4]=parseInt(this.value);"></td>
+							</tr>
+
+							<tr>
+								<td id='rateBarCell' colspan="6">
+									<canvas id='rateBars'> </canvas>
+								</td>
+							</tr>
+
+							<tr style='text-align:center;'>
+								<td colspan='6'>
+									<span id="Time_display"></span> seconds since last reset
+								</td>
+							</tr>
+						</table>
+					</td>
 				</tr>
-
-				<!--script type="text/javascript">
-					mod_layout();
-					refreshAll();
-
-					for(TBparam.i=0; TBparam.i<=TBparam.num_gates; TBparam.i++){
-						TBparam.name="Gatex"+TBparam.i;
-						TBparam.cmd="/Analyzer/Parameters/Gate"+TBparam.i+"/x";
-						document.getElementById(TBparam.name).value=ODBGet(TBparam.cmd);
-						TBparam.name="Gatey"+TBparam.i;
-						TBparam.cmd="/Analyzer/Parameters/Gate"+TBparam.i+"/y";
-						document.getElementById(TBparam.name).value=ODBGet(TBparam.cmd);
-						TBparam.name="GateSize"+TBparam.i;
-						TBparam.cmd="/Analyzer/Parameters/Gate"+TBparam.i+"/size";
-						document.getElementById(TBparam.name).value=ODBGet(TBparam.cmd);
-					}
-
-				</script-->
 			</table>
 		</form>
+		</div>
 
 		<script type="text/javascript">
-			//establish global parameter namespace
-			TBparam = {
-				'svgns' : 'http://www.w3.org/2000/svg',
-				'num_gates' : 0,
-				'old_num_gates' : 0,
-				'GateMax' : [1000,1000,1000,1000,1000],
-				'ResetTime' : 0,
-				'x' : 0,
-				'obj' : 0,
-				'i' : 0,
-				'img' : 0,
-				'name' : 0,
-				'cmd' : 0,
-				'oldLevels' : [0,0,0,0,0],
-				'levels' : [0,0,0,0,0],
-				'rate' : [0,0,0,0,0],
-				'int' : [0,0,0,0,0],
-				'barChartColors' : ['#0000FF', '#FF0000', '#00FF00', '#FFFF00', '#660099']
-			};
-			TBparam.num_gates = parseInt(ODBGet("/Analyzer/Parameters/Gate0/NGates"));
-			TBparam.ResetTime = ODBGet("/Analyzer/Parameters/Gate0/ResetTime");
+			function main(){
 
-			//style barchart canvas:
-    		document.getElementById('rateBars').setAttribute('width', 750);
-    		document.getElementById('rateBars').setAttribute('height', 800);
+				document.getElementById('mainBody').setAttribute('style', 'opacity:1');
 
-			//check the appropriate gate radio:
-			TBparam.x="g"+TBparam.num_gates;
-			document.getElementById(TBparam.x).checked=true;
+				document.getElementById('title').innerHTML = 'TRIUMF';
+				document.getElementById('startB').innerHTML = 'Start';
+				document.getElementById('statusB').innerHTML = 'MIDAS Status';
+				document.getElementById('historyB').innerHTML = 'History';
+				document.getElementById('run5B').innerHTML = 'Start 5 Min Run';
+				document.getElementById('youAreHere').innerHTML = 'TBRAGG Monitor';
+				document.getElementById('resetCountsB').innerHTML = 'Reset Counts';
+				document.getElementById('saveASCIIB').innerHTML = 'Save ASCII';
+				//establish global parameter namespace
+				TBparam = {
+					'svgns' : 'http://www.w3.org/2000/svg',
+					'num_gates' : 0,
+					'old_num_gates' : 0,
+					'GateMax' : [1000,1000,1000,1000,1000],
+					'ResetTime' : 0,
+					'x' : 0,
+					'obj' : 0,
+					'i' : 0,
+					'img' : 0,
+					'name' : 0,
+					'cmd' : 0,
+					'oldLevels' : [0,0,0,0,0],
+					'levels' : [0,0,0,0,0],
+					'rate' : [0,0,0,0,0],
+					'int' : [0,0,0,0,0],
+					'barChartColors' : ['#0000FF', '#FF0000', '#00FF00', '#FFFF00', '#660099']
+				};
+				TBparam.num_gates = parseInt(ODBGet("/Analyzer/Parameters/Gate0/NGates"));
+				TBparam.ResetTime = ODBGet("/Analyzer/Parameters/Gate0/ResetTime");
 
-			//set the right zoom level:
-			TBparam.obj=document.getElementById("zoom_drop");
-			TBparam.obj.selectedIndex=ODBGet("/Analyzer/Parameters/Gate0/Zoom")-1;
+				//style barchart canvas:
+	    		document.getElementById('rateBars').setAttribute('width', 750);
+	    		document.getElementById('rateBars').setAttribute('height', 800);
 
-			//generate the gate interface:
-			document.getElementById('Gate_params').innerHTML = '';
-			for(TBparam.i=0; TBparam.i<TBparam.num_gates; TBparam.i++){
-				document.getElementById('Gate_params').innerHTML += "<br><b>Gate"+(TBparam.i+1)+":</b> Centre of box (x,y): ";
-				document.getElementById('Gate_params').innerHTML += "<input type='text' id='Gatex"+TBparam.i+"' style='width:40px'; onchange='setGateX(this)'>,";
-				document.getElementById('Gate_params').innerHTML += "<input type='text' id='Gatey"+TBparam.i+"' style='width:40px'; onchange='setGateY(this)'>";
-				document.getElementById('Gate_params').innerHTML += "Size: <input type='text' id='GateSize"+TBparam.i+"' style='width:40px'; onchange='setGateSize(this)'><br>";
+				//check the appropriate gate radio:
+				TBparam.x="g"+TBparam.num_gates;
+				document.getElementById(TBparam.x).checked=true;
+
+				//set the right zoom level:
+				TBparam.obj=document.getElementById("zoom_drop");
+				TBparam.obj.selectedIndex=ODBGet("/Analyzer/Parameters/Gate0/Zoom")-1;
+
+				//generate the gate interface:
+				document.getElementById('Gate_params').innerHTML = '';
+				for(TBparam.i=0; TBparam.i<TBparam.num_gates; TBparam.i++){
+					document.getElementById('Gate_params').innerHTML += "<br><b>Gate"+(TBparam.i+1)+":</b> Centre of box (x,y): ";
+					document.getElementById('Gate_params').innerHTML += "<input type='text' id='Gatex"+TBparam.i+"' style='width:40px'; onchange='setGateX(this)'>,";
+					document.getElementById('Gate_params').innerHTML += "<input type='text' id='Gatey"+TBparam.i+"' style='width:40px'; onchange='setGateY(this)'>";
+					document.getElementById('Gate_params').innerHTML += "Size: <input type='text' id='GateSize"+TBparam.i+"' style='width:40px'; onchange='setGateSize(this)'><br>";
+				}
+
+				//refresh some things and pull some stuff out of the ODB
+				mod_layout();
+				refreshAll();
+				for(TBparam.i=0; TBparam.i<=TBparam.num_gates; TBparam.i++){
+					TBparam.name="Gatex"+TBparam.i;
+					TBparam.cmd="/Analyzer/Parameters/Gate"+TBparam.i+"/x";
+					document.getElementById(TBparam.name).value=ODBGet(TBparam.cmd);
+					TBparam.name="Gatey"+TBparam.i;
+					TBparam.cmd="/Analyzer/Parameters/Gate"+TBparam.i+"/y";
+					document.getElementById(TBparam.name).value=ODBGet(TBparam.cmd);
+					TBparam.name="GateSize"+TBparam.i;
+					TBparam.cmd="/Analyzer/Parameters/Gate"+TBparam.i+"/size";
+					document.getElementById(TBparam.name).value=ODBGet(TBparam.cmd);
+				}
+
+				var spinElt = document.getElementById('loading');
+          		spinElt.parentNode.removeChild(spinElt);
 			}
-
-			//draw some images:
-			/*
-			TBparam.img = document.getElementById("svgimage");
-			TBparam.x = document.createElementNS(TBparam.svgns,'text');
-			TBparam.x.setAttribute('id','ThisTime');
-			TBparam.x.setAttribute('x', 20);
-			TBparam.x.setAttribute('y', 12);
-			TBparam.x.setAttribute('text-anchor', "start"); 
-			TBparam.x.textContent="";
-			TBparam.img.appendChild(TBparam.x);
-			DrawBars(); DrawScaler(0); DrawScaler(1);
-			*/
-
-			//refresh some things and pull some stuff out of the ODB
-			mod_layout();
-			refreshAll();
-			for(TBparam.i=0; TBparam.i<=TBparam.num_gates; TBparam.i++){
-				TBparam.name="Gatex"+TBparam.i;
-				TBparam.cmd="/Analyzer/Parameters/Gate"+TBparam.i+"/x";
-				document.getElementById(TBparam.name).value=ODBGet(TBparam.cmd);
-				TBparam.name="Gatey"+TBparam.i;
-				TBparam.cmd="/Analyzer/Parameters/Gate"+TBparam.i+"/y";
-				document.getElementById(TBparam.name).value=ODBGet(TBparam.cmd);
-				TBparam.name="GateSize"+TBparam.i;
-				TBparam.cmd="/Analyzer/Parameters/Gate"+TBparam.i+"/size";
-				document.getElementById(TBparam.name).value=ODBGet(TBparam.cmd);
-			}
-
 		</script>
 
 	</body>
