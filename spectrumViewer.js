@@ -269,6 +269,12 @@ function startup(){
 			ClickWindow( parseInt((document.getElementById(SVparam.canvasID).relMouseCoords(event).x-SVparam.leftMargin)/SVparam.binWidth + SVparam.XaxisLimitMin) );
 		}
 
+	document.getElementById(SVparam.canvasID2D).onmousedown = function(event){mDown2D(event)};
+	document.getElementById(SVparam.canvasID2D).onmouseup = function(event){mUp2D(event)};
+	SVparam.canvas2D.addEventListener('mousemove', function(event){mMove2D(event)}, false);
+	document.getElementById(SVparam.canvasID2D).onmouseout = function(event){document.getElementById('2Dcoords').innerHTML=''};
+
+
 	iframe = document.getElementById('menu_iframe');
 	iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
 	iframeDoc.open();
@@ -1033,6 +1039,330 @@ console.log(elts)
     return {x:canvasX, y:canvasY}
 }
 HTMLCanvasElement.prototype.relMouseCoords = relMouseCoords;
+
+//call <target==1,2>D view to display in Spectrum Control panel
+function summonView(target){
+	if(target==1){
+		document.getElementById('spectrumBlock2D').setAttribute('style', 'display:none;');
+		document.getElementById('spectrumBlock1D').setAttribute('style', '');
+		document.getElementById('overlayB').setAttribute('style', '');
+	} else if(target==2){
+		document.getElementById('spectrumBlock1D').setAttribute('style', 'display:none;');
+		document.getElementById('spectrumBlock2D').setAttribute('style', '');
+		document.getElementById('overlayB').setAttribute('style', 'display:none');
+	}
+}
+
+
+//stuff for 2D mode///////////////////////////////////////////////////////////////////////////////////
+//draw the frame for the 2D view:
+function draw2Dframe(){
+	var binsPerTick, i, label;
+
+	//determine bin render width (enforce square bins)
+	SVparam.binWidth2D = Math.min(  SVparam.yAxisPixLength2D / (SVparam.YaxisLimitMax2D - SVparam.YaxisLimitMin2D), SVparam.xAxisPixLength2D / (SVparam.XaxisLimitMax2D - SVparam.XaxisLimitMin2D));
+
+	//clear canvas
+	SVparam.context2D.clearRect(0,0,SVparam.canvWidth2D, SVparam.canvHeight2D);
+
+	//draw principle axes:
+	SVparam.context2D.strokeStyle = '#FFFFFF';
+	SVparam.context2D.fillStyle = '#FFFFFF';
+	SVparam.context2D.lineWidth = 1;
+	SVparam.context2D.beginPath();
+	SVparam.context2D.moveTo(SVparam.leftMargin2D, SVparam.topMargin2D);
+	SVparam.context2D.lineTo(SVparam.leftMargin2D, SVparam.canvas2D.height-SVparam.bottomMargin2D);
+	SVparam.context2D.lineTo(SVparam.canvas2D.width - SVparam.rightMargin2D, SVparam.canvas2D.height - SVparam.bottomMargin2D);
+	SVparam.context2D.stroke();
+
+	//Decorate x axis////////////////////////////////////////////////////////
+	//decide how many ticks to draw on the x axis:
+	SVparam.nXticks = 6;
+	//draw at most one tick per bin:
+	if(SVparam.XaxisLength2D < (SVparam.nXticks-1) )
+		SVparam.nXticks = SVparam.XaxisLength2D+1
+	//come as close to a factor of the number of bins as possible:
+	while( Math.floor(SVparam.XaxisLength2D / SVparam.nXticks) == Math.floor(SVparam.XaxisLength2D / (SVparam.nXticks-1)) )
+		SVparam.nXticks--;
+
+	//how many bins should there be between each tick?
+	binsPerTick = Math.floor((SVparam.XaxisLimitMax2D - SVparam.XaxisLimitMin2D) / (SVparam.nXticks-1));
+
+	//draw x axis ticks & labels:
+	for(i=0; i<SVparam.nXticks; i++){
+		//ticks
+		SVparam.context2D.beginPath();
+		SVparam.context2D.moveTo(SVparam.leftMargin2D + i*binsPerTick*SVparam.binWidth2D, SVparam.canvas2D.height - SVparam.bottomMargin2D);
+		SVparam.context2D.lineTo(SVparam.leftMargin2D + i*binsPerTick*SVparam.binWidth2D, SVparam.canvas2D.height - SVparam.bottomMargin2D + SVparam.tickLength);
+		SVparam.context2D.stroke();
+
+		//labels
+		label = (SVparam.XaxisLimitMin2D + i*binsPerTick).toFixed(0);
+		SVparam.context2D.textBaseline = 'top';
+		SVparam.context2D.fillText(label, SVparam.leftMargin2D + i*binsPerTick*SVparam.binWidth2D - SVparam.context2D.measureText(label).width/2, SVparam.canvas2D.height - SVparam.bottomMargin2D + SVparam.tickLength + SVparam.xLabelOffset);
+	}
+
+	//Decorate Y axis/////////////////////////////////////////////////////////
+	//decide how many ticks to draw on the y axis:
+	SVparam.nYticks = 6;
+	//come as close to a factor of the number of bins as possible:
+	while( Math.floor(SVparam.YaxisLength2D / SVparam.nYticks) == Math.floor(SVparam.YaxisLength2D / (SVparam.nYticks-1)) )
+		SVparam.nYticks--;
+
+	//how many bins should each tick increment?
+	binsPerTick = Math.floor(SVparam.YaxisLength2D / (SVparam.nYticks-1));
+
+	//draw y axis ticks and labels:
+	for(i=0; i<SVparam.nYticks; i++){
+		//ticks
+		SVparam.context2D.beginPath();
+		SVparam.context2D.moveTo(SVparam.leftMargin2D, SVparam.canvas2D.height - SVparam.bottomMargin2D - i*binsPerTick*SVparam.binWidth2D);
+		SVparam.context2D.lineTo(SVparam.leftMargin2D - SVparam.tickLength, SVparam.canvas2D.height - SVparam.bottomMargin2D - i*binsPerTick*SVparam.binWidth2D);
+		SVparam.context2D.stroke();
+
+		//labels
+		SVparam.context2D.textBaseline = 'middle';
+		label = (SVparam.YaxisLimitMin2D + i*binsPerTick).toFixed(0);
+		SVparam.context2D.fillText(label, SVparam.leftMargin2D - SVparam.tickLength - SVparam.yLabelOffset - SVparam.context2D.measureText(label).width, SVparam.canvas2D.height - SVparam.bottomMargin2D - i*binsPerTick*SVparam.binWidth2D);
+
+	}
+
+	//x axis title:
+	SVparam.context2D.textBaseline = 'bottom';
+	SVparam.context2D.fillText('Channels', SVparam.canvas2D.width - SVparam.rightMargin2D - SVparam.context2D.measureText('Channels').width, SVparam.canvas2D.height);
+
+	//y axis title:
+	SVparam.context2D.textBaseline = 'alphabetic';
+	SVparam.context2D.save();
+	SVparam.context2D.translate(SVparam.leftMargin2D*0.25, SVparam.context2D.measureText('Channels').width + SVparam.topMargin2D );
+	SVparam.context2D.rotate(-Math.PI/2);
+	SVparam.context2D.fillText('Channels', 0,0);
+	SVparam.context2D.restore();
+
+}
+
+function plot_data2D(RefreshNow){
+	var i, j, data, thisSpec, 
+	entries = 0,
+	thisData = [];
+	SVparam.entries = [];
+
+
+	thisData = window.thisData;
+/*
+	SVparam.maxYvalue=SVparam.YaxisLimitMax;
+	// Loop through to get the data and set the Y axis limits
+	for(thisSpec=0; thisSpec<SVparam.DisplayedSpecs.length; thisSpec++){
+		// Here call function to get data from the server
+		// thisData[thisSpec]=ODBGet("/Test/spectrum_data[*]","%d");
+		thisData[thisSpec]=getSpecData(SVparam.DisplayedSpecs[thisSpec]);
+
+		//Find the maximum X value from the size of the data
+		if(thisData[thisSpec].length>SVparam.XaxisLimitAbsMax){
+			SVparam.XaxisLimitAbsMax=thisData[thisSpec].length;
+
+			// Create more datapoints here if required for this spectrum
+		}
+
+		// Find maximum Y value in the part of the spectrum to be displayed
+		if(Math.max.apply(Math, thisData[thisSpec].slice(Math.floor(SVparam.XaxisLimitMin),Math.floor(SVparam.XaxisLimitMax)))>SVparam.maxYvalue){
+			SVparam.maxYvalue=Math.max.apply(Math, thisData[thisSpec].slice(Math.floor(SVparam.XaxisLimitMin),Math.floor(SVparam.XaxisLimitMax)));
+		}
+
+		// Find the sum of everything in the current x range
+		data = thisData[thisSpec].slice(  Math.floor(SVparam.XaxisLimitMin),Math.floor(SVparam.XaxisLimitMax)   );
+		SVparam.totalEntries = 0;
+		for(j=0; j<data.length; j++ ){
+			SVparam.totalEntries += data[j];
+		}
+
+		//report number of entries on canvas:
+		SVparam.entries[thisSpec] = SVparam.totalEntries;
+
+	}// End of for loop
+*/
+/*
+	// Adjust the Y axis limit and compression and redraw the axis
+	if(SVparam.maxYvalue>5){
+		if(SVparam.AxisType==0) SVparam.YaxisLimitMax=Math.floor(SVparam.maxYvalue*1.2);
+		if(SVparam.AxisType==1) SVparam.YaxisLimitMax=SVparam.maxYvalue*100;
+	} else {
+		if(SVparam.AxisType==0) SVparam.YaxisLimitMax=5;
+		if(SVparam.AxisType==1) SVparam.YaxisLimitMax=50;
+	}
+*/
+	//update axis range
+	SVparam.XaxisLength2D=SVparam.XaxisLimitMax2D-SVparam.XaxisLimitMin2D;
+	SVparam.YaxisLength2D=SVparam.YaxisLimitMax2D-SVparam.YaxisLimitMin2D;
+
+	draw2Dframe();
+
+	//fill histo:
+	for(i=0; i<thisData.length; i++){
+		if(thisData[i].x >= SVparam.XaxisLimitMin2D && thisData[i].x < SVparam.XaxisLimitMax2D && thisData[i].y >= SVparam.YaxisLimitMin2D && thisData[i].y < SVparam.YaxisLimitMax2D){
+			SVparam.context2D.fillStyle = scalepickr(thisData[i].z, 'Sunset');
+			//SVparam.context2D.shadowColor = scalepickr(thisData[i].z, 'Sunset');
+			SVparam.context2D.fillRect(SVparam.leftMargin2D + (thisData[i].x-SVparam.XaxisLimitMin2D)*SVparam.binWidth2D, SVparam.canvas2D.height - SVparam.bottomMargin2D - (thisData[i].y-SVparam.YaxisLimitMin2D+1)*SVparam.binWidth2D ,SVparam.binWidth2D,SVparam.binWidth2D);
+			entries += thisData[i].z;
+		}
+	}
+
+	//report entries:
+	SVparam.context2D.textBaseline = 'top';
+	SVparam.context2D.fillStyle = '#999999';
+	SVparam.context2D.fillText('Entries: '+entries, SVparam.canvas2D.width - SVparam.rightMargin2D - SVparam.context.measureText('Entries: '+entries).width, 16);
+
+
+	// Pause for some time and then recall this function to refresh the data display
+	//if(SVparam.RefreshTime>0 && RefreshNow==1) setTimeout(function(){plot_data(1)},SVparam.RefreshTime*1000); 
+}
+
+//mouse down & mouse up behavior functions for 2D canvas:
+function mDown2D(event){
+	var x, y, coords;
+
+	coords = document.getElementById(SVparam.canvasID2D).relMouseCoords(event);
+	x = coords.x;
+	y = coords.y;
+
+	//drag a box if clicking in the plot field:
+	if(x > SVparam.leftMargin2D && x < (SVparam.canvas2D.width - SVparam.rightMargin2D) && y>SVparam.topMargin2D && y<(SVparam.canvas2D.height-SVparam.bottomMargin2D)){
+		SVparam.onclickXvals.min = (x-SVparam.leftMargin2D)/SVparam.binWidth2D + SVparam.XaxisLimitMin2D;
+		SVparam.onclickYvals.min = (SVparam.canvas2D.height-SVparam.bottomMargin2D - y)/SVparam.binWidth2D + SVparam.YaxisLimitMin2D;
+	}
+}
+
+function mUp2D(event){
+	var x, y, coords;
+
+	coords = document.getElementById(SVparam.canvasID2D).relMouseCoords(event);
+	x = coords.x;
+	y = coords.y;
+
+	//drag a box if clicking in the plot field:
+	if(x > SVparam.leftMargin2D && x < (SVparam.canvas2D.width - SVparam.rightMargin2D) && y>SVparam.topMargin2D && y<(SVparam.canvas2D.height-SVparam.bottomMargin2D)){
+		SVparam.onclickXvals.max = (x-SVparam.leftMargin2D)/SVparam.binWidth2D + SVparam.XaxisLimitMin2D;
+		SVparam.onclickYvals.max = (SVparam.canvas2D.height-SVparam.bottomMargin2D - y)/SVparam.binWidth2D + SVparam.YaxisLimitMin2D;
+
+		//make sure the mins and maxes go to the right place, in case the user dragged backwards:
+		SVparam.XaxisLimitMin2D = Math.min(SVparam.onclickXvals.min, SVparam.onclickXvals.max);
+		SVparam.XaxisLimitMax2D = Math.max(SVparam.onclickXvals.min, SVparam.onclickXvals.max);
+		SVparam.YaxisLimitMin2D = Math.min(SVparam.onclickYvals.min, SVparam.onclickYvals.max);
+		SVparam.YaxisLimitMax2D = Math.max(SVparam.onclickYvals.min, SVparam.onclickYvals.max);
+
+		//redraw with new bounds:
+		plot_data2D();
+	}
+}
+
+function mMove2D(event){
+	var x, y, coords, xBin, yBin;
+
+	coords = document.getElementById(SVparam.canvasID2D).relMouseCoords(event);
+	x = coords.x;
+	y = coords.y;
+
+	xBin = Math.floor((x-SVparam.leftMargin2D)/SVparam.binWidth2D+SVparam.XaxisLimitMin2D);
+	yBin = Math.floor((SVparam.canvas2D.height-SVparam.bottomMargin2D-y)/SVparam.binWidth2D+SVparam.YaxisLimitMin2D);
+
+	document.getElementById('2Dcoords').innerHTML = 'x: '+xBin+', y: '+yBin;
+
+}
+
+
+//map [0,1] onto black->purple->red->orange->yellow->white
+scalepickr = function(scale, palette){
+    //map scale onto [0,360]:
+    var H = scale*300 / 60;
+    if(H>5) H=5;
+    if(H<0) H=0;
+    var R, G, B;
+    var start0, start1, start2, start3, start4, start5;
+    if (palette == 'Sunset'){
+        start0 = [0,0,0];
+        start1 = [0,0,0x52];
+        start2 = [0xE6,0,0x5C];
+        start3 = [255,255,0];        
+        start4 = [255,0x66,0];
+        start5 = [255,0,0];        
+    } else if (palette == 'ROOT Rainbow'){
+        start0 = [0xFF,0x00,0x00];
+        start1 = [0xFF,0xFF,0x00];
+        start2 = [0x00,0xFF,0x00];
+        start3 = [0x00,0xFF,0xFF];
+        start4 = [0x00,0x00,0xFF];
+        start5 = [0x66,0x00,0xCC];
+        H = -1*(H-5);
+    } else if (palette == 'Greyscale'){
+        start0 = [0x00,0x00,0x00];
+        start1 = [0x22,0x22,0x22];
+        start2 = [0x55,0x55,0x55];
+        start3 = [0x88,0x88,0x88];        
+        start4 = [0xBB,0xBB,0xBB];
+        start5 = [0xFF,0xFF,0xFF];
+    } else if (palette == 'Red Scale'){
+        start0 = [0x00,0x00,0x00];
+        start1 = [0x33,0x00,0x00];
+        start2 = [0x66,0x00,0x00];
+        start3 = [0x99,0x00,0x00];
+        start4 = [0xCC,0x00,0x00];
+        start5 = [0xFF,0x00,0x00];
+    } else if (palette == 'Mayfair'){
+        start0 = [0x1E,0x4B,0x0F];
+        start1 = [0x0E,0xBE,0x57];
+        start2 = [0xE4,0xAB,0x33];
+        start3 = [0xEC,0x95,0xF7];
+        start4 = [0x86,0x19,0x4A];
+        start5 = [0xFF,0x10,0x10];
+    } else if (palette == 'Test'){
+        start0 = [0x5E,0x1F,0x14];
+        start1 = [0x74,0x4D,0x3E];
+        start2 = [0x9D,0x47,0x05];
+        start3 = [0xDF,0x67,0x19];
+        start4 = [0xFE,0x83,0x54];
+        start5 = [0x251,0x15,0x29];
+    }
+    if(H>=0 && H<1){
+        R = start0[0] + Math.round(H*(start1[0]-start0[0]));
+        G = start0[1] + Math.round(H*(start1[1]-start0[1]));
+        B = start0[2] + Math.round(H*(start1[2]-start0[2]));
+    } else if(H>=1 && H<2){
+        R = start1[0] + Math.round((H-1)*(start2[0]-start1[0]));
+        G = start1[1] + Math.round((H-1)*(start2[1]-start1[1]));
+        B = start1[2] + Math.round((H-1)*(start2[2]-start1[2]));
+    } else if(H>=2 && H<3){
+        R = start2[0] + Math.round((H-2)*(start3[0]-start2[0]));
+        G = start2[1] + Math.round((H-2)*(start3[1]-start2[1]));
+        B = start2[2] + Math.round((H-2)*(start3[2]-start2[2]));
+    } else if(H>=3 && H<4){
+        R = start3[0] + Math.round((H-3)*(start4[0]-start3[0]));
+        G = start3[1] + Math.round((H-3)*(start4[1]-start3[1]));
+        B = start3[2] + Math.round((H-3)*(start4[2]-start3[2]));
+    } else if(H>=4 && H<=5){
+        R = start4[0] + Math.round((H-4)*(start5[0]-start4[0]));
+        G = start4[1] + Math.round((H-4)*(start5[1]-start4[1]));
+        B = start4[2] + Math.round((H-4)*(start5[2]-start4[2]));  
+    }
+
+    return constructHexColor([R,G,B]);
+
+}
+
+function constructHexColor(color){
+    var R = Math.round(color[0]);
+    var G = Math.round(color[1]);
+    var B = Math.round(color[2]);
+
+    R = R.toString(16);
+    G = G.toString(16);
+    B = B.toString(16);
+
+    if(R.length == 1) R = '0'+R;
+    if(G.length == 1) G = '0'+G;
+    if(B.length == 1) B = '0'+B;
+
+    return '#'+R+G+B;
+}
 
 // To do list:
 // 
