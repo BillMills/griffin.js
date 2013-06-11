@@ -76,107 +76,107 @@
 
 	    <div id='mainBody' style='opacity:0'>
 
-		<div id='branding' style='width:100%; height:100; border-color:#999999; border-left-style:solid; border-bottom-style:solid; border-left-width:5px; border-bottom-width:5px; border-bottom-left-radius:25px; background-color:#333333; margin-bottom:5px;'>
-			<img id='logo' height='80px' width='80px' src='triumf.gif' style='opacity:0.5625; padding-left:10px;'></img>
-			<h1 id='title' style='position:relative; display:inline; font: 80px Raleway; top:-10px'></h1>
-		</div>
+			<div id='branding' style='width:100%; height:100; border-color:#999999; border-left-style:solid; border-bottom-style:solid; border-left-width:5px; border-bottom-width:5px; border-bottom-left-radius:25px; background-color:#333333; margin-bottom:5px;'>
+				<img id='logo' height='80px' width='80px' src='triumf.gif' style='opacity:0.5625; padding-left:10px;'></img>
+				<h1 id='title' style='position:relative; display:inline; font: 80px Raleway; top:-10px'></h1>
+			</div>
 
-		<div id='navbar' style='width: 100%; height: 30px; margin-bottom:10px;'>
-			<button id='startB' class='navLink' name="cmd" value="Start" type="submit" onclick="setResetTime()"></button>
-			<button id='statusB' class='navLink' name="cmd" value="Status" type="submit"></button>
-			<button id='historyB' class='navLink' name="cmd" value="History" type="submit"></button>
-			<input type=hidden name="redir" value="/CS/Monitor">
-			<button id='run5B' class='navLink' type=submit name=customscript value="Start 5 Min Run" onclick="setResetTime()"></button>
-			<h2 id='youAreHere' style='position:absolute; display:inline; margin:0px; right:20px;'></h2>
-		</div>
+			<div id='navbar' style='width: 100%; height: 30px; margin-bottom:10px;'>
+				<button id='startB' class='navLink' name="cmd" value="Start" type="submit" onclick="setResetTime()"></button>
+				<button id='statusB' class='navLink' name="cmd" value="Status" type="submit"></button>
+				<button id='historyB' class='navLink' name="cmd" value="History" type="submit"></button>
+				<input type=hidden name="redir" value="/CS/Monitor">
+				<button id='run5B' class='navLink' type=submit name=customscript value="Start 5 Min Run" onclick="setResetTime()"></button>
+				<h2 id='youAreHere' style='position:absolute; display:inline; margin:0px; right:20px;'></h2>
+			</div>
 
-		<table class='mainElement' width='100%' style='text-align:center'>
-			<caption>Run Status</caption>
-			<tr>
-				<td id="run_status" align='center' width='33%' style='color:#000000'></td>
-				<td id="run_num" width='34%'></td>
-				<td id='dateLine' width='33%'></td>				
-			</tr>
-		</table>
-
-		<table class='mainElement' width='100%' style='margin-top:10px'>
-			<caption>Gate Parameters</caption>
-			<tr style='text-align:center; margin-bottom:10px;'>
-				<td align='center' width='100%'>
-					Number of Gates: 1<input type="radio" id="g0" value="0" onclick="set_radios(this)"> 
-					2<input type="radio" id="g1" value="1" onclick="set_radios(this)"> 
-					3<input type="radio" id="g2" value="2" onclick="set_radios(this)"> 
-					4<input type="radio" id="g3" value="3" onclick="set_radios(this)"> 
-				</td>
-			</tr>
-			<tr id='Gate_params'></tr>
-		</table>
-
-		<form name="mainform" style='text-align:center;'>
-			<table style='margin-top:10px; position:relative; margin-left:auto; margin-right:auto;'>
+			<table class='mainElement' width='100%' style='text-align:center'>
+				<caption>Run Status</caption>
 				<tr>
-					<td>
-						<table class='mainElement' style='position:relative; top:-227px;'>
-							<caption>E vs. dE</caption>
-							<tr>
-								<td colspan="3">
-									<img id="2Dplot" src="IDPlot.gif" width=380, height=380>
-								</td>					
-							</tr>
-							<tr>
-								<td>
-									<b>Zoom</b> 
-									<select id="zoom_drop" onchange="setZoom(this.value);">
-										<option id="v1" value="1">x1</option>
-										<option id="v2" value="2">x2</option>
-										<option id="v3" value="3">x3</option>
-										<option id="v4" value="4">x4</option>
-									</select>						
-								</td>
-
-								<td>
-									<form method="GET" action="http://midtig04.triumf.ca:8081/CS/Monitor&">
-										<button id='resetCountsB' class='navLink' type=submit name=customscript value="Reset Counts" onclick="setResetTime()"></button>
-										<input type=hidden name="redir" value="/CS/Monitor">
-									</form>
-								</td>
-
-								<td align=left style="width:100px;">
-									<button id='saveASCIIB' class='navLink' type="button" value="Save ASCII" onclick="dump2D()"></button>
-								</td>
-							</tr>
-
-						</table>
-					</td>
-
-					<td>
-						<table class='mainElement'>
-							<caption>Gate Rates</caption>
-							<tr>
-								<td stlye='width:100px !important;'></td>
-								<td class='limitBox'>Upper limit<br><input type="text" id="MaxT" style="width:70px" onchange="TBparam.GateMax[0]=this.value;"></td>
-								<td class='limitBox'>Upper limit<br><input type="text" id="MaxG" style="width:70px" onchange="TBparam.GateMax[1]=this.value;"></td>
-								<td class='limitBox' id="l1" style='opacity:0;'>Upper limit<br><input type="text" id="MaxG1" style="width:70px" onchange="TBparam.GateMax[2]=parseInt(this.value);"></td>
-								<td class='limitBox' id="l2" style='opacity:0;'>Upper limit<br><input type="text" id="MaxG2" style="width:70px" onchange="TBparam.GateMax[3]=parseInt(this.value);"></td>
-								<td class='limitBox' id="l3" style='opacity:0;'>Upper limit<br><input type="text" id="MaxG3" style="width:70px" onchange="TBparam.GateMax[4]=parseInt(this.value);"></td>
-							</tr>
-
-							<tr>
-								<td id='rateBarCell' colspan="6">
-									<canvas id='rateBars'> </canvas>
-								</td>
-							</tr>
-
-							<tr style='text-align:center;'>
-								<td colspan='6'>
-									<span id="Time_display"></span> seconds since last reset
-								</td>
-							</tr>
-						</table>
-					</td>
+					<td id="run_status" align='center' width='33%' style='color:#000000'></td>
+					<td id="run_num" width='34%'></td>
+					<td id='dateLine' width='33%'></td>				
 				</tr>
 			</table>
-		</form>
+
+			<table class='mainElement' width='100%' style='margin-top:10px'>
+				<caption>Gate Parameters</caption>
+				<tr style='text-align:center; margin-bottom:10px;'>
+					<td align='center' width='100%'>
+						Number of Gates: 1<input type="radio" id="g0" value="0" onclick="set_radios(this)"> 
+						2<input type="radio" id="g1" value="1" onclick="set_radios(this)"> 
+						3<input type="radio" id="g2" value="2" onclick="set_radios(this)"> 
+						4<input type="radio" id="g3" value="3" onclick="set_radios(this)"> 
+					</td>
+				</tr>
+				<tr id='Gate_params'></tr>
+			</table>
+
+			<form name="mainform" style='text-align:center;'>
+				<table style='margin-top:10px; position:relative; margin-left:auto; margin-right:auto;'>
+					<tr>
+						<td>
+							<table class='mainElement' style='position:relative; top:-227px;'>
+								<caption>E vs. dE</caption>
+								<tr>
+									<td colspan="3">
+										<img id="2Dplot" src="IDPlot.gif" width=380, height=380>
+									</td>					
+								</tr>
+								<tr>
+									<td>
+										<b>Zoom</b> 
+										<select id="zoom_drop" onchange="setZoom(this.value);">
+											<option id="v1" value="1">x1</option>
+											<option id="v2" value="2">x2</option>
+											<option id="v3" value="3">x3</option>
+											<option id="v4" value="4">x4</option>
+										</select>						
+									</td>
+
+									<td>
+										<form method="GET" action="http://midtig04.triumf.ca:8081/CS/Monitor&">
+											<button id='resetCountsB' class='navLink' type=submit name=customscript value="Reset Counts" onclick="setResetTime()"></button>
+											<input type=hidden name="redir" value="/CS/Monitor">
+										</form>
+									</td>
+
+									<td align=left style="width:100px;">
+										<button id='saveASCIIB' class='navLink' type="button" value="Save ASCII" onclick="dump2D()"></button>
+									</td>
+								</tr>
+
+							</table>
+						</td>
+
+						<td>
+							<table class='mainElement'>
+								<caption>Gate Rates</caption>
+								<tr>
+									<td stlye='width:100px !important;'></td>
+									<td class='limitBox'>Upper limit<br><input type="text" id="MaxT" style="width:70px" onchange="TBparam.GateMax[0]=this.value;"></td>
+									<td class='limitBox'>Upper limit<br><input type="text" id="MaxG" style="width:70px" onchange="TBparam.GateMax[1]=this.value;"></td>
+									<td class='limitBox' id="l1" style='opacity:0;'>Upper limit<br><input type="text" id="MaxG1" style="width:70px" onchange="TBparam.GateMax[2]=parseInt(this.value);"></td>
+									<td class='limitBox' id="l2" style='opacity:0;'>Upper limit<br><input type="text" id="MaxG2" style="width:70px" onchange="TBparam.GateMax[3]=parseInt(this.value);"></td>
+									<td class='limitBox' id="l3" style='opacity:0;'>Upper limit<br><input type="text" id="MaxG3" style="width:70px" onchange="TBparam.GateMax[4]=parseInt(this.value);"></td>
+								</tr>
+
+								<tr>
+									<td id='rateBarCell' colspan="6">
+										<canvas id='rateBars'> </canvas>
+									</td>
+								</tr>
+
+								<tr style='text-align:center;'>
+									<td colspan='6'>
+										<span id="Time_display"></span> seconds since last reset
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</form>
 		</div>
 
 		<script type="text/javascript">

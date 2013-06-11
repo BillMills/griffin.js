@@ -44,6 +44,8 @@
 
 	<body class='standard'>
 
+		<div id='loading' style='width:100px; height:100px; border:5px solid; border-color:#FFFFFF; border-radius:25px; background:#000000; text-align:center; margin-left:auto; margin-right:auto; position:relative; top:300px'><p style='position:relative; top:50px; font:16px Arial'>Loading<p></div>
+
 	    <script type="text/javascript">
 	      //load the webfonts, and block the page until they're ready or failed - otherwise lots of rendering bugs happen!
 	      WebFontConfig = { google: { families: [ 'Orbitron', 'Raleway' ] },
@@ -69,190 +71,193 @@
 	      })();
 	    </script>
 
-		<div id='branding' style='width:100%; height:100; border-color:#999999; border-left-style:solid; border-bottom-style:solid; border-left-width:5px; border-bottom-width:5px; border-bottom-left-radius:25px; background-color:#333333; margin-bottom:5px;'>
-			<img id='logo' height='80px' width='80px' src='triumf.gif' style='opacity:0.5625; padding-left:10px;'></img>
-			<h1 id='title' style='position:relative; display:inline; font: 80px Raleway; top:-10px'></h1>
+	    <div id='mainBody' style='opacity:0'>
+			<div id='branding' style='width:100%; height:100; border-color:#999999; border-left-style:solid; border-bottom-style:solid; border-left-width:5px; border-bottom-width:5px; border-bottom-left-radius:25px; background-color:#333333; margin-bottom:5px;'>
+				<img id='logo' height='80px' width='80px' src='triumf.gif' style='opacity:0.5625; padding-left:10px;'></img>
+				<h1 id='title' style='position:relative; display:inline; font: 80px Raleway; top:-10px'></h1>
+			</div>
+
+			<div id='navbar' style='width: 100%; height: 30px; margin-bottom:10px;'>
+				<button id='statusPage' class='navLink' type="submit"></button>
+				<h2 id='youAreHere' style='position:absolute; display:inline; margin:0px; right:20px;'></h2>
+			</div>
+
+			<table width='100%' style='padding-top:0px;'>
+				<tr>
+					<td rowspan='2'>
+
+						<!--1D spectrum elements///////////////////////////////////////////////////////////-->
+						<table id='spectrumBlock1D' class='mainElement'>
+							<caption style='font: 20px Raleway'>Spectrum Control</caption>
+
+							<tr>
+								<td colspan=2>
+									<canvas id='testCanv'></canvas>
+									<br><br><p id="textbox"></p>
+								</td>
+							</tr>
+
+							<tr>
+								<td align='left' style='padding:none;'>
+									x axis limits: 
+									<input type="text" id="LowerXLimit" style="width:42px;" onchange="SetLowerLimitByInput(parseInt(this.value))"></button>
+									<input type="text" id="UpperXLimit" style="width:42px;" onchange="SetUpperLimitByInput(parseInt(this.value))"></button>
+									<button id='bigLeft' class='navLink' type="button" value="<<" onclick="ShiftLimitBigLeft()"></button>
+									<button id='smallLeft' class='navLink' type="button" value="<" onclick="ShiftLimitLeft()"></button>
+									<button id='smallRight' class='navLink' type="button" value=">" onclick="ShiftLimitRight()"></button>
+									<button id='bigRight' class='navLink' type="button" value=">>" onclick="ShiftLimitBigRight()"></button>
+									<button id='unzoom' class='navLink' type="button" value="Unzoom" onclick="unzoom()"></button>
+									<div id="limitMistake" style="color:'#00FFFF'"></div>
+								</td>
+
+								<td colspan=1 width='200px' align='left' style='padding:none;'>
+									<p id="mousebox" style='margin:none;'></p>
+								</td>
+
+							</tr>
+
+							<tr>
+								<td>
+									y axis: Lin<input type="radio" id="a0" value="0" onclick="set_AxisType(this)" checked="true">|<input type="radio" id="a1" value="1" onclick="set_AxisType(this)">Log
+								</td>
+							</tr>
+
+							<tr>
+								<td width="400px" align='left'>
+									Refresh Rate: 
+									<select id="refreshRate" onchange="SVparam.RefreshTime=this.value;">
+										<option id="r0" value="0">Off</option>
+										<option id="r1" value="1">1s</option>
+										<option id="r2" value="2">2s</option>
+										<option id="r3" value="5">5s</option>
+										<option id="r4" value="10">10s</option>
+									</select>
+									<button id='refresh' class='navLink' type="button" value="Refresh Now" onclick="plot_data(0)"></button>
+								</td>
+							</tr>
+
+							<tr>
+								<td colspan=1 align='left' style='padding:none;'>
+									<button id='clearSpec' class='navLink' type="button" value="Clear Spectra" onclick="clearSpecs()"></button>
+									<button id='fitPeak' class='navLink' type="button" value="Fit a Peak" onclick="RequestFitLimits()"></button>
+								</td>
+
+								<td>
+									<p id="fitbox"></p>
+								</td>
+							</tr>
+
+						</table>
+
+						<!--2D spectrum elements////////////////////////////////////////////////////////////////-->
+						<table id='spectrumBlock2D' class='mainElement' style='display:none;'>
+							<caption style='font: 20px Raleway'>Spectrum Control</caption>
+
+							<tr>
+								<td rowspan='7'>
+									<canvas id='canvas2D' style='margin-right:10px'></canvas>
+								</td>
+							</tr>
+
+							<tr>
+								<td align='left' style='padding:none;'>
+									x axis limits: 
+									<input type="text" id="LowerXLimit2D" style="width:42px;" onchange="SetLowerLimitByInput(parseInt(this.value))"></button>
+									<input type="text" id="UpperXLimit2D" style="width:42px;" onchange="SetUpperLimitByInput(parseInt(this.value))"></button>
+									<button id='bigLeft2D' class='navLink' type="button" value="<<" onclick="ShiftLimitBigLeft()"><<</button>
+									<button id='smallLeft2D' class='navLink' type="button" value="<" onclick="ShiftLimitLeft()"><</button>
+									<button id='smallRight2D' class='navLink' type="button" value=">" onclick="ShiftLimitRight()">></button>
+									<button id='bigRight2D' class='navLink' type="button" value=">>" onclick="ShiftLimitBigRight()">>></button>
+									<div id="limitMistake2D" style="color:'#00FFFF'"></div>
+								</td>
+							</tr>
+							<tr>
+								<td align='left' style='padding:none;'>
+									y axis limits: 
+									<input type="text" id="LowerYLimit" style="width:42px;" onchange="SetLowerLimitByInput(parseInt(this.value))"></button>
+									<input type="text" id="UpperYLimit" style="width:42px;" onchange="SetUpperLimitByInput(parseInt(this.value))"></button>
+									<button id='bigDown' class='navLink' type="button" value="<<" onclick="ShiftLimitBigLeft()">D</button>
+									<button id='smallDown' class='navLink' type="button" value="<" onclick="ShiftLimitLeft()">d</button>
+									<button id='smallUp' class='navLink' type="button" value=">" onclick="ShiftLimitRight()">u</button>
+									<button id='bigUp' class='navLink' type="button" value=">>" onclick="ShiftLimitBigRight()">U</button>
+									<div id="limitMistake" style="color:'#00FFFF'"></div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									z axis: Lin<input type="radio" id="a0" value="0" onclick="set_AxisType(this)" checked="true">|<input type="radio" id="a1" value="1" onclick="set_AxisType(this)">Log
+								</td>							
+							</tr>
+
+							<tr>
+								<td width="400px" align='left' vertical-align='bottom'>
+									Refresh Rate: 
+									<select id="refreshRate" onchange="SVparam.RefreshTime=this.value;">
+										<option id="r0" value="0">Off</option>
+										<option id="r1" value="1">1s</option>
+										<option id="r2" value="2">2s</option>
+										<option id="r3" value="5">5s</option>
+										<option id="r4" value="10">10s</option>
+									</select>
+									<button id='refresh' class='navLink' type="button" value="Refresh Now" onclick="plot_data(0)">Refresh Now</button>
+								</td>							
+							</tr>
+
+							<tr>
+								<td colspan=1 align='left' style='padding:none;'>
+									<button id='clearSpec' class='navLink' type="button" value="Clear Spectra" onclick="clearSpecs()">Clear Plot</button>
+									<button id='unzoom2D' class='navLink' type="button" value="Unzoom" onclick="unzoom()">Unzoom</button>
+								</td>
+							</tr>
+
+							<tr>
+								<td>
+									<p id="2Dcoords"></p>
+								</td>							
+							</tr>
+							
+						</table>
+					</td>
+
+					<!--File IO////////////////////////////////////////////////////////////////-->
+					<td>
+						<table id='fileBlock' class='mainElement' style='width:100%'>
+							<caption style='font: 20px Raleway'>Spectrum Menu</caption>
+
+							<tr>
+								<td width="480px" align='left'>
+									<iframe id="menu_iframe" width='99%' height='475px' frameborder=0></iframe>
+								</td>
+							</tr>
+
+							<tr>
+								<td style='text-align:center;'>
+									<button id='loadB' class='navLink' type="button" value="Load 1D Spectrum List" onclick='GetList("localhost:9092")'></button>
+									<button id='displayB' class='navLink' type="button" value="Display" onclick="DisplaySpecs()"></button>
+									<button id='overlayB' class='navLink' type="button" value="Overlay" onclick="OverlaySpecs()"></button>
+									<button id='clearB' class='navLink' type="button" value="Clear Selected" onclick="Menu_unSelectAll()"></button>
+									<button id='dummyB' class='navLink' type="button" value="dummy" onclick="summonView(2)">2D Test Dummy</button>
+									<div id="displayMistake" style="color:#00FFFF"></div>
+									<div id="holder"></div>
+								</td>
+							</tr>																		
+						</table>
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+						<table id="recent_list" class='mainElement' style='display:none; margin-top:10px; width:100%'>
+							<caption style='font: 20px Raleway'>Recently Viewed Spectra</caption>
+						</table>
+					</td>
+				</tr>
+			</table>
 		</div>
-
-		<div id='navbar' style='width: 100%; height: 30px; margin-bottom:10px;'>
-			<button id='statusPage' class='navLink' type="submit"></button>
-			<h2 id='youAreHere' style='position:absolute; display:inline; margin:0px; right:20px;'></h2>
-		</div>
-
-		<table width='100%' style='padding-top:0px;'>
-			<tr>
-				<td rowspan='2'>
-
-					<!--1D spectrum elements///////////////////////////////////////////////////////////-->
-					<table id='spectrumBlock1D' class='mainElement'>
-						<caption style='font: 20px Raleway'>Spectrum Control</caption>
-
-						<tr>
-							<td colspan=2>
-								<canvas id='testCanv'></canvas>
-								<br><br><p id="textbox"></p>
-							</td>
-						</tr>
-
-						<tr>
-							<td align='left' style='padding:none;'>
-								x axis limits: 
-								<input type="text" id="LowerXLimit" style="width:42px;" onchange="SetLowerLimitByInput(parseInt(this.value))"></button>
-								<input type="text" id="UpperXLimit" style="width:42px;" onchange="SetUpperLimitByInput(parseInt(this.value))"></button>
-								<button id='bigLeft' class='navLink' type="button" value="<<" onclick="ShiftLimitBigLeft()"></button>
-								<button id='smallLeft' class='navLink' type="button" value="<" onclick="ShiftLimitLeft()"></button>
-								<button id='smallRight' class='navLink' type="button" value=">" onclick="ShiftLimitRight()"></button>
-								<button id='bigRight' class='navLink' type="button" value=">>" onclick="ShiftLimitBigRight()"></button>
-								<button id='unzoom' class='navLink' type="button" value="Unzoom" onclick="unzoom()"></button>
-								<div id="limitMistake" style="color:'#00FFFF'"></div>
-							</td>
-
-							<td colspan=1 width='200px' align='left' style='padding:none;'>
-								<p id="mousebox" style='margin:none;'></p>
-							</td>
-
-						</tr>
-
-						<tr>
-							<td>
-								y axis: Lin<input type="radio" id="a0" value="0" onclick="set_AxisType(this)" checked="true">|<input type="radio" id="a1" value="1" onclick="set_AxisType(this)">Log
-							</td>
-						</tr>
-
-						<tr>
-							<td width="400px" align='left'>
-								Refresh Rate: 
-								<select id="refreshRate" onchange="SVparam.RefreshTime=this.value;">
-									<option id="r0" value="0">Off</option>
-									<option id="r1" value="1">1s</option>
-									<option id="r2" value="2">2s</option>
-									<option id="r3" value="5">5s</option>
-									<option id="r4" value="10">10s</option>
-								</select>
-								<button id='refresh' class='navLink' type="button" value="Refresh Now" onclick="plot_data(0)"></button>
-							</td>
-						</tr>
-
-						<tr>
-							<td colspan=1 align='left' style='padding:none;'>
-								<button id='clearSpec' class='navLink' type="button" value="Clear Spectra" onclick="clearSpecs()"></button>
-								<button id='fitPeak' class='navLink' type="button" value="Fit a Peak" onclick="RequestFitLimits()"></button>
-							</td>
-
-							<td>
-								<p id="fitbox"></p>
-							</td>
-						</tr>
-
-					</table>
-
-					<!--2D spectrum elements////////////////////////////////////////////////////////////////-->
-					<table id='spectrumBlock2D' class='mainElement' style='display:none;'>
-						<caption style='font: 20px Raleway'>Spectrum Control</caption>
-
-						<tr>
-							<td rowspan='7'>
-								<canvas id='canvas2D' style='margin-right:10px'></canvas>
-							</td>
-						</tr>
-
-						<tr>
-							<td align='left' style='padding:none;'>
-								x axis limits: 
-								<input type="text" id="LowerXLimit2D" style="width:42px;" onchange="SetLowerLimitByInput(parseInt(this.value))"></button>
-								<input type="text" id="UpperXLimit2D" style="width:42px;" onchange="SetUpperLimitByInput(parseInt(this.value))"></button>
-								<button id='bigLeft2D' class='navLink' type="button" value="<<" onclick="ShiftLimitBigLeft()"><<</button>
-								<button id='smallLeft2D' class='navLink' type="button" value="<" onclick="ShiftLimitLeft()"><</button>
-								<button id='smallRight2D' class='navLink' type="button" value=">" onclick="ShiftLimitRight()">></button>
-								<button id='bigRight2D' class='navLink' type="button" value=">>" onclick="ShiftLimitBigRight()">>></button>
-								<div id="limitMistake2D" style="color:'#00FFFF'"></div>
-							</td>
-						</tr>
-						<tr>
-							<td align='left' style='padding:none;'>
-								y axis limits: 
-								<input type="text" id="LowerYLimit" style="width:42px;" onchange="SetLowerLimitByInput(parseInt(this.value))"></button>
-								<input type="text" id="UpperYLimit" style="width:42px;" onchange="SetUpperLimitByInput(parseInt(this.value))"></button>
-								<button id='bigDown' class='navLink' type="button" value="<<" onclick="ShiftLimitBigLeft()">D</button>
-								<button id='smallDown' class='navLink' type="button" value="<" onclick="ShiftLimitLeft()">d</button>
-								<button id='smallUp' class='navLink' type="button" value=">" onclick="ShiftLimitRight()">u</button>
-								<button id='bigUp' class='navLink' type="button" value=">>" onclick="ShiftLimitBigRight()">U</button>
-								<div id="limitMistake" style="color:'#00FFFF'"></div>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								z axis: Lin<input type="radio" id="a0" value="0" onclick="set_AxisType(this)" checked="true">|<input type="radio" id="a1" value="1" onclick="set_AxisType(this)">Log
-							</td>							
-						</tr>
-
-						<tr>
-							<td width="400px" align='left' vertical-align='bottom'>
-								Refresh Rate: 
-								<select id="refreshRate" onchange="SVparam.RefreshTime=this.value;">
-									<option id="r0" value="0">Off</option>
-									<option id="r1" value="1">1s</option>
-									<option id="r2" value="2">2s</option>
-									<option id="r3" value="5">5s</option>
-									<option id="r4" value="10">10s</option>
-								</select>
-								<button id='refresh' class='navLink' type="button" value="Refresh Now" onclick="plot_data(0)">Refresh Now</button>
-							</td>							
-						</tr>
-
-						<tr>
-							<td colspan=1 align='left' style='padding:none;'>
-								<button id='clearSpec' class='navLink' type="button" value="Clear Spectra" onclick="clearSpecs()">Clear Plot</button>
-								<button id='unzoom2D' class='navLink' type="button" value="Unzoom" onclick="unzoom()">Unzoom</button>
-							</td>
-						</tr>
-
-						<tr>
-							<td>
-								<p id="2Dcoords"></p>
-							</td>							
-						</tr>
-						
-					</table>
-				</td>
-
-				<!--File IO////////////////////////////////////////////////////////////////-->
-				<td>
-					<table id='fileBlock' class='mainElement' style='width:100%'>
-						<caption style='font: 20px Raleway'>Spectrum Menu</caption>
-
-						<tr>
-							<td width="480px" align='left'>
-								<iframe id="menu_iframe" width='99%' height='475px' frameborder=0></iframe>
-							</td>
-						</tr>
-
-						<tr>
-							<td style='text-align:center;'>
-								<button id='loadB' class='navLink' type="button" value="Load 1D Spectrum List" onclick='GetList("localhost:9092")'></button>
-								<button id='displayB' class='navLink' type="button" value="Display" onclick="DisplaySpecs()"></button>
-								<button id='overlayB' class='navLink' type="button" value="Overlay" onclick="OverlaySpecs()"></button>
-								<button id='clearB' class='navLink' type="button" value="Clear Selected" onclick="Menu_unSelectAll()"></button>
-								<button id='dummyB' class='navLink' type="button" value="dummy" onclick="summonView(2)">2D Test Dummy</button>
-								<div id="displayMistake" style="color:#00FFFF"></div>
-								<div id="holder"></div>
-							</td>
-						</tr>																		
-					</table>
-				</td>
-			</tr>
-
-			<tr>
-				<td>
-					<table id="recent_list" class='mainElement' style='display:none; margin-top:10px; width:100%'>
-						<caption style='font: 20px Raleway'>Recently Viewed Spectra</caption>
-					</table>
-				</td>
-			</tr>
-		</table>
 
 		<script type="text/javascript">
 			function main(){
+
 				//fill in the some text elements:
 				document.getElementById('title').innerHTML = 'TRIUMF';
 				document.getElementById('youAreHere').innerHTML = 'Spectrum Viewer';
@@ -409,6 +414,10 @@
 
 				//initialize
 				startup();
+
+				document.getElementById('mainBody').setAttribute('style', 'opacity:1');
+				var spinElt = document.getElementById('loading');
+          		spinElt.parentNode.removeChild(spinElt);
 			}
 		</script>
 	</body>
