@@ -137,15 +137,16 @@ function SetLowerLimitByInput(input){
 }
 
 function ShiftLimitLeft(){
+	var length = SVparam.XaxisLimitMax - SVparam.XaxisLimitMin;
 
 	SVparam.XaxisLimitMin--;
 	SVparam.XaxisLimitMax--;
 
-	if(SVparam.XaxisLimitMin<=0) SVparam.XaxisLimitMin=0;
-	if(SVparam.XaxisLimitMax<=5) SVparam.XaxisLimitMax=5;
-	if(SVparam.XaxisLimitMax>=SVparam.XaxisLimitAbsMax) SVparam.XaxisLimitMax=SVparam.XaxisLimitAbsMax; 
-	if(SVparam.XaxisLimitMin>=SVparam.XaxisLimitMax) SVparam.XaxisLimitMin=(SVparam.XaxisLimitMax-5);
-	if(SVparam.XaxisLimitMax<=SVparam.XaxisLimitMin) SVparam.XaxisLimitMax=(SVparam.XaxisLimitMin+5); 
+	if(SVparam.XaxisLimitMin < 0){
+		SVparam.XaxisLimitMin = 0;
+		SVparam.XaxisLimitMax = length;
+	}
+ 
 	document.getElementById("LowerXLimit").value=SVparam.XaxisLimitMin;
 	document.getElementById("UpperXLimit").value=SVparam.XaxisLimitMax;
 
@@ -154,15 +155,16 @@ function ShiftLimitLeft(){
 }
 
 function ShiftLimitRight(){
+	var length = SVparam.XaxisLimitMax - SVparam.XaxisLimitMin;	
 
 	SVparam.XaxisLimitMin++;
 	SVparam.XaxisLimitMax++;
 
-	if(SVparam.XaxisLimitMin<0) SVparam.XaxisLimitMin=0;
-	if(SVparam.XaxisLimitMax<=5) SVparam.XaxisLimitMax=5;
-	if(SVparam.XaxisLimitMax>SVparam.XaxisLimitAbsMax) SVparam.XaxisLimitMax=SVparam.XaxisLimitAbsMax; 
-	if(SVparam.XaxisLimitMin>=(SVparam.XaxisLimitMax-5)) SVparam.XaxisLimitMin=(SVparam.XaxisLimitMax-5);
-	if(SVparam.XaxisLimitMax<=SVparam.XaxisLimitMin) SVparam.XaxisLimitMax=(SVparam.XaxisLimitMin+5);
+	if(SVparam.XaxisLimitMax > SVparam.XaxisLimitAbsMax){
+		SVparam.XaxisLimitMax = SVparam.XaxisLimitAbsMax;
+		SVparam.XaxisLimitMin = SVparam.XaxisLimitAbsMax - length;
+	}
+
 	document.getElementById("LowerXLimit").value=SVparam.XaxisLimitMin;
 	document.getElementById("UpperXLimit").value=SVparam.XaxisLimitMax;
 
@@ -171,16 +173,16 @@ function ShiftLimitRight(){
 }
 
 function ShiftLimitBigLeft(){
+	var length;
 
 	length=SVparam.XaxisLimitMax-SVparam.XaxisLimitMin;
 	SVparam.XaxisLimitMin=SVparam.XaxisLimitMin-length;
 	SVparam.XaxisLimitMax=SVparam.XaxisLimitMax-length;
 
-	if(SVparam.XaxisLimitMin<=0) SVparam.XaxisLimitMin=0; 
-	if(SVparam.XaxisLimitMax<=5) SVparam.XaxisLimitMax=5; 
-	if(SVparam.XaxisLimitMax>=SVparam.XaxisLimitAbsMax) SVparam.XaxisLimitMax=SVparam.XaxisLimitAbsMax;
-	if(SVparam.XaxisLimitMin>=SVparam.XaxisLimitMax) SVparam.XaxisLimitMin=(SVparam.XaxisLimitMax-5);
-	if(SVparam.XaxisLimitMax<=SVparam.XaxisLimitMin) SVparam.XaxisLimitMax=(SVparam.XaxisLimitMin+5);
+	if(SVparam.XaxisLimitMin<=0){
+		SVparam.XaxisLimitMin=0; 
+		SVparam.XaxisLimitMax=length; 
+	}
 	document.getElementById("LowerXLimit").value=SVparam.XaxisLimitMin;
 	document.getElementById("UpperXLimit").value=SVparam.XaxisLimitMax;
 
@@ -189,16 +191,16 @@ function ShiftLimitBigLeft(){
 }
 
 function ShiftLimitBigRight(){
+	var length;
 
 	length=SVparam.XaxisLimitMax-SVparam.XaxisLimitMin;
 	SVparam.XaxisLimitMin=SVparam.XaxisLimitMin+length;
 	SVparam.XaxisLimitMax=SVparam.XaxisLimitMax+length;
 
-	if(SVparam.XaxisLimitMin<0) SVparam.XaxisLimitMin=0; 
-	if(SVparam.XaxisLimitMax<=5) SVparam.XaxisLimitMax=5;
-	if(SVparam.XaxisLimitMax>SVparam.XaxisLimitAbsMax) SVparam.XaxisLimitMax=SVparam.XaxisLimitAbsMax; 
-	if(SVparam.XaxisLimitMin>=SVparam.XaxisLimitMax) SVparam.XaxisLimitMin=(SVparam.XaxisLimitMax-5); 
-	if(SVparam.XaxisLimitMax<=SVparam.XaxisLimitMin) SVparam.XaxisLimitMax=(SVparam.XaxisLimitMin+5); 
+	if(SVparam.XaxisLimitMax>SVparam.XaxisLimitAbsMax){
+		SVparam.XaxisLimitMax=SVparam.XaxisLimitAbsMax; 
+		SVparam.XaxisLimitMin=(SVparam.XaxisLimitMax-length);
+	} 
 	document.getElementById("LowerXLimit").value=SVparam.XaxisLimitMin;
 	document.getElementById("UpperXLimit").value=SVparam.XaxisLimitMax;
 
@@ -887,8 +889,14 @@ function Menu_selectSpectrum(id){
 function List_update(id,colorID) {
 	var i, table, row;
 
-	SVparam.word='<td width="25px" align="center" id="box'+colorID+'" style="display:inline-block;width:20px;background-color:'+SVparam.dataColor[colorID]+';color:'+SVparam.dataColor[colorID]+'">:-)</td><td width="150px" align="center"><button type="button" class="navLink" value="Display" onclick="displaySpectrum('+id+')">Display</button>'+' <button type="button" class="navLink" value="Overlay" onclick="overlaySpectrum('+id+')">Overlay</button></td><td width="225px">'+SVparam.spectrum_names[id]+' </td><td id="spec_fits'+colorID+'"></td>';
 	table = document.getElementById("recent_list");
+	//don't duplicate things in the list:
+	for(i=0; i<table.getElementsByTagName("tr").length; i++){
+		if(table.getElementsByTagName('tr')[i].innerHTML.search(SVparam.spectrum_names[id]) != -1)
+			table.deleteRow(i);
+	}
+
+	SVparam.word='<td width="25px" align="center" id="box'+colorID+'" style="display:inline-block;width:20px;background-color:'+SVparam.dataColor[colorID]+';color:'+SVparam.dataColor[colorID]+'">:-)</td><td width="150px" align="center"><button type="button" class="navLink" value="Display" onclick="displaySpectrum('+id+')">Display</button>'+' <button type="button" class="navLink" value="Overlay" onclick="overlaySpectrum('+id+')">Overlay</button></td><td width="225px">'+SVparam.spectrum_names[id]+' </td><td id="spec_fits'+colorID+'"></td>';
 	table.setAttribute('style', 'display:block; margin-top:10px;')
 	row = table.insertRow(0);
 	row.innerHTML =SVparam.word;
@@ -900,10 +908,12 @@ function List_update(id,colorID) {
 function reset_list_color(){
 	var j, x;
 
-	for(j=0; j<SVparam.NumSpecsDisplayed; j++){
+	for(j=0; j<10; j++){
 		x=document.getElementById("box"+j);
-		x.setAttribute('style', "background-color:#333333;color:#333333");
-		x.setAttribute('id', "");
+		if(x){
+			x.setAttribute('style', "background-color:#333333;color:#333333");
+			x.setAttribute('id', "");
+		}
 	}
 }
 
@@ -943,7 +953,8 @@ function overlaySpectrum(id){
 	}
 
 	// Add this spectrum to the Specs list
-	SVparam.Specs[SVparam.Specs.length]=id;
+	//SVparam.Specs[SVparam.Specs.length]=id;
+	SVparam.Specs = [id]  //dubious hack seems to fix the funky behavior of the above line - first use of overlay duplicated the original spectrum, investigate.
 
 	//Check number of displayed spectra
 	if((SVparam.Specs.length+SVparam.NumSpecsDisplayed)>10){
@@ -994,6 +1005,8 @@ function clearSpecs(){
 
 	SVparam.DisplayedSpecs=SVparam.Specs.slice();
 	SVparam.NumSpecsDisplayed=0;
+
+	drawFrame();
 
 }
 
