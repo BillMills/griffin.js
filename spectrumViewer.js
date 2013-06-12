@@ -130,76 +130,24 @@ function setAxisLimit(input, fieldID, target, absMax){
 	}
 }
 
-function ShiftLimitLeft(){
-	var length = SVparam.XaxisLimitMax - SVparam.XaxisLimitMin;
+function scrollSpectra(step, targetMin, targetMax, targetAbsMax, loField, hiField){
+	var windowSize = SVparam[targetMax] - SVparam[targetMin];
 
-	SVparam.XaxisLimitMin--;
-	SVparam.XaxisLimitMax--;
+	SVparam[targetMin] += step;
+	SVparam[targetMax] += step;
 
-	if(SVparam.XaxisLimitMin < 0){
-		SVparam.XaxisLimitMin = 0;
-		SVparam.XaxisLimitMax = length;
-	}
- 
-	document.getElementById("LowerXLimit").value=SVparam.XaxisLimitMin;
-	document.getElementById("UpperXLimit").value=SVparam.XaxisLimitMax;
-
-	SVparam.YaxisLimitMax=5;
-	plot_data(0);
-}
-
-function ShiftLimitRight(){
-	var length = SVparam.XaxisLimitMax - SVparam.XaxisLimitMin;	
-
-	SVparam.XaxisLimitMin++;
-	SVparam.XaxisLimitMax++;
-
-	if(SVparam.XaxisLimitMax > SVparam.XaxisLimitAbsMax){
-		SVparam.XaxisLimitMax = SVparam.XaxisLimitAbsMax;
-		SVparam.XaxisLimitMin = SVparam.XaxisLimitAbsMax - length;
+	if(SVparam[targetMin] < 0){
+		SVparam[targetMin] = 0;
+		SVparam[targetMax] = windowSize;
 	}
 
-	document.getElementById("LowerXLimit").value=SVparam.XaxisLimitMin;
-	document.getElementById("UpperXLimit").value=SVparam.XaxisLimitMax;
-
-	SVparam.YaxisLimitMax=5;
-	plot_data(0);
-}
-
-function ShiftLimitBigLeft(){
-	var length;
-
-	length=SVparam.XaxisLimitMax-SVparam.XaxisLimitMin;
-	SVparam.XaxisLimitMin=SVparam.XaxisLimitMin-length;
-	SVparam.XaxisLimitMax=SVparam.XaxisLimitMax-length;
-
-	if(SVparam.XaxisLimitMin<=0){
-		SVparam.XaxisLimitMin=0; 
-		SVparam.XaxisLimitMax=length; 
+	if(SVparam[targetMax] > SVparam[targetAbsMax]){
+		SVparam[targetMax] = SVparam[targetAbsMax];
+		SVparam[targetMin] = SVparam[targetAbsMax] - windowSize;
 	}
-	document.getElementById("LowerXLimit").value=SVparam.XaxisLimitMin;
-	document.getElementById("UpperXLimit").value=SVparam.XaxisLimitMax;
 
-	SVparam.YaxisLimitMax=5;
-	plot_data(0);
-}
-
-function ShiftLimitBigRight(){
-	var length;
-
-	length=SVparam.XaxisLimitMax-SVparam.XaxisLimitMin;
-	SVparam.XaxisLimitMin=SVparam.XaxisLimitMin+length;
-	SVparam.XaxisLimitMax=SVparam.XaxisLimitMax+length;
-
-	if(SVparam.XaxisLimitMax>SVparam.XaxisLimitAbsMax){
-		SVparam.XaxisLimitMax=SVparam.XaxisLimitAbsMax; 
-		SVparam.XaxisLimitMin=(SVparam.XaxisLimitMax-length);
-	} 
-	document.getElementById("LowerXLimit").value=SVparam.XaxisLimitMin;
-	document.getElementById("UpperXLimit").value=SVparam.XaxisLimitMax;
-
-	SVparam.YaxisLimitMax=5;
-	plot_data(0);
+	document.getElementById(loField).value = SVparam[targetMin];
+	document.getElementById(hiField).value = SVparam[targetMax];
 }
 
 function unzoom(){
@@ -371,7 +319,7 @@ function plot_data(RefreshNow){
 	// Adjust the Y axis limit and compression and redraw the axis
 	if(SVparam.maxYvalue>5){
 		if(SVparam.AxisType==0) SVparam.YaxisLimitMax=Math.floor(SVparam.maxYvalue*1);
-		if(SVparam.AxisType==1) SVparam.YaxisLimitMax=SVparam.maxYvalue*100;
+		if(SVparam.AxisType==1) SVparam.YaxisLimitMax=SVparam.maxYvalue*1;
 	} else {
 		if(SVparam.AxisType==0) SVparam.YaxisLimitMax=5;
 		if(SVparam.AxisType==1) SVparam.YaxisLimitMax=50;

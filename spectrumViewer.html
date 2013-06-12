@@ -107,10 +107,10 @@
 										x axis limits:								
 										<input type="number" id="LowerXLimit" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'XaxisLimitMin', 'XaxisLimitAbsMax'); plot_data(0); document.getElementById('UpperXLimit').setAttribute('min', this.value);" min='0' max='500'></button>
 										<input type="number" id="UpperXLimit" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'XaxisLimitMax', 'XaxisLimitAbsMax'); plot_data(0); document.getElementById('LowerXLimit').setAttribute('max', this.value)" min='0'></button>
-										<button id='bigLeft' class='navLink' type="button" value="<<" onclick="ShiftLimitBigLeft()"></button>
-										<button id='smallLeft' class='navLink' type="button" value="<" onclick="ShiftLimitLeft()"></button>
-										<button id='smallRight' class='navLink' type="button" value=">" onclick="ShiftLimitRight()"></button>
-										<button id='bigRight' class='navLink' type="button" value=">>" onclick="ShiftLimitBigRight()"></button>
+										<button id='bigLeft' class='navLink' type="button" value="<<" onclick="scrollSpectra(SVparam.XaxisLimitMin - SVparam.XaxisLimitMax, 'XaxisLimitMin', 'XaxisLimitMax', 'XaxisLimitAbsMax', 'LowerXLimit', 'UpperXLimit'); plot_data(0)"></button>
+										<button id='smallLeft' class='navLink' type="button" value="<" onclick="scrollSpectra(-1, 'XaxisLimitMin', 'XaxisLimitMax', 'XaxisLimitAbsMax', 'LowerXLimit', 'UpperXLimit'); plot_data(0)"></button>
+										<button id='smallRight' class='navLink' type="button" value=">" onclick="scrollSpectra(1, 'XaxisLimitMin', 'XaxisLimitMax', 'XaxisLimitAbsMax', 'LowerXLimit', 'UpperXLimit'); plot_data(0)"></button>
+										<button id='bigRight' class='navLink' type="button" value=">>" onclick="scrollSpectra(SVparam.XaxisLimitMax - SVparam.XaxisLimitMin, 'XaxisLimitMin', 'XaxisLimitMax', 'XaxisLimitAbsMax', 'LowerXLimit', 'UpperXLimit'); plot_data(0)"></button>
 										<button id='unzoom' class='navLink' type="button" value="Unzoom" onclick="unzoom()"></button>
 									</form>
 								</td>
@@ -169,10 +169,10 @@
 									x axis limits: 
 									<input type="number" id="LowerXLimit2D" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'XaxisLimitMin2D', 'XaxisLimitAbsMax2D');plot_data2D(0); document.getElementById('UpperXLimit2D').setAttribute('min', this.value);" min='0' max='500'></button>
 									<input type="number" id="UpperXLimit2D" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'XaxisLimitMax2D', 'XaxisLimitAbsMax2D');plot_data2D(0); document.getElementById('LowerXLimit2D').setAttribute('max', this.value);" min='0' max='500'></button>
-									<button id='bigLeft2D' class='navLink' type="button" value="<<" onclick="ShiftLimitBigLeft()"><<</button>
-									<button id='smallLeft2D' class='navLink' type="button" value="<" onclick="ShiftLimitLeft()"><</button>
-									<button id='smallRight2D' class='navLink' type="button" value=">" onclick="ShiftLimitRight()">></button>
-									<button id='bigRight2D' class='navLink' type="button" value=">>" onclick="ShiftLimitBigRight()">>></button>
+									<button id='bigLeft2D' class='navLink' type="button" value="<<" onclick="scrollSpectra(SVparam.XaxisLimitMin2D - SVparam.XaxisLimitMax2D, 'XaxisLimitMin2D', 'XaxisLimitMax2D', 'XaxisLimitAbsMax2D', 'LowerXLimit2D', 'UpperXLimit2D'); plot_data2D(0)"><<</button>
+									<button id='smallLeft2D' class='navLink' type="button" value="<" onclick="scrollSpectra(-1, 'XaxisLimitMin2D', 'XaxisLimitMax2D', 'XaxisLimitAbsMax2D', 'LowerXLimit2D', 'UpperXLimit2D'); plot_data2D(0)"><</button>
+									<button id='smallRight2D' class='navLink' type="button" value=">" onclick="scrollSpectra(1, 'XaxisLimitMin2D', 'XaxisLimitMax2D', 'XaxisLimitAbsMax2D', 'LowerXLimit2D', 'UpperXLimit2D'); plot_data2D(0)">></button>
+									<button id='bigRight2D' class='navLink' type="button" value=">>" onclick="scrollSpectra(SVparam.XaxisLimitMax2D - SVparam.XaxisLimitMin2D, 'XaxisLimitMin2D', 'XaxisLimitMax2D', 'XaxisLimitAbsMax2D', 'LowerXLimit2D', 'UpperXLimit2D'); plot_data2D(0)">>></button>
 									<div id="limitMistake2D" style="color:'#00FFFF'"></div>
 								</td>
 							</tr>
@@ -181,10 +181,10 @@
 									y axis limits: 
 									<input type="number" id="LowerYLimit" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'YaxisLimitMin2D', 'YaxisLimitAbsMax2D');plot_data2D(0); document.getElementById('UpperYLimit').setAttribute('min', this.value);" min='0' max='500'></button>
 									<input type="number" id="UpperYLimit" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D');plot_data2D(0); document.getElementById('LowerYLimit').setAttribute('max', this.value);" min='0' max='500'></button>
-									<button id='bigDown' class='navLink' type="button" value="<<" onclick="ShiftLimitBigLeft()">D</button>
-									<button id='smallDown' class='navLink' type="button" value="<" onclick="ShiftLimitLeft()">d</button>
-									<button id='smallUp' class='navLink' type="button" value=">" onclick="ShiftLimitRight()">u</button>
-									<button id='bigUp' class='navLink' type="button" value=">>" onclick="ShiftLimitBigRight()">U</button>
+									<button id='bigDown' class='navLink' type="button" value="<<" onclick="scrollSpectra(SVparam.YaxisLimitMin2D - SVparam.YaxisLimitMax2D, 'YaxisLimitMin2D', 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D', 'LowerYLimit', 'UpperYLimit'); plot_data2D(0)">D</button>
+									<button id='smallDown' class='navLink' type="button" value="<" onclick="scrollSpectra(-1, 'YaxisLimitMin2D', 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D', 'LowerYLimit', 'UpperYLimit'); plot_data2D(0)">d</button>
+									<button id='smallUp' class='navLink' type="button" value=">" onclick="scrollSpectra(1, 'YaxisLimitMin2D', 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D', 'LowerYLimit', 'UpperYLimit'); plot_data2D(0)">u</button>
+									<button id='bigUp' class='navLink' type="button" value=">>" onclick="scrollSpectra(SVparam.YaxisLimitMax2D - SVparam.YaxisLimitMin2D, 'YaxisLimitMin2D', 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D', 'LowerYLimit', 'UpperYLimit'); plot_data2D(0)">U</button>
 									<div id="limitMistake" style="color:'#00FFFF'"></div>
 								</td>
 							</tr>
@@ -230,7 +230,7 @@
 							<caption style='font: 20px Raleway'>Spectrum Menu</caption>
 
 							<tr>
-								<td width="480px" align='left'>
+								<td width="440px" align='left'>
 									<iframe id="menu_iframe" width='99%' height='475px' frameborder=0></iframe>
 								</td>
 							</tr>
@@ -343,8 +343,10 @@
 					'binWidth2D' : 0,
 					'XaxisLimitMin2D' : 0,
 					'XaxisLimitMax2D' : 500,
+					'XaxisLimitAbsMax2D' : 500,
 					'YaxisLimitMin2D' : 0,
 					'YaxisLimitMax2D' : 500,
+					'YaxisLimitAbsMax2D' : 500,
 					'xAxisPixLength2D' : 0,
 					'yAxisPixLength2D' : 0,
 					"leftMargin2D" : 100,					//left gutter of plot area
