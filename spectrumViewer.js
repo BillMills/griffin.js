@@ -102,38 +102,32 @@ function ClickWindow(bin){
 	}
 }
 
-function SetUpperLimitByInput(input){
-	document.getElementById("limitMistake").innerHTML="";
+function setAxisLimit(input, fieldID, target, absMax){
+	var field = document.getElementById(fieldID)
+	if(field.validity.valid){
 
-	if(parseInt(input)<=parseInt(SVparam.XaxisLimitMin)){
-		document.getElementById("limitMistake").innerHTML="Error: Upper limit must be larger than the lower limit fool! ";
-		document.getElementById("UpperXLimit").value=SVparam.XaxisLimitMax;
-		return;
+		//mins are always protected to be > 0 from the HTML, but maxs need to be babysat:
+		if(field.value > SVparam[absMax])
+			field.value = SVparam[absMax];
+
+		//input the number requested...
+		SVparam[target]=input;
+
+		//...and make sure it makes sense.
+		if(SVparam[target]>SVparam[absMax])
+			SVparam[target]=SVparam[absMax];
+
+		if(SVparam[target]<0) 
+			SVparam[target]=0;
+
+	} else {  //exception handling
+		if(input < field.min)
+			field.value = field.min;
+		else if(input > field.max)
+			field.value = field.max;
+		if(field.value > SVparam[absMax])
+			field.value = SVparam[absMax]
 	}
-	SVparam.XaxisLimitMax=input;
-
-	if(SVparam.XaxisLimitMax>SVparam.XaxisLimitAbsMax)
-		SVparam.XaxisLimitMax=SVparam.XaxisLimitAbsMax;
-
-	SVparam.YaxisLimitMax=5;
-
-	plot_data(0);
-}
-
-function SetLowerLimitByInput(input){
-	document.getElementById("limitMistake").innerHTML="";
-
-	if(parseInt(input)>=parseInt(SVparam.XaxisLimitMax)){
-		document.getElementById("limitMistake").innerHTML="Error: Lower limit must be smaller than the upper limit fool! ";
-		document.getElementById("LowerXLimit").value=SVparam.XaxisLimitMin;
-		return;
-	}
-	SVparam.XaxisLimitMin=input;
-
-	if(SVparam.XaxisLimitMin<0) SVparam.XaxisLimitMin=0;
-
-	SVparam.YaxisLimitMax=5;
-	plot_data(0);
 }
 
 function ShiftLimitLeft(){
@@ -209,7 +203,6 @@ function ShiftLimitBigRight(){
 }
 
 function unzoom(){
-	document.getElementById("limitMistake").innerHTML="";
 
 	SVparam.XaxisLimitMin=0;
 	SVparam.XaxisLimitMax=SVparam.XaxisLimitAbsMax;
@@ -377,7 +370,7 @@ function plot_data(RefreshNow){
 
 	// Adjust the Y axis limit and compression and redraw the axis
 	if(SVparam.maxYvalue>5){
-		if(SVparam.AxisType==0) SVparam.YaxisLimitMax=Math.floor(SVparam.maxYvalue*1.2);
+		if(SVparam.AxisType==0) SVparam.YaxisLimitMax=Math.floor(SVparam.maxYvalue*1);
 		if(SVparam.AxisType==1) SVparam.YaxisLimitMax=SVparam.maxYvalue*100;
 	} else {
 		if(SVparam.AxisType==0) SVparam.YaxisLimitMax=5;
@@ -453,6 +446,7 @@ function plot_data(RefreshNow){
 
 	// Pause for some time and then recall this function to refresh the data display
 	if(SVparam.RefreshTime>0 && RefreshNow==1) setTimeout(function(){plot_data(1)},SVparam.RefreshTime*1000); 
+	
 }
 ///////////////////////////////
 // End of plot_data function //
@@ -892,7 +886,7 @@ function List_update(id,colorID) {
 	table = document.getElementById("recent_list");
 	//don't duplicate things in the list:
 	for(i=0; i<table.getElementsByTagName("tr").length; i++){
-		if(table.getElementsByTagName('tr')[i].innerHTML.search(SVparam.spectrum_names[id]) != -1)
+		if(table.getElementsByTagName('tr')[i].innerHTML.indexOf(SVparam.spectrum_names[id]) != -1)
 			table.deleteRow(i);
 	}
 
@@ -1160,6 +1154,11 @@ function plot_data2D(RefreshNow){
 	thisData = [];
 	SVparam.entries = [];
 
+	//echo back the axis limits in the input textboxes:
+	document.getElementById('LowerXLimit2D').value = SVparam.XaxisLimitMin2D;
+	document.getElementById('UpperXLimit2D').value = SVparam.XaxisLimitMax2D;
+	document.getElementById('LowerYLimit').value = SVparam.YaxisLimitMin2D;
+	document.getElementById('UpperYLimit').value = SVparam.YaxisLimitMax2D;
 
 	thisData = window.thisData;
 /*
@@ -1240,8 +1239,8 @@ function mDown2D(event){
 
 	//drag a box if clicking in the plot field:
 	if(x > SVparam.leftMargin2D && x < (SVparam.canvas2D.width - SVparam.rightMargin2D) && y>SVparam.topMargin2D && y<(SVparam.canvas2D.height-SVparam.bottomMargin2D)){
-		SVparam.onclickXvals.min = (x-SVparam.leftMargin2D)/SVparam.binWidth2D + SVparam.XaxisLimitMin2D;
-		SVparam.onclickYvals.min = (SVparam.canvas2D.height-SVparam.bottomMargin2D - y)/SVparam.binWidth2D + SVparam.YaxisLimitMin2D;
+		SVparam.onclickXvals.min = Math.floor((x-SVparam.leftMargin2D)/SVparam.binWidth2D + SVparam.XaxisLimitMin2D);
+		SVparam.onclickYvals.min = Math.floor((SVparam.canvas2D.height-SVparam.bottomMargin2D - y)/SVparam.binWidth2D + SVparam.YaxisLimitMin2D);
 	}
 }
 
@@ -1254,8 +1253,8 @@ function mUp2D(event){
 
 	//drag a box if clicking in the plot field:
 	if(x > SVparam.leftMargin2D && x < (SVparam.canvas2D.width - SVparam.rightMargin2D) && y>SVparam.topMargin2D && y<(SVparam.canvas2D.height-SVparam.bottomMargin2D)){
-		SVparam.onclickXvals.max = (x-SVparam.leftMargin2D)/SVparam.binWidth2D + SVparam.XaxisLimitMin2D;
-		SVparam.onclickYvals.max = (SVparam.canvas2D.height-SVparam.bottomMargin2D - y)/SVparam.binWidth2D + SVparam.YaxisLimitMin2D;
+		SVparam.onclickXvals.max = Math.floor((x-SVparam.leftMargin2D)/SVparam.binWidth2D + SVparam.XaxisLimitMin2D);
+		SVparam.onclickYvals.max = Math.floor((SVparam.canvas2D.height-SVparam.bottomMargin2D - y)/SVparam.binWidth2D + SVparam.YaxisLimitMin2D);
 
 		//make sure the mins and maxes go to the right place, in case the user dragged backwards:
 		SVparam.XaxisLimitMin2D = Math.min(SVparam.onclickXvals.min, SVparam.onclickXvals.max);

@@ -39,6 +39,10 @@
 				display: table-cell;
 				vertical-align: top; 
 			}
+
+			:invalid{
+				color: #FF0000;
+			}
 		</style>
 	</head>
 
@@ -99,15 +103,16 @@
 
 							<tr>
 								<td align='left' style='padding:none;'>
-									x axis limits: 
-									<input type="text" id="LowerXLimit" style="width:42px;" onchange="SetLowerLimitByInput(parseInt(this.value))"></button>
-									<input type="text" id="UpperXLimit" style="width:42px;" onchange="SetUpperLimitByInput(parseInt(this.value))"></button>
-									<button id='bigLeft' class='navLink' type="button" value="<<" onclick="ShiftLimitBigLeft()"></button>
-									<button id='smallLeft' class='navLink' type="button" value="<" onclick="ShiftLimitLeft()"></button>
-									<button id='smallRight' class='navLink' type="button" value=">" onclick="ShiftLimitRight()"></button>
-									<button id='bigRight' class='navLink' type="button" value=">>" onclick="ShiftLimitBigRight()"></button>
-									<button id='unzoom' class='navLink' type="button" value="Unzoom" onclick="unzoom()"></button>
-									<div id="limitMistake" style="color:'#00FFFF'"></div>
+									<form id='1DwindowInput' style='margin:none;'>
+										x axis limits:								
+										<input type="number" id="LowerXLimit" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'XaxisLimitMin', 'XaxisLimitAbsMax'); plot_data(0); document.getElementById('UpperXLimit').setAttribute('min', this.value);" min='0' max='500'></button>
+										<input type="number" id="UpperXLimit" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'XaxisLimitMax', 'XaxisLimitAbsMax'); plot_data(0); document.getElementById('LowerXLimit').setAttribute('max', this.value)" min='0'></button>
+										<button id='bigLeft' class='navLink' type="button" value="<<" onclick="ShiftLimitBigLeft()"></button>
+										<button id='smallLeft' class='navLink' type="button" value="<" onclick="ShiftLimitLeft()"></button>
+										<button id='smallRight' class='navLink' type="button" value=">" onclick="ShiftLimitRight()"></button>
+										<button id='bigRight' class='navLink' type="button" value=">>" onclick="ShiftLimitBigRight()"></button>
+										<button id='unzoom' class='navLink' type="button" value="Unzoom" onclick="unzoom()"></button>
+									</form>
 								</td>
 
 								<td colspan=1 width='200px' align='left' style='padding:none;'>
@@ -162,8 +167,8 @@
 							<tr>
 								<td align='left' style='padding:none;'>
 									x axis limits: 
-									<input type="text" id="LowerXLimit2D" style="width:42px;" onchange="SetLowerLimitByInput(parseInt(this.value))"></button>
-									<input type="text" id="UpperXLimit2D" style="width:42px;" onchange="SetUpperLimitByInput(parseInt(this.value))"></button>
+									<input type="number" id="LowerXLimit2D" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'XaxisLimitMin2D', 'XaxisLimitAbsMax2D');plot_data2D(0); document.getElementById('UpperXLimit2D').setAttribute('min', this.value);" min='0' max='500'></button>
+									<input type="number" id="UpperXLimit2D" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'XaxisLimitMax2D', 'XaxisLimitAbsMax2D');plot_data2D(0); document.getElementById('LowerXLimit2D').setAttribute('max', this.value);" min='0' max='500'></button>
 									<button id='bigLeft2D' class='navLink' type="button" value="<<" onclick="ShiftLimitBigLeft()"><<</button>
 									<button id='smallLeft2D' class='navLink' type="button" value="<" onclick="ShiftLimitLeft()"><</button>
 									<button id='smallRight2D' class='navLink' type="button" value=">" onclick="ShiftLimitRight()">></button>
@@ -174,8 +179,8 @@
 							<tr>
 								<td align='left' style='padding:none;'>
 									y axis limits: 
-									<input type="text" id="LowerYLimit" style="width:42px;" onchange="SetLowerLimitByInput(parseInt(this.value))"></button>
-									<input type="text" id="UpperYLimit" style="width:42px;" onchange="SetUpperLimitByInput(parseInt(this.value))"></button>
+									<input type="number" id="LowerYLimit" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'YaxisLimitMin2D', 'YaxisLimitAbsMax2D');plot_data2D(0); document.getElementById('UpperYLimit').setAttribute('min', this.value);" min='0' max='500'></button>
+									<input type="number" id="UpperYLimit" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D');plot_data2D(0); document.getElementById('LowerYLimit').setAttribute('max', this.value);" min='0' max='500'></button>
 									<button id='bigDown' class='navLink' type="button" value="<<" onclick="ShiftLimitBigLeft()">D</button>
 									<button id='smallDown' class='navLink' type="button" value="<" onclick="ShiftLimitLeft()">d</button>
 									<button id='smallUp' class='navLink' type="button" value=">" onclick="ShiftLimitRight()">u</button>
