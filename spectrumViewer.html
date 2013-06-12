@@ -137,7 +137,7 @@
 										<option id="r3" value="5">5s</option>
 										<option id="r4" value="10">10s</option>
 									</select>
-									<button id='refresh' class='navLink' type="button" value="Refresh Now" onclick="plot_data(0)"></button>
+									<button id='refresh' class='navLink' type="button" value="Refresh Now" onclick="plot_data(0, true)"></button>
 								</td>
 							</tr>
 
@@ -282,7 +282,8 @@
 
 				//namespace all the global variables in their own object:
 				SVparam = {
-					"statusURL" : 'http://alphadon.triumf.ca:8082',
+					"devMode" : 0,
+					"statusURL" : 'http://midtig04.triumf.ca:8082',
 					"hostname" : "localhost:9092",
 					"RefreshTime" : 0,
 					"XaxisLimitMin" : 0,

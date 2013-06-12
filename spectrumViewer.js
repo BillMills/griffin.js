@@ -203,7 +203,7 @@ function set_AxisType(word){
 function startup(){
 	var iframe, iframeDoc, row, table;
 
-	// Setup the nouse coordinate printing on the screen
+	// Setup the mouse coordinate printing on the screen
 	reportSpectrumBin();
 
 	document.getElementById(SVparam.canvasID).onmousedown = function(event){
@@ -277,7 +277,7 @@ function resetData(){
 // If the data exceeds the Y limit or the maximum value is well    //
 // below the limit then the axis will be redrawn                   //
 /////////////////////////////////////////////////////////////////////
-function plot_data(RefreshNow){
+function plot_data(RefreshNow, abandonBuffer){
 	var i, j, data, thisSpec,
 	thisData = [];
 	SVparam.entries = [];
@@ -293,7 +293,7 @@ function plot_data(RefreshNow){
 	for(thisSpec=0; thisSpec<SVparam.DisplayedSpecs.length; thisSpec++){
 		// Here call function to get data from the server
 		// thisData[thisSpec]=ODBGet("/Test/spectrum_data[*]","%d");
-		thisData[thisSpec]=getSpecData(SVparam.DisplayedSpecs[thisSpec]);
+		thisData[thisSpec]=getSpecData(SVparam.DisplayedSpecs[thisSpec], abandonBuffer);
 
 		//Find the maximum X value from the size of the data
 		if(thisData[thisSpec].length>SVparam.XaxisLimitAbsMax){
@@ -396,7 +396,7 @@ function plot_data(RefreshNow){
 	} // End of for loop
 
 	// Pause for some time and then recall this function to refresh the data display
-	if(SVparam.RefreshTime>0 && RefreshNow==1) setTimeout(function(){plot_data(1)},SVparam.RefreshTime*1000); 
+	if(SVparam.RefreshTime>0 && RefreshNow==1) setTimeout(function(){plot_data(1, 'true')},SVparam.RefreshTime*1000); 
 	
 }
 ///////////////////////////////
@@ -672,31 +672,33 @@ function GetList(newhost){
 	else{
 		table.deleteRow(0);
 	}
-	/*
-	// Here call the function to Get the spectrum list from the server
-	SVparam.spectrum_names = getList();
-	for(i=0; i<SVparam.spectrum_names.length; i++){
-	row = table.insertRow(i);
-	row.setAttribute('id', "row"+i);
-	row.setAttribute('bgcolor', "white");
-	row.setAttribute('style', "display:block;cursor:default");
-	// row.setAttribute('onclick', "parent.Menu_selectSpectrum("+i+")");
-	row.setAttribute('onclick', "parent.Menu_MakeselectSpectrum(event,"+i+")");
-	row.setAttribute('ondblclick', "parent.displaySpectrum("+i+")");
-	row.innerHTML = SVparam.spectrum_names[i];
-	}
-	*/
-	// Put in fake list info - COMMENT OUT ONCE ABOVE FUNCTION IS WORKING
-		for(i=0; i<50; i++){
+	
+	if(!SVparam.devMode){
+		// Here call the function to Get the spectrum list from the server
+		SVparam.spectrum_names = getList();
+		for(i=0; i<SVparam.spectrum_names.length; i++){
 			row = table.insertRow(i);
 			row.setAttribute('id', "row"+i);
 			row.setAttribute('bgcolor', "#333333");
 			row.setAttribute('style', "display:block;cursor:default");
-			iframeDoc.getElementById('row'+i).onclick = function(event){ parent.Menu_MakeselectSpectrum(event, parseInt(this.id.slice(3,this.id.length+1))  )};
-			iframeDoc.getElementById('row'+i).ondblclick = function(){parent.displaySpectrum( parseInt(this.id.slice(3,this.id.length+1)) )};
-			row.innerHTML ="Spectrum Name "+i;
-			SVparam.spectrum_names[i]="Spectrum Name "+i;
+			// row.setAttribute('onclick', "parent.Menu_selectSpectrum("+i+")");
+			row.setAttribute('onclick', "parent.Menu_MakeselectSpectrum(event,"+i+")");
+			row.setAttribute('ondblclick', "parent.displaySpectrum("+i+")");
+			row.innerHTML = SVparam.spectrum_names[i];
+		}
+	} else {
+		// Put in fake list info - COMMENT OUT ONCE ABOVE FUNCTION IS WORKING
+			for(i=0; i<50; i++){
+				row = table.insertRow(i);
+				row.setAttribute('id', "row"+i);
+				row.setAttribute('bgcolor', "#333333");
+				row.setAttribute('style', "display:block;cursor:default");
+				iframeDoc.getElementById('row'+i).onclick = function(event){ parent.Menu_MakeselectSpectrum(event, parseInt(this.id.slice(3,this.id.length+1))  )};
+				iframeDoc.getElementById('row'+i).ondblclick = function(){parent.displaySpectrum( parseInt(this.id.slice(3,this.id.length+1)) )};
+				row.innerHTML ="Spectrum Name "+i;
+				SVparam.spectrum_names[i]="Spectrum Name "+i;
 
+		}
 	}
 
 
@@ -955,20 +957,21 @@ function clearSpecs(){
 
 }
 
-function getSpecData(x){
-	/*
-	if(SVparam.dataBuffer[parseInt(x)]){
-		return SVparam.dataBuffer[parseInt(x)];
+function getSpecData(x, abandonBuffer){
+	if(!SVparam.devMode){
+		if(SVparam.dataBuffer[parseInt(x)] && !abandonBuffer){
+			return SVparam.dataBuffer[parseInt(x)];
+		} else {
+			SVparam.dataBuffer[parseInt(x)] = getData(parseInt(x));
+			return SVparam.dataBuffer[parseInt(x)];
+		}
 	} else {
-		SVparam.dataBuffer[parseInt(x)] = getData(parseInt(x));
-		return SVparam.dataBuffer[parseInt(x)];
+		if(x==0) return SVfakeData.energydata0;
+		if(x==1) return SVfakeData.energydata1;
+		if(x==2) return SVfakeData.energydata2;
+		if(x==3) return SVfakeData.energydata3;
+		if(x==4) return SVfakeData.energydata4;
 	}
-	*/
-	if(x==0) return SVfakeData.energydata0;
-	if(x==1) return SVfakeData.energydata1;
-	if(x==2) return SVfakeData.energydata2;
-	if(x==3) return SVfakeData.energydata3;
-	if(x==4) return SVfakeData.energydata4;
 }
 
 function relMouseCoords(event){
