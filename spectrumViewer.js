@@ -147,7 +147,9 @@ function scrollSpectra(step, targetMin, targetMax, targetAbsMax, loField, hiFiel
 	}
 
 	document.getElementById(loField).value = SVparam[targetMin];
+	document.getElementById(loField).onchange();
 	document.getElementById(hiField).value = SVparam[targetMax];
+	document.getElementById(hiField).onchange();
 }
 
 function unzoom(){
