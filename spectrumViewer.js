@@ -154,14 +154,27 @@ function scrollSpectra(step, targetMin, targetMax, targetAbsMax, loField, hiFiel
 
 function Unzoom(){
 
+	//1D
 	SVparam.XaxisLimitMin=0;
 	SVparam.XaxisLimitMax=SVparam.XaxisLimitAbsMax;
 
 	document.getElementById("LowerXLimit").value=SVparam.XaxisLimitMin;
 	document.getElementById("UpperXLimit").value=SVparam.XaxisLimitMax;
 
-	//SVparam.YaxisLimitMax=5;
 	plot_data(0);
+
+	//2D
+	SVparam.XaxisLimitMin2D = 0;
+	SVparam.XaxisLimitMax2D = SVparam.XaxisLimitAbsMax2D;
+	SVparam.YaxisLimitMin2D = 0;
+	SVparam.YaxisLimitMax2D = SVparam.YaxisLimitAbsMax2D;
+
+	document.getElementById("LowerXLimit2D").value=SVparam.XaxisLimitMin2D;
+	document.getElementById("UpperXLimit2D").value=SVparam.XaxisLimitMax2D;
+	document.getElementById("LowerYLimit").value=SVparam.YaxisLimitMin2D;
+	document.getElementById("UpperYLimit").value=SVparam.YaxisLimitMax2D;
+
+	plot_data2D(0);	
 
 }
 
@@ -953,6 +966,7 @@ function Menu_unselectSpectrum(id){
 
 function clearSpecs(){
 
+	//1D:
 	reset_list_color();
 	SVparam.Specs=[];
 
@@ -960,6 +974,9 @@ function clearSpecs(){
 	SVparam.NumSpecsDisplayed=0;
 
 	drawFrame();
+
+	//2D:
+	draw2Dframe();
 
 }
 
@@ -1109,7 +1126,7 @@ function draw2Dframe(){
 
 }
 
-function plot_data2D(RefreshNow){
+function plot_data2D(RefreshNow, abandonBuffer){
 	var i, j, data, thisSpec, 
 	entries = 0,
 	thisData = [];
@@ -1128,7 +1145,7 @@ function plot_data2D(RefreshNow){
 	for(thisSpec=0; thisSpec<SVparam.DisplayedSpecs.length; thisSpec++){
 		// Here call function to get data from the server
 		// thisData[thisSpec]=ODBGet("/Test/spectrum_data[*]","%d");
-		thisData[thisSpec]=getSpecData(SVparam.DisplayedSpecs[thisSpec]);
+		thisData[thisSpec]=getSpecData(SVparam.DisplayedSpecs[thisSpec], abandonBuffer);
 
 		//Find the maximum X value from the size of the data
 		if(thisData[thisSpec].length>SVparam.XaxisLimitAbsMax){
@@ -1157,8 +1174,8 @@ function plot_data2D(RefreshNow){
 /*
 	// Adjust the Y axis limit and compression and redraw the axis
 	if(SVparam.maxYvalue>5){
-		if(SVparam.AxisType==0) SVparam.YaxisLimitMax=Math.floor(SVparam.maxYvalue*1.2);
-		if(SVparam.AxisType==1) SVparam.YaxisLimitMax=SVparam.maxYvalue*100;
+		if(SVparam.AxisType==0) SVparam.YaxisLimitMax=Math.floor(SVparam.maxYvalue*1);
+		if(SVparam.AxisType==1) SVparam.YaxisLimitMax=SVparam.maxYvalue*10;
 	} else {
 		if(SVparam.AxisType==0) SVparam.YaxisLimitMax=5;
 		if(SVparam.AxisType==1) SVparam.YaxisLimitMax=50;
@@ -1187,7 +1204,7 @@ function plot_data2D(RefreshNow){
 
 
 	// Pause for some time and then recall this function to refresh the data display
-	//if(SVparam.RefreshTime>0 && RefreshNow==1) setTimeout(function(){plot_data(1)},SVparam.RefreshTime*1000); 
+	if(SVparam.RefreshTime>0 && RefreshNow==1) setTimeout(function(){plot_data2D(1, 'true')},SVparam.RefreshTime*1000); 
 }
 
 //mouse down & mouse up behavior functions for 2D canvas:
