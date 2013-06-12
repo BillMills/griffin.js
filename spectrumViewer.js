@@ -152,7 +152,7 @@ function scrollSpectra(step, targetMin, targetMax, targetAbsMax, loField, hiFiel
 	document.getElementById(hiField).onchange();
 }
 
-function unzoom(){
+function Unzoom(){
 
 	SVparam.XaxisLimitMin=0;
 	SVparam.XaxisLimitMax=SVparam.XaxisLimitAbsMax;
@@ -160,8 +160,9 @@ function unzoom(){
 	document.getElementById("LowerXLimit").value=SVparam.XaxisLimitMin;
 	document.getElementById("UpperXLimit").value=SVparam.XaxisLimitMax;
 
-	SVparam.YaxisLimitMax=5;
+	//SVparam.YaxisLimitMax=5;
 	plot_data(0);
+
 }
 
 /////////////////////////////////////////////////////////////////////
