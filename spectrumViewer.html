@@ -88,14 +88,14 @@
 
 			<table width='100%' style='padding-top:0px;'>
 				<tr>
-					<td rowspan='2'>
+					<td>
 
 						<!--1D spectrum elements///////////////////////////////////////////////////////////-->
 						<table id='spectrumBlock1D' class='mainElement'>
 							<caption style='font: 20px Raleway'>Spectrum Control</caption>
 
 							<tr>
-								<td colspan=2>
+								<td colspan='2'>
 									<canvas id='testCanv'></canvas>
 									<br><br><p id="textbox"></p>
 								</td>
@@ -111,7 +111,9 @@
 										<button id='smallLeft' class='navLink' type="button" value="<" onclick="scrollSpectra(-1, 'XaxisLimitMin', 'XaxisLimitMax', 'XaxisLimitAbsMax', 'LowerXLimit', 'UpperXLimit'); plot_data(0)"></button>
 										<button id='smallRight' class='navLink' type="button" value=">" onclick="scrollSpectra(1, 'XaxisLimitMin', 'XaxisLimitMax', 'XaxisLimitAbsMax', 'LowerXLimit', 'UpperXLimit'); plot_data(0)"></button>
 										<button id='bigRight' class='navLink' type="button" value=">>" onclick="scrollSpectra(SVparam.XaxisLimitMax - SVparam.XaxisLimitMin, 'XaxisLimitMin', 'XaxisLimitMax', 'XaxisLimitAbsMax', 'LowerXLimit', 'UpperXLimit'); plot_data(0)"></button>
-										<button id='unzoom' class='navLink' type="button" value="Unzoom" onclick="Unzoom();"></button>
+										<button id='unzoom' class='navLink' type="button" style='margin-right:20px;' value="Unzoom" onclick="Unzoom();"></button>
+									y axis: Lin<input type="radio" id="a0" value="0" onclick="set_AxisType(this)" checked="true">|<input type="radio" id="a1" value="1" onclick="set_AxisType(this)">Log
+
 									</form>
 								</td>
 
@@ -122,29 +124,18 @@
 							</tr>
 
 							<tr>
-								<td>
-									y axis: Lin<input type="radio" id="a0" value="0" onclick="set_AxisType(this)" checked="true">|<input type="radio" id="a1" value="1" onclick="set_AxisType(this)">Log
-								</td>
-							</tr>
-
-							<tr>
-								<td width="400px" align='left'>
+								<td align='left' style='padding:none;'>
+									<button id='clearSpec' class='navLink' type="button" value="Clear Spectra" onclick="clearSpecs()"></button>
+									<button id='fitPeak' class='navLink' type="button" style='margin-right:20px;' value="Fit a Peak" onclick="RequestFitLimits()"></button>
 									Refresh Rate: 
-									<select id="refreshRate" onchange="SVparam.RefreshTime=this.value;">
+									<select id="refreshRate" onchange="SVparam.RefreshTime=this.value; plot_data(0, 'true')">
 										<option id="r0" value="0">Off</option>
 										<option id="r1" value="1">1s</option>
-										<option id="r2" value="2">2s</option>
+										<option id="r2" value="3">3s</option>
 										<option id="r3" value="5">5s</option>
 										<option id="r4" value="10">10s</option>
 									</select>
 									<button id='refresh' class='navLink' type="button" value="Refresh Now" onclick="plot_data(0, true)"></button>
-								</td>
-							</tr>
-
-							<tr>
-								<td colspan=1 align='left' style='padding:none;'>
-									<button id='clearSpec' class='navLink' type="button" value="Clear Spectra" onclick="clearSpecs()"></button>
-									<button id='fitPeak' class='navLink' type="button" value="Fit a Peak" onclick="RequestFitLimits()"></button>
 								</td>
 
 								<td>
@@ -159,7 +150,7 @@
 							<caption style='font: 20px Raleway'>Spectrum Control</caption>
 
 							<tr>
-								<td rowspan='7'>
+								<td rowspan='7' width='auto'>
 									<canvas id='canvas2D' style='margin-right:10px'></canvas>
 								</td>
 							</tr>
@@ -197,10 +188,10 @@
 							<tr>
 								<td width="400px" align='left' vertical-align='bottom'>
 									Refresh Rate: 
-									<select id="refreshRate" onchange="SVparam.RefreshTime=this.value;">
+									<select id="refreshRate2D" onchange="SVparam.RefreshTime=this.value; plot_data(0, 'true')">
 										<option id="r0" value="0">Off</option>
 										<option id="r1" value="1">1s</option>
-										<option id="r2" value="2">2s</option>
+										<option id="r2" value="3">3s</option>
 										<option id="r3" value="5">5s</option>
 										<option id="r4" value="10">10s</option>
 									</select>
@@ -249,14 +240,10 @@
 						</table>
 					</td>
 				</tr>
+			</table>
 
-				<tr>
-					<td>
-						<table id="recent_list" class='mainElement' style='display:none; margin-top:10px; width:100%'>
-							<caption style='font: 20px Raleway'>Recently Viewed Spectra</caption>
-						</table>
-					</td>
-				</tr>
+			<table id="recent_list" class='mainElement' style='display:none; margin-top:10px; width:100%'>
+				<caption style='font: 20px Raleway'>Recently Viewed Spectra</caption>
 			</table>
 		</div>
 
@@ -282,10 +269,10 @@
 
 				//namespace all the global variables in their own object:
 				SVparam = {
-					"devMode" : 0,
+					"devMode" : 1,
 					"statusURL" : 'http://midtig04.triumf.ca:8082',
 					"hostname" : "localhost:9092",
-					"RefreshTime" : 0,
+					"RefreshTime" : 3,
 					"XaxisLimitMin" : 0,
 					"XaxisLimitMax" : 500,
 					"XaxisLimitAbsMax" : 512,
@@ -414,7 +401,7 @@
 				}
 
 				// Set refresh time select menu for first time
-				document.getElementById("refreshRate").selectedIndex= SVparam.refreshMap.indexOf(SVparam.RefreshTime);
+				document.getElementById("refreshRate").value = SVparam.RefreshTime;
 
 				// Display initial x axis limits in input boxes 
 				document.getElementById("LowerXLimit").value=SVparam.XaxisLimitMin;

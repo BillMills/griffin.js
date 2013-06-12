@@ -281,7 +281,10 @@ function plot_data(RefreshNow, abandonBuffer){
 	var i, j, data, thisSpec,
 	thisData = [];
 	SVparam.entries = [];
-		
+	
+	SVparam.YaxisLimitMax=5;
+	SVparam.XaxisLength = SVparam.XaxisLimitMax - SVparam.XaxisLimitMin;
+
 	//abandon the fit when re-drawing the plot
 	if(SVparam.Fitted==1){
 		document.getElementById('fitbox').innerHTML = '';
@@ -322,7 +325,7 @@ function plot_data(RefreshNow, abandonBuffer){
 	// Adjust the Y axis limit and compression and redraw the axis
 	if(SVparam.maxYvalue>5){
 		if(SVparam.AxisType==0) SVparam.YaxisLimitMax=Math.floor(SVparam.maxYvalue*1);
-		if(SVparam.AxisType==1) SVparam.YaxisLimitMax=SVparam.maxYvalue*1;
+		if(SVparam.AxisType==1) SVparam.YaxisLimitMax=SVparam.maxYvalue*10;
 	} else {
 		if(SVparam.AxisType==0) SVparam.YaxisLimitMax=5;
 		if(SVparam.AxisType==1) SVparam.YaxisLimitMax=50;
@@ -428,12 +431,13 @@ function drawFrame(){
 	//Decorate x axis////////////////////////////////////////////////////////
 	//decide how many ticks to draw on the x axis:
 	SVparam.nXticks = 6;
-	//draw at most one tick per bin:
-	if(SVparam.XaxisLength < (SVparam.nXticks-1) )
-		SVparam.nXticks = SVparam.XaxisLength+1
+
 	//come as close to a factor of the number of bins as possible:
 	while( Math.floor(SVparam.XaxisLength / SVparam.nXticks) == Math.floor(SVparam.XaxisLength / (SVparam.nXticks-1)) )
 		SVparam.nXticks--;
+	//draw at most one tick per bin:
+	if(SVparam.XaxisLength < (SVparam.nXticks-1) )
+		SVparam.nXticks = SVparam.XaxisLength+1
 
 	//how many bins should there be between each tick?
 	binsPerTick = Math.floor((SVparam.XaxisLimitMax - SVparam.XaxisLimitMin) / (SVparam.nXticks-1));
@@ -645,7 +649,7 @@ function SetupGetList(){
 }
 
 function GetList(newhost){
-	var i, iframe, iframeDoc, Num, row, table,
+	var i, iframe, iframeDoc, Num, row, table, string,
 		RemoveTable = 0;
 
 	// Check if a list is already loaded by the hostname being defined
@@ -653,7 +657,9 @@ function GetList(newhost){
 	if(SVparam.hostname.length>0) RemoveTable=1; 
 
 	// Set the hostname at the top of the page
-	document.getElementById('youAreHere').innerHTML="Spectrum Viewer - "+SVparam.hostname;
+    string = document.location.href.slice(7, document.location.href.length);
+    string = string.slice(0,string.indexOf('/'));
+	document.getElementById('youAreHere').innerHTML="Spectrum Viewer - "+string;
 
 	// Attach to the table for the spectrum list in the iframe
 	iframe = document.getElementById('menu_iframe');
@@ -675,7 +681,7 @@ function GetList(newhost){
 	
 	if(!SVparam.devMode){
 		// Here call the function to Get the spectrum list from the server
-		SVparam.spectrum_names = getList();
+	//SVparam.spectrum_names = getList();
 		for(i=0; i<SVparam.spectrum_names.length; i++){
 			row = table.insertRow(i);
 			row.setAttribute('id', "row"+i);
@@ -1010,6 +1016,7 @@ function summonView(target){
 	} else if(target==2){
 		document.getElementById('spectrumBlock1D').setAttribute('style', 'display:none;');
 		document.getElementById('spectrumBlock2D').setAttribute('style', '');
+		document.getElementById('spectrumBlock2D').setAttribute('width', '100%');
 		document.getElementById('overlayB').setAttribute('style', 'display:none');
 	}
 }
