@@ -1209,30 +1209,47 @@ function plot_data2D(RefreshNow, abandonBuffer){
 
 //mouse down & mouse up behavior functions for 2D canvas:
 function mDown2D(event){
-	var x, y, coords;
+	var x, y, xBin, yBin, coords;
 
 	coords = document.getElementById(SVparam.canvasID2D).relMouseCoords(event);
 	x = coords.x;
 	y = coords.y;
 
+	xBin = Math.floor((x-SVparam.leftMargin2D)/SVparam.binWidth2D + SVparam.XaxisLimitMin2D);
+	yBin = Math.floor((SVparam.canvas2D.height-SVparam.bottomMargin2D - y)/SVparam.binWidth2D + SVparam.YaxisLimitMin2D);
+	if(xBin < 0) xBin = 0;
+	if(yBin < 0) yBin = 0;
+	
 	//drag a box if clicking in the plot field:
 	if(x > SVparam.leftMargin2D && x < (SVparam.canvas2D.width - SVparam.rightMargin2D) && y>SVparam.topMargin2D && y<(SVparam.canvas2D.height-SVparam.bottomMargin2D)){
-		SVparam.onclickXvals.min = Math.floor((x-SVparam.leftMargin2D)/SVparam.binWidth2D + SVparam.XaxisLimitMin2D);
-		SVparam.onclickYvals.min = Math.floor((SVparam.canvas2D.height-SVparam.bottomMargin2D - y)/SVparam.binWidth2D + SVparam.YaxisLimitMin2D);
+		SVparam.onclickXvals.min = xBin;
+		SVparam.onclickYvals.min = yBin;
+	} else if(y > (SVparam.canvas2D.height-SVparam.bottomMargin2D) && SVparam.clickX.down == -1 && SVparam.clickY.down == -1){ //clicking in the x-margin
+		SVparam.clickX['down'] = xBin;
+		//deal with the possibility that the user clicked on the ambiguous region in the bottom left corner and actually wanted the y-margin:
+		if(x < SVparam.leftMargin2D)
+			SVparam.clickY['down'] = yBin
+	} else if (x < SVparam.leftMargin2D && SVparam.clickY.down == -1){  //user clicked in the y-margin
+		SVparam.clickY['down'] = yBin;
 	}
 }
 
 function mUp2D(event){
-	var x, y, coords;
+	var x, y, xBin, yBin, coords;
 
 	coords = document.getElementById(SVparam.canvasID2D).relMouseCoords(event);
 	x = coords.x;
 	y = coords.y;
 
+	xBin = Math.floor((x-SVparam.leftMargin2D)/SVparam.binWidth2D + SVparam.XaxisLimitMin2D);
+	yBin = Math.floor((SVparam.canvas2D.height-SVparam.bottomMargin2D - y)/SVparam.binWidth2D + SVparam.YaxisLimitMin2D);
+	if(xBin < 0) xBin = 0;
+	if(yBin < 0) yBin = 0;
+
 	//drag a box if clicking in the plot field:
 	if(x > SVparam.leftMargin2D && x < (SVparam.canvas2D.width - SVparam.rightMargin2D) && y>SVparam.topMargin2D && y<(SVparam.canvas2D.height-SVparam.bottomMargin2D)){
-		SVparam.onclickXvals.max = Math.floor((x-SVparam.leftMargin2D)/SVparam.binWidth2D + SVparam.XaxisLimitMin2D);
-		SVparam.onclickYvals.max = Math.floor((SVparam.canvas2D.height-SVparam.bottomMargin2D - y)/SVparam.binWidth2D + SVparam.YaxisLimitMin2D);
+		SVparam.onclickXvals.max = xBin;
+		SVparam.onclickYvals.max = yBin;
 
 		//make sure the mins and maxes go to the right place, in case the user dragged backwards:
 		SVparam.XaxisLimitMin2D = Math.min(SVparam.onclickXvals.min, SVparam.onclickXvals.max);
@@ -1242,6 +1259,29 @@ function mUp2D(event){
 
 		//redraw with new bounds:
 		plot_data2D();
+		return;
+	} else if (y > (SVparam.canvas2D.height-SVparam.bottomMargin2D) && x > SVparam.leftMargin2D){ //release on the x-margin
+		SVparam.clickX['up'] = xBin;
+	} else if (x < SVparam.leftMargin2D && y < (SVparam.canvas2D.height-SVparam.bottomMargin2D)){ //release on the y-margin
+		SVparam.clickY['up'] = yBin;
+	} else if (x < SVparam.leftMargin2D && y > (SVparam.canvas2D.height-SVparam.bottomMargin2D)){ //release on the margin overlap
+		SVparam.clickX['up'] = xBin;
+		SVparam.clickY['up'] = yBin;
+	}
+
+	//valid X range found:
+	if(SVparam.clickX.up != SVparam.clickX.down && SVparam.clickX.up>=0 && SVparam.clickX.down>=0){
+		SVparam.XaxisLimitMin2D = Math.min(SVparam.clickX.up, SVparam.clickX.down);
+		SVparam.XaxisLimitMax2D = Math.max(SVparam.clickX.up, SVparam.clickX.down);
+		plot_data2D();
+		SVparam.clickX.up = -1;
+		SVparam.clickX.down = -1;
+	} else if(SVparam.clickY.up != SVparam.clickY.down && SVparam.clickY.up>=0 && SVparam.clickY.down>=0){ //valid Y range found:
+		SVparam.YaxisLimitMin2D = Math.min(SVparam.clickY.up, SVparam.clickY.down);
+		SVparam.YaxisLimitMax2D = Math.max(SVparam.clickY.up, SVparam.clickY.down);
+		plot_data2D();
+		SVparam.clickY.up = -1;
+		SVparam.clickY.down = -1;
 	}
 }
 
