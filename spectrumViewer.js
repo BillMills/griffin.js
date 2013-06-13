@@ -153,29 +153,33 @@ function scrollSpectra(step, targetMin, targetMax, targetAbsMax, loField, hiFiel
 function Unzoom(){
 
 	//1D
-	SVparam.XaxisLimitMin=0;
-	SVparam.XaxisLimitMax=SVparam.XaxisLimitAbsMax;
+	if(document.getElementById('LowerXLimit')){
+		SVparam.XaxisLimitMin=0;
+		SVparam.XaxisLimitMax=SVparam.XaxisLimitAbsMax;
 
-	//update input field values and trigger their onchange:
-	document.getElementById("LowerXLimit").value=SVparam.XaxisLimitMin;
-	document.getElementById("UpperXLimit").value=SVparam.XaxisLimitMax;
-	document.getElementById('LowerXLimit').onchange();
-	document.getElementById('UpperXLimit').onchange();
+		//update input field values and trigger their onchange:
+		document.getElementById("LowerXLimit").value=SVparam.XaxisLimitMin;
+		document.getElementById("UpperXLimit").value=SVparam.XaxisLimitMax;
+		document.getElementById('LowerXLimit').onchange();
+		document.getElementById('UpperXLimit').onchange();
 
-	plot_data(0);
+		plot_data(0);
+	}
 
 	//2D
-	SVparam.XaxisLimitMin2D = 0;
-	SVparam.XaxisLimitMax2D = SVparam.XaxisLimitAbsMax2D;
-	SVparam.YaxisLimitMin2D = 0;
-	SVparam.YaxisLimitMax2D = SVparam.YaxisLimitAbsMax2D;
+	if(document.getElementById('LowerXLimit2D')){
+		SVparam.XaxisLimitMin2D = 0;
+		SVparam.XaxisLimitMax2D = SVparam.XaxisLimitAbsMax2D;
+		SVparam.YaxisLimitMin2D = 0;
+		SVparam.YaxisLimitMax2D = SVparam.YaxisLimitAbsMax2D;
 
-	document.getElementById("LowerXLimit2D").value=SVparam.XaxisLimitMin2D;
-	document.getElementById("UpperXLimit2D").value=SVparam.XaxisLimitMax2D;
-	document.getElementById("LowerYLimit").value=SVparam.YaxisLimitMin2D;
-	document.getElementById("UpperYLimit").value=SVparam.YaxisLimitMax2D;
+		document.getElementById("LowerXLimit2D").value=SVparam.XaxisLimitMin2D;
+		document.getElementById("UpperXLimit2D").value=SVparam.XaxisLimitMax2D;
+		document.getElementById("LowerYLimit").value=SVparam.YaxisLimitMin2D;
+		document.getElementById("UpperYLimit").value=SVparam.YaxisLimitMax2D;
 
-	plot_data2D(0);	
+		plot_data2D(0);	
+	}
 
 }
 
@@ -973,16 +977,19 @@ function Menu_unselectSpectrum(id){
 function clearSpecs(){
 
 	//1D:
-	reset_list_color();
-	SVparam.Specs=[];
+	if(document.getElementById('LowerXLimit')){
+		reset_list_color();
+		SVparam.Specs=[];
 
-	SVparam.DisplayedSpecs=SVparam.Specs.slice();
-	SVparam.NumSpecsDisplayed=0;
+		SVparam.DisplayedSpecs=SVparam.Specs.slice();
+		SVparam.NumSpecsDisplayed=0;
 
-	drawFrame();
-
+		drawFrame();
+	}
 	//2D:
-	draw2Dframe();
+	if(document.getElementById('LowerXLimit2D')){
+		draw2Dframe();
+	}
 
 }
 
@@ -1207,8 +1214,10 @@ function plot_data2D(RefreshNow, abandonBuffer){
 	//report entries:
 	SVparam.context2D.textBaseline = 'top';
 	SVparam.context2D.fillStyle = '#999999';
-	SVparam.context2D.fillText('Entries: '+entries, SVparam.canvas2D.width - SVparam.rightMargin2D - SVparam.context.measureText('Entries: '+entries).width, 16);
+	SVparam.context2D.fillText('Entries: '+entries, SVparam.canvas2D.width - SVparam.rightMargin2D - SVparam.context2D.measureText('Entries: '+entries).width, 16);
 
+	//overlay tbragg gates if running on tbragg:
+	drawTbraggGates();
 
 	// Pause for some time and then recall this function to refresh the data display
 	if(SVparam.RefreshTime>0 && RefreshNow==1) setTimeout(function(){plot_data2D(1, 'true')},SVparam.RefreshTime*1000); 
@@ -1304,6 +1313,32 @@ function mMove2D(event){
 
 	document.getElementById('2Dcoords').innerHTML = 'x: '+xBin+', y: '+yBin;
 
+}
+
+//Draw the gate boxes for use with the TBRAGG viewer:
+function drawTbraggGates(){
+	var i, x0, y0, size, height, width;
+
+	if(document.getElementById('GateSize0')){
+		for(i=0; i<TBparam.num_gates+1; i++){
+
+			//in bins
+			size = parseInt(document.getElementById('GateSize'+i).value);
+			x0 = parseInt(document.getElementById('Gatex'+i).value) - size/2;
+			y0 = parseInt(document.getElementById('Gatey'+i).value) + size/2;
+
+			//in pixels
+			height = size*SVparam.binHeight2D;
+			width = size*SVparam.binWidth2D;
+			x0 = SVparam.leftMargin2D + (x0 - SVparam.XaxisLimitMin2D)*SVparam.binWidth2D;
+			y0 = SVparam.canvHeight2D - SVparam.bottomMargin2D - (y0 - SVparam.YaxisLimitMin2D)*SVparam.binHeight2D;
+
+			//draw
+			SVparam.context2D.strokeStyle = TBparam.barChartColors[i+1];
+			SVparam.context2D.lineWidth = 3;
+			SVparam.context2D.strokeRect(x0,y0,width,height);
+		}
+	}
 }
 
 

@@ -128,7 +128,7 @@
 									<button id='clearSpec' class='navLink' type="button" value="Clear Spectra" onclick="clearSpecs()"></button>
 									<button id='fitPeak' class='navLink' type="button" style='margin-right:20px;' value="Fit a Peak" onclick="RequestFitLimits()"></button>
 									Refresh Rate: 
-									<select id="refreshRate" onchange="SVparam.RefreshTime=this.value; plot_data(0, 'true')">
+									<select id="refreshRate" onchange="SVparam.RefreshTime=parseInt(this.value); plot_data(1, 'true')">
 										<option id="r0" value="0">Off</option>
 										<option id="r1" value="1">1s</option>
 										<option id="r2" value="3">3s</option>

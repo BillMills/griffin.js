@@ -207,16 +207,17 @@ function mod_layout(){
 
 //TODO: move the DOM element definitions to HTML, and make this function hide / show as appropriate
 function mod_gate_params(){
-	var font=["#FF0000", "#00FF00", "#FFFF00", "#660099"],
+	var font=["#FF0000", "#00FF00", "#FFFF00", "#FF00FF"],
 		obj=document.getElementById("Gate_params"),
 		line="",
 		i, name, cmd;
 
 	for(i=0; i<=TBparam.num_gates; i++){
-		line=line+"<font style=\"color: "+font[i]+";\"><b>Gate"+(i+1)+":</b></font> Centre (x,y): <input type=\"text\" id=\"Gatex"+i+"\" style=\"width:40px\"; onchange=\"setGateX(this)\">,<input type=\"text\" id=\"Gatey"+i+"\" style=\"width:40px\"; onchange=\"setGateY(this)\">Size: <input type=\"text\" id=\"GateSize"+i+"\" style=\"width:40px; margin-right:20px;\"; onchange=\"setGateSize(this)\">";
+		line=line+"<font style=\"color: "+font[i]+";\"><b>Gate"+(i+1)+":</b></font> Centre (x,y): <input type=\"text\" id=\"Gatex"+i+"\" style=\"width:40px\"; onchange=\"setGateX(this); plot_data2D(1, 'true')\">,<input type=\"text\" id=\"Gatey"+i+"\" style=\"width:40px\"; onchange=\"setGateY(this); plot_data2D(1, 'true')\">Size: <input type=\"text\" id=\"GateSize"+i+"\" style=\"width:40px; margin-right:20px;\"; onchange=\"setGateSize(this); plot_data2D(1, 'true')\">";
 
 	}
 	obj.innerHTML=line;
+	drawTbraggGates();
 
 	for(i=0; i<=TBparam.num_gates; i++){
 		name="Gatex"+i;
