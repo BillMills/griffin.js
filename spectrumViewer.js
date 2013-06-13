@@ -120,13 +120,8 @@ function setAxisLimit(input, fieldID, target, absMax){
 		if(SVparam[target]<0) 
 			SVparam[target]=0;
 
-	} else {  //exception handling
-		if(input < field.min)
-			field.value = field.min;
-		else if(input > field.max)
-			field.value = field.max;
-		if(field.value > SVparam[absMax])
-			field.value = SVparam[absMax]
+	} else {  //exception handling, bump the value back to whatever it used to be.
+		field.value = SVparam[target];
 	}
 }
 
@@ -412,7 +407,7 @@ function plot_data(RefreshNow, abandonBuffer){
 	} // End of for loop
 
 	// Pause for some time and then recall this function to refresh the data display
-	if(SVparam.RefreshTime>0 && RefreshNow==1) setTimeout(function(){plot_data(1, 'true')},SVparam.RefreshTime*1000); 
+	if(SVparam.RefreshTime>0 && RefreshNow==1) SVparam.refreshHandler = setTimeout(function(){plot_data(1, 'true')},SVparam.RefreshTime*1000); 
 	
 }
 ///////////////////////////////
@@ -532,6 +527,11 @@ function RequestFitLimits(){
 
 function FitData(){
 	var cent, fitdata, i, max, width, x, y, height;
+
+	//suspend the refresh
+	window.clearTimeout(SVparam.refreshHandler);
+	//set refresh option to 'off'
+	document.getElementById("refreshRate").value = 0;
 
 	if(SVparam.FitLimitLower<0) SVparam.FitLimitLower=0;
 	if(SVparam.FitLimitUpper>SVparam.XaxisLimitAbsMax) SVparam.FitLimitUpper=SVparam.XaxisLimitAbsMax;
@@ -1219,7 +1219,7 @@ function mDown2D(event){
 	yBin = Math.floor((SVparam.canvas2D.height-SVparam.bottomMargin2D - y)/SVparam.binWidth2D + SVparam.YaxisLimitMin2D);
 	if(xBin < 0) xBin = 0;
 	if(yBin < 0) yBin = 0;
-	
+
 	//drag a box if clicking in the plot field:
 	if(x > SVparam.leftMargin2D && x < (SVparam.canvas2D.width - SVparam.rightMargin2D) && y>SVparam.topMargin2D && y<(SVparam.canvas2D.height-SVparam.bottomMargin2D)){
 		SVparam.onclickXvals.min = xBin;
