@@ -66,6 +66,9 @@ function DragWindow(){
 		//populate the text fields:
 		document.getElementById("LowerXLimit").value=SVparam.XaxisLimitMin;
 		document.getElementById("UpperXLimit").value=SVparam.XaxisLimitMax;	
+		//programatically trigger the fields' onchange:
+		document.getElementById('LowerXLimit').onchange();
+		document.getElementById('UpperXLimit').onchange();
 
 		//drawXaxis();
 		SVparam.YaxisLimitMax=5;
@@ -153,8 +156,11 @@ function Unzoom(){
 	SVparam.XaxisLimitMin=0;
 	SVparam.XaxisLimitMax=SVparam.XaxisLimitAbsMax;
 
+	//update input field values and trigger their onchange:
 	document.getElementById("LowerXLimit").value=SVparam.XaxisLimitMin;
 	document.getElementById("UpperXLimit").value=SVparam.XaxisLimitMax;
+	document.getElementById('LowerXLimit').onchange();
+	document.getElementById('UpperXLimit').onchange();
 
 	plot_data(0);
 
@@ -1044,8 +1050,9 @@ function summonView(target){
 function draw2Dframe(){
 	var binsPerTick, i, label;
 
-	//determine bin render width (enforce square bins)
-	SVparam.binWidth2D = Math.min(  SVparam.yAxisPixLength2D / (SVparam.YaxisLimitMax2D - SVparam.YaxisLimitMin2D), SVparam.xAxisPixLength2D / (SVparam.XaxisLimitMax2D - SVparam.XaxisLimitMin2D));
+	//determine bin render width
+	SVparam.binWidth2D  = SVparam.xAxisPixLength2D / (SVparam.XaxisLimitMax2D - SVparam.XaxisLimitMin2D);
+	SVparam.binHeight2D = SVparam.yAxisPixLength2D / (SVparam.YaxisLimitMax2D - SVparam.YaxisLimitMin2D);
 
 	//clear canvas
 	SVparam.context2D.clearRect(0,0,SVparam.canvWidth2D, SVparam.canvHeight2D);
@@ -1101,14 +1108,14 @@ function draw2Dframe(){
 	for(i=0; i<SVparam.nYticks; i++){
 		//ticks
 		SVparam.context2D.beginPath();
-		SVparam.context2D.moveTo(SVparam.leftMargin2D, SVparam.canvas2D.height - SVparam.bottomMargin2D - i*binsPerTick*SVparam.binWidth2D);
-		SVparam.context2D.lineTo(SVparam.leftMargin2D - SVparam.tickLength, SVparam.canvas2D.height - SVparam.bottomMargin2D - i*binsPerTick*SVparam.binWidth2D);
+		SVparam.context2D.moveTo(SVparam.leftMargin2D, SVparam.canvas2D.height - SVparam.bottomMargin2D - i*binsPerTick*SVparam.binHeight2D);
+		SVparam.context2D.lineTo(SVparam.leftMargin2D - SVparam.tickLength, SVparam.canvas2D.height - SVparam.bottomMargin2D - i*binsPerTick*SVparam.binHeight2D);
 		SVparam.context2D.stroke();
 
 		//labels
 		SVparam.context2D.textBaseline = 'middle';
 		label = (SVparam.YaxisLimitMin2D + i*binsPerTick).toFixed(0);
-		SVparam.context2D.fillText(label, SVparam.leftMargin2D - SVparam.tickLength - SVparam.yLabelOffset - SVparam.context2D.measureText(label).width, SVparam.canvas2D.height - SVparam.bottomMargin2D - i*binsPerTick*SVparam.binWidth2D);
+		SVparam.context2D.fillText(label, SVparam.leftMargin2D - SVparam.tickLength - SVparam.yLabelOffset - SVparam.context2D.measureText(label).width, SVparam.canvas2D.height - SVparam.bottomMargin2D - i*binsPerTick*SVparam.binHeight2D);
 
 	}
 
@@ -1192,7 +1199,7 @@ function plot_data2D(RefreshNow, abandonBuffer){
 		if(thisData[i].x >= SVparam.XaxisLimitMin2D && thisData[i].x < SVparam.XaxisLimitMax2D && thisData[i].y >= SVparam.YaxisLimitMin2D && thisData[i].y < SVparam.YaxisLimitMax2D){
 			SVparam.context2D.fillStyle = scalepickr(thisData[i].z, 'Sunset');
 			//SVparam.context2D.shadowColor = scalepickr(thisData[i].z, 'Sunset');
-			SVparam.context2D.fillRect(SVparam.leftMargin2D + (thisData[i].x-SVparam.XaxisLimitMin2D)*SVparam.binWidth2D, SVparam.canvas2D.height - SVparam.bottomMargin2D - (thisData[i].y-SVparam.YaxisLimitMin2D+1)*SVparam.binWidth2D ,SVparam.binWidth2D,SVparam.binWidth2D);
+			SVparam.context2D.fillRect(SVparam.leftMargin2D + (thisData[i].x-SVparam.XaxisLimitMin2D)*SVparam.binWidth2D, SVparam.canvas2D.height - SVparam.bottomMargin2D - (thisData[i].y-SVparam.YaxisLimitMin2D+1)*SVparam.binHeight2D ,SVparam.binWidth2D,SVparam.binHeight2D);
 			entries += thisData[i].z;
 		}
 	}
@@ -1216,7 +1223,7 @@ function mDown2D(event){
 	y = coords.y;
 
 	xBin = Math.floor((x-SVparam.leftMargin2D)/SVparam.binWidth2D + SVparam.XaxisLimitMin2D);
-	yBin = Math.floor((SVparam.canvas2D.height-SVparam.bottomMargin2D - y)/SVparam.binWidth2D + SVparam.YaxisLimitMin2D);
+	yBin = Math.floor((SVparam.canvas2D.height-SVparam.bottomMargin2D - y)/SVparam.binHeight2D + SVparam.YaxisLimitMin2D);
 	if(xBin < 0) xBin = 0;
 	if(yBin < 0) yBin = 0;
 
@@ -1242,7 +1249,7 @@ function mUp2D(event){
 	y = coords.y;
 
 	xBin = Math.floor((x-SVparam.leftMargin2D)/SVparam.binWidth2D + SVparam.XaxisLimitMin2D);
-	yBin = Math.floor((SVparam.canvas2D.height-SVparam.bottomMargin2D - y)/SVparam.binWidth2D + SVparam.YaxisLimitMin2D);
+	yBin = Math.floor((SVparam.canvas2D.height-SVparam.bottomMargin2D - y)/SVparam.binHeight2D + SVparam.YaxisLimitMin2D);
 	if(xBin < 0) xBin = 0;
 	if(yBin < 0) yBin = 0;
 
@@ -1293,7 +1300,7 @@ function mMove2D(event){
 	y = coords.y;
 
 	xBin = Math.floor((x-SVparam.leftMargin2D)/SVparam.binWidth2D+SVparam.XaxisLimitMin2D);
-	yBin = Math.floor((SVparam.canvas2D.height-SVparam.bottomMargin2D-y)/SVparam.binWidth2D+SVparam.YaxisLimitMin2D);
+	yBin = Math.floor((SVparam.canvas2D.height-SVparam.bottomMargin2D-y)/SVparam.binHeight2D+SVparam.YaxisLimitMin2D);
 
 	document.getElementById('2Dcoords').innerHTML = 'x: '+xBin+', y: '+yBin;
 
