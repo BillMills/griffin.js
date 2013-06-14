@@ -73,7 +73,7 @@ function masterLoop(callMyself){
 	if(!document.webkitHidden && !document.mozHidden){
 
         //one big ODB grab:
-        if(!window.parameters.devMode) ODBgrab();
+        ODBgrab();
 
         //update all assets
         //status bar
@@ -129,22 +129,19 @@ function masterLoop(callMyself){
 function detectCards(){
     var i, j, crateCode, nSlots;
     
-    if(window.parameters.devMode) moduleSizes = [0,4,0,1,1,0];
-    else {
-        //fetch cratemap code: subsequent pairs of bits correspond to slots in ascending order: 00 => empty slot; 01 => 12 channel card; 10 => 48 channel card.
-        //crate size indicated by terminating bitpattern = 111: at bit 12 -> 6 slot crate, at bit 24 -> 12 slot crate, absent -> 16 slot crate:
-        for(j=0; j<window.parameters.HVequipmentNames.length; j++){
-            crateCode = ODBGet('/Equipment/'+window.parameters.HVequipmentNames[j]+'/Settings/CrateMap[0]');
-            if( ((crateCode & (7<<12)) >> 12) == 7) nSlots = 6;
-            else if( ((crateCode & (7<<24)) >> 24) == 7) nSlots = 12;
-            else nSlots = 16;
-    
-            window.parameters.moduleSizes[j] = [];    
-            for(i=0; i<nSlots; i++){
-                if( ((crateCode>>(2*i)) & 3) == 1 ) window.parameters.moduleSizes[j][window.parameters.moduleSizes[j].length] = 1;
-                else if( ((crateCode>>(2*i)) & 3) == 2 ) window.parameters.moduleSizes[j][window.parameters.moduleSizes[j].length] = 4;
-                else window.parameters.moduleSizes[j][window.parameters.moduleSizes[j].length] = 0;
-            }
+    //fetch cratemap code: subsequent pairs of bits correspond to slots in ascending order: 00 => empty slot; 01 => 12 channel card; 10 => 48 channel card.
+    //crate size indicated by terminating bitpattern = 111: at bit 12 -> 6 slot crate, at bit 24 -> 12 slot crate, absent -> 16 slot crate:
+    for(j=0; j<window.parameters.HVequipmentNames.length; j++){
+        crateCode = ODBGet('/Equipment/'+window.parameters.HVequipmentNames[j]+'/Settings/CrateMap[0]');
+        if( ((crateCode & (7<<12)) >> 12) == 7) nSlots = 6;
+        else if( ((crateCode & (7<<24)) >> 24) == 7) nSlots = 12;
+        else nSlots = 16;
+
+        window.parameters.moduleSizes[j] = [];    
+        for(i=0; i<nSlots; i++){
+            if( ((crateCode>>(2*i)) & 3) == 1 ) window.parameters.moduleSizes[j][window.parameters.moduleSizes[j].length] = 1;
+            else if( ((crateCode>>(2*i)) & 3) == 2 ) window.parameters.moduleSizes[j][window.parameters.moduleSizes[j].length] = 4;
+            else window.parameters.moduleSizes[j][window.parameters.moduleSizes[j].length] = 0;
         }
     }
 }

@@ -129,7 +129,7 @@ function StatusBar(wrapper){
         document.getElementById('JSONPmonitor').innerHTML = JSONPtext;
         
         //message service:
-        if(!window.parameters.MIDASlegacyMode && !window.parameters.devMode){
+        if(!window.parameters.MIDASlegacyMode){
             var messages = ODBGetMsg(5);
             for(i=0; i<5; i++){
                 document.getElementById('message'+i).innerHTML = messages[4-i]; //most recent on top
@@ -144,7 +144,7 @@ function StatusBar(wrapper){
         tabBKG('LeftSidebarBKG', 'left');
         
         //pull in status table from traditional status page, and put it in the TT:
-        if(!window.parameters.MIDASlegacyMode && !window.parameters.devMode){
+        if(!window.parameters.MIDASlegacyMode){
             $.get(window.parameters.statusURL, function(response){
                 var i, headStart, headEnd = '', rowNode;
 

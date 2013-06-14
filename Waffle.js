@@ -753,32 +753,31 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         
             //batch fetch all in one big lump:
 
-            if(!window.parameters.devMode){
-                for(k=0; k<this.nCrates; k++){
+            for(k=0; k<this.nCrates; k++){
 
-                    for(i=0; i<window.parameters.ODBkeys.length; i++){
-                        paths[k*window.parameters.ODBkeys.length + i] = '/Equipment/'+window.parameters.HVequipmentNames[k]+'/'+window.parameters.ODBkeys[i]+'[*]';
-                    }
-                    
-                }
-                
-                data = ODBMGet(paths);
- 
-                for(k=0; k<this.nCrates; k++){
-                    chName[k]          = data[k*window.parameters.ODBkeys.length + 10];
-                    reqVoltage[k]      = data[k*window.parameters.ODBkeys.length + 0];
-                    measVoltage[k]     = data[k*window.parameters.ODBkeys.length + 1];
-                    measCurrent[k]     = data[k*window.parameters.ODBkeys.length + 2];
-                    rampUp[k]          = data[k*window.parameters.ODBkeys.length + 3];
-                    rampDown[k]        = data[k*window.parameters.ODBkeys.length + 4];
-                    measTemperature[k] = data[k*window.parameters.ODBkeys.length + 5];
-                    repoChState[k]     = data[k*window.parameters.ODBkeys.length + 6];
-                    repoChStatus[k]    = data[k*window.parameters.ODBkeys.length + 7];
-                    voltageLimit[k]    = data[k*window.parameters.ODBkeys.length + 8];
-                    currentLimit[k]    = data[k*window.parameters.ODBkeys.length + 9];                    
+                for(i=0; i<window.parameters.ODBkeys.length; i++){
+                    paths[k*window.parameters.ODBkeys.length + i] = '/Equipment/'+window.parameters.HVequipmentNames[k]+'/'+window.parameters.ODBkeys[i]+'[*]';
                 }
                 
             }
+            
+            data = ODBMGet(paths);
+
+            for(k=0; k<this.nCrates; k++){
+                chName[k]          = data[k*window.parameters.ODBkeys.length + 10];
+                reqVoltage[k]      = data[k*window.parameters.ODBkeys.length + 0];
+                measVoltage[k]     = data[k*window.parameters.ODBkeys.length + 1];
+                measCurrent[k]     = data[k*window.parameters.ODBkeys.length + 2];
+                rampUp[k]          = data[k*window.parameters.ODBkeys.length + 3];
+                rampDown[k]        = data[k*window.parameters.ODBkeys.length + 4];
+                measTemperature[k] = data[k*window.parameters.ODBkeys.length + 5];
+                repoChState[k]     = data[k*window.parameters.ODBkeys.length + 6];
+                repoChStatus[k]    = data[k*window.parameters.ODBkeys.length + 7];
+                voltageLimit[k]    = data[k*window.parameters.ODBkeys.length + 8];
+                currentLimit[k]    = data[k*window.parameters.ODBkeys.length + 9];                    
+            }
+                
+
 
             for(k=0; k<this.nCrates; k++){
                 for(i=0; i<this.rows; i++){
@@ -792,53 +791,39 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                         else slot = j;
                         //don't populate the primary of a 12 channel card, or any channel corresponding to an empty slot:
                         if( (i!=0 || window.parameters.moduleSizes[k][j]==4) && window.parameters.moduleSizes[k][slot]!=0 ){
-                            if(!window.parameters.devMode){
                                
-                                this.dataBus[k].channelName[i][j] = 'channel'+i+j;
-                                this.dataBus[k].demandVoltage[i][j] = -9999;
-                                this.dataBus[k].reportVoltage[i][j] = -9999;
-                                this.dataBus[k].reportCurrent[i][j] = -9999;
-                                this.dataBus[k].demandVrampUp[i][j] = -9999;
-                                this.dataBus[k].demandVrampDown[i][j] = -9999;
-                                this.dataBus[k].reportTemperature[i][j] = -9999;
-                                this.dataBus[k].channelMask[i][j] = 1;
-                                this.dataBus[k].rampStatus[i][j] = 7;
-                                this.dataBus[k].voltLimit[i][j] = -9999;
-                                this.dataBus[k].currentLimit[i][j] = -9999;
+                            this.dataBus[k].channelName[i][j] = 'channel'+i+j;
+                            this.dataBus[k].demandVoltage[i][j] = -9999;
+                            this.dataBus[k].reportVoltage[i][j] = -9999;
+                            this.dataBus[k].reportCurrent[i][j] = -9999;
+                            this.dataBus[k].demandVrampUp[i][j] = -9999;
+                            this.dataBus[k].demandVrampDown[i][j] = -9999;
+                            this.dataBus[k].reportTemperature[i][j] = -9999;
+                            this.dataBus[k].channelMask[i][j] = 1;
+                            this.dataBus[k].rampStatus[i][j] = 7;
+                            this.dataBus[k].voltLimit[i][j] = -9999;
+                            this.dataBus[k].currentLimit[i][j] = -9999;
 
-                                ODBindex = getMIDASindex(i, j, k);
-                                this.dataBus[k].channelName[i][j]       = chName[k][ODBindex];
-                                this.dataBus[k].demandVoltage[i][j]     = parseFloat(reqVoltage[k][ODBindex]);
-                                this.dataBus[k].reportVoltage[i][j]     = parseFloat(measVoltage[k][ODBindex]);   
-                                this.dataBus[k].reportCurrent[i][j]     = parseFloat(measCurrent[k][ODBindex]);
-                                
-                                this.dataBus[k].demandVrampUp[i][j]     = parseFloat(rampUp[k][ODBindex]);
-                                this.dataBus[k].demandVrampDown[i][j]   = parseFloat(rampDown[k][ODBindex]);
-                                this.dataBus[k].reportTemperature[i][j] = parseFloat(measTemperature[k][ODBindex]);
-                                this.dataBus[k].channelMask[i][j]       = ( parseFloat(repoChState[k][ODBindex]) && parseFloat(repoChStatus[k][ODBindex]) ) ? 1 : 0 ;
-                                this.dataBus[k].rampStatus[i][j]        = parseFloat(repoChStatus[k][ODBindex]);
-                                this.dataBus[k].voltLimit[i][j]         = parseFloat(voltageLimit[k][ODBindex]);
-                                this.dataBus[k].currentLimit[i][j]      = parseFloat(currentLimit[k][ODBindex]);
+                            ODBindex = getMIDASindex(i, j, k);
+                            this.dataBus[k].channelName[i][j]       = chName[k][ODBindex];
+                            this.dataBus[k].demandVoltage[i][j]     = parseFloat(reqVoltage[k][ODBindex]);
+                            this.dataBus[k].reportVoltage[i][j]     = parseFloat(measVoltage[k][ODBindex]);   
+                            this.dataBus[k].reportCurrent[i][j]     = parseFloat(measCurrent[k][ODBindex]);
+                            
+                            this.dataBus[k].demandVrampUp[i][j]     = parseFloat(rampUp[k][ODBindex]);
+                            this.dataBus[k].demandVrampDown[i][j]   = parseFloat(rampDown[k][ODBindex]);
+                            this.dataBus[k].reportTemperature[i][j] = parseFloat(measTemperature[k][ODBindex]);
+                            this.dataBus[k].channelMask[i][j]       = ( parseFloat(repoChState[k][ODBindex]) && parseFloat(repoChStatus[k][ODBindex]) ) ? 1 : 0 ;
+                            this.dataBus[k].rampStatus[i][j]        = parseFloat(repoChStatus[k][ODBindex]);
+                            this.dataBus[k].voltLimit[i][j]         = parseFloat(voltageLimit[k][ODBindex]);
+                            this.dataBus[k].currentLimit[i][j]      = parseFloat(currentLimit[k][ODBindex]);
 
-                                //48ch cards report the currents in mA, convert to uA: 
-                                if(i==0){
-                                    this.dataBus[k].reportCurrent[i][j] = this.dataBus[k].reportCurrent[i][j]*1000;
-                                    this.dataBus[k].currentLimit[i][j] = this.dataBus[k].currentLimit[i][j]*1000;
-                                }
-                                
-                            } else{
-                                this.dataBus[k].channelName[i][j]   = 'channel'+i+j;
-                                this.dataBus[k].demandVoltage[i][j] = 0;
-                                this.dataBus[k].reportVoltage[i][j] = 0;
-                                this.dataBus[k].reportCurrent[i][j] = 0;
-                                this.dataBus[k].demandVrampUp[i][j] = 0;
-                                this.dataBus[k].demandVrampDown[i][j] = 0;
-                                this.dataBus[k].reportTemperature[i][j] = 0;
-                                this.dataBus[k].channelMask[i][j] = 1;
-                                this.dataBus[k].rampStatus[i][j] = 1;
-                                this.dataBus[k].voltLimit[i][j] = 0;
-                                this.dataBus[k].currentLimit[i][j] = 0;
+                            //48ch cards report the currents in mA, convert to uA: 
+                            if(i==0){
+                                this.dataBus[k].reportCurrent[i][j] = this.dataBus[k].reportCurrent[i][j]*1000;
+                                this.dataBus[k].currentLimit[i][j] = this.dataBus[k].currentLimit[i][j]*1000;
                             }
+                                
                         } else if (i!=0 || window.parameters.moduleSizes[k][j]==4){  //keep the array filled, even for empty slots to avoid unpredictable behavior
                             this.dataBus[k].channelName[i][j] = 'channel'+i+j;
                             this.dataBus[k].demandVoltage[i][j] = 0;

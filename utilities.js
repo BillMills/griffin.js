@@ -233,7 +233,7 @@ function fakeScalars(){
 
     if(window.parameters.deployment.HPGe){
         for(key in window.HPGepointer.dataBus.HPGe){
-            JSONP.scalar[key] = {"TRIGREQ" : 100};
+            JSONP.scalar[key] = {"TRIGREQ" : Math.random()};
 
         }
     }
@@ -248,7 +248,7 @@ function fakeThresholds(){
 
     if(window.parameters.deployment.HPGe){
         for(key in window.HPGepointer.dataBus.HPGe){
-            JSONP.parameters.thresholds[key] = 50;
+            JSONP.parameters.thresholds[key] = Math.random();
 
         }
     }

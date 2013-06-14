@@ -45,14 +45,14 @@
   <body style="font-family: 'Raleway', sans-serif; font-size:14px; background-color:#333333; color:#FFFFFF; margin-left:0px"> 
 
     <!--Bounce to the right mirror - necessary to accomodate legacy MIDAS & mhttpd-->
-    <script type="text/JavaScript">
+    <!--script type="text/JavaScript">
       
       if(document.URL.search('http://midtig06.triumf.ca:8081') == -1){
         console.log('redirecting...')
         window.location = 'http://midtig06.triumf.ca:8081/CS/Dashboard'
       }
       
-    </script>
+    </script-->
 
     <!--Branding///////////////////////////////////////////////////////////-->
     <canvas id="banner"></canvas>
@@ -311,9 +311,9 @@
 
         //hack to put subsystems on top until Dashboard view is implemented:
         if(window.parameters.topDeployment['Subsystems']) swapView('SubsystemLinks', window.Subdetectors[0].canvasID, 'SubsystemSidebar', 'SubsystemsButton')
-        else if(!window.parameters.topDeployment['Trigger']) swapView('mainframeLinks', 'HVgrid0', 'InputLayer', 'HVmonitorButton');
+        //else if(!window.parameters.topDeployment['Trigger']) swapView('mainframeLinks', 'HVgrid0', 'InputLayer', 'HVmonitorButton');
         //hack to patch in HV assets:
-        insertDOM('button', 'HVhackButton', 'navLink', '', 'statusLink', function(){window.location="http://alphadon.triumf.ca:8082/CS/Dashboard"}, 'HV Status', '', 'submit');
+        //insertDOM('button', 'HVhackButton', 'navLink', '', 'statusLink', function(){window.location="http://alphadon.triumf.ca:8082/CS/Dashboard"}, 'HV Status', '', 'submit');
 
         startLoop(); 
 

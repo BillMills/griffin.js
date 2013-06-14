@@ -1,11 +1,11 @@
 function loadParameters(){
 
 				window.parameters = {
-				"devMode" : 0,
+				"devMode" : 1,
 				"MIDASlegacyMode" : 0,
 				"ExpName" : "TIGRESS",
-				"statusURL" : "http://midtig06.triumf.ca:8081/",
-				"topDeployment" : {"HV":0, "Subsystems":1, "DAQ":1, "Clock":0, "Trigger":0},
+				"statusURL" : "http://alphadon.triumf.ca:8082/",
+				"topDeployment" : {"HV":1, "Subsystems":1, "DAQ":1, "Clock":0, "Trigger":0},
 				"deployment" : {"BAMBINO":0, "DANTE":0, "DESCANT":0, "HPGe":1, "PACES":0, "SCEPTAR":0, "SHARC":0, "SPICE":0, "TIP":0, "DSSD":1},
 				"wrapper" : "waffleplate",
 				"subdetectorUnit" : ["V", "ADC units", "Hz"],
@@ -40,7 +40,7 @@ function loadParameters(){
 				"colorScale"  : ["ROOT Rainbow", "Greyscale", "Sunset", "Red Scale", "Mayfair"],
 				"subdetectorColors" : ["ROOT Rainbow", "ROOT Rainbow", "Sunset"],
 				"validDetectors" : ["TIG", "TIS", "GRG", "GRS", "HPG", "HPS", "BAE", "BAZ", "SHQ", "SHB", "MAD", "MAM", "CSD", "CSM", "SPI", "SPE", "DSC", "SEP", "SET", "PAC", "DAL", "DAB", "DAS", "TPC", "TPW", "TPP", "TPG", "TPE", "ZDS", "ZDP", "ZDM", "ZDD", "TBR", "YBP", "YBB", "TRF", "RFL", "RFS"],
-				"detectorLogMode" : {'SubsystemsButton' : 1, 'DAQbutton' : 0},  //log state a function of ID of button used to summon current view state 
+				"detectorLogMode" : {'SubsystemsButton' : 0, 'DAQbutton' : 0},  //log state a function of ID of button used to summon current view state 
 				"warningFill" : 0, //an img to fill detector channels absent from the JSONP post
 
 
@@ -158,8 +158,8 @@ function loadParameters(){
 										   },
 						},
 
-				//"DAQminima" : [0, 0, 0, 0, 0, 0], //minima of element scales: [top level view rate, top level transfer, detail view rate, detail view transfer, master rate, master transfer]
-				//"DAQmaxima" : [10000, 100000, 1000, 1000, 50000, 50000],
+				"DAQminima" : [0, 0, 0, 0, 0, 0], //minima of element scales: [top level view rate, top level transfer, detail view rate, detail view transfer, master rate, master transfer]
+				"DAQmaxima" : [10000, 100000, 1000, 1000, 50000, 50000],
 
 				"JSONPrepos" : ["http://midtig06.triumf.ca:8092/parameters?jsonp=parseThreshold", "http://midtig06.triumf.ca:8091/scalar?jsonp=parseResponse"]
 				}
