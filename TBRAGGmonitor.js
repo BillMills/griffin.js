@@ -468,3 +468,18 @@ function dump2D(){
 	ODBSet("/Analyzer/Parameters/Gate0/dump",1);
 	alert("The file \""+filename+"\" has been written on the lxdaq04 filesystem.");
 }
+
+//special extention to mhttpd to handle 2D data
+function getData2D(specid){
+	var request = XMLHttpRequestGeneric();
+
+	var url = "?cmd=getspec2d&value="+specid;
+	request.open('GET', url, false);
+	request.send(null);
+
+	//var tempArray = request.responseText.split(";");
+	//for(var i=0; i<tempArray.length; i++) { tempArray[i] = +tempArray[i]; }
+
+	//return tempArray;
+    return request.responseText;
+}

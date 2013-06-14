@@ -1028,8 +1028,7 @@ function relMouseCoords(event){
         elts[elts.length] = currentElement
     }
     while(currentElement = currentElement.offsetParent)
-console.log(test)
-console.log(elts)
+
     canvasX = event.pageX - totalOffsetX;
     canvasY = event.pageY - totalOffsetY;
 
@@ -1071,7 +1070,7 @@ function draw2Dframe(){
 	SVparam.context2D.beginPath();
 	SVparam.context2D.moveTo(SVparam.leftMargin2D, SVparam.topMargin2D);
 	SVparam.context2D.lineTo(SVparam.leftMargin2D, SVparam.canvas2D.height-SVparam.bottomMargin2D);
-	SVparam.context2D.lineTo(SVparam.canvas2D.width - SVparam.rightMargin2D, SVparam.canvas2D.height - SVparam.bottomMargin2D);
+	SVparam.context2D.lineTo(SVparam.canvas2D.width - SVparam.rightMargin2D - SVparam.zScaleMargin, SVparam.canvas2D.height - SVparam.bottomMargin2D);
 	SVparam.context2D.stroke();
 
 	//Decorate x axis////////////////////////////////////////////////////////
@@ -1128,7 +1127,7 @@ function draw2Dframe(){
 
 	//x axis title:
 	SVparam.context2D.textBaseline = 'bottom';
-	SVparam.context2D.fillText('Channels', SVparam.canvas2D.width - SVparam.rightMargin2D - SVparam.context2D.measureText('Channels').width, SVparam.canvas2D.height);
+	SVparam.context2D.fillText('Channels', SVparam.canvas2D.width - SVparam.rightMargin2D - SVparam.context2D.measureText('Channels').width - SVparam.zScaleMargin, SVparam.canvas2D.height);
 
 	//y axis title:
 	SVparam.context2D.textBaseline = 'alphabetic';
@@ -1152,7 +1151,22 @@ function plot_data2D(RefreshNow, abandonBuffer){
 	document.getElementById('LowerYLimit').value = SVparam.YaxisLimitMin2D;
 	document.getElementById('UpperYLimit').value = SVparam.YaxisLimitMax2D;
 
-	thisData = window.thisData;
+	//get some data, either via a network request or a buffer:
+	if(!SVparam.devMode){
+		if(abandonBuffer){
+			thisData = getData2D(0).split(';');
+			for(i=0; i<thisData.length; i++){
+				thisData[i] = thisData[i].split(',');
+				thisData[i] = {'x' : parseInt(thisData[i][0]), 'y' : parseInt(thisData[i][1]), 'z' : parseInt(thisData[i][2])}
+			}
+			SVparam.dataBuffer2D = thisData;
+		} else {
+			thisData = SVparam.dataBuffer2D;
+		}
+	} else {
+		thisData = window.thisData
+	}
+
 /*
 	SVparam.maxYvalue=SVparam.YaxisLimitMax;
 	// Loop through to get the data and set the Y axis limits
@@ -1201,10 +1215,28 @@ function plot_data2D(RefreshNow, abandonBuffer){
 
 	draw2Dframe();
 
+	//determine the maximum z value:
+	for(i=0; i<thisData.length; i++){
+		if(!SVparam.logZ)
+			SVparam.zMax = Math.max(SVparam.zMax, thisData[i].z);
+		else 
+			SVparam.zMax = Math.max(SVparam.zMax, Math.log10(thisData[i].z));
+	}
+	if(!SVparam.zMax)
+		SVparam.zMax = 1;
+
+	//fill in all the 0 bins:
+	SVparam.context2D.fillStyle = scalepickr(0, 'Sunset');
+	SVparam.context2D.fillRect(SVparam.leftMargin2D, SVparam.canvHeight2D - SVparam.bottomMargin2D - SVparam.yAxisPixLength2D, SVparam.xAxisPixLength2D, SVparam.yAxisPixLength2D)
+
 	//fill histo:
 	for(i=0; i<thisData.length; i++){
 		if(thisData[i].x >= SVparam.XaxisLimitMin2D && thisData[i].x < SVparam.XaxisLimitMax2D && thisData[i].y >= SVparam.YaxisLimitMin2D && thisData[i].y < SVparam.YaxisLimitMax2D){
-			SVparam.context2D.fillStyle = scalepickr(thisData[i].z, 'Sunset');
+			if(!SVparam.logZ)
+				SVparam.context2D.fillStyle = scalepickr(thisData[i].z / SVparam.zMax, 'Sunset');
+			else
+				SVparam.context2D.fillStyle = scalepickr( (Math.log10(thisData[i].z) - SVparam.logZmin ) / (SVparam.zMax - SVparam.logZmin ), 'Sunset');
+
 			//SVparam.context2D.shadowColor = scalepickr(thisData[i].z, 'Sunset');
 			SVparam.context2D.fillRect(SVparam.leftMargin2D + (thisData[i].x-SVparam.XaxisLimitMin2D)*SVparam.binWidth2D, SVparam.canvas2D.height - SVparam.bottomMargin2D - (thisData[i].y-SVparam.YaxisLimitMin2D+1)*SVparam.binHeight2D ,SVparam.binWidth2D,SVparam.binHeight2D);
 			entries += thisData[i].z;
@@ -1214,10 +1246,13 @@ function plot_data2D(RefreshNow, abandonBuffer){
 	//report entries:
 	SVparam.context2D.textBaseline = 'top';
 	SVparam.context2D.fillStyle = '#999999';
-	SVparam.context2D.fillText('Entries: '+entries, SVparam.canvas2D.width - SVparam.rightMargin2D - SVparam.context2D.measureText('Entries: '+entries).width, 16);
+	SVparam.context2D.fillText('Entries: '+entries, SVparam.canvas2D.width - SVparam.rightMargin2D - SVparam.context2D.measureText('Entries: '+entries).width - SVparam.zScaleMargin, 16);
 
 	//overlay tbragg gates if running on tbragg:
 	drawTbraggGates();
+
+	//draw scale
+	drawZscale();
 
 	// Pause for some time and then recall this function to refresh the data display
 	if(SVparam.RefreshTime>0 && RefreshNow==1) setTimeout(function(){plot_data2D(1, 'true')},SVparam.RefreshTime*1000); 
@@ -1312,6 +1347,50 @@ function mMove2D(event){
 	yBin = Math.floor((SVparam.canvas2D.height-SVparam.bottomMargin2D-y)/SVparam.binHeight2D+SVparam.YaxisLimitMin2D);
 
 	document.getElementById('2Dcoords').innerHTML = 'x: '+xBin+', y: '+yBin;
+
+}
+
+//draw a zaxis scale for the 2D plot:
+function drawZscale(){
+	var i, x0, y0, label,
+	width = 50;
+
+	//top corner of scale:
+	x0 = SVparam.leftMargin2D + SVparam.xAxisPixLength2D + SVparam.rightMargin2D;
+	y0 = SVparam.topMargin2D;
+
+	//color bar
+	for(i=0; i<1000; i++){
+		SVparam.context2D.fillStyle = scalepickr(i/1000, 'Sunset');
+		SVparam.context2D.fillRect(x0, SVparam.canvHeight2D - SVparam.bottomMargin2D - (i+1)*SVparam.yAxisPixLength2D/1000, width, SVparam.yAxisPixLength2D/1000);
+	}
+
+	//frame
+	SVparam.context2D.strokeStyle = '#FFFFFF';
+	SVparam.context2D.beginPath();
+	SVparam.context2D.moveTo(x0+width, y0);
+	SVparam.context2D.lineTo(x0+width, y0+SVparam.yAxisPixLength2D);
+	SVparam.context2D.stroke();
+	SVparam.context2D.closePath();
+	for(i=0; i<5; i++){
+		//ticks
+		SVparam.context2D.beginPath();
+		SVparam.context2D.moveTo(x0+width, SVparam.canvHeight2D - SVparam.bottomMargin2D - i*SVparam.yAxisPixLength2D/4);
+		SVparam.context2D.lineTo(x0+width+SVparam.tickLength, SVparam.canvHeight2D - SVparam.bottomMargin2D - i*SVparam.yAxisPixLength2D/4);
+		SVparam.context2D.stroke();
+		SVparam.context2D.closePath();
+
+		//labels
+		SVparam.context2D.textBaseline = 'middle';
+		SVparam.context2D.fillStyle = '#FFFFFF';
+		if(!SVparam.logZ)
+			label = (i*SVparam.zMax/4).toFixed(1);
+		else
+			label = (SVparam.logZmin + i/4*(SVparam.zMax - SVparam.logZmin)).toFixed(1);
+
+		SVparam.context2D.fillText(label, x0+width+SVparam.tickLength + 5, SVparam.canvHeight2D - SVparam.bottomMargin2D - i*SVparam.yAxisPixLength2D/4)
+	}
+	SVparam.context2D.textBaseline = 'alphabetic';
 
 }
 
