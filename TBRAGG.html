@@ -137,12 +137,71 @@
 								<caption>Spectrum Control</caption>
 
 								<tr>
-									<td colspan='3' width='auto'>
+									<td>
+										<div id="limitMistake" style="color:'#00FFFF'"></div>
+									</td>
+
+									<td colspan='3' rowspan='9' style='width:auto;'>
 										<canvas id='canvas2D' style='margin-right:10px'></canvas>
 									</td>
 								</tr>
 
 								<tr>
+									<td>
+										<button id='bigUp' class='navLink' type="button" value=">>" onclick="scrollSpectra(SVparam.YaxisLimitMax2D - SVparam.YaxisLimitMin2D, 'YaxisLimitMin2D', 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D', 'LowerYLimit', 'UpperYLimit'); plot_data2D(0)">U</button>
+									</td>
+								</tr>
+
+								<tr>
+									<td>
+										<button id='smallUp' class='navLink' type="button" value=">" onclick="scrollSpectra(1, 'YaxisLimitMin2D', 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D', 'LowerYLimit', 'UpperYLimit'); plot_data2D(0)">u</button>
+									</td>
+								</tr>
+
+								<tr>
+									<td>
+										<button id='smallDown' class='navLink' type="button" value="<" onclick="scrollSpectra(-1, 'YaxisLimitMin2D', 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D', 'LowerYLimit', 'UpperYLimit'); plot_data2D(0)">d</button>
+									</td>
+								</tr>
+
+								<tr>
+									<td>
+										<button id='bigDown' class='navLink' type="button" value="<<" onclick="scrollSpectra(SVparam.YaxisLimitMin2D - SVparam.YaxisLimitMax2D, 'YaxisLimitMin2D', 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D', 'LowerYLimit', 'UpperYLimit'); plot_data2D(0)">D</button>
+									</td>
+								</tr>
+
+								<tr>
+									<td>
+										<input type="number" id="UpperYLimit" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D');plot_data2D(0); document.getElementById('LowerYLimit').setAttribute('max', this.value);" min='0' max='500'></button>
+									</td>
+								</tr>
+
+								<tr>
+									<td>
+										<input type="number" id="LowerYLimit" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'YaxisLimitMin2D', 'YaxisLimitAbsMax2D');plot_data2D(0); document.getElementById('UpperYLimit').setAttribute('min', this.value);" min='0' max='500'></button>
+									</td>
+								</tr>
+
+								<tr>
+									<td>
+										y axis limits
+									</td>
+								</tr>
+
+								<tr>
+									<td></td>
+								</tr>
+
+
+								<!--tr>
+									<td colspan='3' rowspan='8' width='auto'>
+										<canvas id='canvas2D' style='margin-right:10px'></canvas>
+									</td>
+								</tr-->
+
+								<tr>
+									<td></td>
+
 									<td align='left' colspan='1' style='padding:none;'>
 										x axis limits: 
 										<input type="number" id="LowerXLimit2D" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'XaxisLimitMin2D', 'XaxisLimitAbsMax2D');plot_data2D(0); document.getElementById('UpperXLimit2D').setAttribute('min', this.value);" min='0' max='500'></button>
@@ -159,7 +218,7 @@
 									</td>
 								</tr>
 
-								<tr>
+								<!--tr>
 									<td align='left' colspan='3' style='padding:none;'>
 										y axis limits: 
 										<input type="number" id="LowerYLimit" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'YaxisLimitMin2D', 'YaxisLimitAbsMax2D');plot_data2D(0); document.getElementById('UpperYLimit').setAttribute('min', this.value);" min='0' max='500'></button>
@@ -170,15 +229,11 @@
 										<button id='bigUp' class='navLink' type="button" value=">>" onclick="scrollSpectra(SVparam.YaxisLimitMax2D - SVparam.YaxisLimitMin2D, 'YaxisLimitMin2D', 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D', 'LowerYLimit', 'UpperYLimit'); plot_data2D(0)">U</button>
 										<div id="limitMistake" style="color:'#00FFFF'"></div>
 									</td>
-								</tr>
-
-								<!--tr>
-									<td>
-										z axis: Lin<input type="radio" id="a0" value="0" onclick="set_AxisType(this)" checked="true">|<input type="radio" id="a1" value="1" onclick="set_AxisType(this)">Log
-									</td>							
 								</tr-->
 
 								<tr>
+									<td></td>
+
 									<td width="400px" colspan='3' align='left' vertical-align='bottom'>
 										Refresh Rate: 
 										<select id="refreshRate2D" onchange="SVparam.RefreshTime=this.value; plot_data2D(0, 'true')">
@@ -193,70 +248,17 @@
 								</tr>
 
 								<tr>
+									<td></td>
+
 									<td colspan='3' align='left' style='padding:none;'>
-										<button id='clearSpec2D' class='navLink' type="button" value="Clear Spectra" onclick="clearSpecs()">Clear Plot</button>
+										<!--button id='clearSpec2D' class='navLink' type="button" value="Clear Spectra" onclick="clearSpecs()">Clear Plot</button-->
 										<button id='unzoom2D' class='navLink' type="button" value="Unzoom" onclick="Unzoom();">Unzoom</button>
 										<button id='saveASCIIB' class='navLink' type="button" value="Save ASCII" onclick="dump2D()">Save ASCII</button>
 									</td>
 								</tr>
 
-								<!--tr>
-									<td>
-										<b>Zoom</b> 
-										<select id="zoom_drop" onchange="setZoom(this.value);">
-											<option id="v1" value="1">x1</option>
-											<option id="v2" value="2">x2</option>
-											<option id="v3" value="3">x3</option>
-											<option id="v4" value="4">x4</option>
-										</select>
-
-										<form method="GET" action="http://midtig04.triumf.ca:8081/CS/Monitor&">
-											<button id='resetCountsB' class='navLink' type=submit name=customscript value="Reset Counts" onclick="setResetTime()">Reset Counts</button>
-											<input type=hidden name="redir" value="/CS/Monitor">
-										</form>
-
-										<button id='saveASCIIB' class='navLink' type="button" value="Save ASCII" onclick="dump2D()">Save ASCII</button>
-										</td>				
-								</tr-->
 							</table>
 
-
-
-
-
-							<!--table class='mainElement' style='position:relative; top:-227px;'>
-								<caption>E vs. dE</caption>
-								<tr>
-									<td colspan="3">
-										<img id="2Dplot" src="IDPlot.gif" width=380, height=380>
-									</td>					
-								</tr>
-
-
-								<tr>
-									<td>
-										<b>Zoom</b> 
-										<select id="zoom_drop" onchange="setZoom(this.value);">
-											<option id="v1" value="1">x1</option>
-											<option id="v2" value="2">x2</option>
-											<option id="v3" value="3">x3</option>
-											<option id="v4" value="4">x4</option>
-										</select>						
-									</td>
-
-									<td>
-										<form method="GET" action="http://midtig04.triumf.ca:8081/CS/Monitor&">
-											<button id='resetCountsB' class='navLink' type=submit name=customscript value="Reset Counts" onclick="setResetTime()"></button>
-											<input type=hidden name="redir" value="/CS/Monitor">
-										</form>
-									</td>
-
-									<td align=left style="width:100px;">
-										<button id='saveASCIIB' class='navLink' type="button" value="Save ASCII" onclick="dump2D()"></button>
-									</td>
-								</tr>
-
-							</table-->
 						</td>
 
 						<td id='el2'>
@@ -576,9 +578,9 @@ function refreshAll(){
 		}
 		TBparam.rate[Num] = h;
 		TBparam.int[Num] = t;
-		rate=parseInt((h/TBparam.GateMax[Num])*500.0);
-		if(rate>TBparam.GateMax[Num]) rate=500;
-		if(rate<0) rate=0;
+		rate=parseInt(h) //parseInt((h/TBparam.GateMax[Num])*500.0);
+		//if(rate<0) rate=0//if(rate>TBparam.GateMax[Num]) rate=500;
+		//if(rate>1) rate=1//if(rate<0) rate=0;
 		newLevels[Num] = rate;
 		/*
 		if(Num<=(parseInt(TBparam.num_gates)+1)){
@@ -641,7 +643,7 @@ function updateBars(frame){
 		leftMargin = 40,
 		bottomMargin = canvas.width*0.15,
 		barWidth = 70,
-		yAxisLength = canvas.height*0.9 - bottomMargin,
+		yAxisLength = canvas.height*0.85 - bottomMargin,
 		tickLength = 5,
 		lineWidth = 1,
 		height, i, j, string;
@@ -657,8 +659,11 @@ function updateBars(frame){
 
 		//bars
 		for(i=0; i<=parseInt(TBparam.num_gates)+1; i++){
+			//console.log()
 			context.fillStyle = TBparam.barChartColors[i];
 			height = TBparam.oldLevels[i]/TBparam.GateMax[i]*yAxisLength + ( TBparam.levels[i] / TBparam.GateMax[i] - TBparam.oldLevels[i] / TBparam.GateMax[i] )*yAxisLength*frame/nFrame;
+			if(height>yAxisLength) height = yAxisLength;
+			if(height<0) height = 0;
 			context.fillRect(leftMargin + textGutter + i*(barWidth+textGutter), canvas.height - bottomMargin - height, barWidth, height);
 		}
 
@@ -696,8 +701,8 @@ function updateBars(frame){
 			context.save()
 			context.translate(leftMargin+textGutter+barWidth/2 + i*(barWidth+textGutter), canvas.height-bottomMargin-yAxisLength-5 );
 			context.rotate(-Math.PI/2);
-			context.fillText('Rate: '+parseFloat(TBparam.rate[i]).toFixed(0), 0, -20);
-			context.fillText('Int: '+parseFloat(TBparam.int[i]).toFixed(0), 0, 20);
+			context.fillText('Rate: '+parseFloat(TBparam.rate[i]).toExponential(1), 0, -20);
+			context.fillText('Int: '+parseFloat(TBparam.int[i]).toExponential(1), 0, 20);
 			context.restore();
 		}
 
@@ -1799,17 +1804,24 @@ function relMouseCoords(event){
     elts = [];
 
 	if (event.offsetX !== undefined && event.offsetY !== undefined) { return {x:event.offsetX, y:event.offsetY}; }
+	//if (event.layerX !== undefined && event.layerY !== undefined) { return {x:event.layerX, y:event.layerY}; }
 
     do{
         totalOffsetX += currentElement.offsetLeft - currentElement.scrollLeft;
         totalOffsetY += currentElement.offsetTop - currentElement.scrollTop;
-        test[test.length] = currentElement.offsetLeft - currentElement.scrollLeft
-        elts[elts.length] = currentElement
+        //test[test.length] = currentElement.offsetLeft - currentElement.scrollLeft
+        //elts[elts.length] = currentElement
     }
     while(currentElement = currentElement.offsetParent)
 
     canvasX = event.pageX - totalOffsetX;
     canvasY = event.pageY - totalOffsetY;
+
+    //hack to deal with FF scroll, better solution TBD:
+    if(event.offsetX == undefined){
+    	canvasX -= document.body.scrollLeft;
+    	canvasY -= document.body.scrollTop;
+    }
 
     return {x:canvasX, y:canvasY}
 }
@@ -1906,14 +1918,14 @@ function draw2Dframe(){
 
 	//x axis title:
 	SVparam.context2D.textBaseline = 'bottom';
-	SVparam.context2D.fillText('Channels', SVparam.canvas2D.width - SVparam.rightMargin2D - SVparam.context2D.measureText('Channels').width - SVparam.zScaleMargin, SVparam.canvas2D.height);
+	SVparam.context2D.fillText('Total E', SVparam.canvas2D.width - SVparam.rightMargin2D - SVparam.context2D.measureText('Total E').width - SVparam.zScaleMargin, SVparam.canvas2D.height);
 
 	//y axis title:
 	SVparam.context2D.textBaseline = 'alphabetic';
 	SVparam.context2D.save();
-	SVparam.context2D.translate(SVparam.leftMargin2D*0.25, SVparam.context2D.measureText('Channels').width + SVparam.topMargin2D );
+	SVparam.context2D.translate(SVparam.leftMargin2D*0.25, SVparam.context2D.measureText('dE').width + SVparam.topMargin2D );
 	SVparam.context2D.rotate(-Math.PI/2);
-	SVparam.context2D.fillText('Channels', 0,0);
+	SVparam.context2D.fillText('dE', 0,0);
 	SVparam.context2D.restore();
 
 }
@@ -2047,8 +2059,12 @@ function mDown2D(event){
 
 	xBin = Math.floor((x-SVparam.leftMargin2D)/SVparam.binWidth2D + SVparam.XaxisLimitMin2D);
 	yBin = Math.floor((SVparam.canvas2D.height-SVparam.bottomMargin2D - y)/SVparam.binHeight2D + SVparam.YaxisLimitMin2D);
-	if(xBin < 0) xBin = 0;
-	if(yBin < 0) yBin = 0;
+	//if(xBin < 0) xBin = 0;
+	//if(yBin < 0) yBin = 0;
+	if(xBin < SVparam.XaxisLimitMin2D) xBin = SVparam.XaxisLimitMin2D;
+	if(yBin < SVparam.YaxisLimitMin2D) yBin = SVparam.YaxisLimitMin2D;
+	if(xBin > SVparam.XaxisLimitMax2D) xBin = SVparam.XaxisLimitMax2D;
+	if(yBin > SVparam.YaxisLimitMax2D) yBin = SVparam.YaxisLimitMax2D;
 
 	//drag a box if clicking in the plot field:
 	if(x > SVparam.leftMargin2D && x < (SVparam.canvas2D.width - SVparam.rightMargin2D) && y>SVparam.topMargin2D && y<(SVparam.canvas2D.height-SVparam.bottomMargin2D)){
@@ -2076,6 +2092,11 @@ function mUp2D(event){
 
 	xBin = Math.floor((x-SVparam.leftMargin2D)/SVparam.binWidth2D + SVparam.XaxisLimitMin2D);
 	yBin = Math.floor((SVparam.canvas2D.height-SVparam.bottomMargin2D - y)/SVparam.binHeight2D + SVparam.YaxisLimitMin2D);
+	if(xBin < SVparam.XaxisLimitMin2D) xBin = SVparam.XaxisLimitMin2D;
+	if(yBin < SVparam.YaxisLimitMin2D) yBin = SVparam.YaxisLimitMin2D;
+	if(xBin > SVparam.XaxisLimitMax2D) xBin = SVparam.XaxisLimitMax2D;
+	if(yBin > SVparam.YaxisLimitMax2D) yBin = SVparam.YaxisLimitMax2D;
+	/*
 	if(xBin < 0) xBin = 0;
 	if(yBin < 0) yBin = 0;
 
@@ -2094,6 +2115,32 @@ function mUp2D(event){
 		plot_data2D();
 		SVparam.onclickXvals = {'min':0, 'max':0};
 		SVparam.onclickYvals = {'min':0, 'max':0};
+		return;
+
+	} else if (y > (SVparam.canvas2D.height-SVparam.bottomMargin2D) && x > SVparam.leftMargin2D){ //release on the x-margin
+		SVparam.clickX['up'] = xBin;
+	} else if (x < SVparam.leftMargin2D && y < (SVparam.canvas2D.height-SVparam.bottomMargin2D)){ //release on the y-margin
+		SVparam.clickY['up'] = yBin;
+	} else if (x < SVparam.leftMargin2D && y > (SVparam.canvas2D.height-SVparam.bottomMargin2D)){ //release on the margin overlap
+		SVparam.clickX['up'] = xBin;
+		SVparam.clickY['up'] = yBin;
+	}
+	*/
+
+	if(SVparam.onclickXvals.min != -1){
+		SVparam.onclickXvals.max = xBin;
+		SVparam.onclickYvals.max = yBin;
+
+		//make sure the mins and maxes go to the right place, in case the user dragged backwards:
+		SVparam.XaxisLimitMin2D = Math.min(SVparam.onclickXvals.min, SVparam.onclickXvals.max);
+		SVparam.XaxisLimitMax2D = Math.max(SVparam.onclickXvals.min, SVparam.onclickXvals.max);
+		SVparam.YaxisLimitMin2D = Math.min(SVparam.onclickYvals.min, SVparam.onclickYvals.max);
+		SVparam.YaxisLimitMax2D = Math.max(SVparam.onclickYvals.min, SVparam.onclickYvals.max);
+
+		//redraw with new bounds:
+		plot_data2D();
+		SVparam.onclickXvals = {'min':-1, 'max':-1};
+		SVparam.onclickYvals = {'min':-1, 'max':-1};
 		return;
 
 	} else if (y > (SVparam.canvas2D.height-SVparam.bottomMargin2D) && x > SVparam.leftMargin2D){ //release on the x-margin
@@ -2144,6 +2191,7 @@ function mMove2D(event){
 function drawZscale(){
 	var i, x0, y0, 
 	width = 50;
+	length = SVparam.yAxisPixLength2D*0.9
 
 	//top corner of scale:
 	x0 = SVparam.leftMargin2D + SVparam.xAxisPixLength2D + SVparam.rightMargin2D;
@@ -2152,7 +2200,7 @@ function drawZscale(){
 	//color bar
 	for(i=0; i<1000; i++){
 		SVparam.context2D.fillStyle = scalepickr(i/1000, 'ROOT Rainbow');
-		SVparam.context2D.fillRect(x0, SVparam.canvHeight2D - SVparam.bottomMargin2D - (i+1)*SVparam.yAxisPixLength2D/1000, width, SVparam.yAxisPixLength2D/1000);
+		SVparam.context2D.fillRect(x0, SVparam.canvHeight2D - SVparam.bottomMargin2D - (SVparam.yAxisPixLength2D - length) - (i+1)*length/1000, width, length/1000);
 	}
 
 	//frame
@@ -2160,14 +2208,14 @@ function drawZscale(){
 	SVparam.context2D.lineWidth = 1;
 	SVparam.context2D.beginPath();
 	SVparam.context2D.moveTo(x0+width, y0);
-	SVparam.context2D.lineTo(x0+width, y0+SVparam.yAxisPixLength2D);
+	SVparam.context2D.lineTo(x0+width, y0+length);
 	SVparam.context2D.stroke();
 	SVparam.context2D.closePath();
 	for(i=0; i<5; i++){
 		//ticks
 		SVparam.context2D.beginPath();
-		SVparam.context2D.moveTo(x0+width, SVparam.canvHeight2D - SVparam.bottomMargin2D - i*SVparam.yAxisPixLength2D/4);
-		SVparam.context2D.lineTo(x0+width+SVparam.tickLength, SVparam.canvHeight2D - SVparam.bottomMargin2D - i*SVparam.yAxisPixLength2D/4);
+		SVparam.context2D.moveTo(x0+width, SVparam.canvHeight2D - SVparam.bottomMargin2D - (SVparam.yAxisPixLength2D - length) - i*length/4);
+		SVparam.context2D.lineTo(x0+width+SVparam.tickLength, SVparam.canvHeight2D - SVparam.bottomMargin2D - (SVparam.yAxisPixLength2D - length) - i*length/4);
 		SVparam.context2D.stroke();
 		SVparam.context2D.closePath();
 
@@ -2178,9 +2226,25 @@ function drawZscale(){
 			label = (i*SVparam.zMax/4).toFixed(1);
 		else
 			label = (SVparam.logZmin + i/4*(SVparam.zMax - SVparam.logZmin)).toFixed(1);
-		SVparam.context2D.fillText(label, x0+width+SVparam.tickLength + 5, SVparam.canvHeight2D - SVparam.bottomMargin2D - i*SVparam.yAxisPixLength2D/4)
+		SVparam.context2D.fillText(label, x0+width+SVparam.tickLength + 5, SVparam.canvHeight2D - SVparam.bottomMargin2D - (SVparam.yAxisPixLength2D - length) - i*length/4)
 	}
 	SVparam.context2D.textBaseline = 'alphabetic';
+
+	//title
+	SVparam.context2D.save();
+	SVparam.context2D.font = '20px Raleway'
+	SVparam.context2D.translate(x0 + 2*width, y0 + SVparam.yAxisPixLength2D/2 - SVparam.context2D.measureText('log(counts)').width/2)
+	SVparam.context2D.rotate(Math.PI/2);
+	SVparam.context2D.fillText('log ( counts )', 0,0);
+	SVparam.context2D.restore();
+
+	//legend:
+	SVparam.context2D.fillRect(x0, y0+SVparam.yAxisPixLength2D-width, width, width);
+	SVparam.context2D.strokeStyle = '#000000'
+	SVparam.context2D.lineWidth = 2;
+	SVparam.context2D.textBaseline = 'middle';
+	SVparam.context2D.strokeRect(x0, y0+SVparam.yAxisPixLength2D-width, width, width);
+	SVparam.context2D.fillText('Absent', x0+width+5, y0+SVparam.yAxisPixLength2D-width/2)
 
 }
 
@@ -2354,9 +2418,20 @@ function constructHexColor(color){
 				document.getElementById('el1').setAttribute('style', 'width:auto; height:'+document.getElementById('masterTable').offsetHeight)				
 				document.getElementById('el2').setAttribute('style', 'width:auto; height:'+document.getElementById('masterTable').offsetHeight)
 
+				//put nice charcodes in the scroll buttons:
+				document.getElementById('bigLeft2D').innerHTML = String.fromCharCode(0x21C7);
+				document.getElementById('bigRight2D').innerHTML = String.fromCharCode(0x21C9);
+				document.getElementById('smallLeft2D').innerHTML = String.fromCharCode(0x2190);
+				document.getElementById('smallRight2D').innerHTML = String.fromCharCode(0x2192);
+				document.getElementById('bigUp').innerHTML = String.fromCharCode(0x21C8);
+				document.getElementById('bigDown').innerHTML = String.fromCharCode(0x21CA);
+				document.getElementById('smallUp').innerHTML = String.fromCharCode(0x2191);
+				document.getElementById('smallDown').innerHTML = String.fromCharCode(0x2193);
+
 				//TBRAGG namespace
 				TBparam = {
 					'svgns' : 'http://www.w3.org/2000/svg',
+					'historyURL' : 'http://midtig04.triumf.ca:8082/HS/',
 					'num_gates' : 0,
 					'old_num_gates' : 0,
 					'GateMax' : [1000,1000,1000,1000,1000],
@@ -2455,8 +2530,8 @@ function constructHexColor(color){
 					"topMargin2D" : 50, 					//top gutter of plot area
 					'XaxisLength2D' : 0,
 					'YaxisLength2D' : 0,
-					'onclickXvals' : {'min':0, 'max':0},
-					'onclickYvals' : {'min':0, 'max':0},
+					'onclickXvals' : {'min':-1, 'max':-1},
+					'onclickYvals' : {'min':-1, 'max':-1},
 					'clickX' : {'down':-1, 'up':-1},
 					'clickY' : {'down':-1, 'up':-1},
 					'zMax' : .001,
@@ -2506,9 +2581,11 @@ function constructHexColor(color){
 				TBparam.x="g"+TBparam.num_gates;
 				document.getElementById(TBparam.x).checked=true;
 
-				//set the right zoom level:
-				//TBparam.obj=document.getElementById("zoom_drop");
-				//TBparam.obj.selectedIndex=ODBAGet("/Analyzer/Parameters/Gate0/Zoom")-1;
+	        	//plug in MIDAS status page link:
+    		    document.getElementById('statusB').setAttribute('onclick', "window.location='"+SVparam.statusURL+"';");
+
+	        	//plug in history page link:
+    		    document.getElementById('historyB').setAttribute('onclick', "window.location='"+TBparam.historyURL+"';");
 
 				//generate the gate interface:
 				document.getElementById('Gate_params').innerHTML = '';
