@@ -69,8 +69,7 @@ function gatekeeper(){
 }
 
 function masterLoop(callMyself){
-    console.log(window.onDisplay)
-
+    
     var i,j;
 	if(!document.webkitHidden && !document.mozHidden){
 

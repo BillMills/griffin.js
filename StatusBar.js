@@ -9,16 +9,16 @@ function StatusBar(wrapper){
     insertDOM('div', 'statusHeader', '', 'background:rgba(0,0,0,0.7); border: 5px solid; border-radius:10px; width:80%; margin-top:5%; margin-bottom:5%; margin-left:auto; margin-right:auto; padding-left:5%; padding-right:5%; transition:border-color 0.5s; -moz-transition:border-color 0.5s; -webkit-transition:border-color 0.5s;', this.wrapperID, '', '')
 
     //deploy tooltip:
-    this.tooltip = new Tooltip('LeftSidebarBKG', 'leftSidebarTT', this.wrapperID, [], []);
-    this.tooltip.obj = that;
+    //this.tooltip = new Tooltip('LeftSidebarBKG', 'leftSidebarTT', this.wrapperID, [], []);
+    //this.tooltip.obj = that;
 
     //tooltip actually attaches to a canvas - attach it to the background canvas, but then pull the event listners up to the top-level div:
-    document.getElementById('statusHeader').onmousemove = document.getElementById('LeftSidebarBKG').onmousemove
-    document.getElementById('statusHeader').onmouseout = document.getElementById('LeftSidebarBKG').onmouseout
-    document.getElementById('statusHeader').onmouseover = document.getElementById('LeftSidebarBKG').onmouseover
+    //document.getElementById('statusHeader').onmousemove = document.getElementById('LeftSidebarBKG').onmousemove
+    //document.getElementById('statusHeader').onmouseout = document.getElementById('LeftSidebarBKG').onmouseout
+    //document.getElementById('statusHeader').onmouseover = document.getElementById('LeftSidebarBKG').onmouseover
     //tooltip will also look for members canvasWidth and canvasHeight:
-    this.canvasWidth = document.getElementById('LeftSidebarBKG').width
-    this.canvasHeight = document.getElementById('LeftSidebarBKG').height
+    //this.canvasWidth = document.getElementById('LeftSidebarBKG').width
+    //this.canvasHeight = document.getElementById('LeftSidebarBKG').height
 
     //experiment title
     insertDOM('h2', this.titleID, '', 'margin-top:25px; font-family: "Orbitron", sans-serif;', 'statusHeader', '', '')
@@ -135,13 +135,6 @@ function StatusBar(wrapper){
                 document.getElementById('message'+i).innerHTML = messages[4-i]; //most recent on top
             }
         }
-
-        //make sure the left sidebar background adjusts to accomodate its elements
-        document.getElementById('LeftSidebarBKG').width = parseInt(($('#'+this.wrapperID).css('width')));
-        document.getElementById('LeftSidebarBKG').height = Math.max(renderHeight*0.9, 50 + parseInt($('#'+this.wrapperID).css('height')) );
-        this.canvasWidth = document.getElementById('LeftSidebarBKG').width;
-        this.canvasHeight = document.getElementById('LeftSidebarBKG').height;
-        tabBKG('LeftSidebarBKG', 'left');
         
         //pull in status table from traditional status page, and put it in the TT:
         if(!window.parameters.MIDASlegacyMode){
@@ -171,8 +164,8 @@ function StatusBar(wrapper){
                 response = response.replace(/bgcolor=#FFFF00/g, 'bgcolor="#FFFF00" style="color:#000000;"'); //yellow backgrounds, sometimes MIDAS leaves off the quotes...
 
                 //stick the result in the TT - html parsing happens now:
-                document.getElementById('leftSidebarTT').innerHTML = response;
-
+                //document.getElementById('leftSidebarTT').innerHTML = response;
+                /*
                 //now strip out unwanted table elements, easiest to do after html parsing:
                 var rowTags = getTag('tr', 'leftSidebarTT');
                 if(rowTags){
@@ -184,7 +177,7 @@ function StatusBar(wrapper){
                 }
 
                 $('#leftSidebarTT').css('padding', 0);
-
+                */
             });
 
         }

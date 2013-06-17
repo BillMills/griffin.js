@@ -160,29 +160,11 @@ function AlarmService(sidebarDivID, sidebarDetailDivID){
 		this.rateAlarms = [];
     };
 
-    //update the text with nice transitions:
+    //update the text:
     this.updateText = function(content){
-    	$('#'+this.pID).css('opacity', '0');
-    	setTimeout(function(){
-	    	document.getElementById('alarmText').innerHTML = content;
-    		$('#alarmText').css('opacity', '1');
-    		//if($('#leftSidebarDetail').css('opacity') == 1){
-            //	showDetail();
-        	//}
-        	animate(that, 0);
-            //that.draw(that.nFrames)
-    	}, 500);
+	    document.getElementById('alarmText').innerHTML = content;
     };
 
-    //animate the detail-level background's change in length:
-    this.draw = function(frame){
-    	var frameHeight = this.bkgCanvasHeight - frame/this.nFrames*(this.bkgCanvasHeight - Math.max($('#'+this.pID).height() + 150, this.minBKGheight))
-		document.getElementById('LeftSidebarDetailBKG').setAttribute('height', frameHeight);
-        //console.log('frameHeight = ' + frameHeight)
-		tabBKG('LeftSidebarDetailBKG', 'left');
-		if(frame == this.nFrames)
-			this.bkgCanvasHeight = Math.max($('#'+this.pID).height() + 150, this.minBKGheight);
-    }
 }
 
 

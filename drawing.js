@@ -347,7 +347,7 @@ function constructHexColor(color){
 
     return '#'+R+G+B;
 }
-
+/*
 //draw a nicer sidebar background
 function tabBKG(canvasID, side){
 
@@ -388,7 +388,7 @@ function tabBKG(canvasID, side){
     }
 
 }
-
+*/
 //atom spinner:
 function drawSpinner(canvasID){
     

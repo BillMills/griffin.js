@@ -162,9 +162,6 @@ function channelSelect(waffle){
         divFade(inputDiv, 'in', 0);
     }
 
-    //make sure the right sidebar background adjusts to accomodate the interface
-    document.getElementById('SidebarBKG').height = Math.max(renderHeight*0.9, 50+parseInt($('#'+waffle.sidebarID).css('height')) );
-    tabBKG('SidebarBKG', 'right');
 }
 
 //point interface at new channel indicated by user in the 'changeChannel' form.

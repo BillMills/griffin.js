@@ -62,7 +62,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         this.deploySidebar = function(){
 
             //wrapper div
-            insertDOM('div', this.sidebarID, 'Sidebar', '', this.wrapperDiv, '', '');
+            insertDOM('div', this.sidebarID, 'RightSidebar', '', this.wrapperDiv, '', '');
             document.getElementById(this.sidebarID).setAttribute('align', 'left');
 
             //title
@@ -146,9 +146,9 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
 
         //deploy some sliders in the sidebar  TODO: push into deploySidebar()?
         var sliderWidth = parseFloat($(document.getElementById('InputLayer')).width())*0.5;
-        this.voltageSlider = new Slider('SidebarBKG', 'volageSliderText', 'demandVoltage', 'voltageSlider', 'voltageSliderBKG', 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', window.parameters.minVoltage, window.parameters.maxVoltage, window.parameters.statusPrecision, window.parameters.voltUnit, sliderWidth );
-        this.rampSlider = new Slider('SidebarBKG', 'rampSliderText', 'demandRampSpeed', 'rampSlider', 'rampSliderBKG', 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', window.parameters.minRampSpeed, window.parameters.maxRampSpeed, window.parameters.statusPrecision, window.parameters.rampUnit,  sliderWidth);
-        this.rampDownSlider = new Slider('SidebarBKG', 'rampDownSliderText', 'demandRampDownSpeed', 'rampDownSlider', 'rampDownSliderBKG', 'rampDownSliderKnob', 'rampDownKnobStyle', 'rampDownSliderText', window.parameters.minRampSpeed, window.parameters.maxRampSpeed, window.parameters.statusPrecision, window.parameters.rampUnit,  sliderWidth);
+        this.voltageSlider = new Slider(this.sidebarID, 'volageSliderText', 'demandVoltage', 'voltageSlider', 'voltageSliderBKG', 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', window.parameters.minVoltage, window.parameters.maxVoltage, window.parameters.statusPrecision, window.parameters.voltUnit, sliderWidth );
+        this.rampSlider = new Slider(this.sidebarID, 'rampSliderText', 'demandRampSpeed', 'rampSlider', 'rampSliderBKG', 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', window.parameters.minRampSpeed, window.parameters.maxRampSpeed, window.parameters.statusPrecision, window.parameters.rampUnit,  sliderWidth);
+        this.rampDownSlider = new Slider(this.sidebarID, 'rampDownSliderText', 'demandRampDownSpeed', 'rampDownSlider', 'rampDownSliderBKG', 'rampDownSliderKnob', 'rampDownKnobStyle', 'rampDownSliderText', window.parameters.minRampSpeed, window.parameters.maxRampSpeed, window.parameters.statusPrecision, window.parameters.rampUnit,  sliderWidth);
 
         //fill meters  TODO: put these on the waffle object instead of window?
         window.meter = new FillMeter('voltageMeter', 'InputLayer', 0, window.parameters.minVoltage, window.parameters.maxVoltage, window.parameters.voltUnit, window.parameters.statusPrecision);

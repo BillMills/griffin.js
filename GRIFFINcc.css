@@ -83,7 +83,7 @@ td.TTcell{
 	text-align: center;
 }
 
-div.leftSidebar{
+div.LeftSidebar{
 	position: absolute;
 	color: rgba(255,255,255,0.9);
 	width: 21%;
@@ -91,33 +91,32 @@ div.leftSidebar{
 	left:0%;
 	display:inline;
 	text-align: center;
+	background-color:#4C4C4C;
+	border:2px solid black;
+	border-top-right-radius:20px;
+	border-bottom-right-radius:20px; 
+	border-left:none;
+
 	transition:opacity 0.5s;
 	-moz-transition:opacity 0.5s;
 	-webkit-transition:opacity 0.5s;
 }
 
-div#leftSidebarDetail{
-	position: absolute;
-	color: rgba(255,255,255,0.9);
-	width: 21%;
-	height: 695px;
-	left:0%;
-	display:inline;
-	transition:opacity 0.5s, z-index 0.5s;
-	-moz-transition:opacity 0.5s, z-index 0.5s;
-	-webkit-transition:opacity 0.5s, z-index 0.5s;
-}
-
-div.Sidebar{
+div.RightSidebar{
 
 	position: absolute;
-	color: rgba(255,255,255,0.9);
+	color: #EEEEEE;
 	width: 25%;
 	height: auto;
 	right:0%;
 	display:inline;
 	opacity:0;
 	z-index:-1;
+	background-color:#4C4C4C;
+	border:2px solid black;
+	border-top-left-radius:20px;
+	border-bottom-left-radius:20px; 
+	border-right:none;
 
 	transition:opacity 0.5s, z-index 0.5s;
 	-moz-transition:opacity 0.5s, z-index 0.5s;

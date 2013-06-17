@@ -69,7 +69,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     }
 
     //right sidebar
-    insertDOM('div', this.sidebarID, 'Sidebar', '', this.monitorID, '', '')
+    insertDOM('div', this.sidebarID, 'RightSidebar', '', this.monitorID, '', '')
 
     //display canvases
     //top view
