@@ -198,7 +198,7 @@ button.MFlink{
 
 button.navLink{
 	background: #4C4C4C; 
-	color: #999999;
+	color: #FFFFFF;
 	border-color: #333333; 
 	border-radius: 5px;
     display: inline;
@@ -208,7 +208,7 @@ button.navLink{
 
 button.navLinkDown{
 	background: #777777; 
-	color: #DDDDDD;
+	color: #FFFFFF;
 	border-color: #333333;  
 	border-radius: 5px;
     display: inline;
