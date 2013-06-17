@@ -72,7 +72,7 @@
 
     <div id="waffleplate" style='margin-top:2%'>      
       <!--Left Sidebar: alarms, run control, etc-->
-      <div id='leftSidebarDetail' class='LeftSidebar' style='z-index:-1; opacity:0;'></div>
+      <div id='leftSidebarDetail' class='LeftSidebar' style='z-index:-1; opacity:0; height:80%; overflow:scroll; padding:10px;'></div>
       <div id='leftSidebar' class='LeftSidebar' style='z-index:1; opacity:0'></div>
 
       <!--Spinner Canvas////////////////-->
@@ -167,7 +167,7 @@
         $('#MIDASstatusLink').css('opacity', 1);
         $('#leftSidebar').css('opacity', 1);
         //plug in MIDAS status page link:
-        document.getElementById('MIDASstatusLink').setAttribute('onclick', "window.location='"+window.parameters.statusURL+"';")
+        document.getElementById('MIDASstatusLink').setAttribute('onclick', "window.location='"+window.parameters.statusURL+"';");
 
         //state variables for what the subdetector view is showing: 0->HV, 1->Thresholds, 2->Rate
         window.state.subdetectorView = 2;  //rate by default
