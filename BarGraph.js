@@ -159,8 +159,13 @@ function BarGraph(cvas, moduleNumber, nBars, title, yAxisTitle, scaleMin, scaleM
         this.setNewLevels(newLevel, alarmStatus);
 
         //animate:
-        animate(this, 0);
+        this.animate(this, 0);
 
+    };
+
+    //manage animation
+    this.animate = function(){
+        if(window.onDisplay == this.cvas) animate(this, 0);
     };
 
 	//set new levels:

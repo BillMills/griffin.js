@@ -69,6 +69,8 @@ function gatekeeper(){
 }
 
 function masterLoop(callMyself){
+    console.log(window.onDisplay)
+
     var i,j;
 	if(!document.webkitHidden && !document.mozHidden){
 
@@ -87,7 +89,7 @@ function masterLoop(callMyself){
             for(i=0; i<window.Subdetectors.length; i++)
                 window.Subdetectors[i].update();
         }
-
+/*
         //animate whoever is showing on top, flat draw the rest
         //Dashboard
         window.dashboard.animate(callMyself);
@@ -111,6 +113,7 @@ function masterLoop(callMyself){
                 window.Subdetectors[i].animate(callMyself);
             }
         }
+*/
     }
     
     //remove all temporary scripts from the head so they don't accrue:

@@ -197,6 +197,9 @@ function HPGe(){
         this.tooltip.update();
         this.detailTooltip.update();
         this.displaySwitch();
+
+        //animate if on top:
+        this.animate();
     };
 
     this.fetchNewData = function(){

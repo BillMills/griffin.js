@@ -341,10 +341,10 @@ function DetailView(){
 
     //manage animation
     this.animate = function(){
-        if(window.onDisplay == this.canvasID || window.freshLoad) animate(this, 0);
-        else this.draw(this.nFrames);
-        if(window.onDisplay == this.detailCanvasID || window.freshLoad) animateDetail(this, 0);
-        else this.drawDetail(this.detailContext, this.nFrames);
+        if(window.onDisplay == this.canvasID /*|| window.freshLoad*/) animate(this, 0);
+        //else this.draw(this.nFrames);
+        if(window.onDisplay == this.detailCanvasID /*|| window.freshLoad*/) animateDetail(this, 0);
+        //else this.drawDetail(this.detailContext, this.nFrames);
     };
 
     //decide which display version to show:

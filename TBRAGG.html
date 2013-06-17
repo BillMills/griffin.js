@@ -96,11 +96,11 @@
 			</div>
 
 			<div id='navbar' style='width: 100%; margin-bottom:10px;'>
-				<button id='startB' class='navLink' name="cmd" value="Start" type="submit" onclick="setResetTime()">Start</button>
+				<button id='startB' class='navLink' name="cmd" value="Start" type="submit" onclick="setResetTime(); TBparam.runTimer=1000; document.getElementById('refreshRate2D').value=3; document.getElementById('refreshRate2D').onchange();">Start Perpetual Run</button>
 				<button id='statusB' class='navLink' name="cmd" value="Status" type="submit">MIDAS Status</button>
 				<button id='historyB' class='navLink' name="cmd" value="History" type="submit">History</button>
 				<!--input type=hidden name="redir" value="/CS/Monitor"-->
-				<button id='run5B' class='navLink' type=submit name=customscript value="Start 5 Min Run" onclick="setResetTime()">Start 5 Min Run</button>
+				<button id='run5B' class='navLink' type=submit name=customscript value="Start 5 Min Run" onclick="setResetTime(); TBparam.runTimer=300;">Start 5 Min Run</button>
 				<h2 id='youAreHere' style='position:absolute; display:inline; margin:0px; right:20px;'>TBRAGG Monitor</h2>
 			</div>
 
@@ -520,35 +520,29 @@ function mod_gate_params(){
 function refreshAll(){
 	var this_run_num,// = ODBGet("/Runinfo/Run number"),
 		running,//=ODBGet("/Runinfo/State"),
-		data, img, Num, h, t, x, y, z, rate, obj, currentTime, hrs, mins, secs, TimeNow,
+		data, img, Num, h, t, x, y, z, rate, obj, currentTime, hrs, mins, secs, TimeNow, timeElapsed,
 		newLevels = [],
 		paths = [];
 
-		paths[0] = "/Runinfo/Run number";
-		paths[1] = "/Runinfo/State";
-		paths[2] = "/Analyzer/Parameters/Statistics/TotalRate";
-		paths[3] = "/Analyzer/Parameters/Statistics/TotalInt";
-		paths[4] = "/Analyzer/Parameters/Statistics/GateRate";
-		paths[5] = "/Analyzer/Parameters/Statistics/GateInt";
-		paths[6] = "/Analyzer/Parameters/Statistics/GateRate1";
-		paths[7] = "/Analyzer/Parameters/Statistics/GateInt1";
-		paths[8] = "/Analyzer/Parameters/Statistics/GateRate2";
-		paths[9] = "/Analyzer/Parameters/Statistics/GateInt2";
-		paths[10] = "/Analyzer/Parameters/Statistics/GateRate3";
-		paths[11] = "/Analyzer/Parameters/Statistics/GateInt3";
-		paths[12] = "/Analyzer/Parameters/Gate0/Zoom";
+	paths[0] = "/Runinfo/Run number";
+	paths[1] = "/Runinfo/State";
+	paths[2] = "/Analyzer/Parameters/Statistics/TotalRate";
+	paths[3] = "/Analyzer/Parameters/Statistics/TotalInt";
+	paths[4] = "/Analyzer/Parameters/Statistics/GateRate";
+	paths[5] = "/Analyzer/Parameters/Statistics/GateInt";
+	paths[6] = "/Analyzer/Parameters/Statistics/GateRate1";
+	paths[7] = "/Analyzer/Parameters/Statistics/GateInt1";
+	paths[8] = "/Analyzer/Parameters/Statistics/GateRate2";
+	paths[9] = "/Analyzer/Parameters/Statistics/GateInt2";
+	paths[10] = "/Analyzer/Parameters/Statistics/GateRate3";
+	paths[11] = "/Analyzer/Parameters/Statistics/GateInt3";
+	paths[12] = "/Analyzer/Parameters/Gate0/Zoom";
 
-		data = ODBAMGet(paths);
-		this_run_num = data[0];
-		running = data[1];
+	data = ODBAMGet(paths);
+	this_run_num = data[0];
+	running = data[1];
 
-	if(running==1){
-		document.getElementById("run_status").bgColor="red";
-		document.getElementById("run_status").innerHTML="Data Collecting Stopped";
-	} else {
-		document.getElementById("run_status").bgColor="lime";
-		document.getElementById("run_status").innerHTML="Data Collecting";
-	}
+
 	document.getElementById("run_num").innerHTML='Run # '+this_run_num;
 
 	// Connect to the svg image element
@@ -569,27 +563,8 @@ function refreshAll(){
 		}
 		TBparam.rate[Num] = h;
 		TBparam.int[Num] = t;
-		rate=parseInt(h) //parseInt((h/TBparam.GateMax[Num])*500.0);
-		//if(rate<0) rate=0//if(rate>TBparam.GateMax[Num]) rate=500;
-		//if(rate>1) rate=1//if(rate<0) rate=0;
+		rate=parseInt(h)
 		newLevels[Num] = rate;
-		/*
-		if(Num<=(parseInt(TBparam.num_gates)+1)){
-			x='Scaler'+Num;
-			y="ScalerNum"+Num;
-			z="ScalerTot"+Num;
-			img.getElementById(x).setAttribute("height", rate);
-			img.getElementById(y).textContent=h;
-			img.getElementById(z).textContent=t;
-		} else {
-			x='Scaler'+Num;
-			y="ScalerNum"+Num;
-			z="ScalerTot"+Num;
-			img.getElementById(x).setAttribute("height", 0);
-			img.getElementById(y).textContent="";
-			img.getElementById(z).textContent="";
-		}
-		*/
 	}
 
 	//reproduce the svg in canvas:
@@ -617,8 +592,33 @@ function refreshAll(){
 	TimeNow=hrs+":"+mins+":"+secs
 	document.getElementById("dateLine").innerHTML=currentTime+'<br>';
 
+	timeElapsed = Math.floor(currentTime.getTime()/1000)-TBparam.ResetTime
+	document.getElementById("Time_display").innerHTML=(timeElapsed);
 
-	document.getElementById("Time_display").innerHTML=(Math.floor(currentTime.getTime()/1000)-TBparam.ResetTime);
+	if(running==1){
+		document.getElementById("run_status").bgColor="red";
+		document.getElementById("run_status").innerHTML="Data Collecting Stopped";
+		TBparam.runTimer = 0;
+	} else {
+		document.getElementById("run_status").bgColor="lime";
+		if(TBparam.runTimer < 500 && TBparam.runTimer > 0){	
+			TBparam.runTimer = 300-timeElapsed
+			if(TBparam.runTimer>=0) document.getElementById("run_status").innerHTML= TBparam.runTimer + " s left in run";
+			else{
+				document.getElementById("run_status").innerHTML= '5 min run finalizing'
+				document.getElementById("run_status").bgColor='#FFFF00';
+			}
+		} else if(TBparam.runTimer <= 0){  //5 min run is complete, suspend refresh and save ascii:
+			document.getElementById("run_status").innerHTML= '5 min run finalizing'
+			document.getElementById("run_status").bgColor='#FFFF00';
+			window.clearTimeout(SVparam.refreshHandler2D);
+			window.clearTimeout(SVparam.meterRefreshHandler2D);
+			document.getElementById('saveASCIIB').onclick();
+			SVparam.RefreshTime = 0;
+			document.getElementById("refreshRate2D").value = SVparam.RefreshTime;
+		} else
+			document.getElementById("run_status").innerHTML="Perpetual Run Active";
+	}
 
 	if(SVparam.RefreshTime > 0)SVparam.meterRefreshHandler2D = setTimeout("refreshAll()",SVparam.RefreshTime*1000);
 }
@@ -730,6 +730,9 @@ function setGateSize(num){
 } 
 
 function setResetTime(){
+	//send the refresh down to the ODB
+	ODBASet('/Analyzer/Parameters/Gate0/reset', 1);
+
 	// Print the time of the refresh
 	TBparam.ResetTime = new Date();
 	TBparam.ResetTime = Math.floor(TBparam.ResetTime.getTime()/1000);
@@ -2160,7 +2163,7 @@ function mMove2D(event){
 //draw a zaxis scale for the 2D plot:
 function drawZscale(){
 	var i, x0, y0, 
-	width = 50;
+	width = SVparam.yAxisPixLength2D*0.08;
 	length = SVparam.yAxisPixLength2D*0.9
 
 	//top corner of scale:
@@ -2416,7 +2419,8 @@ function constructHexColor(color){
 					'levels' : [0,0,0,0,0],
 					'rate' : [0,0,0,0,0],
 					'int' : [0,0,0,0,0],
-					'barChartColors' : ['#0000FF', '#FF0000', '#00FF00', '#E68A2E', '#FF00FF']  //660099
+					'barChartColors' : ['#0000FF', '#FF0000', '#00FF00', '#E68A2E', '#FF00FF'],
+					'runTimer' : 1000  //0=run stop, 1->300 = seconds left in 5min countdown, 1000 = perpetual mode
 				};
 				TBparam.num_gates = parseInt(ODBAGet("/Analyzer/Parameters/Gate0/NGates"));
 				TBparam.ResetTime = ODBAGet("/Analyzer/Parameters/Gate0/ResetTime");

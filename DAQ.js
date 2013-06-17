@@ -50,7 +50,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 
     //navigation
     //top level nav button
-    insertDOM('button', this.topNavID, 'navLink', '', 'statusLink', function(){swapView('DAQlinks', 'DAQcanvas', 'DAQsidebar', window.DAQpointer.topNavID)}, 'DAQ', '', 'button')
+    insertDOM('button', this.topNavID, 'navLink', '', 'statusLink', function(){swapView('DAQlinks', 'DAQcanvas', 'DAQsidebar', window.DAQpointer.topNavID); forceUpdate();}, 'DAQ', '', 'button')
     //nav wrapper div
     insertDOM('div', this.linkWrapperID, 'navPanel', '', this.monitorID, '', '')
     //nav header
@@ -237,6 +237,9 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 
         this.tooltip.update();
         this.detailTooltip.update();
+
+        //animate if DAQ is showing:
+        this.animate();
 
 	};
 
@@ -769,11 +772,11 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     };
 
     this.animate = function(){
-        if(window.onDisplay == this.canvasID || window.freshLoad) animate(this, 0);
-        else this.draw(this.nFrames);
+        if(window.onDisplay == this.canvasID /*|| window.freshLoad*/) animate(this, 0);
+        //else this.draw(this.nFrames);
 
-        if(window.onDisplay == this.detailCanvasID || window.freshLoad) animateDetail(this, 0);
-        else this.drawDetail(this.nFrames);
+        if(window.onDisplay == this.detailCanvasID /*|| window.freshLoad*/) animateDetail(this, 0);
+        //else this.drawDetail(this.nFrames);
     };
 }
 

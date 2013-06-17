@@ -243,7 +243,10 @@
           window.subsystemScalars = window.parameters.monitorValues.length;
 
           //make the top level nav button default to the first subdetector in the list:
-          document.getElementById('SubsystemsButton').setAttribute('onclick', "javascript:swapView('SubsystemLinks', '"+window.Subdetectors[0].canvasID+"', 'SubsystemSidebar', 'SubsystemsButton')")
+          document.getElementById('SubsystemsButton').onclick = function(){
+            swapView('SubsystemLinks', window.Subdetectors[0].canvasID, 'SubsystemSidebar', 'SubsystemsButton');
+            forceUpdate();
+          }
 
           //make the nav button of the first subdetector in the list pressed by default:
           document.getElementById(window.Subdetectors[0].subviewLink).setAttribute('class', 'navLinkDown');

@@ -167,7 +167,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
 
         //DOM insertions////////////////////////////////////
         //inject top level nav button
-        insertDOM('button', this.topNavID, 'navLink', '', 'statusLink', function(){swapView(this.linkWrapperID, 'TestWaffle', 'InputLayer', window.HVpointer.topNavID)}, 'HV Monitor')
+        insertDOM('button', this.topNavID, 'navLink', '', 'statusLink', function(){swapView(window.HVpointer.linkWrapperID, 'HVgrid0', 'InputLayer', window.HVpointer.topNavID); forceUpdate();}, 'HV Monitor')
 
         //header
         insertDOM('div', this.linkWrapperID, 'navPanel', '', this.wrapperDiv, '', '');
@@ -176,7 +176,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         insertDOM('br', 'break', '', '', this.linkWrapperID, '', '');
         //mainframe navigation
         for(i=0; i<this.nCrates; i++){
-            insertDOM('button', 'Main'+(i+1), (i==0)? 'navLinkDown' : 'navLink', '', this.linkWrapperID, function(){swapHVmainframe(this.crate)}, 'Mainframe '+(i+1) );
+            insertDOM('button', 'Main'+(i+1), (i==0)? 'navLinkDown' : 'navLink', '', this.linkWrapperID, function(){swapHVmainframe(this.crate); forceUpdate();}, 'Mainframe '+(i+1) );
             document.getElementById('Main'+(i+1)).crate = i;
         }
         insertDOM('br', 'break', '', '', this.linkWrapperID, '', '');
@@ -655,6 +655,9 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                 this.tooltip[i].update();
             }
 
+            //animation fires only if canvas is showing:
+            this.animate();
+
         };
 
         //determine which cell pixel x,y falls in, with this.leftEdge,0 being the top left corner of the canvas; return -1 if no corresponding cell.
@@ -935,26 +938,27 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         };
 
         this.animate = function(){
-            var i, 
-            topHV = window.HVview;
+            //var i, 
+            //topHV = window.HVview;
 
             if(window.onDisplay.slice(0,6) == 'HVgrid' /*|| window.freshLoad*/){
+                /*
                 for(i=0; i<this.nCrates; i++){  
                     if(i!=topHV){
                         window.HVview = i;
                         this.draw(this.nFrames);
                     }
                 }
-                window.HVview = topHV;
+                */
+                //window.HVview = topHV;
                 animate(this, 0);
-            }
-            else{
+            } /*else{
                 for(i=0; i<this.nCrates; i++){
                     window.HVview = i;
                     this.draw(this.nFrames);      
                 }
                 window.HVview = topHV;
-            } 
+            }*/
         };
 
         //do an initial populate of the waffle:
