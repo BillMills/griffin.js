@@ -7,8 +7,6 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
         window.HVpointer = that;
 
-        //autodetect what size cards are plugged into what slot:
-        detectCards();
         window.HVview = 0; //index of which crate is currently on display in the HV view.
         this.nCrates = window.parameters.moduleSizes.length;
 
