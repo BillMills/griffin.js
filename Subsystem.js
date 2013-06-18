@@ -22,7 +22,7 @@ function Subsystem(){
     
     //DOM insertions
     //insert nav link
-	insertDOM('button', this.name+'link', 'navLink', '', this.linkWrapperID, function(){swapFade(this.id, this.parentPointer, window.subsystemScalars, window.state.subdetectorView)}, this.name, '', 'button');
+	insertDOM('button', this.name+'link', 'navLink', '', this.linkWrapperID, function(){ swapFade(this.id, this.parentPointer, window.subsystemScalars); forceUpdate();}, this.name, '', 'button');
     document.getElementById(this.name+'link').parentPointer = this;
     //scale canvas
 	this.monitor = document.getElementById(this.monitorID);
@@ -169,8 +169,7 @@ function Subsystem(){
 
     //manage animation
     this.animate = function(){
-        if(window.onDisplay == this.canvasID || window.freshLoad) animate(this, 0);
-        else this.draw(this.nFrames);
+        if(window.onDisplay == this.canvasID) animate(this, 0);
     };
 
     //make the base HV / thresholds / rate summary text for the tooltip
@@ -259,8 +258,26 @@ function Subsystem(){
             this.dataBus[this.name][key].rateColor = this.parseColor(this.dataBus[this.name][key].rate, this.name);
         }
 
+        //do the same for the summary level, if it exists:
+        if(this.dataBus.summary){
+            for(key in this.dataBus.summary){
+                this.dataBus.summary[key].oldHVcolor = this.dataBus.summary[key].HVcolor;
+                this.dataBus.summary[key].HVcolor = this.parseColor(this.dataBus.summary[key].HV, this.name);
+                this.dataBus.summary[key].oldThresholdColor = this.dataBus.summary[key].thresholdColor;
+                this.dataBus.summary[key].thresholdColor = this.parseColor(this.dataBus.summary[key].threshold, this.name);
+                this.dataBus.summary[key].oldRateColor = this.dataBus.summary[key].rateColor;
+                this.dataBus.summary[key].rateColor = this.parseColor(this.dataBus.summary[key].rate, this.name);
+            }            
+        }
+
+        //update tooltip
         this.tooltip.update();
-        
+        //update detail level tooltip if it exists:
+        this.detailTooltip.update();
+
+        //animate if on top:
+        this.animate
+
     };
     
     //write the simplest possible subsystem tooltip contents:
@@ -321,7 +338,7 @@ function DetailView(){
                                     var y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;    
                                     if(y < that.canvasHeight - that.scaleHeight){
                                         that.detailShowing = 0;
-                                        swapFade(null, that, 1000, 0);
+                                        swapFade(null, that, 1000);
                                     } else{
                                         parameterDialogue(that.name, [[that.name, window.parameters[that.name].minima[that.name][window.state.subdetectorView], window.parameters[that.name].maxima[that.name][window.state.subdetectorView], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/'+that.name+'/'+scaleType()+'[0]', '/DashboardConfig/'+that.name+'/'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.state.subdetectorView]);
                                     }
@@ -340,7 +357,7 @@ function DetailView(){
                                     that.drawDetail(that.detailContext, that.nFrames);
                                     that.drawDetail(that.TTdetailContext, that.nFrames);
                                     that.detailShowing = 1;
-                                    swapFade(null, that, 1000, 0)
+                                    swapFade(null, that, 1000)
                                 } else if(y > that.canvasHeight - that.scaleHeight){
                                     parameterDialogue(that.name, [[that.name, window.parameters[that.name].minima[that.name][window.state.subdetectorView], window.parameters[that.name].maxima[that.name][window.state.subdetectorView], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/'+that.name+'/'+scaleType()+'[0]', '/DashboardConfig/'+that.name+'/'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.state.subdetectorView]);
                                 }
@@ -372,15 +389,17 @@ function DetailView(){
     //manage animation
     this.animate = function(){
         if(window.onDisplay == this.canvasID) animate(this, 0);
+        if(window.onDisplay == this.detailCanvasID) animateDetail(this, 0);
     };
 
-    //decide which display version to show:
+    //decide which display version to show: (depricated?)
     this.displaySwitch = function(){
         this.TTdetailContext.fillStyle = 'rgba(50,100,150,1)';
         this.TTdetailContext.fillRect(0,0,this.canvasWidth,this.canvasHeight);
         this.drawDetail(this.detailContext, this.nFrames);
         this.drawDetail(this.TTdetailContext, this.nFrames);
     };
+
 }
 
 

@@ -31,7 +31,7 @@ function HPGe(){
                                     var y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;    
                                     if(y < that.canvasHeight - that.scaleHeight){
                                         that.detailShowing = 0;
-                                        swapFade(null, that, 1000, 0);
+                                        swapFade(null, that, 1000);
                                     } else{
                                         parameterDialogue(that.name, [['HPGe', window.parameters[that.name].minima['HPGe'][window.state.subdetectorView], window.parameters[that.name].maxima['HPGe'][window.state.subdetectorView], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/HPGe/'+scaleType()+'[0]', '/DashboardConfig/HPGe/'+scaleType()+'[1]'], ['BGO', window.parameters[that.name].minima['BGO'][window.state.subdetectorView], window.parameters[that.name].maxima['BGO'][window.state.subdetectorView],  window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/HPGe/BGO'+scaleType()+'[0]', '/DashboardConfig/HPGe/BGO'+scaleType()+'[1]'] ], window.parameters.subdetectorColors[window.state.subdetectorView]);
                                     }
@@ -50,7 +50,7 @@ function HPGe(){
                                     that.drawDetail(that.detailContext, that.nFrames);
                                     that.drawDetail(that.TTdetailContext, that.nFrames);
                                     that.detailShowing = 1;
-                                    swapFade(null, that, 1000, 0)
+                                    swapFade(null, that, 1000)
                                 } else if(y > that.canvasHeight - that.scaleHeight){
                                     parameterDialogue(that.name, [['HPGe', window.parameters[that.name].minima['HPGe'][window.state.subdetectorView], window.parameters[that.name].maxima['HPGe'][window.state.subdetectorView], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/HPGe/'+scaleType()+'[0]', '/DashboardConfig/HPGe/'+scaleType()+'[1]'], ['BGO', window.parameters[that.name].minima['BGO'][window.state.subdetectorView], window.parameters[that.name].maxima['BGO'][window.state.subdetectorView],  window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/HPGe/BGO'+scaleType()+'[0]', '/DashboardConfig/HPGe/BGO'+scaleType()+'[1]'] ], window.parameters.subdetectorColors[window.state.subdetectorView]);
                                 }
@@ -193,10 +193,10 @@ function HPGe(){
         //update the databus
         this.updateHPGe();
 
-        //update tooltips & display
+        //update tooltips
         this.tooltip.update();
         this.detailTooltip.update();
-        this.displaySwitch();
+        //this.displaySwitch();
 
         //animate if on top:
         this.animate();

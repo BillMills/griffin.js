@@ -179,8 +179,8 @@ function cloverDS(nClovers, mode){
 }
 
 SHARCDS = function(){
-	var i, j, name;
-
+	var i, j, name,
+	that = this;
 	this.SHARC = {};
 	this.TTmap = [];
 	//SHARC detail level index logic: hundreds correspond to Array Position, ones and tens count through Segments front to back. 
@@ -217,7 +217,6 @@ SHARCDS = function(){
 	}
 
 	//invert the index map for the TT:
-	this.TTmap = [];
 	for(key in this.SHARC){
 		this.TTmap[this.SHARC[key].index] = key;
 	}
@@ -258,7 +257,7 @@ SHARCDS = function(){
 	}
 
 	function deployKeys(name, index){
-		this.SHARC[name] = {
+		that.SHARC[name] = {
 			'HV'		: 0,
 			'threshold' : 0,
 			'rate' 		: 0,
@@ -271,7 +270,7 @@ SHARCDS = function(){
 			'oldRateColor' : '#000000',
 			'rateColor' : '#000000'	
 		}
-		this.TTmap[index] = name;		
+		that.TTmap[index] = name;		
 	};
 }
 

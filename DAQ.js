@@ -57,13 +57,13 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     insertDOM('h1', 'DAQlinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', window.parameters.ExpName+' DAQ Status')
     insertDOM('br', 'break', '', '', this.linkWrapperID, '', '')
     //nav buttons
-    insertDOM('button', 'DAQToplink', 'navLinkDown', '', 'DAQlinks', function(){window.DAQpointer.detailShowing=0; window.DAQdetail=-1; swapFade('DAQToplink', window.DAQpointer, 0, 0);}, 'Master', '', 'button')
+    insertDOM('button', 'DAQToplink', 'navLinkDown', '', 'DAQlinks', function(){window.DAQpointer.detailShowing=0; window.DAQdetail=-1; swapFade('DAQToplink', window.DAQpointer, 0);}, 'Master', '', 'button')
     insertDOM('br', 'break', '', '', this.linkWrapperID, '', '')
     //p to label row of collector buttons
     insertDOM('p', 'DAQcollectorTitle', '', 'display:inline; color:#999999; margin-right:5px;', 'DAQlinks', '', 'Slave')
     //deploy collector buttons
     for(i=0; i<this.nCollectors; i++){
-        insertDOM('button', 'Collector'+i, 'navLink', '', this.linkWrapperID, function(){swapFade(this.id, window.DAQpointer, 0, 1); window.DAQpointer.detailShowing=1; animateDetail(window.DAQpointer, 0); window.DAQdetail=this.collectorNumber;}, i+1, '', 'button')
+        insertDOM('button', 'Collector'+i, 'navLink', '', this.linkWrapperID, function(){window.DAQpointer.detailShowing=1; swapFade(this.id, window.DAQpointer, 0); animateDetail(window.DAQpointer, 0); window.DAQdetail=this.collectorNumber;}, i+1, '', 'button')
         $('#Collector'+i).width( ( 0.95*this.canvasWidth - $('#DAQcollectorTitle').width()) / this.nCollectors );
         document.getElementById('Collector'+i).collectorNumber = i;
     }
@@ -108,7 +108,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                                         parameterDialogue('DAQ', [ ['Transfer Rate', window.parameters.DAQminima[3], window.parameters.DAQmaxima[3], 'Bps', '/DashboardConfig/DAQ/transferMinDetailView', '/DashboardConfig/DAQ/transferMaxDetailView' ], ['Trigger Rate', window.parameters.DAQminima[2], window.parameters.DAQmaxima[2], 'Hz', '/DashboardConfig/DAQ/rateMinDetailView', '/DashboardConfig/DAQ/rateMaxDetailView']  ], window.parameters.colorScale[window.DAQpointer.DAQcolor]);
                                     } else {
                                         that.detailShowing = 0;
-                                        swapFade('DAQToplink', that, 0, 0);
+                                        swapFade('DAQToplink', that, 0);
                                     }
                                 };
     this.canvas.onclick =   function(event){
@@ -123,7 +123,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                                     window.DAQdetail = (digiGroupClicked-1)%that.nCollectors;
                                     that.drawDetail(that.detailContext, that.nFrames);
                                     that.detailShowing = 1;
-                                    swapFade('Collector'+(window.DAQdetail), that, 0, 1)
+                                    swapFade('Collector'+(window.DAQdetail), that, 0)
                                 }
                                 //set up scale range dialogue:
                                 if(y>that.canvasHeight - that.scaleHeight){
@@ -188,10 +188,10 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     //member functions///////////////////////////////////////////////
 
     //decide which view to transition to when this object is navigated to
-    this.view = function(index){
-        if(index == 1)
+    this.view = function(){
+        if(this.detailShowing == 1)
             return this.detailCanvasID;
-        else if(index == 0)
+        else if(this.detailShowing == 0)
             return this.canvasID;
     }
 

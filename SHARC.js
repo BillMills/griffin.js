@@ -9,7 +9,8 @@ function SHARC(){
     DetailView.call(this);              //inject the infrastructure for a detail level view
 
     //member variables////////////////////
-
+    this.padsEnabled = 0;               //are the pads present?
+    this.detailShowing = 0;             //is the detail view on display?
 
     //drawing parameters//////////////////
 
@@ -18,21 +19,66 @@ function SHARC(){
 
     //draw the summary view
     this.draw = function(frame){
-
+        this.context.fillRect(0,0,100,100)
     };
+
+    this.drawDetail = function(frame){
+
+    }
 
     //define the tooltip text
     this.defineText = function(cell){
 
     };
 
-    //update SHARC in browser
-    this.update = function(){
-
-    };
-
     //get new data
     this.fetchNewData = function(){
+        var key, normalization;
+
+        //zero out the summary:
+        for(key in this.dataBus.summary){
+            if(this.dataBus.summary.hasOwnProperty(key)){
+                this.dataBus.summary[key].HV = 0;
+                this.dataBus.summary[key].threshold = 0;
+                this.dataBus.summary[key].rate = 0;
+            }
+        }
+
+        //fetch data, plug into detail level and increment summary cells:
+        for(key in this.dataBus.SHARC){
+            if(window.JSONPstore['thresholds']){
+                if(window.JSONPstore['thresholds'][key]){
+                    this.dataBus.SHARC[key]['threshold'] = window.JSONPstore['thresholds'][key];
+                    this.dataBus.summary[key.slice(0,5)].threshold += window.JSONPstore['thresholds'][key];
+                } else
+                    this.dataBus.SHARC[key]['threshold'] = 0xDEADBEEF;
+            }
+
+            if(window.JSONPstore['scalar']){
+                if(window.JSONPstore['scalar'][key]){
+                    this.dataBus.SHARC[key]['rate'] = window.JSONPstore['scalar'][key]['TRIGREQ'];
+                    this.dataBus.summary[key.slice(0,5)].rate += window.JSONPstore['scalar'][key]['TRIGREQ'];
+                } else 
+                    this.dataBus.SHARC[key]['rate'] = 0xDEADBEEF;
+            }
+        }
+
+        //average the summary level cells - each is currently the sum of 1/4 of their side of their array position
+        for(key in this.dataBus.summary){
+            if(this.dataBus.summary.hasOwnProperty(key)){
+                if(key.slice(0,3) == 'SHB'){
+                    if(key.slice(3,5) == 'DP')
+                        normalization = 6;
+                    else if(key.slice(3,5) == 'EN')
+                        normalization = 12;
+                } else if(key.slice(0,3) == 'SHQ'){
+                    if(key.slice(3,5) == 'DP')
+                        normalization = 4;
+                    else if(key.slice(3,5) == 'EN')
+                        normalization = 6;
+                }
+            }
+        }
 
     };
 
