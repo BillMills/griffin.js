@@ -19,7 +19,7 @@ function SHARC(){
 
     //draw the summary view
     this.draw = function(frame){
-        this.context.fillRect(0,0,100,100)
+        radialQuadrant(this.context, 300, 300, 50, 100, 0.8*Math.PI/2, -Math.PI/2, ['#00FF00', '#FF0000', '#0000FF', '#FF00FF'])
     };
 
     this.drawDetail = function(frame){

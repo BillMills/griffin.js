@@ -276,7 +276,7 @@ function Subsystem(){
         this.detailTooltip.update();
 
         //animate if on top:
-        this.animate
+        this.animate();
 
     };
     

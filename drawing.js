@@ -171,6 +171,33 @@ greenRightDetector = function(context, centerX, centerY, scale, phi, rotation, b
     context.fill();
     if(bkg == 0)context.stroke();
 }
+
+//SHARC////////////////////////////////////////////////////////////
+radialQuadrant = function(context, x0, y0, innerRad, outerRad, arc, orientation, colors){
+    var i,
+        segments = colors.length,
+        radStep = (outerRad - innerRad) / segments;
+
+    context.save();
+    context.translate(x0,y0);
+    context.rotate(orientation);
+
+    context.strokeStyle = '#999999';
+
+    for(i=0; i<segments; i++){
+        context.fillStyle = colors[i];
+        context.beginPath();
+        context.arc(0,0,innerRad + i*radStep, -arc/2, arc/2, false);
+        context.arc(0,0,innerRad + (i+1)*radStep, arc/2, -arc/2, true);
+        context.closePath();
+        context.fill();
+        context.stroke();
+    }
+
+    context.restore();
+
+}
+
 //Color Scales///////////////////////////////////////////////////////////////////////////////////
 
 //map [0,1] onto [#000000, #FF0000]
