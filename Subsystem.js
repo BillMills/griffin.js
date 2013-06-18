@@ -316,6 +316,36 @@ function DetailView(){
     this.detailTooltip = new Tooltip(this.detailCanvasID, this.name+'TTdetail', this.monitorID, window.parameters.HPGeprefix, window.parameters.HPGepostfix);
     this.detailTooltip.obj = that;
 
+    //onclick switch between top and detail view - only appropriate for detectors with a single scale (so ie not HPGe, which has HPGe+BGO)
+    this.detailCanvas.onclick = function(event){
+                                    var y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;    
+                                    if(y < that.canvasHeight - that.scaleHeight){
+                                        that.detailShowing = 0;
+                                        swapFade(null, that, 1000, 0);
+                                    } else{
+                                        parameterDialogue(that.name, [[that.name, window.parameters[that.name].minima[that.name][window.state.subdetectorView], window.parameters[that.name].maxima[that.name][window.state.subdetectorView], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/'+that.name+'/'+scaleType()+'[0]', '/DashboardConfig/'+that.name+'/'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.state.subdetectorView]);
+                                    }
+                                };
+    this.canvas.onclick =   function(event){
+                                //use TT layer to decide which clover user clicked on
+                                var cloverClicked = -1;
+                                var x,y;
+                                x = event.pageX - that.canvas.offsetLeft - that.monitor.offsetLeft;
+                                y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;
+                                cloverClicked = that.findCell(x,y);
+                                //draw and swap out if user clicked on a valid clover
+                                if(cloverClicked != -1){
+                                    cloverClicked = Math.floor( (cloverClicked - 108) / 8)+1;
+                                    that.cloverShowing = cloverClicked
+                                    that.drawDetail(that.detailContext, that.nFrames);
+                                    that.drawDetail(that.TTdetailContext, that.nFrames);
+                                    that.detailShowing = 1;
+                                    swapFade(null, that, 1000, 0)
+                                } else if(y > that.canvasHeight - that.scaleHeight){
+                                    parameterDialogue(that.name, [[that.name, window.parameters[that.name].minima[that.name][window.state.subdetectorView], window.parameters[that.name].maxima[that.name][window.state.subdetectorView], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/'+that.name+'/'+scaleType()+'[0]', '/DashboardConfig/'+that.name+'/'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.state.subdetectorView]);
+                                }
+                            };
+
     //member functions
     //decide which view to transition to when this object is navigated to; overwrites equivalent in Subsystem.
     this.view = function(){
@@ -341,10 +371,7 @@ function DetailView(){
 
     //manage animation
     this.animate = function(){
-        if(window.onDisplay == this.canvasID /*|| window.freshLoad*/) animate(this, 0);
-        //else this.draw(this.nFrames);
-        if(window.onDisplay == this.detailCanvasID /*|| window.freshLoad*/) animateDetail(this, 0);
-        //else this.drawDetail(this.detailContext, this.nFrames);
+        if(window.onDisplay == this.canvasID) animate(this, 0);
     };
 
     //decide which display version to show:

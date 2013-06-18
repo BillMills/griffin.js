@@ -1,4 +1,52 @@
 SHARC.prototype = Object.create(Subsystem.prototype);
+function SHARC(){
+    //basic plumbing:
+    this.name = 'SHARC';                //name prefix
+    var that = this;                    //pointer to self
+    Subsystem.call(this);               //inject Subsystem attributes
+    window.SHARCpointer = that;         //send a pointer to SHARC up to global scope
+    this.dataBus = new SHARCDS();       //build the data structure to manage SHARC's info
+    DetailView.call(this);              //inject the infrastructure for a detail level view
+
+    //member variables////////////////////
+
+
+    //drawing parameters//////////////////
+
+
+    //member functions////////////////////
+
+    //draw the summary view
+    this.draw = function(frame){
+
+    };
+
+    //define the tooltip text
+    this.defineText = function(cell){
+
+    };
+
+    //update SHARC in browser
+    this.update = function(){
+
+    };
+
+    //get new data
+    this.fetchNewData = function(){
+
+    };
+
+
+
+}
+
+
+
+
+
+
+/*
+SHARC.prototype = Object.create(Subsystem.prototype);
 
 function SHARC(){
 	var i,j;
@@ -247,6 +295,6 @@ function SHARC(){
 
     //do an initial populate:
     this.update();
-}
+}*/
 
 

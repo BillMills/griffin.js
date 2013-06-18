@@ -179,13 +179,100 @@ function cloverDS(nClovers, mode){
 }
 
 SHARCDS = function(){
-	//data arrays:
-	this.HV = [];
-	this.thresholds = [];
-	this.rate = [];
+	var i, j, name;
 
-	//key map
-	//todo
+	this.SHARC = {};
+	this.TTmap = [];
+	//SHARC detail level index logic: hundreds correspond to Array Position, ones and tens count through Segments front to back. 
+	//boxes:
+	for(i=5; i<13; i++){
+		//fronts:
+		for(j=0; j<24; j++){
+			name = 'SHB' + ( (i<10) ? '0'+i : i ) + 'DP' + ( (j<10) ? '0'+j : j ) + 'X';
+			deployKeys(name, 100*i + j);
+		}
+		//backs:
+		for(j=0; j<48; j++){
+			name = 'SHB' + ( (i<10) ? '0'+i : i ) + 'EN' + ( (j<10) ? '0'+j : j ) + 'X';
+			deployKeys(name, 100*i + 24 + j);
+		}		
+	}
+
+	//quadrants:
+	for(i=1; i<5; i++){
+		//fronts:
+		for(j=0; j<16; j++){
+			name = 'SHQ' + '0'+i + 'DP' + ( (j<10) ? '0'+j : j ) + 'X';  //upstream
+			deployKeys(name, 100*i + j);
+			name = 'SHQ' + (i+12) + 'DP' + ( (j<10) ? '0'+j : j ) + 'X';  //downstream
+			deployKeys(name, 100*(i+12) + j);
+		}
+		//backs:
+		for(j=0; j<24; j++){
+			name = 'SHQ' + '0'+i + 'EN' + ( (j<10) ? '0'+j : j ) + 'X'; //upstream
+			deployKeys(name, 100*i + 16 + j);
+			name = 'SHQ' + (i+12) + 'EN' + ( (j<10) ? '0'+j : j ) + 'X'; //downstream
+			deployKeys(name, 100*(i+12) + 16 + j);
+		}
+	}
+
+	//invert the index map for the TT:
+	this.TTmap = [];
+	for(key in this.SHARC){
+		this.TTmap[this.SHARC[key].index] = key;
+	}
+
+	//sumaries - split each detector into 4 groups of segments:
+	//SHARC summary level index logic: index = 10*(Array Position) + { (Front Q1->Q4, Back Q1->Q4) -> [0,7] }
+	this.summary = {};
+	//boxes:
+	for(i=5; i<13; i++){
+		//fronts:
+		for(j=0; j<4; j++){
+			name = 'SHB' + ( (i<10) ? '0'+i : i ) + 'DP';
+			deployKeys(name, 10*i + j);
+		}
+		//backs:
+		for(j=0; j<4; j++){
+			name = 'SHB' + ( (i<10) ? '0'+i : i ) + 'EN';
+			deployKeys(name, 10*i + 4 + j);
+		}		
+	}
+
+	//quadrants:
+	for(i=1; i<5; i++){
+		//fronts:
+		for(j=0; j<4; j++){
+			name = 'SHQ' + '0'+i + 'DP';  //upstream
+			deployKeys(name, 10*i + j);
+			name = 'SHQ' + (i+12) + 'DP';  //downstream
+			deployKeys(name, 10*(i+12) + j);
+		}
+		//backs:
+		for(j=0; j<4; j++){
+			name = 'SHQ' + '0'+i + 'EN'; //upstream
+			deployKeys(name, 10*i + 4 + j);
+			name = 'SHQ' + (i+12) + 'EN'; //downstream
+			deployKeys(name, 10*(i+12) + 4 + j);
+		}
+	}
+
+	function deployKeys(name, index){
+		this.SHARC[name] = {
+			'HV'		: 0,
+			'threshold' : 0,
+			'rate' 		: 0,
+			'index'		: index,
+
+			'oldHVcolor' : '#000000',
+			'HVcolor'	 : '#000000',
+			'oldThresholdColor' : '#000000',
+			'thresholdColor' : '#000000',
+			'oldRateColor' : '#000000',
+			'rateColor' : '#000000'	
+		}
+		this.TTmap[index] = name;		
+	};
 }
 
 DESCANTDS = function(){
