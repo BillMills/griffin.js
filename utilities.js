@@ -277,7 +277,7 @@ function frameColor(obj, frame, nFrames){
         oldKey = 'oldRateColor';
         newKey = 'rateColor';
     }
-//console.log(obj)
+
     return interpolateColor(parseHexColor(obj[oldKey]), parseHexColor(obj[newKey]), frame/nFrames);
 
 }

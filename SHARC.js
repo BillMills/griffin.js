@@ -18,20 +18,25 @@ function SHARC(){
     this.quadArc = 0.66*Math.PI/2;
     this.innerQuadCenterLine = this.canvasHeight*0.4;
     this.outerRowSpacing = this.canvasHeight*0.2;
-    this.outerTopQuadCenterLine = this.canvasHeight*0.2;
-    this.outerBottomQuadCenterLine = this.canvasHeight*0.6;
+    //this.outerTopQuadCenterLine = this.canvasHeight*0.2;
+    //this.outerBottomQuadCenterLine = this.canvasHeight*0.6;
     this.summaryBoxWidth = 0.08*this.canvasWidth;
     this.summaryBoxHeight = 0.16*this.canvasHeight;
+    this.x0 = 0.1*this.canvasWidth;  //top left corner for TT boxes on summary view
+    this.y0 = 0;
+    this.TTboxWidth = 0.1*this.canvasWidth;
+    this.TTboxHeight = 0.4*this.canvasHeight;
+    //detail view
+    this.innerQuadRadDetail = this.canvasHeight*0.1;
+    this.outerQuadRadDetail = this.canvasHeight*0.6;
+    this.quadArcDetail = 0.45*Math.PI/2;
+    this.detailTitles = ['Upstream Quadrant 1', 'Upstream Quadrant 2', 'Upstream Quadrant 3', 'Upstream Quadrant 4', 'Upstream Box 1', 'Upstream Box 2', 'Upstream Box 3', 'Upstream Box 4', 'Downstream Box 1', 'Downstream Box 2', 'Downstream Box 3', 'Downstream Box 4', 'Downstream Quadrant 1', 'Downstream Quadrant 2', 'Downstream Quadrant 3', 'Downstream Quadrant 4']
 
     //member functions////////////////////
 
     //draw the summary view
     this.draw = function(frame){
         var colors, i, j, name;
-
-        //beamline:
-        this.context.strokeStyle = '#999999';
-        this.context.move
 
         for(i=1; i<5; i++){
             //upstream quad fronts:
@@ -97,7 +102,7 @@ function SHARC(){
             
         }
 
-        //decorations:
+        //decorations & TT:
         if(frame==this.nFrames || frame==0){ 
             //beamline:
             this.context.strokeStyle = '#999999';
@@ -114,16 +119,96 @@ function SHARC(){
             }
 */
             //scale:
-            this.drawScale(this.context);
+            this.drawScale(this.detailContext);
+
+            //tooltip layer:
+            for(i=0; i<16; i++){
+                this.TTcontext.fillStyle = 'rgba('+(i+1)+','+(i+1)+','+(i+1)+',1)';
+
+                this.TTcontext.fillRect(this.x0 + this.TTboxWidth*(i%2) + 2*this.TTboxWidth*Math.floor(i/4), this.y0 + this.TTboxHeight*Math.floor((i%4)/2), this.TTboxWidth, this.TTboxHeight);
+            }
+
         }
     };
 
-    this.drawDetail = function(frame){
+    this.drawDetail = function(x, frame){  //animatedetail expects the first argument to be the detail context - refactor to eliminate.
+        var colors = [],
+            i, name;
 
+        this.detailContext.clearRect(0,0, this.canvasWidth, this.canvasHeight-this.scaleHeight);
+        //title
+        this.detailContext.fillStyle = '#999999';
+        this.detailContext.font = '20px Orbitron';
+        this.detailContext.fillText(this.detailTitles[this.detailShowing-1], this.canvasWidth/2 - this.detailContext.measureText(this.detailTitles[this.detailShowing-1]).width/2, this.canvasHeight*0.75 )
+
+        //quadrant details
+        if(this.detailShowing < 5 || this.detailShowing > 12){
+
+            //subtitles:
+            this.detailContext.fillText('Front', this.canvasWidth*0.3 - this.detailContext.measureText('Front').width/2, this.canvasHeight*0.67);
+            this.detailContext.fillText('Back', this.canvasWidth*0.7 - this.detailContext.measureText('Back').width/2, this.canvasHeight*0.67);
+
+            //front side:
+            colors = [];
+            for(i=0; i<16; i++){
+                name = 'SHQ' + ( (this.detailShowing < 10) ? '0'+this.detailShowing : this.detailShowing ) + 'DP' + ( (i<10) ? '0'+i : i ) + 'X';
+                colors[colors.length] = frameColor(this.dataBus.SHARC[name], frame, this.nFrames);
+            }
+            radialQuadrant(this.detailContext, this.canvasWidth*0.3, this.canvasHeight*0.7, this.innerQuadRadDetail, this.outerQuadRadDetail, this.quadArcDetail, -Math.PI/2, colors);           
+
+
+            //back side:
+            colors = [];
+            for(i=0; i<24; i++){
+                name = 'SHQ' + ( (this.detailShowing < 10) ? '0'+this.detailShowing : this.detailShowing ) + 'EN' + ( (i<10) ? '0'+i : i ) + 'X';
+                colors[colors.length] = frameColor(this.dataBus.SHARC[name], frame, this.nFrames);
+            }
+            azimuthalQuadrant(this.detailContext, this.canvasWidth*0.7, this.canvasHeight*0.7, this.innerQuadRadDetail, this.outerQuadRadDetail, this.quadArcDetail, -Math.PI/2, colors); 
+
+        } else{  //box details
+
+            //subtitles:
+            this.detailContext.fillText('Front', this.canvasWidth*0.29 - this.detailContext.measureText('Front').width/2, this.canvasHeight*0.7);
+            this.detailContext.fillText('Back', this.canvasWidth*0.71 - this.detailContext.measureText('Back').width/2, this.canvasHeight*0.7);
+
+            //front side:
+            colors = [];
+            for(i=0; i<24; i++){
+                name = 'SHB' + ( (this.detailShowing < 10) ? '0'+this.detailShowing : this.detailShowing ) + 'DP' + ( (i<10) ? '0'+i : i ) + 'X';
+                colors[colors.length] = frameColor(this.dataBus.SHARC[name], frame, this.nFrames);
+            }
+            boxFront(this.detailContext, 0.1*this.canvasWidth,0.05*this.canvasHeight, 0.60*this.canvasHeight, 0.38*this.canvasWidth, colors)          
+
+
+            //back side:
+            colors = [];
+            for(i=0; i<48; i++){
+                name = 'SHB' + ( (this.detailShowing < 10) ? '0'+this.detailShowing : this.detailShowing ) + 'EN' + ( (i<10) ? '0'+i : i ) + 'X';
+                colors[colors.length] = frameColor(this.dataBus.SHARC[name], frame, this.nFrames);
+            }
+            boxBack(this.detailContext, 0.52*this.canvasWidth, 0.05*this.canvasHeight, 0.60*this.canvasHeight, 0.38*this.canvasWidth, colors)
+        }
+
+        //decorations & TT:
+        if(frame==this.nFrames || frame==0){ 
+            //scale:
+            this.drawScale(this.context);
+        }
     }
 
-    //define the tooltip text
     this.defineText = function(cell){
+        var toolTipContent = '',
+            nextLine;
+
+        toolTipContent += cell + '<br>';
+
+        if(this.detailShowing){
+            document.getElementById(this.detailTooltip.ttDivID).innerHTML = toolTipContent;
+        } else{
+            document.getElementById(this.tooltip.ttDivID).innerHTML = toolTipContent;
+        }
+
+        return 0;
 
     };
 

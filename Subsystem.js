@@ -344,19 +344,19 @@ function DetailView(){
                                     }
                                 };
     this.canvas.onclick =   function(event){
-                                //use TT layer to decide which clover user clicked on
-                                var cloverClicked = -1;
+                                //use TT layer to decide which detail group user clicked on
+                                var detailClicked = -1;
                                 var x,y;
                                 x = event.pageX - that.canvas.offsetLeft - that.monitor.offsetLeft;
                                 y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;
-                                cloverClicked = that.findCell(x,y);
-                                //draw and swap out if user clicked on a valid clover
-                                if(cloverClicked != -1){
-                                    cloverClicked = Math.floor( (cloverClicked - 108) / 8)+1;
-                                    that.cloverShowing = cloverClicked
-                                    that.drawDetail(that.detailContext, that.nFrames);
-                                    that.drawDetail(that.TTdetailContext, that.nFrames);
-                                    that.detailShowing = 1;
+                                detailClicked = that.findCell(x,y);
+                                //draw and swap out if user clicked on a valid detail group
+                                if(detailClicked != -1){
+                                    //detailClicked = Math.floor( (detailClicked - 108) / 8)+1;  //transformation from HPGe implementation of this, drop in general?
+                                    that.detailShowing = detailClicked;
+                                    //draw detail chooses which detail group to draw as a function of that.detailShowing:
+                                    that.drawDetail(0,that.nFrames);  //draw detail wants a context for first arg, eliminate
+                                    //that.detailShowing = 1;
                                     swapFade(null, that, 1000)
                                 } else if(y > that.canvasHeight - that.scaleHeight){
                                     parameterDialogue(that.name, [[that.name, window.parameters[that.name].minima[that.name][window.state.subdetectorView], window.parameters[that.name].maxima[that.name][window.state.subdetectorView], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/'+that.name+'/'+scaleType()+'[0]', '/DashboardConfig/'+that.name+'/'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.state.subdetectorView]);
@@ -368,7 +368,7 @@ function DetailView(){
     this.view = function(){
         if(this.detailShowing == 0)
             return this.canvasID;
-        else if(this.detailShowing == 1)
+        else if(this.detailShowing > 0)
             return this.detailCanvasID;
     };
 
