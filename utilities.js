@@ -229,12 +229,15 @@ function getTag(tag, parentID){
 //generate a fake JSONP scalar post to use for offline development:
 function fakeScalars(){
     
-    var JSONP = {'scalar' : {} };
+    var JSONP = {'scalar' : {} },
+        key, subKey;
 
-    if(window.parameters.deployment.HPGe){
-        for(key in window.HPGepointer.dataBus.HPGe){
-            JSONP.scalar[key] = {"TRIGREQ" : Math.random()};
 
+    for(key in window.parameters.deployment){
+        if(window.parameters.deployment[key]){
+            for(subKey in window[key+'pointer'].dataBus[key]){
+                JSONP.scalar[subKey] = {"TRIGREQ" : Math.random()};
+            }
         }
     }
 
@@ -244,16 +247,52 @@ function fakeScalars(){
 //like fake scalars, but now thresholds:
 function fakeThresholds(){
 
-    var JSONP = {'parameters' : {'thresholds' : {} } };
+    var JSONP = {'parameters' : {'thresholds' : {} } },
+        key, subKey;
 
-    if(window.parameters.deployment.HPGe){
-        for(key in window.HPGepointer.dataBus.HPGe){
-            JSONP.parameters.thresholds[key] = Math.random();
-
+    for(key in window.parameters.deployment){
+        if(window.parameters.deployment[key]){
+            for(subKey in window[key+'pointer'].dataBus[key]){
+                JSONP.parameters.thresholds[subKey] = Math.random();
+            }
         }
     }
 
     return JSONP;
 
 }
+
+//take a standard object from datastructures and a frame, and determine the appropriate fill color:
+function frameColor(obj, frame, nFrames){
+    var oldKey, newKey;
+
+    //pick the right keys
+    if(window.state.subdetectorView == 0){
+        oldKey = 'oldHVcolor';
+        newKey = 'HVcolor';
+    } else if(window.state.subdetectorView == 1){
+        oldKey = 'oldThresholdColor';
+        newKey = 'thresholdColor';
+    } else if(window.state.subdetectorView == 2){
+        oldKey = 'oldRateColor';
+        newKey = 'rateColor';
+    }
+//console.log(obj)
+    return interpolateColor(parseHexColor(obj[oldKey]), parseHexColor(obj[newKey]), frame/nFrames);
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

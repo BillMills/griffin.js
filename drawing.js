@@ -198,6 +198,59 @@ radialQuadrant = function(context, x0, y0, innerRad, outerRad, arc, orientation,
 
 }
 
+azimuthalQuadrant = function(context, x0, y0, innerRad, outerRad, arc, orientation, colors){
+    var i,
+        segments = colors.length,
+        angleStep = arc / segments;
+
+    context.save();
+    context.translate(x0,y0);
+    context.rotate(orientation);
+
+    context.strokeStyle = '#999999';
+
+    for(i=0; i<segments; i++){
+        context.fillStyle = colors[i];
+        context.beginPath();
+        context.arc(0,0,innerRad, -arc/2 + i*angleStep, -arc/2 + (i+1)*angleStep  , false);
+        context.arc(0,0,outerRad, -arc/2 + (i+1)*angleStep, -arc/2 + i*angleStep, true);
+        context.closePath();
+        context.fill();
+        context.stroke();
+    }
+
+    context.restore();
+
+}
+
+boxFront = function(context, x0,y0, height, width, colors){
+    var i,
+        nStrips = colors.length,
+        stripWidth = height/nStrips;
+
+    context.strokeStyle = '#999999';
+
+    for(i=0; i<nStrips; i++){
+        context.fillStyle = colors[i];
+        context.fillRect(x0, y0+i*stripWidth, width, stripWidth);
+        context.strokeRect(x0, y0+i*stripWidth, width, stripWidth);
+    }
+}
+
+boxBack = function(context, x0,y0, height, width, colors){
+    var i,
+        nStrips = colors.length,
+        stripWidth = width/nStrips;
+
+    context.strokeStyle = '#999999';
+
+    for(i=0; i<nStrips; i++){
+        context.fillStyle = colors[i];
+        context.fillRect(x0+i*stripWidth, y0, stripWidth, height);
+        context.strokeRect(x0+i*stripWidth, y0, stripWidth, height);
+    }
+}
+
 //Color Scales///////////////////////////////////////////////////////////////////////////////////
 
 //map [0,1] onto [#000000, #FF0000]

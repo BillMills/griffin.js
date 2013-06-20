@@ -13,13 +13,109 @@ function SHARC(){
     this.detailShowing = 0;             //is the detail view on display?
 
     //drawing parameters//////////////////
-
+    this.innerQuadRad = 0.02*this.canvasWidth;
+    this.outerQuadRad = 0.1*this.canvasWidth;
+    this.quadArc = 0.66*Math.PI/2;
+    this.innerQuadCenterLine = this.canvasHeight*0.4;
+    this.outerRowSpacing = this.canvasHeight*0.2;
+    this.outerTopQuadCenterLine = this.canvasHeight*0.2;
+    this.outerBottomQuadCenterLine = this.canvasHeight*0.6;
+    this.summaryBoxWidth = 0.08*this.canvasWidth;
+    this.summaryBoxHeight = 0.16*this.canvasHeight;
 
     //member functions////////////////////
 
     //draw the summary view
     this.draw = function(frame){
-        radialQuadrant(this.context, 300, 300, 50, 100, 0.8*Math.PI/2, -Math.PI/2, ['#00FF00', '#FF0000', '#0000FF', '#FF00FF'])
+        var colors, i, j, name;
+
+        //beamline:
+        this.context.strokeStyle = '#999999';
+        this.context.move
+
+        for(i=1; i<5; i++){
+            //upstream quad fronts:
+            colors = [];
+            for(j=0; j<4; j++){
+                name = 'SHQ0' + i + 'DP' + j;
+                colors[colors.length] = frameColor(this.dataBus.summary[name], frame, this.nFrames);
+            }
+            radialQuadrant(this.context, this.canvasWidth*(0.15 + 0.1*((i-1)%2)), this.innerQuadCenterLine + this.outerRowSpacing*Math.pow(-1, Math.ceil(i/2)), this.innerQuadRad, this.outerQuadRad, this.quadArc, Math.pow(-1, Math.ceil(i/2))*Math.PI/2, colors);           
+            //downstream quad fronts:
+            colors = [];
+            for(j=0; j<4; j++){
+                name = 'SHQ' + (i+12) + 'DP' + j;
+                colors[colors.length] = frameColor(this.dataBus.summary[name], frame, this.nFrames);
+            }
+            radialQuadrant(this.context, this.canvasWidth*(0.75 + 0.1*((i-1)%2)), this.innerQuadCenterLine + this.outerRowSpacing*Math.pow(-1, Math.ceil(i/2)), this.innerQuadRad, this.outerQuadRad, this.quadArc, Math.pow(-1, Math.ceil(i/2))*Math.PI/2, colors);           
+
+            //upstream quad backs:
+            colors = [];
+            for(j=0; j<4; j++){
+                name = 'SHQ0' + i + 'EN' + j;
+                colors[colors.length] = frameColor(this.dataBus.summary[name], frame, this.nFrames);
+            }
+            azimuthalQuadrant(this.context, this.canvasWidth*(0.15 + 0.1*((i-1)%2)), this.innerQuadCenterLine, this.innerQuadRad, this.outerQuadRad, this.quadArc, Math.pow(-1, Math.ceil(i/2))*Math.PI/2, colors);          
+            //downstream quad backs:
+            colors = [];
+            for(j=0; j<4; j++){
+                name = 'SHQ' + (i+12) + 'EN' + j;
+                colors[colors.length] = frameColor(this.dataBus.summary[name], frame, this.nFrames);
+            }
+            azimuthalQuadrant(this.context, this.canvasWidth*(0.75 + 0.1*((i-1)%2)), this.innerQuadCenterLine, this.innerQuadRad, this.outerQuadRad, this.quadArc, Math.pow(-1, Math.ceil(i/2))*Math.PI/2, colors);
+
+            //upstream box fronts:
+            colors = [];
+            for(j=0; j<4; j++){
+                name = 'SHB0' + (i+4) + 'DP' + j;
+                colors[colors.length] = frameColor(this.dataBus.summary[name], frame, this.nFrames);
+            }
+            boxFront(this.context, this.canvasWidth*(0.31+0.1*((i+1)%2)), this.canvasHeight*(0.22+0.2*Math.floor((i-1)/2)), this.summaryBoxHeight, this.summaryBoxWidth, colors);
+
+            //downstream box fronts:
+            colors = [];
+            for(j=0; j<4; j++){
+                name = 'SHB' + ( (i+8<10) ? '0'+(i+8) : (i+8) ) + 'DP' + j;
+                colors[colors.length] = frameColor(this.dataBus.summary[name], frame, this.nFrames);
+            }
+            boxFront(this.context, this.canvasWidth*(0.51+0.1*((i+1)%2)), this.canvasHeight*(0.22+0.2*Math.floor((i-1)/2)), this.summaryBoxHeight, this.summaryBoxWidth, colors);
+
+            //upstream box backs:
+            colors = [];
+            for(j=0; j<4; j++){
+                name = 'SHB0' + (i+4) + 'EN' + j;
+                colors[colors.length] = frameColor(this.dataBus.summary[name], frame, this.nFrames);
+            }
+            boxBack(this.context, this.canvasWidth*(0.31+0.1*((i+1)%2)), this.canvasHeight*(0.02+0.6*Math.floor((i-1)/2)), this.summaryBoxHeight, this.summaryBoxWidth, colors);
+            //downstream box backs:
+            colors = [];
+            for(j=0; j<4; j++){
+                name = 'SHB' + ( (i+8<10) ? '0'+(i+8) : (i+8) ) + 'EN' + j;
+                colors[colors.length] = frameColor(this.dataBus.summary[name], frame, this.nFrames);
+            }
+            boxBack(this.context, this.canvasWidth*(0.51+0.1*((i+1)%2)), this.canvasHeight*(0.02+0.6*Math.floor((i-1)/2)), this.summaryBoxHeight, this.summaryBoxWidth, colors);            
+            
+        }
+
+        //decorations:
+        if(frame==this.nFrames || frame==0){ 
+            //beamline:
+            this.context.strokeStyle = '#999999';
+            this.context.moveTo(this.canvasWidth*0.1, this.canvasHeight*0.4);
+            this.context.lineTo(this.canvasWidth*0.9, this.canvasHeight*0.4);
+            this.context.lineTo(this.canvasWidth*0.9 - 15, this.canvasHeight*0.4 - 15);
+            this.context.stroke();
+/*
+            //temporary grid lines:
+            for(var i = 1; i<10; i++){
+                this.context.moveTo(i*this.canvasWidth/10, 0);
+                this.context.lineTo(i*this.canvasWidth/10, this.canvasHeight);
+                this.context.stroke();
+            }
+*/
+            //scale:
+            this.drawScale(this.context);
+        }
     };
 
     this.drawDetail = function(frame){
@@ -33,7 +129,8 @@ function SHARC(){
 
     //get new data
     this.fetchNewData = function(){
-        var key, normalization;
+        
+        var key, normalization, quarter;
 
         //zero out the summary:
         for(key in this.dataBus.summary){
@@ -49,7 +146,8 @@ function SHARC(){
             if(window.JSONPstore['thresholds']){
                 if(window.JSONPstore['thresholds'][key]){
                     this.dataBus.SHARC[key]['threshold'] = window.JSONPstore['thresholds'][key];
-                    this.dataBus.summary[key.slice(0,5)].threshold += window.JSONPstore['thresholds'][key];
+                    quarter = Math.floor(parseInt(key.slice(7,9)) / this.sizeOfQuarter(key));
+                    this.dataBus.summary[key.slice(0,7) + quarter].threshold += window.JSONPstore['thresholds'][key];
                 } else
                     this.dataBus.SHARC[key]['threshold'] = 0xDEADBEEF;
             }
@@ -57,32 +155,40 @@ function SHARC(){
             if(window.JSONPstore['scalar']){
                 if(window.JSONPstore['scalar'][key]){
                     this.dataBus.SHARC[key]['rate'] = window.JSONPstore['scalar'][key]['TRIGREQ'];
-                    this.dataBus.summary[key.slice(0,5)].rate += window.JSONPstore['scalar'][key]['TRIGREQ'];
+                    quarter = Math.floor(parseInt(key.slice(7,9)) / this.sizeOfQuarter(key));
+                    this.dataBus.summary[key.slice(0,7) + quarter].rate += window.JSONPstore['scalar'][key]['TRIGREQ'];
                 } else 
                     this.dataBus.SHARC[key]['rate'] = 0xDEADBEEF;
             }
         }
 
-        //average the summary level cells - each is currently the sum of 1/4 of their side of their array position
+        //average the summary level cells:
         for(key in this.dataBus.summary){
             if(this.dataBus.summary.hasOwnProperty(key)){
-                if(key.slice(0,3) == 'SHB'){
-                    if(key.slice(3,5) == 'DP')
-                        normalization = 6;
-                    else if(key.slice(3,5) == 'EN')
-                        normalization = 12;
-                } else if(key.slice(0,3) == 'SHQ'){
-                    if(key.slice(3,5) == 'DP')
-                        normalization = 4;
-                    else if(key.slice(3,5) == 'EN')
-                        normalization = 6;
-                }
+                this.dataBus.summary[key].HV /= this.sizeOfQuarter(key);
+                this.dataBus.summary[key].threshold /= this.sizeOfQuarter(key);
+                this.dataBus.summary[key].rate /= this.sizeOfQuarter(key);
             }
         }
+        
 
     };
 
+    //given a SHARC key, return 1/4 the number of segments in that type of detector
+    this.sizeOfQuarter = function(key){
 
+        if(key.slice(0,3) == 'SHB'){
+            if(key.slice(5,7) == 'DP')
+                return 6;
+            else if(key.slice(5,7) == 'EN')
+                return 12;
+        } else if(key.slice(0,3) == 'SHQ'){
+            if(key.slice(5,7) == 'DP')
+                return 4;
+            else if(key.slice(5,7) == 'EN')
+                return 6;
+        }        
+    };
 
 }
 

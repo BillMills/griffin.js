@@ -189,12 +189,12 @@ SHARCDS = function(){
 		//fronts:
 		for(j=0; j<24; j++){
 			name = 'SHB' + ( (i<10) ? '0'+i : i ) + 'DP' + ( (j<10) ? '0'+j : j ) + 'X';
-			deployKeys(name, 100*i + j);
+			deployKeys('SHARC', name, 100*i + j);
 		}
 		//backs:
 		for(j=0; j<48; j++){
 			name = 'SHB' + ( (i<10) ? '0'+i : i ) + 'EN' + ( (j<10) ? '0'+j : j ) + 'X';
-			deployKeys(name, 100*i + 24 + j);
+			deployKeys('SHARC', name, 100*i + 24 + j);
 		}		
 	}
 
@@ -203,16 +203,16 @@ SHARCDS = function(){
 		//fronts:
 		for(j=0; j<16; j++){
 			name = 'SHQ' + '0'+i + 'DP' + ( (j<10) ? '0'+j : j ) + 'X';  //upstream
-			deployKeys(name, 100*i + j);
+			deployKeys('SHARC', name, 100*i + j);
 			name = 'SHQ' + (i+12) + 'DP' + ( (j<10) ? '0'+j : j ) + 'X';  //downstream
-			deployKeys(name, 100*(i+12) + j);
+			deployKeys('SHARC', name, 100*(i+12) + j);
 		}
 		//backs:
 		for(j=0; j<24; j++){
 			name = 'SHQ' + '0'+i + 'EN' + ( (j<10) ? '0'+j : j ) + 'X'; //upstream
-			deployKeys(name, 100*i + 16 + j);
+			deployKeys('SHARC', name, 100*i + 16 + j);
 			name = 'SHQ' + (i+12) + 'EN' + ( (j<10) ? '0'+j : j ) + 'X'; //downstream
-			deployKeys(name, 100*(i+12) + 16 + j);
+			deployKeys('SHARC', name, 100*(i+12) + 16 + j);
 		}
 	}
 
@@ -228,13 +228,13 @@ SHARCDS = function(){
 	for(i=5; i<13; i++){
 		//fronts:
 		for(j=0; j<4; j++){
-			name = 'SHB' + ( (i<10) ? '0'+i : i ) + 'DP';
-			deployKeys(name, 10*i + j);
+			name = 'SHB' + ( (i<10) ? '0'+i : i ) + 'DP' + j;
+			deployKeys('summary', name, 10*i + j);
 		}
 		//backs:
 		for(j=0; j<4; j++){
-			name = 'SHB' + ( (i<10) ? '0'+i : i ) + 'EN';
-			deployKeys(name, 10*i + 4 + j);
+			name = 'SHB' + ( (i<10) ? '0'+i : i ) + 'EN' + j;
+			deployKeys('summary', name, 10*i + 4 + j);
 		}		
 	}
 
@@ -242,22 +242,22 @@ SHARCDS = function(){
 	for(i=1; i<5; i++){
 		//fronts:
 		for(j=0; j<4; j++){
-			name = 'SHQ' + '0'+i + 'DP';  //upstream
-			deployKeys(name, 10*i + j);
-			name = 'SHQ' + (i+12) + 'DP';  //downstream
-			deployKeys(name, 10*(i+12) + j);
+			name = 'SHQ' + '0'+i + 'DP' + j;  //upstream
+			deployKeys('summary', name, 10*i + j);
+			name = 'SHQ' + (i+12) + 'DP' + j;  //downstream
+			deployKeys('summary', name, 10*(i+12) + j);
 		}
 		//backs:
 		for(j=0; j<4; j++){
-			name = 'SHQ' + '0'+i + 'EN'; //upstream
-			deployKeys(name, 10*i + 4 + j);
-			name = 'SHQ' + (i+12) + 'EN'; //downstream
-			deployKeys(name, 10*(i+12) + 4 + j);
+			name = 'SHQ' + '0'+i + 'EN' + j; //upstream
+			deployKeys('summary', name, 10*i + 4 + j);
+			name = 'SHQ' + (i+12) + 'EN' + j; //downstream
+			deployKeys('summary', name, 10*(i+12) + 4 + j);
 		}
 	}
-
-	function deployKeys(name, index){
-		that.SHARC[name] = {
+ 
+	function deployKeys(object, name, index){
+		that[object][name] = {
 			'HV'		: 0,
 			'threshold' : 0,
 			'rate' 		: 0,
