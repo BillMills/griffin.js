@@ -54,7 +54,7 @@ function Tooltip(ttCanvasID, ttDivID, wrapperID, prefix, postfix){
 
             //make the tool tip follow the mouse, but keep it on the screen:
             that.ttDiv.style.top = Math.min(event.pageY - 10, window.innerHeight + window.pageYOffset - that.ttDiv.offsetHeight);
-            if(event.pageX < that.canvas.offsetWidth || window.renderWidth>1500){
+            if(event.pageX < that.canvas.offsetWidth || window.renderWidth>15000){
                 that.ttDiv.style.right = 'auto'
                 that.ttDiv.style.left = event.pageX  + 10;
             }else{

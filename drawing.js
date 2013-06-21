@@ -173,7 +173,7 @@ greenRightDetector = function(context, centerX, centerY, scale, phi, rotation, b
 }
 
 //SHARC////////////////////////////////////////////////////////////
-radialQuadrant = function(context, x0, y0, innerRad, outerRad, arc, orientation, colors){
+radialQuadrant = function(context, x0, y0, innerRad, outerRad, arc, orientation, colors, TT){
     var i,
         segments = colors.length,
         radStep = (outerRad - innerRad) / segments;
@@ -182,7 +182,11 @@ radialQuadrant = function(context, x0, y0, innerRad, outerRad, arc, orientation,
     context.translate(x0,y0);
     context.rotate(orientation);
 
-    context.strokeStyle = '#999999';
+    //outline cell or suppress antialiasing, as appropriate
+    if(TT)
+        context.strokeStyle = '#123456';
+    else
+        context.strokeStyle = '#999999';
 
     for(i=0; i<segments; i++){
         context.fillStyle = colors[i];
@@ -198,7 +202,7 @@ radialQuadrant = function(context, x0, y0, innerRad, outerRad, arc, orientation,
 
 }
 
-azimuthalQuadrant = function(context, x0, y0, innerRad, outerRad, arc, orientation, colors){
+azimuthalQuadrant = function(context, x0, y0, innerRad, outerRad, arc, orientation, colors, TT){
     var i,
         segments = colors.length,
         angleStep = arc / segments;
@@ -207,7 +211,11 @@ azimuthalQuadrant = function(context, x0, y0, innerRad, outerRad, arc, orientati
     context.translate(x0,y0);
     context.rotate(orientation);
 
-    context.strokeStyle = '#999999';
+    //outline cell or suppress antialiasing, as appropriate
+    if(TT)
+        context.strokeStyle = '#123456';
+    else
+        context.strokeStyle = '#999999';
 
     for(i=0; i<segments; i++){
         context.fillStyle = colors[i];
@@ -223,12 +231,16 @@ azimuthalQuadrant = function(context, x0, y0, innerRad, outerRad, arc, orientati
 
 }
 
-boxFront = function(context, x0,y0, height, width, colors){
+boxFront = function(context, x0,y0, height, width, colors, TT){
     var i,
         nStrips = colors.length,
         stripWidth = height/nStrips;
 
-    context.strokeStyle = '#999999';
+    //outline cell or suppress antialiasing, as appropriate
+    if(TT)
+        context.strokeStyle = '#123456';
+    else
+        context.strokeStyle = '#999999';
 
     for(i=0; i<nStrips; i++){
         context.fillStyle = colors[i];
@@ -237,12 +249,16 @@ boxFront = function(context, x0,y0, height, width, colors){
     }
 }
 
-boxBack = function(context, x0,y0, height, width, colors){
+boxBack = function(context, x0,y0, height, width, colors, TT){
     var i,
         nStrips = colors.length,
         stripWidth = width/nStrips;
 
-    context.strokeStyle = '#999999';
+    //outline cell or suppress antialiasing, as appropriate
+    if(TT)
+        context.strokeStyle = '#123456';
+    else
+        context.strokeStyle = '#999999';
 
     for(i=0; i<nStrips; i++){
         context.fillStyle = colors[i];

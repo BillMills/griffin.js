@@ -283,23 +283,32 @@ function frameColor(obj, frame, nFrames){
 }
 
 //make a table for a tooltip using <objects> as rows and <keys> as columns, where the objects are keys of <data>, and insert it into DOM element <id>
-function TTtable(id, data, objects, keys){
-    var i, j;
+function TTtable(id, data, objects, keys, tableTitle, titles, split){
+    var i, j, k, nContentRows;
 
-    insertDOM('table', id + 'table', '', '', id, '', '');
+    insertDOM('table', id + 'table', 'TTtab', '', id, '', '');
+
+    insertDOM('tr', id+'tableTitleRow', '', '', id+'table', '', '');
+    insertDOM('td', id+'tableTitle', '', '', id+'tableTitleRow', '', tableTitle);
+    document.getElementById(id+'tableTitle'). setAttribute('colspan', (1+keys.length)*split)
+
     insertDOM('tr', id+'tableHeaderRow', '', '', id+'table', '', '');
-    insertDOM('td', 'spacerCell', '', '', id+'tableHeaderRow','','');
-    
-    for(j=0; j<keys.length; j++){
-        insertDOM('td', id+'headerCell'+j, '', '', id+'tableHeaderRow','',keys[j]);    
+    for(k=0; k<split; k++){
+        insertDOM('td', 'spacerCell'+k, '', '', id+'tableHeaderRow','','');  
+        for(j=0; j<titles.length; j++){
+            insertDOM('td', id+'headerCell'+j+'col'+k, '', 'padding-left:10px; padding-right:10px;', id+'tableHeaderRow','',titles[j]);    
+        }
     }
     
+    nContentRows = Math.ceil(objects.length/split);
 
-    for(i=0; i<objects.length; i++){
+    for(i=0; i<nContentRows; i++){
         insertDOM('tr', id+'row'+i, '', '', id+'table', '', '');
-        insertDOM('td', id+'row'+i+'title', '', '', id+'row'+i, '', objects[i]);
-        for(j=0; j<keys.length; j++){
-            insertDOM('td', id+'row'+i+'cell'+j, '', '', id+'row'+i, '', data[objects[i]][keys[j]] );
+        for(k=0; k<split; k++){
+            insertDOM('td', id+'row'+i+'titleCol'+k, '', 'padding-right:10px; padding-left:'+( (k>0)?50:10 )+'px;', id+'row'+i, '', objects[i+k*nContentRows]);
+            for(j=0; j<keys.length; j++){
+                insertDOM('td', id+'row'+i+'cell'+j+'col'+k, '', '', id+'row'+i, '', data[objects[i+k*nContentRows]][keys[j]].toFixed(window.parameters.tooltipPrecision) );
+            }
         }    
     }
 

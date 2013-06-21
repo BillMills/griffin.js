@@ -32,6 +32,7 @@ function loadParameters(){
 				"statusPrecision" : 3,
 				"barChartPrecision" : 1,
 				"alarmPrecision" : 3,
+				"tooltipPrecision" : 1,
 				"voltUnit" : "V",
 				"rampUnit" : "V/s",
 				"currentUnit" : "uA",
