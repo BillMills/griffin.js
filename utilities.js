@@ -282,7 +282,28 @@ function frameColor(obj, frame, nFrames){
 
 }
 
+//make a table for a tooltip using <objects> as rows and <keys> as columns, where the objects are keys of <data>, and insert it into DOM element <id>
+function TTtable(id, data, objects, keys){
+    var i, j;
 
+    insertDOM('table', id + 'table', '', '', id, '', '');
+    insertDOM('tr', id+'tableHeaderRow', '', '', id+'table', '', '');
+    insertDOM('td', 'spacerCell', '', '', id+'tableHeaderRow','','');
+    
+    for(j=0; j<keys.length; j++){
+        insertDOM('td', id+'headerCell'+j, '', '', id+'tableHeaderRow','',keys[j]);    
+    }
+    
+
+    for(i=0; i<objects.length; i++){
+        insertDOM('tr', id+'row'+i, '', '', id+'table', '', '');
+        insertDOM('td', id+'row'+i+'title', '', '', id+'row'+i, '', objects[i]);
+        for(j=0; j<keys.length; j++){
+            insertDOM('td', id+'row'+i+'cell'+j, '', '', id+'row'+i, '', data[objects[i]][keys[j]] );
+        }    
+    }
+
+}
 
 
 

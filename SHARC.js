@@ -197,6 +197,36 @@ function SHARC(){
     }
 
     this.defineText = function(cell){
+        var i,
+            objects = [], 
+            keys = ['HV', 'threshold', 'rate'];
+
+        //quadrants
+        if(cell < 5 || cell > 12){
+            //fronts
+            for(i=0; i<16; i++){
+                objects[objects.length] = 'SHQ' + ( (cell < 10) ? '0'+cell : cell ) + 'DP' + ( (i<10) ? '0'+i : i ) + 'X';
+            }
+            //backs
+            for(i=0; i<24; i++){
+                objects[objects.length] = 'SHQ' + ( (cell < 10) ? '0'+cell : cell ) + 'EN' + ( (i<10) ? '0'+i : i ) + 'X';
+            }            
+        } else{ //boxes
+            //fronts
+            for(i=0; i<24; i++){
+                objects[objects.length] = 'SHB' + ( (cell < 10) ? '0'+cell : cell ) + 'DP' + ( (i<10) ? '0'+i : i ) + 'X';
+            }
+            //backs
+            for(i=0; i<48; i++){
+                objects[objects.length] = 'SHB' + ( (cell < 10) ? '0'+cell : cell ) + 'EN' + ( (i<10) ? '0'+i : i ) + 'X';
+            } 
+
+        }
+
+        document.getElementById(this.name+'TT').innerHTML = '';
+        TTtable(this.name+'TT', this.dataBus.SHARC , objects, keys);
+
+        /*
         var toolTipContent = '',
             nextLine;
 
@@ -209,7 +239,7 @@ function SHARC(){
         }
 
         return 0;
-
+        */
     };
 
     //get new data
