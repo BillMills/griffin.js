@@ -13,19 +13,18 @@ function SHARC(){
     this.detailShowing = 0;             //is the detail view on display?
 
     //drawing parameters//////////////////
-    this.innerQuadRad = 0.02*this.canvasWidth;
-    this.outerQuadRad = 0.1*this.canvasWidth;
+    this.scaleFactor = (this.padsEnabled) ? 0.67 : 1;  //scale down layers D and E to accomodate pads if present
+    this.innerQuadRad = 0.02*this.canvasWidth*this.scaleFactor;
+    this.outerQuadRad = 0.1*this.canvasWidth*this.scaleFactor;
     this.quadArc = 0.66*Math.PI/2;
     this.innerQuadCenterLine = this.canvasHeight*0.4;
-    this.outerRowSpacing = this.canvasHeight*0.2;
-    //this.outerTopQuadCenterLine = this.canvasHeight*0.2;
-    //this.outerBottomQuadCenterLine = this.canvasHeight*0.6;
+    this.outerRowSpacing = this.canvasHeight*0.2*this.scaleFactor + this.padsEnabled*0.02*this.canvasHeight;
     this.summaryBoxWidth = 0.08*this.canvasWidth;
-    this.summaryBoxHeight = 0.16*this.canvasHeight;
+    this.summaryBoxHeight = 0.16*this.canvasHeight*this.scaleFactor;
     this.x0 = 0.1*this.canvasWidth;  //top left corner for TT boxes on summary view
-    this.y0 = 0;
+    this.y0 = (1-this.scaleFactor)*(this.canvasHeight-this.scaleHeight)/2;
     this.TTboxWidth = 0.1*this.canvasWidth;
-    this.TTboxHeight = 0.4*this.canvasHeight;
+    this.TTboxHeight = 0.2*this.canvasHeight*this.scaleFactor;
     //detail view
     this.innerQuadRadDetail = this.canvasHeight*0.1;
     this.outerQuadRadDetail = this.canvasHeight*0.6;
@@ -36,7 +35,7 @@ function SHARC(){
 
     //draw the summary view
     this.draw = function(frame){
-        var colors, i, j, name;
+        var colors, i, j, name, increment, index;
 
         for(i=1; i<5; i++){
             //upstream quad fronts:
@@ -75,7 +74,7 @@ function SHARC(){
                 name = 'SHB0' + (i+4) + 'DP' + j;
                 colors[colors.length] = frameColor(this.dataBus.summary[name], frame, this.nFrames);
             }
-            boxFront(this.context, this.canvasWidth*(0.31+0.1*((i+1)%2)), this.canvasHeight*(0.22+0.2*Math.floor((i-1)/2)), this.summaryBoxHeight, this.summaryBoxWidth, colors);
+            boxFront(this.context, this.canvasWidth*(0.31+0.1*((i+1)%2)), this.canvasHeight*(0.22+0.2*Math.floor((i-1)/2)) + (1-this.scaleFactor)/this.scaleFactor*this.summaryBoxHeight*(1-Math.floor((i-1)/2)), this.summaryBoxHeight, this.summaryBoxWidth, colors);
 
             //downstream box fronts:
             colors = [];
@@ -83,7 +82,7 @@ function SHARC(){
                 name = 'SHB' + ( (i+8<10) ? '0'+(i+8) : (i+8) ) + 'DP' + j;
                 colors[colors.length] = frameColor(this.dataBus.summary[name], frame, this.nFrames);
             }
-            boxFront(this.context, this.canvasWidth*(0.51+0.1*((i+1)%2)), this.canvasHeight*(0.22+0.2*Math.floor((i-1)/2)), this.summaryBoxHeight, this.summaryBoxWidth, colors);
+            boxFront(this.context, this.canvasWidth*(0.51+0.1*((i+1)%2)), this.canvasHeight*(0.22+0.2*Math.floor((i-1)/2)) + (1-this.scaleFactor)/this.scaleFactor*this.summaryBoxHeight*(1-Math.floor((i-1)/2)), this.summaryBoxHeight, this.summaryBoxWidth, colors);
 
             //upstream box backs:
             colors = [];
@@ -91,14 +90,14 @@ function SHARC(){
                 name = 'SHB0' + (i+4) + 'EN' + j;
                 colors[colors.length] = frameColor(this.dataBus.summary[name], frame, this.nFrames);
             }
-            boxBack(this.context, this.canvasWidth*(0.31+0.1*((i+1)%2)), this.canvasHeight*(0.02+0.6*Math.floor((i-1)/2)), this.summaryBoxHeight, this.summaryBoxWidth, colors);
+            boxBack(this.context, this.canvasWidth*(0.31+0.1*((i+1)%2)), this.canvasHeight*(0.02+0.6*Math.floor((i-1)/2)) + (1-this.scaleFactor)/this.scaleFactor*this.summaryBoxHeight*( (i<3) ? 2:-1 ), this.summaryBoxHeight, this.summaryBoxWidth, colors);
             //downstream box backs:
             colors = [];
             for(j=0; j<4; j++){
                 name = 'SHB' + ( (i+8<10) ? '0'+(i+8) : (i+8) ) + 'EN' + j;
                 colors[colors.length] = frameColor(this.dataBus.summary[name], frame, this.nFrames);
             }
-            boxBack(this.context, this.canvasWidth*(0.51+0.1*((i+1)%2)), this.canvasHeight*(0.02+0.6*Math.floor((i-1)/2)), this.summaryBoxHeight, this.summaryBoxWidth, colors);            
+            boxBack(this.context, this.canvasWidth*(0.51+0.1*((i+1)%2)), this.canvasHeight*(0.02+0.6*Math.floor((i-1)/2)) + (1-this.scaleFactor)/this.scaleFactor*this.summaryBoxHeight*( (i<3) ? 2:-1 ), this.summaryBoxHeight, this.summaryBoxWidth, colors);            
             
         }
 
@@ -121,12 +120,19 @@ function SHARC(){
             //scale:
             this.drawScale(this.context);
 
-            //tooltip layer:
-            for(i=0; i<16; i++){
-                this.TTcontext.fillStyle = 'rgba('+(2*i+1)+','+(2*i+1)+','+(2*i+1)+',1)';
-                this.TTcontext.fillRect(this.x0 + this.TTboxWidth*(i%2) + 2*this.TTboxWidth*Math.floor(i/4), this.y0 + this.TTboxHeight*Math.floor((i%4)/2) + this.TTboxHeight/2*Math.floor((i%4)/2), this.TTboxWidth, this.TTboxHeight/2);
-                this.TTcontext.fillStyle = 'rgba('+(2*i+2)+','+(2*i+2)+','+(2*i+2)+',1)'
-                this.TTcontext.fillRect(this.x0 + this.TTboxWidth*(i%2) + 2*this.TTboxWidth*Math.floor(i/4), this.y0 + this.TTboxHeight*Math.floor((i%4)/2) + this.TTboxHeight/2*(1-Math.floor((i%4)/2)), this.TTboxWidth, this.TTboxHeight/2);
+            index = 1;
+            for(i=0; i<32; i++){
+                this.TTcontext.fillStyle = 'rgba('+index+','+index+','+index+',1)';
+                this.TTcontext.fillRect(this.x0 + this.TTboxWidth*Math.floor(i/4), this.y0 + this.TTboxHeight*(i%4), this.TTboxWidth, this.TTboxHeight);
+
+                
+                if((i+1)%4 == 1) increment = 1;
+                else if((i+1)%4 == 2) increment = 4;
+                else if((i+1)%4 == 3) increment = -1;
+                else if((i+1)%8 == 4) increment = -2;
+                else if((i+1)%8 == 0) increment = 2;
+                index += increment;
+
             }
 
         }
@@ -258,20 +264,6 @@ function SHARC(){
 
         }
 
-        /*
-        var toolTipContent = '',
-            nextLine;
-
-        toolTipContent += cell + '<br>';
-
-        if(this.detailShowing){
-            document.getElementById(this.detailTooltip.ttDivID).innerHTML = toolTipContent;
-        } else{
-            document.getElementById(this.tooltip.ttDivID).innerHTML = toolTipContent;
-        }
-
-        return 0;
-        */
     };
 
     //get new data
