@@ -178,12 +178,13 @@ function cloverDS(nClovers, mode){
 	}
 }
 
-SHARCDS = function(){
+SHARCDS = function(padsEnabled){
 	var i, j, name,
 	that = this;
 	this.SHARC = {};
 	this.TTmap = [];
-	//SHARC detail level index logic: hundreds correspond to Array Position, ones and tens count through Segments front to back. 
+	this.summary = {};
+	//SHARC detail level index logic: hundreds correspond to Array Position, ones and tens count through Segments front to back to pads. 
 	//boxes:
 	for(i=5; i<13; i++){
 		//fronts:
@@ -196,6 +197,12 @@ SHARCDS = function(){
 			name = 'SHB' + ( (i<10) ? '0'+i : i ) + 'EN' + ( (j<10) ? '0'+j : j ) + 'X';
 			deployKeys('SHARC', name, 100*i + 24 + j);
 		}		
+		//pads
+		for(j=0; j<2; j++){
+			name = 'SHB' + ( (i<10) ? '0'+i : i ) + 'F' + ( (j==0) ? 'N' : 'P' ) + '00X';
+			deployKeys('SHARC', name, 100*i+72 + j);
+			deployKeys('summary', name, 10*i+8 + j); //summary level, see below
+		}
 	}
 
 	//quadrants:
@@ -214,6 +221,17 @@ SHARCDS = function(){
 			name = 'SHQ' + (i+12) + 'EN' + ( (j<10) ? '0'+j : j ) + 'X'; //downstream
 			deployKeys('SHARC', name, 100*(i+12) + 16 + j);
 		}
+		//pads
+		for(j=0; j<2; j++){
+			name = 'SHQ0' + i + 'F' + ( (j==0) ? 'N' : 'P' ) + '00X';
+			deployKeys('SHARC', name, 100*i+40 + j);
+			deployKeys('summary', name, 10*i+8 + j);
+			name = 'SHQ' + (i+12) + 'F' + ( (j==0) ? 'N' : 'P' ) + '00X';
+			deployKeys('SHARC', name, 100*(i+12)+40 + j);
+			deployKeys('summary', name, 10*(i+12)+8 + j);
+		}
+
+
 	}
 
 	//invert the index map for the TT:
@@ -222,8 +240,7 @@ SHARCDS = function(){
 	}
 
 	//sumaries - split each detector into 4 groups of segments:
-	//SHARC summary level index logic: index = 10*(Array Position) + { (Front Q1->Q4, Back Q1->Q4) -> [0,7] }
-	this.summary = {};
+	//SHARC summary level index logic: index = 10*(Array Position) + { (Front Q1->Q4, Back Q1->Q4, front pad, back pad) -> [0,9] }
 	//boxes:
 	for(i=5; i<13; i++){
 		//fronts:

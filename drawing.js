@@ -267,6 +267,24 @@ boxBack = function(context, x0,y0, height, width, colors, TT){
     }
 }
 
+padSummaries = function(context, x0, y0, scale, colors, TT){
+
+    //outline cell or suppress antialiasing, as appropriate
+    if(TT)
+        context.strokeStyle = '#123456';
+    else
+        context.strokeStyle = '#999999';   
+
+    context.fillStyle = colors[0];
+    context.fillRect(x0-1.5*scale, y0-scale/2, scale, scale);
+    context.strokeRect(x0-1.5*scale, y0-scale/2, scale, scale);
+
+    context.fillStyle = colors[1];
+    context.fillRect(x0+0.5*scale, y0-scale/2, scale, scale);
+    context.strokeRect(x0+0.5*scale, y0-scale/2, scale, scale);    
+
+}
+
 //Color Scales///////////////////////////////////////////////////////////////////////////////////
 
 //map [0,1] onto [#000000, #FF0000]
