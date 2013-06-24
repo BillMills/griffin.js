@@ -13,6 +13,8 @@
 		</script>
 
 		<style type='text/css'>
+			* { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
+
 			button.navLink{
 				background: #4C4C4C; 
 				color: #FFFFFF;
@@ -29,6 +31,28 @@
 				padding:10px;
 			}
 
+			div.mainElement{
+				border:5px solid; 
+				border-radius:25px; 
+				padding:10px;
+			}
+
+			div.collapsableMenu{
+				border:5px solid; 
+				border-radius:25px; 
+				padding:10px;
+				overflow:hidden;
+				transition:height 0.3s;
+				-moz-transition:height 0.3s;
+				-webkit-transition:height 0.3s;				
+			}
+
+			div.spectrumWindow{
+				transition:opacity 0.3s;
+				-moz-transition:opacity 0.3s;
+				-webkit-transition:opacity 0.3s;		
+			}
+
 			body.standard{
 				background:#333333; 
 				color:#999999; 
@@ -38,6 +62,19 @@
 			table td { 
 				display: table-cell;
 				vertical-align: top; 
+			}
+
+			h3{
+				margin:0px;
+				margin-bottom:5%;
+			}
+
+			h2{
+				margin:0px;
+			}
+
+			ol{
+				padding:0px;
 			}
 
 			:invalid{
@@ -75,8 +112,9 @@
 	      })();
 	    </script>
 
-	    <div id='mainBody' style='opacity:0'>
-			<div id='branding' style='width:100%; height:100; border-color:#999999; border-left-style:solid; border-bottom-style:solid; border-left-width:5px; border-bottom-width:5px; border-bottom-left-radius:25px; background-color:#333333; margin-bottom:5px;'>
+	    <div id='mainBody' style='opacity:0; width:100%; height:100%'>
+
+			<div id='branding' style='width:100%; height:100px; border-color:#999999; border-left-style:solid; border-bottom-style:solid; border-left-width:5px; border-bottom-width:5px; border-bottom-left-radius:25px; background-color:#333333; margin-bottom:5px;'>
 				<img id='logo' height='80px' width='80px' src='triumf.gif' style='opacity:0.5625; padding-left:10px;'></img>
 				<h1 id='title' style='position:relative; display:inline; font: 80px Raleway; top:-10px'></h1>
 			</div>
@@ -86,172 +124,139 @@
 				<h2 id='youAreHere' style='position:absolute; display:inline; margin:0px; right:20px;'></h2>
 			</div>
 
-			<table id='masterTable' style='padding-top:0px;'>
-				<tr>
-					<td id='el1'>
+			<h2 id='specControlTitle'; style='float:left; position:relative; width:80%; text-align:center;'>Spectrum Control</h2>
+			<h2 id='specMenuTitle'; style='float:left; position:relative; width:20%; text-align:center;'>Spectrum Menu</h2>
 
-						<!--1D spectrum elements///////////////////////////////////////////////////////////-->
-						<table id='spectrumBlock1D' class='mainElement' style='height:100%;'>
-							<caption style='font: 20px Raleway'>Spectrum Control</caption>
+			<div id='specControl' class='mainElement' style='float:left; height:80%; width:80%'>
 
-							<tr>
-								<td colspan='1'>
-									<canvas id='testCanv'></canvas>
-									<br><br><p id="textbox"></p>
-								</td>
-							</tr>
+				<div id='spectrum1D' class='spectrumWindow' style='width:100%; height:100%; z-index:-1; opacity:0'>
+					<canvas id='testCanv'></canvas>
+					<br><br><p id="textbox"></p>
 
-							<tr>
-								<td align='left' style='padding:none;'>
-									<form id='1DwindowInput' style='margin:none;'>
-										x axis limits:								
-										<input type="number" id="LowerXLimit" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'XaxisLimitMin', 'XaxisLimitAbsMax'); plot_data(0); document.getElementById('UpperXLimit').setAttribute('min', this.value);" min='0' max='500'></button>
-										<input type="number" id="UpperXLimit" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'XaxisLimitMax', 'XaxisLimitAbsMax'); plot_data(0); document.getElementById('LowerXLimit').setAttribute('max', this.value)" min='0'></button>
-										<button id='bigLeft' class='navLink' type="button" value="<<" onclick="scrollSpectra(SVparam.XaxisLimitMin - SVparam.XaxisLimitMax, 'XaxisLimitMin', 'XaxisLimitMax', 'XaxisLimitAbsMax', 'LowerXLimit', 'UpperXLimit'); plot_data(0)"></button>
-										<button id='smallLeft' class='navLink' type="button" value="<" onclick="scrollSpectra(-1, 'XaxisLimitMin', 'XaxisLimitMax', 'XaxisLimitAbsMax', 'LowerXLimit', 'UpperXLimit'); plot_data(0)"></button>
-										<button id='smallRight' class='navLink' type="button" value=">" onclick="scrollSpectra(1, 'XaxisLimitMin', 'XaxisLimitMax', 'XaxisLimitAbsMax', 'LowerXLimit', 'UpperXLimit'); plot_data(0)"></button>
-										<button id='bigRight' class='navLink' type="button" value=">>" onclick="scrollSpectra(SVparam.XaxisLimitMax - SVparam.XaxisLimitMin, 'XaxisLimitMin', 'XaxisLimitMax', 'XaxisLimitAbsMax', 'LowerXLimit', 'UpperXLimit'); plot_data(0)"></button>
-										<button id='unzoom' class='navLink' type="button" style='margin-right:20px;' value="Unzoom" onclick="Unzoom();"></button>
-									y axis: Lin<input type="radio" id="a0" value="0" onclick="set_AxisType(this)" checked="true">|<input type="radio" id="a1" value="1" onclick="set_AxisType(this)">Log
+					<form id='1DwindowInput' style='margin:none; margin-left:100px; display:inline;'>
+						x axis limits:								
+						<input type="number" id="LowerXLimit" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'XaxisLimitMin', 'XaxisLimitAbsMax'); plot_data(0); document.getElementById('UpperXLimit').setAttribute('min', this.value);" min='0' max='500'></input>
+						<input type="number" id="UpperXLimit" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'XaxisLimitMax', 'XaxisLimitAbsMax'); plot_data(0); document.getElementById('LowerXLimit').setAttribute('max', this.value)" min='0'></input>
+						<button id='bigLeft' class='navLink' type="button" value="<<" onclick="scrollSpectra(SVparam.XaxisLimitMin - SVparam.XaxisLimitMax, 'XaxisLimitMin', 'XaxisLimitMax', 'XaxisLimitAbsMax', 'LowerXLimit', 'UpperXLimit'); plot_data(0)"></button>
+						<button id='smallLeft' class='navLink' type="button" value="<" onclick="scrollSpectra(-1, 'XaxisLimitMin', 'XaxisLimitMax', 'XaxisLimitAbsMax', 'LowerXLimit', 'UpperXLimit'); plot_data(0)"></button>
+						<button id='smallRight' class='navLink' type="button" value=">" onclick="scrollSpectra(1, 'XaxisLimitMin', 'XaxisLimitMax', 'XaxisLimitAbsMax', 'LowerXLimit', 'UpperXLimit'); plot_data(0)"></button>
+						<button id='bigRight' class='navLink' type="button" value=">>" onclick="scrollSpectra(SVparam.XaxisLimitMax - SVparam.XaxisLimitMin, 'XaxisLimitMin', 'XaxisLimitMax', 'XaxisLimitAbsMax', 'LowerXLimit', 'UpperXLimit'); plot_data(0)"></button>
+						<button id='unzoom' class='navLink' type="button" style='margin-right:20px;' value="Unzoom" onclick="Unzoom();"></button>
+						y axis: Lin<input type="radio" id="a0" value="0" onclick="set_AxisType(this)" checked="true">|<input type="radio" id="a1" value="1" onclick="set_AxisType(this)">Log
 
-									</form>
-								</td>
+					</form>
 
-								<td colspan=2 width='200px' align='left' style='padding:none;'>
-									<p id="mousebox" style='margin:none;'></p>
-								</td>
+					<p id="mousebox" style='margin:none; margin-right:100px; float:right'></p>
 
-							</tr>
+					<br>
+					<button id='clearSpec' class='navLink' type="button" value="Clear Spectra" onclick="clearSpecs()" style='margin-left:100px'></button>
+					<button id='fitPeak' class='navLink' type="button" style='margin-right:20px;' value="Fit a Peak" onclick="RequestFitLimits()"></button>
+					Refresh Rate: 
+					<select id="refreshRate" onchange="SVparam.RefreshTime=parseInt(this.value); plot_data(1, 'true')">
+						<option id="r0" value="0">Off</option>
+						<option id="r1" value="1">1s</option>
+						<option id="r2" value="3">3s</option>
+						<option id="r3" value="5">5s</option>
+						<option id="r4" value="10">10s</option>
+					</select>
+					<button id='refresh' class='navLink' type="button" value="Refresh Now" onclick="plot_data(0, true)"></button>
 
-							<tr>
-								<td align='left' style='padding:none;'>
-									<button id='clearSpec' class='navLink' type="button" value="Clear Spectra" onclick="clearSpecs()"></button>
-									<button id='fitPeak' class='navLink' type="button" style='margin-right:20px;' value="Fit a Peak" onclick="RequestFitLimits()"></button>
-									Refresh Rate: 
-									<select id="refreshRate" onchange="SVparam.RefreshTime=parseInt(this.value); plot_data(1, 'true')">
-										<option id="r0" value="0">Off</option>
-										<option id="r1" value="1">1s</option>
-										<option id="r2" value="3">3s</option>
-										<option id="r3" value="5">5s</option>
-										<option id="r4" value="10">10s</option>
-									</select>
-									<button id='refresh' class='navLink' type="button" value="Refresh Now" onclick="plot_data(0, true)"></button>
-								</td>
+					<p id="fitbox"></p>
+				</div>
 
-								<td>
-									<p id="fitbox"></p>
-								</td>
-							</tr>
-
-						</table>
-
-						<!--2D spectrum elements////////////////////////////////////////////////////////////////-->
-						<table id='spectrumBlock2D' class='mainElement' style='display:none;'>
-							<caption style='font: 20px Raleway'>Spectrum Control</caption>
-
-							<tr>
-								<td rowspan='7' width='auto'>
-									<canvas id='canvas2D' style='margin-right:10px'></canvas>
-								</td>
-							</tr>
-
-							<tr>
-								<td align='left' style='padding:none;'>
-									x axis limits: 
-									<input type="number" id="LowerXLimit2D" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'XaxisLimitMin2D', 'XaxisLimitAbsMax2D');plot_data2D(0); document.getElementById('UpperXLimit2D').setAttribute('min', this.value);" min='0' max='500'></button>
-									<input type="number" id="UpperXLimit2D" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'XaxisLimitMax2D', 'XaxisLimitAbsMax2D');plot_data2D(0); document.getElementById('LowerXLimit2D').setAttribute('max', this.value);" min='0' max='500'></button>
-									<button id='bigLeft2D' class='navLink' type="button" value="<<" onclick="scrollSpectra(SVparam.XaxisLimitMin2D - SVparam.XaxisLimitMax2D, 'XaxisLimitMin2D', 'XaxisLimitMax2D', 'XaxisLimitAbsMax2D', 'LowerXLimit2D', 'UpperXLimit2D'); plot_data2D(0)"><<</button>
-									<button id='smallLeft2D' class='navLink' type="button" value="<" onclick="scrollSpectra(-1, 'XaxisLimitMin2D', 'XaxisLimitMax2D', 'XaxisLimitAbsMax2D', 'LowerXLimit2D', 'UpperXLimit2D'); plot_data2D(0)"><</button>
-									<button id='smallRight2D' class='navLink' type="button" value=">" onclick="scrollSpectra(1, 'XaxisLimitMin2D', 'XaxisLimitMax2D', 'XaxisLimitAbsMax2D', 'LowerXLimit2D', 'UpperXLimit2D'); plot_data2D(0)">></button>
-									<button id='bigRight2D' class='navLink' type="button" value=">>" onclick="scrollSpectra(SVparam.XaxisLimitMax2D - SVparam.XaxisLimitMin2D, 'XaxisLimitMin2D', 'XaxisLimitMax2D', 'XaxisLimitAbsMax2D', 'LowerXLimit2D', 'UpperXLimit2D'); plot_data2D(0)">>></button>
-									<div id="limitMistake2D" style="color:'#00FFFF'"></div>
-								</td>
-							</tr>
-							<tr>
-								<td align='left' style='padding:none;'>
-									y axis limits: 
-									<input type="number" id="LowerYLimit" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'YaxisLimitMin2D', 'YaxisLimitAbsMax2D');plot_data2D(0); document.getElementById('UpperYLimit').setAttribute('min', this.value);" min='0' max='500'></button>
-									<input type="number" id="UpperYLimit" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D');plot_data2D(0); document.getElementById('LowerYLimit').setAttribute('max', this.value);" min='0' max='500'></button>
-									<button id='bigDown' class='navLink' type="button" value="<<" onclick="scrollSpectra(SVparam.YaxisLimitMin2D - SVparam.YaxisLimitMax2D, 'YaxisLimitMin2D', 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D', 'LowerYLimit', 'UpperYLimit'); plot_data2D(0)">D</button>
-									<button id='smallDown' class='navLink' type="button" value="<" onclick="scrollSpectra(-1, 'YaxisLimitMin2D', 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D', 'LowerYLimit', 'UpperYLimit'); plot_data2D(0)">d</button>
-									<button id='smallUp' class='navLink' type="button" value=">" onclick="scrollSpectra(1, 'YaxisLimitMin2D', 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D', 'LowerYLimit', 'UpperYLimit'); plot_data2D(0)">u</button>
-									<button id='bigUp' class='navLink' type="button" value=">>" onclick="scrollSpectra(SVparam.YaxisLimitMax2D - SVparam.YaxisLimitMin2D, 'YaxisLimitMin2D', 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D', 'LowerYLimit', 'UpperYLimit'); plot_data2D(0)">U</button>
-									<div id="limitMistake" style="color:'#00FFFF'"></div>
-								</td>
-							</tr>
-							<!--tr>
-								<td>
-									z axis: Lin<input type="radio" id="a0" value="0" onclick="set_AxisType(this)" checked="true">|<input type="radio" id="a1" value="1" onclick="set_AxisType(this)">Log
-								</td>							
-							</tr-->
-
-							<tr>
-								<td width="400px" align='left' vertical-align='bottom'>
-									Refresh Rate: 
-									<select id="refreshRate2D" onchange="SVparam.RefreshTime=this.value; plot_data2D(0, 'true')">
-										<option id="r0" value="0">Off</option>
-										<option id="r1" value="1">1s</option>
-										<option id="r2" value="3">3s</option>
-										<option id="r3" value="5">5s</option>
-										<option id="r4" value="10">10s</option>
-									</select>
-									<button id='refresh2D' class='navLink' type="button" value="Refresh Now" onclick="plot_data2D(0, 'true')">Refresh Now</button>
-								</td>							
-							</tr>
-
-							<tr>
-								<td colspan=1 align='left' style='padding:none;'>
-									<button id='clearSpec2D' class='navLink' type="button" value="Clear Spectra" onclick="clearSpecs()">Clear Plot</button>
-									<button id='unzoom2D' class='navLink' type="button" value="Unzoom" onclick="Unzoom();">Unzoom</button>
-								</td>
-							</tr>
-
-							<tr>
-								<td>
-									<p id="2Dcoords"></p>
-								</td>							
-							</tr>
+				<div id='spectrum2D' class='spectrumWindow' style='width:100%; height:100%; position:relative; top:-100%; z-index:-1; opacity:0'>
+					
+					<div id='spectrumWrapper' style='width:100%; height:90%; position:relative;'>
+						<form style='float:left; width:5%; position:absolute; left:0%; bottom:70px; text-align:right;'>
+							<button id='bigUp' class='navLink' type="button" value=">>" onclick="scrollSpectra(SVparam.YaxisLimitMax2D - SVparam.YaxisLimitMin2D, 'YaxisLimitMin2D', 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D', 'LowerYLimit', 'UpperYLimit'); plot_data2D(0)">U</button><br>
+							<button id='smallUp' class='navLink' type="button" value=">" onclick="scrollSpectra(1, 'YaxisLimitMin2D', 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D', 'LowerYLimit', 'UpperYLimit'); plot_data2D(0)">u</button><br>
+							<button id='smallDown' class='navLink' type="button" value="<" onclick="scrollSpectra(-1, 'YaxisLimitMin2D', 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D', 'LowerYLimit', 'UpperYLimit'); plot_data2D(0)">d</button><br>
+							<button id='bigDown' class='navLink' type="button" value="<<" onclick="scrollSpectra(SVparam.YaxisLimitMin2D - SVparam.YaxisLimitMax2D, 'YaxisLimitMin2D', 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D', 'LowerYLimit', 'UpperYLimit'); plot_data2D(0)">D</button><br>
+							y axis limits:<br>
+							<input type="number" id="UpperYLimit" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D');plot_data2D(0); document.getElementById('LowerYLimit').setAttribute('max', this.value);" min='0' max='500'></input><br>
+							<input type="number" id="LowerYLimit" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'YaxisLimitMin2D', 'YaxisLimitAbsMax2D');plot_data2D(0); document.getElementById('UpperYLimit').setAttribute('min', this.value);" min='0' max='500'></input>  
 							
-						</table>
-					</td>
+							<div id="limitMistake" style="color:'#00FFFF'"></div>
+						</form>
+						<canvas id='canvas2D' style='position:absolute; right:0%; bottom:0%' ></canvas>
+					</div>
 
-					<!--File IO////////////////////////////////////////////////////////////////-->
-					<td id='el2'>
-						<table id='fileBlock' class='mainElement' style='width:100%; height:100%;'>
-							<caption style='font: 20px Raleway'>Spectrum Menu</caption>
+					<form style='margin-left:100px;'>
+						x axis limits:
+						<input type="number" id="LowerXLimit2D" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'XaxisLimitMin2D', 'XaxisLimitAbsMax2D');plot_data2D(0); document.getElementById('UpperXLimit2D').setAttribute('min', this.value);" min='0' max='500'></button>
+						<input type="number" id="UpperXLimit2D" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'XaxisLimitMax2D', 'XaxisLimitAbsMax2D');plot_data2D(0); document.getElementById('LowerXLimit2D').setAttribute('max', this.value);" min='0' max='500'></button>
+						<button id='bigLeft2D' class='navLink' type="button" value="<<" onclick="scrollSpectra(SVparam.XaxisLimitMin2D - SVparam.XaxisLimitMax2D, 'XaxisLimitMin2D', 'XaxisLimitMax2D', 'XaxisLimitAbsMax2D', 'LowerXLimit2D', 'UpperXLimit2D'); plot_data2D(0)"><<</button>
+						<button id='smallLeft2D' class='navLink' type="button" value="<" onclick="scrollSpectra(-1, 'XaxisLimitMin2D', 'XaxisLimitMax2D', 'XaxisLimitAbsMax2D', 'LowerXLimit2D', 'UpperXLimit2D'); plot_data2D(0)"><</button>
+						<button id='smallRight2D' class='navLink' type="button" value=">" onclick="scrollSpectra(1, 'XaxisLimitMin2D', 'XaxisLimitMax2D', 'XaxisLimitAbsMax2D', 'LowerXLimit2D', 'UpperXLimit2D'); plot_data2D(0)">></button>
+						<button id='bigRight2D' class='navLink' type="button" value=">>" onclick="scrollSpectra(SVparam.XaxisLimitMax2D - SVparam.XaxisLimitMin2D, 'XaxisLimitMin2D', 'XaxisLimitMax2D', 'XaxisLimitAbsMax2D', 'LowerXLimit2D', 'UpperXLimit2D'); plot_data2D(0)">>></button>
+						<div id="limitMistake2D" style="color:'#00FFFF'"></div>
+					</form>
 
-							<tr style='width:100%; height:100%;'>
-								<td style='width:100%; height:100%;'>
-									<iframe id="menu_iframe" width='99%' height='100%' frameborder=0></iframe>
-								</td>
-							</tr>
+					<p id="2Dcoords" style='float:right; margin-right:100px'></p>
 
-							<tr>
-								<td style='text-align:center;'>
-									<button id='loadB' class='navLink' type="button" value="Load 1D Spectrum List" onclick='GetList("localhost:9092")'></button>
-									<button id='displayB' class='navLink' type="button" value="Display" onclick="DisplaySpecs()"></button>
-									<button id='overlayB' class='navLink' type="button" value="Overlay" onclick="OverlaySpecs()"></button>
-									<button id='clearB' class='navLink' type="button" value="Clear Selected" onclick="Menu_unSelectAll()"></button>
-									<button id='dummyB' class='navLink' type="button" value="dummy" onclick="summonView(2)">2D Test Dummy</button>
-									<div id="displayMistake" style="color:#00FFFF"></div>
-									<div id="holder"></div>
-								</td>
-							</tr>																		
-						</table>
-					</td>
-				</tr>
-			</table>
+					<form style='margin-left:100px'>
+						Refresh Rate
+						<select id="refreshRate2D" onchange="SVparam.RefreshTime=this.value; plot_data2D(0, 'true')">
+							<option id="r0" value="0">Off</option>
+							<option id="r1" value="1">1s</option>
+							<option id="r2" value="3">3s</option>
+							<option id="r3" value="5">5s</option>
+							<option id="r4" value="10">10s</option>
+						</select>
+						<button id='refresh2D' class='navLink' type="button" value="Refresh Now" onclick="plot_data2D(0, 'true')">Refresh Now</button>
+
+						<button id='clearSpec2D' class='navLink' type="button" value="Clear Spectra" onclick="clearSpecs()">Clear Plot</button>
+						<button id='unzoom2D' class='navLink' type="button" value="Unzoom" onclick="Unzoom();">Unzoom</button>
+					</form>
+				</div>
+
+				<div id='scope' class='spectrumWindow' style='width:100%; height:100%; position:relative; top:-200%; z-index:-1; opacity:0'>
+				</div>				
+
+			</div>
+
+
+
+			<div id='menus' style='float:left; height:80%; width:19%; margin-left:1%;'>
+
+				<div id='menu1D' class='collapsableMenu' style='float:left; height:50px; width:100%; text-align:center;'>
+					<h3 id='menu1Dtitle' onclick='toggleMenu("menu1D")'>1D Spectra</h3>
+					<div id="spectra1D" style='overflow:scroll; width:100%; height:80%; margin-bottom:5%'>
+						<ol id='main_table' style='width:100%; list-style-type:none;'>
+							<li>Welcome! To begin click 'Load Spectra' below.</li>
+						</ol>
+					</div>
+
+					<button id='loadB' class='navLink' type="button" value="Load 1D Spectrum List" onclick='GetList("localhost:9092")'></button>
+					<button id='displayB' class='navLink' type="button" value="Display" onclick="DisplaySpecs()"></button>
+					<button id='overlayB' class='navLink' type="button" value="Overlay" onclick="OverlaySpecs()"></button>
+					<button id='clearB' class='navLink' type="button" value="Clear Selected" onclick="Menu_unSelectAll()"></button>
+					<!--button id='dummyB' class='navLink' type="button" value="dummy" onclick="summonView(2)">2D Test Dummy</button-->
+					<div id="displayMistake" style="color:#00FFFF"></div>
+					<div id="holder"></div>
+				</div>
+
+				<div id='menu2D' class='collapsableMenu' style='float:left; height:50px; width:100%; margin-top:2%; text-align:center;'>
+					<h3 onclick='toggleMenu("menu2D")'>2D Spectra</h3>
+				</div>
+
+				<div id='scopeMenu' class='collapsableMenu' style='float:left; width:100%; height:50px; margin-top:2%; text-align:center;'>
+					<h3 onclick='toggleMenu("scopeMenu")'>Scope Feeds</h3>
+				</div>				
+
+			</div>
 
 			<table id="recent_list" class='mainElement' style='display:none; margin-top:10px; width:100%'>
 				<caption style='font: 20px Raleway; margin-top:15px;'>Recently Viewed Spectra</caption>
 			</table>
+
 		</div>
 
 		<script type="text/javascript">
 			function main(){
 
-				document.getElementById('el1').setAttribute('style', 'width:auto; height:'+document.getElementById('masterTable').offsetHeight)				
-				document.getElementById('el2').setAttribute('style', 'width:auto; height:'+document.getElementById('masterTable').offsetHeight)
+				//document.getElementById('el1').setAttribute('style', 'width:auto; height:'+document.getElementById('masterTable').offsetHeight)				
+				//document.getElementById('el2').setAttribute('style', 'width:auto; height:'+document.getElementById('masterTable').offsetHeight)
 				//fill in the some text elements:
 				document.getElementById('title').innerHTML = 'TRIUMF';
 				document.getElementById('youAreHere').innerHTML = 'Spectrum Viewer';
@@ -260,20 +265,28 @@
 				document.getElementById('displayB').innerHTML = 'Display';
 				document.getElementById('overlayB').innerHTML = 'Overlay';
 				document.getElementById('clearB').innerHTML = 'Clear';
-				document.getElementById('bigLeft').innerHTML = '<<';
-				document.getElementById('smallLeft').innerHTML = '<';
-				document.getElementById('smallRight').innerHTML = '>';
-				document.getElementById('bigRight').innerHTML = '>>';
 				document.getElementById('unzoom').innerHTML = 'Unzoom';
 				document.getElementById('clearSpec').innerHTML = 'Clear Spectra';
 				document.getElementById('fitPeak').innerHTML = 'Fit Peak';
 				document.getElementById('refresh').innerHTML = 'Refresh Now';
+				document.getElementById('bigLeft').innerHTML = String.fromCharCode(0x21C7);
+				document.getElementById('bigRight').innerHTML = String.fromCharCode(0x21C9);
+				document.getElementById('smallLeft').innerHTML = String.fromCharCode(0x2190);
+				document.getElementById('smallRight').innerHTML = String.fromCharCode(0x2192);			
+				document.getElementById('bigLeft2D').innerHTML = String.fromCharCode(0x21C7);
+				document.getElementById('bigRight2D').innerHTML = String.fromCharCode(0x21C9);
+				document.getElementById('smallLeft2D').innerHTML = String.fromCharCode(0x2190);
+				document.getElementById('smallRight2D').innerHTML = String.fromCharCode(0x2192);
+				document.getElementById('bigUp').innerHTML = String.fromCharCode(0x21C8);
+				document.getElementById('bigDown').innerHTML = String.fromCharCode(0x21CA);
+				document.getElementById('smallUp').innerHTML = String.fromCharCode(0x2191);
+				document.getElementById('smallDown').innerHTML = String.fromCharCode(0x2193);
 
 				//namespace all the global variables in their own object:
 				SVparam = {
 					"devMode" : 1,
 					"refreshHandler" : 0,
-					'activeCursor' : 0;
+					'activeCursor' : 0,
 					"statusURL" : 'http://midtig04.triumf.ca:8082',
 					"hostname" : "localhost:9092",
 					"RefreshTime" : 3,
@@ -306,8 +319,8 @@
 					"canvasID" : 'testCanv',			//id of canvas to draw spectra in
 					"canvas" : 0,
 					"context" : 0,
-					'canvWidth' : 960,					//spectrum canvas width
-					'canvHeight' : 420,					//  "" height
+					'canvWidth' : 1152,					//spectrum canvas width  960
+					'canvHeight' : 504,					//  "" height            420
 					"leftMargin" : 100,					//left gutter of plot area
 					"bottomMargin" : 50, 				//bottom gutter of plot area
 					"rightMargin" : 100,				//right gutter of plot area
@@ -371,13 +384,13 @@
 				SVparam.yAxisPixLength = SVparam.canvas.height - SVparam.bottomMargin - SVparam.topMargin;
 				SVparam.context.font = SVparam.baseFont;
 				//2D canvas:
-				SVparam.canvWidth2D = SVparam.canvWidth*0.6 + SVparam.zScaleMargin;
-				SVparam.canvHeight2D = SVparam.canvWidth*0.6;
+				SVparam.canvWidth2D = 0.95*SVparam.canvWidth //SVparam.canvWidth*0.6 + SVparam.zScaleMargin;
+				SVparam.canvHeight2D = SVparam.canvHeight //SVparam.canvWidth*0.6;
 				SVparam.canvas2D = document.getElementById('canvas2D');
 				SVparam.context2D = SVparam.canvas2D.getContext('2d');
 				SVparam.canvas2D.setAttribute('width', SVparam.canvWidth2D);
 				SVparam.canvas2D.setAttribute('height', SVparam.canvHeight2D);
-				document.getElementById('spectrumBlock2D').setAttribute('width', SVparam.canvWidth2D+400);
+				//document.getElementById('spectrumBlock2D').setAttribute('width', SVparam.canvWidth2D+400);
 				SVparam.xAxisPixLength2D = SVparam.canvas2D.width - SVparam.leftMargin2D - SVparam.rightMargin2D - SVparam.zScaleMargin;
 				SVparam.yAxisPixLength2D = SVparam.canvas2D.height - SVparam.topMargin2D - SVparam.bottomMargin2D;
 				SVparam.XaxisLength2D = SVparam.XaxisLimitMax2D-SVparam.XaxisLimitMin2D;

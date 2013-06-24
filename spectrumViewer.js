@@ -219,7 +219,6 @@ function set_AxisType(word){
 // Function to draw everything the first time when page is loaded  //
 /////////////////////////////////////////////////////////////////////
 function startup(){
-	var iframe, iframeDoc, row, table;
 
 	// Setup the mouse coordinate printing on the screen
 	reportSpectrumBin();
@@ -237,17 +236,6 @@ function startup(){
 	document.getElementById(SVparam.canvasID2D).onmouseup = function(event){mUp2D(event)};
 	SVparam.canvas2D.addEventListener('mousemove', function(event){mMove2D(event)}, false);
 	document.getElementById(SVparam.canvasID2D).onmouseout = function(event){document.getElementById('2Dcoords').innerHTML=''};
-
-
-	iframe = document.getElementById('menu_iframe');
-	iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-	iframeDoc.open();
-	iframeDoc.write('<body style="background:#333333; color:#999999; font-family:'+ "'" +'Raleway'+ "'" +', sans-serif;"> <table id="main_table" width="100%"></table></body>');
-	iframeDoc.close();
-
-	table = iframeDoc.getElementById("main_table");
-	row = table.insertRow(0);
-	row.innerHTML ="Welcome! To begin click 'Load Spectra' below.";
 
 }
 ///////////////////////////////
@@ -609,19 +597,16 @@ function FitData(){
 }
 
 function Menu_unSelectAll(){
-	var i, iframe, iframeDoc, j;
+	var i, j;
 
 	document.getElementById("displayMistake").innerHTML="";
-	iframe = document.getElementById('menu_iframe');
-	iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-
 	// Reset the properties of the rows which were selected
 	j=0;
 	if(SVparam.Specs.length>0){
 		while(j<SVparam.Specs.length){
 			i=SVparam.Specs[j];
-			iframeDoc.getElementById("row"+i).setAttribute('bgcolor', "#333333");
-			iframeDoc.getElementById("row"+i).setAttribute('onclick', 'parent.Menu_MakeselectSpectrum(event,'+i+')');
+			document.getElementById("row"+i).setAttribute('style', "background-color:#333333");
+			document.getElementById("row"+i).setAttribute('onclick', 'Menu_MakeselectSpectrum(event,'+i+')');
 			j++;
 		}
 	}
@@ -672,7 +657,7 @@ function SetupGetList(){
 }
 
 function GetList(newhost){
-	var i, iframe, iframeDoc, Num, row, table, string,
+	var i, row, table, string,
 		RemoveTable = 0;
 
 	// Check if a list is already loaded by the hostname being defined
@@ -684,62 +669,49 @@ function GetList(newhost){
     string = string.slice(0,string.indexOf('/'));
 	document.getElementById('youAreHere').innerHTML="Spectrum Viewer - "+string;
 
-	// Attach to the table for the spectrum list in the iframe
-	iframe = document.getElementById('menu_iframe');
-	iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-	table = iframeDoc.getElementById("main_table");
-
-	// If a previous list was loaded, delete all rows for it
-	if(RemoveTable==1){
-		i=0;
-		Num=table.rows.length;
-		while(i<Num){
-			table.deleteRow(0);
-			i++;
-		}
-	}
-	else{
-		table.deleteRow(0);
-	}
+	table = document.getElementById("main_table");
+	table.innerHTML = '';
 	
 	if(!SVparam.devMode){
 		// Here call the function to Get the spectrum list from the server
-	//SVparam.spectrum_names = getList();
+		SVparam.spectrum_names = getList();
 		for(i=0; i<SVparam.spectrum_names.length; i++){
-			row = table.insertRow(i);
+			row = document.createElement('li');
 			row.setAttribute('id', "row"+i);
-			row.setAttribute('bgcolor', "#333333");
+			row.setAttribute('style', "background-color:#333333");
 			row.setAttribute('style', "display:block;cursor:default");
-			// row.setAttribute('onclick', "parent.Menu_selectSpectrum("+i+")");
-			row.setAttribute('onclick', "parent.Menu_MakeselectSpectrum(event,"+i+")");
-			row.setAttribute('ondblclick', "parent.displaySpectrum("+i+")");
-			row.innerHTML = SVparam.spectrum_names[i];
+			row.setAttribute('onclick', "Menu_MakeselectSpectrum(event,"+i+")");
+			row.setAttribute('ondblclick', "displaySpectrum("+i+")");
+			document.getElementById('main_table').appendChild(row);
+			document.getElementById('row'+i).innerHTML = SVparam.spectrum_names[i];
+
 		}
 	} else {
 		// Put in fake list info - COMMENT OUT ONCE ABOVE FUNCTION IS WORKING
 			for(i=0; i<50; i++){
-				row = table.insertRow(i);
+				row = document.createElement('li');
 				row.setAttribute('id', "row"+i);
-				row.setAttribute('bgcolor', "#333333");
+				row.setAttribute('style', "background-color:#333333");
 				row.setAttribute('style', "display:block;cursor:default");
-				iframeDoc.getElementById('row'+i).onclick = function(event){ parent.Menu_MakeselectSpectrum(event, parseInt(this.id.slice(3,this.id.length+1))  )};
-				iframeDoc.getElementById('row'+i).ondblclick = function(){parent.displaySpectrum( parseInt(this.id.slice(3,this.id.length+1)) )};
-				row.innerHTML ="Spectrum Name "+i;
+				document.getElementById('main_table').appendChild(row);
+				document.getElementById('row'+i).onclick = function(event){ Menu_MakeselectSpectrum(event, parseInt(this.id.slice(3,this.id.length+1))  )};
+				document.getElementById('row'+i).ondblclick = function(){displaySpectrum( parseInt(this.id.slice(3,this.id.length+1)) )};
+				document.getElementById('row'+i).innerHTML ="Spectrum Name "+i;
 				SVparam.spectrum_names[i]="Spectrum Name "+i;
-
 		}
 	}
 
 
 	// Disable text selection in the menu list
-	if (typeof iframeDoc.body.onselectstart!="undefined") //IE route
-		iframeDoc.body.onselectstart=function(){return false}
+	//if (typeof iframeDoc.body.onselectstart!="undefined") //IE route
+	//	iframeDoc.body.onselectstart=function(){return false}
 
-	else if (typeof iframeDoc.body.style.MozUserSelect!="undefined") //Firefox route
-		iframeDoc.body.style.MozUserSelect="none"
+	//else if (typeof iframeDoc.body.style.MozUserSelect!="undefined") //Firefox route
+	//	iframeDoc.body.style.MozUserSelect="none"
 
-	else //All other route (ie: Opera)
-		iframeDoc.body.onmousedown=function(){return false}
+	//else //All other route (ie: Opera)
+	//	iframeDoc.body.onmousedown=function(){return false}
+	document.body.onmousedown=function(event){event.preventDefault();}
 
 	plot_data(1);
 }
@@ -825,7 +797,7 @@ function Menu_MakeselectSpectrum(oEvent,id){
 }
 
 function Menu_selectSpectrum(id){
-	var iframe, iframeDoc, j, rowID;
+	var j, rowID;
 
 	document.getElementById("displayMistake").innerHTML="";
 
@@ -851,12 +823,9 @@ function Menu_selectSpectrum(id){
 		}
 	}
 
-	// Connect to the iframe and make the changes to the selected row
-	iframe = document.getElementById('menu_iframe');
-	iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-	rowID = iframeDoc.getElementById("row"+id);
-	iframeDoc.getElementById("row"+id).setAttribute('bgcolor', "lightblue");
-	iframeDoc.getElementById("row"+id).setAttribute('onclick', 'parent.Menu_unselectSpectrum('+id+')');
+	rowID = document.getElementById("row"+id);
+	rowID.setAttribute('style', "background-color:lightblue;");
+	rowID.setAttribute('onclick', 'Menu_unselectSpectrum('+id+')');
 
 	// Add this spectrum to the Specs list
 	SVparam.Specs[SVparam.Specs.length]=id;
@@ -950,13 +919,11 @@ function overlaySpectrum(id){
 }
 
 function Menu_unselectSpectrum(id){
-	var iframe, iframeDoc, j, k;
+	var j, k;
 
 	document.getElementById("displayMistake").innerHTML="";
-	iframe = document.getElementById('menu_iframe');
-	iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-	iframeDoc.getElementById("row"+id).setAttribute('bgcolor', "#333333");
-	iframeDoc.getElementById("row"+id).setAttribute('onclick', "parent.Menu_selectSpectrum("+id+")");
+	document.getElementById("row"+id).setAttribute('style', "background-color:#333333;");
+	document.getElementById("row"+id).setAttribute('onclick', "Menu_selectSpectrum("+id+")");
 
 	// Remove this spectrum from the parent.Spec array
 	j=0;
@@ -1020,17 +987,24 @@ function relMouseCoords(event){
     elts = [];
 
 	if (event.offsetX !== undefined && event.offsetY !== undefined) { return {x:event.offsetX, y:event.offsetY}; }
+	//if (event.layerX !== undefined && event.layerY !== undefined) { return {x:event.layerX, y:event.layerY}; }
 
     do{
         totalOffsetX += currentElement.offsetLeft - currentElement.scrollLeft;
         totalOffsetY += currentElement.offsetTop - currentElement.scrollTop;
-        test[test.length] = currentElement.offsetLeft - currentElement.scrollLeft
-        elts[elts.length] = currentElement
+        //test[test.length] = currentElement.offsetLeft - currentElement.scrollLeft
+        //elts[elts.length] = currentElement
     }
     while(currentElement = currentElement.offsetParent)
 
     canvasX = event.pageX - totalOffsetX;
     canvasY = event.pageY - totalOffsetY;
+
+    //hack to deal with FF scroll, better solution TBD:
+    if(event.offsetX == undefined){
+    	canvasX -= document.body.scrollLeft;
+    	canvasY -= document.body.scrollTop;
+    }
 
     return {x:canvasX, y:canvasY}
 }
@@ -1127,14 +1101,14 @@ function draw2Dframe(){
 
 	//x axis title:
 	SVparam.context2D.textBaseline = 'bottom';
-	SVparam.context2D.fillText('Channels', SVparam.canvas2D.width - SVparam.rightMargin2D - SVparam.context2D.measureText('Channels').width - SVparam.zScaleMargin, SVparam.canvas2D.height);
+	SVparam.context2D.fillText('x', SVparam.canvas2D.width - SVparam.rightMargin2D - SVparam.context2D.measureText('x').width - SVparam.zScaleMargin, SVparam.canvas2D.height);
 
 	//y axis title:
 	SVparam.context2D.textBaseline = 'alphabetic';
 	SVparam.context2D.save();
-	SVparam.context2D.translate(SVparam.leftMargin2D*0.25, SVparam.context2D.measureText('Channels').width + SVparam.topMargin2D );
+	SVparam.context2D.translate(SVparam.leftMargin2D*0.25, SVparam.context2D.measureText('y').width + SVparam.topMargin2D );
 	SVparam.context2D.rotate(-Math.PI/2);
-	SVparam.context2D.fillText('Channels', 0,0);
+	SVparam.context2D.fillText('y', 0,0);
 	SVparam.context2D.restore();
 
 }
@@ -1151,8 +1125,9 @@ function plot_data2D(RefreshNow, abandonBuffer){
 	document.getElementById('LowerYLimit').value = SVparam.YaxisLimitMin2D;
 	document.getElementById('UpperYLimit').value = SVparam.YaxisLimitMax2D;
 
-	//get some data, either via a network request or a buffer:
-	if(!SVparam.devMode){
+	if(SVparam.devMode){
+		thisData = window.thisData;
+	} else {
 		if(abandonBuffer){
 			thisData = getData2D(0).split(';');
 			for(i=0; i<thisData.length; i++){
@@ -1163,10 +1138,7 @@ function plot_data2D(RefreshNow, abandonBuffer){
 		} else {
 			thisData = SVparam.dataBuffer2D;
 		}
-	} else {
-		thisData = window.thisData
 	}
-
 /*
 	SVparam.maxYvalue=SVparam.YaxisLimitMax;
 	// Loop through to get the data and set the Y axis limits
@@ -1225,19 +1197,19 @@ function plot_data2D(RefreshNow, abandonBuffer){
 	if(!SVparam.zMax)
 		SVparam.zMax = 1;
 
-	//fill in all the 0 bins:
-	SVparam.context2D.fillStyle = scalepickr(0, 'Sunset');
+	//fill in all the unpopulated bins:
+	SVparam.context2D.fillStyle = scalepickr('unpopulated', 'ROOT Rainbow');
 	SVparam.context2D.fillRect(SVparam.leftMargin2D, SVparam.canvHeight2D - SVparam.bottomMargin2D - SVparam.yAxisPixLength2D, SVparam.xAxisPixLength2D, SVparam.yAxisPixLength2D)
 
 	//fill histo:
 	for(i=0; i<thisData.length; i++){
 		if(thisData[i].x >= SVparam.XaxisLimitMin2D && thisData[i].x < SVparam.XaxisLimitMax2D && thisData[i].y >= SVparam.YaxisLimitMin2D && thisData[i].y < SVparam.YaxisLimitMax2D){
 			if(!SVparam.logZ)
-				SVparam.context2D.fillStyle = scalepickr(thisData[i].z / SVparam.zMax, 'Sunset');
+				SVparam.context2D.fillStyle = scalepickr(thisData[i].z / SVparam.zMax, 'ROOT Rainbow');
 			else
-				SVparam.context2D.fillStyle = scalepickr( (Math.log10(thisData[i].z) - SVparam.logZmin ) / (SVparam.zMax - SVparam.logZmin ), 'Sunset');
+				SVparam.context2D.fillStyle = scalepickr( (Math.log10(thisData[i].z) - SVparam.logZmin ) / (SVparam.zMax - SVparam.logZmin ), 'ROOT Rainbow');
 
-			//SVparam.context2D.shadowColor = scalepickr(thisData[i].z, 'Sunset');
+			//SVparam.context2D.shadowColor = scalepickr(thisData[i].z, 'ROOT Rainbow');
 			SVparam.context2D.fillRect(SVparam.leftMargin2D + (thisData[i].x-SVparam.XaxisLimitMin2D)*SVparam.binWidth2D, SVparam.canvas2D.height - SVparam.bottomMargin2D - (thisData[i].y-SVparam.YaxisLimitMin2D+1)*SVparam.binHeight2D ,SVparam.binWidth2D,SVparam.binHeight2D);
 			entries += thisData[i].z;
 		}
@@ -1255,7 +1227,7 @@ function plot_data2D(RefreshNow, abandonBuffer){
 	drawZscale();
 
 	// Pause for some time and then recall this function to refresh the data display
-	if(SVparam.RefreshTime>0 && RefreshNow==1) setTimeout(function(){plot_data2D(1, 'true')},SVparam.RefreshTime*1000); 
+	if(SVparam.RefreshTime>0 && RefreshNow==1)  SVparam.refreshHandler2D = setTimeout(function(){plot_data2D(1, 'true')},SVparam.RefreshTime*1000); 
 }
 
 //mouse down & mouse up behavior functions for 2D canvas:
@@ -1274,8 +1246,12 @@ function mDown2D(event){
 
 	xBin = Math.floor((x-SVparam.leftMargin2D)/SVparam.binWidth2D + SVparam.XaxisLimitMin2D);
 	yBin = Math.floor((SVparam.canvas2D.height-SVparam.bottomMargin2D - y)/SVparam.binHeight2D + SVparam.YaxisLimitMin2D);
-	if(xBin < 0) xBin = 0;
-	if(yBin < 0) yBin = 0;
+	//if(xBin < 0) xBin = 0;
+	//if(yBin < 0) yBin = 0;
+	if(xBin < SVparam.XaxisLimitMin2D) xBin = SVparam.XaxisLimitMin2D;
+	if(yBin < SVparam.YaxisLimitMin2D) yBin = SVparam.YaxisLimitMin2D;
+	if(xBin > SVparam.XaxisLimitMax2D) xBin = SVparam.XaxisLimitMax2D;
+	if(yBin > SVparam.YaxisLimitMax2D) yBin = SVparam.YaxisLimitMax2D;
 
 	//drag a box if clicking in the plot field:
 	if(x > SVparam.leftMargin2D && x < (SVparam.canvas2D.width - SVparam.rightMargin2D) && y>SVparam.topMargin2D && y<(SVparam.canvas2D.height-SVparam.bottomMargin2D)){
@@ -1294,7 +1270,7 @@ function mDown2D(event){
 function mUp2D(event){
 	var x, y, xBin, yBin, coords;
 
-	//draggy hand:
+	//release draggy hand:
 	SVparam.activeCursor = 0;
 
 	coords = document.getElementById(SVparam.canvasID2D).relMouseCoords(event);
@@ -1303,11 +1279,21 @@ function mUp2D(event){
 
 	xBin = Math.floor((x-SVparam.leftMargin2D)/SVparam.binWidth2D + SVparam.XaxisLimitMin2D);
 	yBin = Math.floor((SVparam.canvas2D.height-SVparam.bottomMargin2D - y)/SVparam.binHeight2D + SVparam.YaxisLimitMin2D);
-	if(xBin < 0) xBin = 0;
-	if(yBin < 0) yBin = 0;
+	if(xBin < SVparam.XaxisLimitMin2D) xBin = SVparam.XaxisLimitMin2D;
+	if(yBin < SVparam.YaxisLimitMin2D) yBin = SVparam.YaxisLimitMin2D;
+	if(xBin > SVparam.XaxisLimitMax2D) xBin = SVparam.XaxisLimitMax2D;
+	if(yBin > SVparam.YaxisLimitMax2D) yBin = SVparam.YaxisLimitMax2D;
 
-	//drag a box if clicking in the plot field:
-	if(x > SVparam.leftMargin2D && x < (SVparam.canvas2D.width - SVparam.rightMargin2D) && y>SVparam.topMargin2D && y<(SVparam.canvas2D.height-SVparam.bottomMargin2D)){
+	//bail out on a single click:
+	if( (xBin == SVparam.onclickXvals.min && yBin == SVparam.onclickYvals.min) || (xBin == SVparam.clickX['down'] && yBin == SVparam.clickY['down']) ){
+		SVparam.onclickXvals = {'min':-1, 'max':-1};
+		SVparam.onclickYvals = {'min':-1, 'max':-1};
+		SVparam.clickX = {'down':-1, 'up':-1};
+		SVparam.clickY = {'down':-1, 'up':-1};
+		return;
+	}
+
+	if(SVparam.onclickXvals.min != -1){
 		SVparam.onclickXvals.max = xBin;
 		SVparam.onclickYvals.max = yBin;
 
@@ -1319,8 +1305,8 @@ function mUp2D(event){
 
 		//redraw with new bounds:
 		plot_data2D();
-		SVparam.onclickXvals = {'min':0, 'max':0};
-		SVparam.onclickYvals = {'min':0, 'max':0};
+		SVparam.onclickXvals = {'min':-1, 'max':-1};
+		SVparam.onclickYvals = {'min':-1, 'max':-1};
 		return;
 
 	} else if (y > (SVparam.canvas2D.height-SVparam.bottomMargin2D) && x > SVparam.leftMargin2D){ //release on the x-margin
@@ -1354,7 +1340,7 @@ function mMove2D(event){
 	if(SVparam.activeCursor)
 		document.body.style.cursor = 'nwse-resize';
 	else
-		document.body.style.cursor = 'default';
+		document.body.style.cursor = 'default'; 
 
 	coords = document.getElementById(SVparam.canvasID2D).relMouseCoords(event);
 	x = coords.x;
@@ -1369,8 +1355,9 @@ function mMove2D(event){
 
 //draw a zaxis scale for the 2D plot:
 function drawZscale(){
-	var i, x0, y0, label,
-	width = 50;
+	var i, x0, y0, 
+	width = SVparam.yAxisPixLength2D*0.08;
+	length = SVparam.yAxisPixLength2D*0.9
 
 	//top corner of scale:
 	x0 = SVparam.leftMargin2D + SVparam.xAxisPixLength2D + SVparam.rightMargin2D;
@@ -1378,8 +1365,8 @@ function drawZscale(){
 
 	//color bar
 	for(i=0; i<1000; i++){
-		SVparam.context2D.fillStyle = scalepickr(i/1000, 'Sunset');
-		SVparam.context2D.fillRect(x0, SVparam.canvHeight2D - SVparam.bottomMargin2D - (i+1)*SVparam.yAxisPixLength2D/1000, width, SVparam.yAxisPixLength2D/1000);
+		SVparam.context2D.fillStyle = scalepickr(i/1000, 'ROOT Rainbow');
+		SVparam.context2D.fillRect(x0, SVparam.canvHeight2D - SVparam.bottomMargin2D - (SVparam.yAxisPixLength2D - length) - (i+1)*length/1000, width, length/1000);
 	}
 
 	//frame
@@ -1387,14 +1374,14 @@ function drawZscale(){
 	SVparam.context2D.lineWidth = 1;
 	SVparam.context2D.beginPath();
 	SVparam.context2D.moveTo(x0+width, y0);
-	SVparam.context2D.lineTo(x0+width, y0+SVparam.yAxisPixLength2D);
+	SVparam.context2D.lineTo(x0+width, y0+length);
 	SVparam.context2D.stroke();
 	SVparam.context2D.closePath();
 	for(i=0; i<5; i++){
 		//ticks
 		SVparam.context2D.beginPath();
-		SVparam.context2D.moveTo(x0+width, SVparam.canvHeight2D - SVparam.bottomMargin2D - i*SVparam.yAxisPixLength2D/4);
-		SVparam.context2D.lineTo(x0+width+SVparam.tickLength, SVparam.canvHeight2D - SVparam.bottomMargin2D - i*SVparam.yAxisPixLength2D/4);
+		SVparam.context2D.moveTo(x0+width, SVparam.canvHeight2D - SVparam.bottomMargin2D - (SVparam.yAxisPixLength2D - length) - i*length/4);
+		SVparam.context2D.lineTo(x0+width+SVparam.tickLength, SVparam.canvHeight2D - SVparam.bottomMargin2D - (SVparam.yAxisPixLength2D - length) - i*length/4);
 		SVparam.context2D.stroke();
 		SVparam.context2D.closePath();
 
@@ -1405,10 +1392,25 @@ function drawZscale(){
 			label = (i*SVparam.zMax/4).toFixed(1);
 		else
 			label = (SVparam.logZmin + i/4*(SVparam.zMax - SVparam.logZmin)).toFixed(1);
-
-		SVparam.context2D.fillText(label, x0+width+SVparam.tickLength + 5, SVparam.canvHeight2D - SVparam.bottomMargin2D - i*SVparam.yAxisPixLength2D/4)
+		SVparam.context2D.fillText(label, x0+width+SVparam.tickLength + 5, SVparam.canvHeight2D - SVparam.bottomMargin2D - (SVparam.yAxisPixLength2D - length) - i*length/4)
 	}
 	SVparam.context2D.textBaseline = 'alphabetic';
+
+	//title
+	SVparam.context2D.save();
+	SVparam.context2D.font = '20px Raleway'
+	SVparam.context2D.translate(x0 + width + SVparam.tickLength + 2*SVparam.context2D.measureText(label).width, y0 + SVparam.yAxisPixLength2D/2 - SVparam.context2D.measureText('log(counts)').width/2)
+	SVparam.context2D.rotate(Math.PI/2);
+	SVparam.context2D.fillText('log ( counts )', 0,0);
+	SVparam.context2D.restore();
+
+	//legend:
+	SVparam.context2D.fillRect(x0, y0+SVparam.yAxisPixLength2D-width, width, width);
+	SVparam.context2D.strokeStyle = '#000000'
+	SVparam.context2D.lineWidth = 2;
+	SVparam.context2D.textBaseline = 'middle';
+	SVparam.context2D.strokeRect(x0, y0+SVparam.yAxisPixLength2D-width, width, width);
+	SVparam.context2D.fillText('Absent', x0+width+5, y0+SVparam.yAxisPixLength2D-width/2)
 
 }
 
@@ -1461,6 +1463,7 @@ function drawTbraggGates(){
 
 //map [0,1] onto black->purple->red->orange->yellow->white
 scalepickr = function(scale, palette){
+
     //map scale onto [0,360]:
     var H = scale*300 / 60;
     if(H>5) H=5;
@@ -1475,6 +1478,11 @@ scalepickr = function(scale, palette){
         start4 = [255,0x66,0];
         start5 = [255,0,0];        
     } else if (palette == 'ROOT Rainbow'){
+
+	 	//escape to white for unpopulated channels:
+		if(scale=='unpopulated')
+			return constructHexColor([255,255,255]);
+
         start0 = [0xFF,0x00,0x00];
         start1 = [0xFF,0xFF,0x00];
         start2 = [0x00,0xFF,0x00];
@@ -1553,6 +1561,36 @@ function constructHexColor(color){
     return '#'+R+G+B;
 }
 
+function toggleMenu(divID){
+
+	var totalHeight = parseInt(document.getElementById('menus').offsetHeight),  //total height of menu bar
+		thisHeight = totalHeight*0.98 - 100,
+		assocDiv;
+
+	if(document.getElementById(divID).style.height == '50px'){
+		//shrink other menus and allow this one to fill the space:
+		document.getElementById('menu1D').style.height = '50px';
+		document.getElementById('menu2D').style.height = '50px';
+		document.getElementById('scopeMenu').style.height = '50px';
+		document.getElementById(divID).style.height = thisHeight+'px';
+
+		//fade out other displays and send them to the back, and bring this one to the front.
+		if(divID=='menu1D') assocDiv = 'spectrum1D';
+		else if(divID=='menu2D') assocDiv = 'spectrum2D';
+		else if(divID=='scopeMenu') assocDiv = 'scope';
+
+		document.getElementById('spectrum1D').style['z-index'] = -1;
+		document.getElementById('spectrum2D').style['z-index'] = -1;
+		document.getElementById('scope').style['z-index'] = -1;
+		document.getElementById('spectrum1D').style.opacity = 0;
+		document.getElementById('spectrum2D').style.opacity = 0;
+		document.getElementById('scope').style.opacity = 0;
+		document.getElementById(assocDiv).style.opacity = 1;
+		document.getElementById(assocDiv).style['z-index'] = 1
+	}
+
+}
+
 // To do list:
 // 
 // General:
@@ -1569,3 +1607,4 @@ function constructHexColor(color){
 // - Make a 2D menu load button
 // - y axis zoomable with mouse and limit entry
 // - 2D data array with each line as all y points of x
+
