@@ -146,7 +146,7 @@
 
 					</form>
 
-					<p id="mousebox" style='margin:none; margin-right:100px; float:right'></p>
+					<p id="mousebox" style='margin:0px; margin-right:100px; float:right'></p>
 
 					<br>
 					<button id='clearSpec' class='navLink' type="button" value="Clear Spectra" onclick="clearSpecs()" style='margin-left:100px'></button>
@@ -159,9 +159,9 @@
 						<option id="r3" value="5">5s</option>
 						<option id="r4" value="10">10s</option>
 					</select>
-					<button id='refresh' class='navLink' type="button" value="Refresh Now" onclick="plot_data(0, true)"></button>
+					<button id='refresh' class='navLink' type="button" value="Refresh Now" onclick="plot_data(0, true)" style='display:inline;'></button>
 
-					<p id="fitbox"></p>
+					<p id="fitbox" style='margin:0px; margin-right:100px; float:right'></p>
 				</div>
 
 				<div id='spectrum2D' class='spectrumWindow' style='width:100%; height:100%; position:relative; top:-100%; z-index:-1; opacity:0'>
