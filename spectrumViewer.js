@@ -1589,6 +1589,9 @@ function toggleMenu(divID){
 		document.getElementById(assocDiv).style['z-index'] = 1
 	}
 
+	if(divID == 'menu1D') document.getElementById('recent_list').style.display = 'table';
+	else document.getElementById('recent_list').style.display = 'none';
+
 }
 
 // To do list:
