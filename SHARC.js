@@ -337,7 +337,7 @@ function SHARC(){
 
                 }
                 document.getElementById(this.name+'TT').innerHTML = '';
-                TTtable(this.name+'TT', this.dataBus.SHARC , objects, keys, objects[0].slice(0,5) + ( (objects[0].slice(5,7) == 'DP') ? ' (front)' : ' (back)' ), ['HV [V]', 'Threhsold [ADC Units]', 'Rate [Hz]'], 2);
+                TTtable(this.name+'TT', this.dataBus.SHARC , objects, keys, objects[0].slice(0,5) + ( (objects[0].slice(5,7) == 'DP') ? ' (front)' : ' (back)' ), ['Device','HV [V]', 'Threhsold [ADC Units]', 'Rate [Hz]'], [Math.ceil(objects.length/2),Math.floor(objects.length/2)] );
             } else {  //pads:
                 arrayElt = cell - 100;
                 //quadrants
@@ -349,7 +349,7 @@ function SHARC(){
                     objects[1] = 'SHB' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + 'FN00X';
                 }
                 document.getElementById(this.name+'TT').innerHTML = '';
-                TTtable(this.name+'TT', this.dataBus.SHARC ,objects, keys, objects[0].slice(0,5) + ' pads', ['HV [V]', 'Threhsold [ADC Units]', 'Rate [Hz]'], 1);
+                TTtable(this.name+'TT', this.dataBus.SHARC ,objects, keys, objects[0].slice(0,5) + ' pads', ['Device','HV [V]', 'Threhsold [ADC Units]', 'Rate [Hz]'], [objects.length]);
             }
         } else {
             arrayElt = Math.ceil(this.detailShowing/2);

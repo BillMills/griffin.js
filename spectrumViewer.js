@@ -1209,8 +1209,10 @@ function plot_data2D(RefreshNow, abandonBuffer){
 			else
 				SVparam.context2D.fillStyle = scalepickr( (Math.log10(thisData[i].z) - SVparam.logZmin ) / (SVparam.zMax - SVparam.logZmin ), 'ROOT Rainbow');
 
+			SVparam.context2D.strokeStyle = SVparam.context2D.fillStyle;
 			//SVparam.context2D.shadowColor = scalepickr(thisData[i].z, 'ROOT Rainbow');
 			SVparam.context2D.fillRect(SVparam.leftMargin2D + (thisData[i].x-SVparam.XaxisLimitMin2D)*SVparam.binWidth2D, SVparam.canvas2D.height - SVparam.bottomMargin2D - (thisData[i].y-SVparam.YaxisLimitMin2D+1)*SVparam.binHeight2D ,SVparam.binWidth2D,SVparam.binHeight2D);
+			SVparam.context2D.strokeRect(SVparam.leftMargin2D + (thisData[i].x-SVparam.XaxisLimitMin2D)*SVparam.binWidth2D, SVparam.canvas2D.height - SVparam.bottomMargin2D - (thisData[i].y-SVparam.YaxisLimitMin2D+1)*SVparam.binHeight2D ,SVparam.binWidth2D,SVparam.binHeight2D);
 			entries += thisData[i].z;
 		}
 	}

@@ -181,7 +181,7 @@
 						<canvas id='canvas2D' style='position:absolute; right:0%; bottom:0%' ></canvas>
 					</div>
 
-					<form style='margin-left:100px;'>
+					<form style='margin-left:100px; display:inline;'>
 						x axis limits:
 						<input type="number" id="LowerXLimit2D" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'XaxisLimitMin2D', 'XaxisLimitAbsMax2D');plot_data2D(0); document.getElementById('UpperXLimit2D').setAttribute('min', this.value);" min='0' max='500'></button>
 						<input type="number" id="UpperXLimit2D" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'XaxisLimitMax2D', 'XaxisLimitAbsMax2D');plot_data2D(0); document.getElementById('LowerXLimit2D').setAttribute('max', this.value);" min='0' max='500'></button>
@@ -192,7 +192,7 @@
 						<div id="limitMistake2D" style="color:'#00FFFF'"></div>
 					</form>
 
-					<p id="2Dcoords" style='float:right; margin-right:100px'></p>
+					<p id="2Dcoords" style='float:right; margin:0px; margin-right:100px'></p>
 
 					<form style='margin-left:100px'>
 						Refresh Rate

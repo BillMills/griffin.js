@@ -282,36 +282,72 @@ function frameColor(obj, frame, nFrames){
 
 }
 
-//make a table for a tooltip using <objects> as rows and <keys> as columns, where the objects are keys of <data>, and insert it into DOM element <id>
+//make a table for a tooltip using <objects> as rows and <keys> as columns, where the objects are keys of <data>, and insert it into DOM element <id>.  
+//[split] indicates how many elements to put in each supercolumn:
 function TTtable(id, data, objects, keys, tableTitle, titles, split){
-    var i, j, k, nContentRows;
+    var i, j, k, n, nContentRows, cellContent;
 
     insertDOM('table', id + 'table', 'TTtab', '', id, '', '');
 
-    insertDOM('tr', id+'tableTitleRow', '', '', id+'table', '', '');
-    insertDOM('td', id+'tableTitle', '', '', id+'tableTitleRow', '', tableTitle);
-    document.getElementById(id+'tableTitle'). setAttribute('colspan', (1+keys.length)*split)
+    if(tableTitle != ''){
+        insertDOM('tr', id+'tableTitleRow', '', '', id+'table', '', '');
+        insertDOM('td', id+'tableTitle', '', '', id+'tableTitleRow', '', tableTitle);
+        document.getElementById(id+'tableTitle'). setAttribute('colspan', (1+keys.length)*split.length)
+    }
 
     insertDOM('tr', id+'tableHeaderRow', '', '', id+'table', '', '');
-    for(k=0; k<split; k++){
-        insertDOM('td', 'spacerCell'+k, '', '', id+'tableHeaderRow','','');  
+    for(k=0; k<split.length; k++){
+        //insertDOM('td', 'spacerCell'+k, '', '', id+'tableHeaderRow','','');  
         for(j=0; j<titles.length; j++){
             insertDOM('td', id+'headerCell'+j+'col'+k, '', 'padding-left:10px; padding-right:10px;', id+'tableHeaderRow','',titles[j]);    
         }
     }
     
-    nContentRows = Math.ceil(objects.length/split);
+    nContentRows = Math.max.apply(null, split);
 
+    //build table:
+    for(i=0; i<nContentRows; i++){
+        //rows
+        insertDOM('tr', id+'row'+i, '', '', id+'table', '', '');
+        //cells
+        for(j=0; j<titles.length*split.length; j++){
+            insertDOM('td', id+'row'+i+'cell'+j, '', 'padding-right:10px; padding-left:'+( (j%titles.length == 0 && j!=0) ? 50:10 )+'px', id+'row'+i, '', '' );
+        }
+    }
+
+    //fill table:
+    n=0;
+    for(i=0; i<split.length; i++){
+        for(j=0; j<split[i]; j++){
+            document.getElementById(id+'row'+j+'cell'+(titles.length*i)).innerHTML = objects[n];
+            for(k=0; k<keys.length; k++){
+                if(typeof data[objects[n]][keys[k]] == 'string')
+                    cellContent = data[objects[n]][keys[k]];
+                else 
+                    cellContent = data[objects[n]][keys[k]].toFixed(window.parameters.tooltipPrecision)                
+                document.getElementById(id+'row'+j+'cell'+(1+titles.length*i+k)).innerHTML = cellContent;
+            }
+            n++;
+        }
+    }
+
+
+
+/*
     for(i=0; i<nContentRows; i++){
         insertDOM('tr', id+'row'+i, '', '', id+'table', '', '');
-        for(k=0; k<split; k++){
+        for(k=0; k<split.length; k++){
             insertDOM('td', id+'row'+i+'titleCol'+k, '', 'padding-right:10px; padding-left:'+( (k>0)?50:10 )+'px;', id+'row'+i, '', objects[i+k*nContentRows]);
             for(j=0; j<keys.length; j++){
-                insertDOM('td', id+'row'+i+'cell'+j+'col'+k, '', '', id+'row'+i, '', data[objects[i+k*nContentRows]][keys[j]].toFixed(window.parameters.tooltipPrecision) );
+                if(typeof data[objects[i+k*nContentRows]][keys[j]] == 'string')
+                    cellContent = data[objects[i+k*nContentRows]][keys[j]];
+                else 
+                    cellContent = data[objects[i+k*nContentRows]][keys[j]].toFixed(window.parameters.tooltipPrecision)
+                insertDOM('td', id+'row'+i+'cell'+j+'col'+k, '', '', id+'row'+i, '', cellContent );
             }
         }    
     }
-
+*/
 }
 
 
