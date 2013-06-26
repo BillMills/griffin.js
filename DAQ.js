@@ -727,25 +727,25 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     };
 
     this.defineText = function(cell){
-        var toolTipContent = '<br>',
-            nextLine, cardIndex, i, key, objects = [],
+        var toolTipContent = '',
+            nextLine, cardIndex, i, key, objects = [], split = [], table, mezRow, mezCell0, mezCell1,
             keys = ['detector','trigRequestRate', 'dataRate'],
             data = {};
 
         
         nextLine = '';
         if(this.dataBus.key[cell]){
-            nextLine = 'FSPC: ' + this.dataBus.key[cell][this.dataBus.key[cell].length-1] + '<br><br>';
+            nextLine = 'FSPC: ' + this.dataBus.key[cell][this.dataBus.key[cell].length-1] + '<br>';
 
             //collectors
             if(this.dataBus.key[cell].length == 2){
-                nextLine += 'Trig Request Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]]['trigRequestRate'].toFixed(1) + ' Hz<br>';
+                nextLine += '<br>Trig Request Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]]['trigRequestRate'].toFixed(1) + ' Hz<br>';
                 nextLine += 'Inbound Data Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]]['dataRate'].toFixed(1) + ' Bps';
             }
 
             //digitizers
             if(this.dataBus.key[cell].length == 3){
-                nextLine += 'Total Trig Request Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]]['trigRequestRate'].toFixed(1) + ' Hz<br>';
+                nextLine += '<br>Total Trig Request Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]]['trigRequestRate'].toFixed(1) + ' Hz<br>';
                 nextLine += 'Total Outbound Data Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]]['dataRate'].toFixed(1) + ' Bps<br><br>';
 
                 //build up arrays and objects to pass to tooltip table builder in the format it expects:
@@ -762,12 +762,33 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                 }
             } 
         }
-        
+
         toolTipContent += nextLine;
-        toolTipContent += '<br>';
         if(this.detailShowing){
             document.getElementById(this.detailTooltip.ttDivID).innerHTML = toolTipContent;
-            TTtable('DAQTTdetail', data, objects, keys, '', ['FSPC','Device','Trig Request Rate [Hz]', 'Outbound Data Rate [Bps]'], [objects.length]);
+            if(cell > this.nCollectors){
+                //split TIG64s by mezzanine:
+                if(objects.length>1){  //TODO: need more robust decision on whether we're looking at a TIG64 or not
+                    split = [0,0];
+                    for(i=0; i<objects.length; i++){
+                        if(parseInt(objects[i].slice(7,9), 16) < 5 ) split[0]++;
+                        else split[1]++;
+                    }
+                } else
+                    split = [objects.length]
+                TTtable('DAQTTdetail', data, objects, keys, '', ['FSPC','Device','Trig Request Rate [Hz]', 'Outbound Data Rate [Bps]'], split);
+                //fudge in a title row for mezzanines:
+                if(objects.length>1){
+                    table = document.getElementById('DAQTTdetailtable');
+                    mezRow = table.insertRow(0);
+                    mezCell0 = mezRow.insertCell(0);
+                    mezCell1 = mezRow.insertCell(1);
+                    mezCell0.innerHTML = 'Mezzanine 1';
+                    mezCell1.innerHTML = 'Mezzanine 2';
+                    mezCell0.setAttribute('colspan', 4);
+                    mezCell1.setAttribute('colspan', 4);
+                }
+            }
         } else{
             document.getElementById(this.tooltip.ttDivID).innerHTML = toolTipContent;
         }
@@ -995,9 +1016,6 @@ DAQcodex = function(){
     this.Name  = this.DAQtable[1];
     this.nRows = this.DAQtable[2];
 
-    //detect digitizer type, TIG10 = 0 or TIG64 = 1:
-    this.digitizerType = [];
-
     //parse into DAQ levels, and sort:    
     this.table = [];
     this.F = [];
@@ -1071,9 +1089,6 @@ DAQcodex = function(){
         Skey = '0x'+this.F[i].toString(16).toUpperCase()+this.S[i].toString(16).toUpperCase()+'XXXXX';
         Pkey = '0x'+this.F[i].toString(16).toUpperCase()+this.S[i].toString(16).toUpperCase()+'00'+this.P[i].toString(16).toUpperCase()+'XX';
         Ckey = '0x'+this.F[i].toString(16).toUpperCase()+this.S[i].toString(16).toUpperCase()+'00'+this.P[i].toString(16).toUpperCase() + ( (this.C[i] < 10) ? '0' : '' ) + this.C[i].toString(16).toUpperCase();
-
-        //detect digitizer types:
-        this.digitizerType[this.P[i]] = ( (this.C[i] > 9) ? 1 : 0 );  //table is sorted by this point, so 1 will overwrite 0 as we count up along the TIG64 channels.
 
         if(this.DAQmap[Fkey]){
             this.DAQmap[Fkey].trigRequestRate = 0;

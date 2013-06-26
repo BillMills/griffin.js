@@ -12,6 +12,8 @@
 		</script>
 
 		<style type="text/css">
+			* { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
+
 			.t1{clear:both; width:25%; float:left; text-align:right; margin:0px 0px 0px 0px;}
 			.t2{width:70%; float:left; text-align:left; margin:0px 0px 0px 0px;}
 			.c1{height:30px;  margin:0px 53px 0px 0px;}
@@ -64,6 +66,214 @@
 		<div id='loading' style='width:100px; height:100px; border:5px solid; border-color:#FFFFFF; border-radius:25px; background:#000000; text-align:center; margin-left:auto; margin-right:auto; position:relative; top:300px'><p style='position:relative; top:50px; font:16px Arial'>Loading<p></div>
 
 	    <script type="text/javascript">
+
+			function main(){
+
+				//scale subtables to match
+				//document.getElementById('el1').setAttribute('style', 'width:auto; height:'+document.getElementById('masterTable').offsetHeight)				
+				//document.getElementById('el2').setAttribute('style', 'width:auto; height:'+document.getElementById('masterTable').offsetHeight)
+
+				//put nice charcodes in the scroll buttons:
+				document.getElementById('bigLeft2D').innerHTML = String.fromCharCode(0x21C7);
+				document.getElementById('bigRight2D').innerHTML = String.fromCharCode(0x21C9);
+				document.getElementById('smallLeft2D').innerHTML = String.fromCharCode(0x2190);
+				document.getElementById('smallRight2D').innerHTML = String.fromCharCode(0x2192);
+				document.getElementById('bigUp').innerHTML = String.fromCharCode(0x21C8);
+				document.getElementById('bigDown').innerHTML = String.fromCharCode(0x21CA);
+				document.getElementById('smallUp').innerHTML = String.fromCharCode(0x2191);
+				document.getElementById('smallDown').innerHTML = String.fromCharCode(0x2193);
+
+				//TBRAGG namespace
+				TBparam = {
+					'svgns' : 'http://www.w3.org/2000/svg',
+					'historyURL' : 'http://midtig04.triumf.ca:8082/HS/',
+					'num_gates' : 0,
+					'old_num_gates' : 0,
+					'GateMax' : [10000,5000,5000,5000,5000],
+					'ResetTime' : 0,
+					'x' : 0,
+					'obj' : 0,
+					'i' : 0,
+					'img' : 0,
+					'name' : 0,
+					'cmd' : 0,
+					'oldLevels' : [0,0,0,0,0],
+					'levels' : [0,0,0,0,0],
+					'rate' : [0,0,0,0,0],
+					'int' : [0,0,0,0,0],
+					'barChartColors' : ['#0000FF', '#FF0000', '#00FFFF', '#E68A2E', '#FF00FF'],
+					'runTimer' : 1000  //0=run stop, 1->300 = seconds left in 5min countdown, 1000 = perpetual mode
+				};
+				TBparam.num_gates = parseInt(ODBAGet("/Analyzer/Parameters/Gate0/NGates"));
+				TBparam.ResetTime = ODBAGet("/Analyzer/Parameters/Gate0/ResetTime");
+
+				//Spectrum viewer namespace (a lot of these could be dropped, don't need the 1D functionality here)
+				SVparam = {
+					"devMode" : 1,
+					"refreshHandler" : 0,
+					'activeCursor' : 0,
+					"statusURL" : 'http://midtig04.triumf.ca:8082',
+					"hostname" : "localhost:9092",
+					"RefreshTime" : 3,
+					"XaxisLimitMin" : 0,
+					"XaxisLimitMax" : 500,
+					"XaxisLimitAbsMax" : 512,
+					"XaxisLength" : 0,
+					"YaxisLimitMin" : 0,
+					"YaxisLimitMax" : 204,
+					"YaxisLength" : 0,
+					"maxYvalue" : 200,
+					"dataColor" : ["#FFFFFF", "#FF0000", "#00FFFF", "#00FF00", "#FF9900", "#0000FF", "#FFFF00", "#FF00CC", "#00CC00", "#990099"],
+					"XMouseLimitxMin" : 0,
+					"XMouseLimitxMax" : 0,
+					"DataType" : 0,
+					"AxisType" : 0,
+					"Specs" : [],
+					"DisplayedSpecs" : [],
+					"spectrum_names" : [],
+					"NumSpecsDisplayed" : 0,
+					"Fitted" : 0,
+					"FitLimitLower" : -1,
+					"FitLimitUpper" : -1,
+					"word" : 'Hello there',
+					"data" : [],
+					"KnownHostnames" : ["midtig03:9095", "localhost:9092"],
+					"refreshMap" : [0,1,2,5,10],
+					"totalEntries" : 0,
+
+					"canvasID" : 'testCanv',			//id of canvas to draw spectra in
+					"canvas" : 0,
+					"context" : 0,
+					'canvWidth' : 960,					//spectrum canvas width
+					'canvHeight' : 420,					//  "" height
+					"leftMargin" : 100,					//left gutter of plot area
+					"bottomMargin" : 50, 				//bottom gutter of plot area
+					"rightMargin" : 100,				//right gutter of plot area
+					"topMargin" : 20, 					//top gutter of plot area
+					"xAxisPixLength" : 0,				//in pixels
+					"yAxisPixLength" : 0,				//in pixels
+					"tickLength" : 5, 					//axis tickmark length
+					"nXticks" : 6,						//number of ticks on the x axis
+					"nYticks" : 5,						//number of ticks on the y axis
+					"xLabelOffset" : 5, 				//x axis labels sit this far below the bottom of their tick
+					"yLabelOffset" : 5, 				//y axis labels sit this many pix to the left of their tick
+					"binWidth" : 0, 					//width of histo bin in pixels
+					"countHeight" : 0, 					//height in pix accrued by a bin for each count
+					"baseFont" : '18px Arial',			//default font
+					"expFont" : '14px Arial',			//exponent font
+					"clickBounds" : [],					//bounds clicked by the user
+					"fitModeEngage" : 0, 				//determines if the event listeners on the canvas initiate zoom (0) or fit (1) procedures
+					"dataBuffer" : [],					//buffer data so we don't re-fetch it.
+
+					'refreshHandler2D' : 0,
+					'meterRefreshHandler2D' : 0,
+					'canvasID2D' : 'canvas2D',
+					'canvas2D' : 0,
+					'context2D' : 0,
+					'canvWidth2D' : 0,
+					'canvHeight2D' : 0,
+					'binWidth2D' : 0,
+					'binHeight2D' : 0,
+					'XaxisLimitMin2D' : 0,
+					'XaxisLimitMax2D' : 500,
+					'XaxisLimitAbsMax2D' : 500,
+					'YaxisLimitMin2D' : 0,
+					'YaxisLimitMax2D' : 500,
+					'YaxisLimitAbsMax2D' : 500,
+					'xAxisPixLength2D' : 0,
+					'yAxisPixLength2D' : 0,
+					"leftMargin2D" : 100,					//left gutter of plot area
+					"bottomMargin2D" : 70, 				//bottom gutter of plot area
+					"rightMargin2D" : 20,				//right gutter of plot area
+					"topMargin2D" : 50, 					//top gutter of plot area
+					'XaxisLength2D' : 0,
+					'YaxisLength2D' : 0,
+					'onclickXvals' : {'min':-1, 'max':-1},
+					'onclickYvals' : {'min':-1, 'max':-1},
+					'clickX' : {'down':-1, 'up':-1},
+					'clickY' : {'down':-1, 'up':-1},
+					'zMax' : .001,
+					'logZ' : 1,			//turn on log scale for z in 2d plots
+					'logZmin' : -1,
+					'zScaleMargin' : 200
+				};
+
+				//2D canvas:
+				SVparam.canvWidth2D = document.getElementById('spectrumDisplay').offsetWidth*0.9; //window.innerWidth*0.4 + SVparam.zScaleMargin;
+				SVparam.canvHeight2D = document.getElementById('spectrumDisplay').offsetHeight*0.85; //window.innerWidth*0.4;
+				SVparam.canvas2D = document.getElementById('canvas2D');
+				SVparam.context2D = SVparam.canvas2D.getContext('2d');
+				SVparam.canvas2D.setAttribute('width', SVparam.canvWidth2D);
+				SVparam.canvas2D.setAttribute('height', SVparam.canvHeight2D);
+				SVparam.xAxisPixLength2D = SVparam.canvas2D.width - SVparam.leftMargin2D - SVparam.rightMargin2D - SVparam.zScaleMargin;
+				SVparam.yAxisPixLength2D = SVparam.canvas2D.height - SVparam.topMargin2D - SVparam.bottomMargin2D;
+				SVparam.XaxisLength2D = SVparam.XaxisLimitMax2D-SVparam.XaxisLimitMin2D;
+				SVparam.YaxisLength2D = SVparam.YaxisLimitMax2D-SVparam.YaxisLimitMin2D;
+				SVparam.context2D.font = SVparam.baseFont;
+				//SVparam.context2D.shadowBlur = 1;
+				//fake data for now:
+				var i,j;
+
+				//style barchart canvas:
+	    		document.getElementById('rateBars').setAttribute('width', document.getElementById('gateRatesDisplay').offsetWidth*0.90);
+	    		document.getElementById('rateBars').setAttribute('height', document.getElementById('gateRatesDisplay').offsetHeight*0.80);
+
+				//check the appropriate gate radio:
+				TBparam.x="g"+TBparam.num_gates;
+				document.getElementById(TBparam.x).checked=true;
+
+	        	//plug in MIDAS status page link:
+    		    document.getElementById('statusB').setAttribute('onclick', "window.location='"+SVparam.statusURL+"';");
+
+	        	//plug in history page link:
+    		    document.getElementById('historyB').setAttribute('onclick', "window.location='"+TBparam.historyURL+"';");
+
+				//generate the gate interface:
+				document.getElementById('Gate_params').innerHTML = '';
+				for(TBparam.i=0; TBparam.i<TBparam.num_gates; TBparam.i++){
+					document.getElementById('Gate_params').innerHTML += "<br><b>Gate"+(TBparam.i+1)+":</b> Centre of box (x,y): ";
+					document.getElementById('Gate_params').innerHTML += "<input type='text' id='Gatex"+TBparam.i+"' style='width:40px'; onchange='setGateX(this)'>,";
+					document.getElementById('Gate_params').innerHTML += "<input type='text' id='Gatey"+TBparam.i+"' style='width:40px'; onchange='setGateY(this)'>";
+					document.getElementById('Gate_params').innerHTML += "Size: <input type='text' id='GateSize"+TBparam.i+"' style='width:40px'; onchange='setGateSize(this)'><br>";
+				}
+
+				//refresh some things and pull some stuff out of the ODB
+				mod_layout();
+				refreshAll();
+				for(TBparam.i=0; TBparam.i<=TBparam.num_gates; TBparam.i++){
+					TBparam.name="Gatex"+TBparam.i;
+					TBparam.cmd="/Analyzer/Parameters/Gate"+TBparam.i+"/x";
+					document.getElementById(TBparam.name).value=ODBAGet(TBparam.cmd);
+					TBparam.name="Gatey"+TBparam.i;
+					TBparam.cmd="/Analyzer/Parameters/Gate"+TBparam.i+"/y";
+					document.getElementById(TBparam.name).value=ODBAGet(TBparam.cmd);
+					TBparam.name="GateSize"+TBparam.i;
+					TBparam.cmd="/Analyzer/Parameters/Gate"+TBparam.i+"/size";
+					document.getElementById(TBparam.name).value=ODBAGet(TBparam.cmd);
+				}
+
+          		//establish event listeners on 2D spectra:
+				document.getElementById(SVparam.canvasID2D).onmousedown = function(event){mDown2D(event)};
+				document.getElementById(SVparam.canvasID2D).onmouseup = function(event){mUp2D(event)};
+				SVparam.canvas2D.addEventListener('mousemove', function(event){mMove2D(event)}, false);
+				document.getElementById(SVparam.canvasID2D).onmouseout = function(event){document.getElementById('2Dcoords').innerHTML=''};
+
+				//set the refresh rate
+				document.getElementById("refreshRate2D").value = SVparam.RefreshTime;
+
+				//scale head table nicely:
+				//document.getElementById('headTable').setAttribute('style', 'text-align:center; margin-left:auto; margin-right:auto; width:'+document.getElementById('masterTable').offsetWidth)
+				//document.getElementById('branding').setAttribute('style', 'height:85; border-color:#999999; border-left-style:solid; border-bottom-style:solid; border-left-width:5px; border-bottom-width:5px; border-bottom-left-radius:25px; background-color:#333333; margin-bottom:5px; width:'+Math.max(document.getElementById('masterTable').offsetWidth, window.innerWidth)  )
+
+				plot_data2D(1, 'true');
+
+				//kill the spinner and let the page appear
+				document.getElementById('mainBody').setAttribute('style', 'opacity:1');
+				var spinElt = document.getElementById('loading');
+          		spinElt.parentNode.removeChild(spinElt);
+
+			}
+
 	      //load the webfonts, and block the page until they're ready or failed - otherwise lots of rendering bugs happen!
 	      WebFontConfig = { google: { families: [ 'Orbitron', 'Raleway' ] },
 	        loading: function(){
@@ -104,182 +314,88 @@
 				<h2 id='youAreHere' style='position:absolute; display:inline; margin:0px; right:20px;'>TBRAGG Monitor</h2>
 			</div>
 
-			<table id='headTable' class='mainElement' style='width:100%; text-align:center'>
-				<caption>Run Status & Gate Control</caption>
-				<tr>
-					<td>		
-						<table style='text-align:center; width:auto; margin-left:auto; margin-right:auto;'>
-							<tr>
-								<td id="run_status" align='center' style='color:#000000; width:200px'></td>
-								<td id="run_num" style='width:200px;'></td>
-								<td id='dateLine' style='width:200px;'></td>
-								<td style='width:200px; text-align:right'>
-									Refresh Rate: 
-									<select id="refreshRate2D" onchange="SVparam.RefreshTime=this.value; window.clearTimeout(SVparam.refreshHandler2D); plot_data2D(1, 'true'); window.clearTimeout(SVparam.meterRefreshHandler2D); refreshAll()">
-										<option id="r0" value="0">Off</option>
-										<option id="r1" value="1">1s</option>
-										<option id="r2" value="3">3s</option>
-										<option id="r3" value="5">5s</option>
-										<option id="r4" value="10">10s</option>
-									</select>									
-								</td>
-								<td style='width:200px; text-align:left;'>
-									<button id='refresh2D' class='navLink' type="button" value="Refresh Now" onclick="plot_data2D(0, 'true')">Refresh Now</button>
-								</td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<table style='margin-top:10px; margin-left:auto; margin-right:auto; text-align:center'>
-							<tr style='text-align:center; margin-bottom:10px;'>
-								<td align='center' width='100%'>
-									Number of Gates: 1<input type="radio" id="g0" value="0" onclick="set_radios(this)"> 
-									2<input type="radio" id="g1" value="1" onclick="set_radios(this)"> 
-									3<input type="radio" id="g2" value="2" onclick="set_radios(this)"> 
-									4<input type="radio" id="g3" value="3" onclick="set_radios(this)"> 
-								</td>
-							</tr>
-							<tr id='Gate_params'></tr>
-						</table>
-					</td>
-				</tr>
-			</table>
+			<h2 style='margin-bottom:0px; margin-left:auto; margin-right:auto; text-align:center;'>Run Status & Gate Control</h2>
+			<div id='runControl' class='section' style='width:100%; height:auto; text-align:center; padding-top:15px; margin-bottom:10px;'>
+				<div id="run_status" align='center' style='color:#000000; width:12%; display:inline; padding:10px;'></div>
+				<div id="run_num" style='width:12%; display:inline; margin-left:2%;'></div>
+				<div id='dateLine' style='width:12%; display:inline; margin-left:2%;'></div>
+				<div style='width:12%; text-align:right; display:inline; margin-left:2%;'>
+					Refresh Rate: 
+					<select id="refreshRate2D" onchange="SVparam.RefreshTime=this.value; window.clearTimeout(SVparam.refreshHandler2D); plot_data2D(1, 'true'); window.clearTimeout(SVparam.meterRefreshHandler2D); refreshAll()">
+						<option id="r0" value="0">Off</option>
+						<option id="r1" value="1">1s</option>
+						<option id="r2" value="3">3s</option>
+						<option id="r3" value="5">5s</option>
+						<option id="r4" value="10">10s</option>
+					</select>
+				</div>
 
-			<form name="mainform" style='text-align:center; margin-top:30px;'>
-				<table id='masterTable' style='margin-top:10px; position:relative; margin-left:auto; margin-right:auto;'>
-					<tr>
-						<td id='el1'>
+				<div id='nGatesToggle' style='padding-top:0.5%;'>
+					Number of Gates: 1<input type="radio" id="g0" value="0" onclick="set_radios(this)"> 
+					2<input type="radio" id="g1" value="1" onclick="set_radios(this)"> 
+					3<input type="radio" id="g2" value="2" onclick="set_radios(this)"> 
+					4<input type="radio" id="g3" value="3" onclick="set_radios(this)"> 
+				</div>
 
-							<table id='spectrumBlock2D' class='mainElement' style='height:100%;'>
-								<caption>Spectrum Control</caption>
+				<div id='Gate_params' style='padding-top:0.5%;'></div>
+			</div>
 
-								<tr>
-									<td>
-										<table style='text-align:right'>
-											<tr>
-												<td></td>
-											</tr>
 
-											<tr>
-												<td>
-													<div id="limitMistake" style="color:'#00FFFF'"></div>
-												</td>
-											</tr>
+			<h2 style='display:inline; text-align:center; width:60%; float:left; margin-bottom:0px'>Spectrum Control</h2>
+			<h2 style='display:inline; text-align:center; width:38%; float:right; margin-bottom:0px'>Gate Rates</h2>
+			<div id='spectrumDisplay' class='section' style='width:60%; height:80%; float:left;'>
+				<div id='spectrumWrapper' style='width:100%; height:90%; position:relative;'>
+					<form style='width:5%; position:absolute; left:0%; bottom:70px; text-align:right;'>
+						<button id='bigUp' class='navLink' type="button" value=">>" onclick="scrollSpectra(SVparam.YaxisLimitMax2D - SVparam.YaxisLimitMin2D, 'YaxisLimitMin2D', 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D', 'LowerYLimit', 'UpperYLimit'); plot_data2D(0)">U</button><br>
+						<button id='smallUp' class='navLink' type="button" value=">" onclick="scrollSpectra(1, 'YaxisLimitMin2D', 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D', 'LowerYLimit', 'UpperYLimit'); plot_data2D(0)">u</button><br>
+						<button id='smallDown' class='navLink' type="button" value="<" onclick="scrollSpectra(-1, 'YaxisLimitMin2D', 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D', 'LowerYLimit', 'UpperYLimit'); plot_data2D(0)">d</button><br>
+						<button id='bigDown' class='navLink' type="button" value="<<" onclick="scrollSpectra(SVparam.YaxisLimitMin2D - SVparam.YaxisLimitMax2D, 'YaxisLimitMin2D', 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D', 'LowerYLimit', 'UpperYLimit'); plot_data2D(0)">D</button><br>
+						y axis limits:<br>
+						<input type="number" id="UpperYLimit" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D');plot_data2D(0); document.getElementById('LowerYLimit').setAttribute('max', this.value);" min='0' max='500'></input><br>
+						<input type="number" id="LowerYLimit" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'YaxisLimitMin2D', 'YaxisLimitAbsMax2D');plot_data2D(0); document.getElementById('UpperYLimit').setAttribute('min', this.value);" min='0' max='500'></input>  
+						
+						<div id="limitMistake" style="color:'#00FFFF'"></div>
+					</form>
+					<canvas id='canvas2D' style='position:absolute; left:5%; bottom:0%' ></canvas>
+				</div>
 
-											<tr>
-												<td>
-													<button id='bigUp' class='navLink' type="button" value=">>" onclick="scrollSpectra(SVparam.YaxisLimitMax2D - SVparam.YaxisLimitMin2D, 'YaxisLimitMin2D', 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D', 'LowerYLimit', 'UpperYLimit'); plot_data2D(0)">U</button>
-												</td>
-											</tr>
+				<form style='margin-left:100px; display:inline;'>
+					x axis limits:
+					<input type="number" id="LowerXLimit2D" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'XaxisLimitMin2D', 'XaxisLimitAbsMax2D');plot_data2D(0); document.getElementById('UpperXLimit2D').setAttribute('min', this.value);" min='0' max='500'></button>
+					<input type="number" id="UpperXLimit2D" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'XaxisLimitMax2D', 'XaxisLimitAbsMax2D');plot_data2D(0); document.getElementById('LowerXLimit2D').setAttribute('max', this.value);" min='0' max='500'></button>
+					<button id='bigLeft2D' class='navLink' type="button" value="<<" onclick="scrollSpectra(SVparam.XaxisLimitMin2D - SVparam.XaxisLimitMax2D, 'XaxisLimitMin2D', 'XaxisLimitMax2D', 'XaxisLimitAbsMax2D', 'LowerXLimit2D', 'UpperXLimit2D'); plot_data2D(0)"><<</button>
+					<button id='smallLeft2D' class='navLink' type="button" value="<" onclick="scrollSpectra(-1, 'XaxisLimitMin2D', 'XaxisLimitMax2D', 'XaxisLimitAbsMax2D', 'LowerXLimit2D', 'UpperXLimit2D'); plot_data2D(0)"><</button>
+					<button id='smallRight2D' class='navLink' type="button" value=">" onclick="scrollSpectra(1, 'XaxisLimitMin2D', 'XaxisLimitMax2D', 'XaxisLimitAbsMax2D', 'LowerXLimit2D', 'UpperXLimit2D'); plot_data2D(0)">></button>
+					<button id='bigRight2D' class='navLink' type="button" value=">>" onclick="scrollSpectra(SVparam.XaxisLimitMax2D - SVparam.XaxisLimitMin2D, 'XaxisLimitMin2D', 'XaxisLimitMax2D', 'XaxisLimitAbsMax2D', 'LowerXLimit2D', 'UpperXLimit2D'); plot_data2D(0)">>></button>
+					<div id="limitMistake2D" style="color:'#00FFFF'"></div>
+				</form>
 
-											<tr>
-												<td>
-													<button id='smallUp' class='navLink' type="button" value=">" onclick="scrollSpectra(1, 'YaxisLimitMin2D', 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D', 'LowerYLimit', 'UpperYLimit'); plot_data2D(0)">u</button>
-												</td>
-											</tr>
+				<p id="2Dcoords" style='float:right; margin:0px; margin-right:100px'></p>
 
-											<tr>
-												<td>
-													<button id='smallDown' class='navLink' type="button" value="<" onclick="scrollSpectra(-1, 'YaxisLimitMin2D', 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D', 'LowerYLimit', 'UpperYLimit'); plot_data2D(0)">d</button>
-												</td>
-											</tr>
+				<form style='margin-left:100px'>
+					<button id='saveASCIIB' class='navLink' type="button" value="Save ASCII" onclick="dump2D()">Save ASCII</button>	
+					<button id='unzoom2D' class='navLink' type="button" value="Unzoom" onclick="Unzoom();">Unzoom</button>
+				</form>
+			</div>
 
-											<tr>
-												<td>
-													<button id='bigDown' class='navLink' type="button" value="<<" onclick="scrollSpectra(SVparam.YaxisLimitMin2D - SVparam.YaxisLimitMax2D, 'YaxisLimitMin2D', 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D', 'LowerYLimit', 'UpperYLimit'); plot_data2D(0)">D</button>
-												</td>
-											</tr>
+			<div id='gateRatesDisplay' class='section'; style='width:38%; height:80%; float:right; text-align:center;'>
+				<h4 style='display:inline; width:8%'>Max[Hz]</h4>
+				<input type="text" id="MaxT" style="width:9%; display:inline;" onchange="TBparam.GateMax[0]=this.value;"></input>
+				<input type="text" id="MaxG" style="width:9%; display:inline; margin-left:7.2%;" onchange="TBparam.GateMax[1]=this.value;"></input>
+				<input type="text" id="MaxG1" style="width:9%; display:inline; margin-left:7.2%;" onchange="TBparam.GateMax[2]=parseInt(this.value);"></input>
+				<input type="text" id="MaxG2" style="width:9%; display:inline; margin-left:7.2%;" onchange="TBparam.GateMax[3]=parseInt(this.value);"></input>
+				<input type="text" id="MaxG3" style="width:9%; display:inline; margin-left:7.2%;" onchange="TBparam.GateMax[4]=parseInt(this.value);"></input>
 
-											<tr>
-												<td>
-													<input type="number" id="UpperYLimit" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D');plot_data2D(0); document.getElementById('LowerYLimit').setAttribute('max', this.value);" min='0' max='500'></button>
-												</td>
-											</tr>
+				<div id='rateBarCell'>
+					<canvas id='rateBars'> </canvas>
+				</div>
 
-											<tr>
-												<td>
-													<input type="number" id="LowerYLimit" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'YaxisLimitMin2D', 'YaxisLimitAbsMax2D');plot_data2D(0); document.getElementById('UpperYLimit').setAttribute('min', this.value);" min='0' max='500'></button>
-												</td>
-											</tr>
+				<div style='margin-top:10px;'>
+					<p id="Time_display" style='display:inline;'></p> seconds since last reset
+				</div>
+							
+			</div>
 
-											<tr>
-												<td>
-													y axis limits
-												</td>
-											</tr>
-										</table>
-
-									</td>
-
-									<td>
-										<td style='width:auto;'>
-											<canvas id='canvas2D' style='margin-right:10px'></canvas>
-										</td>
-									</td>
-								</tr>
-
-								<tr>
-
-									<td colspan='3' align='left' style='padding:none; text-align:center'>
-										<p id="2Dcoords" style='display:inline;'></p>
-
-										<br>
-
-										x axis limits: 
-										<input type="number" id="LowerXLimit2D" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'XaxisLimitMin2D', 'XaxisLimitAbsMax2D');plot_data2D(0); document.getElementById('UpperXLimit2D').setAttribute('min', this.value);" min='0' max='500'></button>
-										<input type="number" id="UpperXLimit2D" style="width:60px;" onchange="setAxisLimit(parseInt(this.value), this.id, 'XaxisLimitMax2D', 'XaxisLimitAbsMax2D');plot_data2D(0); document.getElementById('LowerXLimit2D').setAttribute('max', this.value);" min='0' max='500'></button>
-										<button id='bigLeft2D' class='navLink' type="button" value="<<" onclick="scrollSpectra(SVparam.XaxisLimitMin2D - SVparam.XaxisLimitMax2D, 'XaxisLimitMin2D', 'XaxisLimitMax2D', 'XaxisLimitAbsMax2D', 'LowerXLimit2D', 'UpperXLimit2D'); plot_data2D(0)"><<</button>
-										<button id='smallLeft2D' class='navLink' type="button" value="<" onclick="scrollSpectra(-1, 'XaxisLimitMin2D', 'XaxisLimitMax2D', 'XaxisLimitAbsMax2D', 'LowerXLimit2D', 'UpperXLimit2D'); plot_data2D(0)"><</button>
-										<button id='smallRight2D' class='navLink' type="button" value=">" onclick="scrollSpectra(1, 'XaxisLimitMin2D', 'XaxisLimitMax2D', 'XaxisLimitAbsMax2D', 'LowerXLimit2D', 'UpperXLimit2D'); plot_data2D(0)">></button>
-										<button id='bigRight2D' style='display:inline;' class='navLink' type="button" value=">>" onclick="scrollSpectra(SVparam.XaxisLimitMax2D - SVparam.XaxisLimitMin2D, 'XaxisLimitMin2D', 'XaxisLimitMax2D', 'XaxisLimitAbsMax2D', 'LowerXLimit2D', 'UpperXLimit2D'); plot_data2D(0)">>></button>
-
-										<br>
-
-										<button id='unzoom2D' class='navLink' type="button" value="Unzoom" onclick="Unzoom();">Unzoom</button>
-										<button id='saveASCIIB' class='navLink' type="button" value="Save ASCII" onclick="dump2D()">Save ASCII</button>																				
-									</td>
-								</tr>
-
-								<tr>
-									<td>
-										<div id='spacer' style='height:300px'></div>
-									</td>
-								</tr>
-
-							</table>
-
-						</td>
-
-						<td id='el2'>
-							<table class='mainElement' style='height:100%'>
-								<caption>Gate Rates</caption>
-								<tr>
-									<td stlye='width:100px !important;'></td>
-									<td class='limitBox'>Upper limit<br><input type="text" id="MaxT" style="width:70px" onchange="TBparam.GateMax[0]=this.value;"></td>
-									<td class='limitBox'>Upper limit<br><input type="text" id="MaxG" style="width:70px" onchange="TBparam.GateMax[1]=this.value;"></td>
-									<td class='limitBox' id="l1" style='opacity:0;'>Upper limit<br><input type="text" id="MaxG1" style="width:70px" onchange="TBparam.GateMax[2]=parseInt(this.value);"></td>
-									<td class='limitBox' id="l2" style='opacity:0;'>Upper limit<br><input type="text" id="MaxG2" style="width:70px" onchange="TBparam.GateMax[3]=parseInt(this.value);"></td>
-									<td class='limitBox' id="l3" style='opacity:0;'>Upper limit<br><input type="text" id="MaxG3" style="width:70px" onchange="TBparam.GateMax[4]=parseInt(this.value);"></td>
-								</tr>
-
-								<tr>
-									<td id='rateBarCell' colspan="6">
-										<canvas id='rateBars'> </canvas>
-									</td>
-								</tr>
-
-								<tr style='text-align:center;'>
-									<td colspan='6'>
-										<span id="Time_display"></span> seconds since last reset
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-				</table>
-			</form>
 		</div>
 
 		<script type="text/javascript">
@@ -310,183 +426,26 @@ function RemoveScaler(Num){
 	img.getElementById('ScalerTot'+Num).textContent="";
 }
 
-/*
-function DrawBars(){
-	var XOffset=120,
-		Color = ['fill:rgb(0,0,255);', 'fill:rgb(255,0,0);', 'fill:rgb(0,255,0);', 'fill:rgb(255,255,0);', 'fill:rgb(102,0,153);'],
-		img = document.getElementById("svgimage"),
-		i, x;
-
-	for(i=0; i<5; i++){
-		x = document.createElementNS(TBparam.svgns,'rect');
-		x.setAttribute('id','Scaler'+i);
-		x.setAttribute('x', 10+(i*XOffset));
-		x.setAttribute('y', 550);
-		x.setAttribute('width','60');
-		x.setAttribute('height', '0');
-		x.setAttribute('transform', 'rotate(180 '+(40+(i*XOffset))+' 550)');
-		x.setAttribute('style',Color[i]);
-		img.appendChild(x);
-		x = document.createElementNS(TBparam.svgns,'text');
-		x.setAttribute('id','ScalerNum'+i);
-		x.setAttribute('x', 40+(i*XOffset));
-		x.setAttribute('y', 30);
-		x.setAttribute('text-anchor', "middle"); 
-		x.textContent="";
-		img.appendChild(x);
-		x = document.createElementNS(TBparam.svgns,'text');
-		x.setAttribute('id','ScalerTot'+i);
-		x.setAttribute('x', 40+(i*XOffset));
-		x.setAttribute('y', 600);
-		x.setAttribute('text-anchor', "middle"); 
-		x.textContent="";
-		img.appendChild(x);
-	}
-}
-
-/*
-function DrawScaler(Num){
-	var XOffset=120,
-		Title = ["Total (Hz)", "Gate1 (Hz)", "Gate2 (Hz)", "Gate3 (Hz)", "Gate4 (Hz)"],
-		Color = ['fill:rgb(0,0,255);', 'fill:rgb(255,0,0);', 'fill:rgb(0,255,0);', 'fill:rgb(255,255,0);', 'fill:rgb(102,0,153);'],
-		img, group, x;
-
-	if(Num<0 || Num>4) return;
-
-	img = document.getElementById("svgimage");
-	group = document.createElementNS(TBparam.svgns,'g');
-	group.setAttribute('id','ScalerGroup'+Num);
-	x = document.createElementNS(TBparam.svgns,'rect');
-	x.setAttribute('id','ScalerBox'+Num);
-	x.setAttribute('x', 10+(Num*XOffset));
-	x.setAttribute('y', 50);
-	x.setAttribute('width','60');
-	x.setAttribute('height','500');
-	x.setAttribute('style','fill:none;stroke-width:1;stroke:rgb(0,0,0)');
-	group.appendChild(x);
-	x = document.createElementNS(TBparam.svgns,'text');
-	x.setAttribute('id','ScalerAxis0'+Num);
-	x.setAttribute('x', 75+(Num*XOffset));
-	x.setAttribute('y', 550);
-	x.setAttribute('text-anchor', "start"); 
-	x.textContent="0";
-	group.appendChild(x);
-	x = document.createElementNS(TBparam.svgns,'text');
-	x.setAttribute('id','ScalerAxis25'+Num);
-	x.setAttribute('x', 75+(Num*XOffset));
-	x.setAttribute('y', 425);
-	x.setAttribute('text-anchor', "start"); 
-	x.textContent=parseInt(TBparam.GateMax[Num]*0.25);
-	group.appendChild(x);
-	x = document.createElementNS(TBparam.svgns,'text');
-	x.setAttribute('id','ScalerAxis50'+Num);	
-	x.setAttribute('x', 75+(Num*XOffset));
-	x.setAttribute('y', 300);
-	x.setAttribute('text-anchor', "start"); 
-	x.textContent=parseInt(TBparam.GateMax[Num]*0.50);
-	group.appendChild(x);
-	x = document.createElementNS(TBparam.svgns,'text');
-	x.setAttribute('id','ScalerAxis75'+Num);
-	x.setAttribute('x', 75+(Num*XOffset));
-	x.setAttribute('y', 175);
-	x.setAttribute('text-anchor', "start"); 
-	x.textContent=parseInt(TBparam.GateMax[Num]*0.75);
-	group.appendChild(x);
-	x = document.createElementNS(TBparam.svgns,'text');
-	x.setAttribute('id','ScalerAxis100'+Num);
-	x.setAttribute('x', 75+(Num*XOffset));
-	x.setAttribute('y', 50);
-	x.setAttribute('text-anchor', "start"); 
-	x.textContent=parseInt(TBparam.GateMax[Num]);
-	group.appendChild(x);
-	x = document.createElementNS(TBparam.svgns,'text');
-	x.setAttribute('id','ScalerLabel'+Num);
-	x.setAttribute('x', 40+(Num*XOffset));
-	x.setAttribute('y', 580);
-	x.setAttribute('text-anchor', "middle"); 
-	x.textContent=Title[Num];
-	group.appendChild(x);
-	img.appendChild(group);
-}
-
-
-function mod_gate_limit(id){
-	var img = document.getElementById("svgimage");
-	img.getElementById('ScalerAxis100'+id).textContent=TBparam.GateMax[id];
-	img.getElementById('ScalerAxis75'+id).textContent=parseInt(TBparam.GateMax[id]*0.75);
-	img.getElementById('ScalerAxis50'+id).textContent=parseInt(TBparam.GateMax[id]*0.50);
-	img.getElementById('ScalerAxis25'+id).textContent=parseInt(TBparam.GateMax[id]*0.25);
-}
-*/
-
 function mod_layout(){
-	//var x;
-/*
-	if(TBparam.num_gates<TBparam.old_num_gates){
-		while(TBparam.old_num_gates>TBparam.num_gates){
-			x=parseInt(TBparam.old_num_gates)+1;
-			RemoveScaler(x);
-			TBparam.old_num_gates--;
-			if(TBparam.old_num_gates<TBparam.num_gates){
-				TBparam.old_num_gates=TBparam.num_gates; 
-				x=parseInt(TBparam.old_num_gates)+1; 
-				RemoveScaler(x); break;
-			}
-		}
-	} else if(TBparam.num_gates>TBparam.old_num_gates){
-		while(TBparam.old_num_gates!=TBparam.num_gates){
-			x=parseInt(TBparam.old_num_gates)+2;
-			if(x>1 && x<5) DrawScaler(x);
-			TBparam.old_num_gates++;
-			if(TBparam.old_num_gates>TBparam.num_gates){
-				TBparam.old_num_gates=TBparam.num_gates; 
-				break;
-			}
-		}
-	}
-/*
-	if(TBparam.num_gates==0){
-		document.getElementById("l1").innerHTML="";
-		document.getElementById("l2").innerHTML="";
-		document.getElementById("l3").innerHTML="";
-	}
 
-	if(TBparam.num_gates==1){
-		document.getElementById("l1").innerHTML="Upper limit<br><input type=\"text\" id=\"MaxG1\" style=\"width:70px\"; onchange=\"TBparam.GateMax[2]=this.value;mod_gate_limit(2);\">";
-		document.getElementById("l2").innerHTML="";
-		document.getElementById("l3").innerHTML="";
-	}
-
-	if(TBparam.num_gates==2){
-		document.getElementById("l1").innerHTML="Upper limit<br><input type=\"text\" id=\"MaxG1\" style=\"width:70px\"; onchange=\"TBparam.GateMax[2]=this.value;mod_gate_limit(2);\">";
-		document.getElementById("l2").innerHTML="Upper limit<br><input type=\"text\" id=\"MaxG2\" style=\"width:70px\"; onchange=\"TBparam.GateMax[3]=this.value;mod_gate_limit(3);\">";
-		document.getElementById("l3").innerHTML="";
-	}
-
-	if(TBparam.num_gates==3){
-		document.getElementById("l1").innerHTML="Upper limit<br><input type=\"text\" id=\"MaxG1\" style=\"width:70px\"; onchange=\"TBparam.GateMax[2]=this.value;mod_gate_limit(2);\">";
-		document.getElementById("l2").innerHTML="Upper limit<br><input type=\"text\" id=\"MaxG2\" style=\"width:70px\"; onchange=\"TBparam.GateMax[3]=this.value;mod_gate_limit(3);\">";
-		document.getElementById("l3").innerHTML="Upper limit<br><input type=\"text\" id=\"MaxG3\" style=\"width:70px\"; onchange=\"TBparam.GateMax[4]=this.value;mod_gate_limit(4);\">";
-	}
-*/
 	// Set initial values
 	document.getElementById("MaxT").value=TBparam.GateMax[0];
 	document.getElementById("MaxG").value=TBparam.GateMax[1];
 	if(TBparam.num_gates>0){
 		document.getElementById("MaxG1").value=TBparam.GateMax[2];
-		document.getElementById("l1").setAttribute('style', 'opacity:1;')
+		document.getElementById("MaxG1").style.opacity = 1;
 	} else
-		document.getElementById("l1").setAttribute('style', 'opacity:0;')
+		document.getElementById("MaxG1").style.opacity = 0;
 	if(TBparam.num_gates>1){
 		document.getElementById("MaxG2").value=TBparam.GateMax[3];
-		document.getElementById("l2").setAttribute('style', 'opacity:1;')
+		document.getElementById("MaxG2").style.opacity=1;
 	} else
-		document.getElementById("l2").setAttribute('style', 'opacity:0;')
+		document.getElementById("MaxG2").style.opacity = 0;
 	if(TBparam.num_gates>2){
 		document.getElementById("MaxG3").value=TBparam.GateMax[4];
-		document.getElementById("l3").setAttribute('style', 'opacity:1;')
+		document.getElementById("MaxG3").style.opacity=1;
 	} else
-		document.getElementById("l3").setAttribute('style', 'opacity:0;')
+		document.getElementById("MaxG3").style.opacity = 0;
 	mod_gate_params();
 }
 
@@ -590,27 +549,27 @@ function refreshAll(){
 	if(secs < 10) secs="0"+secs;
 
 	TimeNow=hrs+":"+mins+":"+secs
-	document.getElementById("dateLine").innerHTML=currentTime+'<br>';
+	document.getElementById("dateLine").innerHTML=currentTime;
 
 	timeElapsed = Math.floor(currentTime.getTime()/1000)-TBparam.ResetTime
 	document.getElementById("Time_display").innerHTML=(timeElapsed);
 
 	if(running==1){
-		document.getElementById("run_status").bgColor="red";
+		document.getElementById("run_status").style['background-color'] = '#FF0000';
 		document.getElementById("run_status").innerHTML="Data Collecting Stopped";
 		TBparam.runTimer = 0;
 	} else {
-		document.getElementById("run_status").bgColor="lime";
+		document.getElementById("run_status").style['background-color'] = '#00FF00';
 		if(TBparam.runTimer < 500 && TBparam.runTimer > 0){	
 			TBparam.runTimer = 300-timeElapsed
 			if(TBparam.runTimer>=0) document.getElementById("run_status").innerHTML= TBparam.runTimer + " s left in run";
 			else{
 				document.getElementById("run_status").innerHTML= '5 min run finalizing'
-				document.getElementById("run_status").bgColor='#FFFF00';
+				document.getElementById("run_status").style['background-color'] = '#FFFF00';
 			}
 		} else if(TBparam.runTimer <= 0){  //5 min run is complete, suspend refresh and save ascii:
 			document.getElementById("run_status").innerHTML= '5 min run finalizing'
-			document.getElementById("run_status").bgColor='#FFFF00';
+			document.getElementById("run_status").style['background-color'] = '#FFFF00';
 			window.clearTimeout(SVparam.refreshHandler2D);
 			window.clearTimeout(SVparam.meterRefreshHandler2D);
 			document.getElementById('saveASCIIB').onclick();
@@ -620,7 +579,9 @@ function refreshAll(){
 			document.getElementById("run_status").innerHTML="Perpetual Run Active";
 	}
 
-	if(SVparam.RefreshTime > 0)SVparam.meterRefreshHandler2D = setTimeout("refreshAll()",SVparam.RefreshTime*1000);
+	//if(SVparam.RefreshTime > 0)SVparam.meterRefreshHandler2D = setTimeout("refreshAll()",SVparam.RefreshTime*1000);
+	//users demand faster bar refresh
+	SVparam.meterRefreshHandler2D = setTimeout("refreshAll()",1000);
 }
 
 function updateBars(frame){
@@ -630,11 +591,11 @@ function updateBars(frame){
 		nFrame = Math.floor(FPS*duration),
 		canvas = document.getElementById('rateBars'),
 		context = canvas.getContext('2d'),
-		textGutter = 60,
-		leftMargin = 40,
-		bottomMargin = canvas.width*0.15,
-		barWidth = 70,
-		yAxisLength = canvas.height*0.85 - bottomMargin,
+		textGutter = canvas.width*0.08,//60,
+		leftMargin = canvas.width*0.08,//40,
+		bottomMargin = canvas.width*0.05,
+		barWidth = canvas.width*0.1,//70,
+		yAxisLength = canvas.height*0.70 - bottomMargin,
 		tickLength = 5,
 		lineWidth = 1,
 		height, i, j, string;
@@ -642,7 +603,7 @@ function updateBars(frame){
 		//style context:
 		context.strokeStyle = '#FFFFFF';
 		context.fillStyle = '#FFFFFF';
-		context.font = '16px Arial';
+		context.font = (16*window.innerWidth/1440)+'px Arial';
 		context.lineWidth = lineWidth;
 
 		//clear canvas:
@@ -670,7 +631,11 @@ function updateBars(frame){
 				context.stroke();
 				context.textBaseline = 'middle';
 				context.fillStyle = '#FFFFFF'
-				context.fillText(j*TBparam.GateMax[i]/4, leftMargin + textGutter + i*(barWidth+textGutter) - tickLength - context.measureText(j*TBparam.GateMax[i]/4).width - 5, canvas.height - bottomMargin - j/4*yAxisLength);
+				context.save();
+				context.translate(leftMargin + textGutter + i*(barWidth+textGutter) - tickLength - 10, canvas.height - bottomMargin - j/4*yAxisLength);
+				context.rotate(-Math.PI/2)
+				context.fillText(j*TBparam.GateMax[i]/4000, -context.measureText(j*TBparam.GateMax[i]/4000).width/2, 0 );
+				context.restore();
 			}
 			//x-axis labels
 			context.textBaseline = 'top';
@@ -683,7 +648,7 @@ function updateBars(frame){
 		context.save();
 		context.translate(leftMargin/2, canvas.height-bottomMargin-yAxisLength/2 + context.measureText('Rate (Hz)').width/2);
 		context.rotate(-Math.PI/2);
-		context.fillText('Rate (Hz)', 0,0);
+		context.fillText('Rate (kHz)', 0,0);
 		context.restore();
 
 		//bar summary data
@@ -1398,7 +1363,7 @@ function Menu_unSelectAll(){
 	if(SVparam.Specs.length>0){
 		while(j<SVparam.Specs.length){
 			i=SVparam.Specs[j];
-			iframeDoc.getElementById("row"+i).setAttribute('bgcolor', "#333333");
+			iframeDoc.getElementById("row"+i).style['background-color'] = "#333333";
 			iframeDoc.getElementById("row"+i).setAttribute('onclick', 'parent.Menu_MakeselectSpectrum(event,'+i+')');
 			j++;
 		}
@@ -1486,7 +1451,7 @@ function GetList(newhost){
 		for(i=0; i<SVparam.spectrum_names.length; i++){
 			row = table.insertRow(i);
 			row.setAttribute('id', "row"+i);
-			row.setAttribute('bgcolor', "#333333");
+			row.setAttribute('background-color', "#333333");
 			row.setAttribute('style', "display:block;cursor:default");
 			// row.setAttribute('onclick', "parent.Menu_selectSpectrum("+i+")");
 			row.setAttribute('onclick', "parent.Menu_MakeselectSpectrum(event,"+i+")");
@@ -1498,7 +1463,7 @@ function GetList(newhost){
 			for(i=0; i<50; i++){
 				row = table.insertRow(i);
 				row.setAttribute('id', "row"+i);
-				row.setAttribute('bgcolor', "#333333");
+				row.setAttribute('background-color', "#333333");
 				row.setAttribute('style', "display:block;cursor:default");
 				iframeDoc.getElementById('row'+i).onclick = function(event){ parent.Menu_MakeselectSpectrum(event, parseInt(this.id.slice(3,this.id.length+1))  )};
 				iframeDoc.getElementById('row'+i).ondblclick = function(){parent.displaySpectrum( parseInt(this.id.slice(3,this.id.length+1)) )};
@@ -1633,7 +1598,7 @@ function Menu_selectSpectrum(id){
 	iframe = document.getElementById('menu_iframe');
 	iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
 	rowID = iframeDoc.getElementById("row"+id);
-	iframeDoc.getElementById("row"+id).setAttribute('bgcolor', "lightblue");
+	iframeDoc.getElementById("row"+id).setAttribute('background-color', "lightblue");
 	iframeDoc.getElementById("row"+id).setAttribute('onclick', 'parent.Menu_unselectSpectrum('+id+')');
 
 	// Add this spectrum to the Specs list
@@ -1733,7 +1698,7 @@ function Menu_unselectSpectrum(id){
 	document.getElementById("displayMistake").innerHTML="";
 	iframe = document.getElementById('menu_iframe');
 	iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-	iframeDoc.getElementById("row"+id).setAttribute('bgcolor', "#333333");
+	iframeDoc.getElementById("row"+id).setAttribute('background-color', "#333333");
 	iframeDoc.getElementById("row"+id).setAttribute('onclick', "parent.Menu_selectSpectrum("+id+")");
 
 	// Remove this spectrum from the parent.Spec array
@@ -1929,6 +1894,8 @@ function plot_data2D(RefreshNow, abandonBuffer){
 	entries = 0,
 	thisData = [];
 	SVparam.entries = [];
+
+	SVparam.context2D.font = (16*window.innerWidth/1440)+'px Raleway';
 
 	//echo back the axis limits in the input textboxes:
 	document.getElementById('LowerXLimit2D').value = SVparam.XaxisLimitMin2D;
@@ -2205,7 +2172,7 @@ function drawZscale(){
 
 	//title
 	SVparam.context2D.save();
-	SVparam.context2D.font = '20px Raleway'
+	SVparam.context2D.font = (20*window.innerWidth/1440)+'px Raleway'
 	SVparam.context2D.translate(x0 + 2*width, y0 + SVparam.yAxisPixLength2D/2 - SVparam.context2D.measureText('log(counts)').width/2)
 	SVparam.context2D.rotate(Math.PI/2);
 	SVparam.context2D.fillText('log ( counts )', 0,0);
@@ -2384,230 +2351,6 @@ function constructHexColor(color){
 // - Make a 2D menu load button
 // - y axis zoomable with mouse and limit entry
 // - 2D data array with each line as all y points of x
-
-			function main(){
-
-				//scale subtables to match
-				document.getElementById('el1').setAttribute('style', 'width:auto; height:'+document.getElementById('masterTable').offsetHeight)				
-				document.getElementById('el2').setAttribute('style', 'width:auto; height:'+document.getElementById('masterTable').offsetHeight)
-
-				//put nice charcodes in the scroll buttons:
-				document.getElementById('bigLeft2D').innerHTML = String.fromCharCode(0x21C7);
-				document.getElementById('bigRight2D').innerHTML = String.fromCharCode(0x21C9);
-				document.getElementById('smallLeft2D').innerHTML = String.fromCharCode(0x2190);
-				document.getElementById('smallRight2D').innerHTML = String.fromCharCode(0x2192);
-				document.getElementById('bigUp').innerHTML = String.fromCharCode(0x21C8);
-				document.getElementById('bigDown').innerHTML = String.fromCharCode(0x21CA);
-				document.getElementById('smallUp').innerHTML = String.fromCharCode(0x2191);
-				document.getElementById('smallDown').innerHTML = String.fromCharCode(0x2193);
-
-				//TBRAGG namespace
-				TBparam = {
-					'svgns' : 'http://www.w3.org/2000/svg',
-					'historyURL' : 'http://midtig04.triumf.ca:8082/HS/',
-					'num_gates' : 0,
-					'old_num_gates' : 0,
-					'GateMax' : [10000,5000,5000,5000,5000],
-					'ResetTime' : 0,
-					'x' : 0,
-					'obj' : 0,
-					'i' : 0,
-					'img' : 0,
-					'name' : 0,
-					'cmd' : 0,
-					'oldLevels' : [0,0,0,0,0],
-					'levels' : [0,0,0,0,0],
-					'rate' : [0,0,0,0,0],
-					'int' : [0,0,0,0,0],
-					'barChartColors' : ['#0000FF', '#FF0000', '#00FF00', '#E68A2E', '#FF00FF'],
-					'runTimer' : 1000  //0=run stop, 1->300 = seconds left in 5min countdown, 1000 = perpetual mode
-				};
-				TBparam.num_gates = parseInt(ODBAGet("/Analyzer/Parameters/Gate0/NGates"));
-				TBparam.ResetTime = ODBAGet("/Analyzer/Parameters/Gate0/ResetTime");
-
-				//Spectrum viewer namespace (a lot of these could be dropped, don't need the 1D functionality here)
-				SVparam = {
-					"devMode" : 1,
-					"refreshHandler" : 0,
-					'activeCursor' : 0,
-					"statusURL" : 'http://midtig04.triumf.ca:8082',
-					"hostname" : "localhost:9092",
-					"RefreshTime" : 3,
-					"XaxisLimitMin" : 0,
-					"XaxisLimitMax" : 500,
-					"XaxisLimitAbsMax" : 512,
-					"XaxisLength" : 0,
-					"YaxisLimitMin" : 0,
-					"YaxisLimitMax" : 204,
-					"YaxisLength" : 0,
-					"maxYvalue" : 200,
-					"dataColor" : ["#FFFFFF", "#FF0000", "#00FFFF", "#00FF00", "#FF9900", "#0000FF", "#FFFF00", "#FF00CC", "#00CC00", "#990099"],
-					"XMouseLimitxMin" : 0,
-					"XMouseLimitxMax" : 0,
-					"DataType" : 0,
-					"AxisType" : 0,
-					"Specs" : [],
-					"DisplayedSpecs" : [],
-					"spectrum_names" : [],
-					"NumSpecsDisplayed" : 0,
-					"Fitted" : 0,
-					"FitLimitLower" : -1,
-					"FitLimitUpper" : -1,
-					"word" : 'Hello there',
-					"data" : [],
-					"KnownHostnames" : ["midtig03:9095", "localhost:9092"],
-					"refreshMap" : [0,1,2,5,10],
-					"totalEntries" : 0,
-
-					"canvasID" : 'testCanv',			//id of canvas to draw spectra in
-					"canvas" : 0,
-					"context" : 0,
-					'canvWidth' : 960,					//spectrum canvas width
-					'canvHeight' : 420,					//  "" height
-					"leftMargin" : 100,					//left gutter of plot area
-					"bottomMargin" : 50, 				//bottom gutter of plot area
-					"rightMargin" : 100,				//right gutter of plot area
-					"topMargin" : 20, 					//top gutter of plot area
-					"xAxisPixLength" : 0,				//in pixels
-					"yAxisPixLength" : 0,				//in pixels
-					"tickLength" : 5, 					//axis tickmark length
-					"nXticks" : 6,						//number of ticks on the x axis
-					"nYticks" : 5,						//number of ticks on the y axis
-					"xLabelOffset" : 5, 				//x axis labels sit this far below the bottom of their tick
-					"yLabelOffset" : 5, 				//y axis labels sit this many pix to the left of their tick
-					"binWidth" : 0, 					//width of histo bin in pixels
-					"countHeight" : 0, 					//height in pix accrued by a bin for each count
-					"baseFont" : '16px Arial',			//default font
-					"expFont" : '12px Arial',			//exponent font
-					"clickBounds" : [],					//bounds clicked by the user
-					"fitModeEngage" : 0, 				//determines if the event listeners on the canvas initiate zoom (0) or fit (1) procedures
-					"dataBuffer" : [],					//buffer data so we don't re-fetch it.
-
-					'refreshHandler2D' : 0,
-					'meterRefreshHandler2D' : 0,
-					'canvasID2D' : 'canvas2D',
-					'canvas2D' : 0,
-					'context2D' : 0,
-					'canvWidth2D' : 0,
-					'canvHeight2D' : 0,
-					'binWidth2D' : 0,
-					'binHeight2D' : 0,
-					'XaxisLimitMin2D' : 0,
-					'XaxisLimitMax2D' : 500,
-					'XaxisLimitAbsMax2D' : 500,
-					'YaxisLimitMin2D' : 0,
-					'YaxisLimitMax2D' : 500,
-					'YaxisLimitAbsMax2D' : 500,
-					'xAxisPixLength2D' : 0,
-					'yAxisPixLength2D' : 0,
-					"leftMargin2D" : 100,					//left gutter of plot area
-					"bottomMargin2D" : 70, 				//bottom gutter of plot area
-					"rightMargin2D" : 20,				//right gutter of plot area
-					"topMargin2D" : 50, 					//top gutter of plot area
-					'XaxisLength2D' : 0,
-					'YaxisLength2D' : 0,
-					'onclickXvals' : {'min':-1, 'max':-1},
-					'onclickYvals' : {'min':-1, 'max':-1},
-					'clickX' : {'down':-1, 'up':-1},
-					'clickY' : {'down':-1, 'up':-1},
-					'zMax' : .001,
-					'logZ' : 1,			//turn on log scale for z in 2d plots
-					'logZmin' : -1,
-					'zScaleMargin' : 200
-				};
-
-				//2D canvas:
-				SVparam.canvWidth2D = window.innerWidth*0.4 + SVparam.zScaleMargin;
-				SVparam.canvHeight2D = window.innerWidth*0.4;
-				SVparam.canvas2D = document.getElementById('canvas2D');
-				SVparam.context2D = SVparam.canvas2D.getContext('2d');
-				SVparam.canvas2D.setAttribute('width', SVparam.canvWidth2D);
-				SVparam.canvas2D.setAttribute('height', SVparam.canvHeight2D);
-				document.getElementById('spectrumBlock2D').setAttribute('width', SVparam.canvWidth2D);
-				SVparam.xAxisPixLength2D = SVparam.canvas2D.width - SVparam.leftMargin2D - SVparam.rightMargin2D - SVparam.zScaleMargin;
-				SVparam.yAxisPixLength2D = SVparam.canvas2D.height - SVparam.topMargin2D - SVparam.bottomMargin2D;
-				SVparam.XaxisLength2D = SVparam.XaxisLimitMax2D-SVparam.XaxisLimitMin2D;
-				SVparam.YaxisLength2D = SVparam.YaxisLimitMax2D-SVparam.YaxisLimitMin2D;
-				SVparam.context2D.font = SVparam.baseFont;
-				//SVparam.context2D.shadowBlur = 1;
-				//fake data for now:
-				var i,j;
-				/*
-				window.thisData = [];
-				for(i=0; i<500; i++){
-					for(j=0; j<500; j++){
-						window.thisData[window.thisData.length] = {'x':i, 'y':j, 'z':Math.exp(-1*((i-350)*(i-350)/2/50/50+(j-200)*(j-200)/2/150/150))}
-						//window.thisData[window.thisData.length] = {'x':i, 'y':j, 'z':i-2}
-					}
-				}
-				*/	
-				/*
-				window.thisData = getData2D(0).split(';');
-				for(i=0; i<window.thisData.length; i++){
-					window.thisData[i] = window.thisData[i].split(',');
-					window.thisData[i] = {'x' : parseInt(window.thisData[i][0]), 'y' : parseInt(window.thisData[i][1]), 'z' : parseInt(window.thisData[i][2])}
-				}
-				*/
-
-				//style barchart canvas:
-	    		document.getElementById('rateBars').setAttribute('width', 750);
-	    		document.getElementById('rateBars').setAttribute('height', 800);
-
-				//check the appropriate gate radio:
-				TBparam.x="g"+TBparam.num_gates;
-				document.getElementById(TBparam.x).checked=true;
-
-	        	//plug in MIDAS status page link:
-    		    document.getElementById('statusB').setAttribute('onclick', "window.location='"+SVparam.statusURL+"';");
-
-	        	//plug in history page link:
-    		    document.getElementById('historyB').setAttribute('onclick', "window.location='"+TBparam.historyURL+"';");
-
-				//generate the gate interface:
-				document.getElementById('Gate_params').innerHTML = '';
-				for(TBparam.i=0; TBparam.i<TBparam.num_gates; TBparam.i++){
-					document.getElementById('Gate_params').innerHTML += "<br><b>Gate"+(TBparam.i+1)+":</b> Centre of box (x,y): ";
-					document.getElementById('Gate_params').innerHTML += "<input type='text' id='Gatex"+TBparam.i+"' style='width:40px'; onchange='setGateX(this)'>,";
-					document.getElementById('Gate_params').innerHTML += "<input type='text' id='Gatey"+TBparam.i+"' style='width:40px'; onchange='setGateY(this)'>";
-					document.getElementById('Gate_params').innerHTML += "Size: <input type='text' id='GateSize"+TBparam.i+"' style='width:40px'; onchange='setGateSize(this)'><br>";
-				}
-
-				//refresh some things and pull some stuff out of the ODB
-				mod_layout();
-				refreshAll();
-				for(TBparam.i=0; TBparam.i<=TBparam.num_gates; TBparam.i++){
-					TBparam.name="Gatex"+TBparam.i;
-					TBparam.cmd="/Analyzer/Parameters/Gate"+TBparam.i+"/x";
-					document.getElementById(TBparam.name).value=ODBAGet(TBparam.cmd);
-					TBparam.name="Gatey"+TBparam.i;
-					TBparam.cmd="/Analyzer/Parameters/Gate"+TBparam.i+"/y";
-					document.getElementById(TBparam.name).value=ODBAGet(TBparam.cmd);
-					TBparam.name="GateSize"+TBparam.i;
-					TBparam.cmd="/Analyzer/Parameters/Gate"+TBparam.i+"/size";
-					document.getElementById(TBparam.name).value=ODBAGet(TBparam.cmd);
-				}
-
-          		//establish event listeners on 2D spectra:
-				document.getElementById(SVparam.canvasID2D).onmousedown = function(event){mDown2D(event)};
-				document.getElementById(SVparam.canvasID2D).onmouseup = function(event){mUp2D(event)};
-				SVparam.canvas2D.addEventListener('mousemove', function(event){mMove2D(event)}, false);
-				document.getElementById(SVparam.canvasID2D).onmouseout = function(event){document.getElementById('2Dcoords').innerHTML=''};
-
-				//set the refresh rate
-				document.getElementById("refreshRate2D").value = SVparam.RefreshTime;
-
-				//scale head table nicely:
-				document.getElementById('headTable').setAttribute('style', 'text-align:center; margin-left:auto; margin-right:auto; width:'+document.getElementById('masterTable').offsetWidth)
-				document.getElementById('branding').setAttribute('style', 'height:85; border-color:#999999; border-left-style:solid; border-bottom-style:solid; border-left-width:5px; border-bottom-width:5px; border-bottom-left-radius:25px; background-color:#333333; margin-bottom:5px; width:'+Math.max(document.getElementById('masterTable').offsetWidth, window.innerWidth)  )
-
-				plot_data2D(1, 'true');
-
-				//kill the spinner and let the page appear
-				document.getElementById('mainBody').setAttribute('style', 'opacity:1');
-				var spinElt = document.getElementById('loading');
-          		spinElt.parentNode.removeChild(spinElt);
-
-			}
 		</script>
 
 	</body>
