@@ -61,6 +61,7 @@ div.tooltip{
 	width:auto; 
 	height:auto; 
 	padding:20px;
+	pointer-events:none;
 }
 
 table.TTtab{

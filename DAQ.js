@@ -751,11 +751,6 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                 //build up arrays and objects to pass to tooltip table builder in the format it expects:
                 for(key in window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]]){
                     if(window.codex.dataKeys.indexOf(key) == -1){
-                        //nextLine +=  window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]][key]['FSPC'] + ': ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]][key]['detector'];
-                        //nextLine += '<br>';
-                        //nextLine += 'Trig Request Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]][key]['trigRequestRate'].toFixed(1) + ' Hz; Data Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]][key]['dataRate'].toFixed(1) + ' Bps';
-                        //nextLine += '<br><br>'
-
                         data[key] = window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]][key]
                         objects[objects.length] = key;
                     }
@@ -768,17 +763,18 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
             document.getElementById(this.detailTooltip.ttDivID).innerHTML = toolTipContent;
             if(cell > this.nCollectors){
                 //split TIG64s by mezzanine:
-                if(objects.length>1){  //TODO: need more robust decision on whether we're looking at a TIG64 or not
+                if(objects.length>10){  //TODO: need more robust decision on whether we're looking at a TIG64 or not
                     split = [0,0];
                     for(i=0; i<objects.length; i++){
-                        if(parseInt(objects[i].slice(7,9), 16) < 5 ) split[0]++;
+                        if(parseInt(objects[i].slice(7,9), 16) < 23 ) split[0]++;
                         else split[1]++;
                     }
+                    window.state.staticTT = 1;
                 } else
                     split = [objects.length]
                 TTtable('DAQTTdetail', data, objects, keys, '', ['FSPC','Device','Trig Request Rate [Hz]', 'Outbound Data Rate [Bps]'], split);
                 //fudge in a title row for mezzanines:
-                if(objects.length>1){
+                if(objects.length>10){
                     table = document.getElementById('DAQTTdetailtable');
                     mezRow = table.insertRow(0);
                     mezCell0 = mezRow.insertCell(0);

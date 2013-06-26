@@ -172,6 +172,9 @@
         //state variables for what the subdetector view is showing: 0->HV, 1->Thresholds, 2->Rate
         window.state.subdetectorView = 2;  //rate by default
 
+        //should the tooltip follow the mouse (0) or appear in a statc position (1, for huge tooltips)
+        window.state.staticTT = 0;
+
         //set up wrapper div dimensions; minimum rendering width = 1440px, height 900px:
         window.renderWidth = Math.max(1440, window.innerWidth);
         window.renderHeight = Math.max(900*0.85,window.innerHeight*0.85)

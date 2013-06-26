@@ -337,6 +337,7 @@ function SHARC(){
 
                 }
                 document.getElementById(this.name+'TT').innerHTML = '';
+                window.state.staticTT = 1;
                 TTtable(this.name+'TT', this.dataBus.SHARC , objects, keys, objects[0].slice(0,5) + ( (objects[0].slice(5,7) == 'DP') ? ' (front)' : ' (back)' ), ['Device','HV [V]', 'Threhsold [ADC Units]', 'Rate [Hz]'], [Math.ceil(objects.length/2),Math.floor(objects.length/2)] );
             } else {  //pads:
                 arrayElt = cell - 100;

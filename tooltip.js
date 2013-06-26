@@ -52,14 +52,21 @@ function Tooltip(ttCanvasID, ttDivID, wrapperID, prefix, postfix){
             that.ttDiv.style.display = 'block';
             that.ttDiv.style.opacity = 0;
 
-            //make the tool tip follow the mouse, but keep it on the screen:
-            that.ttDiv.style.top = Math.min(event.pageY - 10, window.innerHeight + window.pageYOffset - that.ttDiv.offsetHeight);
-            if(event.pageX < that.canvas.offsetWidth || window.renderWidth>15000){
-                that.ttDiv.style.right = 'auto'
-                that.ttDiv.style.left = event.pageX  + 10;
-            }else{
-                that.ttDiv.style.left = 'auto';
-                that.ttDiv.style.right = window.innerWidth - event.pageX + 10;
+            //decide how to position the TT:
+            if(window.state.staticTT){
+                that.ttDiv.style.top = window.innerHeight/2 - that.ttDiv.offsetHeight/2;
+                that.ttDiv.style.left = window.innerWidth/2 - that.ttDiv.offsetWidth/2;
+                that.ttDiv.style.right = 'auto';
+            } else {
+                //make the tool tip follow the mouse, but keep it on the screen:
+                that.ttDiv.style.top = Math.min(event.pageY - 10, window.innerHeight + window.pageYOffset - that.ttDiv.offsetHeight);
+                if(event.pageX < that.canvas.offsetWidth || window.renderWidth>15000){
+                    that.ttDiv.style.right = 'auto'
+                    that.ttDiv.style.left = event.pageX  + 10;
+                }else{
+                    that.ttDiv.style.left = 'auto';
+                    that.ttDiv.style.right = window.innerWidth - event.pageX + 10;
+                }
             }
             //turn the TT on:
             that.ttDiv.style.opacity = 1;
@@ -67,6 +74,9 @@ function Tooltip(ttCanvasID, ttDivID, wrapperID, prefix, postfix){
             //keep track of tooltip position
             that.oldCellIndex = cellIndex;
             that.allowUpdate = 1;
+
+            //return to default TT positioning:
+            window.state.staticTT = 0;
 
         } else {
             document.body.style.cursor = 'auto';
