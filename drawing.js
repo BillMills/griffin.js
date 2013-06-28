@@ -129,6 +129,42 @@ horizPara = function(context, x0, y0, width, height, color, pitch, TT){
 
 }
 
+//stack of four vertical parallelograms for summary view; colors stack left to right:
+vertStack = function(context, X0, Y0, width, height, colors, pitch, TT){
+    var i, y0, x0, dX, dY, stripWidth;
+
+    context.strokeStyle = ( (TT) ? '#123456' : '#999999' );
+
+    //for the pads:
+    if(colors.length==1){
+        vertPara(context, X0, Y0, width, height, colors[0], pitch, TT);  
+        return;
+    }
+
+    if(pitch == 'h'){
+        //center of first strip:
+        y0 = Y0,
+        x0 = X0 - 1.5*(width - height*Math.tan(Math.PI/6))/4,
+        dX = (width - height*Math.tan(Math.PI/6))/4,
+        dY = 0;
+        for(i=0; i<4; i++){
+            vertPara(context, x0+i*dX, y0, (width + 3*height*Math.tan(Math.PI/6))/4, height, colors[i], pitch, TT );
+        }
+    } else {
+        stripWidth = width/4/Math.cos(Math.PI/6);
+        dY = stripWidth*Math.sin(Math.PI/6);
+        dX = width/4;
+        x0 = X0 - 1.5*dX;
+        y0 = Y0 + 1.5*dY;
+        for(i=0; i<4; i++){
+            vertPara(context, x0+i*dX, y0-i*dY, width/4, (height-0.75*width*Math.tan(Math.PI/6)), colors[i], pitch, TT );
+        }
+    }
+
+
+
+}
+
 //paralellogram with vertical stripes
 vertPara = function(context, x0, y0, width, height, color, pitch, TT){
 
@@ -138,6 +174,7 @@ vertPara = function(context, x0, y0, width, height, color, pitch, TT){
         cx = x0 - width/2,
         cy = y0 + height/2;
 
+    context.fillStyle = color;
     context.beginPath();
     context.moveTo(cx,cy);
     if(pitch == 'h'){
