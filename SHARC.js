@@ -13,6 +13,7 @@ function SHARC(){
     this.detailShowing = 0;             //is the detail view on display?
 
     //drawing parameters//////////////////
+    /*
     this.scaleFactor = (this.padsEnabled) ? 0.67 : 1;  //scale down layers D and E to accomodate pads if present
     this.innerQuadRad = 0.02*this.canvasWidth*this.scaleFactor;
     this.outerQuadRad = 0.1*this.canvasWidth*this.scaleFactor;
@@ -26,6 +27,15 @@ function SHARC(){
     this.TTboxWidth = 0.1*this.canvasWidth;
     this.TTboxHeight = 0.2*this.canvasHeight*this.scaleFactor;
     this.padSize = 0.02*this.canvasWidth;
+    */
+    //summary drawing V.2
+    //summary view is laid out on a 15x12 grid:
+    this.cellWidth = this.canvasWidth/15;
+    this.cellHeight = (this.canvasHeight - this.scaleHeight)/12
+    this.quadInnerRad = 0.05*this.cellWidth;
+    this.quadOuterRad = 0.98*this.cellWidth;
+    this.quadSquish = 0.98*this.cellHeight/this.quadOuterRad/2;
+
     //detail view
     this.innerQuadRadDetail = this.canvasHeight*0.1;
     this.outerQuadRadDetail = this.canvasHeight*0.6;
@@ -35,9 +45,140 @@ function SHARC(){
     this.quadDetailBackCenter = (0.7 - 0.1*this.padsEnabled)*this.canvasWidth;
     this.boxDetailFrontLeftEdge = 0.1*this.canvasWidth*(1-this.padsEnabled);
     this.boxDetailBackLeftEdge = (0.52-0.1*this.padsEnabled)*this.canvasWidth;
+    this.scaleDown = 0.9;
 
     //member functions////////////////////
 
+    this.draw = function(frame){
+        var dummyColors4 = ['#000000', '#444444', '#AAAAAA', '#FFFFFF'], i, dummyColors16 = [], x;
+        for(i=0; i<16; i++){
+            x = i.toString(16);
+            dummyColors16[i] = '#'+x+x+x+x+x+x;
+        }
+
+        this.context.fillStyle = '#000000'
+
+        //UPSTREAM//////////////////////////////////////
+        if(this.padsEnabled){
+            //upstream quad pad back
+            quadBack(this.context, 1*this.cellWidth, 11.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, dummyColors4, 0);
+            //upstream quad pad front
+            quadBack(this.context, 1.5*this.cellWidth, 10.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, dummyColors4, 0);        
+        }
+
+        //upstream quad back
+        quadBack(this.context, 2*this.cellWidth, 9.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, dummyColors16, 0);
+        //upstream quad front
+        quadFront(this.context, 2.5*this.cellWidth, 8.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, dummyColors16, 0);
+
+        //3 o'clock upstream DSSD:
+        //pads
+        if(this.padsEnabled){
+            horizStack(this.context, 7.5*this.cellWidth, 3.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
+            horizStack(this.context, 7.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
+        }
+        //back
+        vertPara(this.context, 6.5*this.cellWidth, 4*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, dummyColors4, 'v', 0);
+        //front
+        horizStack(this.context, 5.5*this.cellWidth, 4*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, dummyColors4, 'v', 0);
+
+        //12 o'clock upstream DSSD:
+        //pads
+        if(this.padsEnabled){
+            horizStack(this.context, 3.5*this.cellWidth, 0.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
+            horizStack(this.context, 4.5*this.cellWidth, 0.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
+        }
+        //back
+        horizStack(this.context, 4*this.cellWidth, 1.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, dummyColors4, 'h', 0);
+        //front
+        vertPara(this.context, 4*this.cellWidth, 2.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, dummyColors4, 'h', 0);
+
+        //9 o'clock upstream DSSD:
+        //pads
+        if(this.padsEnabled){
+            horizStack(this.context, 0.5*this.cellWidth, 3.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
+            horizStack(this.context, 0.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
+        }
+        //back
+        vertPara(this.context, 1.5*this.cellWidth, 4*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, dummyColors4, 'v', 0);
+        //front
+        horizStack(this.context, 2.5*this.cellWidth, 4*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, dummyColors4, 'v', 0);
+
+        //6 o'clock upstream DSSD:
+        //pads
+        if(this.padsEnabled){
+            horizStack(this.context, 3.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
+            horizStack(this.context, 4.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
+        }
+        //back
+        horizStack(this.context, 4*this.cellWidth, 6.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, dummyColors4, 'h', 0);
+        //front
+        vertPara(this.context, 4*this.cellWidth, 5.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, dummyColors4, 'h', 0);
+
+        //DOWNSTREAM//////////////////////////////////
+        if(this.padsEnabled){
+            //downstream quad pad back
+            quadBack(this.context, 13.5*this.cellWidth, 0.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, dummyColors4, 0);
+            //upstream quad pad front
+            quadBack(this.context, 13*this.cellWidth, 1.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, dummyColors4, 0);        
+        }
+
+        //upstream quad back
+        quadBack(this.context, 12.5*this.cellWidth, 2.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, dummyColors16, 0);
+        //upstream quad front
+        quadFront(this.context, 12*this.cellWidth, 3.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, dummyColors16, 0);
+
+        //3 o'clock downstream DSSD:
+        //pads
+        if(this.padsEnabled){
+            horizStack(this.context, 14.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
+            horizStack(this.context, 14.5*this.cellWidth, 8.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
+        }
+        //back
+        vertPara(this.context, 13.5*this.cellWidth, 8*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, dummyColors4, 'v', 0);
+        //front
+        horizStack(this.context, 12.5*this.cellWidth, 8*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, dummyColors4, 'v', 0);
+
+        //12 o'clock downstream DSSD:
+        //pads
+        if(this.padsEnabled){
+            horizStack(this.context, 10.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
+            horizStack(this.context, 11.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
+        }
+        //back
+        horizStack(this.context, 11*this.cellWidth, 5.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, dummyColors4, 'h', 0);
+        //front
+        vertPara(this.context, 11*this.cellWidth, 6.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, dummyColors4, 'h', 0);
+
+        //9 o'clock downstream DSSD:
+        //pads
+        if(this.padsEnabled){
+            horizStack(this.context, 7.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
+            horizStack(this.context, 7.5*this.cellWidth, 8.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
+        }
+        //back
+        vertPara(this.context, 8.5*this.cellWidth, 8*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, dummyColors4, 'v', 0);
+        //front
+        horizStack(this.context, 9.5*this.cellWidth, 8*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, dummyColors4, 'v', 0);
+
+        //6 o'clock downstream DSSD:
+        //pads
+        if(this.padsEnabled){
+            horizStack(this.context, 10.5*this.cellWidth, 11.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
+            horizStack(this.context, 11.5*this.cellWidth, 11.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
+        }
+        //back
+        horizStack(this.context, 11*this.cellWidth, 10.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, dummyColors4, 'h', 0);
+        //front
+        vertPara(this.context, 11*this.cellWidth, 9.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, dummyColors4, 'h', 0);
+
+        if(frame==this.nFrames || frame==0){ 
+            //scale:
+            this.drawScale(this.context);
+        }
+    };
+
+/*
     //draw the summary view
     this.draw = function(frame){
         var colors, i, j, name, increment, index;
@@ -186,7 +327,7 @@ function SHARC(){
 
         }
     };
-
+*/
     this.drawDetail = function(x, frame){  //animatedetail expects the first argument to be the detail context - refactor to eliminate.
         var colors = [], TTcolors = [],
             i, name,

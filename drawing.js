@@ -1,5 +1,275 @@
+//SHARC////////////////////////////////////////////////////////////
+//SHARC assets: x0, y0 = center of shape
+//Quad back summary - azimuthal segments, colors sorted azimuthally
+quadBack = function(context, x0, y0, innerRad, outerRad, squish, colors, TT){
+    
+    var angularStep = (2*Math.PI)/colors.length;
 
-//SHARC////////////////////////////////////////////////////////////////////////////////////////////////
+    for(i=0; i<colors.length; i++){
+        azimuthalSegment(context, x0, y0, innerRad, outerRad, angularStep, i*angularStep, squish, colors[i], TT);
+    }
+
+}
+
+//draws a wedge shaped segment
+azimuthalSegment = function(context, x0, y0, innerRad, outerRad, arc, orientation, squish, color, TT){
+    context.fillStyle = color;
+    context.strokeStyle = ( (TT) ? '#123456' : '#999999' );
+
+    context.save();
+    context.translate(x0, y0);
+    context.scale(1,squish);
+    context.rotate(-orientation);
+    context.beginPath();
+    context.arc(0,0,innerRad, 0, -arc, true);
+    context.lineTo(outerRad*Math.cos(arc), -outerRad*Math.sin(arc));
+    context.arc(0,0,outerRad, -arc, 0, false);
+    context.closePath();
+    context.fill();
+    context.stroke();
+    context.restore();
+}
+
+//Quad front summary - radial segments.  Colors should be sorted first by array position (ie quadrant), then by smallest to largest radius.
+quadFront = function(context, x0, y0, innerRad, outerRad, squish, colors, TT){
+
+    var radStep = (outerRad - innerRad)/4;
+
+    for(i=0; i<colors.length; i++){
+        annularSegment(context, x0, y0, innerRad+(i%4)*radStep, innerRad + ((i%4)+1)*radStep, Math.PI/2, Math.PI/2*Math.floor(i/4), squish, colors[i], TT);
+    }
+
+}
+
+//draws a macaroni-shaped segment that extends <arc> radians CCW from angle <orientation>
+annularSegment = function(context, x0, y0, innerRad, outerRad, arc, orientation, squish, color, TT){
+
+    context.fillStyle = color;
+    context.strokeStyle = ( (TT) ? '#123456' : '#999999' );
+
+    context.save();
+    context.translate(x0, y0);
+    context.scale(1,squish);
+    context.rotate(-orientation);
+    context.beginPath();
+    context.arc(0,0,innerRad, 0, -arc, true);
+    context.lineTo(outerRad*Math.cos(arc), -outerRad*Math.sin(arc));
+    context.arc(0,0,outerRad, -arc, 0, false);
+    context.closePath();
+    context.fill();
+    context.stroke();
+    context.restore();
+
+}
+
+//stack of four horizontal parallelograms for summary view; colors stack bottom to top:
+horizStack = function(context, X0, Y0, width, height, colors, pitch, TT){
+    var i, y0, x0, dX, dY, stripWidth;
+
+    context.strokeStyle = ( (TT) ? '#123456' : '#999999' );
+
+    //for the pads:
+    if(colors.length==1){
+        horizPara(context, X0, Y0, width, height, colors[0], pitch, TT);  
+        return;
+    }
+
+    if(pitch == 'h'){
+        //center of first strip:
+        y0 = Y0 + 1.5*height/4,
+        x0 = X0 - 1.5*height/4*Math.tan(Math.PI/6),
+        dX = height/4*Math.tan(Math.PI/6),
+        dY = height/4;
+        for(i=0; i<4; i++){
+            horizPara(context, x0+i*dX, y0-i*dY, width - 0.75*height*Math.tan(Math.PI/6), height/4, colors[i], pitch, TT );
+        }
+    } else {
+        stripWidth = (height-width*Math.tan(Math.PI/6))/4;
+        x0 = X0;
+        y0 = Y0 + 1.5*stripWidth;
+        dY = stripWidth;
+        dX = 0;
+        for(i=0; i<4; i++){
+            horizPara(context, x0+i*dX, y0-i*dY, width, (height-width*Math.tan(Math.PI/6))/4+width*Math.tan(Math.PI/6), colors[i], pitch, TT );
+        }
+    }
+
+
+
+}
+
+//paralellogram with horizontal stripes - pitch = 'h' for top and bottom parallel to x or 'v' for left and right parallel to y
+horizPara = function(context, x0, y0, width, height, color, pitch, TT){
+
+    var theta = Math.PI/6,
+        yLength, xLength,
+        //cx, cy coords of bottom left corner
+        cx = x0 - width/2,
+        cy = y0 + height/2;
+
+    context.fillStyle = color;
+    context.beginPath();
+    context.moveTo(cx,cy);
+    if(pitch == 'h'){
+        yLength = height / Math.cos(theta);
+        xLength = width - height*Math.tan(theta);
+        context.lineTo(cx + height*Math.tan(theta), cy - height);
+        context.lineTo(cx+width, cy-height);
+        context.lineTo(cx+xLength, cy);
+    } else{
+        xLength = width / Math.cos(theta);
+        yLength = height - width*Math.tan(theta);
+        context.lineTo(cx, cy-yLength);
+        context.lineTo(cx+width, cy-height);
+        context.lineTo(cx+width, cy - (height-yLength) )
+    }
+    context.closePath();
+    context.fill();
+    context.stroke();
+
+}
+
+//paralellogram with vertical stripes
+vertPara = function(context, x0, y0, width, height, color, pitch, TT){
+
+    var theta = Math.PI/6,
+        yLength, xLength,
+        //cx, cy coords of bottom left corner
+        cx = x0 - width/2,
+        cy = y0 + height/2;
+
+    context.beginPath();
+    context.moveTo(cx,cy);
+    if(pitch == 'h'){
+        yLength = height / Math.cos(theta);
+        xLength = width - height*Math.tan(theta);
+        context.lineTo(cx + height*Math.tan(theta), cy - height);
+        context.lineTo(cx+width, cy-height);
+        context.lineTo(cx+xLength, cy);
+    } else{
+        xLength = width / Math.cos(theta);
+        yLength = height - width*Math.tan(theta);
+        context.lineTo(cx, cy-yLength);
+        context.lineTo(cx+width, cy-height);
+        context.lineTo(cx+width, cy - (height-yLength) )
+    }
+    context.closePath();
+    context.fill();
+    context.stroke();
+
+}
+
+radialQuadrant = function(context, x0, y0, innerRad, outerRad, arc, orientation, colors, TT){
+    var i,
+        segments = colors.length,
+        radStep = (outerRad - innerRad) / segments;
+
+    context.save();
+    context.translate(x0,y0);
+    context.rotate(orientation);
+
+    //outline cell or suppress antialiasing, as appropriate
+    if(TT)
+        context.strokeStyle = '#123456';
+    else
+        context.strokeStyle = '#999999';
+
+    for(i=0; i<segments; i++){
+        context.fillStyle = colors[i];
+        context.beginPath();
+        context.arc(0,0,innerRad + i*radStep, -arc/2, arc/2, false);
+        context.arc(0,0,innerRad + (i+1)*radStep, arc/2, -arc/2, true);
+        context.closePath();
+        context.fill();
+        context.stroke();
+    }
+
+    context.restore();
+
+}
+
+azimuthalQuadrant = function(context, x0, y0, innerRad, outerRad, arc, orientation, colors, TT){
+    var i,
+        segments = colors.length,
+        angleStep = arc / segments;
+
+    context.save();
+    context.translate(x0,y0);
+    context.rotate(orientation);
+
+    //outline cell or suppress antialiasing, as appropriate
+    if(TT)
+        context.strokeStyle = '#123456';
+    else
+        context.strokeStyle = '#999999';
+
+    for(i=0; i<segments; i++){
+        context.fillStyle = colors[i];
+        context.beginPath();
+        context.arc(0,0,innerRad, -arc/2 + i*angleStep, -arc/2 + (i+1)*angleStep  , false);
+        context.arc(0,0,outerRad, -arc/2 + (i+1)*angleStep, -arc/2 + i*angleStep, true);
+        context.closePath();
+        context.fill();
+        context.stroke();
+    }
+
+    context.restore();
+
+}
+
+boxFront = function(context, x0,y0, height, width, colors, TT){
+    var i,
+        nStrips = colors.length,
+        stripWidth = height/nStrips;
+
+    //outline cell or suppress antialiasing, as appropriate
+    if(TT)
+        context.strokeStyle = '#123456';
+    else
+        context.strokeStyle = '#999999';
+
+    for(i=0; i<nStrips; i++){
+        context.fillStyle = colors[i];
+        context.fillRect(x0, y0+i*stripWidth, width, stripWidth);
+        context.strokeRect(x0, y0+i*stripWidth, width, stripWidth);
+    }
+}
+
+boxBack = function(context, x0,y0, height, width, colors, TT){
+    var i,
+        nStrips = colors.length,
+        stripWidth = width/nStrips;
+
+    //outline cell or suppress antialiasing, as appropriate
+    if(TT)
+        context.strokeStyle = '#123456';
+    else
+        context.strokeStyle = '#999999';
+
+    for(i=0; i<nStrips; i++){
+        context.fillStyle = colors[i];
+        context.fillRect(x0+i*stripWidth, y0, stripWidth, height);
+        context.strokeRect(x0+i*stripWidth, y0, stripWidth, height);
+    }
+}
+
+padSummaries = function(context, x0, y0, scale, colors, TT){
+
+    //outline cell or suppress antialiasing, as appropriate
+    if(TT)
+        context.strokeStyle = '#123456';
+    else
+        context.strokeStyle = '#999999';   
+
+    context.fillStyle = colors[0];
+    context.fillRect(x0-1.5*scale, y0-scale/2, scale, scale);
+    context.strokeRect(x0-1.5*scale, y0-scale/2, scale, scale);
+
+    context.fillStyle = colors[1];
+    context.fillRect(x0+0.5*scale, y0-scale/2, scale, scale);
+    context.strokeRect(x0+0.5*scale, y0-scale/2, scale, scale);    
+
+}
 
 //draw elliptical arc:
 ellipse = function(context, centerX, centerY, horizRadius, startAngle, endAngle){
@@ -170,119 +440,6 @@ greenRightDetector = function(context, centerX, centerY, scale, phi, rotation, b
     context.restore();   
     context.fill();
     if(bkg == 0)context.stroke();
-}
-
-//SHARC////////////////////////////////////////////////////////////
-radialQuadrant = function(context, x0, y0, innerRad, outerRad, arc, orientation, colors, TT){
-    var i,
-        segments = colors.length,
-        radStep = (outerRad - innerRad) / segments;
-
-    context.save();
-    context.translate(x0,y0);
-    context.rotate(orientation);
-
-    //outline cell or suppress antialiasing, as appropriate
-    if(TT)
-        context.strokeStyle = '#123456';
-    else
-        context.strokeStyle = '#999999';
-
-    for(i=0; i<segments; i++){
-        context.fillStyle = colors[i];
-        context.beginPath();
-        context.arc(0,0,innerRad + i*radStep, -arc/2, arc/2, false);
-        context.arc(0,0,innerRad + (i+1)*radStep, arc/2, -arc/2, true);
-        context.closePath();
-        context.fill();
-        context.stroke();
-    }
-
-    context.restore();
-
-}
-
-azimuthalQuadrant = function(context, x0, y0, innerRad, outerRad, arc, orientation, colors, TT){
-    var i,
-        segments = colors.length,
-        angleStep = arc / segments;
-
-    context.save();
-    context.translate(x0,y0);
-    context.rotate(orientation);
-
-    //outline cell or suppress antialiasing, as appropriate
-    if(TT)
-        context.strokeStyle = '#123456';
-    else
-        context.strokeStyle = '#999999';
-
-    for(i=0; i<segments; i++){
-        context.fillStyle = colors[i];
-        context.beginPath();
-        context.arc(0,0,innerRad, -arc/2 + i*angleStep, -arc/2 + (i+1)*angleStep  , false);
-        context.arc(0,0,outerRad, -arc/2 + (i+1)*angleStep, -arc/2 + i*angleStep, true);
-        context.closePath();
-        context.fill();
-        context.stroke();
-    }
-
-    context.restore();
-
-}
-
-boxFront = function(context, x0,y0, height, width, colors, TT){
-    var i,
-        nStrips = colors.length,
-        stripWidth = height/nStrips;
-
-    //outline cell or suppress antialiasing, as appropriate
-    if(TT)
-        context.strokeStyle = '#123456';
-    else
-        context.strokeStyle = '#999999';
-
-    for(i=0; i<nStrips; i++){
-        context.fillStyle = colors[i];
-        context.fillRect(x0, y0+i*stripWidth, width, stripWidth);
-        context.strokeRect(x0, y0+i*stripWidth, width, stripWidth);
-    }
-}
-
-boxBack = function(context, x0,y0, height, width, colors, TT){
-    var i,
-        nStrips = colors.length,
-        stripWidth = width/nStrips;
-
-    //outline cell or suppress antialiasing, as appropriate
-    if(TT)
-        context.strokeStyle = '#123456';
-    else
-        context.strokeStyle = '#999999';
-
-    for(i=0; i<nStrips; i++){
-        context.fillStyle = colors[i];
-        context.fillRect(x0+i*stripWidth, y0, stripWidth, height);
-        context.strokeRect(x0+i*stripWidth, y0, stripWidth, height);
-    }
-}
-
-padSummaries = function(context, x0, y0, scale, colors, TT){
-
-    //outline cell or suppress antialiasing, as appropriate
-    if(TT)
-        context.strokeStyle = '#123456';
-    else
-        context.strokeStyle = '#999999';   
-
-    context.fillStyle = colors[0];
-    context.fillRect(x0-1.5*scale, y0-scale/2, scale, scale);
-    context.strokeRect(x0-1.5*scale, y0-scale/2, scale, scale);
-
-    context.fillStyle = colors[1];
-    context.fillRect(x0+0.5*scale, y0-scale/2, scale, scale);
-    context.strokeRect(x0+0.5*scale, y0-scale/2, scale, scale);    
-
 }
 
 //Color Scales///////////////////////////////////////////////////////////////////////////////////
