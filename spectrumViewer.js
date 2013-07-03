@@ -613,61 +613,13 @@ function Menu_unSelectAll(){
 	SVparam.Specs = [];
 }
 
-function SetupGetList(){
-	var box, but, i;
-
-	// Black out the screen
-	box = document.createElement('div');
-	box.setAttribute('id', 'hostnameblankbox');
-	box.setAttribute('style', 'position:fixed; top:0; left:0; right:0; bottom:0; border:none; z-index:49; background-color:rgba(190,190,190,0.8); opacity:50%;');
-	document.getElementById('holder').appendChild(box);
-
-	// Request the hostname input from the user
-	box = document.createElement('div');
-	box.setAttribute('id', 'hostnamebox');
-	box.setAttribute('style', 'position:fixed; top:180px; left:0; right:0; border:3px solid black; z-index:50; width:500px; margin:auto; background-color:#A0A0FF;');
-	box.innerHTML = '<center>Please enter a hostname or select a known one from the list:<table width=100%><tr><td align=center id="enterhostbox"></td></tr><tr><td align=center id="knownhostbox"></td></table></center>';
-	document.getElementById('holder').appendChild(box);
-
-	but = document.createElement('input');
-	but.setAttribute('type', 'text');
-	but.setAttribute('id', 'divtext');
-	document.getElementById('enterhostbox').appendChild(but);
-	but = document.createElement('input');
-	but.setAttribute('type', 'button');
-	but.setAttribute('id', 'divtextbutton');
-	but.setAttribute('value', 'ok');
-	but.setAttribute('onclick', 'GetList(divtext.value)');
-	document.getElementById('enterhostbox').appendChild(but);
-	but = document.createElement('input');
-	but.setAttribute('type', 'button');
-	but.setAttribute('id', 'divcancelbutton');
-	but.setAttribute('value', 'cancel');
-	but.setAttribute('onclick', 'GetList(null)');
-	document.getElementById('enterhostbox').appendChild(but);
-
-	for(i=0; i<SVparam.KnownHostnames.length; i++){
-		but = document.createElement('input');
-		but.setAttribute('type', 'button');
-		but.setAttribute('id', 'divbutton'+i);
-		but.setAttribute('value', SVparam.KnownHostnames[i]);
-		but.setAttribute('onclick', 'GetList(this.value)');
-		document.getElementById('knownhostbox').appendChild(but);
-	}
-}
-
 function GetList(newhost){
-	var i, row, table, string,
+	var i, row, table,
 		RemoveTable = 0;
 
 	// Check if a list is already loaded by the hostname being defined
 	// if yes then set a flag for the old list to be removed later in this function
 	if(SVparam.hostname.length>0) RemoveTable=1; 
-
-	// Set the hostname at the top of the page
-    string = document.location.href.slice(7, document.location.href.length);
-    string = string.slice(0,string.indexOf('/'));
-	document.getElementById('youAreHere').innerHTML="Spectrum Viewer - "+string;
 
 	table = document.getElementById("main_table");
 	table.innerHTML = '';
@@ -678,11 +630,10 @@ function GetList(newhost){
 		for(i=0; i<SVparam.spectrum_names.length; i++){
 			row = document.createElement('li');
 			row.setAttribute('id', "row"+i);
-			row.setAttribute('style', "background-color:#333333");
-			row.setAttribute('style', "display:block;cursor:default");
+			row.setAttribute('style', "background-color:#333333; display:block; cursor:default");
 			row.setAttribute('onclick', "Menu_MakeselectSpectrum(event,"+i+")");
 			row.setAttribute('ondblclick', "displaySpectrum("+i+")");
-			document.getElementById('main_table').appendChild(row);
+			table.appendChild(row);
 			document.getElementById('row'+i).innerHTML = SVparam.spectrum_names[i];
 
 		}
@@ -691,29 +642,61 @@ function GetList(newhost){
 			for(i=0; i<50; i++){
 				row = document.createElement('li');
 				row.setAttribute('id', "row"+i);
-				row.setAttribute('style', "background-color:#333333");
-				row.setAttribute('style', "display:block;cursor:default");
-				document.getElementById('main_table').appendChild(row);
+				row.setAttribute('style', "background-color:#333333; display:block; cursor:default");
+				table.appendChild(row);
 				document.getElementById('row'+i).onclick = function(event){ Menu_MakeselectSpectrum(event, parseInt(this.id.slice(3,this.id.length+1))  )};
 				document.getElementById('row'+i).ondblclick = function(){displaySpectrum( parseInt(this.id.slice(3,this.id.length+1)) )};
 				document.getElementById('row'+i).innerHTML ="Spectrum Name "+i;
 				SVparam.spectrum_names[i]="Spectrum Name "+i;
 		}
 	}
+}
 
+function GetList2D(){
+	var i, row, table;
 
-	// Disable text selection in the menu list
-	//if (typeof iframeDoc.body.onselectstart!="undefined") //IE route
-	//	iframeDoc.body.onselectstart=function(){return false}
+	table = document.getElementById("menuTable2D");
+	table.innerHTML = '';
 
-	//else if (typeof iframeDoc.body.style.MozUserSelect!="undefined") //Firefox route
-	//	iframeDoc.body.style.MozUserSelect="none"
+	if(!SVparam.devMode){
 
-	//else //All other route (ie: Opera)
-	//	iframeDoc.body.onmousedown=function(){return false}
-	document.body.onmousedown=function(event){event.preventDefault();}
+	} else {
+		row = document.createElement('li');
+		row.setAttribute('id', 'row2D0');
+		row.setAttribute('style', "background-color:#333333; display:block; cursor:default");
+		table.appendChild(row);
+		document.getElementById('row2D0').innerHTML = 'Gaussian';
+		document.getElementById('row2D0').data = window.thisData;
+		document.getElementById('row2D0').onclick = function(event){select2Dspectra(this.id)};
 
-	plot_data(1);
+		row = document.createElement('li');
+		row.setAttribute('id', 'row2D1');
+		row.setAttribute('style', "background-color:#333333; display:block; cursor:default");
+		table.appendChild(row);
+		document.getElementById('row2D1').innerHTML = 'White Noise';
+		document.getElementById('row2D1').data = window.whiteNoise;
+		document.getElementById('row2D1').onclick = function(event){select2Dspectra(this.id)};
+	}
+
+}
+
+function select2Dspectra(id){
+	var i = 0;
+
+	//unhighlight everyone else:
+	while(document.getElementById('row2D'+i)){
+		document.getElementById('row2D'+i).setAttribute('style', 'background-color:#333333');
+		i++;
+	}
+
+	//highlight this one:
+	document.getElementById(id).setAttribute('style', 'background-color:lightblue');
+
+	//stick the data in the place the plotting function is going to go looking for it at:
+	window.data2D = document.getElementById(id).data;
+
+	//plots ahoy:
+	plot_data2D(1, 'true');
 }
 
 function DisplaySpecs(){
@@ -1125,6 +1108,9 @@ function plot_data2D(RefreshNow, abandonBuffer){
 	document.getElementById('LowerYLimit').value = SVparam.YaxisLimitMin2D;
 	document.getElementById('UpperYLimit').value = SVparam.YaxisLimitMax2D;
 
+	thisData = window.data2D;
+
+/*
 	if(SVparam.devMode){
 		thisData = window.thisData;
 	} else {
@@ -1139,48 +1125,8 @@ function plot_data2D(RefreshNow, abandonBuffer){
 			thisData = SVparam.dataBuffer2D;
 		}
 	}
-/*
-	SVparam.maxYvalue=SVparam.YaxisLimitMax;
-	// Loop through to get the data and set the Y axis limits
-	for(thisSpec=0; thisSpec<SVparam.DisplayedSpecs.length; thisSpec++){
-		// Here call function to get data from the server
-		// thisData[thisSpec]=ODBGet("/Test/spectrum_data[*]","%d");
-		thisData[thisSpec]=getSpecData(SVparam.DisplayedSpecs[thisSpec], abandonBuffer);
-
-		//Find the maximum X value from the size of the data
-		if(thisData[thisSpec].length>SVparam.XaxisLimitAbsMax){
-			SVparam.XaxisLimitAbsMax=thisData[thisSpec].length;
-
-			// Create more datapoints here if required for this spectrum
-		}
-
-		// Find maximum Y value in the part of the spectrum to be displayed
-		if(Math.max.apply(Math, thisData[thisSpec].slice(Math.floor(SVparam.XaxisLimitMin),Math.floor(SVparam.XaxisLimitMax)))>SVparam.maxYvalue){
-			SVparam.maxYvalue=Math.max.apply(Math, thisData[thisSpec].slice(Math.floor(SVparam.XaxisLimitMin),Math.floor(SVparam.XaxisLimitMax)));
-		}
-
-		// Find the sum of everything in the current x range
-		data = thisData[thisSpec].slice(  Math.floor(SVparam.XaxisLimitMin),Math.floor(SVparam.XaxisLimitMax)   );
-		SVparam.totalEntries = 0;
-		for(j=0; j<data.length; j++ ){
-			SVparam.totalEntries += data[j];
-		}
-
-		//report number of entries on canvas:
-		SVparam.entries[thisSpec] = SVparam.totalEntries;
-
-	}// End of for loop
 */
-/*
-	// Adjust the Y axis limit and compression and redraw the axis
-	if(SVparam.maxYvalue>5){
-		if(SVparam.AxisType==0) SVparam.YaxisLimitMax=Math.floor(SVparam.maxYvalue*1);
-		if(SVparam.AxisType==1) SVparam.YaxisLimitMax=SVparam.maxYvalue*10;
-	} else {
-		if(SVparam.AxisType==0) SVparam.YaxisLimitMax=5;
-		if(SVparam.AxisType==1) SVparam.YaxisLimitMax=50;
-	}
-*/
+
 	//update axis range
 	SVparam.XaxisLength2D=SVparam.XaxisLimitMax2D-SVparam.XaxisLimitMin2D;
 	SVparam.YaxisLength2D=SVparam.YaxisLimitMax2D-SVparam.YaxisLimitMin2D;

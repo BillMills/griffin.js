@@ -67,7 +67,7 @@ function SHARC(){
 
             //tooltip:
             if(frame==this.nFrames || frame==0){
-                TTcolors = ['rgba(113,113,113,1)', 'rgba(114,114,114,1)', 'rgba(115,115,115,1)', 'rgba(116,116,116,1)'];
+                TTcolors = ['rgba(114,114,114,1)', 'rgba(113,113,113,1)', 'rgba(116,116,116,1)', 'rgba(115,115,115,1)'];
                 //upstream quad pad back
                 quadBack(this.TTcontext, 1*this.cellWidth, 11.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, TTcolors, 1);
                 //upstream quad pad front
@@ -82,10 +82,10 @@ function SHARC(){
         //upstream quad tooltip:
         if(frame==this.nFrames || frame==0){
             //upstream quad back
-            TTcolors = ['rgba(26,26,26,1)', 'rgba(28,28,28,1)', 'rgba(30,30,30,1)', 'rgba(32,32,32,1)'];
+            TTcolors = ['rgba(28,28,28,1)', 'rgba(26,26,26,1)', 'rgba(32,32,32,1)', 'rgba(30,30,30,1)'];
             quadBack(this.TTcontext, 2*this.cellWidth, 9.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, TTcolors, 1);
             //upstream quad front
-            TTcolors = ['rgba(25,25,25,1)', 'rgba(27,27,27,1)', 'rgba(29,29,29,1)', 'rgba(31,31,31,1)'];
+            TTcolors = ['rgba(27,27,27,1)', 'rgba(25,25,25,1)', 'rgba(31,31,31,1)', 'rgba(29,29,29,1)'];
             quadBack(this.TTcontext, 2.5*this.cellWidth, 8.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, TTcolors, 1);
         }
 
@@ -97,7 +97,7 @@ function SHARC(){
 
             //tooltip:
             if(frame==this.nFrames || frame==0){
-                TTcolors = ['rgba(109,109,109,1)'];
+                TTcolors = ['rgba(111,111,111,1)'];
                 horizStack(this.TTcontext, 7.5*this.cellWidth, 3.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);
                 horizStack(this.TTcontext, 7.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);
             }
@@ -109,10 +109,10 @@ function SHARC(){
         //tooltip:
         if(frame==this.nFrames || frame==0){
             //back
-            TTcolors = ['rgba(17,17,17,1)'];
+            TTcolors = ['rgba(21,21,21,1)'];
             vertStack(this.TTcontext, 6.5*this.cellWidth, 4*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, TTcolors, 'v', 1);
             //front
-            TTcolors = ['rgba(18,18,18,1)'];
+            TTcolors = ['rgba(22,22,22,1)'];
             horizStack(this.TTcontext, 5.5*this.cellWidth, 4*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, TTcolors, 'v', 1);
         }
 
@@ -149,7 +149,7 @@ function SHARC(){
             horizStack(this.context, 0.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
             //tooltip:
             if(frame==this.nFrames || frame==0){
-                TTcolors = ['rgba(111,111,111,1)'];
+                TTcolors = ['rgba(109,109,109,1)'];
                 horizStack(this.TTcontext, 0.5*this.cellWidth, 3.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);
                 horizStack(this.TTcontext, 0.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);                
             } 
@@ -161,10 +161,10 @@ function SHARC(){
         //tooltip:
         if(frame==this.nFrames || frame==0){
             //back
-            TTcolors = ['rgba(21,21,21,1)'];
+            TTcolors = ['rgba(17,17,17,1)'];
             vertStack(this.TTcontext, 1.5*this.cellWidth, 4*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, TTcolors, 'v', 1);
             //front
-            TTcolors = ['rgba(22,22,22,1)'];
+            TTcolors = ['rgba(18,18,18,1)'];
             horizStack(this.TTcontext, 2.5*this.cellWidth, 4*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, TTcolors, 'v', 1);
         }
 
@@ -197,33 +197,33 @@ function SHARC(){
         //DOWNSTREAM//////////////////////////////////
         if(this.padsEnabled){
             //downstream quad pad back
-            quadBack(this.context, 13.5*this.cellWidth, 0.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, dummyColors4, 0);
+            quadBack(this.context, 14*this.cellWidth, 0.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, dummyColors4, 0);
             //upstream quad pad front
-            quadBack(this.context, 13*this.cellWidth, 1.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, dummyColors4, 0);
+            quadBack(this.context, 13.5*this.cellWidth, 1.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, dummyColors4, 0);
 
             //tooltip:
             if(frame==this.nFrames || frame==0){
-                TTcolors = ['rgba(101,101,101,1)', 'rgba(102,102,102,1)', 'rgba(103,103,103,1)', 'rgba(104,104,104,1)'];
+                TTcolors = ['rgba(102,102,102,1)', 'rgba(101,101,101,1)', 'rgba(104,104,104,1)', 'rgba(103,103,103,1)'];
                 //downstream quad pad back
-                quadBack(this.TTcontext, 13.5*this.cellWidth, 0.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, TTcolors, 1);
+                quadBack(this.TTcontext, 14*this.cellWidth, 0.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, TTcolors, 1);
                 //upstream quad pad front
-                quadBack(this.TTcontext, 13*this.cellWidth, 1.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, TTcolors, 1);
+                quadBack(this.TTcontext, 13.5*this.cellWidth, 1.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, TTcolors, 1);
             }
 
         }
 
         //downstream quad back
-        quadBack(this.context, 12.5*this.cellWidth, 2.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, dummyColors16, 0);
+        quadBack(this.context, 13*this.cellWidth, 2.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, dummyColors16, 0);
         //downstream quad front
-        quadFront(this.context, 12*this.cellWidth, 3.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, dummyColors16, 0);
+        quadFront(this.context, 12.5*this.cellWidth, 3.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, dummyColors16, 0);
         //downstream quad tooltip:
         if(frame==this.nFrames || frame==0){
             //downstream quad back
-            TTcolors = ['rgba(2,2,2,1)', 'rgba(4,4,4,1)', 'rgba(6,6,6,1)', 'rgba(8,8,8,1)'];
-            quadBack(this.TTcontext, 12.5*this.cellWidth, 2.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, TTcolors, 1);
+            TTcolors = ['rgba(4,4,4,1)', 'rgba(2,2,2,1)', 'rgba(8,8,8,1)', 'rgba(6,6,6,1)'];
+            quadBack(this.TTcontext, 13*this.cellWidth, 2.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, TTcolors, 1);
             //downstream quad front
-            TTcolors = ['rgba(1,1,1,1)', 'rgba(3,3,3,1)', 'rgba(5,5,5,1)', 'rgba(7,7,7,1)']; 
-            quadBack(this.TTcontext, 12*this.cellWidth, 3.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, TTcolors, 1);
+            TTcolors = ['rgba(3,3,3,1)', 'rgba(1,1,1,1)', 'rgba(7,7,7,1)', 'rgba(5,5,5,1)']; 
+            quadBack(this.TTcontext, 12.5*this.cellWidth, 3.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, TTcolors, 1);
         }
 
         //3 o'clock downstream DSSD:
@@ -233,7 +233,7 @@ function SHARC(){
             horizStack(this.context, 14.5*this.cellWidth, 8.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
             //tooltip:
             if(frame==this.nFrames || frame==0){
-                TTcolors = ['rgba(105,105,105,1)'];
+                TTcolors = ['rgba(107,107,107,1)'];
                 horizStack(this.TTcontext, 14.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);
                 horizStack(this.TTcontext, 14.5*this.cellWidth, 8.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);             
             } 
@@ -245,10 +245,10 @@ function SHARC(){
         //tooltip:
         if(frame==this.nFrames || frame==0){
             //back
-            TTcolors = ['rgba(9,9,9,1)'];
+            TTcolors = ['rgba(13,13,13,1)'];
             vertStack(this.TTcontext, 13.5*this.cellWidth, 8*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, TTcolors, 'v', 1);
             //front
-            TTcolors = ['rgba(10,10,10,1)'];
+            TTcolors = ['rgba(14,14,14,1)'];
             horizStack(this.TTcontext, 12.5*this.cellWidth, 8*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, TTcolors, 'v', 1);
         }
 
@@ -285,7 +285,7 @@ function SHARC(){
             horizStack(this.context, 7.5*this.cellWidth, 8.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
             //tooltip:
             if(frame==this.nFrames || frame==0){
-                TTcolors = ['rgba(107,107,107,1)'];
+                TTcolors = ['rgba(105,105,105,1)'];
                 horizStack(this.TTcontext, 7.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);
                 horizStack(this.TTcontext, 7.5*this.cellWidth, 8.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);           
             }
@@ -297,10 +297,10 @@ function SHARC(){
         //tooltip:
         if(frame==this.nFrames || frame==0){
             //back
-            TTcolors = ['rgba(13,13,13,1)'];
+            TTcolors = ['rgba(9,9,9,1)'];
             vertStack(this.TTcontext, 8.5*this.cellWidth, 8*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, TTcolors, 'v', 1);
             //front
-            TTcolors = ['rgba(14,14,14,1)'];
+            TTcolors = ['rgba(10,10,10,1)'];
             horizStack(this.TTcontext, 9.5*this.cellWidth, 8*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, TTcolors, 'v', 1);
         }
 
@@ -333,6 +333,32 @@ function SHARC(){
         if(frame==this.nFrames || frame==0){ 
             //scale:
             this.drawScale(this.context);
+
+            //orienting arrows:
+            this.context.strokeStyle = '#999999';
+            this.context.lineWidth = 2;
+            //upstream
+            this.context.beginPath();
+            this.context.moveTo(2.5*this.cellWidth, 11.5*this.cellHeight);
+            this.context.lineTo(4*this.cellWidth, 8.5*this.cellHeight);
+            this.context.lineTo(4.2*this.cellWidth, 8.7*this.cellHeight);
+            this.context.stroke();
+            //downstream
+            this.context.beginPath();
+            this.context.moveTo(11*this.cellWidth, 3.5*this.cellHeight);
+            this.context.lineTo(12.5*this.cellWidth, 0.5*this.cellHeight);
+            this.context.lineTo(12.1*this.cellWidth, 0.7*this.cellHeight);
+            this.context.stroke();
+
+            this.context.lineWidth = 1;
+
+            //titles:
+            this.context.fillStyle = '#999999';
+            this.context.font = '20px Orbitron';
+            this.context.textBaseline = 'top';
+            this.context.fillText('Upstream', this.cellWidth*4 - this.context.measureText('Upstream').width/2, this.canvasHeight - this.scaleHeight*0.95);
+            this.context.fillText('Downstream', this.cellWidth*11 - this.context.measureText('Downstream').width/2, this.canvasHeight - this.scaleHeight*0.95);
+            this.context.textBaseline = 'alphabetic';
         }
     };
 

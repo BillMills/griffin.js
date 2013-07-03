@@ -17,7 +17,7 @@ function loadParameters(){
 				"rows" : 12,
 				"columns": [],
 				"rowTitles" : ["Ch.", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"],
-				"alarmThresholds" : [0.8, 0.999, 0.999, 0],
+				"alarmThresholds" : [20, 10000, 100, 0],
 				"scaleMaxima" : [1,1,1,1],
 				"prefix" : ["Demand Voltage: ", "Reported Voltage: ", "Reported Current: ", "Voltage Ramp Up Speed: ", "Voltage Ramp Down Speed", "Temperature: ", "Status: "],
 				"postfix" : ["V", "V", "uA", "V/s", "V/s", "C", ""],
