@@ -132,7 +132,6 @@
 
 				<div id='spectrum1D' class='spectrumWindow' style='width:100%; height:100%; z-index:-1; opacity:0'>
 					<canvas id='testCanv'></canvas>
-					<br><br><p id="textbox"></p>
 
 					<form id='1DwindowInput' style='margin:none; margin-left:100px; display:inline;'>
 						x axis limits:								
@@ -168,7 +167,7 @@
 				<div id='spectrum2D' class='spectrumWindow' style='width:100%; height:100%; position:relative; top:-100%; z-index:-1; opacity:0'>
 					
 					<div id='spectrumWrapper' style='width:100%; height:90%; position:relative;'>
-						<form style='float:left; width:5%; position:absolute; left:0%; bottom:70px; text-align:right;'>
+						<form style='float:left; width:5%; position:absolute; left:0%; bottom:70px; text-align:right; z-index:1;'>
 							<button id='bigUp' class='navLink' type="button" value=">>" onclick="scrollSpectra(SVparam.YaxisLimitMax2D - SVparam.YaxisLimitMin2D, 'YaxisLimitMin2D', 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D', 'LowerYLimit', 'UpperYLimit'); plot_data2D(0)">U</button><br>
 							<button id='smallUp' class='navLink' type="button" value=">" onclick="scrollSpectra(1, 'YaxisLimitMin2D', 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D', 'LowerYLimit', 'UpperYLimit'); plot_data2D(0)">u</button><br>
 							<button id='smallDown' class='navLink' type="button" value="<" onclick="scrollSpectra(-1, 'YaxisLimitMin2D', 'YaxisLimitMax2D', 'YaxisLimitAbsMax2D', 'LowerYLimit', 'UpperYLimit'); plot_data2D(0)">d</button><br>
@@ -179,7 +178,7 @@
 							
 							<div id="limitMistake" style="color:'#00FFFF'"></div>
 						</form>
-						<canvas id='canvas2D' style='position:absolute; right:0%; bottom:0%' ></canvas>
+						<canvas id='canvas2D' style='position:absolute; right:0%; bottom:0%;' ></canvas>
 					</div>
 
 					<form style='margin-left:100px; display:inline;'>
@@ -221,7 +220,7 @@
 			<div id='menus' style='float:left; height:80%; width:19%; margin-left:1%;'>
 
 				<div id='menu1D' class='collapsableMenu' style='float:left; height:50px; width:100%; text-align:center;'>
-					<h3 id='menu1Dtitle' onclick='toggleMenu("menu1D")'>1D Spectra</h3>
+					<h3 id='menu1DTitle' onclick='toggleMenu("menu1D")'>1D Spectra</h3>
 					<div id="spectra1D" style='overflow:scroll; width:100%; height:80%; margin-bottom:5%'>
 						<ol id='main_table' style='width:100%; list-style-type:none;'>
 							<li>Welcome! To begin click 'Load Spectra' below.</li>
@@ -237,7 +236,7 @@
 				</div>
 
 				<div id='menu2D' class='collapsableMenu' style='float:left; height:50px; width:100%; margin-top:2%; text-align:center;'>
-					<h3 onclick='toggleMenu("menu2D")'>2D Spectra</h3>
+					<h3 id='menu2DTitle' onclick='toggleMenu("menu2D")'>2D Spectra</h3>
 					<div id="spectra2D" style='overflow:scroll; width:100%; height:80%; margin-bottom:5%'>
 						<ol id='menuTable2D' style='width:100%; list-style-type:none;'>
 							<li>Welcome! To begin click 'Load Spectra' below.</li>
@@ -248,7 +247,7 @@
 				</div>
 
 				<div id='scopeMenu' class='collapsableMenu' style='float:left; width:100%; height:50px; margin-top:2%; text-align:center;'>
-					<h3 onclick='toggleMenu("scopeMenu")'>Scope Feeds</h3>
+					<h3 id='scopeMenuTitle' onclick='toggleMenu("scopeMenu")'>Scope Feeds</h3>
 				</div>				
 
 			</div>
@@ -291,7 +290,9 @@
 				document.getElementById('bigDown').innerHTML = String.fromCharCode(0x21CA);
 				document.getElementById('smallUp').innerHTML = String.fromCharCode(0x2191);
 				document.getElementById('smallDown').innerHTML = String.fromCharCode(0x2193);
-
+				document.getElementById('menu1DTitle').innerHTML = '1D Spectra ' + String.fromCharCode(0x25B6);
+				document.getElementById('menu2DTitle').innerHTML = '2D Spectra ' + String.fromCharCode(0x25B6);
+				document.getElementById('scopeMenuTitle').innerHTML = 'Scope Feeds ' + String.fromCharCode(0x25B6);
 				//namespace all the global variables in their own object:
 				SVparam = {
 					"devMode" : 1,
@@ -387,7 +388,7 @@
 				SVparam.canvas = document.getElementById(SVparam.canvasID);
 				SVparam.context = SVparam.canvas.getContext('2d');
 				SVparam.canvWidth *= window.innerWidth / 1440;
-				SVparam.canvHeight *= window.innerWidth / 1440;
+				SVparam.canvHeight = window.innerHeight*0.8-100//window.innerWidth / 1440;
 				SVparam.canvas.setAttribute('width', SVparam.canvWidth);
 				SVparam.canvas.setAttribute('height', SVparam.canvHeight);
 				SVparam.xAxisPixLength = SVparam.canvas.width - SVparam.leftMargin - SVparam.rightMargin;

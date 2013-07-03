@@ -1513,9 +1513,18 @@ function toggleMenu(divID){
 
 	var totalHeight = parseInt(document.getElementById('menus').offsetHeight),  //total height of menu bar
 		thisHeight = totalHeight*0.98 - 100,
-		assocDiv;
+		assocDiv, string;
 
 	if(document.getElementById(divID).style.height == '50px'){
+		//change the title arrows as appropriate
+		document.getElementById('menu1DTitle').innerHTML = '1D Spectra ' + String.fromCharCode(0x25B6);
+		document.getElementById('menu2DTitle').innerHTML = '2D Spectra ' + String.fromCharCode(0x25B6);
+		document.getElementById('scopeMenuTitle').innerHTML = 'Scope Feeds ' + String.fromCharCode(0x25B6);
+		if(divID == 'menu1D') string = '1D Spectra ';
+		else if(divID == 'menu2D') string = '2D Spectra ';
+		else if(divID == 'scopeMenu') string = 'Scope Feeds ';
+		document.getElementById(divID+'Title').innerHTML = string + String.fromCharCode(0x25BC);
+
 		//shrink other menus and allow this one to fill the space:
 		document.getElementById('menu1D').style.height = '50px';
 		document.getElementById('menu2D').style.height = '50px';
