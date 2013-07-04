@@ -227,12 +227,13 @@
 						</ol>
 					</div>
 
-					<button id='loadB' class='navLink' type="button" value="Load 1D Spectrum List" onclick='GetList("localhost:9092")'></button>
-					<button id='displayB' class='navLink' type="button" value="Display" onclick="DisplaySpecs()"></button>
-					<button id='overlayB' class='navLink' type="button" value="Overlay" onclick="OverlaySpecs()"></button>
-					<button id='clearB' class='navLink' type="button" value="Clear Selected" onclick="Menu_unSelectAll()"></button>
-					<div id="displayMistake" style="color:#00FFFF"></div>
-					<div id="holder"></div>
+					<div id='subnav1D'>
+						<button id='loadB' class='navLink' type="button" value="Load 1D Spectrum List" onclick='GetList("localhost:9092")'></button>
+						<button id='displayB' class='navLink' type="button" value="Display" onclick="DisplaySpecs()"></button>
+						<button id='overlayB' class='navLink' type="button" value="Overlay" onclick="OverlaySpecs()"></button>
+						<button id='clearB' class='navLink' type="button" value="Clear Selected" onclick="Menu_unSelectAll()"></button>
+						<div id="displayMistake" style="color:#00FFFF"></div>
+					</div>
 				</div>
 
 				<div id='menu2D' class='collapsableMenu' style='float:left; height:50px; width:100%; margin-top:2%; text-align:center;'>
@@ -243,7 +244,9 @@
 						</ol>
 					</div>
 
-					<button id='loadB2D' class='navLink' type="button" value="Load 2D Spectrum List" onclick='GetList2D()'>Load Spectra</button>
+					<div id='subnav2D'>
+						<button id='loadB2D' class='navLink' type="button" value="Load 2D Spectrum List" onclick='GetList2D()'>Load Spectra</button>
+					</div>
 				</div>
 
 				<div id='scopeMenu' class='collapsableMenu' style='float:left; width:100%; height:50px; margin-top:2%; text-align:center;'>
@@ -407,8 +410,16 @@
 				SVparam.XaxisLength2D = SVparam.XaxisLimitMax2D-SVparam.XaxisLimitMin2D;
 				SVparam.YaxisLength2D = SVparam.YaxisLimitMax2D-SVparam.YaxisLimitMin2D;
 				SVparam.context2D.font = SVparam.baseFont;
-				//SVparam.context2D.shadowBlur = 1;
+				//SVparam.context2D.shadowBlur = 1
+				//menus:
+				document.getElementById('spectra1D').style.height = 100 - (document.getElementById('menu1DTitle').offsetHeight + document.getElementById('subnav1D').offsetHeight + 20) / document.getElementById('menus').offsetHeight*100 - 5 + '%';
+				document.getElementById('spectra2D').style.height = 100 - (document.getElementById('menu2DTitle').offsetHeight + document.getElementById('subnav2D').offsetHeight + 20) / document.getElementById('menus').offsetHeight*100 - 5 + '%';
 
+/*
+				console.log([document.getElementById('menus').offsetHeight, document.getElementById('menu1DTitle').offsetHeight, document.getElementById('subnav1D').offsetHeight ])
+				document.getElementById('spectra1D').style.height = parseInt(document.getElementById('menus').offsetHeight)*0.98 - 100 - parseInt(document.getElementById('menu1DTitle').offsetHeight) - parseInt(document.getElementById('subnav1D').offsetHeight);
+				console.log(document.getElementById('spectra1D').style.height)
+*/
 				//fake data for dev mode:
 				var i,j;
 				window.thisData = [];
