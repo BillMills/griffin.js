@@ -18,48 +18,44 @@ function PACES(){
     this.arrayRadius = this.canvasHeight*0.3;
     this.SiLiRadius = this.canvasHeight*0.1;
 
-    //establish data buffers////////////////////////////////////////////////////////////////////////////
-    this.HVcolor = [];
-    this.oldHVcolor = [];
-    this.thresholdColor = [];
-    this.oldThresholdColor = [];
-    this.rateColor = [];
-    this.oldRateColor = [];
-
     //member functions///////////////////////////////////////////////////////////////////
 
     this.draw = function(frame){
 
-    	var i;
+    	var i, name;
     	this.context.strokeStyle = '#999999'
 
         //Thresholds & Rate view///////////////////////////////////////
         //once for the display canvas....
         if(window.state.subdetectorView == 1 || window.state.subdetectorView == 2){
-    	for(i=0; i<5; i++){
+        	for(i=0; i<5; i++){
 
-    		this.context.save();
-    		this.context.translate(this.centerX, this.centerY);
-    		this.context.rotate(i*Math.PI*72/180);
+                name = 'PAC0'+(i+1)+'XN00A';
 
-            if(window.state.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[2*i]), parseHexColor(this.thresholdColor[2*i]), frame/this.nFrames);
-            else if(window.state.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[2*i]), parseHexColor(this.rateColor[2*i]), frame/this.nFrames);
-    		this.context.beginPath();
-    		this.context.arc(0, -this.arrayRadius, this.SiLiRadius, 0, Math.PI);
-    		this.context.closePath();
-            this.context.fill();
-    		this.context.stroke();
+        		this.context.save();
+        		this.context.translate(this.centerX, this.centerY);
+        		this.context.rotate(i*Math.PI*72/180);
 
-            if(window.state.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[2*i+1]), parseHexColor(this.thresholdColor[2*i+1]), frame/this.nFrames);
-            else if(window.state.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[2*i+1]), parseHexColor(this.rateColor[2*i+1]), frame/this.nFrames);
-            this.context.beginPath();
-            this.context.arc(0, -this.arrayRadius, this.SiLiRadius, Math.PI, 0);
-            this.context.closePath();
-            this.context.fill();
-            this.context.stroke();
+                if(window.state.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.PACES[name].oldThresholdColor), parseHexColor(this.dataBus.PACES[name].thresholdColor), frame/this.nFrames);
+                else if(window.state.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.PACES[name].oldRateColor), parseHexColor(this.dataBus.PACES[name].rateColor), frame/this.nFrames);
+        		this.context.beginPath();
+        		this.context.arc(0, -this.arrayRadius, this.SiLiRadius, 0, Math.PI);
+        		this.context.closePath();
+                this.context.fill();
+        		this.context.stroke();
 
-    		this.context.restore();
-    	}
+                name = 'PAC0'+(i+1)+'XN00B';
+
+                if(window.state.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.PACES[name].oldThresholdColor), parseHexColor(this.dataBus.PACES[name].thresholdColor), frame/this.nFrames);
+                else if(window.state.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.PACES[name].oldRateColor), parseHexColor(this.dataBus.PACES[name].rateColor), frame/this.nFrames);
+                this.context.beginPath();
+                this.context.arc(0, -this.arrayRadius, this.SiLiRadius, Math.PI, 0);
+                this.context.closePath();
+                this.context.fill();
+                this.context.stroke();
+
+        		this.context.restore();
+        	}
         }
         //...and again for the tooltip encoding
         for(i=0; i<5; i++){
@@ -67,13 +63,13 @@ function PACES(){
             this.TTcontext.translate(this.centerX, this.centerY);
             this.TTcontext.rotate(i*Math.PI*72/180);
 
-            this.TTcontext.fillStyle = 'rgba('+(2*i)+','+(2*i)+','+(2*i)+',1)';
+            this.TTcontext.fillStyle = 'rgba('+(2*i+1)+','+(2*i+1)+','+(2*i+1)+',1)';
             this.TTcontext.beginPath();
             this.TTcontext.arc(0, -this.arrayRadius, this.SiLiRadius, 0, Math.PI);
             this.TTcontext.closePath();
             this.TTcontext.fill();
 
-            this.TTcontext.fillStyle = 'rgba('+(2*i+1)+','+(2*i+1)+','+(2*i+1)+',1)';
+            this.TTcontext.fillStyle = 'rgba('+(2*i+2)+','+(2*i+2)+','+(2*i+2)+',1)';
             this.TTcontext.beginPath();
             this.TTcontext.arc(0, -this.arrayRadius, this.SiLiRadius, Math.PI, 0);
             this.TTcontext.closePath();
@@ -85,18 +81,21 @@ function PACES(){
 
         //HV view///////////////////////////////////////////
         if(window.state.subdetectorView == 0){
-        for(i=0; i<5; i++){
-            this.context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[i]), parseHexColor(this.HVcolor[i]), frame/this.nFrames);
-            this.context.save();
-            this.context.translate(this.centerX, this.centerY);
-            this.context.rotate(i*Math.PI*72/180);
-            this.context.beginPath();
-            this.context.arc(0, -this.arrayRadius, this.SiLiRadius, 0, 2*Math.PI);
-            this.context.closePath();
-            this.context.fill();
-            this.context.stroke();
-            this.context.restore();
-        }
+            for(i=0; i<5; i++){
+
+                name = 'PAC0'+(i+1)+'XN00A';  //real voltage is plugged into seg. A; seg B voltage contains garbage data, don't use.
+console.log(this.dataBus.PACES[name].HV)
+                this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.PACES[name].oldHVcolor), parseHexColor(this.dataBus.PACES[name].HVcolor), frame/this.nFrames);
+                this.context.save();
+                this.context.translate(this.centerX, this.centerY);
+                this.context.rotate(i*Math.PI*72/180);
+                this.context.beginPath();
+                this.context.arc(0, -this.arrayRadius, this.SiLiRadius, 0, 2*Math.PI);
+                this.context.closePath();
+                this.context.fill();
+                this.context.stroke();
+                this.context.restore();
+            }
         }
 
         if(frame==this.nFrames || frame==0) {
@@ -105,6 +104,8 @@ function PACES(){
         }
     };
 
+
+/*
     this.findCell = function(x, y){
         var imageData = this.TTcontext.getImageData(x,y,1,1);
         var index = -1;
@@ -169,7 +170,7 @@ function PACES(){
         }
 
     };
-
+*/
     //do an initial populate:
     this.update();
 }

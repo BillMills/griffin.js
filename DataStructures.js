@@ -318,13 +318,43 @@ DESCANTDS = function(){
 }
 
 PACESDS = function(){
-	//data arrays:
-	this.HV = [];
-	this.thresholds = [];
-	this.rate = [];
+	var i, name;
 
-	//key map
-	//todo
+	this.PACES = {};
+	this.TTmap = [];
+	for(i=1; i<6; i++){
+		name = 'PAC0'+i+'XN00A';
+		this.PACES[name] = {
+			'HV'		: 0,
+			'threshold' : 0,
+			'rate' 		: 0,
+			'index'		: 2*i-1,
+
+			'oldHVcolor' : '#000000',
+			'HVcolor'	 : '#000000',
+			'oldThresholdColor' : '#000000',
+			'thresholdColor' : '#000000',
+			'oldRateColor' : '#000000',
+			'rateColor' : '#000000'	
+		}
+		this.TTmap[2*i-1] = name;
+
+		name = 'PAC0'+i+'XN00B';
+		this.PACES[name] = {
+			'HV'		: 0,
+			'threshold' : 0,
+			'rate' 		: 0,
+			'index'		: 2*i,
+
+			'oldHVcolor' : '#000000',
+			'HVcolor'	 : '#000000',
+			'oldThresholdColor' : '#000000',
+			'thresholdColor' : '#000000',
+			'oldRateColor' : '#000000',
+			'rateColor' : '#000000'	
+		}
+		this.TTmap[2*i] = name;
+	}
 }
 
 DANTEDS = function(){

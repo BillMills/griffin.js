@@ -290,15 +290,15 @@
 				document.getElementById('bigDown').innerHTML = String.fromCharCode(0x21CA);
 				document.getElementById('smallUp').innerHTML = String.fromCharCode(0x2191);
 				document.getElementById('smallDown').innerHTML = String.fromCharCode(0x2193);
-				document.getElementById('menu1DTitle').innerHTML = '1D Spectra ' + String.fromCharCode(0x25B6);
-				document.getElementById('menu2DTitle').innerHTML = '2D Spectra ' + String.fromCharCode(0x25B6);
-				document.getElementById('scopeMenuTitle').innerHTML = 'Scope Feeds ' + String.fromCharCode(0x25B6);
+				document.getElementById('menu1DTitle').innerHTML = String.fromCharCode(0x25B6) + ' 1D Spectra';
+				document.getElementById('menu2DTitle').innerHTML = String.fromCharCode(0x25B6) + ' 2D Spectra';
+				document.getElementById('scopeMenuTitle').innerHTML = String.fromCharCode(0x25B6) + ' Scope Feeds';
 				//namespace all the global variables in their own object:
 				SVparam = {
 					"devMode" : 1,
 					"refreshHandler" : 0,
 					'activeCursor' : 0,
-					"statusURL" : 'http://midtig04.triumf.ca:8082',
+					"statusURL" : 'http://alphadon.triumf.ca:8082',
 					"hostname" : "localhost:9092",
 					"RefreshTime" : 3,
 					"XaxisLimitMin" : 0,

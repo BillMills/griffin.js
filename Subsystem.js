@@ -273,7 +273,8 @@ function Subsystem(){
         //update tooltip
         this.tooltip.update();
         //update detail level tooltip if it exists:
-        this.detailTooltip.update();
+        if(this.detailTooltip)
+            this.detailTooltip.update();
 
         //animate if on top:
         this.animate();

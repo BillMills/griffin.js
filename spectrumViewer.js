@@ -1517,13 +1517,13 @@ function toggleMenu(divID){
 
 	if(document.getElementById(divID).style.height == '50px'){
 		//change the title arrows as appropriate
-		document.getElementById('menu1DTitle').innerHTML = '1D Spectra ' + String.fromCharCode(0x25B6);
-		document.getElementById('menu2DTitle').innerHTML = '2D Spectra ' + String.fromCharCode(0x25B6);
-		document.getElementById('scopeMenuTitle').innerHTML = 'Scope Feeds ' + String.fromCharCode(0x25B6);
-		if(divID == 'menu1D') string = '1D Spectra ';
-		else if(divID == 'menu2D') string = '2D Spectra ';
-		else if(divID == 'scopeMenu') string = 'Scope Feeds ';
-		document.getElementById(divID+'Title').innerHTML = string + String.fromCharCode(0x25BC);
+		document.getElementById('menu1DTitle').innerHTML = String.fromCharCode(0x25B6) + ' 1D Spectra';
+		document.getElementById('menu2DTitle').innerHTML = String.fromCharCode(0x25B6) + ' 2D Spectra';
+		document.getElementById('scopeMenuTitle').innerHTML = String.fromCharCode(0x25B6) + ' Scope Feeds';
+		if(divID == 'menu1D') string = ' 1D Spectra';
+		else if(divID == 'menu2D') string = ' 2D Spectra';
+		else if(divID == 'scopeMenu') string = ' Scope Feeds';
+		document.getElementById(divID+'Title').innerHTML = String.fromCharCode(0x25BC) + string;
 
 		//shrink other menus and allow this one to fill the space:
 		document.getElementById('menu1D').style.height = '50px';
