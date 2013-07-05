@@ -232,7 +232,10 @@
 						<button id='displayB' class='navLink' type="button" value="Display" onclick="DisplaySpecs()"></button>
 						<button id='overlayB' class='navLink' type="button" value="Overlay" onclick="OverlaySpecs()"></button>
 						<button id='clearB' class='navLink' type="button" value="Clear Selected" onclick="Menu_unSelectAll()"></button>
-						<div id="displayMistake" style="color:#00FFFF"></div>
+						<br>
+						<button id='prev1D' class='navLink' type='button' onclick='prevSpec()'>Previous</button>
+						<button id='next1D' class='navLink' type='button' onclick='nextSpec()'>Next</button>
+						<div id="displayMistake" style="color:#00FFFF; display:none"></div>  <!--TODO: remove / rethink / refactor?-->
 					</div>
 				</div>
 
@@ -312,7 +315,7 @@
 					"YaxisLimitMax" : 204,
 					"YaxisLength" : 0,
 					"maxYvalue" : 200,
-					"dataColor" : ["#FFFFFF", "#FF0000", "#00FFFF", "#00FF00", "#FF9900", "#0000FF", "#FFFF00", "#FF00CC", "#00CC00", "#990099"],
+					"dataColor" : ["#FFFFFF", "#FF0000", "#00FFFF", "#44FF44", "#FF9900", "#0066FF", "#FFFF00", "#FF00CC", "#00CC00", "#994499"],
 					"XMouseLimitxMin" : 0,
 					"XMouseLimitxMax" : 0,
 					"DataType" : 0,

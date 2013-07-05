@@ -350,7 +350,7 @@ function plot_data(RefreshNow, abandonBuffer){
 
 		SVparam.context.textBaseline = 'top';
 		SVparam.context.fillStyle = SVparam.dataColor[thisSpec];
-		SVparam.context.fillText('Entries: '+SVparam.entries[thisSpec], SVparam.canvas.width - SVparam.rightMargin - SVparam.context.measureText('Entries: '+SVparam.entries[thisSpec]).width, thisSpec*16);
+		SVparam.context.fillText(SVparam.spectrum_names[SVparam.DisplayedSpecs[thisSpec]] + ': '+SVparam.entries[thisSpec] + ' entries', SVparam.canvas.width - SVparam.rightMargin - SVparam.context.measureText(SVparam.spectrum_names[SVparam.DisplayedSpecs[thisSpec]] + ': '+SVparam.entries[thisSpec] + 'entries').width, thisSpec*16);
 
 		SVparam.data=thisData[thisSpec].slice();
 
@@ -639,13 +639,14 @@ function GetList(newhost){
 		}
 	} else {
 		// Put in fake list info - COMMENT OUT ONCE ABOVE FUNCTION IS WORKING
-			for(i=0; i<50; i++){
+			for(i=0; i<5; i++){
 				row = document.createElement('li');
 				row.setAttribute('id', "row"+i);
 				row.setAttribute('style', "background-color:#333333; display:block; cursor:default");
 				table.appendChild(row);
+				document.getElementById('row'+i).onmousedown = function(event){event.preventDefault();};
 				document.getElementById('row'+i).onclick = function(event){ Menu_MakeselectSpectrum(event, parseInt(this.id.slice(3,this.id.length+1))  )};
-				document.getElementById('row'+i).ondblclick = function(){displaySpectrum( parseInt(this.id.slice(3,this.id.length+1)) )};
+				//document.getElementById('row'+i).ondblclick = function(){displaySpectrum( parseInt(this.id.slice(3,this.id.length+1)) )};
 				document.getElementById('row'+i).innerHTML ="Spectrum Name "+i;
 				SVparam.spectrum_names[i]="Spectrum Name "+i;
 		}
@@ -707,7 +708,11 @@ function DisplaySpecs(){
 	document.getElementById("displayMistake").innerHTML="";
 
 	if(SVparam.Specs.length>1){
-		document.getElementById("displayMistake").innerHTML="Only one spectrum can be displayed! (use Overlay for multiple spectra)";
+		reset_list_color();
+		SVparam.DisplayedSpecs=[];
+		SVparam.NumSpecsDisplayed=0;
+		drawFrame();
+		OverlaySpecs();
 		return;
 	}
 	if(SVparam.Specs.length==0){
@@ -732,12 +737,59 @@ function DisplaySpecs(){
 	plot_data(0);
 }
 
+function nextSpec(){
+
+	if(SVparam.DisplayedSpecs.length != 1){
+		Menu_unSelectAll();
+		Menu_MakeselectSpectrum('',0);
+
+	} else{
+		Menu_unSelectAll();
+		Menu_MakeselectSpectrum('',Math.min(SVparam.DisplayedSpecs[0] + 1, SVparam.spectrum_names.length-1 ))
+	}
+}
+
+function prevSpec(){
+
+	if(SVparam.DisplayedSpecs.length != 1){
+		Menu_unSelectAll();
+		Menu_MakeselectSpectrum('',SVparam.spectrum_names.length-1);
+
+	} else{
+		Menu_unSelectAll();
+		Menu_MakeselectSpectrum('',Math.max(0,SVparam.DisplayedSpecs[0] - 1))
+	}
+}
+
+function nextSpec(){
+
+	if(SVparam.DisplayedSpecs.length != 1){
+		Menu_unSelectAll();
+		Menu_MakeselectSpectrum('',0);
+
+	} else{
+		Menu_unSelectAll();
+		Menu_MakeselectSpectrum('',SVparam.DisplayedSpecs[0] + 1)
+
+		//console.log(SVparam.DisplayedSpecs[0])
+	}
+}
+
 function OverlaySpecs(){
 	var j, x;
 
 	SVparam.XaxisLimitAbsMax=500;
 	SVparam.YaxisLimitMax=5;
 	document.getElementById("displayMistake").innerHTML="";
+
+	//don't repeat yourself:
+	for(j=0; j<SVparam.Specs.length; j++){
+		if(SVparam.DisplayedSpecs.indexOf(SVparam.Specs[j]) != -1){
+			Menu_unselectSpectrum(SVparam.Specs[j]);
+			OverlaySpecs();
+			return;
+		}
+	}
 
 	if((SVparam.Specs.length+SVparam.NumSpecsDisplayed)>10){
 		document.getElementById("displayMistake").innerHTML="Maximum of 10 spectra can be overlayed";
@@ -758,60 +810,52 @@ function OverlaySpecs(){
 function Menu_MakeselectSpectrum(oEvent,id){
 	var i, id1;
 
-	//alert("MakeSelection: "+id);
+	//cycling with next / prev buttons
+	if(!oEvent){
+		Menu_selectSpectrum(id);
+		DisplaySpecs();
+		return;		
+	}
+
+	oEvent.preventDefault();
+
 	if (oEvent.shiftKey){
 		// Multi-select with mouse button and Shift key 
 		if(SVparam.Specs.length>0){
 			// Call Menu_selectSpectrum multiple times
 			id1=SVparam.Specs[SVparam.Specs.length-1];
 			if(id1>id){
-				for(i=id; i<id1; i++) Menu_selectSpectrum(i);
+				for(i=id; i<id1; i++) Menu_selectSpectrum(i, true);
 			} else {
-				for(i=id1+1; i<=id; i++){ Menu_selectSpectrum(i); }
+				for(i=id1+1; i<=id; i++){ Menu_selectSpectrum(i, true); }
 			}
 		} else {
 			// Even though shift key is used, this is the first spectrum so just select it
 			Menu_selectSpectrum(id);
 		}
+	} else if(oEvent.metaKey){
+		Menu_selectSpectrum(id, true);
 	} else {
 		// Single-select with mouse button only
 		Menu_selectSpectrum(id);
+		DisplaySpecs();
 	}
 }
 
-function Menu_selectSpectrum(id){
+function Menu_selectSpectrum(id, append){
 	var j, rowID;
 
-	document.getElementById("displayMistake").innerHTML="";
+	if(!append) Menu_unSelectAll();
 
-	// Check for duplicates
-	j=0;
-	if(SVparam.DisplayedSpecs.length>0){
-		while(j<SVparam.DisplayedSpecs.length){
-			if(SVparam.DisplayedSpecs[j]!=id) j++;
-			else {
-				SVparam.word='Spectrum "'+SVparam.spectrum_names[id]+'" already displayed, use "Clear Spectra"';
-				document.getElementById("displayMistake").innerHTML=SVparam.word;
-				return;
-			}
-		}
+	if(SVparam.Specs.indexOf(id) == -1){
+
+		rowID = document.getElementById("row"+id);
+		rowID.setAttribute('style', "background-color:lightblue;");
+		rowID.setAttribute('onclick', 'Menu_unselectSpectrum('+id+')');
+
+		// Add this spectrum to the Specs list
+		SVparam.Specs[SVparam.Specs.length]=id;
 	}
-	j=0;
-	if(SVparam.Specs.length>0){
-		while(j<SVparam.Specs.length){
-			if(SVparam.Specs[j]!=id) j++;
-			else{
-				return;
-			}
-		}
-	}
-
-	rowID = document.getElementById("row"+id);
-	rowID.setAttribute('style', "background-color:lightblue;");
-	rowID.setAttribute('onclick', 'Menu_unselectSpectrum('+id+')');
-
-	// Add this spectrum to the Specs list
-	SVparam.Specs[SVparam.Specs.length]=id;
 }
 
 function List_update(id,colorID) {
@@ -902,26 +946,19 @@ function overlaySpectrum(id){
 }
 
 function Menu_unselectSpectrum(id){
-	var j, k;
+	var j;
 
+	//colors and clicks:
 	document.getElementById("displayMistake").innerHTML="";
 	document.getElementById("row"+id).setAttribute('style', "background-color:#333333;");
 	document.getElementById("row"+id).setAttribute('onclick', "Menu_selectSpectrum("+id+")");
 
-	// Remove this spectrum from the parent.Spec array
-	j=0;
-	if(SVparam.Specs.length>0){
-		while(SVparam.Specs[j]!=id){
-			j++;
-		}
-		k=j+1;
-		while(k<SVparam.Specs.length){
-			SVparam.Specs[j]=SVparam.Specs[k];
-			j++; 
-			k++;
-		}
+	// Remove this spectrum from the SVparam.Spec array
+	for(j=0; j<SVparam.Specs.length; j++){
+		if(SVparam.Specs[j] == id)
+			SVparam.Specs.splice(j,1);
 	}
-	SVparam.Specs=SVparam.Specs.slice(0,j);
+
 }
 
 function clearSpecs(){
@@ -1550,6 +1587,7 @@ function toggleMenu(divID){
 	else document.getElementById('recent_list').style.display = 'none';
 
 }
+
 
 // To do list:
 // 
