@@ -639,7 +639,7 @@ function GetList(newhost){
 		}
 	} else {
 		// Put in fake list info - COMMENT OUT ONCE ABOVE FUNCTION IS WORKING
-			for(i=0; i<5; i++){
+			for(i=0; i<50; i++){
 				row = document.createElement('li');
 				row.setAttribute('id', "row"+i);
 				row.setAttribute('style', "background-color:#333333; display:block; cursor:default");
@@ -1552,15 +1552,15 @@ function toggleMenu(divID){
 		thisHeight = totalHeight*0.98 - 100,
 		assocDiv, string;
 
-	if(document.getElementById(divID).style.height == '50px'){
+	if(document.getElementById(divID).style.height == '50px'){ //expand menu:
 		//change the title arrows as appropriate
-		document.getElementById('menu1DTitle').innerHTML = String.fromCharCode(0x25B6) + ' 1D Spectra';
-		document.getElementById('menu2DTitle').innerHTML = String.fromCharCode(0x25B6) + ' 2D Spectra';
-		document.getElementById('scopeMenuTitle').innerHTML = String.fromCharCode(0x25B6) + ' Scope Feeds';
-		if(divID == 'menu1D') string = ' 1D Spectra';
-		else if(divID == 'menu2D') string = ' 2D Spectra';
-		else if(divID == 'scopeMenu') string = ' Scope Feeds';
-		document.getElementById(divID+'Title').innerHTML = String.fromCharCode(0x25BC) + string;
+		document.getElementById('arrow1D').innerHTML = String.fromCharCode(0x25B6);
+		document.getElementById('arrow2D').innerHTML = String.fromCharCode(0x25B6);
+		document.getElementById('arrowScope').innerHTML = String.fromCharCode(0x25B6);
+		if(divID == 'menu1D') string = 'arrow1D';
+		else if(divID == 'menu2D') string = 'arrow2D';
+		else if(divID == 'scopeMenu') string = 'arrowScope';
+		document.getElementById(string).innerHTML = String.fromCharCode(0x25BC);
 
 		//shrink other menus and allow this one to fill the space:
 		document.getElementById('menu1D').style.height = '50px';
@@ -1581,10 +1581,25 @@ function toggleMenu(divID){
 		document.getElementById('scope').style.opacity = 0;
 		document.getElementById(assocDiv).style.opacity = 1;
 		document.getElementById(assocDiv).style['z-index'] = 1
+
+		if(divID == 'menu1D') document.getElementById('recent_list').style.display = 'table';
+		else document.getElementById('recent_list').style.display = 'none';
+
+	} else { //collapse menu:
+		document.getElementById('arrow1D').innerHTML = String.fromCharCode(0x25B6);
+		document.getElementById('arrow2D').innerHTML = String.fromCharCode(0x25B6);
+		document.getElementById('arrowScope').innerHTML = String.fromCharCode(0x25B6);	
+		document.getElementById(divID).style.height = '50px';
+		document.getElementById('spectrum1D').style['z-index'] = -1;
+		document.getElementById('spectrum2D').style['z-index'] = -1;
+		document.getElementById('scope').style['z-index'] = -1;
+		document.getElementById('spectrum1D').style.opacity = 0;
+		document.getElementById('spectrum2D').style.opacity = 0;
+		document.getElementById('scope').style.opacity = 0;
+		document.getElementById('recent_list').style.display = 'none';
 	}
 
-	if(divID == 'menu1D') document.getElementById('recent_list').style.display = 'table';
-	else document.getElementById('recent_list').style.display = 'none';
+
 
 }
 

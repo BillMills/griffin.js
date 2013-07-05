@@ -220,7 +220,8 @@
 			<div id='menus' style='float:left; height:80%; width:19%; margin-left:1%;'>
 
 				<div id='menu1D' class='collapsableMenu' style='float:left; height:50px; width:100%; text-align:center;'>
-					<h3 id='menu1DTitle' onclick='toggleMenu("menu1D")'>1D Spectra</h3>
+					<h3 id='arrow1D' style='display:inline; float:left' onclick='toggleMenu("menu1D")'></h3>
+					<h3 id='menu1DTitle' style='display:inline'>1D Spectra</h3>
 					<div id="spectra1D" style='overflow:scroll; width:100%; height:80%; margin-bottom:5%'>
 						<ol id='main_table' style='width:100%; list-style-type:none;'>
 							<li>Welcome! To begin click 'Load Spectra' below.</li>
@@ -240,7 +241,8 @@
 				</div>
 
 				<div id='menu2D' class='collapsableMenu' style='float:left; height:50px; width:100%; margin-top:2%; text-align:center;'>
-					<h3 id='menu2DTitle' onclick='toggleMenu("menu2D")'>2D Spectra</h3>
+					<h3 id='arrow2D' style='display:inline; float:left' onclick='toggleMenu("menu2D")'></h3>
+					<h3 id='menu2DTitle' style='display:inline'>2D Spectra</h3>
 					<div id="spectra2D" style='overflow:scroll; width:100%; height:80%; margin-bottom:5%'>
 						<ol id='menuTable2D' style='width:100%; list-style-type:none;'>
 							<li>Welcome! To begin click 'Load Spectra' below.</li>
@@ -253,7 +255,8 @@
 				</div>
 
 				<div id='scopeMenu' class='collapsableMenu' style='float:left; width:100%; height:50px; margin-top:2%; text-align:center;'>
-					<h3 id='scopeMenuTitle' onclick='toggleMenu("scopeMenu")'>Scope Feeds</h3>
+					<h3 id='arrowScope' style='display:inline; float:left' onclick='toggleMenu("scopeMenu")'></h3>
+					<h3 id='scopeMenuTitle' style:'display:inline'>Scope Feeds</h3>
 				</div>				
 
 			</div>
@@ -296,9 +299,9 @@
 				document.getElementById('bigDown').innerHTML = String.fromCharCode(0x21CA);
 				document.getElementById('smallUp').innerHTML = String.fromCharCode(0x2191);
 				document.getElementById('smallDown').innerHTML = String.fromCharCode(0x2193);
-				document.getElementById('menu1DTitle').innerHTML = String.fromCharCode(0x25B6) + ' 1D Spectra';
-				document.getElementById('menu2DTitle').innerHTML = String.fromCharCode(0x25B6) + ' 2D Spectra';
-				document.getElementById('scopeMenuTitle').innerHTML = String.fromCharCode(0x25B6) + ' Scope Feeds';
+				document.getElementById('arrow1D').innerHTML = String.fromCharCode(0x25B6);
+				document.getElementById('arrow2D').innerHTML = String.fromCharCode(0x25B6);
+				document.getElementById('arrowScope').innerHTML = String.fromCharCode(0x25B6);
 				//namespace all the global variables in their own object:
 				SVparam = {
 					"devMode" : 1,
