@@ -25,6 +25,16 @@
 			    font-family: 'Raleway', sans-serif;
 			    font-size:14px;
 			}
+			
+			button.navLinkDown{
+				background: #777777; 
+				color: #FFFFFF;
+				border-color: #333333;  
+				border-radius: 5px;
+			    display: inline;
+			    font-family: 'Raleway', sans-serif;
+			    font-size:14px;	
+			}
 
 			table.mainElement{
 				border:5px solid; 
@@ -80,6 +90,10 @@
 
 			:invalid{
 				color: #FF0000;
+			}
+
+			button.navLink:disabled{
+				color: #000000;
 			}
 		</style>
 	</head>
@@ -230,12 +244,13 @@
 
 					<div id='subnav1D'>
 						<button id='loadB' class='navLink' type="button" value="Load 1D Spectrum List" onclick='GetList("localhost:9092")'></button>
-						<button id='displayB' class='navLink' type="button" value="Display" onclick="DisplaySpecs()"></button>
-						<button id='overlayB' class='navLink' type="button" value="Overlay" onclick="OverlaySpecs()"></button>
-						<button id='clearB' class='navLink' type="button" value="Clear Selected" onclick="Menu_unSelectAll()"></button>
+						<button id='displayB' class='navLink' type="button" value="Display" onclick="DisplaySpecs()" disabled></button>
+						<button id='overlayB' class='navLink' type="button" value="Overlay" onclick="OverlaySpecs()" disabled></button>
+						<button id='clearB' class='navLink' type="button" value="Clear Selected" onclick="Menu_unSelectAll()" disabled></button>
+						<button id='gridB' class='navLink' type="button" value="Grid Mode" onclick="toggleGridMode();" disabled>Grid Mode</button>
 						<br>
-						<button id='prev1D' class='navLink' type='button' onclick='prevSpec()'>Previous</button>
-						<button id='next1D' class='navLink' type='button' onclick='nextSpec()'>Next</button>
+						<button id='prev1D' class='navLink' type='button' onclick='prevSpec()' disabled>Previous</button>
+						<button id='next1D' class='navLink' type='button' onclick='nextSpec()' disabled>Next</button>
 						<div id="displayMistake" style="color:#00FFFF; display:none"></div>  <!--TODO: remove / rethink / refactor?-->
 					</div>
 				</div>
@@ -265,7 +280,9 @@
 				<caption style='font: 20px Raleway; margin-top:15px;'>Recently Viewed Spectra</caption>
 			</table>
 
-		</div>
+			<div id='gridView' style='clear:both;'></div>
+
+		</div>	
 
 		<script type="text/javascript">
 
@@ -388,7 +405,8 @@
 					'zMax' : .001,
 					'logZ' : 0,
 					'logZmin' : -1,
-					'zScaleMargin' : 200
+					'zScaleMargin' : 200,
+					'gridMode' : 0
 				};
 				SVparam.XaxisLength = SVparam.XaxisLimitMax-SVparam.XaxisLimitMin;
 				SVparam.YaxisLength = SVparam.YaxisLimitMax-SVparam.YaxisLimitMin;
@@ -397,9 +415,11 @@
 				SVparam.canvas = document.getElementById(SVparam.canvasID);
 				SVparam.context = SVparam.canvas.getContext('2d');
 				SVparam.canvWidth *= window.innerWidth / 1440;
-				SVparam.canvHeight = window.innerHeight*0.8-100//window.innerWidth / 1440;
+				SVparam.canvHeight = window.innerHeight*0.8-100;
 				SVparam.canvas.setAttribute('width', SVparam.canvWidth);
 				SVparam.canvas.setAttribute('height', SVparam.canvHeight);
+				document.getElementById('gridView').style.width = SVparam.canvWidth;
+				document.getElementById('gridView').style.height = SVparam.canvHeight;
 				SVparam.xAxisPixLength = SVparam.canvas.width - SVparam.leftMargin - SVparam.rightMargin;
 				SVparam.yAxisPixLength = SVparam.canvas.height - SVparam.bottomMargin - SVparam.topMargin;
 				SVparam.context.font = SVparam.baseFont;
@@ -475,6 +495,9 @@
 				document.getElementById('mainBody').setAttribute('style', 'opacity:1');
 				var spinElt = document.getElementById('loading');
           		spinElt.parentNode.removeChild(spinElt);
+
+          		//try gridview injection:
+          		injectCanv('gridView', 5)
 			}
 		</script>
 	</body>

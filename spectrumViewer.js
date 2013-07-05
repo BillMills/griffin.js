@@ -617,6 +617,14 @@ function GetList(newhost){
 	var i, row, table,
 		RemoveTable = 0;
 
+	//enable all other 1D buttons
+	document.getElementById('displayB').disabled = false;
+	document.getElementById('overlayB').disabled = false;
+	document.getElementById('clearB').disabled = false;
+	document.getElementById('gridB').disabled = false;
+	document.getElementById('prev1D').disabled = false;
+	document.getElementById('next1D').disabled = false;
+
 	// Check if a list is already loaded by the hostname being defined
 	// if yes then set a flag for the old list to be removed later in this function
 	if(SVparam.hostname.length>0) RemoveTable=1; 
@@ -1599,10 +1607,84 @@ function toggleMenu(divID){
 		document.getElementById('recent_list').style.display = 'none';
 	}
 
+}
 
+//inject a bunch of canvases into a div.  Should pack in rows automatically.
+function injectCanv(divID, nCanv){
+	var div = document.getElementById(divID),
+		width, height, style, i, newCanv;
+
+	//how big should canvases be, in fraction of parent div dimensions?  Packing options are (row, col): (2,1), (2,2), (2,3), (3,3), (3,4), (4,4), (4,5), (4,6).
+	width = '100%';
+	height = '50%';
+	if(nCanv>2){
+		width = '50%';
+		height = '50%';		
+	}
+	if(nCanv>4){
+		width = '33.3%';
+		height = '50%';		
+	}
+	if(nCanv>6){
+		width = '33.3%';
+		height = '33.3%';		
+	}
+	if(nCanv>9){
+		width = '25%';
+		height = '33.3%';		
+	}
+	if(nCanv>12){
+		width = '25%';
+		height = '25%';		
+	}
+	if(nCanv>16){
+		width = '20%';
+		height = '25%';		
+	}
+	if(nCanv>20){
+		width = '16.6%';
+		height = '25%';		
+	}
+
+	//construct style:
+	style = 'width:'+width+'; height:'+height+'; float:left;';
+
+	//inject canvases:
+	for(i=0; i<Math.min(24,nCanv); i++){
+		insertDOM('canvas', 'gridCanv'+i, '', style, divID);
+	}
 
 }
 
+function toggleGridMode(){
+
+	if(SVparam.gridMode){
+		SVparam.gridMode = 0;
+		document.getElementById('gridB').setAttribute('class', 'navLink');
+		document.getElementById('overlayB').disabled = false;
+	} else{
+		SVparam.gridMode = 1;
+		document.getElementById('gridB').setAttribute('class', 'navLinkDown');
+		document.getElementById('overlayB').disabled = true;
+	}
+}
+
+//insert something in the DOM
+function insertDOM(element, id, classTag, style, wrapperID, onclick, content, name, type, value){
+    var newElement = document.createElement(element);
+    newElement.setAttribute('id', id);
+    newElement.setAttribute('class', classTag);
+    newElement.setAttribute('style', style);
+    newElement.setAttribute('name', name);
+    newElement.setAttribute('type', type);
+    newElement.setAttribute('value', value);
+    if(wrapperID == 'body')
+        document.body.appendChild(newElement)
+    else
+        document.getElementById(wrapperID).appendChild(newElement);
+    document.getElementById(id).innerHTML = content;
+    document.getElementById(id).onclick = onclick;
+}
 
 // To do list:
 // 
