@@ -750,9 +750,37 @@ function drawSpinner(canvasID){
 
     }, 3);
 */    
-
-
 }
 
+function curveText(text, context, x0, y0, rad, startAngle){
+    var textWidth = context.measureText(text).width,
+        charRotation = startAngle,
+        character, charWidth, nextChar, nextWidth, bothWidth, kern, extraRotation, charSegment;
+
+    for (var i=0, l=text.length; i<l; i++) {
+        character = nextChar || text[i];
+        charWidth = nextWidth || context.measureText(character).width;
+
+        // Rotate so the letter base makes a circle segment instead of a tangent
+        extraRotation = (Math.PI/2) - Math.acos((charWidth/2) / rad);
+
+        context.save();
+        context.translate(x0, y0);
+        context.rotate(charRotation);
+        context.translate(0, -rad);
+        context.rotate(extraRotation);
+        context.fillText(character,0,0);
+        context.restore();
+
+        nextChar = text[i+1] || '';
+        nextWidth = context.measureText(nextChar).width;
+
+        bothWidth = context.measureText(character+nextChar).width;
+        kern = bothWidth - charWidth - nextWidth;
+
+        charSegment = (charWidth+kern) / textWidth; // percent of total text size this takes up
+        charRotation += charSegment * (context.measureText(text).width/rad);
+    }           
+}
 
 

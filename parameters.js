@@ -55,6 +55,7 @@ function loadParameters(){
 										   }
 							},
 				"BAMBINOmode" : "S3",
+				"BAMBINOdeployment" : [0,0],  //upstream, downstream
 
 				"DANTE" : {
 							"minima" : {
