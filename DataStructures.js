@@ -455,24 +455,71 @@ BAMBINODS = function(mode){
 	}
 }
 
-SCEPTARDS = function(){
-	//data arrays:
-	this.HV = [];
-	this.thresholds = [];
-	this.rate = [];
+SCEPTARDS = function(config){
+	var i, name;
 
-	//key map
-	this.key = [];
-	for(i=0; i<20; i++){
-		this.key[i] = [];
-		//generate names
-		if(i<10)
-			this.key[i][0] = 'SEP0'+i+'XN00X';
-		else
-			this.key[i][0] = 'SEP'+i+'XN00X';
-	}	
-	this.key[20] = [];
-	this.key[20][0] = 'ZDS01XN00X';
+	this.SCEPTAR = {};
+	this.TTmap = [];
+
+	//upstream SCEPTAR
+	if(config[0]){
+		for(i=1; i<11; i++){
+			name = (i<10) ? 'SEP0'+i+'XN00X' : 'SEP'+i+'XN00X';
+			this.SCEPTAR[name] = {
+				'HV'		: 0,
+				'threshold' : 0,
+				'rate' 		: 0,
+				'index'		: i,
+
+				'oldHVcolor' : '#000000',
+				'HVcolor'	 : '#000000',
+				'oldThresholdColor' : '#000000',
+				'thresholdColor' : '#000000',
+				'oldRateColor' : '#000000',
+				'rateColor' : '#000000'	
+			}
+			this.TTmap[i] = name;
+		}
+	}
+
+	//downstream SCEPTAR
+	if(config[1]){
+		for(i=11; i<21; i++){
+			name = 'SEP'+i+'XN00X';
+			this.SCEPTAR[name] = {
+				'HV'		: 0,
+				'threshold' : 0,
+				'rate' 		: 0,
+				'index'		: i,
+
+				'oldHVcolor' : '#000000',
+				'HVcolor'	 : '#000000',
+				'oldThresholdColor' : '#000000',
+				'thresholdColor' : '#000000',
+				'oldRateColor' : '#000000',
+				'rateColor' : '#000000'	
+			}
+			this.TTmap[i] = name;
+		}
+	}
+
+	//ZDS:
+	if(config[2]){
+		this.SCEPTAR['ZDS01XN00X'] = {
+			'HV'		: 0,
+			'threshold' : 0,
+			'rate' 		: 0,
+			'index'		: 21,
+
+			'oldHVcolor' : '#000000',
+			'HVcolor'	 : '#000000',
+			'oldThresholdColor' : '#000000',
+			'thresholdColor' : '#000000',
+			'oldRateColor' : '#000000',
+			'rateColor' : '#000000'		
+		}
+		this.TTmap[21] = 'ZDS01XN00X';
+	}
 }
 
 SPICEDS = function(){

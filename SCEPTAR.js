@@ -6,7 +6,7 @@ function SCEPTAR(){
     this.name = 'SCEPTAR';
     var that = this;
     Subsystem.call(this);
-    this.dataBus = new SCEPTARDS();
+    this.dataBus = new SCEPTARDS(window.parameters.SCEPTARconfig);
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
     window.SCEPTARpointer = that;
 
@@ -23,8 +23,6 @@ function SCEPTAR(){
 
         }
     }
-
-
 
     //drawing parameters///////////////////////////////////////
     this.ZDSradius = this.canvasHeight*0.5 / 4; 
@@ -65,9 +63,9 @@ function SCEPTAR(){
         }
     	//ZDS
         if(this.config[2] == 1){
-            if(window.state.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[20]), parseHexColor(this.HVcolor[20]), frame/this.nFrames);
-            else if(window.state.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[20]), parseHexColor(this.thresholdColor[20]), frame/this.nFrames);
-            else if(window.state.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[20]), parseHexColor(this.rateColor[20]), frame/this.nFrames);
+            if(window.state.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.SCEPTAR['ZDS01XN00X'].oldHVcolor), parseHexColor(this.dataBus.SCEPTAR['ZDS01XN00X'].HVcolor), frame/this.nFrames);
+            else if(window.state.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.SCEPTAR['ZDS01XN00X'].oldThresholdColor), parseHexColor(this.dataBus.SCEPTAR['ZDS01XN00X'].thresholdColor), frame/this.nFrames);
+            else if(window.state.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.SCEPTAR['ZDS01XN00X'].oldRateColor), parseHexColor(this.dataBus.SCEPTAR['ZDS01XN00X'].rateColor), frame/this.nFrames);
         	this.context.beginPath();
     	    this.context.arc(this.ZDScenterX, this.ZDScenterY, this.ZDSradius, 0, 2*Math.PI);
         	this.context.closePath();
@@ -120,7 +118,7 @@ function SCEPTAR(){
     };
 
     this.drawSceptar = function(side, frame, context){
-        var x0, y0, i, indexStart;
+        var x0, y0, i, indexStart, name;
         if(side == 'upstream'){
             x0 = this.USSCx0;
             y0 = this.USSCy0;
@@ -132,10 +130,12 @@ function SCEPTAR(){
         }
 
         for(i=0; i<10; i++){
+            name = (indexStart+i+1<10) ? 'SEP0'+(indexStart+i+1)+'XN00X' : 'SEP'+(indexStart+i+1)+'XN00X'
+
             if(context == this.context){
-                if(window.state.subdetectorView == 0) context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[i+indexStart]), parseHexColor(this.HVcolor[i+indexStart]), frame/this.nFrames);
-                else if(window.state.subdetectorView == 1) context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[i+indexStart]), parseHexColor(this.thresholdColor[i+indexStart]), frame/this.nFrames);
-                else if(window.state.subdetectorView == 2) context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[i+indexStart]), parseHexColor(this.rateColor[i+indexStart]), frame/this.nFrames);
+                if(window.state.subdetectorView == 0) context.fillStyle = interpolateColor(parseHexColor(this.dataBus.SCEPTAR[name].oldHVcolor), parseHexColor(this.dataBus.SCEPTAR[name].HVcolor), frame/this.nFrames);
+                else if(window.state.subdetectorView == 1) context.fillStyle = interpolateColor(parseHexColor(this.dataBus.SCEPTAR[name].oldThresholdColor), parseHexColor(this.dataBus.SCEPTAR[name].thresholdColor), frame/this.nFrames);
+                else if(window.state.subdetectorView == 2) context.fillStyle = interpolateColor(parseHexColor(this.dataBus.SCEPTAR[name].oldRateColor), parseHexColor(this.dataBus.SCEPTAR[name].rateColor), frame/this.nFrames);
             }
             else if(context == this.TTcontext) context.fillStyle = '#123456'; //anti-antialiasing
             context.save();
@@ -167,7 +167,7 @@ function SCEPTAR(){
             }
         }   
     }
-
+/*
     this.defineText = function(cell){
         var toolTipContent = '<br>';
         var nextLine;
@@ -226,7 +226,7 @@ function SCEPTAR(){
             this.dataBus.rate[i] = Math.random();
         }
     };
-
+*/
     //do an initial populate:
     this.update();
 }
