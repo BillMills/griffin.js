@@ -78,6 +78,26 @@
       <!--Spinner Canvas////////////////-->
       <canvas id='spinner' style='position:fixed; z-index:100000; transition:opacity 0.5s; -moz-transition:opacity 0.5s; -webkit-transition:opacity 0.5s;' width='200px' height='200px'> </canvas>
 
+      <!--Collapsible menus for clock page-->
+      <div id='clockMenus' class='clockSidebar' style='float:right; height:80%; width:19%;'>
+
+        <div id='menu1D' class='collapsableMenu' style='height:50px; text-align:center;'>
+          <h3 id='arrow1D' style='display:inline; float:left' onclick='toggleMenu("menu1D")'></h3>
+          <h3 id='menu1DTitle' style='display:inline'>Clock Summary</h3>
+        </div>
+
+        <div id='menu2D' class='collapsableMenu' style='height:50px; margin-top:2%; text-align:center;'>
+          <h3 id='arrow2D' style='display:inline; float:left' onclick='toggleMenu("menu2D")'></h3>
+          <h3 id='menu2DTitle' style='display:inline'>Channel Outs</h3>
+        </div>
+
+        <div id='scopeMenu' class='collapsableMenu' style=' height:50px; margin-top:2%; text-align:center;'>
+          <h3 id='arrowScope' style='display:inline; float:left' onclick='toggleMenu("scopeMenu")'></h3>
+          <h3 id='scopeMenuTitle' style:'display:inline'>CSAC Parameters</h3>
+        </div>        
+
+      </div>
+
     </div>
 
     <!--Load up an image file to use as a fill background for detector channels missing from JSONP-->

@@ -428,30 +428,34 @@ DSSDDS = function(){
 	
 }
 
-BAMBINODS = function(mode){
-	var i, name, 
-	prefix = ((mode=='S2') ? 'BAZ0' : 'BAE0'),
-	waypoints = ['D', 'E', 'F'];
-
+BAMBINODS = function(mode, layers){
+	var i, j, k, index=0, name, 
+	prefix = ((mode=='S2') ? 'BAZ0' : 'BAE0');
+	this.waypoints = ['D', 'E'];  //note tooltip indices only support two layers in S3 mode
 
 	this.BAMBINO = {};
 	this.TTmap = [];
-	for(i=1; i<3; i++){
-		name = '???'  //prefix + i + waypoints + N or P + segment + 'X'
-		this.BAMBINO[name] = {
-			'HV'		: 0,
-			'threshold' : 0,
-			'rate' 		: 0,
-			'index'		: i,
+	for(i=1; i<3; i++){  //1 for upstream, 2 for downstream
+		for(j=0; j<layers; j++){ //telescope layers
+			for(k=0; k<24+( (mode=='S2') ? 16 : 32 ); k++ ){  //segments, 16 azimuthal in S2 mode, 32 in S3
+				name = prefix + i + this.waypoints[j] + ( (k<24) ? 'P'+( (k<10) ? '0'+k : k ) : 'N' + ( (k-24<10) ? '0'+(k-24) : k-24 ) ) + 'X';
+				this.BAMBINO[name] = {
+					'HV'		: 0,
+					'threshold' : 0,
+					'rate' 		: 0,
+					'index'		: index,
 
-			'oldHVcolor' : '#000000',
-			'HVcolor'	 : '#000000',
-			'oldThresholdColor' : '#000000',
-			'thresholdColor' : '#000000',
-			'oldRateColor' : '#000000',
-			'rateColor' : '#000000'	
+					'oldHVcolor' : '#000000',
+					'HVcolor'	 : '#000000',
+					'oldThresholdColor' : '#000000',
+					'thresholdColor' : '#000000',
+					'oldRateColor' : '#000000',
+					'rateColor' : '#000000'	
+				}
+				this.TTmap[index] = name;
+				index++;
+			}
 		}
-		this.TTmap[i] = name;
 	}
 }
 

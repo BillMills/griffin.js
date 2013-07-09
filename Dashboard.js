@@ -33,15 +33,11 @@ function Dashboard(){
     if(window.parameters.deployment.SPICE)  //something is fishy here WRT SPICE + ZDS deployment at least.
         this.labels[4] = 'SPICE'
     //downstream lampshade
-    if(window.parameters.deployment.SHARC && window.parameters.deployment.DESCANT)
-        this.labels[1] = 'SHARC + DSC';
-    else if(window.parameters.deployment.SHARC)
-        this.labels[1] = 'SHARC';
-    else if(window.parameters.deployment.DESCANT)
+    if(window.parameters.deployment.DESCANT)
         this.labels[1] = 'DESCANT';
     //upstream lampshade
     if(window.parameters.deployment.SPICE)
-        this.labels[2] = 'SPICE';
+        this.labels[2] = 0;
 
 
 

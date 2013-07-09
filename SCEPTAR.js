@@ -37,14 +37,6 @@ function SCEPTAR(){
     this.DSSCx0 = 0.75*this.canvasWidth;
     this.DSSCy0 = 0.4*this.canvasHeight;
 
-    //establish data buffers////////////////////////////////////////////////////////////////////////////
-    this.HVcolor = [];
-    this.oldHVcolor = [];
-    this.thresholdColor = [];
-    this.oldThresholdColor = [];
-    this.rateColor = [];
-    this.oldRateColor = [];
-
     //member functions///////////////////////////////////////////////////////////////////
 
 

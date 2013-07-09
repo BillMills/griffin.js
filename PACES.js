@@ -84,7 +84,7 @@ function PACES(){
             for(i=0; i<5; i++){
 
                 name = 'PAC0'+(i+1)+'XN00A';  //real voltage is plugged into seg. A; seg B voltage contains garbage data, don't use.
-console.log(this.dataBus.PACES[name].HV)
+
                 this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.PACES[name].oldHVcolor), parseHexColor(this.dataBus.PACES[name].HVcolor), frame/this.nFrames);
                 this.context.save();
                 this.context.translate(this.centerX, this.centerY);

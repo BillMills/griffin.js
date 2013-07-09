@@ -11,7 +11,8 @@ function BAMBINO(){
 
     //member variables///////////////////////////////////
     this.mode = window.parameters.BAMBINOmode;      //'S2' or 'S3'
-    this.dataBus = new BAMBINODS(this.mode);
+    this.layers = window.parameters.BAMBINOlayers
+    this.dataBus = new BAMBINODS(this.mode, this.layers);
     this.nRadial = 24;
     if(this.mode=='S2')
     	this.nAzimuthal = 16;
@@ -30,25 +31,19 @@ function BAMBINO(){
     this.radialWidth = (this.CDradius - this.CDinnerRadius) / this.nRadial;
     this.azimuthalArc = 2*Math.PI / this.nAzimuthal;
 
-    //establish data buffers////////////////////////////////////////////////////////////////////////////
-    this.HVcolor = [];
-    this.oldHVcolor = [];
-    this.thresholdColor = [];
-    this.oldThresholdColor = [];
-    this.rateColor = [];
-    this.oldRateColor = [];
-
     //member functions///////////////////////////////////////////////////////////////////
-
 
     this.draw = function(frame){
 
-    	var i, j, m, x0, y0;
+    	var i, j, m, x0, y0, name;
 
     	this.context.strokeStyle = '#999999';
+        this.TTcontext.strokeStyle = '#123456';
 
-        //once for display canvas...
-    	for(i=0; i<4; i++){
+        //each layer -> 2 disks (up and downstream) times 2 sides (front and back).
+        //index i counts upstream/layerD/front, upstream/layerD/back, downstream/layerD/front, downstream/layerD/back, etc incrementing layers.
+    	for(i=0; i<4*this.layers; i++){ 
+            //determine disk image center
 	    	if(i == 0){
 	    		x0 = this.centerLeft; y0 = this.centerTop;  //downstream radial
 	    	} else if(i == 1){
@@ -58,31 +53,55 @@ function BAMBINO(){
 	    	} else if(i == 3){
 	    		x0 = this.centerRight; y0 = this.centerBottom; //upstream azimuthal
 	    	}
-	    	if(i == 0 || i == 2){
+
+            //fronts
+    
+	    	if(i%2 == 0){
+
 	    		for(j=0; j<this.nRadial; j++){
+                    name = ((this.mode=='S2') ? 'BAZ0' : 'BAE0') + (Math.floor((i%4)/2)+1) + this.dataBus.waypoints[Math.floor(i/4)] + 'P' +( (j<10) ? '0'+j : j ) + 'X';
     				this.context.beginPath()
-                    if(window.state.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[i/2*(this.nRadial+this.nAzimuthal)+j]), parseHexColor(this.HVcolor[i/2*(this.nRadial+this.nAzimuthal)+j]), frame/this.nFrames);
-                    else if(window.state.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[i/2*(this.nRadial+this.nAzimuthal)+j]), parseHexColor(this.thresholdColor[i/2*(this.nRadial+this.nAzimuthal)+j]), frame/this.nFrames);
-                    else if(window.state.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[i/2*(this.nRadial+this.nAzimuthal)+j]), parseHexColor(this.rateColor[i/2*(this.nRadial+this.nAzimuthal)+j]), frame/this.nFrames);
+                    if(window.state.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.BAMBINO[name].oldHVcolor), parseHexColor(this.dataBus.BAMBINO[name].HVcolor), frame/this.nFrames);
+                    else if(window.state.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.BAMBINO[name].oldThresholdColor), parseHexColor(this.dataBus.BAMBINO[name].thresholdColor), frame/this.nFrames);
+                    else if(window.state.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.BAMBINO[name].oldRateColor), parseHexColor(this.dataBus.BAMBINO[name].rateColor), frame/this.nFrames);
 	    			this.context.arc(x0, y0, this.CDradius - j*this.radialWidth, 0, 2*Math.PI);
 	    			this.context.closePath();
     				this.context.fill();
 	    			this.context.stroke();
+
+                    //and again for tooltip:
+                    if(frame==0){
+                        this.TTcontext.fillStyle = 'rgba('+this.dataBus.BAMBINO[name].index+','+this.dataBus.BAMBINO[name].index+','+this.dataBus.BAMBINO[name].index+',1)';
+                        this.TTcontext.beginPath();
+                        this.TTcontext.arc(x0, y0, this.CDradius - j*this.radialWidth, 0, 2*Math.PI);
+                        this.TTcontext.closePath();
+                        this.TTcontext.fill();
+                        this.TTcontext.stroke();
+                    }
     			}
                 //clear inner circle:
                 this.context.fillStyle = '#333333';
                 this.context.beginPath();
                 this.context.arc(x0, y0, this.CDradius - j*this.radialWidth, 0, 2*Math.PI);
                 this.context.closePath();
-                this.context.fill();   
+                this.context.fill(); 
+                //and again in TT:
+                this.TTcontext.fillStyle = '#987654';
+                this.TTcontext.beginPath();
+                this.TTcontext.arc(x0, y0, this.CDradius - j*this.radialWidth, 0, 2*Math.PI);
+                this.TTcontext.closePath();
+                this.TTcontext.fill();
     			
+            //backs
     		} else {
     
 	    		for(j=0; j<this.nAzimuthal; j++){
+                    name = ((this.mode=='S2') ? 'BAZ0' : 'BAE0') + (Math.floor((i%4)/2)+1) + this.dataBus.waypoints[Math.floor(i/4)] + 'N' +( (j<10) ? '0'+j : j ) + 'X';
     				this.context.beginPath()
-                    if(window.state.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[this.nRadial+(i-1)/2*(this.nRadial+this.nAzimuthal)+j]), parseHexColor(this.HVcolor[this.nRadial+(i-1)/2*(this.nRadial+this.nAzimuthal)+j]), frame/this.nFrames);
-                    else if(window.state.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[this.nRadial+(i-1)/2*(this.nRadial+this.nAzimuthal)+j]), parseHexColor(this.thresholdColor[this.nRadial+(i-1)/2*(this.nRadial+this.nAzimuthal)+j]), frame/this.nFrames);
-                    else if(window.state.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[this.nRadial+(i-1)/2*(this.nRadial+this.nAzimuthal)+j]), parseHexColor(this.rateColor[this.nRadial+(i-1)/2*(this.nRadial+this.nAzimuthal)+j]), frame/this.nFrames);
+                    if(window.state.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.BAMBINO[name].oldHVcolor), parseHexColor(this.dataBus.BAMBINO[name].HVcolor), frame/this.nFrames);
+                    else if(window.state.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.BAMBINO[name].oldThresholdColor), parseHexColor(this.dataBus.BAMBINO[name].thresholdColor), frame/this.nFrames);
+                    else if(window.state.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.BAMBINO[name].oldRateColor), parseHexColor(this.dataBus.BAMBINO[name].rateColor), frame/this.nFrames);
+                    
                     this.context.moveTo(x0 + this.CDinnerRadius*Math.cos(j*this.azimuthalArc), y0 - this.CDinnerRadius*Math.sin(j*this.azimuthalArc));
                     this.context.arc(x0,y0, this.CDinnerRadius, -j*this.azimuthalArc, -(j+1)*this.azimuthalArc, true);
                     this.context.lineTo(x0 + this.CDradius*Math.cos((j+1)*this.azimuthalArc), y0 - this.CDradius*Math.sin((j+1)*this.azimuthalArc));
@@ -90,56 +109,22 @@ function BAMBINO(){
     				this.context.closePath();
     				this.context.fill();
 	    			this.context.stroke();
-    			}
-    		}
-    	}
-        //...and again for TT encoding; loop twice to suppress antialiasing:
-        for(var aa=0; aa<2; aa++){
-            m=0;
-            for(i=0; i<4; i++){
-                if(i == 0){
-                    x0 = this.centerLeft; y0 = this.centerTop;  //downstream radial
-                } else if(i == 1){
-                    x0 = this.centerLeft; y0 = this.centerBottom; //downstream azimuthal
-                } else if(i == 2){
-                    x0 = this.centerRight; y0 = this.centerTop; //upstream radial
-                } else if(i == 3){
-                    x0 = this.centerRight; y0 = this.centerBottom; //upstream azimuthal
-                }
-                if(i == 0 || i == 2){
-                    for(j=0; j<this.nRadial; j++){
-                        this.TTcontext.beginPath()
-                        if(aa==0) this.TTcontext.fillStyle = '#123456';
-                        else this.TTcontext.fillStyle = 'rgba('+m+','+m+','+m+',1)';
-                        this.TTcontext.arc(x0, y0, this.CDradius - j*this.radialWidth, 0, 2*Math.PI);
-                        this.TTcontext.closePath();
-                        this.TTcontext.fill();
-                        m++;
-                    }
-                    //clear inner circle:
-                    this.TTcontext.fillStyle = '#123456';
+                    
+                    //and again for tooltip:
+                    this.TTcontext.fillStyle = 'rgba('+this.dataBus.BAMBINO[name].index+','+this.dataBus.BAMBINO[name].index+','+this.dataBus.BAMBINO[name].index+',1)';
                     this.TTcontext.beginPath();
-                    this.TTcontext.arc(x0, y0, this.CDradius - j*this.radialWidth, 0, 2*Math.PI);
+                    this.TTcontext.moveTo(x0 + this.CDinnerRadius*Math.cos(j*this.azimuthalArc), y0 - this.CDinnerRadius*Math.sin(j*this.azimuthalArc));
+                    this.TTcontext.arc(x0,y0, this.CDinnerRadius, -j*this.azimuthalArc, -(j+1)*this.azimuthalArc, true);
+                    this.TTcontext.lineTo(x0 + this.CDradius*Math.cos((j+1)*this.azimuthalArc), y0 - this.CDradius*Math.sin((j+1)*this.azimuthalArc));
+                    this.TTcontext.arc(x0,y0, this.CDradius, -(j+1)*this.azimuthalArc, -j*this.azimuthalArc, false);
                     this.TTcontext.closePath();
                     this.TTcontext.fill();
-                
-                } else {
-    
-                    for(j=0; j<this.nAzimuthal; j++){
-                        this.TTcontext.beginPath()
-                        if(aa==0) this.TTcontext.fillStyle = '#123456';
-                        else this.TTcontext.fillStyle = 'rgba('+m+','+m+','+m+',1)';
-                        this.TTcontext.moveTo(x0 + this.CDinnerRadius*Math.cos(j*this.azimuthalArc), y0 - this.CDinnerRadius*Math.sin(j*this.azimuthalArc));
-                        this.TTcontext.arc(x0,y0, this.CDinnerRadius, -j*this.azimuthalArc, -(j+1)*this.azimuthalArc, true);
-                        this.TTcontext.lineTo(x0 + this.CDradius*Math.cos((j+1)*this.azimuthalArc), y0 - this.CDradius*Math.sin((j+1)*this.azimuthalArc));
-                        this.TTcontext.arc(x0,y0, this.CDradius, -(j+1)*this.azimuthalArc, -j*this.azimuthalArc, false);
-                        this.TTcontext.closePath();
-                        this.TTcontext.fill();
-                        m++;
-                    }
-                }
-            }    
-		}
+                    this.TTcontext.stroke();                  
+
+    			}
+
+    		}
+    	}
 
         if(frame==this.nFrames || frame==0) {
             //scale

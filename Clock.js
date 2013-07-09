@@ -8,7 +8,7 @@ function Clock(){
 	this.wrapper = document.getElementById(this.wrapperID);
 
     //add top level nav button:
-    insertDOM('button', 'ClockButton', 'navLink', '', 'statusLink', function(){swapView('ClockLinks', 'ClockCanvas', 'ClockSidebar', 'ClockButton')}, 'Clock')
+    insertDOM('button', 'ClockButton', 'navLink', '', 'statusLink', function(){swapView('ClockLinks', 'ClockCanvas', 'clockMenus', 'ClockButton');}, 'Clock')
 
     //nav wrapper div
     insertDOM('div', this.linkWrapperID, 'navPanel', '', this.wrapperID, '', '')
@@ -24,9 +24,6 @@ function Clock(){
     this.context = this.canvas.getContext('2d');
     this.canvas.setAttribute('width', this.canvasWidth);
     this.canvas.setAttribute('height', this.canvasHeight);
-
-    //right sidebar
-    insertDOM('div', this.sidebarID, 'Sidebar', '', this.wrapperID, '', '')
 
     //drawing parameters:
     this.margin = 5;

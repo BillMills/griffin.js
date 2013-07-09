@@ -5,8 +5,8 @@ function loadParameters(){
 				"MIDASlegacyMode" : 0,
 				"ExpName" : "TIGRESS",
 				"statusURL" : "http://alphadon.triumf.ca:8082/",
-				"topDeployment" : {"HV":1, "Subsystems":1, "DAQ":1, "Clock":0, "Trigger":0},
-				"deployment" : {"BAMBINO":0, "DANTE":0, "DESCANT":1, "HPGe":1, "PACES":1, "SCEPTAR":1, "SHARC":1, "SPICE":0, "TIP":0, "DSSD":0},
+				"topDeployment" : {"HV":1, "Subsystems":1, "DAQ":1, "Clock":1, "Trigger":0},
+				"deployment" : {"BAMBINO":1, "DANTE":0, "DESCANT":1, "HPGe":1, "PACES":1, "SCEPTAR":1, "SHARC":1, "SPICE":0, "TIP":0, "DSSD":0},
 				"wrapper" : "waffleplate",
 				"subdetectorUnit" : ["V", "ADC units", "Hz"],
 				"monitorValues" : ["HV", "Thresholds", "Rate"],  //for filling tooltip
@@ -55,7 +55,8 @@ function loadParameters(){
 										   }
 							},
 				"BAMBINOmode" : "S3",
-				"BAMBINOdeployment" : [0,0],  //upstream, downstream
+				"BAMBINOlayers" : 1,
+				"BAMBINOdeployment" : [1,1],  //upstream, downstream
 
 				"DANTE" : {
 							"minima" : {
