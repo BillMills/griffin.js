@@ -69,7 +69,6 @@ function gatekeeper(){
 }
 
 function masterLoop(callMyself){
-    //console.log(window.onDisplay)
     var i,j;
 	if(!document.webkitHidden && !document.mozHidden){
 
@@ -88,31 +87,6 @@ function masterLoop(callMyself){
             for(i=0; i<window.Subdetectors.length; i++)
                 window.Subdetectors[i].update();
         }
-/*
-        //animate whoever is showing on top, flat draw the rest
-        //Dashboard
-        window.dashboard.animate(callMyself);
-        //HV
-        if(window.parameters.topDeployment['HV']){
-            window.waffle.animate(callMyself);
-            for(i=0; i<window.waffle.barCharts.length; i++){
-                for(j=0; j<window.waffle.barCharts[i].length; j++)
-                    window.waffle.barCharts[i][j].animate(callMyself);
-            }
-        }
-        //DAQ
-        if(window.parameters.topDeployment['DAQ']) window.DAQ.animate(callMyself);
-        //Clock
-        if(window.parameters.topDeployment['Clock']) window.Clock.animate(callMyself);
-        //Trigger
-        if(window.parameters.topDeployment['Trigger']) window.Trigger.animate(callMyself);
-        //Subsystems
-        if(window.parameters.topDeployment['Subsystems']){
-            for(i=0; i<window.Subdetectors.length; i++){
-                window.Subdetectors[i].animate(callMyself);
-            }
-        }
-*/
     }
     
     //remove all temporary scripts from the head so they don't accrue:
@@ -124,7 +98,7 @@ function masterLoop(callMyself){
 
     window.freshLoad = 0;
     //next iteration:
-    window.loop = setTimeout(function(){loadJSONP(window.Gatekeeper, 1)}, 3000);
+    window.loop = setTimeout(function(){loadJSONP(window.Gatekeeper, 1)}, 60000);
 }
 
 //determine what size cards are in what slot:

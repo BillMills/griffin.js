@@ -1,4 +1,5 @@
 function Clock(){
+    var i, cellSize, clockStyle;
 
 	this.wrapperID = window.parameters.wrapper;	    //ID of wrapping div
 	this.canvasID = 'ClockCanvas';		            //ID of canvas to paint clock on
@@ -8,84 +9,30 @@ function Clock(){
 	this.wrapper = document.getElementById(this.wrapperID);
 
     //add top level nav button:
-    insertDOM('button', 'ClockButton', 'navLink', '', 'statusLink', function(){swapView('ClockLinks', 'ClockCanvas', 'clockMenus', 'ClockButton');}, 'Clock')
+    insertDOM('button', 'ClockButton', 'navLink', '', 'statusLink', function(){swapView('ClockLinks', 'ClockCanvas', 'clockMenus', 'ClockButton');}, 'Clock');
 
     //nav wrapper div
-    insertDOM('div', this.linkWrapperID, 'navPanel', '', this.wrapperID, '', '')
+    insertDOM('div', this.linkWrapperID, 'navPanel', 'width:50%; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;', this.wrapperID, '', '');
     //nav header
-    insertDOM('h1', 'ClockLinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', window.parameters.ExpName+' Clock Status')
-    insertDOM('br', 'break', '', '', this.linkWrapperID, '', '')
+    insertDOM('h1', 'ClockLinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', window.parameters.ExpName+' Clock Status');
+    insertDOM('br', 'break', '', '', this.linkWrapperID, '', '');
 
-	//deploy a canvas for the clock view:
-    this.canvasWidth = 0.48*$(this.wrapper).width();
-    this.canvasHeight = 0.8*$(this.wrapper).height();
-    insertDOM('canvas', this.canvasID, 'monitor', 'top:' + ($('#ClockLinks').height() + 5) +'px;', this.wrapperID, '', '')
-    this.canvas = document.getElementById('ClockCanvas');
-    this.context = this.canvas.getContext('2d');
-    this.canvas.setAttribute('width', this.canvasWidth);
-    this.canvas.setAttribute('height', this.canvasHeight);
+    //the clock view is done entirely with dom elements; most convenient to extend the central div to accommodate.
+    cellSize = document.getElementById(this.linkWrapperID).offsetWidth / 100;
+    insertDOM('div', 'masterClock', 'clock', 'width:'+20*cellSize+'px; height:'+10*cellSize+'px; margin-left:auto; margin-right:auto; margin-top:20px;', this.linkWrapperID, '', '');
+    //slaves
+    for(i=0; i<24; i++){
+        clockStyle = 'display:inline-block; width:'+10*cellSize+'px; height:'+10*cellSize+'px; margin-left:'+( (i%6==0) ? 10*cellSize : 2*cellSize )+'px; margin-right:'+( (i%6==5) ? 10*cellSize : 2*cellSize )+'px; margin-bottom:'+2*cellSize+'px; margin-top:'+2*cellSize+'px;'
+        insertDOM('div', 'slaveClock'+i, 'clock', clockStyle , this.linkWrapperID, '', '');
+        if(i%6==5) insertDOM('br', 'break', '', '', this.linkWrapperID);
+    }
 
-    //drawing parameters:
-    this.margin = 5;
-    this.topMargin = this.canvasHeight*0.1;
-    this.masterWidth = this.canvasWidth - 2*this.margin;
-    this.masterHeight = this.canvasHeight*0.2;
-    this.clockCenterY = this.topMargin + this.masterHeight/2;
-    this.clockRadius = this.masterHeight*0.8/2;
-    this.secondHandLength = this.clockRadius*0.9;
-    this.clockCenterX = this.margin + this.clockRadius*1.4;
-    this.slavesCellSide = this.canvasHeight*0.1;
-    this.slavesRows = 4;
-    this.slavesColumns = 6;
-    this.slavesLeft = (this.canvasWidth - this.slavesColumns*this.slavesCellSide) / 2;
-    this.slavesTop = this.topMargin + this.masterHeight + this.slavesCellSide;
-    //establish animation parameters////////////////////////////////////////////////////////////////////
-    this.FPS = 30;
-    this.duration = 0.5;
-    this.nFrames = this.FPS*this.duration;
+    //set up arrow labels in right-side menu
+    document.getElementById('arrowClockSummary').innerHTML = String.fromCharCode(0x25B6);
+    document.getElementById('arrowChannelOut').innerHTML = String.fromCharCode(0x25B6);
+    document.getElementById('arrowCSAC').innerHTML = String.fromCharCode(0x25B6);
 
-    //data buffers///////////////////////////
-    this.secondHand = 0;
+	//deploy a canvas for the clock view; this is actually just a dummy to stay consistent with all the other views, so we can use the same transition functions easily.
+    insertDOM('canvas', this.canvasID, 'monitor', 'top:' + ($('#ClockLinks').height() + 5) +'px;', this.wrapperID, '', '');
 
-    //member functions/////////////////////////////////////////////
-    this.draw = function(frame){
-        /*
-    	var i, j, secondAngle;
-
-    	this.context.clearRect(0,0,this.canvasWidth, this.canvasHeight);
-
-    	this.context.strokeStyle = '#999999';
-
-    	//master
-    	//frame
-    	this.context.strokeRect(this.margin, this.topMargin, this.masterWidth, this.masterHeight);
-    	//clock
-    	this.secondHand++;
-    	secondAngle = (this.secondHand%60)*6*Math.PI/180;
-    	this.context.beginPath();
-    	this.context.arc(this.clockCenterX, this.clockCenterY, this.clockRadius, 0, 2*Math.PI);
-    	this.context.moveTo(this.clockCenterX, this.clockCenterY);
-    	this.context.lineTo(this.clockCenterX + this.secondHandLength*Math.cos(secondAngle), this.clockCenterY + this.secondHandLength*Math.sin(secondAngle) );
-    	this.context.closePath();
-    	this.context.stroke();
-
-    	//slaves
-    	for(i=0; i<this.slavesRows; i++){
-    		for(j=0; j<this.slavesColumns; j++){
-    			this.context.strokeRect(this.slavesLeft + j*this.slavesCellSide, this.slavesTop + i*this.slavesCellSide, this.slavesCellSide, this.slavesCellSide);
-    		}
-    	}
-
-    	//titles
-        this.context.fillStyle = '#999999';
-        this.context.font="24px 'Orbitron'";
-        this.context.fillText('Master', this.margin, this.topMargin - 10);
-        this.context.fillText('Slaves', this.slavesLeft, this.slavesTop - 10);
-        */
-    };
-
-    this.animate = function(){
-        if(window.onDisplay == this.canvasID || window.freshLoad) animate(this, 0);
-        else this.draw(this.nFrames);
-    };
 }

@@ -42,6 +42,16 @@ div.navPanel{
 	-webkit-transition:opacity 0.5s, z-index 0.5s;
 }
 
+div.clock{
+	border:5px solid;
+	border-color: #000000;
+	border-radius:25px;
+	background-color: #4C4C4C;
+	-moz-box-sizing: border-box; 
+	-webkit-box-sizing: border-box; 
+	box-sizing: border-box;
+}
+
 div.cardNavPanel{
 	display:none;
 }
@@ -141,13 +151,23 @@ div.clockSidebar{
 
 div.collapsableMenu{
 	border:2px solid black;
+	border-right:none;
 	background-color:#4C4C4C;	 
-	border-radius:20px; 
+	border-top-left-radius:20px;
+	border-bottom-left-radius: 20px; 
 	padding:10px;
 	overflow:hidden;
+	-moz-box-sizing: border-box; 
+	-webkit-box-sizing: border-box; 
+	box-sizing: border-box;
 	transition:height 0.3s;
 	-moz-transition:height 0.3s;
 	-webkit-transition:height 0.3s;				
+}
+
+h3{
+	margin:0px;
+	margin-top:5px;
 }
 
 p#FieldText{

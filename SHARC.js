@@ -103,9 +103,9 @@ function SHARC(){
             }
         }
         //back
-        vertStack(this.context, 6.5*this.cellWidth, 4*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, dummyColors4, 'v', 0);
+        vertStack(this.context, 6.5*this.cellWidth, 4*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, this.meanColor('SHB11EN', frame, 1), 'v', 0);
         //front
-        horizStack(this.context, 5.5*this.cellWidth, 4*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, dummyColors4, 'v', 0);
+        horizStack(this.context, 5.5*this.cellWidth, 4*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, this.meanColor('SHB11DP', frame, 1), 'v', 0);
         //tooltip:
         if(frame==this.nFrames || frame==0){
             //back
@@ -129,9 +129,9 @@ function SHARC(){
             }            
         }
         //back
-        horizStack(this.context, 4*this.cellWidth, 1.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, dummyColors4, 'h', 0);
+        horizStack(this.context, 4*this.cellWidth, 1.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, this.meanColor('SHB10EN', frame, 1), 'h', 0);
         //front
-        vertStack(this.context, 4*this.cellWidth, 2.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, dummyColors4, 'h', 0);
+        vertStack(this.context, 4*this.cellWidth, 2.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, this.meanColor('SHB10DP', frame, 0), 'h', 0);
         //tooltip:
         if(frame==this.nFrames || frame==0){
             //back
@@ -155,9 +155,9 @@ function SHARC(){
             } 
         }
         //back
-        vertStack(this.context, 1.5*this.cellWidth, 4*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, dummyColors4, 'v', 0);
+        vertStack(this.context, 1.5*this.cellWidth, 4*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, this.meanColor('SHB09EN', frame, 1), 'v', 0);
         //front
-        horizStack(this.context, 2.5*this.cellWidth, 4*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, dummyColors4, 'v', 0);
+        horizStack(this.context, 2.5*this.cellWidth, 4*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, this.meanColor('SHB09DP', frame, 0), 'v', 0);
         //tooltip:
         if(frame==this.nFrames || frame==0){
             //back
@@ -181,9 +181,9 @@ function SHARC(){
             } 
         }
         //back
-        horizStack(this.context, 4*this.cellWidth, 6.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, dummyColors4, 'h', 0);
+        horizStack(this.context, 4*this.cellWidth, 6.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, this.meanColor('SHB12EN', frame, 1), 'h', 0);
         //front
-        vertStack(this.context, 4*this.cellWidth, 5.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, dummyColors4, 'h', 0);
+        vertStack(this.context, 4*this.cellWidth, 5.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, this.meanColor('SHB12DP', frame, 1), 'h', 0);
         //tooltip:
         if(frame==this.nFrames || frame==0){
             //back
@@ -239,9 +239,9 @@ function SHARC(){
             } 
         }
         //back
-        vertStack(this.context, 13.5*this.cellWidth, 8*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, dummyColors4, 'v', 0);
+        vertStack(this.context, 13.5*this.cellWidth, 8*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, this.meanColor('SHB07EN', frame, 1), 'v', 0);
         //front
-        horizStack(this.context, 12.5*this.cellWidth, 8*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, dummyColors4, 'v', 0);
+        horizStack(this.context, 12.5*this.cellWidth, 8*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, this.meanColor('SHB07DP', frame, 1), 'v', 0);
         //tooltip:
         if(frame==this.nFrames || frame==0){
             //back
@@ -265,9 +265,9 @@ function SHARC(){
             }
         }
         //back
-        horizStack(this.context, 11*this.cellWidth, 5.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, dummyColors4, 'h', 0);
+        horizStack(this.context, 11*this.cellWidth, 5.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, this.meanColor('SHB06EN', frame, 1), 'h', 0);
         //front
-        vertStack(this.context, 11*this.cellWidth, 6.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, dummyColors4, 'h', 0);
+        vertStack(this.context, 11*this.cellWidth, 6.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, this.meanColor('SHB06DP', frame, 0), 'h', 0);
         //tooltip:
         if(frame==this.nFrames || frame==0){
             //back
@@ -291,9 +291,9 @@ function SHARC(){
             }
         }
         //back
-        vertStack(this.context, 8.5*this.cellWidth, 8*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, dummyColors4, 'v', 0);
+        vertStack(this.context, 8.5*this.cellWidth, 8*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, this.meanColor('SHB05EN', frame, 1), 'v', 0);
         //front
-        horizStack(this.context, 9.5*this.cellWidth, 8*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, dummyColors4, 'v', 0);
+        horizStack(this.context, 9.5*this.cellWidth, 8*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, this.meanColor('SHB05DP', frame, 0), 'v', 0);
         //tooltip:
         if(frame==this.nFrames || frame==0){
             //back
@@ -317,9 +317,9 @@ function SHARC(){
             }
         }
         //back
-        horizStack(this.context, 11*this.cellWidth, 10.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, dummyColors4, 'h', 0);
+        horizStack(this.context, 11*this.cellWidth, 10.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, this.meanColor('SHB08EN', frame, 1), 'h', 0);
         //front
-        vertStack(this.context, 11*this.cellWidth, 9.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, dummyColors4, 'h', 0);
+        vertStack(this.context, 11*this.cellWidth, 9.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, this.meanColor('SHB08DP', frame, 1), 'h', 0);
         //tooltip:
         if(frame==this.nFrames || frame==0){
             //back
@@ -764,6 +764,24 @@ function SHARC(){
             else if(key.slice(5,7) == 'EN')
                 return 6;
         }        
+    };
+
+    //determine the color corresponding to the average value across a quarter of an element prefixed by prefix (7 characters ie SHB09DP) for the summary view.
+    //colors packed in order [1st quarter, 2nd, 3rd, 4th], unless reversed flag is set, then returns [4th, 3rd, 2nd, 1st].
+    this.meanColor = function(prefix, frame, reversed){
+        var i,
+            colors=[];
+
+        for(i=0; i<4; i++){
+            if(window.state.subdetectorView == 0) colors[i] = interpolateColor(parseHexColor(this.dataBus.summary[prefix+i].oldHVcolor), parseHexColor(this.dataBus.summary[prefix+i].HVcolor), frame/this.nFrames);
+            else if(window.state.subdetectorView == 1) colors[i] = interpolateColor(parseHexColor(this.dataBus.summary[prefix+i].oldThresholdColor), parseHexColor(this.dataBus.summary[prefix+i].thresholdColor), frame/this.nFrames);
+            else if(window.state.subdetectorView == 2) colors[i] = interpolateColor(parseHexColor(this.dataBus.summary[prefix+i].oldRateColor), parseHexColor(this.dataBus.summary[prefix+i].rateColor), frame/this.nFrames);
+        }
+
+        if(reversed)
+            colors = colors.reverse();
+
+        return colors;
     };
 
 }
