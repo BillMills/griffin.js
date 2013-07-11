@@ -6,7 +6,7 @@ quadBack = function(context, x0, y0, innerRad, outerRad, squish, colors, TT){
     var angularStep = (2*Math.PI)/colors.length;
 
     for(i=0; i<colors.length; i++){
-        azimuthalSegment(context, x0, y0, innerRad, outerRad, angularStep, i*angularStep, squish, colors[i], TT);
+        azimuthalSegment(context, x0, y0, innerRad, outerRad, angularStep, Math.PI-(i+1)*angularStep, squish, colors[i], TT);
     }
 
 }
@@ -49,7 +49,7 @@ annularSegment = function(context, x0, y0, innerRad, outerRad, arc, orientation,
 
     context.save();
     context.translate(x0, y0);
-    context.scale(1,squish);
+    context.scale(-1,squish);
     context.rotate(-orientation);
     context.beginPath();
     context.arc(0,0,innerRad, 0, -arc, true);

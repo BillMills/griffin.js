@@ -333,7 +333,6 @@ function TTtable(id, data, objects, keys, tableTitle, titles, split){
 
 }
 
-
 //menu toggler for clock view
 function toggleMenu(divID){
 
@@ -366,7 +365,19 @@ function toggleMenu(divID){
 
 }
 
+//return an array with the appropriate colors chosen from <dataStore> (typically dataBus[this.name] for detectors) corresponding to the elements listed in <elements>
+function colors(elements, dataStore, frame, nFrames){
+    var i,
+        colors=[];
 
+    for(i=0; i<elements.length; i++){
+        if(window.state.subdetectorView == 0) colors[i] = interpolateColor(parseHexColor(dataStore[elements[i]].oldHVcolor), parseHexColor(dataStore[elements[i]].HVcolor), frame/nFrames);
+        else if(window.state.subdetectorView == 1) colors[i] = interpolateColor(parseHexColor(dataStore[elements[i]].oldThresholdColor), parseHexColor(dataStore[elements[i]].thresholdColor), frame/nFrames);
+        else if(window.state.subdetectorView == 2) colors[i] = interpolateColor(parseHexColor(dataStore[elements[i]].oldRateColor), parseHexColor(dataStore[elements[i]].rateColor), frame/nFrames);
+    }
+
+    return colors;
+}
 
 
 

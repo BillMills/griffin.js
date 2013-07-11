@@ -61,13 +61,13 @@ function SHARC(){
         //UPSTREAM//////////////////////////////////////
         if(this.padsEnabled){
             //upstream quad pad back
-            quadBack(this.context, 1*this.cellWidth, 11.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, dummyColors4, 0);
+            quadBack(this.context, 1*this.cellWidth, 11.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, colors(['SHQ13FN00X', 'SHQ14FN00X', 'SHQ15FN00X', 'SHQ16FN00X'], this.dataBus.SHARC, frame, this.nFrames), 0);
             //upstream quad pad front
-            quadBack(this.context, 1.5*this.cellWidth, 10.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, dummyColors4, 0);       
+            quadBack(this.context, 1.5*this.cellWidth, 10.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, colors(['SHQ13FP00X', 'SHQ14FP00X', 'SHQ15FP00X', 'SHQ16FP00X'], this.dataBus.SHARC, frame, this.nFrames), 0);       
 
             //tooltip:
             if(frame==this.nFrames || frame==0){
-                TTcolors = ['rgba(114,114,114,1)', 'rgba(113,113,113,1)', 'rgba(116,116,116,1)', 'rgba(115,115,115,1)'];
+                TTcolors = ['rgba(113,113,113,1)', 'rgba(114,114,114,1)', 'rgba(115,115,115,1)', 'rgba(116,116,116,1)'];
                 //upstream quad pad back
                 quadBack(this.TTcontext, 1*this.cellWidth, 11.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, TTcolors, 1);
                 //upstream quad pad front
@@ -76,24 +76,24 @@ function SHARC(){
         }
 
         //upstream quad back
-        quadBack(this.context, 2*this.cellWidth, 9.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, dummyColors16, 0);
+        quadBack(this.context, 2*this.cellWidth, 9.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, this.meanColor('SHQ13EN', frame, 0).concat(this.meanColor('SHQ14EN', frame, 0), this.meanColor('SHQ15EN', frame, 0), this.meanColor('SHQ16EN', frame, 0)), 0);
         //upstream quad front
-        quadFront(this.context, 2.5*this.cellWidth, 8.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, dummyColors16, 0);
+        quadFront(this.context, 2.5*this.cellWidth, 8.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, this.meanColor('SHQ13DP', frame, 0).concat(this.meanColor('SHQ14DP', frame, 0), this.meanColor('SHQ15DP', frame, 0), this.meanColor('SHQ16DP', frame, 0)), 0);
         //upstream quad tooltip:
         if(frame==this.nFrames || frame==0){
             //upstream quad back
-            TTcolors = ['rgba(28,28,28,1)', 'rgba(26,26,26,1)', 'rgba(32,32,32,1)', 'rgba(30,30,30,1)'];
+            TTcolors = ['rgba(26,26,26,1)', 'rgba(28,28,28,1)', 'rgba(30,30,30,1)', 'rgba(32,32,32,1)'];
             quadBack(this.TTcontext, 2*this.cellWidth, 9.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, TTcolors, 1);
             //upstream quad front
-            TTcolors = ['rgba(27,27,27,1)', 'rgba(25,25,25,1)', 'rgba(31,31,31,1)', 'rgba(29,29,29,1)'];
+            TTcolors = ['rgba(25,25,25,1)', 'rgba(27,27,27,1)', 'rgba(29,29,29,1)', 'rgba(31,31,31,1)'];
             quadBack(this.TTcontext, 2.5*this.cellWidth, 8.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, TTcolors, 1);
         }
 
         //3 o'clock upstream DSSD:
         //pads
         if(this.padsEnabled){
-            horizStack(this.context, 7.5*this.cellWidth, 3.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
-            horizStack(this.context, 7.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
+            horizStack(this.context, 7.5*this.cellWidth, 3.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB11FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            horizStack(this.context, 7.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB11FN00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
 
             //tooltip:
             if(frame==this.nFrames || frame==0){
@@ -119,8 +119,8 @@ function SHARC(){
         //12 o'clock upstream DSSD:
         //pads
         if(this.padsEnabled){
-            horizStack(this.context, 3.5*this.cellWidth, 0.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
-            horizStack(this.context, 4.5*this.cellWidth, 0.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
+            horizStack(this.context, 3.5*this.cellWidth, 0.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB10FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            horizStack(this.context, 4.5*this.cellWidth, 0.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB10FN00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
             //tooltip:
             if(frame==this.nFrames || frame==0){
                 TTcolors = ['rgba(110,110,110,1)'];
@@ -145,8 +145,8 @@ function SHARC(){
         //9 o'clock upstream DSSD:
         //pads
         if(this.padsEnabled){
-            horizStack(this.context, 0.5*this.cellWidth, 3.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
-            horizStack(this.context, 0.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
+            horizStack(this.context, 0.5*this.cellWidth, 3.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB09FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            horizStack(this.context, 0.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB09FN00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
             //tooltip:
             if(frame==this.nFrames || frame==0){
                 TTcolors = ['rgba(109,109,109,1)'];
@@ -171,8 +171,8 @@ function SHARC(){
         //6 o'clock upstream DSSD:
         //pads
         if(this.padsEnabled){
-            horizStack(this.context, 3.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
-            horizStack(this.context, 4.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
+            horizStack(this.context, 3.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB12FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            horizStack(this.context, 4.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB12FN00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
             //tooltip:
             if(frame==this.nFrames || frame==0){
                 TTcolors = ['rgba(112,112,112,1)'];
@@ -197,13 +197,13 @@ function SHARC(){
         //DOWNSTREAM//////////////////////////////////
         if(this.padsEnabled){
             //downstream quad pad back
-            quadBack(this.context, 14*this.cellWidth, 0.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, dummyColors4, 0);
+            quadBack(this.context, 14*this.cellWidth, 0.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, colors(['SHQ01FN00X', 'SHQ02FN00X', 'SHQ03FN00X', 'SHQ04FN00X'], this.dataBus.SHARC, frame, this.nFrames), 0);
             //upstream quad pad front
-            quadBack(this.context, 13.5*this.cellWidth, 1.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, dummyColors4, 0);
+            quadBack(this.context, 13.5*this.cellWidth, 1.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, colors(['SHQ01FP00X', 'SHQ02FP00X', 'SHQ03FP00X', 'SHQ04FP00X'], this.dataBus.SHARC, frame, this.nFrames), 0);
 
             //tooltip:
             if(frame==this.nFrames || frame==0){
-                TTcolors = ['rgba(102,102,102,1)', 'rgba(101,101,101,1)', 'rgba(104,104,104,1)', 'rgba(103,103,103,1)'];
+                TTcolors = ['rgba(101,101,101,1)', 'rgba(102,102,102,1)', 'rgba(103,103,103,1)', 'rgba(104,104,104,1)'];
                 //downstream quad pad back
                 quadBack(this.TTcontext, 14*this.cellWidth, 0.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, TTcolors, 1);
                 //upstream quad pad front
@@ -213,24 +213,24 @@ function SHARC(){
         }
 
         //downstream quad back
-        quadBack(this.context, 13*this.cellWidth, 2.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, dummyColors16, 0);
+        quadBack(this.context, 13*this.cellWidth, 2.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, this.meanColor('SHQ01EN', frame, 0).concat(this.meanColor('SHQ02EN', frame, 0), this.meanColor('SHQ03EN', frame, 0), this.meanColor('SHQ04EN', frame, 0)), 0);
         //downstream quad front
-        quadFront(this.context, 12.5*this.cellWidth, 3.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, dummyColors16, 0);
+        quadFront(this.context, 12.5*this.cellWidth, 3.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, this.meanColor('SHQ01DP', frame, 0).concat(this.meanColor('SHQ02DP', frame, 0), this.meanColor('SHQ03DP', frame, 0), this.meanColor('SHQ04DP', frame, 0)), 0);
         //downstream quad tooltip:
         if(frame==this.nFrames || frame==0){
             //downstream quad back
-            TTcolors = ['rgba(4,4,4,1)', 'rgba(2,2,2,1)', 'rgba(8,8,8,1)', 'rgba(6,6,6,1)'];
+            TTcolors = ['rgba(2,2,2,1)', 'rgba(4,4,4,1)', 'rgba(6,6,6,1)', 'rgba(8,8,8,1)'];
             quadBack(this.TTcontext, 13*this.cellWidth, 2.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, TTcolors, 1);
             //downstream quad front
-            TTcolors = ['rgba(3,3,3,1)', 'rgba(1,1,1,1)', 'rgba(7,7,7,1)', 'rgba(5,5,5,1)']; 
+            TTcolors = ['rgba(1,1,1,1)', 'rgba(3,3,3,1)', 'rgba(5,5,5,1)', 'rgba(7,7,7,1)']; 
             quadBack(this.TTcontext, 12.5*this.cellWidth, 3.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, TTcolors, 1);
         }
 
         //3 o'clock downstream DSSD:
         //pads
         if(this.padsEnabled){
-            horizStack(this.context, 14.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
-            horizStack(this.context, 14.5*this.cellWidth, 8.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
+            horizStack(this.context, 14.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB07FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            horizStack(this.context, 14.5*this.cellWidth, 8.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB07FN00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
             //tooltip:
             if(frame==this.nFrames || frame==0){
                 TTcolors = ['rgba(107,107,107,1)'];
@@ -255,8 +255,8 @@ function SHARC(){
         //12 o'clock downstream DSSD:
         //pads
         if(this.padsEnabled){
-            horizStack(this.context, 10.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
-            horizStack(this.context, 11.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
+            horizStack(this.context, 10.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB06FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            horizStack(this.context, 11.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB06FN00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
             //tooltip:
             if(frame==this.nFrames || frame==0){
                 TTcolors = ['rgba(106,106,106,1)'];
@@ -281,8 +281,8 @@ function SHARC(){
         //9 o'clock downstream DSSD:
         //pads
         if(this.padsEnabled){
-            horizStack(this.context, 7.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
-            horizStack(this.context, 7.5*this.cellWidth, 8.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
+            horizStack(this.context, 7.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB05FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            horizStack(this.context, 7.5*this.cellWidth, 8.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB05FN00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
             //tooltip:
             if(frame==this.nFrames || frame==0){
                 TTcolors = ['rgba(105,105,105,1)'];
@@ -307,8 +307,8 @@ function SHARC(){
         //6 o'clock downstream DSSD:
         //pads
         if(this.padsEnabled){
-            horizStack(this.context, 10.5*this.cellWidth, 11.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
-            horizStack(this.context, 11.5*this.cellWidth, 11.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, ['#000000'], 'h', 0);
+            horizStack(this.context, 10.5*this.cellWidth, 11.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB08FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            horizStack(this.context, 11.5*this.cellWidth, 11.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB08FN00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
             //tooltip:
             if(frame==this.nFrames || frame==0){
                 TTcolors = ['rgba(108,108,108,1)'];
