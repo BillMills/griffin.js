@@ -11,6 +11,9 @@ function Clock(){
     //add top level nav button:
     insertDOM('button', 'ClockButton', 'navLink', '', 'statusLink', function(){swapView('ClockLinks', 'ClockCanvas', 'clockMenus', 'ClockButton');}, 'Clock');
 
+    //deploy right bar menu:
+    deployMenu('clockMenus', ['summary', 'outs', 'CSAC'] , ['Clock Summary','Channel Outs','CSAC Parameters']);
+
     //nav wrapper div
     insertDOM('div', this.linkWrapperID, 'navPanel', 'width:50%; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;', this.wrapperID, '', '');
     //nav header
@@ -27,10 +30,10 @@ function Clock(){
         if(i%6==5) insertDOM('br', 'break', '', '', this.linkWrapperID);
     }
 
-    //set up arrow labels in right-side menu
-    document.getElementById('arrowClockSummary').innerHTML = String.fromCharCode(0x25B6);
-    document.getElementById('arrowChannelOut').innerHTML = String.fromCharCode(0x25B6);
-    document.getElementById('arrowCSAC').innerHTML = String.fromCharCode(0x25B6);
+
+
+
+
 
 	//deploy a canvas for the clock view; this is actually just a dummy to stay consistent with all the other views, so we can use the same transition functions easily.
     insertDOM('canvas', this.canvasID, 'monitor', 'top:' + ($('#ClockLinks').height() + 5) +'px;', this.wrapperID, '', '');

@@ -333,38 +333,6 @@ function TTtable(id, data, objects, keys, tableTitle, titles, split){
 
 }
 
-//menu toggler for clock view
-function toggleMenu(divID){
-
-    var totalHeight = parseInt(document.getElementById('clockMenus').offsetHeight),  //total height of menu bar
-        thisHeight = totalHeight*0.98 - 100,
-        assocDiv, string;
-
-    if(document.getElementById(divID).style.height == '50px'){ //expand menu:
-        //change the title arrows as appropriate
-        document.getElementById('arrowClockSummary').innerHTML = String.fromCharCode(0x25B6);
-        document.getElementById('arrowChannelOut').innerHTML = String.fromCharCode(0x25B6);
-        document.getElementById('arrowCSAC').innerHTML = String.fromCharCode(0x25B6);
-        if(divID == 'clockSummaryTab') string = 'arrowClockSummary';
-        else if(divID == 'channelOutTab') string = 'arrowChannelOut';
-        else if(divID == 'CSACTab') string = 'arrowCSAC';
-        document.getElementById(string).innerHTML = String.fromCharCode(0x25BC);
-
-        //shrink other menus and allow this one to fill the space:
-        document.getElementById('clockSummaryTab').style.height = '50px';
-        document.getElementById('channelOutTab').style.height = '50px';
-        document.getElementById('CSACTab').style.height = '50px';
-        document.getElementById(divID).style.height = thisHeight+'px';
-
-    } else { //collapse menu:
-        document.getElementById('arrowClockSummary').innerHTML = String.fromCharCode(0x25B6);
-        document.getElementById('arrowChannelOut').innerHTML = String.fromCharCode(0x25B6);
-        document.getElementById('arrowCSAC').innerHTML = String.fromCharCode(0x25B6);  
-        document.getElementById(divID).style.height = '50px';
-    }
-
-}
-
 //return an array with the appropriate colors chosen from <dataStore> (typically dataBus[this.name] for detectors) corresponding to the elements listed in <elements>
 function colors(elements, dataStore, frame, nFrames){
     var i,

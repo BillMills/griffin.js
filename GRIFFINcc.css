@@ -137,7 +137,7 @@ div.RightSidebar{
 	-webkit-transition:opacity 0.5s, z-index 0.5s;
 }
 
-div.clockSidebar{
+div.collapsableSidebar{
 	opacity:0;
 	z-index:-1;
 	clear:both;
