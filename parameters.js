@@ -55,7 +55,7 @@ function loadParameters(){
 										   }
 							},
 				"BAMBINOmode" : "S3",
-				"BAMBINOlayers" : 1,
+				"BAMBINOlayers" : 2,
 				"BAMBINOdeployment" : [1,1],  //upstream, downstream
 
 				"DANTE" : {

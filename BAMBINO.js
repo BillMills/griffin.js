@@ -23,9 +23,13 @@ function BAMBINO(){
     this.centerX = this.canvasWidth/2;
     this.centerY = this.canvasHeight/2;
     this.CDinnerRadius = this.canvasWidth*0.01;
-    this.CDradius = this.canvasHeight*0.17;
+    this.CDradius = (this.layers == 1) ? this.canvasHeight*0.17 : this.canvasWidth*0.12;
     this.centerLeft = this.canvasWidth*0.25;
     this.centerRight = this.canvasWidth*0.75;
+    this.centerLeftE = this.canvasWidth*0.13;
+    this.centerLeftD = this.canvasWidth*0.375;
+    this.centerRightD = this.canvasWidth*0.625;
+    this.centerRightE = this.canvasWidth*0.87;
     this.centerTop = this.canvasHeight*0.2;
     this.centerBottom = this.canvasHeight*0.6;
     this.radialWidth = (this.CDradius - this.CDinnerRadius) / this.nRadial;
@@ -44,15 +48,23 @@ function BAMBINO(){
         //index i counts upstream/layerD/front, upstream/layerD/back, downstream/layerD/front, downstream/layerD/back, etc incrementing layers.
     	for(i=0; i<4*this.layers; i++){ 
             //determine disk image center
-	    	if(i == 0){
-	    		x0 = this.centerLeft; y0 = this.centerTop;  //downstream radial
-	    	} else if(i == 1){
-	    		x0 = this.centerLeft; y0 = this.centerBottom; //downstream azimuthal
-	    	} else if(i == 2){
-	    		x0 = this.centerRight; y0 = this.centerTop; //upstream radial
+	    	if(i == 2){
+	    		x0 = ( (this.layers==1) ? this.centerLeft : this.centerLeftD); y0 = this.centerTop;  //downstream radial D layer
 	    	} else if(i == 3){
-	    		x0 = this.centerRight; y0 = this.centerBottom; //upstream azimuthal
-	    	}
+	    		x0 = ( (this.layers==1) ? this.centerLeft : this.centerLeftD); y0 = this.centerBottom; //downstream azimuthal D layer
+	    	} else if(i == 0){
+	    		x0 = ( (this.layers==1) ? this.centerRight : this.centerRightD); y0 = this.centerTop; //upstream radial D layer
+	    	} else if(i == 1){
+	    		x0 = ( (this.layers==1) ? this.centerRight : this.centerRightD); y0 = this.centerBottom; //upstream azimuthal D layer
+	    	} else if(i==4){
+                x0 = this.centerRightE; y0 = this.centerTop; //upstream radial E layer
+            } else if(i==5){
+                x0 = this.centerRightE; y0 = this.centerBottom; //upstream azimuthal E layer
+            } else if(i==6){
+                x0 = this.centerLeftE; y0 = this.centerTop;  //downstream radial E layer   
+            } else if(i==7){
+                x0 = this.centerLeftE; y0 = this.centerBottom; //downstream azimuthal E layer
+            }
 
             //fronts
     
@@ -133,8 +145,8 @@ function BAMBINO(){
             this.context.clearRect(0,0.80*this.canvasHeight,this.canvasWidth,0.20*this.canvasHeight - this.scaleHeight);
             this.context.fillStyle = '#999999';
             this.context.font="24px 'Orbitron'";
-            this.context.fillText('Downstream', this.centerLeft - this.context.measureText('Downstream').width/2, 0.85*this.canvasHeight);
-            this.context.fillText('Upstream', this.centerRight - this.context.measureText('Upstream').width/2, 0.85*this.canvasHeight);
+            this.context.fillText('Upstream', ( (this.layers==1) ? this.centerLeft : this.centerLeftD/2 + this.centerLeftE/2) - this.context.measureText('Upstream').width/2, 0.85*this.canvasHeight);
+            this.context.fillText('Downstream', ( (this.layers==1) ? this.centerRight : this.centerRightD/2 + this.centerRightE/2) - this.context.measureText('Downstream').width/2, 0.85*this.canvasHeight);
         }
 
     };
