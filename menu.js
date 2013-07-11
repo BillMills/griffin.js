@@ -6,7 +6,7 @@ function deployMenu(targetDivID, headings, titles){
 	for(i=0; i<headings.length; i++){
 		insertDOM('div', headings[i]+'Tab', 'collapsableMenu', 'height:50px; text-align:center; margin-top:2%;', targetDivID, function(){toggleMenu(targetDivID, headings, this.id)}, '', '', '', '');
 		insertDOM('h3', headings[i]+'arrow', '', 'display:inline; float:left;', headings[i]+'Tab', '', String.fromCharCode(0x25B6));
-		insertDOM('h3', headings[i]+'title', '', 'display:inline-block', headings[i]+'Tab', '', titles[i]);
+		insertDOM('h3', headings[i]+'title', '', 'display:inline-block; font:20px Orbitron', headings[i]+'Tab', '', titles[i]);
 	}
 
 }

@@ -1,9 +1,11 @@
 function Dashboard(){
 
+    var subsPresent, key;
+
 	this.wrapperID = window.parameters.wrapper;             //ID of wrapping div
 	this.canvasID = 'DashboardCanvas';	                    //ID of canvas to paint dashboard on
     this.linkWrapperID = 'DashboardLinks';                  //ID of div to contain clock view header
-    this.sidebarID = 'DashboardSidebar';                    //ID of dashboard sidebar div
+    this.sidebarID = 'dashboardMenus';                      //ID of dashboard sidebar div
     this.labels = [window.parameters.ExpName, window.parameters.ExpName, window.parameters.ExpName, 0, 0, 0, 'DUMP']      //names of corona, downstream lamp, upstream lamp, corona auxilary, chamber ds, chamber us, beamdump detectors
 
     //determine which detectors go where:
@@ -39,15 +41,18 @@ function Dashboard(){
     if(window.parameters.deployment.SPICE)
         this.labels[2] = 0;
 
-
-
 	this.wrapper = document.getElementById(this.wrapperID);
 
-    //right sidebar
-    insertDOM('div', this.sidebarID, 'RightSidebar', '', this.wrapperID, '', '')
+    //right sidebar menus
+    subsPresent = [window.parameters.ExpName];
+    for(key in window.parameters.deployment){
+        if(window.parameters.deployment[key] && key!='HPGe')
+            subsPresent[subsPresent.length] = key;
+    }
+    deployMenu(this.sidebarID, subsPresent , subsPresent);
 
     //add top level nav button:
-    insertDOM('button', 'DashboardButton', 'navLinkDown', '', 'statusLink', function(){swapView('DashboardLinks', 'DashboardCanvas', 'DashboardSidebar', 'DashboardButton')}, 'Dashboard', '', 'button')
+    insertDOM('button', 'DashboardButton', 'navLinkDown', '', 'statusLink', function(){swapView('DashboardLinks', 'DashboardCanvas', 'dashboardMenus', 'DashboardButton')}, 'Dashboard', '', 'button')
 
     //nav wrapper div
     insertDOM('div', this.linkWrapperID, 'navPanel', '', this.wrapperID, '', '')
@@ -228,5 +233,22 @@ function Dashboard(){
     };
 
     this.draw(0);
+
+
+    //alarm animation test:
+    fadeRed('TIGRESSTab')
+    function fadeBlack(tabID){
+        $('#'+tabID).off();
+        $('#'+tabID).on('transitionend', function(){fadeRed(tabID)});
+        document.getElementById(tabID).style.border = '2px solid black';
+        document.getElementById(tabID).style['border-right'] = 'none';
+    }
+    function fadeRed(tabID){
+        $('#'+tabID).off();
+        $('#'+tabID).on('transitionend', function(){fadeBlack(tabID)});
+        document.getElementById(tabID).style.border = '2px solid red';
+        document.getElementById(tabID).style['border-right'] = 'none';
+    }    
+
 
 }

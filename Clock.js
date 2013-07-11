@@ -22,11 +22,11 @@ function Clock(){
 
     //the clock view is done entirely with dom elements; most convenient to extend the central div to accommodate.
     cellSize = document.getElementById(this.linkWrapperID).offsetWidth / 100;
-    insertDOM('div', 'masterClock', 'clock', 'width:'+20*cellSize+'px; height:'+10*cellSize+'px; margin-left:auto; margin-right:auto; margin-top:20px;', this.linkWrapperID, '', '');
+    insertDOM('div', 'masterClock', 'clock', 'width:'+20*cellSize+'px; height:'+10*cellSize+'px; margin-left:auto; margin-right:auto; margin-top:20px;', this.linkWrapperID, function(){glowMe(this.id)}, '');
     //slaves
     for(i=0; i<24; i++){
         clockStyle = 'display:inline-block; width:'+10*cellSize+'px; height:'+10*cellSize+'px; margin-left:'+( (i%6==0) ? 10*cellSize : 2*cellSize )+'px; margin-right:'+( (i%6==5) ? 10*cellSize : 2*cellSize )+'px; margin-bottom:'+2*cellSize+'px; margin-top:'+2*cellSize+'px;'
-        insertDOM('div', 'slaveClock'+i, 'clock', clockStyle , this.linkWrapperID, '', '');
+        insertDOM('div', 'slaveClock'+i, 'clock', clockStyle , this.linkWrapperID, function(){glowMe(this.id)}, '');
         if(i%6==5) insertDOM('br', 'break', '', '', this.linkWrapperID);
     }
 
@@ -38,4 +38,16 @@ function Clock(){
 	//deploy a canvas for the clock view; this is actually just a dummy to stay consistent with all the other views, so we can use the same transition functions easily.
     insertDOM('canvas', this.canvasID, 'monitor', 'top:' + ($('#ClockLinks').height() + 5) +'px;', this.wrapperID, '', '');
 
+}
+
+function glowMe(id){
+    var i;
+
+    document.getElementById('masterClock').style['box-shadow'] = '0 0 0px white'; 
+
+    for(i=0; i<24; i++){
+        if(document.getElementById('slaveClock'+i))
+            document.getElementById('slaveClock'+i).style['box-shadow'] = '0 0 0px white';    
+    }
+    document.getElementById(id).style['box-shadow'] = '0 0 20px white';
 }

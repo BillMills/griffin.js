@@ -47,6 +47,9 @@ div.clock{
 	border-color: #000000;
 	border-radius:25px;
 	background-color: #4C4C4C;
+	transition: box-shadow 0.5s ease;
+	-moz-transition: box-shadow 0.5s ease;
+	-webkit-transition: box-shadow 0.5s ease;
 	-moz-box-sizing: border-box; 
 	-webkit-box-sizing: border-box; 
 	box-sizing: border-box;
@@ -141,6 +144,8 @@ div.collapsableSidebar{
 	opacity:0;
 	z-index:-1;
 	clear:both;
+	position:absolute;
+	right:0%;
 	transition:opacity 0.5s, z-index 0.5s;
 	-moz-transition:opacity 0.5s, z-index 0.5s;
 	-webkit-transition:opacity 0.5s, z-index 0.5s;
@@ -160,9 +165,9 @@ div.collapsableMenu{
 	-moz-box-sizing: border-box; 
 	-webkit-box-sizing: border-box; 
 	box-sizing: border-box;
-	transition:height 0.3s;
-	-moz-transition:height 0.3s;
-	-webkit-transition:height 0.3s;				
+	transition:height 0.3s, border 1s ease 0.1s;
+	-moz-transition:height 0.3s, border 1s;
+	-webkit-transition:height 0.3s border 1s;				
 }
 
 h3{
