@@ -144,7 +144,7 @@ function SCEPTAR(){
             context.restore();
 
             if(context == this.TTcontext){
-                context.fillStyle = 'rgba('+(indexStart+i)+','+(indexStart+i)+','+(indexStart+i)+',1)';
+                context.fillStyle = 'rgba('+(indexStart+1+i)+','+(indexStart+1+i)+','+(indexStart+1+i)+',1)';
                 context.save();
                 context.translate(x0, y0);
                 context.rotate((i%5)*Math.PI/180*72);
