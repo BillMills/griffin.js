@@ -75,8 +75,8 @@ function Dashboard(){
     //drawing parameters:
     this.x0 = this.canvasWidth / 2;
     this.y0 = this.canvasHeight / 2;
-    this.outerRad = this.canvasHeight*0.45;
-    this.innerRad = this.canvasHeight*0.1;
+    this.outerRad = this.canvasHeight*0.4;
+    this.innerRad = this.canvasHeight*0.25;
     this.gapArc = Math.PI/180 * 5;
     this.lampshadeArc = Math.PI/180 * 25;
     this.coronaArc = Math.PI/180 * 60;

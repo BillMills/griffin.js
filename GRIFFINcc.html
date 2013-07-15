@@ -225,9 +225,9 @@
           if(window.parameters.deployment["DESCANT"]) window.Subdetectors[window.Subdetectors.length] = new DESCANT();
           if(window.parameters.deployment["PACES"]) window.Subdetectors[window.Subdetectors.length] = new PACES();
           if(window.parameters.deployment["DANTE"]) window.Subdetectors[window.Subdetectors.length] = new DANTE();
-          if(window.parameters.deployment["BAMBINO"]) window.Subdetectors[window.Subdetectors.length] = new BAMBINO();
-          if(window.parameters.deployment["SCEPTAR"]) window.Subdetectors[window.Subdetectors.length] = new SCEPTAR();
           if(window.parameters.deployment["SPICE"]) window.Subdetectors[window.Subdetectors.length] = new SPICE();
+          if(window.parameters.deployment["BAMBINO"] || window.parameters.SPICEaux) window.Subdetectors[window.Subdetectors.length] = new BAMBINO(window.parameters.SPICEaux);
+          if(window.parameters.deployment["SCEPTAR"]) window.Subdetectors[window.Subdetectors.length] = new SCEPTAR();
           if(window.parameters.deployment["TIP"]) window.Subdetectors[window.Subdetectors.length] = new TIP();
           if(window.parameters.deployment["DSSD"]) window.Subdetectors[window.Subdetectors.length] = new DSSD();
 
@@ -326,6 +326,44 @@
       //var DAQdata = ODBMGet(DAQpath)
       //console.log( DAQdata[0] )
 
+/*
+      function parse(response){
+        //console.log(JSON.stringify(response))
+        window.dump = response;
+      }
+      var d = new Date();
+      var start = d.getTime();
+      var counts=0;
+      function fetch(){
+        var script  = document.createElement('script');
+        script.setAttribute('src', 'http://midtig06.triumf.ca:8091/mother/scalar?jsonp=parse');
+        script.setAttribute('id', 'benchmark');
+        script.onload = function(){
+          var D = new Date()
+          console.log((D.getTime() - start)/1000);
+          if(counts<1000)fetch();
+          counts++;
+        }
+        script.onerror = function(){
+          var D = new Date()
+          console.log((D.getTime() - start)/1000);
+          if(counts<1000)fetch();
+          counts++;
+        }
+        document.head.appendChild(script);        
+      }
+      fetch()
+
+/*
+      var d = new Date();
+      var start = d.getTime();
+      for(var iii=0; iii<1000; iii++){        
+        var datadump = ODBMGet(['/Experiment/Name']);
+                var D = new Date()
+                console.log((D.getTime()-start)/1000 )  
+        
+      }
+*/
     </script> 
   </body>
 </html>

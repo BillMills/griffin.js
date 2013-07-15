@@ -7,6 +7,12 @@ function SPICE(){
     var that = this;
     Subsystem.call(this);
     this.dataBus = new SPICEDS();
+    //SPICE can be deployed with an S2 or S3 downstream in the chamber;
+    //these are identical to BAMBINO, so we deploy BAMBINO in 'SPICE mode':
+    if(window.parameters.SPICEaux == 'S2' || window.parameters.SPICEaux == 'S3'){
+        window.parameters.deployment.BAMBINO = 1;
+        window.parameters.BAMBINOdeployment = [0,1];
+    }
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
     window.SPICEpointer = that;
 
@@ -22,14 +28,6 @@ function SPICE(){
     this.outerRadius = this.canvasHeight*0.36;
     this.azimuthalStep = 2*Math.PI / this.nAzimuthal;
     this.radialStep = (this.outerRadius - this.innerRadius) / this.nRadial;
-
-    //establish data buffers////////////////////////////////////////////////////////////////////////////
-    this.HVcolor = [];
-    this.oldHVcolor = [];
-    this.thresholdColor = [];
-    this.oldThresholdColor = [];
-    this.rateColor = [];
-    this.oldRateColor = [];
 
     //member functions///////////////////////////////////////////////////////////////////
 

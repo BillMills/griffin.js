@@ -84,7 +84,7 @@ function Subsystem(){
 
     //draw the color scale
     this.drawScale = function(context, frame){
-        var i, j, key;
+        var i, j, key, nKeys=0, label;
         var scaleFraction = 0.8  //fraction of canvas to span with the scale
         //clear the scale region
         context.clearRect(0, this.canvasHeight - this.scaleHeight, this.canvasWidth, this.canvasHeight);
@@ -110,6 +110,7 @@ function Subsystem(){
                 if(window.parameters[this.name].maxima[key][window.state.subdetectorView] < 1000) maxTicks[key] = key+': ' + window.parameters[this.name].maxima[key][window.state.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.state.subdetectorView];
                 else maxTicks[key] = key + ': ' + window.parameters[this.name].maxima[key][window.state.subdetectorView]/1000 + scaleUnit[window.state.subdetectorView] + window.parameters.subdetectorUnit[window.state.subdetectorView];
             }
+            nKeys++;
         }
 
         //titles
@@ -129,7 +130,8 @@ function Subsystem(){
         context.stroke();
         i=0;
         for(key in window.parameters[this.name].minima){
-            context.fillText(minTicks[key], this.canvasWidth*(1-scaleFraction)/2 - context.measureText(minTicks[key]).width/2, this.canvasHeight-this.scaleHeight/2 + 25+12*i);
+            label = (nKeys == 1) ? minTicks[key].slice(minTicks[key].indexOf(':')+2, minTicks[key].length+1) : minTicks[key];
+            context.fillText( label, this.canvasWidth*(1-scaleFraction)/2 - context.measureText(label).width/2, this.canvasHeight-this.scaleHeight/2 + 25+12*i);
             i++;
         }
 
@@ -140,7 +142,8 @@ function Subsystem(){
         context.stroke();
         i=0;
         for(key in window.parameters[this.name].minima){
-            context.fillText(maxTicks[key], this.canvasWidth*(1-(1-scaleFraction)/2) - context.measureText(maxTicks[key]).width/2, this.canvasHeight-this.scaleHeight/2 + 25+12*i);
+            label = (nKeys == 1) ? maxTicks[key].slice(maxTicks[key].indexOf(':')+2, maxTicks[key].length+1) : maxTicks[key]
+            context.fillText(label, this.canvasWidth*(1-(1-scaleFraction)/2) - context.measureText(label).width/2, this.canvasHeight-this.scaleHeight/2 + 25+12*i);
             i++;
         }
 
@@ -242,7 +245,6 @@ function Subsystem(){
 
     //generic update routine.  Again, some subsystems are more complcated versions of this:
     this.update = function(){
-        
         var key;
 
         //get new data

@@ -6,7 +6,7 @@ function loadParameters(){
 				"ExpName" : "TIGRESS",
 				"statusURL" : "http://alphadon.triumf.ca:8082/",
 				"topDeployment" : {"HV":1, "Subsystems":1, "DAQ":1, "Clock":1, "Trigger":0},
-				"deployment" : {"BAMBINO":1, "DANTE":0, "DESCANT":1, "HPGe":1, "PACES":1, "SCEPTAR":1, "SHARC":1, "SPICE":0, "TIP":0, "DSSD":0},
+				"deployment" : {"BAMBINO":0, "DANTE":0, "DESCANT":1, "HPGe":1, "PACES":1, "SCEPTAR":1, "SHARC":1, "SPICE":1, "TIP":0, "DSSD":0},
 				"wrapper" : "waffleplate",
 				"subdetectorUnit" : ["V", "ADC units", "Hz"],
 				"monitorValues" : ["HV", "Thresholds", "Rate"],  //for filling tooltip
@@ -56,7 +56,7 @@ function loadParameters(){
 							},
 				"BAMBINOmode" : "S3",
 				"BAMBINOlayers" : 2,
-				"BAMBINOdeployment" : [1,1],  //upstream, downstream
+				"BAMBINOdeployment" : [1,0],  //upstream, downstream
 
 				"DANTE" : {
 							"minima" : {
@@ -120,15 +120,7 @@ function loadParameters(){
 							"maxima" : {
 											"SHARC" : [1,1,1]
 							           },
-						  },
-				"SMrows" : 2,
-				"SMcolumns" : 4,
-				"SM_ODBkeys" : ["/Location/Of/Device/Varibles", "/Location/Of/Device/Settings", "HV Key"],
-				"SMnChannels" : 16,
-				"nRadialHoriz" : 4, 
-				"nAzimuthalHoriz" : 4, 
-				"nRadialVert" : 1, 
-				"nAzimuthalVert" : 16,
+						  },  
 
 				"SPICE" : {
 							"minima" : {
@@ -138,6 +130,8 @@ function loadParameters(){
 											"SPICE" : [1,1,1]
 									   }
 						  },
+				"SPICEaux" : 'S2',
+				"SPICEauxLayers" : 2,
 
 				"TIP" : {
 							"minima" : {

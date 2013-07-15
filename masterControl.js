@@ -84,8 +84,9 @@ function masterLoop(callMyself){
         if(window.parameters.topDeployment['DAQ']) window.DAQ.update();
         //Subsystems
         if(window.parameters.topDeployment['Subsystems']){
-            for(i=0; i<window.Subdetectors.length; i++)
+            for(i=0; i<window.Subdetectors.length; i++){
                 window.Subdetectors[i].update();
+            }
         }
     }
     
@@ -98,7 +99,7 @@ function masterLoop(callMyself){
 
     window.freshLoad = 0;
     //next iteration:
-    window.loop = setTimeout(function(){loadJSONP(window.Gatekeeper, 1)}, 60000);
+    window.loop = setTimeout(function(){loadJSONP(window.Gatekeeper, 1)}, 3000);
 }
 
 //determine what size cards are in what slot:

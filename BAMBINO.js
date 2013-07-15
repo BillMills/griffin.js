@@ -1,6 +1,6 @@
 BAMBINO.prototype = Object.create(Subsystem.prototype);
 
-function BAMBINO(){
+function BAMBINO(spiceMode){
     //detector name, self-pointing pointer, pull in the Subsystem template, 
     //establish a databus and create a global-scope pointer to this object:
     this.name = 'BAMBINO';
@@ -9,10 +9,15 @@ function BAMBINO(){
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
     window.BAMBINOpointer = that;
 
+    //change the button name if we're deploying in spice mode:
+    if(window.parameters.SPICEaux)
+        document.getElementById('BAMBINOlink').innerHTML = 'SPICE '+window.parameters.SPICEaux
+
     //member variables///////////////////////////////////
-    this.mode = window.parameters.BAMBINOmode;      //'S2' or 'S3'
-    this.layers = window.parameters.BAMBINOlayers
-    this.dataBus = new BAMBINODS(this.mode, this.layers);
+    this.spiceAux = (spiceMode) ? 1 : 0;
+    this.mode = (this.spiceAux) ? spiceMode : window.parameters.BAMBINOmode;      //'S2' or 'S3'
+    this.layers = (this.spiceAux) ? window.parameters.SPICEauxLayers : window.parameters.BAMBINOlayers;
+    this.dataBus = new BAMBINODS(this.mode, this.layers, spiceMode);
     this.nRadial = 24;
     if(this.mode=='S2')
     	this.nAzimuthal = 16;
@@ -24,6 +29,8 @@ function BAMBINO(){
     this.centerY = this.canvasHeight/2;
     this.CDinnerRadius = this.canvasWidth*0.01;
     this.CDradius = (this.layers == 1) ? this.canvasHeight*0.17 : this.canvasWidth*0.12;
+    if(this.layers==1 && !(window.parameters.BAMBINOdeployment[0] && window.parameters.BAMBINOdeployment[1]) )
+        this.CDradius *= 1.5
     this.centerLeft = this.canvasWidth*0.25;
     this.centerRight = this.canvasWidth*0.75;
     this.centerLeftE = this.canvasWidth*0.13;
@@ -34,6 +41,33 @@ function BAMBINO(){
     this.centerBottom = this.canvasHeight*0.6;
     this.radialWidth = (this.CDradius - this.CDinnerRadius) / this.nRadial;
     this.azimuthalArc = 2*Math.PI / this.nAzimuthal;
+    if(this.layers==1 && window.parameters.BAMBINOdeployment[1]==0)
+        this.upstreamTitleCenter = this.canvasWidth/2;
+    else if(this.layers==1)
+        this.upstreamTitleCenter = this.centerLeft;    
+    else
+        this.upstreamTitleCenter = this.canvasWidth/2;
+    if(this.layers==1 && window.parameters.BAMBINOdeployment[0]==0)
+        this.downstreamTitleCenter = this.canvasWidth/2;
+    else if(this.layers==1)
+        this.downstreamTitleCenter = this.centerRight;    
+    else
+        this.downstreamTitleCenter = this.canvasWidth/2;    
+
+    //which detectors are present: [upstream layer D, downstream layer D, upstream layer E, downstream layer E];
+    this.detPresent = [0,0,0,0]; 
+    if(window.parameters.BAMBINOdeployment[0]){
+        this.detPresent[0] = 1
+        if(this.layers == 2){
+            this.detPresent[2] = 1   
+        }
+    }
+    if(window.parameters.BAMBINOdeployment[1]){
+        this.detPresent[1] = 1
+        if(this.layers == 2){
+            this.detPresent[3] = 1   
+        }
+    }    
 
     //member functions///////////////////////////////////////////////////////////////////
 
@@ -44,34 +78,51 @@ function BAMBINO(){
     	this.context.strokeStyle = '#999999';
         this.TTcontext.strokeStyle = '#123456';
 
-        //each layer -> 2 disks (up and downstream) times 2 sides (front and back).
+        //each layer -> 1 or 2 disks (up and downstream) times 2 sides (front and back).
         //index i counts upstream/layerD/front, upstream/layerD/back, downstream/layerD/front, downstream/layerD/back, etc incrementing layers.
     	for(i=0; i<4*this.layers; i++){ 
+            //bail out if this iteration's disk isn't there:
+            if(!this.detPresent[Math.floor(i/2)]) continue;
+
             //determine disk image center
-	    	if(i == 2){
-	    		x0 = ( (this.layers==1) ? this.centerLeft : this.centerLeftD); y0 = this.centerTop;  //downstream radial D layer
-	    	} else if(i == 3){
-	    		x0 = ( (this.layers==1) ? this.centerLeft : this.centerLeftD); y0 = this.centerBottom; //downstream azimuthal D layer
-	    	} else if(i == 0){
-	    		x0 = ( (this.layers==1) ? this.centerRight : this.centerRightD); y0 = this.centerTop; //upstream radial D layer
-	    	} else if(i == 1){
-	    		x0 = ( (this.layers==1) ? this.centerRight : this.centerRightD); y0 = this.centerBottom; //upstream azimuthal D layer
-	    	} else if(i==4){
-                x0 = this.centerRightE; y0 = this.centerTop; //upstream radial E layer
-            } else if(i==5){
-                x0 = this.centerRightE; y0 = this.centerBottom; //upstream azimuthal E layer
-            } else if(i==6){
-                x0 = this.centerLeftE; y0 = this.centerTop;  //downstream radial E layer   
-            } else if(i==7){
-                x0 = this.centerLeftE; y0 = this.centerBottom; //downstream azimuthal E layer
+            //upstream layer D front || back:
+            if(i==0 || i==1){
+                if(this.layers == 2){
+                    x0 = this.centerLeftD; y0 = (i==0) ? this.centerTop : this.centerBottom;
+                } else if(window.parameters.BAMBINOdeployment[1]){
+                    x0 = this.centerLeft; y0 = (i==0) ? this.centerTop : this.centerBottom;
+                } else{
+                    x0 = (i==0) ? this.centerLeft : this.centerRight; y0 = this.canvasHeight*0.4;
+                }
+            } else if(i==2 || i==3){ //downstream layer D front || back:
+                if(this.layers == 2 && !window.parameters.BAMBINOdeployment[0]){
+                    x0 = this.centerLeftD; y0 = (i==2) ? this.centerTop : this.centerBottom;
+                } else if(this.layers==2){
+                    x0 = this.centerRightD; y0 = (i==2) ? this.centerTop : this.centerBottom;
+                } else if(window.parameters.BAMBINOdeployment[0]){
+                    x0 = this.centerRight; y0 = (i==2) ? this.centerTop : this.centerBottom;
+                } else{
+                    x0 = (i==2) ? this.centerLeft : this.centerRight; y0 = this.canvasHeight*0.4;
+                }
+            } else if(i==4 || i==5){ //upstream layer E front || back:
+                if(window.parameters.BAMBINOdeployment[1]){
+                    x0 = this.centerLeftE; y0 = (i==4) ? this.centerTop : this.centerBottom;
+                } else{
+                    x0 = this.centerRightD; y0 = (i==4) ? this.centerTop : this.centerBottom;
+                }
+            } else if(i==6 || i==7){ //downstream layer E front || back:
+                if(window.parameters.BAMBINOdeployment[0]){
+                    x0 = this.centerRightE; y0 = (i==6) ? this.centerTop : this.centerBottom;
+                } else{
+                    x0 = this.centerRightD; y0 = (i==6) ? this.centerTop : this.centerBottom;
+                }
             }
 
-            //fronts
-    
+            //fronts    
 	    	if(i%2 == 0){
 
 	    		for(j=0; j<this.nRadial; j++){
-                    name = ((this.mode=='S2') ? 'BAZ0' : 'BAE0') + (Math.floor((i%4)/2)+1) + this.dataBus.waypoints[Math.floor(i/4)] + 'P' +( (j<10) ? '0'+j : j ) + 'X';
+                    name = ((this.spiceAux) ? 'SP' : 'BA' ) + ((this.mode=='S2') ? 'Z0' : 'E0') + (Math.floor((i%4)/2)+1) + this.dataBus.waypoints[Math.floor(i/4)] + 'P' +( (j<10) ? '0'+j : j ) + 'X';
     				this.context.beginPath()
                     if(window.state.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.BAMBINO[name].oldHVcolor), parseHexColor(this.dataBus.BAMBINO[name].HVcolor), frame/this.nFrames);
                     else if(window.state.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.BAMBINO[name].oldThresholdColor), parseHexColor(this.dataBus.BAMBINO[name].thresholdColor), frame/this.nFrames);
@@ -108,7 +159,7 @@ function BAMBINO(){
     		} else {
     
 	    		for(j=0; j<this.nAzimuthal; j++){
-                    name = ((this.mode=='S2') ? 'BAZ0' : 'BAE0') + (Math.floor((i%4)/2)+1) + this.dataBus.waypoints[Math.floor(i/4)] + 'N' +( (j<10) ? '0'+j : j ) + 'X';
+                    name = ((this.spiceAux) ? 'SP' : 'BA' ) + ((this.mode=='S2') ? 'Z0' : 'E0') + (Math.floor((i%4)/2)+1) + this.dataBus.waypoints[Math.floor(i/4)] + 'N' +( (j<10) ? '0'+j : j ) + 'X';
     				this.context.beginPath()
                     if(window.state.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.BAMBINO[name].oldHVcolor), parseHexColor(this.dataBus.BAMBINO[name].HVcolor), frame/this.nFrames);
                     else if(window.state.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.BAMBINO[name].oldThresholdColor), parseHexColor(this.dataBus.BAMBINO[name].thresholdColor), frame/this.nFrames);
@@ -145,8 +196,8 @@ function BAMBINO(){
             this.context.clearRect(0,0.80*this.canvasHeight,this.canvasWidth,0.20*this.canvasHeight - this.scaleHeight);
             this.context.fillStyle = '#999999';
             this.context.font="24px 'Orbitron'";
-            this.context.fillText('Upstream', ( (this.layers==1) ? this.centerLeft : this.centerLeftD/2 + this.centerLeftE/2) - this.context.measureText('Upstream').width/2, 0.85*this.canvasHeight);
-            this.context.fillText('Downstream', ( (this.layers==1) ? this.centerRight : this.centerRightD/2 + this.centerRightE/2) - this.context.measureText('Downstream').width/2, 0.85*this.canvasHeight);
+            if(window.parameters.BAMBINOdeployment[0]) this.context.fillText('Upstream', this.upstreamTitleCenter - this.context.measureText('Upstream').width/2, 0.85*this.canvasHeight);
+            if(window.parameters.BAMBINOdeployment[1]) this.context.fillText('Downstream', this.downstreamTitleCenter - this.context.measureText('Downstream').width/2, 0.85*this.canvasHeight);
         }
 
     };

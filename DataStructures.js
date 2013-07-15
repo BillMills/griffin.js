@@ -428,9 +428,12 @@ DSSDDS = function(){
 	
 }
 
-BAMBINODS = function(mode, layers){
-	var i, j, k, index=0, name, 
-	prefix = ((mode=='S2') ? 'BAZ0' : 'BAE0');
+BAMBINODS = function(mode, layers, spiceMode){
+	var i, j, k, index=0, name, prefix;
+	if(spiceMode)
+		prefix = ((mode=='S2') ? 'SPZ0' : 'SPE0');
+	else
+		prefix = ((mode=='S2') ? 'BAZ0' : 'BAE0');
 	this.waypoints = ['D', 'E'];  //note tooltip indices only support two layers in S3 mode
 
 	this.BAMBINO = {};
