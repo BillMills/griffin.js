@@ -324,7 +324,8 @@ function TTtable(id, data, objects, keys, tableTitle, titles, split){
                 if(typeof data[objects[n]][keys[k]] == 'string')
                     cellContent = data[objects[n]][keys[k]];
                 else 
-                    cellContent = data[objects[n]][keys[k]].toFixed(window.parameters.tooltipPrecision)                
+                    cellContent = data[objects[n]][keys[k]].toFixed(window.parameters.tooltipPrecision)
+                if(cellContent == 0xDEADBEEF) cellContent = '0xDEADBEEF'
                 document.getElementById(id+'row'+j+'cell'+(1+titles.length*i+k)).innerHTML = cellContent;
             }
             n++;

@@ -296,6 +296,8 @@
 
         //hack to put subsystems on top until Dashboard view is implemented:
         if(window.parameters.topDeployment['Subsystems']) swapView('SubsystemLinks', window.Subdetectors[0].canvasID, 'SubsystemSidebar', 'SubsystemsButton')
+        //suppress dashboard link until it's ready:
+        document.getElementById('DashboardButton').style.display = 'none';
         //else if(!window.parameters.topDeployment['Trigger']) swapView('mainframeLinks', 'HVgrid0', 'InputLayer', 'HVmonitorButton');
         //hack to patch in HV assets:
         //insertDOM('button', 'HVhackButton', 'navLink', '', 'statusLink', function(){window.location="http://alphadon.triumf.ca:8082/CS/Dashboard"}, 'HV Status', '', 'submit');

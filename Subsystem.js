@@ -230,12 +230,12 @@ function Subsystem(){
         for(key in this.dataBus[this.name]){
             
             if(window.JSONPstore['thresholds']){
-                if(window.JSONPstore['thresholds'][key])
+                if(typeof window.JSONPstore['thresholds'][key] == 'number')
                     this.dataBus[this.name][key]['threshold'] = window.JSONPstore['thresholds'][key];
             }
 
             if(window.JSONPstore['scalar']){
-                if(window.JSONPstore['scalar'][key])
+                if(typeof window.JSONPstore['scalar'][key] == 'number')
                     this.dataBus[this.name][key]['rate'] = window.JSONPstore['scalar'][key]['TRIGREQ'];
             }
 
@@ -867,18 +867,19 @@ function HPGeAssets(){
 
     this.fetchHPGeData = function(){
         var i, j, key;
-        
+
         //HPGe + BGO detail
         for(key in this.dataBus.HPGe){
+
             if(window.JSONPstore['thresholds']){
-                if(window.JSONPstore['thresholds'][key])
+                if(typeof window.JSONPstore['thresholds'][key] == 'number')
                     this.dataBus.HPGe[key]['threshold'] = window.JSONPstore['thresholds'][key];
                 else
                     this.dataBus.HPGe[key]['threshold'] = 0xDEADBEEF;
             }
 
             if(window.JSONPstore['scalar']){
-                if(window.JSONPstore['scalar'][key])
+                if(typeof window.JSONPstore['scalar'][key] == 'number')
                     this.dataBus.HPGe[key]['rate'] = window.JSONPstore['scalar'][key]['TRIGREQ'];
                 else 
                     this.dataBus.HPGe[key]['rate'] = 0xDEADBEEF;
