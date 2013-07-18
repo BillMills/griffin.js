@@ -268,12 +268,15 @@ function frameColor(obj, frame, nFrames){
 
     //pick the right keys
     if(window.state.subdetectorView == 0){
+        if(obj.HV == 0xDEADBEEF) return 0xDEADBEEF;
         oldKey = 'oldHVcolor';
         newKey = 'HVcolor';
     } else if(window.state.subdetectorView == 1){
+        if(obj.threshold == 0xDEADBEEF) return 0xDEADBEEF;
         oldKey = 'oldThresholdColor';
         newKey = 'thresholdColor';
     } else if(window.state.subdetectorView == 2){
+        if(obj.rate == 0xDEADBEEF) return 0xDEADBEEF;
         oldKey = 'oldRateColor';
         newKey = 'rateColor';
     }

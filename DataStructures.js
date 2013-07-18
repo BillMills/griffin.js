@@ -198,7 +198,7 @@ SHARCDS = function(padsEnabled){
 			deployKeys('SHARC', name, 100*i + 24 + j);
 		}		
 		//pads
-		for(j=0; j<2; j++){
+		for(j=1; j<2; j++){ //only fronts actually instrumented?
 			name = 'SHB' + ( (i<10) ? '0'+i : i ) + 'F' + ( (j==0) ? 'N' : 'P' ) + '00X';
 			deployKeys('SHARC', name, 100*i+72 + j);
 			deployKeys('summary', name, 10*i+8 + j); //summary level, see below
@@ -222,7 +222,7 @@ SHARCDS = function(padsEnabled){
 			deployKeys('SHARC', name, 100*(i+12) + 16 + j);
 		}
 		//pads
-		for(j=0; j<2; j++){
+		for(j=1; j<2; j++){  //only fronts actually instrumented?
 			name = 'SHQ0' + i + 'F' + ( (j==0) ? 'N' : 'P' ) + '00X';
 			deployKeys('SHARC', name, 100*i+40 + j);
 			deployKeys('summary', name, 10*i+8 + j);
@@ -358,13 +358,63 @@ PACESDS = function(){
 }
 
 DANTEDS = function(){
-	//data arrays:
-	this.HV = [];
-	this.thresholds = [];
-	this.rate = [];
+	var i, name;
 
-	//key map
-	//todo
+	this.DANTE = {};
+	this.TTmap = [];
+	for(i=1; i<11; i++){
+		//LaBr PMT channels
+		name = (i<10) ? 'DAL0'+i+'XN00X' : 'DAL'+i+'XN00X';
+		this.DANTE[name] = {
+			'HV'		: 0,
+			'threshold' : 0,
+			'rate' 		: 0,
+			'index'		: i,
+
+			'oldHVcolor' : '#000000',
+			'HVcolor'	 : '#000000',
+			'oldThresholdColor' : '#000000',
+			'thresholdColor' : '#000000',
+			'oldRateColor' : '#000000',
+			'rateColor' : '#000000',
+		}
+		this.TTmap[i] = name;
+
+		//LaBr TAC channels
+		name = (i<10) ? 'DAL0'+i+'XT00X' : 'DAL'+i+'XT00X';
+		this.DANTE[name] = {
+			'HV'		: 0,
+			'threshold' : 0,
+			'rate' 		: 0,
+			'index'		: i+10,
+
+			'oldHVcolor' : '#000000',
+			'HVcolor'	 : '#000000',
+			'oldThresholdColor' : '#000000',
+			'thresholdColor' : '#000000',
+			'oldRateColor' : '#000000',
+			'rateColor' : '#000000',
+		}
+		this.TTmap[i] = name;
+
+		//Suppressors:
+		name = (i<10) ? 'DAS0'+i+'XN00X' : 'DAS'+i+'XN00X';
+		this.DANTE[name] = {
+			'HV'		: 0,
+			'threshold' : 0,
+			'rate' 		: 0,
+			'index'		: i+20,
+
+			'oldHVcolor' : '#000000',
+			'HVcolor'	 : '#000000',
+			'oldThresholdColor' : '#000000',
+			'thresholdColor' : '#000000',
+			'oldRateColor' : '#000000',
+			'rateColor' : '#000000',
+		}
+		this.TTmap[i] = name;		
+
+	}
 }
 
 DSSDDS = function(){

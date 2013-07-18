@@ -238,10 +238,19 @@
             //position 2 is default for now:
             if(i==2) classDef = 'navLinkDown';
             else classDef = 'navLink'; 
-            insertDOM('button', 'subsystem'+window.parameters.monitorValues[i], classDef, '', 'SubsystemLinks', function(){swapSubsystemView(this.id, 'SubsystemLinks', this.viewIndex)}, window.parameters.monitorValues[i], '', 'button');
+            insertDOM('button', 'subsystem'+window.parameters.monitorValues[i], classDef, (i>2) ? 'display:none;' : '', 'SubsystemLinks', function(){swapSubsystemView(this.id, 'SubsystemLinks', this.viewIndex)}, window.parameters.monitorValues[i], '', 'button');
             document.getElementById('subsystem'+window.parameters.monitorValues[i]).viewIndex = i;
           }
           window.subsystemScalars = window.parameters.monitorValues.length;
+          /*
+          //up/down/left/right buttons for switching between detail views:
+          insertDOM('br', 'break', '', '', 'SubsystemLinks');       
+          insertDOM('button', 'subsystemLeft', 'navLink', '', 'SubsystemLinks', function(){}, String.fromCharCode(0x2190), '', 'button');
+          insertDOM('button', 'subsystemRight', 'navLink', '', 'SubsystemLinks', function(){}, String.fromCharCode(0x2192), '', 'button');
+          insertDOM('button', 'subsystemUp', 'navLink', '', 'SubsystemLinks', function(){}, String.fromCharCode(0x2191), '', 'button');
+          insertDOM('button', 'subsystemDown', 'navLink', '', 'SubsystemLinks', function(){}, String.fromCharCode(0x2193), '', 'button');
+          */
+
 
           //make the top level nav button default to the first subdetector in the list:
           document.getElementById('SubsystemsButton').onclick = function(){
@@ -355,7 +364,7 @@
         document.head.appendChild(script);        
       }
       fetch()
-
+*/
 /*
       var d = new Date();
       var start = d.getTime();

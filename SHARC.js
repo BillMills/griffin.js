@@ -9,7 +9,7 @@ function SHARC(){
     DetailView.call(this);              //inject the infrastructure for a detail level view
 
     //member variables////////////////////
-    this.padsEnabled = 1;               //are the pads present?
+    this.padsEnabled = 0;               //are the pads present?
     this.detailShowing = 0;             //is the detail view on display?
 
     //drawing parameters//////////////////
@@ -61,7 +61,7 @@ function SHARC(){
         //UPSTREAM//////////////////////////////////////
         if(this.padsEnabled){
             //upstream quad pad back
-            quadBack(this.context, 1*this.cellWidth, 11.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, colors(['SHQ13FN00X', 'SHQ14FN00X', 'SHQ15FN00X', 'SHQ16FN00X'], this.dataBus.SHARC, frame, this.nFrames), 0);
+            //quadBack(this.context, 1*this.cellWidth, 11.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, colors(['SHQ13FN00X', 'SHQ14FN00X', 'SHQ15FN00X', 'SHQ16FN00X'], this.dataBus.SHARC, frame, this.nFrames), 0);
             //upstream quad pad front
             quadBack(this.context, 1.5*this.cellWidth, 10.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, colors(['SHQ13FP00X', 'SHQ14FP00X', 'SHQ15FP00X', 'SHQ16FP00X'], this.dataBus.SHARC, frame, this.nFrames), 0);       
 
@@ -69,7 +69,7 @@ function SHARC(){
             if(frame==this.nFrames || frame==0){
                 TTcolors = ['rgba(113,113,113,1)', 'rgba(114,114,114,1)', 'rgba(115,115,115,1)', 'rgba(116,116,116,1)'];
                 //upstream quad pad back
-                quadBack(this.TTcontext, 1*this.cellWidth, 11.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, TTcolors, 1);
+                //quadBack(this.TTcontext, 1*this.cellWidth, 11.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, TTcolors, 1);
                 //upstream quad pad front
                 quadBack(this.TTcontext, 1.5*this.cellWidth, 10.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, TTcolors, 1); 
             }
@@ -92,14 +92,16 @@ function SHARC(){
         //3 o'clock upstream DSSD:
         //pads
         if(this.padsEnabled){
-            horizStack(this.context, 7.5*this.cellWidth, 3.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB11FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
-            horizStack(this.context, 7.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB11FN00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            //horizStack(this.context, 7.5*this.cellWidth, 3.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB11FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            //horizStack(this.context, 7.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB11FN00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            vertStack(this.context, 7.5*this.cellWidth, 4*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, colors(['SHB11FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'v', 0);
 
             //tooltip:
             if(frame==this.nFrames || frame==0){
                 TTcolors = ['rgba(111,111,111,1)'];
-                horizStack(this.TTcontext, 7.5*this.cellWidth, 3.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);
-                horizStack(this.TTcontext, 7.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);
+                //horizStack(this.TTcontext, 7.5*this.cellWidth, 3.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);
+                //horizStack(this.TTcontext, 7.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);
+                vertStack(this.TTcontext, 7.5*this.cellWidth, 4*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, TTcolors, 'v', 1);
             }
         }
         //back
@@ -119,13 +121,15 @@ function SHARC(){
         //12 o'clock upstream DSSD:
         //pads
         if(this.padsEnabled){
-            horizStack(this.context, 3.5*this.cellWidth, 0.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB10FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
-            horizStack(this.context, 4.5*this.cellWidth, 0.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB10FN00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            //horizStack(this.context, 3.5*this.cellWidth, 0.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB10FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            //horizStack(this.context, 4.5*this.cellWidth, 0.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB10FN00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            horizStack(this.context, 4*this.cellWidth, 0.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB10FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
             //tooltip:
             if(frame==this.nFrames || frame==0){
                 TTcolors = ['rgba(110,110,110,1)'];
-                horizStack(this.TTcontext, 3.5*this.cellWidth, 0.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);
-                horizStack(this.TTcontext, 4.5*this.cellWidth, 0.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);                
+                //horizStack(this.TTcontext, 3.5*this.cellWidth, 0.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);
+                //horizStack(this.TTcontext, 4.5*this.cellWidth, 0.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);                
+                horizStack(this.TTcontext, 4*this.cellWidth, 0.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);
             }            
         }
         //back
@@ -145,13 +149,15 @@ function SHARC(){
         //9 o'clock upstream DSSD:
         //pads
         if(this.padsEnabled){
-            horizStack(this.context, 0.5*this.cellWidth, 3.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB09FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
-            horizStack(this.context, 0.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB09FN00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            //horizStack(this.context, 0.5*this.cellWidth, 3.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB09FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            //horizStack(this.context, 0.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB09FN00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            vertStack(this.context, 0.5*this.cellWidth, 4*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, colors(['SHB09FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'v', 0);
             //tooltip:
             if(frame==this.nFrames || frame==0){
                 TTcolors = ['rgba(109,109,109,1)'];
-                horizStack(this.TTcontext, 0.5*this.cellWidth, 3.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);
-                horizStack(this.TTcontext, 0.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);                
+                //horizStack(this.TTcontext, 0.5*this.cellWidth, 3.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);
+                //horizStack(this.TTcontext, 0.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);                
+                vertStack(this.TTcontext, 0.5*this.cellWidth, 4*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, TTcolors, 'v', 0);
             } 
         }
         //back
@@ -171,13 +177,15 @@ function SHARC(){
         //6 o'clock upstream DSSD:
         //pads
         if(this.padsEnabled){
-            horizStack(this.context, 3.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB12FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
-            horizStack(this.context, 4.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB12FN00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            //horizStack(this.context, 3.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB12FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            //horizStack(this.context, 4.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB12FN00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            horizStack(this.context, 4*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB12FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
             //tooltip:
             if(frame==this.nFrames || frame==0){
                 TTcolors = ['rgba(112,112,112,1)'];
-                horizStack(this.TTcontext, 3.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);
-                horizStack(this.TTcontext, 4.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);              
+                //horizStack(this.TTcontext, 3.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);
+                //horizStack(this.TTcontext, 4.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);              
+                horizStack(this.TTcontext, 4*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);
             } 
         }
         //back
@@ -197,7 +205,7 @@ function SHARC(){
         //DOWNSTREAM//////////////////////////////////
         if(this.padsEnabled){
             //downstream quad pad back
-            quadBack(this.context, 14*this.cellWidth, 0.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, colors(['SHQ01FN00X', 'SHQ02FN00X', 'SHQ03FN00X', 'SHQ04FN00X'], this.dataBus.SHARC, frame, this.nFrames), 0);
+            //quadBack(this.context, 14*this.cellWidth, 0.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, colors(['SHQ01FN00X', 'SHQ02FN00X', 'SHQ03FN00X', 'SHQ04FN00X'], this.dataBus.SHARC, frame, this.nFrames), 0);
             //upstream quad pad front
             quadBack(this.context, 13.5*this.cellWidth, 1.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, colors(['SHQ01FP00X', 'SHQ02FP00X', 'SHQ03FP00X', 'SHQ04FP00X'], this.dataBus.SHARC, frame, this.nFrames), 0);
 
@@ -205,7 +213,7 @@ function SHARC(){
             if(frame==this.nFrames || frame==0){
                 TTcolors = ['rgba(101,101,101,1)', 'rgba(102,102,102,1)', 'rgba(103,103,103,1)', 'rgba(104,104,104,1)'];
                 //downstream quad pad back
-                quadBack(this.TTcontext, 14*this.cellWidth, 0.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, TTcolors, 1);
+                //quadBack(this.TTcontext, 14*this.cellWidth, 0.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, TTcolors, 1);
                 //upstream quad pad front
                 quadBack(this.TTcontext, 13.5*this.cellWidth, 1.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, TTcolors, 1);
             }
@@ -229,13 +237,15 @@ function SHARC(){
         //3 o'clock downstream DSSD:
         //pads
         if(this.padsEnabled){
-            horizStack(this.context, 14.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB07FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
-            horizStack(this.context, 14.5*this.cellWidth, 8.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB07FN00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            //horizStack(this.context, 14.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB07FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            //horizStack(this.context, 14.5*this.cellWidth, 8.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB07FN00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            vertStack(this.context, 14.5*this.cellWidth, 8*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, colors(['SHB07FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'v', 0);
             //tooltip:
             if(frame==this.nFrames || frame==0){
                 TTcolors = ['rgba(107,107,107,1)'];
-                horizStack(this.TTcontext, 14.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);
-                horizStack(this.TTcontext, 14.5*this.cellWidth, 8.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);             
+                //horizStack(this.TTcontext, 14.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);
+                //horizStack(this.TTcontext, 14.5*this.cellWidth, 8.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);             
+                vertStack(this.TTcontext, 14.5*this.cellWidth, 8*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, TTcolors, 'v', 1);
             } 
         }
         //back
@@ -255,13 +265,15 @@ function SHARC(){
         //12 o'clock downstream DSSD:
         //pads
         if(this.padsEnabled){
-            horizStack(this.context, 10.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB06FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
-            horizStack(this.context, 11.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB06FN00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            //horizStack(this.context, 10.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB06FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            //horizStack(this.context, 11.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB06FN00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            horizStack(this.context, 11*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB06FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
             //tooltip:
             if(frame==this.nFrames || frame==0){
                 TTcolors = ['rgba(106,106,106,1)'];
-                horizStack(this.TTcontext, 10.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);
-                horizStack(this.TTcontext, 11.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);            
+                //horizStack(this.TTcontext, 10.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);
+                //horizStack(this.TTcontext, 11.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);
+                horizStack(this.TTcontext, 11*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);        
             }
         }
         //back
@@ -281,13 +293,15 @@ function SHARC(){
         //9 o'clock downstream DSSD:
         //pads
         if(this.padsEnabled){
-            horizStack(this.context, 7.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB05FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
-            horizStack(this.context, 7.5*this.cellWidth, 8.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB05FN00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            //horizStack(this.context, 7.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB05FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            //horizStack(this.context, 7.5*this.cellWidth, 8.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB05FN00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            vertStack(this.context, 7.5*this.cellWidth, 8*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, colors(['SHB05FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'v', 0);
             //tooltip:
             if(frame==this.nFrames || frame==0){
                 TTcolors = ['rgba(105,105,105,1)'];
-                horizStack(this.TTcontext, 7.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);
-                horizStack(this.TTcontext, 7.5*this.cellWidth, 8.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);           
+                //horizStack(this.TTcontext, 7.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);
+                //horizStack(this.TTcontext, 7.5*this.cellWidth, 8.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);
+                vertStack(this.TTcontext, 7.5*this.cellWidth, 8*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, TTcolors, 'v', 1);
             }
         }
         //back
@@ -307,13 +321,15 @@ function SHARC(){
         //6 o'clock downstream DSSD:
         //pads
         if(this.padsEnabled){
-            horizStack(this.context, 10.5*this.cellWidth, 11.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB08FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
-            horizStack(this.context, 11.5*this.cellWidth, 11.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB08FN00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            //horizStack(this.context, 10.5*this.cellWidth, 11.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB08FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            //horizStack(this.context, 11.5*this.cellWidth, 11.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB08FN00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            horizStack(this.context, 11*this.cellWidth, 11.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB08FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
             //tooltip:
             if(frame==this.nFrames || frame==0){
                 TTcolors = ['rgba(108,108,108,1)'];
-                horizStack(this.TTcontext, 10.5*this.cellWidth, 11.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);
-                horizStack(this.TTcontext, 11.5*this.cellWidth, 11.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);         
+                //horizStack(this.TTcontext, 10.5*this.cellWidth, 11.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);
+                //horizStack(this.TTcontext, 11.5*this.cellWidth, 11.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);         
+                horizStack(this.TTcontext, 11*this.cellWidth, 11.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, TTcolors, 'h', 1);
             }
         }
         //back
@@ -362,156 +378,6 @@ function SHARC(){
         }
     };
 
-/*
-    //draw the summary view
-    this.draw = function(frame){
-        var colors, i, j, name, increment, index;
-
-        for(i=1; i<5; i++){
-            //upstream quad fronts:
-            colors = [];
-            for(j=0; j<4; j++){
-                name = 'SHQ0' + i + 'DP' + j;
-                colors[colors.length] = frameColor(this.dataBus.summary[name], frame, this.nFrames);
-            }
-            radialQuadrant(this.context, this.canvasWidth*(0.15 + 0.1*((i-1)%2)), this.innerQuadCenterLine + this.outerRowSpacing*Math.pow(-1, Math.ceil(i/2)), this.innerQuadRad, this.outerQuadRad, this.quadArc, Math.pow(-1, Math.ceil(i/2))*Math.PI/2, colors);           
-            //downstream quad fronts:
-            colors = [];
-            for(j=0; j<4; j++){
-                name = 'SHQ' + (i+12) + 'DP' + j;
-                colors[colors.length] = frameColor(this.dataBus.summary[name], frame, this.nFrames);
-            }
-            radialQuadrant(this.context, this.canvasWidth*(0.75 + 0.1*((i-1)%2)), this.innerQuadCenterLine + this.outerRowSpacing*Math.pow(-1, Math.ceil(i/2)), this.innerQuadRad, this.outerQuadRad, this.quadArc, Math.pow(-1, Math.ceil(i/2))*Math.PI/2, colors);           
-
-            //upstream quad backs:
-            colors = [];
-            for(j=0; j<4; j++){
-                name = 'SHQ0' + i + 'EN' + j;
-                colors[colors.length] = frameColor(this.dataBus.summary[name], frame, this.nFrames);
-            }
-            azimuthalQuadrant(this.context, this.canvasWidth*(0.15 + 0.1*((i-1)%2)), this.innerQuadCenterLine, this.innerQuadRad, this.outerQuadRad, this.quadArc, Math.pow(-1, Math.ceil(i/2))*Math.PI/2, colors);          
-            //downstream quad backs:
-            colors = [];
-            for(j=0; j<4; j++){
-                name = 'SHQ' + (i+12) + 'EN' + j;
-                colors[colors.length] = frameColor(this.dataBus.summary[name], frame, this.nFrames);
-            }
-            azimuthalQuadrant(this.context, this.canvasWidth*(0.75 + 0.1*((i-1)%2)), this.innerQuadCenterLine, this.innerQuadRad, this.outerQuadRad, this.quadArc, Math.pow(-1, Math.ceil(i/2))*Math.PI/2, colors);
-
-            //upstream quad pads
-            if(this.padsEnabled){
-                colors = [];
-                for(j=0; j<2; j++){
-                    name = 'SHQ0' + i + 'F'+( (j==0) ? 'N' : 'P' )+'00X';
-                    colors[colors.length] = frameColor(this.dataBus.summary[name], frame, this.nFrames);
-                } 
-            }
-            padSummaries(this.context, this.canvasWidth*(0.15 + 0.1*((i-1)%2)), this.innerQuadCenterLine + 2.5*this.TTboxHeight*Math.pow(-1, Math.ceil(i/2)), this.padSize, colors);
-
-            //downstream quad pads
-            if(this.padsEnabled){
-                colors = [];
-                for(j=0; j<2; j++){
-                    name = 'SHQ' + (i+12) + 'F'+( (j==0) ? 'N' : 'P' )+'00X';
-                    colors[colors.length] = frameColor(this.dataBus.summary[name], frame, this.nFrames);
-                } 
-            }
-            padSummaries(this.context, this.canvasWidth*(0.75 + 0.1*((i-1)%2)), this.innerQuadCenterLine + 2.5*this.TTboxHeight*Math.pow(-1, Math.ceil(i/2)), this.padSize, colors);
-
-            //upstream box fronts:
-            colors = [];
-            for(j=0; j<4; j++){
-                name = 'SHB0' + (i+4) + 'DP' + j;
-                colors[colors.length] = frameColor(this.dataBus.summary[name], frame, this.nFrames);
-            }
-            boxFront(this.context, this.canvasWidth*(0.31+0.1*((i+1)%2)), this.canvasHeight*(0.22+0.2*Math.floor((i-1)/2)) + (1-this.scaleFactor)/this.scaleFactor*this.summaryBoxHeight*(1-Math.floor((i-1)/2)), this.summaryBoxHeight, this.summaryBoxWidth, colors);
-
-            //downstream box fronts:
-            colors = [];
-            for(j=0; j<4; j++){
-                name = 'SHB' + ( (i+8<10) ? '0'+(i+8) : (i+8) ) + 'DP' + j;
-                colors[colors.length] = frameColor(this.dataBus.summary[name], frame, this.nFrames);
-            }
-            boxFront(this.context, this.canvasWidth*(0.51+0.1*((i+1)%2)), this.canvasHeight*(0.22+0.2*Math.floor((i-1)/2)) + (1-this.scaleFactor)/this.scaleFactor*this.summaryBoxHeight*(1-Math.floor((i-1)/2)), this.summaryBoxHeight, this.summaryBoxWidth, colors);
-
-            //upstream box backs:
-            colors = [];
-            for(j=0; j<4; j++){
-                name = 'SHB0' + (i+4) + 'EN' + j;
-                colors[colors.length] = frameColor(this.dataBus.summary[name], frame, this.nFrames);
-            }
-            boxBack(this.context, this.canvasWidth*(0.31+0.1*((i+1)%2)), this.canvasHeight*(0.02+0.6*Math.floor((i-1)/2)) + (1-this.scaleFactor)/this.scaleFactor*this.summaryBoxHeight*( (i<3) ? 2:-1 ), this.summaryBoxHeight, this.summaryBoxWidth, colors);
-            //downstream box backs:
-            colors = [];
-            for(j=0; j<4; j++){
-                name = 'SHB' + ( (i+8<10) ? '0'+(i+8) : (i+8) ) + 'EN' + j;
-                colors[colors.length] = frameColor(this.dataBus.summary[name], frame, this.nFrames);
-            }
-            boxBack(this.context, this.canvasWidth*(0.51+0.1*((i+1)%2)), this.canvasHeight*(0.02+0.6*Math.floor((i-1)/2)) + (1-this.scaleFactor)/this.scaleFactor*this.summaryBoxHeight*( (i<3) ? 2:-1 ), this.summaryBoxHeight, this.summaryBoxWidth, colors);            
-            
-            //upstream box pads
-            if(this.padsEnabled){
-                colors = [];
-                for(j=0; j<2; j++){
-                    name = 'SHB' + ( (i+8<10) ? '0'+(i+8) : (i+8) ) + 'F'+( (j==0) ? 'N' : 'P' )+'00X';
-                    colors[colors.length] = frameColor(this.dataBus.summary[name], frame, this.nFrames);
-                } 
-            }
-            padSummaries(this.context, this.canvasWidth*(0.31+0.1*((i+1)%2)) + this.summaryBoxWidth/2, this.innerQuadCenterLine + 2.5*this.TTboxHeight*Math.pow(-1, Math.ceil(i/2)), this.padSize, colors);
-
-            //downstream box pads
-            if(this.padsEnabled){
-                colors = [];
-                for(j=0; j<2; j++){
-                    name = 'SHB' + ( (i+8<10) ? '0'+(i+8) : (i+8) ) + 'F'+( (j==0) ? 'N' : 'P' )+'00X';
-                    colors[colors.length] = frameColor(this.dataBus.summary[name], frame, this.nFrames);
-                } 
-            }
-            padSummaries(this.context, this.canvasWidth*(0.51+0.1*((i+1)%2)) + this.summaryBoxWidth/2, this.innerQuadCenterLine + 2.5*this.TTboxHeight*Math.pow(-1, Math.ceil(i/2)), this.padSize, colors);
-
-        }
-
-        //decorations & TT:
-        if(frame==this.nFrames || frame==0){ 
-            //beamline:
-            this.context.strokeStyle = '#999999';
-            this.context.moveTo(this.canvasWidth*0.1, this.canvasHeight*0.4);
-            this.context.lineTo(this.canvasWidth*0.9, this.canvasHeight*0.4);
-            this.context.lineTo(this.canvasWidth*0.9 - 15, this.canvasHeight*0.4 - 15);
-            this.context.stroke();
-
-            //scale:
-            this.drawScale(this.context);
-
-            //tooltip:
-            index = 1;
-            this.TTcontext.strokeStyle = '#123456';
-            for(i=0; i<32; i++){
-                this.TTcontext.fillStyle = 'rgba('+index+','+index+','+index+',1)';
-                this.TTcontext.fillRect(this.x0 + this.TTboxWidth*Math.floor(i/4), this.y0 + this.TTboxHeight*(i%4), this.TTboxWidth, this.TTboxHeight);
-                this.TTcontext.strokeRect(this.x0 + this.TTboxWidth*Math.floor(i/4), this.y0 + this.TTboxHeight*(i%4), this.TTboxWidth, this.TTboxHeight);
-                
-                if((i+1)%4 == 1) increment = 1;
-                else if((i+1)%4 == 2) increment = 4;
-                else if((i+1)%4 == 3) increment = -1;
-                else if((i+1)%8 == 4) increment = -2;
-                else if((i+1)%8 == 0) increment = 2;
-                index += increment;
-
-            }
-
-            //pads tooltip:
-            if(this.padsEnabled){
-                for(i=1; i<17; i++){
-                    this.TTcontext.fillStyle = 'rgba('+(100+i)+','+(100+i)+','+(100+i)+',1)';
-                    this.TTcontext.fillRect(this.x0 + this.TTboxWidth*Math.floor((i+1)%2) + 2*this.TTboxWidth*Math.floor((i-1)/4), this.y0 + ( ((i-1)%4 < 2) ? -this.TTboxHeight : 4*this.TTboxHeight ), this.TTboxWidth, this.TTboxHeight);
-                    this.TTcontext.strokeRect(this.x0 + this.TTboxWidth*Math.floor((i+1)%2) + 2*this.TTboxWidth*Math.floor((i-1)/4), this.y0 + ( ((i-1)%4 < 2) ? -this.TTboxHeight : 4*this.TTboxHeight ), this.TTboxWidth, this.TTboxHeight);
-                }
-            }
-
-        }
-    };
-*/
     this.drawDetail = function(x, frame){  //animatedetail expects the first argument to be the detail context - refactor to eliminate.
         var colors = [], TTcolors = [],
             i, name,
@@ -531,7 +397,7 @@ function SHARC(){
             //subtitles:
             this.detailContext.fillText('Front', this.quadDetailFrontCenter - this.detailContext.measureText('Front').width/2, this.canvasHeight*0.67);
             this.detailContext.fillText('Back', this.quadDetailBackCenter - this.detailContext.measureText('Back').width/2, this.canvasHeight*0.67);
-            this.detailContext.fillText('Pads', this.canvasWidth*0.9 - this.detailContext.measureText('Pads').width/2, this.canvasHeight*0.67);
+            if(this.padsEnabled) this.detailContext.fillText('Pads', this.canvasWidth*0.9 - this.detailContext.measureText('Pads').width/2, this.canvasHeight*0.67);
 
             //front side:
             colors = [];
@@ -576,7 +442,7 @@ function SHARC(){
             //subtitles:
             this.detailContext.fillText('Front', this.canvasWidth*0.19+this.boxDetailFrontLeftEdge - this.detailContext.measureText('Front').width/2, this.canvasHeight*0.7);
             this.detailContext.fillText('Back', this.canvasWidth*0.19+this.boxDetailBackLeftEdge - this.detailContext.measureText('Back').width/2, this.canvasHeight*0.7);
-            this.detailContext.fillText('Pads', this.canvasWidth*0.9 - this.detailContext.measureText('Pads').width/2, this.canvasHeight*0.7);
+            if(this.padsEnabled) this.detailContext.fillText('Pads', this.canvasWidth*0.9 - this.detailContext.measureText('Pads').width/2, this.canvasHeight*0.7);
 
             //front side:
             colors = [];
@@ -669,10 +535,10 @@ function SHARC(){
                 //quadrants
                 if(arrayElt < 5 || arrayElt > 12){
                     objects[0] = 'SHQ' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + 'FP00X';
-                    objects[1] = 'SHQ' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + 'FN00X';
+                    //objects[1] = 'SHQ' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + 'FN00X';
                 } else { //boxes
                     objects[0] = 'SHB' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + 'FP00X';
-                    objects[1] = 'SHB' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + 'FN00X';
+                    //objects[1] = 'SHB' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + 'FN00X';
                 }
                 document.getElementById(this.name+'TT').innerHTML = '';
                 TTtable(this.name+'TT', this.dataBus.SHARC ,objects, keys, objects[0].slice(0,5) + ' pads', ['Device','HV [V]', 'Threhsold [ADC Units]', 'Rate [Hz]'], [objects.length]);
@@ -714,36 +580,48 @@ function SHARC(){
         //fetch data, plug into detail level and increment summary cells:
         for(key in this.dataBus.SHARC){
             if(window.JSONPstore['thresholds']){
+                quarter = Math.floor(parseInt(key.slice(7,9)) / this.sizeOfQuarter(key));
                 if(window.JSONPstore['thresholds'][key]){
                     this.dataBus.SHARC[key]['threshold'] = window.JSONPstore['thresholds'][key];
-                    quarter = Math.floor(parseInt(key.slice(7,9)) / this.sizeOfQuarter(key));
-                    if(key.slice(5,6) != 'F') //treat pads differently since they don't need to be averaged:
-                        this.dataBus.summary[key.slice(0,7) + quarter].threshold += window.JSONPstore['thresholds'][key];
-                    else 
+                    if(key.slice(5,6) != 'F'){ //treat pads differently since they don't need to be averaged:
+                        if(this.dataBus.summary[key.slice(0,7) + quarter].threshold != 0xDEADBEEF) 
+                            this.dataBus.summary[key.slice(0,7) + quarter].threshold += window.JSONPstore['thresholds'][key];
+                    } else 
                         this.dataBus.summary[key].threshold = window.JSONPstore['thresholds'][key];
-                } else
+                } else{
                     this.dataBus.SHARC[key]['threshold'] = 0xDEADBEEF;
+                    if(key.slice(5,6) != 'F')
+                        this.dataBus.summary[key.slice(0,7) + quarter].threshold = 0xDEADBEEF;
+                    else
+                       this.dataBus.summary[key].threshold = 0xDEADBEEF; 
+                }
             }
 
             if(window.JSONPstore['scalar']){
+                quarter = Math.floor(parseInt(key.slice(7,9)) / this.sizeOfQuarter(key));
                 if(window.JSONPstore['scalar'][key]){
                     this.dataBus.SHARC[key]['rate'] = window.JSONPstore['scalar'][key]['TRIGREQ'];
-                    quarter = Math.floor(parseInt(key.slice(7,9)) / this.sizeOfQuarter(key));
-                    if(key.slice(5,6) != 'F') //treat pads differently since they don't need to be averaged:
-                        this.dataBus.summary[key.slice(0,7) + quarter].rate += window.JSONPstore['scalar'][key]['TRIGREQ'];
-                    else 
+                    if(key.slice(5,6) != 'F'){ //treat pads differently since they don't need to be averaged:
+                        if(this.dataBus.summary[key.slice(0,7) + quarter].rate != 0xDEADBEEF) 
+                            this.dataBus.summary[key.slice(0,7) + quarter].rate += window.JSONPstore['scalar'][key]['TRIGREQ'];
+                    } else 
                         this.dataBus.summary[key].rate = window.JSONPstore['scalar'][key]['TRIGREQ'];
-                } else 
+                } else{ 
                     this.dataBus.SHARC[key]['rate'] = 0xDEADBEEF;
+                    if(key.slice(5,6) != 'F')
+                        this.dataBus.summary[key.slice(0,7) + quarter].rate = 0xDEADBEEF;
+                    else
+                        this.dataBus.summary[key].rate = 0xDEADBEEF;
+                }
             }
         }
 
         //average the summary level cells:
         for(key in this.dataBus.summary){
             if(this.dataBus.summary.hasOwnProperty(key) && key.slice(5,6)!='F' ){
-                this.dataBus.summary[key].HV /= this.sizeOfQuarter(key);
-                this.dataBus.summary[key].threshold /= this.sizeOfQuarter(key);
-                this.dataBus.summary[key].rate /= this.sizeOfQuarter(key);
+                if(this.dataBus.summary[key].HV != 0xDEADBEEF) this.dataBus.summary[key].HV /= this.sizeOfQuarter(key);
+                if(this.dataBus.summary[key].threshold != 0xDEADBEEF) this.dataBus.summary[key].threshold /= this.sizeOfQuarter(key);
+                if(this.dataBus.summary[key].rate != 0xDEADBEEF) this.dataBus.summary[key].rate /= this.sizeOfQuarter(key);
             }
         }
         

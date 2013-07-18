@@ -13,7 +13,7 @@ quadBack = function(context, x0, y0, innerRad, outerRad, squish, colors, TT){
 
 //draws a wedge shaped segment
 azimuthalSegment = function(context, x0, y0, innerRad, outerRad, arc, orientation, squish, color, TT){
-    context.fillStyle = color;
+    context.fillStyle = (color==0xDEADBEEF) ? context.createPattern(window.parameters.warningFill, 'repeat') : color;
     context.strokeStyle = ( (TT) ? '#123456' : '#999999' );
 
     context.save();
@@ -43,8 +43,7 @@ quadFront = function(context, x0, y0, innerRad, outerRad, squish, colors, TT){
 
 //draws a macaroni-shaped segment that extends <arc> radians CCW from angle <orientation>
 annularSegment = function(context, x0, y0, innerRad, outerRad, arc, orientation, squish, color, TT){
-
-    context.fillStyle = color;
+    context.fillStyle = (color==0xDEADBEEF) ? context.createPattern(window.parameters.warningFill, 'repeat') : color;
     context.strokeStyle = ( (TT) ? '#123456' : '#999999' );
 
     context.save();
@@ -107,7 +106,7 @@ horizPara = function(context, x0, y0, width, height, color, pitch, TT){
         cx = x0 - width/2,
         cy = y0 + height/2;
 
-    context.fillStyle = color;
+    context.fillStyle = (color==0xDEADBEEF) ? context.createPattern(window.parameters.warningFill, 'repeat') : color;
     context.beginPath();
     context.moveTo(cx,cy);
     if(pitch == 'h'){
@@ -174,7 +173,7 @@ vertPara = function(context, x0, y0, width, height, color, pitch, TT){
         cx = x0 - width/2,
         cy = y0 + height/2;
 
-    context.fillStyle = color;
+    context.fillStyle = (color==0xDEADBEEF) ? context.createPattern(window.parameters.warningFill, 'repeat') : color;
     context.beginPath();
     context.moveTo(cx,cy);
     if(pitch == 'h'){
@@ -266,7 +265,7 @@ boxFront = function(context, x0,y0, height, width, colors, TT){
         context.strokeStyle = '#999999';
 
     for(i=0; i<nStrips; i++){
-        context.fillStyle = colors[i];
+        context.fillStyle = (colors[i]==0xDEADBEEF) ? context.createPattern(window.parameters.warningFill, 'repeat') : colors[i];
         context.fillRect(x0, y0+i*stripWidth, width, stripWidth);
         context.strokeRect(x0, y0+i*stripWidth, width, stripWidth);
     }
@@ -284,7 +283,7 @@ boxBack = function(context, x0,y0, height, width, colors, TT){
         context.strokeStyle = '#999999';
 
     for(i=0; i<nStrips; i++){
-        context.fillStyle = colors[i];
+        context.fillStyle = (colors[i]==0xDEADBEEF) ? context.createPattern(window.parameters.warningFill, 'repeat') : colors[i];
         context.fillRect(x0+i*stripWidth, y0, stripWidth, height);
         context.strokeRect(x0+i*stripWidth, y0, stripWidth, height);
     }

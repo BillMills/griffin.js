@@ -766,7 +766,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                 if(objects.length>10){  //TODO: need more robust decision on whether we're looking at a TIG64 or not
                     split = [0,0];
                     for(i=0; i<objects.length; i++){
-                        if(parseInt(objects[i].slice(7,9), 16) < 23 ) split[0]++;
+                        if(parseInt(objects[i].slice(7,9), 16) < 32 ) split[0]++;
                         else split[1]++;
                     }
                     window.state.staticTT = 1;

@@ -235,7 +235,7 @@ function Subsystem(){
             }
 
             if(window.JSONPstore['scalar']){
-                if(typeof window.JSONPstore['scalar'][key] == 'number')
+                if(typeof window.JSONPstore['scalar'][key]['TRIGREQ'] == 'number')
                     this.dataBus[this.name][key]['rate'] = window.JSONPstore['scalar'][key]['TRIGREQ'];
             }
 
@@ -572,6 +572,8 @@ function HPGeAssets(){
                         color2 = parseHexColor(this.dataBus.summary[key].rateColor);
                     }
                     context.fillStyle = interpolateColor(color1, color2, frame/this.nFrames);
+                    if(interpolateColor(color1, color2, frame/this.nFrames) == 0xDEADBEEF)
+                        context.fillStyle = context.createPattern(window.parameters.warningFill, 'repeat');
                 }
                 context.fillRect(Math.round(x0 + (this.BGOouter-this.HPGeside)/2 + (i%2)*(this.lineWeight + this.HPGeside/2)), Math.round(y0 + (this.BGOouter-this.HPGeside)/2 + (i>>1)/2*(2*this.lineWeight + this.HPGeside)), Math.round(this.HPGeside/2),Math.round(this.HPGeside/2));
                 if(context != this.TTcontext){
@@ -600,6 +602,8 @@ function HPGeAssets(){
                         color2 = parseHexColor(this.dataBus.summary[key].rateColor);
                     }
                     fillColor = interpolateColor(color1, color2, frame/this.nFrames);
+                    if(fillColor == 0xDEADBEEF)
+                        fillColor = context.createPattern(window.parameters.warningFill, 'repeat');
                 }
 
                 this.drawL(context, rotation, Math.round((this.BGOouter - this.BGOinner)/2), Math.round(this.BGOouter/2), Math.round(x0 + (this.BGOouter+this.lineWeight)*(i%2)), Math.round(y0 + (this.BGOouter+this.lineWeight)*(i>>1)), color, fillColor);
@@ -879,9 +883,12 @@ function HPGeAssets(){
             }
 
             if(window.JSONPstore['scalar']){
-                if(typeof window.JSONPstore['scalar'][key] == 'number')
-                    this.dataBus.HPGe[key]['rate'] = window.JSONPstore['scalar'][key]['TRIGREQ'];
-                else 
+                if(window.JSONPstore['scalar'][key]){
+                    if(typeof window.JSONPstore['scalar'][key]['TRIGREQ'] == 'number')
+                        this.dataBus.HPGe[key]['rate'] = window.JSONPstore['scalar'][key]['TRIGREQ'];
+                    else 
+                        this.dataBus.HPGe[key]['rate'] = 0xDEADBEEF;
+                } else
                     this.dataBus.HPGe[key]['rate'] = 0xDEADBEEF;
             }
         }
@@ -902,10 +909,18 @@ function HPGeAssets(){
                             this.dataBus.summary[key].threshold += this.dataBus.HPGe[key+'P0'+j+'X']['threshold'];
                             this.dataBus.summary[key].rate += this.dataBus.HPGe[key+'P0'+j+'X']['rate'];
                         }
-                        this.dataBus.summary[key].threshold = this.dataBus.summary[key].threshold%0xDEADBEEF;  //drop any DEADBEEF that got added in
-                        this.dataBus.summary[key].rate = this.dataBus.summary[key].rate%0xDEADBEEF;
-                        this.dataBus.summary[key].threshold /= 10;
-                        this.dataBus.summary[key].rate /= 10;
+                        //this.dataBus.summary[key].threshold = this.dataBus.summary[key].threshold%0xDEADBEEF;  //drop any DEADBEEF that got added in
+                        //this.dataBus.summary[key].rate = this.dataBus.summary[key].rate%0xDEADBEEF;
+                        //this.dataBus.summary[key].threshold /= 10;
+                        //this.dataBus.summary[key].rate /= 10;
+                        if(this.dataBus.summary[key].threshold >= 0xDEADBEEF) 
+                            this.dataBus.summary[key].threshold = 0xDEADBEEF;
+                        else
+                            this.dataBus.summary[key].threshold /= 10;
+                        if(this.dataBus.summary[key].rate >= 0xDEADBEEF) 
+                            this.dataBus.summary[key].rate = 0xDEADBEEF;
+                        else
+                            this.dataBus.summary[key].rate /= 10;
                     }
                 } else if(key[2] == 'S'){
                     this.dataBus.summary[key].HV = 0;
@@ -915,8 +930,16 @@ function HPGeAssets(){
                     }
                     this.dataBus.summary[key].threshold = this.dataBus.HPGe[key+'N01X']['threshold'] + this.dataBus.HPGe[key+'N02X']['threshold'] + this.dataBus.HPGe[key+'N03X']['threshold'] + this.dataBus.HPGe[key+'N04X']['threshold'] + this.dataBus.HPGe[key+'N05X']['threshold'];
                     this.dataBus.summary[key].rate = this.dataBus.HPGe[key+'N01X']['rate'] + this.dataBus.HPGe[key+'N02X']['rate'] + this.dataBus.HPGe[key+'N03X']['rate'] + this.dataBus.HPGe[key+'N04X']['rate'] + this.dataBus.HPGe[key+'N05X']['rate'];
-                    this.dataBus.summary[key].threshold = (this.dataBus.summary[key].threshold%0xDEADBEEF)/5;  //drop any DEADBEEF that got added in
-                    this.dataBus.summary[key].rate = (this.dataBus.summary[key].rate%0xDEADBEEF)/5;
+                    //this.dataBus.summary[key].threshold = (this.dataBus.summary[key].threshold%0xDEADBEEF)/5;  //drop any DEADBEEF that got added in
+                    //this.dataBus.summary[key].rate = (this.dataBus.summary[key].rate%0xDEADBEEF)/5;
+                    if(this.dataBus.summary[key].threshold >= 0xDEADBEEF)
+                        this.dataBus.summary[key].threshold = 0xDEADBEEF;
+                    else
+                        this.dataBus.summary[key].threshold /= 5;
+                    if(this.dataBus.summary[key].rate >= 0xDEADBEEF)
+                        this.dataBus.summary[key].rate = 0xDEADBEEF;
+                    else
+                        this.dataBus.summary[key].rate /= 5;
                 }
             }
         }
