@@ -15,9 +15,10 @@ function DANTE(){
 
     //set up scale adjust dialog:
     this.canvas.onclick = function(event){
-        var y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;
+        var y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop,
+            limitIndex = (window.state.subdetectorView < 3) ? window.state.subdetectorView : window.state.subdetectorView-2;
         if(y > that.canvasHeight - that.scaleHeight)
-            parameterDialogue(that.name, [['BaF', window.parameters[that.name].minima['BaF'][window.state.subdetectorView], window.parameters[that.name].maxima['BaF'][window.state.subdetectorView], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/DANTE/BaF'+scaleType()+'[0]', '/DashboardConfig/DANTE/BaF'+scaleType()+'[1]'],   ['BGO', window.parameters[that.name].minima['BGO'][window.state.subdetectorView], window.parameters[that.name].maxima['BGO'][window.state.subdetectorView], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/DANTE/BGO'+scaleType()+'[0]', '/DashboardConfig/DANTE/BGO'+scaleType()+'[1]'] ], window.parameters.subdetectorColors[window.state.subdetectorView]);
+            parameterDialogue(that.name, [ ['LaBrPMT', window.parameters[that.name].minima['LaBrPMT'][limitIndex], window.parameters[that.name].maxima['LaBrPMT'][limitIndex], window.parameters.subdetectorUnit[limitIndex], '/DashboardConfig/DANTE/LaBrPMT'+scaleType()+'[0]', '/DashboardConfig/DANTE/LaBrPMT'+scaleType()+'[1]'], ['LaBrTAC', window.parameters[that.name].minima['LaBrTAC'][limitIndex], window.parameters[that.name].maxima['LaBrTAC'][limitIndex], window.parameters.subdetectorUnit[limitIndex], '/DashboardConfig/DANTE/LaBrTAC'+scaleType()+'[0]', '/DashboardConfig/DANTE/LaBrTAC'+scaleType()+'[1]'],  ['BGO', window.parameters[that.name].minima['BGO'][limitIndex], window.parameters[that.name].maxima['BGO'][limitIndex], window.parameters.subdetectorUnit[limitIndex], '/DashboardConfig/DANTE/BGO'+scaleType()+'[0]', '/DashboardConfig/DANTE/BGO'+scaleType()+'[1]'] ], window.parameters.subdetectorColors[limitIndex]);
     }
 
     //drawing parameters/////////////////////////////////
@@ -30,19 +31,12 @@ function DANTE(){
     this.shieldInnerRadius = this.canvasWidth*0.05;
     this.shieldOuterRadius = this.canvasWidth*0.06;
 
-    //establish data buffers////////////////////////////////////////////////////////////////////////////
-    this.HVcolor = [];
-    this.oldHVcolor = [];
-    this.thresholdColor = [];
-    this.oldThresholdColor = [];
-    this.rateColor = [];
-    this.oldRateColor = [];
-
     //member functions///////////////////////////////////////////////////////////////////
 
     this.draw = function(frame){
+//console.log(this.dataBus.DANTE.DAL01XT00X.rateColor)
 
-    	var j, ringCenter, x0, y0;
+    	var j, ringCenter, x0, y0, name;
     	this.context.strokeStyle = '#999999';
 
     	this.context.beginPath();
@@ -61,9 +55,8 @@ function DANTE(){
     		y0 = this.canvasHeight*0.4 - this.ringRadius*Math.sin(Math.PI/2*j);
 
             //suppressors
-            if(window.state.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[j*2+1]), parseHexColor(this.HVcolor[j*2+1]), frame/this.nFrames);
-            else if(window.state.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[j*2+1]), parseHexColor(this.thresholdColor[j*2+1]), frame/this.nFrames);
-            else if(window.state.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[j*2+1]), parseHexColor(this.rateColor[j*2+1]), frame/this.nFrames);
+            name = 'DAS0'+(j+1)+'XN00X';
+            this.context.fillStyle = colors(name, this.dataBus.DANTE, frame, this.nFrames);
     		this.context.beginPath();
     		this.context.arc(x0,y0,this.shieldOuterRadius,0,2*Math.PI);
     		this.context.closePath();
@@ -77,10 +70,15 @@ function DANTE(){
     		this.context.fill();
     		this.context.stroke();
 
-            //inner detectors
-            if(window.state.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.oldHVcolor[j*2]), parseHexColor(this.HVcolor[j*2]), frame/this.nFrames);
-            else if(window.state.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.oldThresholdColor[j*2]), parseHexColor(this.thresholdColor[j*2]), frame/this.nFrames);
-            else if(window.state.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.oldRateColor[j*2]), parseHexColor(this.rateColor[j*2]), frame/this.nFrames);
+            //LaBr
+            //PMT
+            if(window.state.subdetectorView < 3)
+                name = 'DAL0'+(j+1)+'XN00X';
+            //TAC
+            else
+                name = 'DAL0'+(j+1)+'XT00X'
+            this.context.fillStyle = colors(name, this.dataBus.DANTE, frame, this.nFrames);
+//console.log(this.context.fillStyle)
     		this.context.beginPath();
     		this.context.arc(x0,y0,this.detectorRadius,0,2*Math.PI);
     		this.context.closePath();
@@ -102,7 +100,10 @@ function DANTE(){
             this.TTcontext.closePath();
             this.TTcontext.fill();
             //end hack around 
-            this.TTcontext.fillStyle = 'rgba('+(2*j+1)+','+(2*j+1)+','+(2*j+1)+',1)';
+
+            //suppressors
+            name = 'DAS0'+(j+1)+'XN00X';
+            this.TTcontext.fillStyle = 'rgba('+this.dataBus.DANTE[name].index+','+this.dataBus.DANTE[name].index+','+this.dataBus.DANTE[name].index+',1)';
             this.TTcontext.beginPath();
             this.TTcontext.arc(x0,y0,this.shieldOuterRadius,0,2*Math.PI);
             this.TTcontext.closePath();
@@ -114,7 +115,14 @@ function DANTE(){
             this.TTcontext.closePath();
             this.TTcontext.fill();
 
-            this.TTcontext.fillStyle = 'rgba('+(2*j)+','+(2*j)+','+(2*j)+',1)';
+            //LaBr
+            //PMT
+            if(window.state.subdetectorView < 3)
+                name = 'DAL0'+(j+1)+'XN00X';
+            //TAC
+            else
+                name = 'DAL0'+(j+1)+'XT00X'
+            this.TTcontext.fillStyle = 'rgba('+this.dataBus.DANTE[name].index+','+this.dataBus.DANTE[name].index+','+this.dataBus.DANTE[name].index+',1)';
             this.TTcontext.beginPath();
             this.TTcontext.arc(x0,y0,this.detectorRadius,0,2*Math.PI);
             this.TTcontext.closePath();
@@ -134,53 +142,10 @@ function DANTE(){
 
     };
 
-    this.defineText = function(cell){
-        var toolTipContent = '<br>';
-        var nextLine;
-        var cardIndex;
-        var i;
-
-        nextLine = 'Channel '+cell;
-        toolTipContent += nextLine;
-
-        toolTipContent += '<br><br>';
-        document.getElementById(this.tooltip.ttDivID).innerHTML = toolTipContent;
-
-        return 0;
-    };
-
-    this.update = function(){
-        var i;
-
-        //get new data
-        this.fetchNewData();
-
-        var detectorType;
-        //parse the new data into colors
-        for(i=0; i<this.dataBus.HV.length; i++){
-            if(i%2 == 0) detectorType = 'BaF';
-            else detectorType = 'BGO';
-            this.oldHVcolor[i] = this.HVcolor[i];
-            this.HVcolor[i] = this.parseColor(this.dataBus.HV[i], detectorType);
-            this.oldThresholdColor[i] = this.thresholdColor[i];
-            this.thresholdColor[i] = this.parseColor(this.dataBus.thresholds[i], detectorType);
-            this.oldRateColor[i] = this.rateColor[i];
-            this.rateColor[i] = this.parseColor(this.dataBus.rate[i], detectorType);
-        }
-
-        this.tooltip.update();
-    };
-
-    this.fetchNewData = function(){
-        var i;
-
-        //dummy data:
-        for(i=0; i<16; i++){
-            this.dataBus.HV[i] = Math.random();
-            this.dataBus.thresholds[i] = Math.random();
-            this.dataBus.rate[i] = Math.random();
-        }
-
+    this.detectorType = function(name){
+        if(name.slice(0,3) == 'DAS') return 'BGO';
+        else if(name.slice(6,7) == 'N') return 'LaBrPMT';
+        else if(name.slice(6,7) == 'T') return 'LaBrTAC';
     };
 
     //do an initial populate:

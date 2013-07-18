@@ -22,6 +22,17 @@ function swapFade(buttonID, object, leaveOff){
 	//parse which view is requested, and fetch the corresponding canvas ID to bring to the front:
 	var inbound = object.view();
 
+	//introduce TAC display buttons as needed (currently only for DANTE):
+	if(buttonID == 'DANTElink'){
+		document.getElementById('subsystemTAC-Thresholds').style.display = 'inline';
+		document.getElementById('subsystemTAC-Rate').style.display = 'inline';
+	} else {
+		document.getElementById('subsystemTAC-Thresholds').style.display = 'none';
+		document.getElementById('subsystemTAC-Rate').style.display = 'none';
+		if(window.state.subdetectorView > 2)
+			document.getElementById('subsystemRate').onclick();
+	}
+
 	//turn off other buttons, except for some at the end:
 	for(i=0; i<document.getElementById(object.linkWrapperID).children.length - leaveOff; i++){
 		if(document.getElementById(object.linkWrapperID).children[i].type == 'button')

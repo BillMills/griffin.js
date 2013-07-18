@@ -378,7 +378,6 @@ DANTEDS = function(){
 			'oldRateColor' : '#000000',
 			'rateColor' : '#000000',
 		}
-		this.TTmap[i] = name;
 
 		//LaBr TAC channels
 		name = (i<10) ? 'DAL0'+i+'XT00X' : 'DAL'+i+'XT00X';
@@ -395,7 +394,6 @@ DANTEDS = function(){
 			'oldRateColor' : '#000000',
 			'rateColor' : '#000000',
 		}
-		this.TTmap[i] = name;
 
 		//Suppressors:
 		name = (i<10) ? 'DAS0'+i+'XN00X' : 'DAS'+i+'XN00X';
@@ -412,8 +410,12 @@ DANTEDS = function(){
 			'oldRateColor' : '#000000',
 			'rateColor' : '#000000',
 		}
-		this.TTmap[i] = name;		
+	}
 
+	for(name in this.DANTE){
+		if(this.DANTE.hasOwnProperty(name)){
+			this.TTmap[this.DANTE[name].index] = name;
+		}
 	}
 }
 

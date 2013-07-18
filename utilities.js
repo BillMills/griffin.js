@@ -143,15 +143,17 @@ function parameterDialogue(devName, scales, currentColorScale){
     document.getElementById('updateParameters').onclick = function(event){
         var i;
         if(document.getElementById('dialogueValues').checkValidity()){
+            
             for(i=0; i<scales.length; i++){
                 //commit
                 scales[i][1] = parseFloat(document.getElementById('minfield'+i).value);
                 scales[i][2] = parseFloat(document.getElementById('maxfield'+i).value);
                 ODBSet(scales[i][4], scales[i][1]);
                 ODBSet(scales[i][5], scales[i][2]);
-                fetchCustomParameters(); //pushes back to the parameter store
+                //fetchCustomParameters(); //pushes back to the parameter store
             }
-            
+            fetchCustomParameters(); //pushes back to the parameter store
+
             if(currentColorScale){
                 if(window.onDisplay.slice(0,3) == 'DAQ'){
                     window.DAQpointer.DAQcolor = window.parameters.colorScale.indexOf(colorDD.value);
@@ -162,7 +164,7 @@ function parameterDialogue(devName, scales, currentColorScale){
 
             if(document.getElementById('logRadio').checked) window.parameters.detectorLogMode[window.viewState] = 1;
             else if(document.getElementById('linearRadio').checked) window.parameters.detectorLogMode[window.viewState] = 0;
-
+            
             //remove dialogue
             document.getElementById('tempDiv').style.opacity = 0;
             setTimeout(function(){
@@ -192,8 +194,8 @@ function parameterDialogue(devName, scales, currentColorScale){
 //help build the ODB path string for the above parameter dialogue:
 function scaleType(){
     if (window.state.subdetectorView == 0) return 'HVscale';
-    else if (window.state.subdetectorView == 1) return 'thresholdScale';
-    else if (window.state.subdetectorView == 2) return 'rateScale';    
+    else if (window.state.subdetectorView == 1 || window.state.subdetectorView == 3) return 'thresholdScale';
+    else if (window.state.subdetectorView == 2 || window.state.subdetectorView == 4) return 'rateScale';    
 }
 
 //Crockford's prototype magics:
@@ -234,7 +236,7 @@ function fakeScalars(){
 
 
     for(key in window.parameters.deployment){
-        if(window.parameters.deployment[key]){
+        if(window.parameters.deployment[key]){            
             for(subKey in window[key+'pointer'].dataBus[key]){
                 JSONP.scalar[subKey] = {"TRIGREQ" : Math.random()};
             }
@@ -337,15 +339,23 @@ function TTtable(id, data, objects, keys, tableTitle, titles, split){
 
 }
 
-//return an array with the appropriate colors chosen from <dataStore> (typically dataBus[this.name] for detectors) corresponding to the elements listed in <elements>
+//return an array with the appropriate colors chosen from <dataStore> (typically dataBus[this.name] for detectors) corresponding to the elements listed in [elements]
 function colors(elements, dataStore, frame, nFrames){
     var i,
         colors=[];
 
-    for(i=0; i<elements.length; i++){
-        if(window.state.subdetectorView == 0) colors[i] = interpolateColor(parseHexColor(dataStore[elements[i]].oldHVcolor), parseHexColor(dataStore[elements[i]].HVcolor), frame/nFrames);
-        else if(window.state.subdetectorView == 1) colors[i] = interpolateColor(parseHexColor(dataStore[elements[i]].oldThresholdColor), parseHexColor(dataStore[elements[i]].thresholdColor), frame/nFrames);
-        else if(window.state.subdetectorView == 2) colors[i] = interpolateColor(parseHexColor(dataStore[elements[i]].oldRateColor), parseHexColor(dataStore[elements[i]].rateColor), frame/nFrames);
+    if(Array.isArray(elements)){
+        for(i=0; i<elements.length; i++){
+            colors[i] = viewMap(elements[i], dataStore, frame, nFrames);
+        }
+    } else {
+        colors = viewMap(elements, dataStore, frame, nFrames);
+    }
+
+    function viewMap(elements, dataStore, frame, nFrames){
+        if(window.state.subdetectorView == 0) return interpolateColor(parseHexColor(dataStore[elements].oldHVcolor), parseHexColor(dataStore[elements].HVcolor), frame/nFrames);
+        else if(window.state.subdetectorView == 1 || window.state.subdetectorView == 3) return interpolateColor(parseHexColor(dataStore[elements].oldThresholdColor), parseHexColor(dataStore[elements].thresholdColor), frame/nFrames);
+        else if(window.state.subdetectorView == 2 || window.state.subdetectorView == 4) return interpolateColor(parseHexColor(dataStore[elements].oldRateColor), parseHexColor(dataStore[elements].rateColor), frame/nFrames);        
     }
 
     return colors;

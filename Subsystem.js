@@ -65,26 +65,28 @@ function Subsystem(){
     //member functions
     //determine which color <scalar> corresponds to
     this.parseColor = function(scalar, detector){
-        var scale;
+        var scale, limitIndex;
 
         if(scalar == 0xDEADBEEF) return 0xDEADBEEF
 
+        limitIndex = (window.state.subdetectorView < 3) ? window.state.subdetectorView : window.state.subdetectorView-2;
+
         //how far along the scale are we?  Technically this will produce the wrong color for canvases not currently on display.
         if(window.parameters.detectorLogMode.SubsystemsButton){
-            scale = (Math.log(scalar) - Math.log(window.parameters[this.name].minima[detector][window.state.subdetectorView])) / (Math.log(window.parameters[this.name].maxima[detector][window.state.subdetectorView]) - Math.log(window.parameters[this.name].minima[detector][window.state.subdetectorView]));
+            scale = (Math.log(scalar) - Math.log(window.parameters[this.name].minima[detector][limitIndex])) / (Math.log(window.parameters[this.name].maxima[detector][limitIndex]) - Math.log(window.parameters[this.name].minima[detector][limitIndex]));
         } else {
-            scale = (scalar - window.parameters[this.name].minima[detector][window.state.subdetectorView]) / (window.parameters[this.name].maxima[detector][window.state.subdetectorView] - window.parameters[this.name].minima[detector][window.state.subdetectorView]);
+            scale = (scalar - window.parameters[this.name].minima[detector][limitIndex]) / (window.parameters[this.name].maxima[detector][limitIndex] - window.parameters[this.name].minima[detector][limitIndex]);
         }
 
         //different scales for different meters to aid visual recognition:
         if(window.state.subdetectorView==0) return scalepickr(scale, window.parameters.subdetectorColors[0]);
-        else if(window.state.subdetectorView==1) return scalepickr(scale, window.parameters.subdetectorColors[1]);
-        else if(window.state.subdetectorView==2) return scalepickr(scale, window.parameters.subdetectorColors[2]);
+        else if(window.state.subdetectorView==1 || window.state.subdetectorView==3) return scalepickr(scale, window.parameters.subdetectorColors[1]);
+        else if(window.state.subdetectorView==2 || window.state.subdetectorView==4) return scalepickr(scale, window.parameters.subdetectorColors[2]);
     };
 
     //draw the color scale
     this.drawScale = function(context, frame){
-        var i, j, key, nKeys=0, label;
+        var i, j, key, nKeys=0, label, limitIndex;
         var scaleFraction = 0.8  //fraction of canvas to span with the scale
         //clear the scale region
         context.clearRect(0, this.canvasHeight - this.scaleHeight, this.canvasWidth, this.canvasHeight);
@@ -92,23 +94,27 @@ function Subsystem(){
         //compressed unit for scales, as a function of window.state.subdetectorView:
         var scaleUnit = [' k', String.fromCharCode(2406)+'10'+String.fromCharCode(179)+' ', ' k']
 
+        //where in the array of minima / maxima will we find the appropriate limit:
+        limitIndex = (window.state.subdetectorView < 3) ? window.state.subdetectorView : window.state.subdetectorView-2;
+
+        //define the strings to use for each minima and maxima label:
         var minTicks = [];
         var maxTicks = [];
-        title = window.parameters.monitorValues[window.state.subdetectorView];
+        title = window.parameters.monitorValues[limitIndex];
         if(window.parameters.detectorLogMode.SubsystemsButton) title = 'log(' + title + ')';
         for(key in window.parameters[this.name].minima){
             if(window.parameters.detectorLogMode.SubsystemsButton){
                 //minimas
-                minTicks[key] = key+': ' + Math.log(window.parameters[this.name].minima[key][window.state.subdetectorView]).toFixed(1) + ' log(' + window.parameters.subdetectorUnit[window.state.subdetectorView]+')';
+                minTicks[key] = key+': ' + Math.log(window.parameters[this.name].minima[key][limitIndex]).toFixed(1) + ' log(' + window.parameters.subdetectorUnit[limitIndex]+')';
                 //maximas:
-                maxTicks[key] = key+': ' + Math.log(window.parameters[this.name].maxima[key][window.state.subdetectorView]).toFixed(1) + ' log(' + window.parameters.subdetectorUnit[window.state.subdetectorView]+')';
+                maxTicks[key] = key+': ' + Math.log(window.parameters[this.name].maxima[key][limitIndex]).toFixed(1) + ' log(' + window.parameters.subdetectorUnit[limitIndex]+')';
             } else {
                 //minimas
-                if(window.parameters[this.name].minima[key][window.state.subdetectorView] < 1000) minTicks[key] = key+': ' + window.parameters[this.name].minima[key][window.state.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.state.subdetectorView];
-                else minTicks[key] = key + ': ' + window.parameters[this.name].minima[key][window.state.subdetectorView]/1000 + scaleUnit[window.state.subdetectorView] + window.parameters.subdetectorUnit[window.state.subdetectorView];
+                if(window.parameters[this.name].minima[key][limitIndex] < 1000) minTicks[key] = key+': ' + window.parameters[this.name].minima[key][limitIndex] + ' ' + window.parameters.subdetectorUnit[limitIndex];
+                else minTicks[key] = key + ': ' + window.parameters[this.name].minima[key][limitIndex]/1000 + scaleUnit[limitIndex] + window.parameters.subdetectorUnit[limitIndex];
                 //maximas:
-                if(window.parameters[this.name].maxima[key][window.state.subdetectorView] < 1000) maxTicks[key] = key+': ' + window.parameters[this.name].maxima[key][window.state.subdetectorView] + ' ' + window.parameters.subdetectorUnit[window.state.subdetectorView];
-                else maxTicks[key] = key + ': ' + window.parameters[this.name].maxima[key][window.state.subdetectorView]/1000 + scaleUnit[window.state.subdetectorView] + window.parameters.subdetectorUnit[window.state.subdetectorView];
+                if(window.parameters[this.name].maxima[key][limitIndex] < 1000) maxTicks[key] = key+': ' + window.parameters[this.name].maxima[key][limitIndex] + ' ' + window.parameters.subdetectorUnit[limitIndex];
+                else maxTicks[key] = key + ': ' + window.parameters[this.name].maxima[key][limitIndex]/1000 + scaleUnit[limitIndex] + window.parameters.subdetectorUnit[limitIndex];
             }
             nKeys++;
         }
@@ -150,8 +156,8 @@ function Subsystem(){
         var colorSteps = 150
         for(i=0; i<3*colorSteps; i++){
             if(window.state.subdetectorView == 0) context.fillStyle = scalepickr((i%colorSteps)/colorSteps, window.parameters.subdetectorColors[0]);
-            if(window.state.subdetectorView == 1) context.fillStyle = scalepickr((i%colorSteps)/colorSteps, window.parameters.subdetectorColors[1]);
-            if(window.state.subdetectorView == 2) context.fillStyle = scalepickr((i%colorSteps)/colorSteps, window.parameters.subdetectorColors[2]);
+            if(window.state.subdetectorView == 1 || window.state.subdetectorView == 3) context.fillStyle = scalepickr((i%colorSteps)/colorSteps, window.parameters.subdetectorColors[1]);
+            if(window.state.subdetectorView == 2 || window.state.subdetectorView == 4) context.fillStyle = scalepickr((i%colorSteps)/colorSteps, window.parameters.subdetectorColors[2]);
             context.fillRect(this.canvasWidth*(1-scaleFraction)/2 + this.canvasWidth*scaleFraction/colorSteps*(i%colorSteps), this.canvasHeight-this.scaleHeight/2-20, this.canvasWidth*scaleFraction/colorSteps, 20);
         }
 
@@ -253,22 +259,22 @@ function Subsystem(){
         //parse the new data into colors
         for(key in this.dataBus[this.name]){
             this.dataBus[this.name][key].oldHVcolor = this.dataBus[this.name][key].HVcolor;
-            this.dataBus[this.name][key].HVcolor = this.parseColor(this.dataBus[this.name][key].HV, this.name);
+            this.dataBus[this.name][key].HVcolor = this.parseColor(this.dataBus[this.name][key].HV, this.detectorType(key));
             this.dataBus[this.name][key].oldThresholdColor = this.dataBus[this.name][key].thresholdColor;
-            this.dataBus[this.name][key].thresholdColor = this.parseColor(this.dataBus[this.name][key].threshold, this.name);
+            this.dataBus[this.name][key].thresholdColor = this.parseColor(this.dataBus[this.name][key].threshold, this.detectorType(key));
             this.dataBus[this.name][key].oldRateColor = this.dataBus[this.name][key].rateColor;
-            this.dataBus[this.name][key].rateColor = this.parseColor(this.dataBus[this.name][key].rate, this.name);
+            this.dataBus[this.name][key].rateColor = this.parseColor(this.dataBus[this.name][key].rate, this.detectorType(key));
         }
 
         //do the same for the summary level, if it exists:
         if(this.dataBus.summary){
             for(key in this.dataBus.summary){
                 this.dataBus.summary[key].oldHVcolor = this.dataBus.summary[key].HVcolor;
-                this.dataBus.summary[key].HVcolor = this.parseColor(this.dataBus.summary[key].HV, this.name);
+                this.dataBus.summary[key].HVcolor = this.parseColor(this.dataBus.summary[key].HV, this.detectorType(key));
                 this.dataBus.summary[key].oldThresholdColor = this.dataBus.summary[key].thresholdColor;
-                this.dataBus.summary[key].thresholdColor = this.parseColor(this.dataBus.summary[key].threshold, this.name);
+                this.dataBus.summary[key].thresholdColor = this.parseColor(this.dataBus.summary[key].threshold, this.detectorType(key));
                 this.dataBus.summary[key].oldRateColor = this.dataBus.summary[key].rateColor;
-                this.dataBus.summary[key].rateColor = this.parseColor(this.dataBus.summary[key].rate, this.name);
+                this.dataBus.summary[key].rateColor = this.parseColor(this.dataBus.summary[key].rate, this.detectorType(key));
             }            
         }
 
@@ -281,6 +287,13 @@ function Subsystem(){
         //animate if on top:
         this.animate();
 
+    };
+
+    //return the detector code from the parameters store that corresponds to the input detector <name> - trivial case
+    //here will work for subsystems with only one kind of element like DESCANT or SHARC, 
+    //subsystems with multiple detector types like DANTE and TIP will have to define their own.
+    this.detectorType = function(name){
+        return this.name;
     };
     
     //write the simplest possible subsystem tooltip contents:

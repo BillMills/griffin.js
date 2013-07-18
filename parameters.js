@@ -1,15 +1,15 @@
 function loadParameters(){
 
 				window.parameters = {
-				"devMode" : 0,
+				"devMode" : 1,
 				"MIDASlegacyMode" : 0,
 				"ExpName" : "TIGRESS",
 				"statusURL" : "http://alphadon.triumf.ca:8082/",
-				"topDeployment" : {"HV":0, "Subsystems":1, "DAQ":1, "Clock":0, "Trigger":0},
-				"deployment" : {"BAMBINO":0, "DANTE":0, "DESCANT":0, "HPGe":1, "PACES":0, "SCEPTAR":0, "SHARC":1, "SPICE":0, "TIP":0, "DSSD":0},
+				"topDeployment" : {"HV":1, "Subsystems":1, "DAQ":1, "Clock":1, "Trigger":0},
+				"deployment" : {"BAMBINO":1, "DANTE":1, "DESCANT":1, "HPGe":1, "PACES":1, "SCEPTAR":1, "SHARC":1, "SPICE":1, "TIP":0, "DSSD":0},
 				"wrapper" : "waffleplate",
 				"subdetectorUnit" : ["V", "ADC units", "Hz"],
-				"monitorValues" : ["HV", "Thresholds", "Rate", "TAC Thresholds", "TAC Rate"],  //for filling tooltip
+				"monitorValues" : ["HV", "Thresholds", "Rate", "TAC-Thresholds", "TAC-Rate"],  //for filling tooltip
 				"keyLookup" : ['HV', 'threshold', 'rate'], //for mapping subdetectorView index onto keys
 				//"ODBkeys" : ["/Location/Of/Device/Varibles", "/Location/Of/Device/Settings", "Demand Voltage Key", "Measured Voltage Key", "Measured Current Key", "Voltage Ramp Up Key", "Voltage Ramp Down Key", "Temperature Key", "ChState Key", "ChStatus Key", "Voltage Limit Key", "Current Limit Key", "Channel Name Key"],
 				//"ODBkeys" : ["/Equipment/HV/Variables", "/Equipment/HV/Settings", "Demand", "Measured", "Current", "Ramp Up Speed", "Ramp Down Speed", "Temperature", "ChState", "ChStatus", "Voltage Limit", "Current Limit", "Names"],
@@ -60,12 +60,14 @@ function loadParameters(){
 
 				"DANTE" : {
 							"minima" : {
-											"BaF" : [0,0,0],
-											"BGO" : [1,1,1]
+											"LaBrPMT" : [0,0,0],
+											"LaBrTAC" : [0,0,0],
+											"BGO" : [0,0,0]
 									   },
 							"maxima" : {
-											"BaF" : [0,0,0],
-											"BGO" : [2,3,4]
+											"LaBrPMT" : [1,1,1],
+											"LaBrTAC" : [1,1,1],
+											"BGO" : [1,1,1]
 									   }
 						  },
 
