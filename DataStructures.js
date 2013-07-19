@@ -615,9 +615,9 @@ TIPwallDS = function(){
 	for(i=1; i<25; i++){
 		var name = (i<10) ? 'TPW00'+i+'P00X' : 'TPW0'+i+'P00X';
 		this.TIPwall[name] = {
-			'HV'		: 0.3,
-			'threshold' : 500,
-			'rate' 		: 100*i,
+			'HV'		: 0,
+			'threshold' : 0,
+			'rate' 		: 0,
 
 			'oldHVcolor' : '#000000',
 			'HVcolor'	 : '#000000',
@@ -660,6 +660,34 @@ TIPwallDS = function(){
 
 }
 
+TIPballDS = function(){
+	var i, j, k, name, key, subKey;
+
+	this.TIPball = {};
+	for(i=1; i<129; i++){
+		var name = (i<10) ? 'TPC00'+i+'P00X' : ( (i<100) ? 'TCW0'+i+'P00X' : 'TCW'+i+'P00X');
+		this.TIPball[name] = {
+			'HV'		: 0,
+			'threshold' : 0,
+			'rate' 		: 0,
+			'index'		: i,
+
+			'oldHVcolor' : '#000000',
+			'HVcolor'	 : '#000000',
+			'oldThresholdColor' : '#000000',
+			'thresholdColor' : '#000000',
+			'oldRateColor' : '#000000',
+			'rateColor' : '#000000'	
+		}
+	}
+
+	//invert the above index map for TT lookup
+	this.TTmap = []
+	for(key in this.TIPball){
+		this.TTmap[this.TIPball[key].index] = key;
+	}
+
+}
 
 DAQDS = function(){
 

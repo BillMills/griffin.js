@@ -6,7 +6,7 @@ function loadParameters(){
 				"ExpName" : "TIGRESS",
 				"statusURL" : "http://alphadon.triumf.ca:8082/",
 				"topDeployment" : {"HV":1, "Subsystems":1, "DAQ":1, "Clock":1, "Trigger":0},
-				"deployment" : {"BAMBINO":1, "DANTE":1, "DESCANT":1, "HPGe":1, "PACES":1, "SCEPTAR":1, "SHARC":1, "SPICE":1, "TIPwall":1, "DSSD":0},
+				"deployment" : {"BAMBINO":1, "DANTE":1, "DESCANT":1, "HPGe":1, "PACES":1, "SCEPTAR":1, "SHARC":1, "SPICE":1, "TIPwall":1, "TIPball":1, "DSSD":0},
 				"wrapper" : "waffleplate",
 				"subdetectorUnit" : ["V", "ADC units", "Hz"],
 				"monitorValues" : ["HV", "Thresholds", "Rate", "TAC-Thresholds", "TAC-Rate"],  //for filling tooltip
@@ -141,6 +141,15 @@ function loadParameters(){
 									   },
 							"maxima" : {
 											"TIPwall" : [1,1,1],
+									   }
+						},
+
+				"TIPball" : {
+							"minima" : {
+											"TIPball" : [0,0,0],
+									   },
+							"maxima" : {
+											"TIPball" : [1,1,1],
 									   }
 						},
 

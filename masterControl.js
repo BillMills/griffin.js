@@ -242,23 +242,28 @@ function fetchCustomParameters(){
     paths[57] = '/DashboardConfig/TIPwall/thresholdScale[*]'
     paths[58] = '/DashboardConfig/TIPwall/rateScale[*]'            
 
-    paths[59] = '/DashboardConfig/DAQ/rateMinTopView';
-    paths[60] = '/DashboardConfig/DAQ/rateMaxTopView';
-    paths[61] = '/DashboardConfig/DAQ/rateMinDetailView';
-    paths[62] = '/DashboardConfig/DAQ/rateMaxDetailView';
-    paths[63] = '/DashboardConfig/DAQ/transferMinTopView';
-    paths[64] = '/DashboardConfig/DAQ/transferMaxTopView';
-    paths[65] = '/DashboardConfig/DAQ/transferMinDetailView';
-    paths[66] = '/DashboardConfig/DAQ/transferMaxDetailView';
-    
-    paths[67] = '/DashboardConfig/DAQ/rateMinMaster';
-    paths[68] = '/DashboardConfig/DAQ/rateMaxMaster';
-    paths[69] = '/DashboardConfig/DAQ/transferMinMaster';
-    paths[70] = '/DashboardConfig/DAQ/transferMaxMaster';
+    paths[59] = '/DashboardConfig/TIPball/deploy'
+    paths[60] = '/DashboardConfig/TIPball/HVscale[*]'
+    paths[61] = '/DashboardConfig/TIPball/thresholdScale[*]'
+    paths[62] = '/DashboardConfig/TIPball/rateScale[*]'   
 
-    paths[71] = '/DashboardConfig/DSSD/HVscale[*]';
-    paths[72] = '/DashboardConfig/DSSD/thresholdScale[*]';
-    paths[73] = '/DashboardConfig/DSSD/rateScale[*]';
+    paths[63] = '/DashboardConfig/DAQ/rateMinTopView';
+    paths[64] = '/DashboardConfig/DAQ/rateMaxTopView';
+    paths[65] = '/DashboardConfig/DAQ/rateMinDetailView';
+    paths[66] = '/DashboardConfig/DAQ/rateMaxDetailView';
+    paths[67] = '/DashboardConfig/DAQ/transferMinTopView';
+    paths[68] = '/DashboardConfig/DAQ/transferMaxTopView';
+    paths[69] = '/DashboardConfig/DAQ/transferMinDetailView';
+    paths[70] = '/DashboardConfig/DAQ/transferMaxDetailView';
+    
+    paths[71] = '/DashboardConfig/DAQ/rateMinMaster';
+    paths[72] = '/DashboardConfig/DAQ/rateMaxMaster';
+    paths[73] = '/DashboardConfig/DAQ/transferMinMaster';
+    paths[74] = '/DashboardConfig/DAQ/transferMaxMaster';
+
+    paths[75] = '/DashboardConfig/DSSD/HVscale[*]';
+    paths[76] = '/DashboardConfig/DSSD/thresholdScale[*]';
+    paths[77] = '/DashboardConfig/DSSD/rateScale[*]';
 
     //fetch:
     var data = ODBMGet(paths);
@@ -329,11 +334,15 @@ function fetchCustomParameters(){
     window.parameters.TIPwall.minima.TIPwall = [parseFloat(data[56][0]), parseFloat(data[57][0]), parseFloat(data[58][0])];
     window.parameters.TIPwall.maxima.TIPwall = [parseFloat(data[56][1]), parseFloat(data[57][1]), parseFloat(data[58][1])];
 
-    window.parameters.DAQminima = [parseFloat(data[59]), parseFloat(data[63]), parseFloat(data[61]), parseFloat(data[65]), parseFloat(data[67]), parseFloat(data[69])];
-    window.parameters.DAQmaxima = [parseFloat(data[60]), parseFloat(data[64]), parseFloat(data[62]), parseFloat(data[66]), parseFloat(data[68]), parseFloat(data[70])];
+    window.parameters.deployment.TIPball = parseFloat(data[59]);
+    window.parameters.TIPwall.minima.TIPball = [parseFloat(data[60][0]), parseFloat(data[61][0]), parseFloat(data[62][0])];
+    window.parameters.TIPwall.maxima.TIPball = [parseFloat(data[60][1]), parseFloat(data[61][1]), parseFloat(data[62][1])];
 
-    window.parameters.DSSD.minima.DSSD = [parseFloat(data[71][0]), parseFloat(data[72][0]), parseFloat(data[73][0])];
-    window.parameters.DSSD.maxima.DSSD = [parseFloat(data[71][1]), parseFloat(data[72][1]), parseFloat(data[73][1])];
+    window.parameters.DAQminima = [parseFloat(data[63]), parseFloat(data[67]), parseFloat(data[65]), parseFloat(data[69]), parseFloat(data[71]), parseFloat(data[73])];
+    window.parameters.DAQmaxima = [parseFloat(data[64]), parseFloat(data[68]), parseFloat(data[66]), parseFloat(data[70]), parseFloat(data[72]), parseFloat(data[74])];
+
+    window.parameters.DSSD.minima.DSSD = [parseFloat(data[75][0]), parseFloat(data[76][0]), parseFloat(data[77][0])];
+    window.parameters.DSSD.maxima.DSSD = [parseFloat(data[75][1]), parseFloat(data[76][1]), parseFloat(data[77][1])];
     
 }
 

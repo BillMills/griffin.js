@@ -34,7 +34,7 @@ function StatusBar(wrapper){
 
     if(!window.parameters.MIDASlegacyMode){
         //message service
-        insertDOM('table', 'messageTable', '', 'padding:10px; font-family:10px Raleway;', this.wrapperID, '', '');
+        //insertDOM('table', 'messageTable', '', 'padding:10px; font-family:10px Raleway;', this.wrapperID, '', '');
         /*  //message input diabled until further notice///////////////////////////////////
         insertDOM('tr', 'inputRow', '', '', 'messageTable', '', '');
         insertDOM('td', 'inputCell', 'messageServiceCell', 'background:#333333;', 'inputRow', '');
@@ -58,6 +58,12 @@ function StatusBar(wrapper){
             }
         }
         */ //end message input///////////////////////////////////////////////////////////////
+        insertDOM('div', 'message0', 'messageServiceCell', 'background:#777777;', this.wrapperID, '');
+        insertDOM('div', 'message1', 'messageServiceCell', 'background:#333333;', this.wrapperID, '');
+        insertDOM('div', 'message2', 'messageServiceCell', 'background:#777777;', this.wrapperID, '');
+        insertDOM('div', 'message3', 'messageServiceCell', 'background:#333333;', this.wrapperID, '');
+        insertDOM('div', 'message4', 'messageServiceCell', 'background:#777777; margin-bottom:20px;', this.wrapperID, '');
+/*
         insertDOM('tr', 'messRow0', '', '', 'messageTable', '', '');
         insertDOM('td', 'message0', 'messageServiceCell', 'background:#777777;', 'messRow0', '');
         insertDOM('tr', 'messRow1', '', '', 'messageTable', '', '');
@@ -68,6 +74,7 @@ function StatusBar(wrapper){
         insertDOM('td', 'message3', 'messageServiceCell', 'background:#333333;', 'messRow3', '');
         insertDOM('tr', 'messRow4', '', '', 'messageTable', '', '');
         insertDOM('td', 'message4', 'messageServiceCell', 'background:#777777;', 'messRow4', '');
+*/
     }
 
     this.update = function(){

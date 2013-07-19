@@ -348,12 +348,14 @@ canvas#downStep{
 	background-color: Black;
 }
 
-td.messageServiceCell{
+div.messageServiceCell{
 	border:solid; 
 	border-color:#000000; 
 	border-width:1px;
 	padding:7px;
 	border-radius: 10px;
+	margin:2px;
+	word-wrap: break-word;
 }
 
 :invalid{
