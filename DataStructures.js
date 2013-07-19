@@ -608,13 +608,13 @@ SPICEDS = function(){
 	}
 }
 
-TIPDS = function(){
+TIPwallDS = function(){
 	var i, j, k, name, key, subKey;
 
-	this.CsIwall = {};
+	this.TIPwall = {};
 	for(i=1; i<25; i++){
 		var name = (i<10) ? 'TPW00'+i+'P00X' : 'TPW0'+i+'P00X';
-		this.CsIwall[name] = {
+		this.TIPwall[name] = {
 			'HV'		: 0.3,
 			'threshold' : 500,
 			'rate' 		: 100*i,
@@ -627,38 +627,36 @@ TIPDS = function(){
 			'rateColor' : '#000000'	
 		}
 	}
-	this.CsIwall['TPW011P00X']['index'] = 0;
-	this.CsIwall['TPW012P00X']['index'] = 1;
-	this.CsIwall['TPW013P00X']['index'] = 2;
-	this.CsIwall['TPW014P00X']['index'] = 3;
-	this.CsIwall['TPW015P00X']['index'] = 4;
-	this.CsIwall['TPW010P00X']['index'] = 5;
-	this.CsIwall['TPW002P00X']['index'] = 6;
-	this.CsIwall['TPW003P00X']['index'] = 7;
-	this.CsIwall['TPW004P00X']['index'] = 8;
-	this.CsIwall['TPW016P00X']['index'] = 9;
-	this.CsIwall['TPW009P00X']['index'] = 10;
-	this.CsIwall['TPW001P00X']['index'] = 11;
-	this.CsIwall['TPW005P00X']['index'] = 12;
-	this.CsIwall['TPW017P00X']['index'] = 13;
-	this.CsIwall['TPW024P00X']['index'] = 14;
-	this.CsIwall['TPW008P00X']['index'] = 15;
-	this.CsIwall['TPW007P00X']['index'] = 16;
-	this.CsIwall['TPW006P00X']['index'] = 17;
-	this.CsIwall['TPW018P00X']['index'] = 18;
-	this.CsIwall['TPW023P00X']['index'] = 19;
-	this.CsIwall['TPW022P00X']['index'] = 20;
-	this.CsIwall['TPW021P00X']['index'] = 21;
-	this.CsIwall['TPW020P00X']['index'] = 22;
-	this.CsIwall['TPW019P00X']['index'] = 23;
+	this.TIPwall['TPW011P00X']['index'] = 0;
+	this.TIPwall['TPW012P00X']['index'] = 1;
+	this.TIPwall['TPW013P00X']['index'] = 2;
+	this.TIPwall['TPW014P00X']['index'] = 3;
+	this.TIPwall['TPW015P00X']['index'] = 4;
+	this.TIPwall['TPW010P00X']['index'] = 5;
+	this.TIPwall['TPW002P00X']['index'] = 6;
+	this.TIPwall['TPW003P00X']['index'] = 7;
+	this.TIPwall['TPW004P00X']['index'] = 8;
+	this.TIPwall['TPW016P00X']['index'] = 9;
+	this.TIPwall['TPW009P00X']['index'] = 10;
+	this.TIPwall['TPW001P00X']['index'] = 11;
+	this.TIPwall['TPW005P00X']['index'] = 12;
+	this.TIPwall['TPW017P00X']['index'] = 13;
+	this.TIPwall['TPW024P00X']['index'] = 14;
+	this.TIPwall['TPW008P00X']['index'] = 15;
+	this.TIPwall['TPW007P00X']['index'] = 16;
+	this.TIPwall['TPW006P00X']['index'] = 17;
+	this.TIPwall['TPW018P00X']['index'] = 18;
+	this.TIPwall['TPW023P00X']['index'] = 19;
+	this.TIPwall['TPW022P00X']['index'] = 20;
+	this.TIPwall['TPW021P00X']['index'] = 21;
+	this.TIPwall['TPW020P00X']['index'] = 22;
+	this.TIPwall['TPW019P00X']['index'] = 23;
 
 	//invert the above index map for TT lookup
-	this.CsIwallTTmap = []
-	for(key in this.CsIwall){
-		this.CsIwallTTmap[this.CsIwall[key].index] = key;
+	this.TTmap = []
+	for(key in this.TIPwall){
+		this.TTmap[this.TIPwall[key].index] = key;
 	}
-
-	cloverDS.call(this, 3, 'GRIFFIN');
 
 }
 
