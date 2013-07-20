@@ -46,11 +46,13 @@ function HPGe(){
                                 //draw and swap out if user clicked on a valid clover
                                 if(cloverClicked != -1){
                                     cloverClicked = Math.floor( (cloverClicked - 108) / 8)+1;
-                                    that.cloverShowing = cloverClicked
-                                    that.drawDetail(that.detailContext, that.nFrames);
-                                    that.drawDetail(that.TTdetailContext, that.nFrames);
-                                    that.detailShowing = 1;
-                                    swapFade(null, that, 1000)
+                                    if(window.parameters.cloversAbsent.indexOf(cloverClicked)==-1){
+                                        that.cloverShowing = cloverClicked
+                                        that.drawDetail(that.detailContext, that.nFrames);
+                                        that.drawDetail(that.TTdetailContext, that.nFrames);
+                                        that.detailShowing = 1;
+                                        swapFade(null, that, 1000)
+                                    }
                                 } else if(y > that.canvasHeight - that.scaleHeight){
                                     parameterDialogue(that.name, [['HPGe', window.parameters[that.name].minima['HPGe'][window.state.subdetectorView], window.parameters[that.name].maxima['HPGe'][window.state.subdetectorView], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/HPGe/'+scaleType()+'[0]', '/DashboardConfig/HPGe/'+scaleType()+'[1]'], ['BGO', window.parameters[that.name].minima['BGO'][window.state.subdetectorView], window.parameters[that.name].maxima['BGO'][window.state.subdetectorView],  window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/HPGe/BGO'+scaleType()+'[0]', '/DashboardConfig/HPGe/BGO'+scaleType()+'[1]'] ], window.parameters.subdetectorColors[window.state.subdetectorView]);
                                 }

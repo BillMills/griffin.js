@@ -588,6 +588,9 @@ function HPGeAssets(){
                     if(interpolateColor(color1, color2, frame/this.nFrames) == 0xDEADBEEF)
                         context.fillStyle = context.createPattern(window.parameters.warningFill, 'repeat');
                 }
+                if( window.parameters.cloversAbsent.indexOf(parseInt(cloverSummaryKey.slice(3,5),10)) != -1 && context!= this.TTcontext)
+                    context.fillStyle = '#333333' //absent clovers transparent
+
                 context.fillRect(Math.round(x0 + (this.BGOouter-this.HPGeside)/2 + (i%2)*(this.lineWeight + this.HPGeside/2)), Math.round(y0 + (this.BGOouter-this.HPGeside)/2 + (i>>1)/2*(2*this.lineWeight + this.HPGeside)), Math.round(this.HPGeside/2),Math.round(this.HPGeside/2));
                 if(context != this.TTcontext){
                     context.strokeStyle = '#999999';
@@ -617,6 +620,8 @@ function HPGeAssets(){
                     fillColor = interpolateColor(color1, color2, frame/this.nFrames);
                     if(fillColor == 0xDEADBEEF)
                         fillColor = context.createPattern(window.parameters.warningFill, 'repeat');
+                    if( window.parameters.cloversAbsent.indexOf(parseInt(cloverSummaryKey.slice(3,5),10)) != -1 )
+                    fillColor = '#333333' //absent clovers transparent
                 }
 
                 this.drawL(context, rotation, Math.round((this.BGOouter - this.BGOinner)/2), Math.round(this.BGOouter/2), Math.round(x0 + (this.BGOouter+this.lineWeight)*(i%2)), Math.round(y0 + (this.BGOouter+this.lineWeight)*(i>>1)), color, fillColor);
@@ -968,39 +973,43 @@ function HPGeAssets(){
         //summary level//////////////////////////////////////////////////
 
         if(!this.detailShowing) {
-            
+
             cloverNumber = Math.floor((cell-100)/8);
             cloverName = pfx+'G'+((cloverNumber<10) ? '0'+cloverNumber : cloverNumber );  //will match the HPGe summary ID of this clover
-            quadrant = ((cell-100)%8)%4;
-            if (quadrant==2) quadrant = 3;
-            else if(quadrant==3) quadrant = 2;
-            //HPGE
-            if( (cell-100)%8 < 4 ){
-                if(this.mode == 'GRIFFIN'){
-                    segA = cloverName+this.dataBus.colorQuads[quadrant]+'N00A';
-                    segB = cloverName+this.dataBus.colorQuads[quadrant]+'N00B';
+            if(window.parameters.cloversAbsent.indexOf(cloverNumber) == -1){  //not in the absentee list
+                quadrant = ((cell-100)%8)%4;
+                if (quadrant==2) quadrant = 3;
+                else if(quadrant==3) quadrant = 2;
+                //HPGE
+                if( (cell-100)%8 < 4 ){
+                    if(this.mode == 'GRIFFIN'){
+                        segA = cloverName+this.dataBus.colorQuads[quadrant]+'N00A';
+                        segB = cloverName+this.dataBus.colorQuads[quadrant]+'N00B';
 
-                    //report segment A:
-                    nextLine = segA;
-                    toolTipContent = '<br>' + nextLine + '<br>';
-                    toolTipContent += this.baseTTtext(this.dataBus.HPGe[segA].HV, this.dataBus.HPGe[segA].threshold, this.dataBus.HPGe[segA].rate)
+                        //report segment A:
+                        nextLine = segA;
+                        toolTipContent = '<br>' + nextLine + '<br>';
+                        toolTipContent += this.baseTTtext(this.dataBus.HPGe[segA].HV, this.dataBus.HPGe[segA].threshold, this.dataBus.HPGe[segA].rate)
 
-                    //report segment B:
-                    nextLine = segB;
-                    toolTipContent += '<br><br>' + nextLine + '<br>';
-                    toolTipContent += this.baseTTtext(this.dataBus.HPGe[segA].HV, this.dataBus.HPGe[segB].threshold, this.dataBus.HPGe[segB].rate)
-                } else if(this.mode == 'TIGRESS'){
-                    createTIGRESSsummaryTT(this.tooltip.ttDivID, cloverName+this.dataBus.colorQuads[quadrant], this.dataBus);
+                        //report segment B:
+                        nextLine = segB;
+                        toolTipContent += '<br><br>' + nextLine + '<br>';
+                        toolTipContent += this.baseTTtext(this.dataBus.HPGe[segA].HV, this.dataBus.HPGe[segB].threshold, this.dataBus.HPGe[segB].rate)
+                    } else if(this.mode == 'TIGRESS'){
+                        createTIGRESSsummaryTT(this.tooltip.ttDivID, cloverName+this.dataBus.colorQuads[quadrant], this.dataBus);
+                    }
+                //BGO 
+                } else {
+                    cloverName = pfx+'S'+((cloverNumber<10) ? '0'+cloverNumber : cloverNumber );
+                    toolTipContent = '';
+                    for(i=1; i<6; i++){
+                        BGO[i] = cloverName+this.dataBus.colorQuads[quadrant]+'N0'+i+'X';
+                        toolTipContent += ((i==1) ? '<br>' : '<br><br>') + BGO[i] + '<br>';
+                        toolTipContent += this.baseTTtext(this.dataBus.HPGe[BGO[i]].HVA, this.dataBus.HPGe[BGO[i]].threshold, this.dataBus.HPGe[BGO[i]].rate, this.dataBus.HPGe[BGO[i]].HVB);
+                    }
                 }
-            //BGO 
             } else {
-                cloverName = pfx+'S'+((cloverNumber<10) ? '0'+cloverNumber : cloverNumber );
-                toolTipContent = '';
-                for(i=1; i<6; i++){
-                    BGO[i] = cloverName+this.dataBus.colorQuads[quadrant]+'N0'+i+'X';
-                    toolTipContent += ((i==1) ? '<br>' : '<br><br>') + BGO[i] + '<br>';
-                    toolTipContent += this.baseTTtext(this.dataBus.HPGe[BGO[i]].HVA, this.dataBus.HPGe[BGO[i]].threshold, this.dataBus.HPGe[BGO[i]].rate, this.dataBus.HPGe[BGO[i]].HVB);
-                }
+                toolTipContent = '<br>'+cloverName + ' absent.'
             }
         }
         //HPGe detail level///////////////////////////////////////////////
