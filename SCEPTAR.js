@@ -55,9 +55,7 @@ function SCEPTAR(){
         }
     	//ZDS
         if(this.config[2] == 1){
-            if(window.state.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.SCEPTAR['ZDS01XN00X'].oldHVcolor), parseHexColor(this.dataBus.SCEPTAR['ZDS01XN00X'].HVcolor), frame/this.nFrames);
-            else if(window.state.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.SCEPTAR['ZDS01XN00X'].oldThresholdColor), parseHexColor(this.dataBus.SCEPTAR['ZDS01XN00X'].thresholdColor), frame/this.nFrames);
-            else if(window.state.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.SCEPTAR['ZDS01XN00X'].oldRateColor), parseHexColor(this.dataBus.SCEPTAR['ZDS01XN00X'].rateColor), frame/this.nFrames);
+            this.context.fillStyle = colors('ZDS01XN00X', this.dataBus.SCEPTAR, frame, this.nFrames)
         	this.context.beginPath();
     	    this.context.arc(this.ZDScenterX, this.ZDScenterY, this.ZDSradius, 0, 2*Math.PI);
         	this.context.closePath();
@@ -86,7 +84,7 @@ function SCEPTAR(){
             this.TTcontext.beginPath();
             this.TTcontext.arc(this.ZDScenterX, this.ZDScenterY, this.ZDSradius, 0, 2*Math.PI);
             this.TTcontext.closePath();
-            this.TTcontext.fillStyle = 'rgba('+20+','+20+','+20+',1)';
+            this.TTcontext.fillStyle = 'rgba('+21+','+21+','+21+',1)';
             this.TTcontext.fill();
         }
     
@@ -125,9 +123,7 @@ function SCEPTAR(){
             name = (indexStart+i+1<10) ? 'SEP0'+(indexStart+i+1)+'XN00X' : 'SEP'+(indexStart+i+1)+'XN00X'
 
             if(context == this.context){
-                if(window.state.subdetectorView == 0) context.fillStyle = interpolateColor(parseHexColor(this.dataBus.SCEPTAR[name].oldHVcolor), parseHexColor(this.dataBus.SCEPTAR[name].HVcolor), frame/this.nFrames);
-                else if(window.state.subdetectorView == 1) context.fillStyle = interpolateColor(parseHexColor(this.dataBus.SCEPTAR[name].oldThresholdColor), parseHexColor(this.dataBus.SCEPTAR[name].thresholdColor), frame/this.nFrames);
-                else if(window.state.subdetectorView == 2) context.fillStyle = interpolateColor(parseHexColor(this.dataBus.SCEPTAR[name].oldRateColor), parseHexColor(this.dataBus.SCEPTAR[name].rateColor), frame/this.nFrames);
+                context.fillStyle = colors(name, this.dataBus.SCEPTAR, frame, this.nFrames)
             }
             else if(context == this.TTcontext) context.fillStyle = '#123456'; //anti-antialiasing
             context.save();
@@ -159,66 +155,7 @@ function SCEPTAR(){
             }
         }   
     }
-/*
-    this.defineText = function(cell){
-        var toolTipContent = '<br>';
-        var nextLine;
-        var cardIndex;
-        var i;
 
-        nextLine = this.dataBus.key[cell][0];
-        toolTipContent += nextLine;
-
-        toolTipContent += '<br><br>';
-        document.getElementById(this.tooltip.ttDivID).innerHTML = toolTipContent;
-
-        return 0;
-    };
-
-    this.update = function(){
-        var i;
-
-        //get new data
-        this.fetchNewData();
-
-        //parse the new data into colors
-        for(i=0; i<this.dataBus.HV.length; i++){
-            this.oldHVcolor[i] = this.HVcolor[i];
-            if(i==20)
-                this.HVcolor[i] = this.parseColor(this.dataBus.HV[i], 'ZDS');
-            else 
-                this.HVcolor[i] = this.parseColor(this.dataBus.HV[i], 'SCEPTAR');
-        }
-        for(i=0; i<this.dataBus.thresholds.length; i++){
-            this.oldThresholdColor[i] = this.thresholdColor[i];
-            if(i==20)  
-                this.thresholdColor[i] = this.parseColor(this.dataBus.thresholds[i], 'ZDS');
-            else 
-                this.thresholdColor[i] = this.parseColor(this.dataBus.thresholds[i], 'SCEPTAR');
-        }
-        for(i=0; i<this.dataBus.rate.length; i++){
-            this.oldRateColor[i] = this.rateColor[i];
-            if(i==20)
-                this.rateColor[i] = this.parseColor(this.dataBus.rate[i], 'ZDS');
-            else
-                this.rateColor[i] = this.parseColor(this.dataBus.rate[i], 'SCEPTAR');
-        }
-
-        this.tooltip.update();
-    };
-
-
-    this.fetchNewData = function(){
-        var i;
-
-        //dummy data:
-        for(i=0; i<21; i++){
-            this.dataBus.HV[i] = Math.random();
-            this.dataBus.thresholds[i] = Math.random();
-            this.dataBus.rate[i] = Math.random();
-        }
-    };
-*/
     //do an initial populate:
     this.update();
 }

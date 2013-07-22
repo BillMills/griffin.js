@@ -34,7 +34,6 @@ function DANTE(){
     //member functions///////////////////////////////////////////////////////////////////
 
     this.draw = function(frame){
-//console.log(this.dataBus.DANTE.DAL01XT00X.rateColor)
 
     	var j, ringCenter, x0, y0, name;
     	this.context.strokeStyle = '#999999';
@@ -78,7 +77,6 @@ function DANTE(){
             else
                 name = 'DAL0'+(j+1)+'XT00X'
             this.context.fillStyle = colors(name, this.dataBus.DANTE, frame, this.nFrames);
-//console.log(this.context.fillStyle)
     		this.context.beginPath();
     		this.context.arc(x0,y0,this.detectorRadius,0,2*Math.PI);
     		this.context.closePath();

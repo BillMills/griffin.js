@@ -124,9 +124,7 @@ function BAMBINO(spiceMode){
 	    		for(j=0; j<this.nRadial; j++){
                     name = ((this.spiceAux) ? 'SP' : 'BA' ) + ((this.mode=='S2') ? 'Z0' : 'E0') + (Math.floor((i%4)/2)+1) + this.dataBus.waypoints[Math.floor(i/4)] + 'P' +( (j<10) ? '0'+j : j ) + 'X';
     				this.context.beginPath()
-                    if(window.state.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.BAMBINO[name].oldHVcolor), parseHexColor(this.dataBus.BAMBINO[name].HVcolor), frame/this.nFrames);
-                    else if(window.state.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.BAMBINO[name].oldThresholdColor), parseHexColor(this.dataBus.BAMBINO[name].thresholdColor), frame/this.nFrames);
-                    else if(window.state.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.BAMBINO[name].oldRateColor), parseHexColor(this.dataBus.BAMBINO[name].rateColor), frame/this.nFrames);
+                    this.context.fillStyle = colors(name, this.dataBus.BAMBINO, frame, this.nFrames)
 	    			this.context.arc(x0, y0, this.CDradius - j*this.radialWidth, 0, 2*Math.PI);
 	    			this.context.closePath();
     				this.context.fill();
@@ -161,9 +159,7 @@ function BAMBINO(spiceMode){
 	    		for(j=0; j<this.nAzimuthal; j++){
                     name = ((this.spiceAux) ? 'SP' : 'BA' ) + ((this.mode=='S2') ? 'Z0' : 'E0') + (Math.floor((i%4)/2)+1) + this.dataBus.waypoints[Math.floor(i/4)] + 'N' +( (j<10) ? '0'+j : j ) + 'X';
     				this.context.beginPath()
-                    if(window.state.subdetectorView == 0) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.BAMBINO[name].oldHVcolor), parseHexColor(this.dataBus.BAMBINO[name].HVcolor), frame/this.nFrames);
-                    else if(window.state.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.BAMBINO[name].oldThresholdColor), parseHexColor(this.dataBus.BAMBINO[name].thresholdColor), frame/this.nFrames);
-                    else if(window.state.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.BAMBINO[name].oldRateColor), parseHexColor(this.dataBus.BAMBINO[name].rateColor), frame/this.nFrames);
+                    this.context.fillStyle = colors(name, this.dataBus.BAMBINO, frame, this.nFrames)
                     
                     this.context.moveTo(x0 + this.CDinnerRadius*Math.cos(j*this.azimuthalArc), y0 - this.CDinnerRadius*Math.sin(j*this.azimuthalArc));
                     this.context.arc(x0,y0, this.CDinnerRadius, -j*this.azimuthalArc, -(j+1)*this.azimuthalArc, true);

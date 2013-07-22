@@ -12,23 +12,7 @@ function SHARC(){
     this.padsEnabled = 0;               //are the pads present?
     this.detailShowing = 0;             //is the detail view on display?
 
-    //drawing parameters//////////////////
-    /*
-    this.scaleFactor = (this.padsEnabled) ? 0.67 : 1;  //scale down layers D and E to accomodate pads if present
-    this.innerQuadRad = 0.02*this.canvasWidth*this.scaleFactor;
-    this.outerQuadRad = 0.1*this.canvasWidth*this.scaleFactor;
-    this.quadArc = 0.66*Math.PI/2;
-    this.innerQuadCenterLine = this.canvasHeight*0.4;
-    this.outerRowSpacing = this.canvasHeight*0.2*this.scaleFactor + this.padsEnabled*0.02*this.canvasHeight;
-    this.summaryBoxWidth = 0.08*this.canvasWidth;
-    this.summaryBoxHeight = 0.16*this.canvasHeight*this.scaleFactor;
-    this.x0 = 0.1*this.canvasWidth;  //top left corner for TT boxes on summary view
-    this.y0 = (1-this.scaleFactor)*(this.canvasHeight-this.scaleHeight)/2;
-    this.TTboxWidth = 0.1*this.canvasWidth;
-    this.TTboxHeight = 0.2*this.canvasHeight*this.scaleFactor;
-    this.padSize = 0.02*this.canvasWidth;
-    */
-    //summary drawing V.2
+    //drawing parameters:
     //summary view is laid out on a 15x12 grid:
     this.cellWidth = this.canvasWidth/15;
     this.cellHeight = (this.canvasHeight - this.scaleHeight)/12
