@@ -58,25 +58,28 @@ function PACES(){
         	}
         }
         //...and again for the tooltip encoding
-        for(i=0; i<5; i++){
-            this.TTcontext.save();
-            this.TTcontext.translate(this.centerX, this.centerY);
-            this.TTcontext.rotate(i*Math.PI*72/180);
+        if(!this.TTlayerDone){
+            for(i=0; i<5; i++){
+                this.TTcontext.save();
+                this.TTcontext.translate(this.centerX, this.centerY);
+                this.TTcontext.rotate(i*Math.PI*72/180);
 
-            this.TTcontext.fillStyle = 'rgba('+(2*i+1)+','+(2*i+1)+','+(2*i+1)+',1)';
-            this.TTcontext.beginPath();
-            this.TTcontext.arc(0, -this.arrayRadius, this.SiLiRadius, 0, Math.PI);
-            this.TTcontext.closePath();
-            this.TTcontext.fill();
+                this.TTcontext.fillStyle = 'rgba('+(2*i+1)+','+(2*i+1)+','+(2*i+1)+',1)';
+                this.TTcontext.beginPath();
+                this.TTcontext.arc(0, -this.arrayRadius, this.SiLiRadius, 0, Math.PI);
+                this.TTcontext.closePath();
+                this.TTcontext.fill();
 
-            this.TTcontext.fillStyle = 'rgba('+(2*i+2)+','+(2*i+2)+','+(2*i+2)+',1)';
-            this.TTcontext.beginPath();
-            this.TTcontext.arc(0, -this.arrayRadius, this.SiLiRadius, Math.PI, 0);
-            this.TTcontext.closePath();
-            this.TTcontext.fill();
+                this.TTcontext.fillStyle = 'rgba('+(2*i+2)+','+(2*i+2)+','+(2*i+2)+',1)';
+                this.TTcontext.beginPath();
+                this.TTcontext.arc(0, -this.arrayRadius, this.SiLiRadius, Math.PI, 0);
+                this.TTcontext.closePath();
+                this.TTcontext.fill();
 
-            this.TTcontext.restore();
+                this.TTcontext.restore();
 
+            }
+            this.TTlayerDone = 1;
         }
 
         //HV view///////////////////////////////////////////

@@ -97,7 +97,6 @@ function masterLoop(callMyself){
             element.parentNode.removeChild(element);
     }
 
-    window.freshLoad = 0;
     //next iteration:
     window.loop = setTimeout(function(){loadJSONP(window.Gatekeeper, 1)}, 3000);
 }

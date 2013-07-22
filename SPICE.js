@@ -55,23 +55,26 @@ function SPICE(){
             i++;
     	}
         //...and again for tt encoding:
+        if(!this.TTlayerDone){
         i=0;
-        for(key in this.dataBus.SPICE){
-            sector = i%12;
-            ring = Math.floor(i/12);
+            for(key in this.dataBus.SPICE){
+                sector = i%12;
+                ring = Math.floor(i/12);
 
-            this.TTcontext.fillStyle = 'rgba('+this.dataBus.SPICE[key].index+','+this.dataBus.SPICE[key].index+','+this.dataBus.SPICE[key].index+',1)';
-            this.TTcontext.beginPath();
-            this.TTcontext.arc(this.centerX, this.centerY, this.innerRadius + ring*this.radialStep, -sector*this.azimuthalStep, -(sector+1)*this.azimuthalStep, true);
-            this.TTcontext.lineTo(this.centerX + (this.innerRadius + (ring+1)*this.radialStep)*Math.cos(2*Math.PI - (sector+1)*this.azimuthalStep), this.centerY + (this.innerRadius + (ring+1)*this.radialStep)*Math.sin(2*Math.PI - (sector+1)*this.azimuthalStep));
-            this.TTcontext.arc(this.centerX, this.centerY, this.innerRadius + (ring+1)*this.radialStep, - (sector+1)*this.azimuthalStep, - sector*this.azimuthalStep, false);
-            this.TTcontext.closePath();
-            this.TTcontext.fill();
-            //suppress antialiasing problems between cells:
-            this.TTcontext.strokeStyle = '#123456';
-            this.TTcontext.stroke();
+                this.TTcontext.fillStyle = 'rgba('+this.dataBus.SPICE[key].index+','+this.dataBus.SPICE[key].index+','+this.dataBus.SPICE[key].index+',1)';
+                this.TTcontext.beginPath();
+                this.TTcontext.arc(this.centerX, this.centerY, this.innerRadius + ring*this.radialStep, -sector*this.azimuthalStep, -(sector+1)*this.azimuthalStep, true);
+                this.TTcontext.lineTo(this.centerX + (this.innerRadius + (ring+1)*this.radialStep)*Math.cos(2*Math.PI - (sector+1)*this.azimuthalStep), this.centerY + (this.innerRadius + (ring+1)*this.radialStep)*Math.sin(2*Math.PI - (sector+1)*this.azimuthalStep));
+                this.TTcontext.arc(this.centerX, this.centerY, this.innerRadius + (ring+1)*this.radialStep, - (sector+1)*this.azimuthalStep, - sector*this.azimuthalStep, false);
+                this.TTcontext.closePath();
+                this.TTcontext.fill();
+                //suppress antialiasing problems between cells:
+                this.TTcontext.strokeStyle = '#123456';
+                this.TTcontext.stroke();
 
-            i++;
+                i++;
+            }
+            this.TTlayerDone = 1;
         }
 
         //scale

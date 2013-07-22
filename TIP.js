@@ -43,14 +43,17 @@ function TIPwall(){
             this.context.strokeRect(this.CsIx0 + this.CsIcellSide*(iAdj%5), this.CsIy0 + this.CsIcellSide*Math.floor(iAdj/5), this.CsIcellSide, this.CsIcellSide);
 
     	}
+        if(!this.TTlayerDone){
         //...and again for tt encoding:
-        for(key in this.dataBus.TIPwall){
-            i = this.dataBus.TIPwall[key].index;
-            iAdj = i;
-            if (iAdj>11) iAdj++;
+            for(key in this.dataBus.TIPwall){
+                i = this.dataBus.TIPwall[key].index;
+                iAdj = i;
+                if (iAdj>11) iAdj++;
 
-            this.TTcontext.fillStyle = 'rgba('+i+','+i+','+i+',1)';
-            this.TTcontext.fillRect(Math.round(this.CsIx0 + this.CsIcellSide*(iAdj%5)), Math.round(this.CsIy0 + this.CsIcellSide*Math.floor(iAdj/5)), Math.round(this.CsIcellSide), Math.round(this.CsIcellSide));
+                this.TTcontext.fillStyle = 'rgba('+i+','+i+','+i+',1)';
+                this.TTcontext.fillRect(Math.round(this.CsIx0 + this.CsIcellSide*(iAdj%5)), Math.round(this.CsIy0 + this.CsIcellSide*Math.floor(iAdj/5)), Math.round(this.CsIcellSide), Math.round(this.CsIcellSide));
+            }
+            this.TTlayerDone = 1;
         }
 
         this.drawScale(this.context, frame);
@@ -108,9 +111,11 @@ function TIPball(){
                 this.context.strokeRect(this.canvasWidth/2 - this.cellSide*this.detsPerRing[i]/2 + this.cellSide*j, this.rowTop, this.cellSide, this.cellSide);
 
                 //and for the tooltip:
-                this.TTcontext.fillStyle = 'rgba('+this.DAQmap(index)+','+this.DAQmap(index)+','+this.DAQmap(index)+',1)';
-                this.TTcontext.fillRect(this.canvasWidth/2 - this.cellSide*this.detsPerRing[i]/2 + this.cellSide*j, this.rowTop, this.cellSide, this.cellSide);
-                this.TTcontext.strokeRect(this.canvasWidth/2 - this.cellSide*this.detsPerRing[i]/2 + this.cellSide*j, this.rowTop, this.cellSide, this.cellSide);
+                if(!this.TTlayerDone){
+                    this.TTcontext.fillStyle = 'rgba('+this.DAQmap(index)+','+this.DAQmap(index)+','+this.DAQmap(index)+',1)';
+                    this.TTcontext.fillRect(this.canvasWidth/2 - this.cellSide*this.detsPerRing[i]/2 + this.cellSide*j, this.rowTop, this.cellSide, this.cellSide);
+                    this.TTcontext.strokeRect(this.canvasWidth/2 - this.cellSide*this.detsPerRing[i]/2 + this.cellSide*j, this.rowTop, this.cellSide, this.cellSide);
+                }
 
                 index++;
             
@@ -130,6 +135,7 @@ function TIPball(){
             if(i==0) this.rowTop += 2*this.gutterWidth;
         }
         this.rowTop = 0.05*this.canvasHeight;
+        this.TTlayerDone = 1;
 
         if(frame==0 || frame == this.nFrames){
             this.context.textBaseline = 'alphabetic'

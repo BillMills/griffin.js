@@ -39,8 +39,7 @@ function DESCANT(){
 	this.draw = function(frame){
 		var i, j, key;
 		this.context.clearRect(0,0,this.canvasWidth, this.canvasHeight-this.scaleHeight);
-		this.TTcontext.fillStyle = '#123456'
-		this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
+
 		//for(i=0; i<70; i++){
         for(key in this.dataBus.DESCANT){
             i = this.dataBus.DESCANT[key].index - 1;
@@ -59,22 +58,27 @@ function DESCANT(){
 			this.context.restore();
 		}
 
-		//and the same again for the hidden TT info canvas:
-		for(key in this.dataBus.DESCANT){
-            i = this.dataBus.DESCANT[key].index - 1;
-			this.TTcontext.save();
-			this.TTcontext.translate(this.centerX, this.centerY);
-			this.TTcontext.rotate(this.drawRules[i][3]);
+		if(!this.TTlayerDone){
+			//and the same again for the hidden TT info canvas:
+			this.TTcontext.fillStyle = '#123456'
+			this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
+			for(key in this.dataBus.DESCANT){
+	            i = this.dataBus.DESCANT[key].index - 1;
+				this.TTcontext.save();
+				this.TTcontext.translate(this.centerX, this.centerY);
+				this.TTcontext.rotate(this.drawRules[i][3]);
 
-			this.TTcontext.fillStyle = 'rgba('+this.dataBus.DESCANT[key].index+','+this.dataBus.DESCANT[key].index+','+this.dataBus.DESCANT[key].index+',1)';
+				this.TTcontext.fillStyle = 'rgba('+this.dataBus.DESCANT[key].index+','+this.dataBus.DESCANT[key].index+','+this.dataBus.DESCANT[key].index+',1)';
 
-			if(this.drawRules[i][0] == 'white')whiteDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, 1);
-			else if(this.drawRules[i][0] == 'red') redDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 1);
-			else if(this.drawRules[i][0] == 'blue') blueDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 1);
-			else if(this.drawRules[i][0] == 'greenLeft') greenLeftDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 1);
-			else if(this.drawRules[i][0] == 'greenRight') greenRightDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 1);
+				if(this.drawRules[i][0] == 'white')whiteDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, 1);
+				else if(this.drawRules[i][0] == 'red') redDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 1);
+				else if(this.drawRules[i][0] == 'blue') blueDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 1);
+				else if(this.drawRules[i][0] == 'greenLeft') greenLeftDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 1);
+				else if(this.drawRules[i][0] == 'greenRight') greenRightDetector(this.TTcontext, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 1);
 
-			this.TTcontext.restore();
+				this.TTcontext.restore();
+				this.TTlayerDone = 1;
+			}
 		}
 		
 

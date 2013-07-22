@@ -46,6 +46,7 @@ function HPGe(){
                                 //draw and swap out if user clicked on a valid clover
                                 if(cloverClicked != -1){
                                     cloverClicked = Math.floor( (cloverClicked - 108) / 8)+1;
+                                    that.TTdetailLayerDone = 0;  //need to redraw detail TT layer for different detail views
                                     if(window.parameters.cloversAbsent.indexOf(cloverClicked)==-1){
                                         that.cloverShowing = cloverClicked
                                         that.drawDetail(that.detailContext, that.nFrames);
@@ -63,6 +64,8 @@ function HPGe(){
     this.centerX = this.canvasWidth/2;
     this.centerY = this.canvasHeight*0.4;
     this.lineWeight = 1;
+    this.context.lineWidth = this.lineWeight;
+    this.context.strokeStyle = '#999999';
 
     this.BGOouter = 0.09*this.canvasWidth;
     this.BGOinner = 0.67*this.BGOouter;
@@ -128,11 +131,9 @@ function HPGe(){
     this.draw = function(frame){
         var i, summaryKey,
             pfx = (this.mode == 'TIGRESS') ? 'TI' : 'GR';
-        this.context.lineWidth = this.lineWeight;
 
         //beam arrow
         this.context.clearRect(this.centerX-0.04*this.canvasWidth, 0, 0.07*this.canvasWidth, 0.7*this.canvasHeight);
-        this.context.strokeStyle = '#999999';
         this.context.fillStyle = '#999999';
         this.context.font="24px 'Orbitron'";
         this.context.moveTo(this.centerX, 0.7*this.canvasHeight);
@@ -148,11 +149,13 @@ function HPGe(){
         for(i=1; i<17; i++){
             summaryKey = pfx+'G' + ( (i<10) ? '0'+i : i );
             this.drawHPGesummary(this.context, this.summaryCoord[i][0], this.summaryCoord[i][1], summaryKey, frame);
-            this.drawHPGesummary(this.TTcontext, this.summaryCoord[i][0], this.summaryCoord[i][1], summaryKey, frame);
+            if(!this.TTlayerDone)
+                this.drawHPGesummary(this.TTcontext, this.summaryCoord[i][0], this.summaryCoord[i][1], summaryKey, frame);
 
             summaryKey = pfx+'S' + ( (i<10) ? '0'+i : i );
             this.drawHPGesummary(this.context, this.summaryCoord[i][0], this.summaryCoord[i][1], summaryKey, frame);
-            this.drawHPGesummary(this.TTcontext, this.summaryCoord[i][0], this.summaryCoord[i][1], summaryKey, frame);            
+            if(!this.TTlayerDone)
+                this.drawHPGesummary(this.TTcontext, this.summaryCoord[i][0], this.summaryCoord[i][1], summaryKey, frame);            
         }
 
         //titles
@@ -168,6 +171,8 @@ function HPGe(){
         }
 
         if(frame==this.nFrames || frame==0) this.drawScale(this.context);
+
+        this.TTlayerDone = 1;
     };
 
     this.defineText = function(cell){

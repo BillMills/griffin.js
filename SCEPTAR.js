@@ -64,30 +64,34 @@ function SCEPTAR(){
         }
 
         //...and again for tt encoding:
-        //upstream SCEPTAR
-        if(this.config[0] == 1){
-            this.drawSceptar('upstream', frame, this.TTcontext);
+        if(!this.TTlayerDone){
+            //upstream SCEPTAR
+            if(this.config[0] == 1){
+                this.drawSceptar('upstream', frame, this.TTcontext);
+            }
+            //downstream SCEPTAR
+            if(this.config[1] == 1){
+                this.drawSceptar('downstream', frame, this.TTcontext);
+            }
+            //ZDS
+            if(this.config[2] == 1){
+                //antialiasing hackaround:
+                this.TTcontext.beginPath();
+                this.TTcontext.arc(this.ZDScenterX, this.ZDScenterY, 1.05*this.ZDSradius, 0, 2*Math.PI);
+                this.TTcontext.closePath();
+                this.TTcontext.fillStyle = '#123456';
+                this.TTcontext.fill();
+                //end hack around
+                this.TTcontext.beginPath();
+                this.TTcontext.arc(this.ZDScenterX, this.ZDScenterY, this.ZDSradius, 0, 2*Math.PI);
+                this.TTcontext.closePath();
+                this.TTcontext.fillStyle = 'rgba('+21+','+21+','+21+',1)';
+                this.TTcontext.fill();
+            }
+            this.TTlayerDone = 1;
         }
-        //downstream SCEPTAR
-        if(this.config[1] == 1){
-            this.drawSceptar('downstream', frame, this.TTcontext);
-        }
-        //ZDS
-        if(this.config[2] == 1){
-            //antialiasing hackaround:
-            this.TTcontext.beginPath();
-            this.TTcontext.arc(this.ZDScenterX, this.ZDScenterY, 1.05*this.ZDSradius, 0, 2*Math.PI);
-            this.TTcontext.closePath();
-            this.TTcontext.fillStyle = '#123456';
-            this.TTcontext.fill();
-            //end hack around
-            this.TTcontext.beginPath();
-            this.TTcontext.arc(this.ZDScenterX, this.ZDScenterY, this.ZDSradius, 0, 2*Math.PI);
-            this.TTcontext.closePath();
-            this.TTcontext.fillStyle = 'rgba('+21+','+21+','+21+',1)';
-            this.TTcontext.fill();
-        }
-    
+   
+
     	//titles
         this.context.clearRect(0,this.SCEPTARy0 + 2.5*this.SCEPTARspoke + 10,this.canvasWidth,this.canvasHeight - (this.scaleHeight+this.SCEPTARy0 + 2.5*this.SCEPTARspoke + 10));
         this.context.fillStyle = '#999999';

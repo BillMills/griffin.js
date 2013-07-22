@@ -14,6 +14,7 @@ function Subsystem(){
     //other member data
     this.prefix = window.parameters[this.name].prefix;
     this.postfix = window.parameters[this.name].postfix;
+    this.TTlayerDone = 0;                           //set to 1 when TT layer painted, don't paint again.
 
     //animation parameters
     this.FPS = 30;
@@ -327,6 +328,7 @@ function DetailView(){
     var that = this;
     this.detailCanvasID = this.name+'detailCanvas';       //ID of canvas to draw single HPGe view on
     this.TTdetailCanvasID = this.name+'TTdetailCanvas';   //ID of hidden tooltip map canvas for detail level
+    this.TTdetailLayerDone = 0;
 
     //insert & scale canvas
     insertDOM('canvas', this.detailCanvasID, 'monitor', 'top:' + ($('#'+this.linkWrapperID).height()*1.25 + 5) +'px; transition:opacity 0.5s, z-index 0.5s; -moz-transition:opacity 0.5s, z-index 0.5s; -webkit-transition:opacity 0.5s, z-index 0.5s;', this.monitorID, '', '');
@@ -370,6 +372,7 @@ function DetailView(){
                                 if(detailClicked != -1){
                                     //detailClicked = Math.floor( (detailClicked - 108) / 8)+1;  //transformation from HPGe implementation of this, drop in general?
                                     that.detailShowing = detailClicked;
+                                    that.TTdetailLayerDone = 0 //get ready to draw a new TT layer for the detail view
                                     //draw detail chooses which detail group to draw as a function of that.detailShowing:
                                     that.drawDetail(0,that.nFrames);  //draw detail wants a context for first arg, eliminate
                                     //that.detailShowing = 1;
@@ -633,6 +636,8 @@ function HPGeAssets(){
 
     this.drawDetail = function(context, frame){
         
+        if(context==this.TTdetailContext && this.TTdetailLayerDone) return 0; //only draw the TT layer once
+
         var i, j, quad;
 
         //state variables select the segmentation state of HPGe and services of BGO 
@@ -848,6 +853,7 @@ function HPGeAssets(){
         this.detailContext.font="24px 'Orbitron'";
         this.detailContext.fillText(this.scalePrefix+this.cloverShowing, 0.5*this.canvasWidth - this.detailContext.measureText(this.scalePrefix+this.cloverShowing).width/2, 0.85*this.canvasHeight);
         
+        if(context == this.TTdetailContext) this.TTdetailLayerDone = 1;
     };
 
     this.updateHPGe = function(){

@@ -131,7 +131,7 @@ function BAMBINO(spiceMode){
 	    			this.context.stroke();
 
                     //and again for tooltip:
-                    if(frame==0){
+                    if(!this.TTlayerDone){
                         this.TTcontext.fillStyle = 'rgba('+this.dataBus.BAMBINO[name].index+','+this.dataBus.BAMBINO[name].index+','+this.dataBus.BAMBINO[name].index+',1)';
                         this.TTcontext.beginPath();
                         this.TTcontext.arc(x0, y0, this.CDradius - j*this.radialWidth, 0, 2*Math.PI);
@@ -147,12 +147,13 @@ function BAMBINO(spiceMode){
                 this.context.closePath();
                 this.context.fill(); 
                 //and again in TT:
-                this.TTcontext.fillStyle = '#987654';
-                this.TTcontext.beginPath();
-                this.TTcontext.arc(x0, y0, this.CDradius - j*this.radialWidth, 0, 2*Math.PI);
-                this.TTcontext.closePath();
-                this.TTcontext.fill();
-    			
+                if(!this.TTlayerDone){
+                    this.TTcontext.fillStyle = '#987654';
+                    this.TTcontext.beginPath();
+                    this.TTcontext.arc(x0, y0, this.CDradius - j*this.radialWidth, 0, 2*Math.PI);
+                    this.TTcontext.closePath();
+                    this.TTcontext.fill();
+    		    }	
             //backs
     		} else {
     
@@ -170,15 +171,17 @@ function BAMBINO(spiceMode){
 	    			this.context.stroke();
                     
                     //and again for tooltip:
-                    this.TTcontext.fillStyle = 'rgba('+this.dataBus.BAMBINO[name].index+','+this.dataBus.BAMBINO[name].index+','+this.dataBus.BAMBINO[name].index+',1)';
-                    this.TTcontext.beginPath();
-                    this.TTcontext.moveTo(x0 + this.CDinnerRadius*Math.cos(j*this.azimuthalArc), y0 - this.CDinnerRadius*Math.sin(j*this.azimuthalArc));
-                    this.TTcontext.arc(x0,y0, this.CDinnerRadius, -j*this.azimuthalArc, -(j+1)*this.azimuthalArc, true);
-                    this.TTcontext.lineTo(x0 + this.CDradius*Math.cos((j+1)*this.azimuthalArc), y0 - this.CDradius*Math.sin((j+1)*this.azimuthalArc));
-                    this.TTcontext.arc(x0,y0, this.CDradius, -(j+1)*this.azimuthalArc, -j*this.azimuthalArc, false);
-                    this.TTcontext.closePath();
-                    this.TTcontext.fill();
-                    this.TTcontext.stroke();                  
+                    if(!this.TTlayerDone){
+                        this.TTcontext.fillStyle = 'rgba('+this.dataBus.BAMBINO[name].index+','+this.dataBus.BAMBINO[name].index+','+this.dataBus.BAMBINO[name].index+',1)';
+                        this.TTcontext.beginPath();
+                        this.TTcontext.moveTo(x0 + this.CDinnerRadius*Math.cos(j*this.azimuthalArc), y0 - this.CDinnerRadius*Math.sin(j*this.azimuthalArc));
+                        this.TTcontext.arc(x0,y0, this.CDinnerRadius, -j*this.azimuthalArc, -(j+1)*this.azimuthalArc, true);
+                        this.TTcontext.lineTo(x0 + this.CDradius*Math.cos((j+1)*this.azimuthalArc), y0 - this.CDradius*Math.sin((j+1)*this.azimuthalArc));
+                        this.TTcontext.arc(x0,y0, this.CDradius, -(j+1)*this.azimuthalArc, -j*this.azimuthalArc, false);
+                        this.TTcontext.closePath();
+                        this.TTcontext.fill();
+                        this.TTcontext.stroke();                  
+                    }
 
     			}
 
@@ -195,6 +198,8 @@ function BAMBINO(spiceMode){
             if(window.parameters.BAMBINOdeployment[0]) this.context.fillText('Upstream', this.upstreamTitleCenter - this.context.measureText('Upstream').width/2, 0.85*this.canvasHeight);
             if(window.parameters.BAMBINOdeployment[1]) this.context.fillText('Downstream', this.downstreamTitleCenter - this.context.measureText('Downstream').width/2, 0.85*this.canvasHeight);
         }
+
+        this.TTlayerDone = 1;
 
     };
 

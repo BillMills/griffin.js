@@ -83,48 +83,51 @@ function DANTE(){
     		this.context.fill();    		
     		this.context.stroke();
     	}
-        //....and again for the tooltip encoding
-        for(j=0; j<8; j++){
-            if(j<4) ringCenter = this.leftRingCenter;
-            else ringCenter = this.rightRingCenter;
+        if(!this.TTlayerDone){
+            //....and again for the tooltip encoding
+            for(j=0; j<8; j++){
+                if(j<4) ringCenter = this.leftRingCenter;
+                else ringCenter = this.rightRingCenter;
 
-            x0 = ringCenter + this.ringRadius*Math.cos(Math.PI/2*j);
-            y0 = this.canvasHeight*0.4 - this.ringRadius*Math.sin(Math.PI/2*j);
+                x0 = ringCenter + this.ringRadius*Math.cos(Math.PI/2*j);
+                y0 = this.canvasHeight*0.4 - this.ringRadius*Math.sin(Math.PI/2*j);
 
-            //hack around to defeat antialiasing problems, fix once there's an option to suppress aa
-            this.TTcontext.fillStyle = '#123456';
-            this.TTcontext.beginPath();
-            this.TTcontext.arc(x0,y0,1.05*this.shieldOuterRadius,0,2*Math.PI);
-            this.TTcontext.closePath();
-            this.TTcontext.fill();
-            //end hack around 
+                //hack around to defeat antialiasing problems, fix once there's an option to suppress aa
+                this.TTcontext.fillStyle = '#123456';
+                this.TTcontext.beginPath();
+                this.TTcontext.arc(x0,y0,1.05*this.shieldOuterRadius,0,2*Math.PI);
+                this.TTcontext.closePath();
+                this.TTcontext.fill();
+                //end hack around 
 
-            //suppressors
-            name = 'DAS0'+(j+1)+'XN00X';
-            this.TTcontext.fillStyle = 'rgba('+this.dataBus.DANTE[name].index+','+this.dataBus.DANTE[name].index+','+this.dataBus.DANTE[name].index+',1)';
-            this.TTcontext.beginPath();
-            this.TTcontext.arc(x0,y0,this.shieldOuterRadius,0,2*Math.PI);
-            this.TTcontext.closePath();
-            this.TTcontext.fill();
+                //suppressors
+                name = 'DAS0'+(j+1)+'XN00X';
+                this.TTcontext.fillStyle = 'rgba('+this.dataBus.DANTE[name].index+','+this.dataBus.DANTE[name].index+','+this.dataBus.DANTE[name].index+',1)';
+                this.TTcontext.beginPath();
+                this.TTcontext.arc(x0,y0,this.shieldOuterRadius,0,2*Math.PI);
+                this.TTcontext.closePath();
+                this.TTcontext.fill();
 
-            this.TTcontext.fillStyle = '#123456';
-            this.TTcontext.beginPath();
-            this.TTcontext.arc(x0,y0,this.shieldInnerRadius,0,2*Math.PI);
-            this.TTcontext.closePath();
-            this.TTcontext.fill();
+                this.TTcontext.fillStyle = '#123456';
+                this.TTcontext.beginPath();
+                this.TTcontext.arc(x0,y0,this.shieldInnerRadius,0,2*Math.PI);
+                this.TTcontext.closePath();
+                this.TTcontext.fill();
 
-            //LaBr
-            //PMT
-            if(window.state.subdetectorView < 3)
-                name = 'DAL0'+(j+1)+'XN00X';
-            //TAC
-            else
-                name = 'DAL0'+(j+1)+'XT00X'
-            this.TTcontext.fillStyle = 'rgba('+this.dataBus.DANTE[name].index+','+this.dataBus.DANTE[name].index+','+this.dataBus.DANTE[name].index+',1)';
-            this.TTcontext.beginPath();
-            this.TTcontext.arc(x0,y0,this.detectorRadius,0,2*Math.PI);
-            this.TTcontext.closePath();
-            this.TTcontext.fill();            
+                //LaBr
+                //PMT
+                if(window.state.subdetectorView < 3)
+                    name = 'DAL0'+(j+1)+'XN00X';
+                //TAC
+                else
+                    name = 'DAL0'+(j+1)+'XT00X'
+                this.TTcontext.fillStyle = 'rgba('+this.dataBus.DANTE[name].index+','+this.dataBus.DANTE[name].index+','+this.dataBus.DANTE[name].index+',1)';
+                this.TTcontext.beginPath();
+                this.TTcontext.arc(x0,y0,this.detectorRadius,0,2*Math.PI);
+                this.TTcontext.closePath();
+                this.TTcontext.fill();            
+            }
+            this.TTlayerDone = 1;
         }
 		
         if(frame==this.nFrames || frame==0) {
