@@ -224,11 +224,11 @@ function fetchCustomParameters(){
     paths[PACES+3] = '/DashboardConfig/PACES/rateScale[*]'    
 
     SCEPTAR = PACES+4;
-    paths[PACES] = '/DashboardConfig/SCEPTAR/USdeploy'
-    paths[PACES+1] = '/DashboardConfig/SCEPTAR/DSdeploy'
-    paths[PACES+2] = '/DashboardConfig/SCEPTAR/HVscale[*]'
-    paths[PACES+3] = '/DashboardConfig/SCEPTAR/thresholdScale[*]'
-    paths[PACES+4] = '/DashboardConfig/SCEPTAR/rateScale[*]'
+    paths[SCEPTAR] = '/DashboardConfig/SCEPTAR/USdeploy'
+    paths[SCEPTAR+1] = '/DashboardConfig/SCEPTAR/DSdeploy'
+    paths[SCEPTAR+2] = '/DashboardConfig/SCEPTAR/HVscale[*]'
+    paths[SCEPTAR+3] = '/DashboardConfig/SCEPTAR/thresholdScale[*]'
+    paths[SCEPTAR+4] = '/DashboardConfig/SCEPTAR/rateScale[*]'
 
     SHARC = SCEPTAR+5;
     paths[SHARC] = '/DashboardConfig/SHARC/deploy'
