@@ -9,8 +9,8 @@ function SHARC(){
     DetailView.call(this);              //inject the infrastructure for a detail level view
 
     //member variables////////////////////
-    this.padsEnabled = 0;               //are the pads present?
-    this.detailShowing = 0;             //is the detail view on display?
+    this.padsEnabled = window.parameters.SHARCpads;     //are the pads present?
+    this.detailShowing = 0;                             //is the detail view on display?
 
     //drawing parameters:
     //summary view is laid out on a 15x12 grid:

@@ -5,7 +5,6 @@
 	    <script src="zepto.min.js" type="text/javascript"></script>
 	    <script src="utilities.js" type="text/javascript"></script>
 	    <script src="drawing.js" type="text/javascript"></script>
-	    <script src="branding.js" type="text/javascript"></script>
 	    <script src="thumbnails.js" type="text/javascript"></script>
 
 	    <link rel="stylesheet" type="text/css" href="ConfigureExperiment.css" />
@@ -13,6 +12,13 @@
 	</head>
 
 	<body style="font-family: 'Raleway', sans-serif; font-size:14px; background-color:#333333; color:#FFFFFF; text-align:center;">
+
+	    <!--Branding///////////////////////////////////////////////////////////-->
+	    <div id='branding' style='width:100%; height:85; text-align:left; border-color:#999999; border-left-style:solid; border-bottom-style:solid; border-left-width:5px; border-bottom-width:5px; border-bottom-left-radius:25px; background-color:#333333; margin-bottom:5px; padding-bottom:5px;' class='section'>
+	      <img id='logo' height='70px' width='80px' src='triumf.gif' style='opacity:0.5625; padding-left:10px; margin-bottom:5px;'></img>
+	      <h1 id='title' style='position:relative; display:inline; font: 80px Raleway; top:-10px; margin-left:10px; color:#999999'>TRIUMF</h1>
+	    </div>
+	    <h1 id='youAreHere' style='opacity:0; float:right; color:#999999; margin-top:0px; margin-bottom:50px;'>Detector Deployment</h1>
 
 		<div id='chooseExperiment', style='margin-left:auto; margin-right:auto; background:rgba(0,0,0,0.7); border: 5px solid; border-radius:10px; opacity:0; width:35%; position:relative; font-family:Orbitron; transition:opacity 0.5s; -moz-transition:opacity 0.5s; -webkit-transition:opacity 0.5s; text-align:center;'>
 			<table style='margin:0 auto; width:60%;'>
@@ -93,17 +99,14 @@
     		};
 
     		//fade initial option in
-			$('#chooseExperiment').css('top', (window.innerHeight - parseFloat($('#chooseExperiment').css('height')) )*0.4  )
+			$('#chooseExperiment').css('top', (window.innerHeight - parseFloat($('#chooseExperiment').css('height')) )*0.4 - 95  )
 			document.getElementById('chooseExperiment').style.opacity = 1;
 			//experiment selected///////////////////////////////////////////////////////////////////////
 
 			function deployBanner(){
-				insertDOM('canvas', 'banner', '', 'opacity:0; transition:opacity 0.5s; -moz-transition:opacity 0.5s; -webkit-transition:opacity 0.5s;', 'body', '', '');
-				insertDOM('div', 'navBar', '', 'margin:none; opacity:0; transition:opacity 0.5s; -moz-transition:opacity 0.5s; -webkit-transition:opacity 0.5s; margin-bottom:100px;', 'body', '', '');
-				insertDOM('p', 'youAreHere', '', 'opacity:0; display: inline; color:rgba(255,255,255,0.3); font-size:24px; margin:0; position:absolute; right:0;transition:opacity 0.5s; -moz-transition:opacity 0.5s; -webkit-transition:opacity 0.5s;', 'navBar', '','');
-
-				//Insert branding & navigation:
-        		Banner('banner', 'youAreHere', 'navBar', 'Experimental Deployment', window.experiment);
+				//show the branding banner:
+				document.getElementById('branding').style.opacity = 1;
+				document.getElementById('youAreHere').style.opacity = 1;
 
         		//deploy subsections:
         		deployChamber();
@@ -111,11 +114,6 @@
         		deployCorona();
         		deployUSlampshade();
         		if(window.experiment == 'TIGRESS') deployBeamdump();
-
-        		//fade assets in:
-        		document.getElementById('banner').style.opacity = 1;
-        		document.getElementById('navBar').style.opacity = 1;
-        		document.getElementById('youAreHere').style.opacity = 1;
 
         		setTimeout(function(){document.getElementById('Chamber').style.opacity = 1;}, 100);
         		setTimeout(function(){document.getElementById('DSlampshade').style.opacity = 1;}, 200);
@@ -139,7 +137,7 @@
 
 				totalWidth = window.innerWidth;
 
-				insertDOM('div', 'Chamber', 'section', '', 'body', '', '');
+				insertDOM('div', 'Chamber', 'section', 'clear:both;', 'body', '', '');
 				insertDOM('h1', 'chamberTitle', 'title', '', 'Chamber', '', 'Chamber Configuration' );
 
 				insertDOM('table', 'chamberTable', 'sectionTable', '', 'Chamber', '', '');

@@ -124,6 +124,7 @@ function loadParameters(){
 											"SHARC" : [1,1,1]
 							           },
 						  },  
+				"SHARCpads" : 0,
 
 				"SPICE" : {
 							"minima" : {

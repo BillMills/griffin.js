@@ -74,6 +74,7 @@ function thumbnail(canvasID, left, right, color){
 		tipWall(context, width/2, height*0.45, height/2);
 		title = 'TIP Wall';
 	} else if(left == 'TIPball' && right == 'none'){
+		tipBall(context, width/2, height/2, height*0.25);
 		title = 'TIP Ball';
 	} else if(left == 'TIGRESS' && right == 'none'){
 		tigress(context, width/2, height*0.45, Math.round(height*0.25));
@@ -322,6 +323,58 @@ function tipWall(context, x0, y0, width){
             context.strokeRect(CsIx0 + cellSize*(i%5), CsIy0 + cellSize*Math.floor(i/5), cellSize, cellSize);
     	}
     	context.strokeRect(CsIx0, CsIy0, width, width)
+}
+
+function tipBall(context, x0, y0, rad){
+
+	context.save();
+
+	context.beginPath();
+	context.arc(x0,y0,rad,0,Math.PI*2);
+	context.clip();
+
+	context.beginPath();
+	context.lineWidth = 2;
+	context.arc(x0,y0,rad-1,0,Math.PI*2);
+	context.stroke();
+
+	context.lineWidth=1;
+	context.beginPath();
+	context.arc(x0+20,y0,rad+10,0,Math.PI*2);
+	context.stroke();
+	context.beginPath();
+	context.arc(x0-20,y0,rad+10,0,Math.PI*2);
+	context.stroke();
+	context.beginPath();
+	context.arc(x0,y0+20,rad+10,0,Math.PI*2);
+	context.stroke();
+	context.beginPath();
+	context.arc(x0,y0-20,rad+10,0,Math.PI*2);
+	context.stroke();
+
+	context.beginPath();
+	context.arc(x0+40,y0,rad+20,0,Math.PI*2);
+	context.stroke();
+	context.beginPath();
+	context.arc(x0-40,y0,rad+20,0,Math.PI*2);
+	context.stroke();
+	context.beginPath();
+	context.arc(x0,y0+40,rad+20,0,Math.PI*2);
+	context.stroke();
+	context.beginPath();
+	context.arc(x0,y0-40,rad+20,0,Math.PI*2);
+	context.stroke();
+
+	context.beginPath();
+	context.moveTo(x0-rad, y0);
+	context.lineTo(x0+rad,y0);
+	context.stroke;
+	context.moveTo(x0, y0-rad);
+	context.lineTo(x0, y0+rad);
+	context.stroke();
+
+	context.restore();
+
 }
 
 function griffin(context, x0, y0, color){

@@ -167,102 +167,117 @@ function ODBgrab(){
 //handle pulling the initial config parameters out of the ODB and replacing the default values in the JSONP-loaded parameter store:
 function fetchCustomParameters(){
 
+    var topLevel=0, HV, BAMBINO, DANTE, DESCANT, HPGe, PACES, SCEPTAR, SHARC, SPICE, ZDS, TIPwall, TIPball, DAQ, DSSD;
+
     //define keys
     var paths = [];
-    paths[0]  = '/DashboardConfig/topLevel/HPGeArray'            //GRIFFIN or TIGRESS
+    paths[topLevel]  = '/DashboardConfig/topLevel/HPGeArray'            //GRIFFIN or TIGRESS
     
-    paths[1]  = '/DashboardConfig/topLevel/statusURL'            //URL of MIDAS status page
-    paths[2]  = '/DashboardConfig/topLevel/expName'              //Experiment name
+    paths[topLevel+1]  = '/DashboardConfig/topLevel/statusURL'            //URL of MIDAS status page
+    paths[topLevel+2]  = '/DashboardConfig/topLevel/expName'              //Experiment name
 
-    paths[3]  = '/DashboardConfig/HV/voltageTolerance'           //tolerance for voltage alarms
-    paths[4]  = '/DashboardConfig/HV/currentTolerance'           //threshold for current alarms
-    paths[5]  = '/DashboardConfig/HV/tempTolerance'              //threshold for temperature alarms
-    paths[6]  = '/DashboardConfig/HV/demandVoltage[*]'           //range of allowed demand voltages
-    paths[7]  = '/DashboardConfig/HV/voltRampSpeed[*]'           //range of allowed voltage ramp speeds
+    HV = topLevel+3
+    paths[HV]  = '/DashboardConfig/HV/voltageTolerance'           //tolerance for voltage alarms
+    paths[HV+1]  = '/DashboardConfig/HV/currentTolerance'           //threshold for current alarms
+    paths[HV+2]  = '/DashboardConfig/HV/tempTolerance'              //threshold for temperature alarms
+    paths[HV+3]  = '/DashboardConfig/HV/demandVoltage[*]'           //range of allowed demand voltages
+    paths[HV+4]  = '/DashboardConfig/HV/voltRampSpeed[*]'           //range of allowed voltage ramp speeds
 
-    paths[8]  = '/DashboardConfig/BAMBINO/deploy'                //deploy BAMBINO?
-    paths[9]  = '/DashboardConfig/BAMBINO/HVscale[*]'            //[min HV, max HV] on color scale
-    paths[10] = '/DashboardConfig/BAMBINO/thresholdScale[*]'     //[min thresh, max thresh] on color scale
-    paths[11] = '/DashboardConfig/BAMBINO/rateScale[*]'          //[min rate, max rate] on color scale
-    paths[12] = '/DashboardConfig/BAMBINO/mode'                  //'S2' or 'S3'
+    BAMBINO = HV+5
+    paths[BAMBINO]  = '/DashboardConfig/BAMBINO/deploy'                //deploy BAMBINO?
+    paths[BAMBINO+1]  = '/DashboardConfig/BAMBINO/HVscale[*]'            //[min HV, max HV] on color scale
+    paths[BAMBINO+2] = '/DashboardConfig/BAMBINO/thresholdScale[*]'     //[min thresh, max thresh] on color scale
+    paths[BAMBINO+3] = '/DashboardConfig/BAMBINO/rateScale[*]'          //[min rate, max rate] on color scale
+    paths[BAMBINO+4] = '/DashboardConfig/BAMBINO/mode'                  //'S2' or 'S3'
 
-    paths[13] = '/DashboardConfig/DANTE/deploy'
-    paths[14] = '/DashboardConfig/DANTE/LaBrPMTHVscale[*]'
-    paths[15] = '/DashboardConfig/DANTE/LaBrPMTthresholdScale[*]'
-    paths[16] = '/DashboardConfig/DANTE/LaBrPMTrateScale[*]'
-    paths[17] = '/DashboardConfig/DANTE/LaBrTACHVscale[*]'
-    paths[18] = '/DashboardConfig/DANTE/LaBrTACthresholdScale[*]'
-    paths[19] = '/DashboardConfig/DANTE/LaBrTACrateScale[*]'    
-    paths[20] = '/DashboardConfig/DANTE/BGOHVscale[*]'
-    paths[21] = '/DashboardConfig/DANTE/BGOthresholdScale[*]'
-    paths[22] = '/DashboardConfig/DANTE/BGOrateScale[*]'
+    DANTE = BAMBINO+5;
+    paths[DANTE] = '/DashboardConfig/DANTE/deploy'
+    paths[DANTE+1] = '/DashboardConfig/DANTE/LaBrPMTHVscale[*]'
+    paths[DANTE+2] = '/DashboardConfig/DANTE/LaBrPMTthresholdScale[*]'
+    paths[DANTE+3] = '/DashboardConfig/DANTE/LaBrPMTrateScale[*]'
+    paths[DANTE+4] = '/DashboardConfig/DANTE/LaBrTACHVscale[*]'
+    paths[DANTE+5] = '/DashboardConfig/DANTE/LaBrTACthresholdScale[*]'
+    paths[DANTE+6] = '/DashboardConfig/DANTE/LaBrTACrateScale[*]'    
+    paths[DANTE+7] = '/DashboardConfig/DANTE/BGOHVscale[*]'
+    paths[DANTE+8] = '/DashboardConfig/DANTE/BGOthresholdScale[*]'
+    paths[DANTE+9] = '/DashboardConfig/DANTE/BGOrateScale[*]'
 
-    paths[23] = '/DashboardConfig/DESCANT/deploy'
-    paths[24] = '/DashboardConfig/DESCANT/HVscale[*]'
-    paths[25] = '/DashboardConfig/DESCANT/thresholdScale[*]'
-    paths[26] = '/DashboardConfig/DESCANT/rateScale[*]'
+    DESCANT = DANTE+10;
+    paths[DESCANT] = '/DashboardConfig/DESCANT/deploy'
+    paths[DESCANT+1] = '/DashboardConfig/DESCANT/HVscale[*]'
+    paths[DESCANT+2] = '/DashboardConfig/DESCANT/thresholdScale[*]'
+    paths[DESCANT+3] = '/DashboardConfig/DESCANT/rateScale[*]'
 
-    paths[27] = '/DashboardConfig/HPGe/deploy'
-    paths[28] = '/DashboardConfig/HPGe/BGOHVscale[*]'
-    paths[29] = '/DashboardConfig/HPGe/BGOthresholdScale[*]'
-    paths[30] = '/DashboardConfig/HPGe/BGOrateScale[*]'
-    paths[31] = '/DashboardConfig/HPGe/HVscale[*]'
-    paths[32] = '/DashboardConfig/HPGe/thresholdScale[*]'
-    paths[33] = '/DashboardConfig/HPGe/rateScale[*]'
+    HPGe = DESCANT+4;
+    paths[HPGe] = '/DashboardConfig/HPGe/deploy'
+    paths[HPGe+1] = '/DashboardConfig/HPGe/BGOHVscale[*]'
+    paths[HPGe+2] = '/DashboardConfig/HPGe/BGOthresholdScale[*]'
+    paths[HPGe+3] = '/DashboardConfig/HPGe/BGOrateScale[*]'
+    paths[HPGe+4] = '/DashboardConfig/HPGe/HVscale[*]'
+    paths[HPGe+5] = '/DashboardConfig/HPGe/thresholdScale[*]'
+    paths[HPGe+6] = '/DashboardConfig/HPGe/rateScale[*]'
 
-    paths[34] = '/DashboardConfig/PACES/deploy'
-    paths[35] = '/DashboardConfig/PACES/HVscale[*]'
-    paths[36] = '/DashboardConfig/PACES/thresholdScale[*]'
-    paths[37] = '/DashboardConfig/PACES/rateScale[*]'    
+    PACES = HPGe+7;
+    paths[PACES] = '/DashboardConfig/PACES/deploy'
+    paths[PACES+1] = '/DashboardConfig/PACES/HVscale[*]'
+    paths[PACES+2] = '/DashboardConfig/PACES/thresholdScale[*]'
+    paths[PACES+3] = '/DashboardConfig/PACES/rateScale[*]'    
 
-    paths[38] = '/DashboardConfig/SCEPTAR/USdeploy'
-    paths[39] = '/DashboardConfig/SCEPTAR/DSdeploy'
-    paths[40] = '/DashboardConfig/SCEPTAR/HVscale[*]'
-    paths[41] = '/DashboardConfig/SCEPTAR/thresholdScale[*]'
-    paths[42] = '/DashboardConfig/SCEPTAR/rateScale[*]'
+    SCEPTAR = PACES+4;
+    paths[PACES] = '/DashboardConfig/SCEPTAR/USdeploy'
+    paths[PACES+1] = '/DashboardConfig/SCEPTAR/DSdeploy'
+    paths[PACES+2] = '/DashboardConfig/SCEPTAR/HVscale[*]'
+    paths[PACES+3] = '/DashboardConfig/SCEPTAR/thresholdScale[*]'
+    paths[PACES+4] = '/DashboardConfig/SCEPTAR/rateScale[*]'
 
-    paths[43] = '/DashboardConfig/SHARC/deploy'
-    paths[44] = '/DashboardConfig/SHARC/HVscale[*]'
-    paths[45] = '/DashboardConfig/SHARC/thresholdScale[*]'
-    paths[46] = '/DashboardConfig/SHARC/rateScale[*]'
+    SHARC = SCEPTAR+5;
+    paths[SHARC] = '/DashboardConfig/SHARC/deploy'
+    paths[SHARC+1] = '/DashboardConfig/SHARC/HVscale[*]'
+    paths[SHARC+2] = '/DashboardConfig/SHARC/thresholdScale[*]'
+    paths[SHARC+3] = '/DashboardConfig/SHARC/rateScale[*]'
 
-    paths[47] = '/DashboardConfig/SPICE/deploy'
-    paths[48] = '/DashboardConfig/SPICE/HVscale[*]'
-    paths[49] = '/DashboardConfig/SPICE/thresholdScale[*]'
-    paths[50] = '/DashboardConfig/SPICE/rateScale[*]'
+    SPICE = SHARC+4;
+    paths[SPICE] = '/DashboardConfig/SPICE/deploy'
+    paths[SPICE+1] = '/DashboardConfig/SPICE/HVscale[*]'
+    paths[SPICE+2] = '/DashboardConfig/SPICE/thresholdScale[*]'
+    paths[SPICE+3] = '/DashboardConfig/SPICE/rateScale[*]'
 
-    paths[51] = '/DashboardConfig/ZDS/deploy'
-    paths[52] = '/DashboardConfig/ZDS/HVscale[*]'
-    paths[53] = '/DashboardConfig/ZDS/thresholdScale[*]'
-    paths[54] = '/DashboardConfig/ZDS/rateScale[*]'
+    ZDS = SPICE+4;
+    paths[ZDS] = '/DashboardConfig/ZDS/deploy'
+    paths[ZDS+1] = '/DashboardConfig/ZDS/HVscale[*]'
+    paths[ZDS+2] = '/DashboardConfig/ZDS/thresholdScale[*]'
+    paths[ZDS+3] = '/DashboardConfig/ZDS/rateScale[*]'
 
-    paths[55] = '/DashboardConfig/TIPwall/deploy'
-    paths[56] = '/DashboardConfig/TIPwall/HVscale[*]'
-    paths[57] = '/DashboardConfig/TIPwall/thresholdScale[*]'
-    paths[58] = '/DashboardConfig/TIPwall/rateScale[*]'            
+    TIPwall = ZDS+4;
+    paths[TIPwall] = '/DashboardConfig/TIPwall/deploy'
+    paths[TIPwall+1] = '/DashboardConfig/TIPwall/HVscale[*]'
+    paths[TIPwall+2] = '/DashboardConfig/TIPwall/thresholdScale[*]'
+    paths[TIPwall+3] = '/DashboardConfig/TIPwall/rateScale[*]'            
 
-    paths[59] = '/DashboardConfig/TIPball/deploy'
-    paths[60] = '/DashboardConfig/TIPball/HVscale[*]'
-    paths[61] = '/DashboardConfig/TIPball/thresholdScale[*]'
-    paths[62] = '/DashboardConfig/TIPball/rateScale[*]'   
+    TIPball = TIPwall+4;
+    paths[TIPball] = '/DashboardConfig/TIPball/deploy'
+    paths[TIPball+1] = '/DashboardConfig/TIPball/HVscale[*]'
+    paths[TIPball+2] = '/DashboardConfig/TIPball/thresholdScale[*]'
+    paths[TIPball+3] = '/DashboardConfig/TIPball/rateScale[*]'   
 
-    paths[63] = '/DashboardConfig/DAQ/rateMinTopView';
-    paths[64] = '/DashboardConfig/DAQ/rateMaxTopView';
-    paths[65] = '/DashboardConfig/DAQ/rateMinDetailView';
-    paths[66] = '/DashboardConfig/DAQ/rateMaxDetailView';
-    paths[67] = '/DashboardConfig/DAQ/transferMinTopView';
-    paths[68] = '/DashboardConfig/DAQ/transferMaxTopView';
-    paths[69] = '/DashboardConfig/DAQ/transferMinDetailView';
-    paths[70] = '/DashboardConfig/DAQ/transferMaxDetailView';
-    
-    paths[71] = '/DashboardConfig/DAQ/rateMinMaster';
-    paths[72] = '/DashboardConfig/DAQ/rateMaxMaster';
-    paths[73] = '/DashboardConfig/DAQ/transferMinMaster';
-    paths[74] = '/DashboardConfig/DAQ/transferMaxMaster';
+    DAQ = TIPball+4; //63-74
+    paths[DAQ] = '/DashboardConfig/DAQ/rateMinTopView';
+    paths[DAQ+1] = '/DashboardConfig/DAQ/rateMaxTopView';
+    paths[DAQ+2] = '/DashboardConfig/DAQ/rateMinDetailView';
+    paths[DAQ+3] = '/DashboardConfig/DAQ/rateMaxDetailView';
+    paths[DAQ+4] = '/DashboardConfig/DAQ/transferMinTopView';
+    paths[DAQ+5] = '/DashboardConfig/DAQ/transferMaxTopView';
+    paths[DAQ+6] = '/DashboardConfig/DAQ/transferMinDetailView';
+    paths[DAQ+7] = '/DashboardConfig/DAQ/transferMaxDetailView';
+    paths[DAQ+8] = '/DashboardConfig/DAQ/rateMinMaster';
+    paths[DAQ+9] = '/DashboardConfig/DAQ/rateMaxMaster';
+    paths[DAQ+10] = '/DashboardConfig/DAQ/transferMinMaster';
+    paths[DAQ+11] = '/DashboardConfig/DAQ/transferMaxMaster';
 
-    paths[75] = '/DashboardConfig/DSSD/HVscale[*]';
-    paths[76] = '/DashboardConfig/DSSD/thresholdScale[*]';
-    paths[77] = '/DashboardConfig/DSSD/rateScale[*]';
+    DSSD = DAQ+12;
+    paths[DSSD] = '/DashboardConfig/DSSD/HVscale[*]';
+    paths[DSSD+1] = '/DashboardConfig/DSSD/thresholdScale[*]';
+    paths[DSSD+2] = '/DashboardConfig/DSSD/rateScale[*]';
 
     //fetch:
     var data = ODBMGet(paths);
@@ -273,75 +288,75 @@ function fetchCustomParameters(){
 
     //plug data in
     
-    window.parameters['HPGemode'] = data[0].slice(0, data[0].length-1);
+    window.parameters['HPGemode'] = data[topLevel].slice(0, data[topLevel].length-1);
     
-    window.parameters['statusURL'] = data[1].slice(0, data[1].length-1);
-    window.parameters['ExpName'] = data[2].slice(0, data[2].length-1);
+    window.parameters['statusURL'] = data[topLevel+1].slice(0, data[topLevel+1].length-1);
+    window.parameters['ExpName'] = data[topLevel+2].slice(0, data[topLevel+2].length-1);
 
-    window.parameters['alarmThresholds'][0] = parseFloat(data[3]);
-    window.parameters['alarmThresholds'][1] = parseFloat(data[4]);
-    window.parameters['alarmThresholds'][2] = parseFloat(data[5]);
-    window.parameters['minVoltage'] = parseFloat(data[6][0]);
-    window.parameters['maxVoltage'] = parseFloat(data[6][1]);
-    window.parameters['minRampSpeed'] = parseFloat(data[7][0]);
-    window.parameters['maxRampSpeed'] = parseFloat(data[7][1]);
+    window.parameters['alarmThresholds'][0] = parseFloat(data[HV]);
+    window.parameters['alarmThresholds'][1] = parseFloat(data[HV+1]);
+    window.parameters['alarmThresholds'][2] = parseFloat(data[HV+2]);
+    window.parameters['minVoltage'] = parseFloat(data[HV+3][0]);
+    window.parameters['maxVoltage'] = parseFloat(data[HV+3][1]);
+    window.parameters['minRampSpeed'] = parseFloat(data[HV+4][0]);
+    window.parameters['maxRampSpeed'] = parseFloat(data[HV+4][1]);
 
-    window.parameters.deployment.BAMBINO = parseFloat(data[8]);
-    window.parameters.BAMBINO.minima.BAMBINO = [parseFloat(data[9][0]), parseFloat(data[10][0]), parseFloat(data[11][0])];
-    window.parameters.BAMBINO.maxima.BAMBINO = [parseFloat(data[9][1]), parseFloat(data[10][1]), parseFloat(data[11][1])];
-    window.parameters.BAMBINOmode = data[12].slice(0, data[12].length-1);
+    window.parameters.deployment.BAMBINO = parseFloat(data[BAMBINO]);
+    window.parameters.BAMBINO.minima.BAMBINO = [parseFloat(data[BAMBINO+1][0]), parseFloat(data[BAMBINO+2][0]), parseFloat(data[BAMBINO+3][0])];
+    window.parameters.BAMBINO.maxima.BAMBINO = [parseFloat(data[BAMBINO+1][1]), parseFloat(data[BAMBINO+2][1]), parseFloat(data[BAMBINO+3][1])];
+    window.parameters.BAMBINOmode = data[BAMBINO+4].slice(0, data[BAMBINO+4].length-1);
 
-    window.parameters.deployment.DANTE = parseFloat(data[13]);
-    window.parameters.DANTE.minima.LaBrPMT = [parseFloat(data[14][0]), parseFloat(data[15][0]), parseFloat(data[16][0])];
-    window.parameters.DANTE.maxima.LaBrPMT = [parseFloat(data[14][1]), parseFloat(data[15][1]), parseFloat(data[16][1])];
-    window.parameters.DANTE.minima.LaBrTAC = [parseFloat(data[17][0]), parseFloat(data[18][0]), parseFloat(data[19][0])];
-    window.parameters.DANTE.maxima.LaBrTAC = [parseFloat(data[17][1]), parseFloat(data[18][1]), parseFloat(data[19][1])];
-    window.parameters.DANTE.minima.BGO = [parseFloat(data[20][0]), parseFloat(data[21][0]), parseFloat(data[22][0])];
-    window.parameters.DANTE.maxima.BGO = [parseFloat(data[20][1]), parseFloat(data[21][1]), parseFloat(data[22][1])];
+    window.parameters.deployment.DANTE = parseFloat(data[DANTE]);
+    window.parameters.DANTE.minima.LaBrPMT = [parseFloat(data[DANTE+1][0]), parseFloat(data[DANTE+2][0]), parseFloat(data[DANTE+3][0])];
+    window.parameters.DANTE.maxima.LaBrPMT = [parseFloat(data[DANTE+1][1]), parseFloat(data[DANTE+2][1]), parseFloat(data[DANTE+3][1])];
+    window.parameters.DANTE.minima.LaBrTAC = [parseFloat(data[DANTE+4][0]), parseFloat(data[DANTE+5][0]), parseFloat(data[DANTE+6][0])];
+    window.parameters.DANTE.maxima.LaBrTAC = [parseFloat(data[DANTE+4][1]), parseFloat(data[DANTE+5][1]), parseFloat(data[DANTE+6][1])];
+    window.parameters.DANTE.minima.BGO = [parseFloat(data[DANTE+7][0]), parseFloat(data[DANTE+8][0]), parseFloat(data[DANTE+9][0])];
+    window.parameters.DANTE.maxima.BGO = [parseFloat(data[DANTE+7][1]), parseFloat(data[DANTE+8][1]), parseFloat(data[DANTE+9][1])];
 
-    window.parameters.deployment.DESCANT = parseFloat(data[23]);
-    window.parameters.DESCANT.minima.DESCANT = [parseFloat(data[24][0]), parseFloat(data[25][0]), parseFloat(data[26][0])];
-    window.parameters.DESCANT.maxima.DESCANT = [parseFloat(data[24][1]), parseFloat(data[25][1]), parseFloat(data[26][1])];
+    window.parameters.deployment.DESCANT = parseFloat(data[DESCANT]);
+    window.parameters.DESCANT.minima.DESCANT = [parseFloat(data[DESCANT+1][0]), parseFloat(data[DESCANT+2][0]), parseFloat(data[DESCANT+3][0])];
+    window.parameters.DESCANT.maxima.DESCANT = [parseFloat(data[DESCANT+1][1]), parseFloat(data[DESCANT+2][1]), parseFloat(data[DESCANT+3][1])];
 
-    window.parameters.deployment.HPGe = parseFloat(data[27]);
-    window.parameters.HPGe.minima.BGO = [parseFloat(data[28][0]), parseFloat(data[29][0]), parseFloat(data[30][0])];
-    window.parameters.HPGe.maxima.BGO = [parseFloat(data[28][1]), parseFloat(data[29][1]), parseFloat(data[30][1])];
-    window.parameters.HPGe.minima.HPGe = [parseFloat(data[31][0]), parseFloat(data[32][0]), parseFloat(data[33][0])];
-    window.parameters.HPGe.maxima.HPGe = [parseFloat(data[31][1]), parseFloat(data[32][1]), parseFloat(data[33][1])];
+    window.parameters.deployment.HPGe = parseFloat(data[HPGe]);
+    window.parameters.HPGe.minima.BGO = [parseFloat(data[HPGe+1][0]), parseFloat(data[HPGe+2][0]), parseFloat(data[HPGe+3][0])];
+    window.parameters.HPGe.maxima.BGO = [parseFloat(data[HPGe+1][1]), parseFloat(data[HPGe+2][1]), parseFloat(data[HPGe+3][1])];
+    window.parameters.HPGe.minima.HPGe = [parseFloat(data[HPGe+4][0]), parseFloat(data[HPGe+5][0]), parseFloat(data[HPGe+6][0])];
+    window.parameters.HPGe.maxima.HPGe = [parseFloat(data[HPGe+4][1]), parseFloat(data[HPGe+5][1]), parseFloat(data[HPGe+6][1])];
 
-    window.parameters.deployment.PACES = parseFloat(data[34]);
-    window.parameters.PACES.minima.PACES = [parseFloat(data[35][0]), parseFloat(data[36][0]), parseFloat(data[37][0])];
-    window.parameters.PACES.maxima.PACES = [parseFloat(data[35][1]), parseFloat(data[36][1]), parseFloat(data[37][1])];    
+    window.parameters.deployment.PACES = parseFloat(data[PACES]);
+    window.parameters.PACES.minima.PACES = [parseFloat(data[PACES+1][0]), parseFloat(data[PACES+2][0]), parseFloat(data[PACES+3][0])];
+    window.parameters.PACES.maxima.PACES = [parseFloat(data[PACES+1][1]), parseFloat(data[PACES+2][1]), parseFloat(data[PACES+3][1])];    
 
-    if(parseFloat(data[38]) || parseFloat(data[39]) || parseFloat(data[51])) window.parameters.deployment.SCEPTAR = 1;
+    if(parseFloat(data[SCEPTAR]) || parseFloat(data[SCEPTAR+1]) || parseFloat(data[51])) window.parameters.deployment.SCEPTAR = 1;
     else window.parameters.deployment.SCEPTAR = 0;
-    window.parameters.SCEPTARconfig = [parseFloat(data[38]), parseFloat(data[39]), parseFloat(data[51])];
-    window.parameters.SCEPTAR.minima.SCEPTAR = [parseFloat(data[40][0]), parseFloat(data[41][0]), parseFloat(data[42][0])];
-    window.parameters.SCEPTAR.maxima.SCEPTAR = [parseFloat(data[40][1]), parseFloat(data[41][1]), parseFloat(data[42][1])];
-    window.parameters.SCEPTAR.minima.ZDS = [parseFloat(data[52][0]), parseFloat(data[53][0]), parseFloat(data[54][0])];
-    window.parameters.SCEPTAR.maxima.ZDS = [parseFloat(data[52][1]), parseFloat(data[53][1]), parseFloat(data[54][1])];
+    window.parameters.SCEPTARconfig = [parseFloat(data[SCEPTAR]), parseFloat(data[SCEPTAR+1]), parseFloat(data[ZDS])];
+    window.parameters.SCEPTAR.minima.SCEPTAR = [parseFloat(data[SCEPTAR+2][0]), parseFloat(data[SCEPTAR+3][0]), parseFloat(data[SCEPTAR+4][0])];
+    window.parameters.SCEPTAR.maxima.SCEPTAR = [parseFloat(data[SCEPTAR+2][1]), parseFloat(data[SCEPTAR+3][1]), parseFloat(data[SCEPTAR+4][1])];
+    window.parameters.SCEPTAR.minima.ZDS = [parseFloat(data[ZDS+1][0]), parseFloat(data[ZDS+2][0]), parseFloat(data[ZDS+3][0])];
+    window.parameters.SCEPTAR.maxima.ZDS = [parseFloat(data[ZDS+1][1]), parseFloat(data[ZDS+2][1]), parseFloat(data[ZDS+3][1])];
 
-    window.parameters.deployment.SHARC = parseFloat(data[43]);
-    window.parameters.SHARC.minima.SHARC = [parseFloat(data[44][0]), parseFloat(data[45][0]), parseFloat(data[46][0])];
-    window.parameters.SHARC.maxima.SHARC = [parseFloat(data[44][1]), parseFloat(data[45][1]), parseFloat(data[46][1])];
+    window.parameters.deployment.SHARC = parseFloat(data[SHARC]);
+    window.parameters.SHARC.minima.SHARC = [parseFloat(data[SHARC+1][0]), parseFloat(data[SHARC+2][0]), parseFloat(data[SHARC+3][0])];
+    window.parameters.SHARC.maxima.SHARC = [parseFloat(data[SHARC+1][1]), parseFloat(data[SHARC+2][1]), parseFloat(data[SHARC+3][1])];
 
-    window.parameters.deployment.SPICE = parseFloat(data[47]);
-    window.parameters.SPICE.minima.SPICE = [parseFloat(data[48][0]), parseFloat(data[49][0]), parseFloat(data[50][0])];
-    window.parameters.SPICE.maxima.SPICE = [parseFloat(data[48][1]), parseFloat(data[49][1]), parseFloat(data[50][1])];
+    window.parameters.deployment.SPICE = parseFloat(data[SPICE]);
+    window.parameters.SPICE.minima.SPICE = [parseFloat(data[SPICE+1][0]), parseFloat(data[SPICE+2][0]), parseFloat(data[SPICE+3][0])];
+    window.parameters.SPICE.maxima.SPICE = [parseFloat(data[SPICE+1][1]), parseFloat(data[SPICE+2][1]), parseFloat(data[SPICE+3][1])];
 
-    window.parameters.deployment.TIPwall = parseFloat(data[55]);
-    window.parameters.TIPwall.minima.TIPwall = [parseFloat(data[56][0]), parseFloat(data[57][0]), parseFloat(data[58][0])];
-    window.parameters.TIPwall.maxima.TIPwall = [parseFloat(data[56][1]), parseFloat(data[57][1]), parseFloat(data[58][1])];
+    window.parameters.deployment.TIPwall = parseFloat(data[TIPwall]);
+    window.parameters.TIPwall.minima.TIPwall = [parseFloat(data[TIPwall+1][0]), parseFloat(data[TIPwall+2][0]), parseFloat(data[TIPwall+3][0])];
+    window.parameters.TIPwall.maxima.TIPwall = [parseFloat(data[TIPwall+1][1]), parseFloat(data[TIPwall+2][1]), parseFloat(data[TIPwall+3][1])];
 
-    window.parameters.deployment.TIPball = parseFloat(data[59]);
-    window.parameters.TIPwall.minima.TIPball = [parseFloat(data[60][0]), parseFloat(data[61][0]), parseFloat(data[62][0])];
-    window.parameters.TIPwall.maxima.TIPball = [parseFloat(data[60][1]), parseFloat(data[61][1]), parseFloat(data[62][1])];
+    window.parameters.deployment.TIPball = parseFloat(data[TIPball]);
+    window.parameters.TIPwall.minima.TIPball = [parseFloat(data[TIPball+1][0]), parseFloat(data[TIPball+2][0]), parseFloat(data[TIPball+3][0])];
+    window.parameters.TIPwall.maxima.TIPball = [parseFloat(data[TIPball+1][1]), parseFloat(data[TIPball+2][1]), parseFloat(data[TIPball+3][1])];
 
-    window.parameters.DAQminima = [parseFloat(data[63]), parseFloat(data[67]), parseFloat(data[65]), parseFloat(data[69]), parseFloat(data[71]), parseFloat(data[73])];
-    window.parameters.DAQmaxima = [parseFloat(data[64]), parseFloat(data[68]), parseFloat(data[66]), parseFloat(data[70]), parseFloat(data[72]), parseFloat(data[74])];
+    window.parameters.DAQminima = [parseFloat(data[DAQ]), parseFloat(data[DAQ+4]), parseFloat(data[DAQ+2]), parseFloat(data[DAQ+6]), parseFloat(data[DAQ+8]), parseFloat(data[DAQ+10])];
+    window.parameters.DAQmaxima = [parseFloat(data[DAQ+3]), parseFloat(data[DAQ+5]), parseFloat(data[DAQ+3]), parseFloat(data[DAQ+7]), parseFloat(data[DAQ+9]), parseFloat(data[DAQ+11])];
 
-    window.parameters.DSSD.minima.DSSD = [parseFloat(data[75][0]), parseFloat(data[76][0]), parseFloat(data[77][0])];
-    window.parameters.DSSD.maxima.DSSD = [parseFloat(data[75][1]), parseFloat(data[76][1]), parseFloat(data[77][1])];
+    window.parameters.DSSD.minima.DSSD = [parseFloat(data[DSSD][0]), parseFloat(data[DSSD+1][0]), parseFloat(data[DSSD+2][0])];
+    window.parameters.DSSD.maxima.DSSD = [parseFloat(data[DSSD][1]), parseFloat(data[DSSD+1][1]), parseFloat(data[DSSD+2][1])];
     
 }
 
