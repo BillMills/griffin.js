@@ -1,7 +1,7 @@
 function loadJSONP(gatekeeper, callback) {
     var i;
 
-    window.JSONPstore = {}; //dump the old store so old junk doesn't persist.
+    window.JSONPstore = {'scalar':{}, 'thresholds':{}}; //dump the old store so old junk doesn't persist.
     for(i=0; i<window.parameters.JSONPrepos.length; i++){
 
         var script  = document.createElement('script');

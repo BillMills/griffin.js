@@ -242,8 +242,10 @@ function Subsystem(){
             }
 
             if(window.JSONPstore['scalar']){
-                if(typeof window.JSONPstore['scalar'][key]['TRIGREQ'] == 'number')
-                    this.dataBus[this.name][key]['rate'] = window.JSONPstore['scalar'][key]['TRIGREQ'];
+                if(window.JSONPstore['scalar'][key]){
+                    if(typeof window.JSONPstore['scalar'][key]['TRIGREQ'] == 'number')
+                        this.dataBus[this.name][key]['rate'] = window.JSONPstore['scalar'][key]['TRIGREQ'];
+                }
             }
 
         }

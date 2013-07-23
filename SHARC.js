@@ -591,7 +591,7 @@ function SHARC(){
                     else
                        this.dataBus.summary[key].threshold = 0xDEADBEEF; 
                 }
-            }
+            } 
 
             if(window.JSONPstore['scalar']){
                 quarter = Math.floor(parseInt(key.slice(7,9)) / this.sizeOfQuarter(key));
