@@ -292,7 +292,15 @@ function frameColor(obj, frame, nFrames){
 function TTtable(id, data, objects, keys, tableTitle, titles, split){
     var i, j, k, n, nContentRows, cellContent;
 
-    insertDOM('table', id + 'table', 'TTtab', '', id, '', '');
+    insertDOM('table', id + 'table', 'TTtab', 'border-collapse:collapse;', id, '', '');
+    insertDOM('colgroup', id+'colgroup', '', '', id+'table');
+    for(i=0; i<split.length-1; i++){
+        insertDOM('col', id+'colSpace'+i, '', '', id+'colgroup');
+        document.getElementById(id+'colSpace'+i).setAttribute('span', keys.length+1)        
+        insertDOM('col', id+'col'+i, '', 'border-left:1px solid white;', id+'colgroup');
+        document.getElementById(id+'col'+i).setAttribute('span', '1')
+    }
+
 
     if(tableTitle != ''){
         insertDOM('tr', id+'tableTitleRow', '', '', id+'table', '', '');
@@ -304,7 +312,7 @@ function TTtable(id, data, objects, keys, tableTitle, titles, split){
     for(k=0; k<split.length; k++){
         //insertDOM('td', 'spacerCell'+k, '', '', id+'tableHeaderRow','','');  
         for(j=0; j<titles.length; j++){
-            insertDOM('td', id+'headerCell'+j+'col'+k, '', 'padding-left:10px; padding-right:10px;', id+'tableHeaderRow','',titles[j]);    
+            insertDOM('td', id+'headerCell'+j+'col'+k, '', 'padding-left:'+( (j==0 && k!=0) ? 25:10 )+'px; padding-right:'+( (j==titles.length-1) ? 25:10 )+'px;', id+'tableHeaderRow','',titles[j]);    
         }
     }
     
@@ -316,7 +324,10 @@ function TTtable(id, data, objects, keys, tableTitle, titles, split){
         insertDOM('tr', id+'row'+i, '', '', id+'table', '', '');
         //cells
         for(j=0; j<titles.length*split.length; j++){
-            insertDOM('td', id+'row'+i+'cell'+j, '', 'padding-right:10px; padding-left:'+( (j%titles.length == 0 && j!=0) ? 50:10 )+'px', id+'row'+i, '', '' );
+            insertDOM('td', id+'row'+i+'cell'+j, '', 'padding:0px; padding-right:'+( (j%(titles.length+1)==0 && j!=0) ? 25:10 )+'px; padding-left:'+( (j%titles.length == 0 && j!=0) ? 25:10 )+'px', id+'row'+i, '', '' );
+            //if(j%(keys.length+1)==keys.length && j!=titles.length*split.length-1 ){
+            //    document.getElementById(id+'row'+i+'cell'+j).setAttribute('style', 'border-right:1px solid white');
+            //}
         }
     }
 

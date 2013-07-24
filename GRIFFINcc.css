@@ -260,6 +260,10 @@ button.navLink{
     font-size:14px;
 }
 
+button.navLink:hover{
+	background: #777777;
+}
+
 button.navLinkDown{
 	background: #777777; 
 	color: #FFFFFF;
