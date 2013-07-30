@@ -6,6 +6,9 @@ function thumbnail(canvasID, left, right, color){
 	var width = canvas.width;
 	var height = canvas.height;
 
+	window.width = width;
+	window.height = height;
+
 	context.clearRect(0,0,width,height);
 	context.lineWidth = 1;
 
@@ -58,7 +61,7 @@ function thumbnail(canvasID, left, right, color){
 
 	//TIGRESS options
 	if(left == 'BAMBINO' && right == 'solo'){
-		title = 'US BAMBINO';
+		title = 'BAMBINO';
 		bambino(context, width*0.45, width*0.55, height/3, height*0.6, height*0.12);	
 	} else if(right == 'BAMBINO' && left == 'none'){
 		title = 'DS BAMBINO';
@@ -69,7 +72,13 @@ function thumbnail(canvasID, left, right, color){
 		bambino(context, width*0.62, width*0.72, height/3, height*0.6, height*0.12);
 	} else if(left == 'SHARC' && right == 'none'){
 		title = 'SHARC';
-		sharc(context, width/2, height*0.45, width*0.3, height*0.7);		
+		sharc(context, width/2, height*0.45, width*0.3, height*0.7);	
+	} else if(left == 'SHARC' && right == 'services'){
+		title = 'SHARC Services';
+		sharc(context, width/2, height*0.45, width*0.3, height*0.7, document.getElementById('Tdsl1canv').disabled);	
+	} else if(left == 'SPICE' && right == 'none'){
+		spice(context, width*0.5, height*0.45, height*0.2);
+		title = 'SPICE';
 	} else if(left == 'TIPwall' && right == 'none'){
 		tipWall(context, width/2, height*0.45, height/2);
 		title = 'TIP Wall';
@@ -78,7 +87,7 @@ function thumbnail(canvasID, left, right, color){
 		title = 'TIP Ball';
 	} else if(left == 'TIGRESS' && right == 'none'){
 		tigress(context, width/2, height*0.45, Math.round(height*0.25));
-		title = 'TIGRESS Standalone';
+		title = 'TIGRESS';
 	} else if(left == 'TIGRESS' && right == 'SHARC'){
 		tigress(context, width*0.32, height*0.45, Math.round(height*0.25));
 		sharc(context, width*0.7, height*0.45, width*0.3, height*0.7);
@@ -286,7 +295,7 @@ function bambino(context, x0upper, x0lower, y0upper, y0lower, rad){
 	}
 }
 
-function sharc(context, x0, y0, width, height){
+function sharc(context, x0, y0, width, height, disabled){
 	context.save();
 	context.translate(x0,y0);
 	ellipse(context, 0, -0.35*height, 0.2*width, 0, Math.PI*2);
@@ -310,6 +319,9 @@ function sharc(context, x0, y0, width, height){
 	context.lineTo(width*0.4/6, height*0.2);
 	context.stroke();
 	context.restore();
+
+	if(disabled)
+		strikeOut(context, window.width, window.height)
 }
 
 function tipWall(context, x0, y0, width){
@@ -486,6 +498,7 @@ function regPoly(context, x0, y0, n, size){
 function strikeOut(context, width, height){
 		context.beginPath()
 		context.lineWidth = 5;
+		context.strokeStyle = '#FF0000';
 		context.moveTo(width*.25, height*0.2);
 		context.lineTo(width*0.75, height*0.6);
 		context.stroke();

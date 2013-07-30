@@ -129,7 +129,40 @@
 									document.getElementById('writeParameters').onmouseup = function(){
 										$('#writeParameters').css('background-color', '#FFFFFF');
 									}
-        						   }, 550)
+        						   }, 550);
+
+        		//special case onclick behaviors://///////////////////////////////////////////////////
+        		//GRIFFIN
+
+        		//TIGRESS
+        		//SHARC chamber forces SHARC services in DS lampshade
+        		document.getElementById('Tcha1canv').onclick = function(event, noChain){
+        			//regular behavior
+        			clickBehavior.call(this, 5, 'Tcha', 'SHARC', 'none');
+
+        			if(!noChain && !this.disabled){
+	        			//force SHARC services in DS lampshade:
+    	    			document.getElementById('Tdsl1canv').onclick.apply(document.getElementById('Tdsl1canv'), [null, true]);
+        				if(this.chosen)
+	        				document.getElementById('Tdsl1canv').onmouseover.apply(document.getElementById('Tdsl1canv'));
+	        			else
+	        				document.getElementById('Tdsl1canv').onmouseout.apply(document.getElementById('Tdsl1canv'));
+	        		}	
+        		};
+        		//...and the other way around:
+        		document.getElementById('Tdsl1canv').onclick = function(event, noChain){
+        			//regular behavior
+        			clickBehavior.call(this, 3, 'Tdsl', 'SHARC', 'services');
+
+        			if(!noChain && !this.disabled){
+	        			//force SHARC services in DS lampshade:
+    	    			document.getElementById('Tcha1canv').onclick.apply(document.getElementById('Tcha1canv'), [null, true]);
+        				if(this.chosen)
+	        				document.getElementById('Tcha1canv').onmouseover.apply(document.getElementById('Tcha1canv'));
+	        			else
+	        				document.getElementById('Tcha1canv').onmouseout.apply(document.getElementById('Tcha1canv'));
+	        		}	
+        		};
 			}
 
 			function deployChamber(){
@@ -156,10 +189,10 @@
 						thumbnail('Gcha'+i+'canv', window.leftChamber[i], window.rightChamber[i], '#999999');
 
 						document.getElementById('Gcha'+i+'canv').onmouseover = function() {
-							thumbnail(this.id, window.leftChamber[this.thumb], window.rightChamber[this.thumb], '#FFFFFF');
+							if(!this.disabled) thumbnail(this.id, window.leftChamber[this.thumb], window.rightChamber[this.thumb], '#FFFFFF');
 						}
 						document.getElementById('Gcha'+i+'canv').onmouseout = function() {
-							if(this.chosen==0)thumbnail(this.id, window.leftChamber[this.thumb], window.rightChamber[this.thumb], '#999999');
+							if(this.chosen==0 && !this.disabled)thumbnail(this.id, window.leftChamber[this.thumb], window.rightChamber[this.thumb], '#999999');
 						}
 
 						document.getElementById('Gcha'+i+'canv').onclick = function(){clickBehavior.call(this, 6, 'Gcha', window.leftChamber, window.rightChamber)};
@@ -170,9 +203,9 @@
 
 				//TIGRESS:
 				if(window.experiment == 'TIGRESS'){
-					window.leftChamber = ['BAMBINO', 'none', 'BAMBINO', 'SHARC', 'TIPwall', 'TIPball'];
-					window.rightChamber = ['solo', 'BAMBINO', 'BAMBINO', 'none', 'none', 'none'];
-					for(i=0; i<6; i++){
+					window.leftChamber = ['BAMBINO', 'SHARC', 'SPICE', 'TIPwall', 'TIPball'];
+					window.rightChamber = ['solo', 'none', 'none', 'none', 'none'];
+					for(i=0; i<5; i++){
 						insertDOM('td', 'Tcha'+i+'pic', '', '', 'chamberPicRow', '', '');
 						insertDOM('canvas', 'Tcha'+i+'canv', 'thumbnail', '', 'Tcha'+i+'pic', '', '');
 						document.getElementById('Tcha'+i+'canv').setAttribute('width', 0.9*totalWidth/6);
@@ -182,13 +215,25 @@
 						thumbnail('Tcha'+i+'canv', window.leftChamber[i], window.rightChamber[i], '#999999');
 
 						document.getElementById('Tcha'+i+'canv').onmouseover = function() {
-							thumbnail(this.id, window.leftChamber[this.thumb], window.rightChamber[this.thumb], '#FFFFFF');
+							if(!this.disabled) thumbnail(this.id, window.leftChamber[this.thumb], window.rightChamber[this.thumb], '#FFFFFF');
 						}
 						document.getElementById('Tcha'+i+'canv').onmouseout = function() {
-							if(this.chosen==0)thumbnail(this.id, window.leftChamber[this.thumb], window.rightChamber[this.thumb], '#999999');
+							if(this.chosen==0 && !this.disabled)thumbnail(this.id, window.leftChamber[this.thumb], window.rightChamber[this.thumb], '#999999');
 						}
 
-						document.getElementById('Tcha'+i+'canv').onclick = function(){clickBehavior.call(this, 6, 'Tcha', window.leftChamber, window.rightChamber)};
+						//all options except SHARC should disable SHARC services in DSL:
+						if(i!=1){
+							document.getElementById('Tcha'+i+'canv').onclick = function(){
+								//normal click:
+								clickBehavior.call(this, 5, 'Tcha', window.leftChamber, window.rightChamber);
+								//disable SHARC Services:
+								if(this.chosen)
+									document.getElementById('Tdsl1canv').disabled = true;
+								else
+									document.getElementById('Tdsl1canv').disabled = false;
+								thumbnail('Tdsl1canv', 'SHARC', 'services', '#999999', document.getElementById('Tdsl1canv').disabled);	
+							};						
+						}
 
 					}
 
@@ -220,10 +265,10 @@
 						thumbnail('Gdsl'+i+'canv', window.leftDSL[i], window.rightDSL[i], '#999999');
 
 						document.getElementById('Gdsl'+i+'canv').onmouseover = function() {
-							thumbnail(this.id, window.leftDSL[this.thumb], window.rightDSL[this.thumb], '#FFFFFF');
+							if(!this.disabled) thumbnail(this.id, window.leftDSL[this.thumb], window.rightDSL[this.thumb], '#FFFFFF');
 						}
 						document.getElementById('Gdsl'+i+'canv').onmouseout = function() {
-							if(this.chosen == 0)thumbnail(this.id, window.leftDSL[this.thumb], window.rightDSL[this.thumb], '#999999');
+							if(this.chosen == 0 && !this.disabled)thumbnail(this.id, window.leftDSL[this.thumb], window.rightDSL[this.thumb], '#999999');
 						}
 
 						document.getElementById('Gdsl'+i+'canv').onclick = function(){clickBehavior.call(this, 2, 'Gdsl', window.leftDSL, window.rightDSL)};
@@ -231,9 +276,9 @@
 				}
 				//TIGRESS:
 				if(window.experiment == 'TIGRESS'){
-					window.leftDSL = ['TIGRESS', 'TIGRESS', 'TIGRESS', 'TIGRESS'];
-					window.rightDSL = ['none', 'SHARC', 'DESCANT', 'all'];
-					for(i=0; i<4; i++){
+					window.leftDSL = ['TIGRESS', 'SHARC', 'DESCANT'];
+					window.rightDSL = ['none', 'services', 'none'];
+					for(i=0; i<3; i++){
 						insertDOM('td', 'Tdsl'+i+'pic', '', '', 'dsLampPicRow', '', '');
 						insertDOM('canvas', 'Tdsl'+i+'canv', 'thumbnail', '', 'Tdsl'+i+'pic', '', '');
 						document.getElementById('Tdsl'+i+'canv').setAttribute('width', 0.9*totalWidth/6);
@@ -243,13 +288,13 @@
 						thumbnail('Tdsl'+i+'canv', window.leftDSL[i], window.rightDSL[i], '#999999');
 
 						document.getElementById('Tdsl'+i+'canv').onmouseover = function() {
-							thumbnail(this.id, window.leftDSL[this.thumb], window.rightDSL[this.thumb], '#FFFFFF');
+							if(!this.disabled) thumbnail(this.id, window.leftDSL[this.thumb], window.rightDSL[this.thumb], '#FFFFFF');
 						}
 						document.getElementById('Tdsl'+i+'canv').onmouseout = function() {
-							if(this.chosen == 0)thumbnail(this.id, window.leftDSL[this.thumb], window.rightDSL[this.thumb], '#999999');
+							if(this.chosen == 0 && !this.disabled)thumbnail(this.id, window.leftDSL[this.thumb], window.rightDSL[this.thumb], '#999999');
 						}
 
-						document.getElementById('Tdsl'+i+'canv').onclick = function(){clickBehavior.call(this, 4, 'Tdsl', window.leftDSL, window.rightDSL)};
+						document.getElementById('Tdsl'+i+'canv').onclick = function(){clickBehavior.call(this, 3, 'Tdsl', window.leftDSL, window.rightDSL)};
 					}
 				}
 			}
@@ -278,7 +323,7 @@
 						thumbnail('Gcor'+i+'canv', window.leftCor[i], window.rightCor[i], '#FFFFFF');
 
 						document.getElementById('Gcor'+i+'canv').onmouseover = function() {
-							thumbnail(this.id, window.leftCor[this.thumb], window.rightCor[this.thumb], '#FFFFFF');
+							if(!this.disabled) thumbnail(this.id, window.leftCor[this.thumb], window.rightCor[this.thumb], '#FFFFFF');
 						}
 						//document.getElementById('Gcor'+i+'canv').onmouseout = function() {
 						//	if(this.chosen == 0)thumbnail(this.id, window.leftCor[this.thumb], window.rightCor[this.thumb], '#999999');
@@ -301,7 +346,7 @@
 						thumbnail('Tcor'+i+'canv', window.leftCor[i], window.rightCor[i], '#FFFFFF');
 
 						document.getElementById('Tcor'+i+'canv').onmouseover = function() {
-							thumbnail(this.id, window.leftCor[this.thumb], window.rightCor[this.thumb], '#FFFFFF');
+							if(!this.disabled) thumbnail(this.id, window.leftCor[this.thumb], window.rightCor[this.thumb], '#FFFFFF');
 						}
 						//document.getElementById('Gcor'+i+'canv').onmouseout = function() {
 						//	if(this.chosen == 0)thumbnail(this.id, window.leftCor[this.thumb], window.rightCor[this.thumb], '#999999');
@@ -337,10 +382,10 @@
 						thumbnail('Gusl'+i+'canv', window.leftUSL[i], window.rightUSL[i], '#999999');
 
 						document.getElementById('Gusl'+i+'canv').onmouseover = function() {
-							thumbnail(this.id, window.leftUSL[this.thumb], window.rightUSL[this.thumb], '#FFFFFF');
+							if(!this.disabled) thumbnail(this.id, window.leftUSL[this.thumb], window.rightUSL[this.thumb], '#FFFFFF');
 						}
 						document.getElementById('Gusl'+i+'canv').onmouseout = function() {
-							if(this.chosen == 0)thumbnail(this.id, window.leftUSL[this.thumb], window.rightUSL[this.thumb], '#999999');
+							if(this.chosen == 0 && !this.disabled)thumbnail(this.id, window.leftUSL[this.thumb], window.rightUSL[this.thumb], '#999999');
 						}
 
 						document.getElementById('Gusl'+i+'canv').onclick = function(){clickBehavior.call(this, 2, 'Gusl', window.leftUSL, window.rightUSL)};	
@@ -349,8 +394,8 @@
 				}
 				//TIGRESS:
 				if(window.experiment == 'TIGRESS'){
-					window.leftUSL = ['TIGRESS', 'TIGRESS'];
-					window.rightUSL = ['none', 'SPICE'];
+					window.leftUSL = ['TIGRESS', 'SPICE'];
+					window.rightUSL = ['none', 'none'];
 					for(i=0; i<2; i++){
 						insertDOM('td', 'Tusl'+i+'pic', '', '', 'usLampPicRow', '', '');
 						insertDOM('canvas', 'Tusl'+i+'canv', 'thumbnail', '', 'Tusl'+i+'pic', '', '');
@@ -361,10 +406,10 @@
 						thumbnail('Tusl'+i+'canv', window.leftUSL[i], window.rightUSL[i], '#999999');
 
 						document.getElementById('Tusl'+i+'canv').onmouseover = function() {
-							thumbnail(this.id, window.leftUSL[this.thumb], window.rightUSL[this.thumb], '#FFFFFF');
+							if(!this.disabled) thumbnail(this.id, window.leftUSL[this.thumb], window.rightUSL[this.thumb], '#FFFFFF');
 						}
 						document.getElementById('Tusl'+i+'canv').onmouseout = function() {
-							if(this.chosen == 0)thumbnail(this.id, window.leftUSL[this.thumb], window.rightUSL[this.thumb], '#999999');
+							if(this.chosen == 0 && !this.disabled)thumbnail(this.id, window.leftUSL[this.thumb], window.rightUSL[this.thumb], '#999999');
 						}
 
 						document.getElementById('Tusl'+i+'canv').onclick = function(){clickBehavior.call(this, 2, 'Tusl', window.leftUSL, window.rightUSL)};	
@@ -400,7 +445,7 @@
 						thumbnail('Tbdp'+i+'canv', window.leftBDP[i], window.rightBDP[i], '#FFFFFF');
 
 						document.getElementById('Tbdp'+i+'canv').onmouseover = function() {
-							thumbnail(this.id, window.leftBDP[this.thumb], window.rightBDP[this.thumb], '#FFFFFF');
+							if(!this.disabled) thumbnail(this.id, window.leftBDP[this.thumb], window.rightBDP[this.thumb], '#FFFFFF');
 						}
 						///document.getElementById('Tbdp'+i+'canv').onmouseout = function() {
 						///	if(this.chosen == 0)thumbnail(this.id, window.leftBDP[this.thumb], window.rightBDP[this.thumb], '#999999');
@@ -412,7 +457,10 @@
 				}
 			}
 
+			//base click behavior
 			function clickBehavior(nFigures, prefix, det1, det2){
+				if(this.disabled) return;
+
 				if(this.chosen == 0){
 					$('#'+this.id).css('left', window.innerWidth/2 - parseFloat(this.width)/2 - document.getElementById(this.id).getBoundingClientRect().left  );
 					$('#'+this.id).css('z-index', 1);
@@ -425,10 +473,10 @@
 
 					window.subdetectors[det1[this.thumb]]++;
 					window.subdetectors[det2[this.thumb]]++;
-					if(det2[this.thumb] == 'all'){
-						window.subdetectors['SHARC']++;
-						window.subdetectors['DESCANT']++;
-					}
+					//if(det2[this.thumb] == 'all'){
+					//	window.subdetectors['SHARC']++;
+					//	window.subdetectors['DESCANT']++;
+					//}
 					window.choices++;
 
 					this.chosen = 1;
@@ -448,6 +496,8 @@
 
 					this.chosen = 0;
 				}
+
+
 			}
 
 			function commitParameters(){
