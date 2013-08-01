@@ -19,28 +19,28 @@ function thumbnail(canvasID, left, right, color, disabled){
 
 	//GRIFFIN options
 	if(left == 'US SCEPTAR' && right == 'DS SCEPTAR'){
-		sceptar(context, width/3, height*0.4, height*0.2);
-		sceptar(context, 2*width/3, height*0.4, height*0.2);
+		sceptar(context, width/3, height*0.4, height*0.2, disabled);
+		sceptar(context, 2*width/3, height*0.4, height*0.2, disabled);
 		title = 'USSC + DSSC';
 	} else if(left == 'US SCEPTAR' && right == 'ZDS'){
-		sceptar(context, width/3, height*0.4, height*0.2);
-		zds(context, 2/3*width, 0.4*height, 0.18*height);
+		sceptar(context, width/3, height*0.4, height*0.2, disabled);
+		zds(context, 2/3*width, 0.4*height, 0.18*height, disabled);
 		title = 'USSC + ZDS';
 	} else if(left == 'PACES' && right == 'DS SCEPTAR'){
 		paces(context, width/3, height*0.4, height*0.15, height*0.05);
-		sceptar(context, 2*width/3, height*0.4, height*0.2);
+		sceptar(context, 2*width/3, height*0.4, height*0.2, disabled);
 		title = 'PACES + SCEPTAR';
 	} else if(left == 'PACES' && right == 'ZDS'){
-		paces(context, width/3, height*0.4, height*0.15, height*0.05);
-		zds(context, 2/3*width, 0.4*height, 0.18*height);
+		paces(context, width/3, height*0.4, height*0.15, height*0.05, disabled);
+		zds(context, 2/3*width, 0.4*height, 0.18*height, disabled);
 		title = 'PACES + ZDS';
 	} else if(left == 'SPICE' && right == 'ZDS'){
 		spice(context, width/3, height*0.4, height*0.2, disabled);
-		zds(context, 2/3*width, 0.4*height, 0.18*height);
+		zds(context, 2/3*width, 0.4*height, 0.18*height, disabled);
 		title = 'SPICE + ZDS';
 	} else if(left == 'SPICE' && right == 'DS SCEPTAR'){
-		spice(context, width/3, height*0.4, height*0.2, disabled);
-		sceptar(context, 2*width/3, height*0.4, height*0.2);
+		spice(context, width/3, height*0.4, height*0.2);
+		sceptar(context, 2*width/3, height*0.4, height*0.2, disabled);
 		title = 'SPICE + DSSC';
 	} else if(left == 'GRIFFIN' && right == 'none'){
 		griffin(context, width*0.5 - imageObj.width/imageObj.height*context.canvas.height*0.6/2, height*0.1, color);
@@ -128,7 +128,7 @@ function thumbnail(canvasID, left, right, color, disabled){
 		dante(context, width*0.5, height*0.4, height*0.2, color);
 		title = 'DANTE';
 	} else if( (left == 'US SCEPTAR' || left == 'SCEPTAR') && right=='none'){
-		sceptar(context, width/2, height*0.4, height*0.2);
+		sceptar(context, width/2, height*0.4, height*0.2, disabled);
 		title = 'SCEPTAR';
 	} else if(left == 'SPICE' && right=='none'){
 		spice(context, width*0.5, height*0.45, height*0.2, disabled);
@@ -154,7 +154,7 @@ function thumbnail(canvasID, left, right, color, disabled){
 //individual thumbnails////////////////////////////////////////////////////////////////////////////////
 
 //draw a SCEPTAR wireframe on context centered at x0, y0.  size is the center to outer vertext distance. 
-function sceptar(context, x0, y0, size){
+function sceptar(context, x0, y0, size, disabled){
 	var i, side;
 	side = size*Math.sqrt(2-2*Math.cos(72/180*Math.PI));
 	smallSize = 0.5*size;
@@ -175,17 +175,23 @@ function sceptar(context, x0, y0, size){
 	}
 	context.closePath();
 	context.restore();
+
+	if(disabled)
+		strikeOut(context, window.width, window.height, window.width/2, y0);
 }
 
-function zds(context, x0, y0, radius){
+function zds(context, x0, y0, radius, disabled){
 	context.beginPath();
 	context.arc(x0, y0, radius, 0, 2*Math.PI);
 	context.closePath();
 	context.stroke();
+
+	if(disabled)
+		strikeOut(context, window.width, window.height, window.width/2, y0);
 }
 
 //draw a PACES wireframe on context centered at x0, y0.  size is the array center to detector center distance, rad is the detector radius.
-function paces(context, x0, y0, size, rad){
+function paces(context, x0, y0, size, rad, disabled){
 	var i;
 
 	context.save();
@@ -199,6 +205,9 @@ function paces(context, x0, y0, size, rad){
 		context.rotate(72/180*Math.PI);
 	}
 	context.restore();
+
+	if(disabled)
+		strikeOut(context, window.width, window.height, window.width/2, y0);
 }
 
 function spice(context, x0, y0, rad, disabled){
@@ -223,7 +232,7 @@ function spice(context, x0, y0, rad, disabled){
 	}
 
 	if(disabled)
-		strikeOut(context, window.width, window.height, x0, y0)
+		strikeOut(context, window.width, window.height, window.width/2, y0);
 }
 
 function descant(context, x0, y0, cellSize){
