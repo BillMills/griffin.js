@@ -138,32 +138,100 @@
         		//SHARC chamber forces SHARC services in DS lampshade
         		document.getElementById('Tcha1canv').onclick = function(event, noChain){
         			//regular behavior
-        			clickBehavior.call(this, 5, 'Tcha', 'SHARC', 'none');
+        			clickBehavior.call(this, 5, 'Tcha', window.leftChamber, window.rightChamber);
 
         			if(!noChain && !this.disabled){
 	        			//force SHARC services in DS lampshade:
     	    			document.getElementById('Tdsl1canv').onclick.apply(document.getElementById('Tdsl1canv'), [null, true]);
-        				if(this.chosen)
+        				if(this.chosen){
 	        				document.getElementById('Tdsl1canv').onmouseover.apply(document.getElementById('Tdsl1canv'));
-	        			else
+	        				thumbnail('Tusl0canv', 'TIGRESS', 'none', '#FFFFFF');
+	        			}
+	        			else{
 	        				document.getElementById('Tdsl1canv').onmouseout.apply(document.getElementById('Tdsl1canv'));
-	        		}	
+	        				thumbnail('Tusl0canv', 'TIGRESS', 'none', '#999999');
+	        			}
+	        		}
+
+	        		//also implies USL TIGRESS:
+	        		if(!this.disabled){
+		        		if(!this.chosen) document.getElementById('Tusl0canv').locked = !document.getElementById('Tusl0canv').locked;
+		        		document.getElementById('Tusl0canv').onclick.apply(document.getElementById('Tusl0canv'), [null, true]);
+	    	    		if(this.chosen) document.getElementById('Tusl0canv').locked = !document.getElementById('Tusl0canv').locked;
+	    	    	}
         		};
         		//...and the other way around:
         		document.getElementById('Tdsl1canv').onclick = function(event, noChain){
         			//regular behavior
-        			clickBehavior.call(this, 3, 'Tdsl', 'SHARC', 'services');
+        			clickBehavior.call(this, 3, 'Tdsl', window.leftDSL, window.rightDSL);
 
         			if(!noChain && !this.disabled){
 	        			//force SHARC services in DS lampshade:
     	    			document.getElementById('Tcha1canv').onclick.apply(document.getElementById('Tcha1canv'), [null, true]);
-        				if(this.chosen)
+        				if(this.chosen){
 	        				document.getElementById('Tcha1canv').onmouseover.apply(document.getElementById('Tcha1canv'));
-	        			else
+	        				thumbnail('Tusl0canv', 'TIGRESS', 'none', '#FFFFFF');
+	        			}
+	        			else {
 	        				document.getElementById('Tcha1canv').onmouseout.apply(document.getElementById('Tcha1canv'));
+	        				thumbnail('Tusl0canv', 'TIGRESS', 'none', '#999999');
+	        			}
 	        		}	
         		};
+
+        		//SPICE chamber forces SPICE services in USL
+	    		document.getElementById('Tcha2canv').onclick = function(event, noChain){
+	    			//regular behavior
+	    			clickBehavior.call(this, 5, 'Tcha', window.leftChamber, window.rightChamber);
+
+	    			if(!noChain && !this.disabled){
+	        			//force SPICE services in US lampshade:
+		    			document.getElementById('Tusl1canv').onclick.apply(document.getElementById('Tusl1canv'), [null, true]);
+	    				if(this.chosen){
+	        				document.getElementById('Tusl1canv').onmouseover.apply(document.getElementById('Tusl1canv'));
+	        				//also disable SHARC services:
+	        				document.getElementById('Tdsl1canv').disabled = true;
+	        			}
+	        			else{
+	        				document.getElementById('Tusl1canv').onmouseout.apply(document.getElementById('Tusl1canv'));
+	        				//re-enable SHARC services:
+	        				document.getElementById('Tdsl1canv').disabled = false;
+	        			}
+	        			//redraw SHARC services as appropriate:
+	        			thumbnail('Tdsl1canv', 'SHARC', 'services', '#999999', document.getElementById('Tdsl1canv').disabled);
+
+	        		}
+					//also disable SHARC Services:
+					if(this.chosen)
+						document.getElementById('Tdsl1canv').disabled = true;
+					else
+						document.getElementById('Tdsl1canv').disabled = false;
+					thumbnail('Tdsl1canv', 'SHARC', 'services', '#999999', document.getElementById('Tdsl1canv').disabled);
+	    		};
+	    		//...and the other way around
+	    		document.getElementById('Tusl1canv').onclick = function(event, noChain){
+	    			//regular behavior
+	    			clickBehavior.call(this, 2, 'Tusl', window.leftUSL, window.rightUSL);
+
+	    			if(!noChain && !this.disabled){
+	        			//force SHARC services in DS lampshade:
+		    			document.getElementById('Tcha2canv').onclick.apply(document.getElementById('Tcha2canv'), [null, true]);
+	    				if(this.chosen)
+	        				document.getElementById('Tcha2canv').onmouseover.apply(document.getElementById('Tcha2canv'));
+	        			else
+	        				document.getElementById('Tcha2canv').onmouseout.apply(document.getElementById('Tcha2canv'));
+	        		}	
+	    		};
+
 			}
+
+
+
+
+
+
+
+
 
 			function deployChamber(){
 				var i, totalWidth; 
@@ -222,17 +290,36 @@
 						}
 
 						//all options except SHARC should disable SHARC services in DSL:
-						if(i!=1){
+						if(i!=1 && i!=2){
 							document.getElementById('Tcha'+i+'canv').onclick = function(){
 								//normal click:
 								clickBehavior.call(this, 5, 'Tcha', window.leftChamber, window.rightChamber);
-								//disable SHARC Services:
-								if(this.chosen)
+								//manage SHARC Services & lock / unlock TIGRESS in USL
+								if(this.chosen){
 									document.getElementById('Tdsl1canv').disabled = true;
-								else
+									//also implies TIGRESS deployed in USL if it isn't already:
+									if(!document.getElementById('Tusl0canv').chosen){
+										document.getElementById('Tusl0canv').onclick.apply(document.getElementById('Tusl0canv'), [null, true]);
+										document.getElementById('Tusl0canv').chosenDirectly = 0;
+									}
+									//lock TIGRESS in USL
+									document.getElementById('Tusl0canv').locked = !document.getElementById('Tusl0canv').locked
+									thumbnail('Tusl0canv', 'TIGRESS', 'none', '#FFFFFF');
+								}
+								else{
 									document.getElementById('Tdsl1canv').disabled = false;
-								thumbnail('Tdsl1canv', 'SHARC', 'services', '#999999', document.getElementById('Tdsl1canv').disabled);	
-							};						
+									//unlock TIGRESS in USL
+									document.getElementById('Tusl0canv').locked = !document.getElementById('Tusl0canv').locked
+									//unselect TIGRESS in USL if it was originally implied by choosing this:
+									if(!document.getElementById('Tusl0canv').chosenDirectly){
+										document.getElementById('Tusl0canv').onclick.apply(document.getElementById('Tusl0canv'), [null, true]);	
+										thumbnail('Tusl0canv', 'TIGRESS', 'none', '#999999');
+									}
+								}
+								thumbnail('Tdsl1canv', 'SHARC', 'services', '#999999', document.getElementById('Tdsl1canv').disabled);
+								//thumbnail('Tusl1canv', 'SPICE', 'services', '#999999', document.getElementById('Tusl1canv').disabled);
+
+							};		
 						}
 
 					}
@@ -295,6 +382,20 @@
 						}
 
 						document.getElementById('Tdsl'+i+'canv').onclick = function(){clickBehavior.call(this, 3, 'Tdsl', window.leftDSL, window.rightDSL)};
+
+						//choosing TIGRESS or DESCANT disallows SHARC in the chamber:
+						if(i!=1){
+							document.getElementById('Tdsl'+i+'canv').onclick = function(){
+								//normal click:
+								clickBehavior.call(this, 3, 'Tdsl', window.leftDSL, window.rightDSL);
+								//disable SHARC Services:
+								if(this.chosen)
+									document.getElementById('Tcha1canv').disabled = true;
+								else
+									document.getElementById('Tcha1canv').disabled = false;
+								thumbnail('Tcha1canv', 'SHARC', 'none', '#999999', document.getElementById('Tcha1canv').disabled);	
+							};							
+						}
 					}
 				}
 			}
@@ -395,7 +496,7 @@
 				//TIGRESS:
 				if(window.experiment == 'TIGRESS'){
 					window.leftUSL = ['TIGRESS', 'SPICE'];
-					window.rightUSL = ['none', 'none'];
+					window.rightUSL = ['none', 'services'];
 					for(i=0; i<2; i++){
 						insertDOM('td', 'Tusl'+i+'pic', '', '', 'usLampPicRow', '', '');
 						insertDOM('canvas', 'Tusl'+i+'canv', 'thumbnail', '', 'Tusl'+i+'pic', '', '');
@@ -413,6 +514,23 @@
 						}
 
 						document.getElementById('Tusl'+i+'canv').onclick = function(){clickBehavior.call(this, 2, 'Tusl', window.leftUSL, window.rightUSL)};	
+
+						//TIGRESS in USL disables SPICE in chamber:
+						if(i==0){
+							document.getElementById('Tusl'+i+'canv').onclick = function(event, noChain){
+								//normal click:
+								clickBehavior.call(this, 2, 'Tusl', window.leftUSL, window.rightUSL);
+								//disable SPICE:
+								if(this.chosen && !noChain){
+									document.getElementById('Tcha2canv').disabled = true;
+									//if chosen directly, don't let deselecting things in the chamber deselect this:
+									if(!this.locked) this.chosenDirectly = 1;
+								}
+								else
+									document.getElementById('Tcha2canv').disabled = false;
+								thumbnail('Tcha2canv', 'SPICE', 'none', '#999999', document.getElementById('Tcha2canv').disabled);	
+							};							
+						}
 
 					}
 				}
@@ -460,6 +578,7 @@
 			//base click behavior
 			function clickBehavior(nFigures, prefix, det1, det2){
 				if(this.disabled) return;
+				if(this.locked) return;
 
 				if(this.chosen == 0){
 					$('#'+this.id).css('left', window.innerWidth/2 - parseFloat(this.width)/2 - document.getElementById(this.id).getBoundingClientRect().left  );
@@ -471,8 +590,8 @@
 						}
 					}
 
-					window.subdetectors[det1[this.thumb]]++;
-					window.subdetectors[det2[this.thumb]]++;
+					if(window.subdetectors.hasOwnProperty(det1[this.thumb])) window.subdetectors[det1[this.thumb]]++;
+					if(window.subdetectors.hasOwnProperty(det2[this.thumb])) window.subdetectors[det2[this.thumb]]++;
 					//if(det2[this.thumb] == 'all'){
 					//	window.subdetectors['SHARC']++;
 					//	window.subdetectors['DESCANT']++;
@@ -490,8 +609,8 @@
 						}
 					}
 
-					window.subdetectors[det1[this.thumb]]--;
-					window.subdetectors[det2[this.thumb]]--;
+					if(window.subdetectors.hasOwnProperty(det1[this.thumb])) window.subdetectors[det1[this.thumb]]--;
+					if(window.subdetectors.hasOwnProperty(det2[this.thumb])) window.subdetectors[det2[this.thumb]]--;
 					window.choices--;
 
 					this.chosen = 0;
@@ -504,6 +623,7 @@
 				if(window.choices < 3){
 					alert('Please click on a deployment option for all sectors.')
 				} else{
+					/*
 					for (var key in window.subdetectors){
 						//TIP and SCEPTAR have fancy deployment modes, everything else is just on / off:
 						if(key == 'TIPwall' || key == 'TIPball'){
@@ -532,6 +652,8 @@
 					}
 
 					window.location = 'http://alphadon.triumf.ca:8082/CS/ConfigureSubdetectors';
+					*/
+					console.log(window.subdetectors)
 				}
 			}
 

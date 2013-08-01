@@ -1,5 +1,5 @@
 
-function thumbnail(canvasID, left, right, color){
+function thumbnail(canvasID, left, right, color, disabled){
 	var canvas = document.getElementById(canvasID);
 	var context = canvas.getContext('2d');
 
@@ -35,11 +35,11 @@ function thumbnail(canvasID, left, right, color){
 		zds(context, 2/3*width, 0.4*height, 0.18*height);
 		title = 'PACES + ZDS';
 	} else if(left == 'SPICE' && right == 'ZDS'){
-		spice(context, width/3, height*0.4, height*0.2);
+		spice(context, width/3, height*0.4, height*0.2, disabled);
 		zds(context, 2/3*width, 0.4*height, 0.18*height);
 		title = 'SPICE + ZDS';
 	} else if(left == 'SPICE' && right == 'DS SCEPTAR'){
-		spice(context, width/3, height*0.4, height*0.2);
+		spice(context, width/3, height*0.4, height*0.2, disabled);
 		sceptar(context, 2*width/3, height*0.4, height*0.2);
 		title = 'SPICE + DSSC';
 	} else if(left == 'GRIFFIN' && right == 'none'){
@@ -55,7 +55,7 @@ function thumbnail(canvasID, left, right, color){
 		title = 'GRIFFIN + DANTE';
 	} else if(left == 'GRIFFIN' && right == 'SPICE'){
 		griffin(context, width*0.28 - imageObj.width/imageObj.height*context.canvas.height*0.6/2, height*0.1, color);
-		spice(context, width*0.68, height*0.4, height*0.2);
+		spice(context, width*0.68, height*0.4, height*0.2, disabled);
 		title = 'GRIFFIN + SPICE';
 	}
 
@@ -72,13 +72,16 @@ function thumbnail(canvasID, left, right, color){
 		bambino(context, width*0.62, width*0.72, height/3, height*0.6, height*0.12);
 	} else if(left == 'SHARC' && right == 'none'){
 		title = 'SHARC';
-		sharc(context, width/2, height*0.45, width*0.3, height*0.7);	
+		sharc(context, width/2, height*0.45, width*0.3, height*0.7, disabled);	
 	} else if(left == 'SHARC' && right == 'services'){
 		title = 'SHARC Services';
-		sharc(context, width/2, height*0.45, width*0.3, height*0.7, document.getElementById('Tdsl1canv').disabled);	
+		sharc(context, width/2, height*0.45, width*0.3, height*0.7, disabled);	
 	} else if(left == 'SPICE' && right == 'none'){
-		spice(context, width*0.5, height*0.45, height*0.2);
+		spice(context, width*0.5, height*0.45, height*0.2, disabled);
 		title = 'SPICE';
+	} else if(left == 'SPICE' && right == 'services'){
+		spice(context, width*0.5, height*0.45, height*0.2, disabled);
+		title = 'SPICE Services';
 	} else if(left == 'TIPwall' && right == 'none'){
 		tipWall(context, width/2, height*0.45, height/2);
 		title = 'TIP Wall';
@@ -104,7 +107,7 @@ function thumbnail(canvasID, left, right, color){
 		title = 'TIGRESS + SHARC + DESCANT';
 	} else if(left == 'TIGRESS' && right == 'SPICE'){
 		tigress(context, width*0.28, height*0.45, Math.round(height*0.25));
-		spice(context, width*0.68, height*0.45, height*0.2);
+		spice(context, width*0.68, height*0.45, height*0.2, disabled);
 		title = 'TIGRESS + SPICE';
 	} else if(left == 'beamdump' && right == 'none'){
 		beamdump(context, width/2, height*0.45, height*0.4)
@@ -128,7 +131,7 @@ function thumbnail(canvasID, left, right, color){
 		sceptar(context, width/2, height*0.4, height*0.2);
 		title = 'SCEPTAR';
 	} else if(left == 'SPICE' && right=='none'){
-		spice(context, width*0.5, height*0.45, height*0.2);
+		spice(context, width*0.5, height*0.45, height*0.2, disabled);
 		title = 'SPICE';
 	} else if(left == 'ZDS' && right=='none'){
 		zds(context, 0.5*width, 0.4*height, 0.18*height);
@@ -198,7 +201,7 @@ function paces(context, x0, y0, size, rad){
 	context.restore();
 }
 
-function spice(context, x0, y0, rad){
+function spice(context, x0, y0, rad, disabled){
 	var i, innerRad, radStep;
 
 	innerRad = 0.15*rad;
@@ -215,8 +218,12 @@ function spice(context, x0, y0, rad){
 		context.beginPath();
 		context.moveTo(x0 + innerRad*Math.cos(Math.PI/4*i), y0 + innerRad*Math.sin(Math.PI/4*i));
 		context.lineTo(x0 + rad*Math.cos(Math.PI/4*i), y0 + rad*Math.sin(Math.PI/4*i));
+		context.closePath();
 		context.stroke();
 	}
+
+	if(disabled)
+		strikeOut(context, window.width, window.height, x0, y0)
 }
 
 function descant(context, x0, y0, cellSize){
@@ -321,7 +328,7 @@ function sharc(context, x0, y0, width, height, disabled){
 	context.restore();
 
 	if(disabled)
-		strikeOut(context, window.width, window.height)
+		strikeOut(context, window.width, window.height, x0, y0)
 }
 
 function tipWall(context, x0, y0, width){
@@ -495,16 +502,20 @@ function regPoly(context, x0, y0, n, size){
 	context.restore();
 }
 
-function strikeOut(context, width, height){
-		context.beginPath()
-		context.lineWidth = 5;
-		context.strokeStyle = '#FF0000';
-		context.moveTo(width*.25, height*0.2);
-		context.lineTo(width*0.75, height*0.6);
-		context.stroke();
-		context.moveTo(width*0.75, height*0.2);
-		context.lineTo(width*0.25, height*0.6);
-		context.stroke();
+function strikeOut(context, width, height, x0, y0){
+
+	context.save();
+	context.beginPath()
+	context.lineWidth = 5;
+	context.strokeStyle = '#FF0000';
+	context.moveTo(x0-width/4, y0-height/4);
+	context.lineTo(x0+width/4, y0+height/4);
+	context.stroke();
+	context.moveTo(x0+width/4, y0-height/4);
+	context.lineTo(x0-width/4, y0+height/4);
+	context.stroke();
+	context.restore();
+
 }
 
 function glowy(canvasID){
