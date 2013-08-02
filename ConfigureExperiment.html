@@ -731,22 +731,10 @@
 				if(window.choices < 3){
 					alert('Please click on a deployment option for all sectors.')
 				} else{
-					/*
+					
 					for (var key in window.subdetectors){
-						//TIP and SCEPTAR have fancy deployment modes, everything else is just on / off:
-						if(key == 'TIPwall' || key == 'TIPball'){
-							if(window.subdetectors['TIPwall']==1 || window.subdetectors['TIPball']==1)
-								ODBSet('/DashboardConfig/TIP/deploy', 1);
-							else 
-								ODBSet('/DashboardConfig/TIP/deploy', 0);
-
-							if(window.subdetectors['TIPwall'] == 1)
-								ODBSet('/DashboardConfig/TIP/mode', 'wall');
-							else if(window.subdetectors['TIPball'] == 1)
-								ODBSet('/DashboardConfig/TIP/mode', 'ball');
-							else 
-								ODBSet('/DashboardConfig/TIP/mode', '');
-						} else if(key == 'US SCEPTAR' || key == 'DS SCEPTAR'){ 
+						//SCEPTAR has fancy deployment mode, everything else is just on / off:
+						if(key == 'US SCEPTAR' || key == 'DS SCEPTAR'){ 
 							if(window.subdetectors['US SCEPTAR'] > 0)
 								ODBSet('/DashboardConfig/SCEPTAR/USdeploy', 1);
 							else 
@@ -758,10 +746,7 @@
 						} else
 							ODBSet('/DashboardConfig/'+key+'/deploy', window.subdetectors[key]);
 					}
-
-					window.location = 'http://alphadon.triumf.ca:8082/CS/ConfigureSubdetectors';
-					*/
-					console.log(window.subdetectors)
+					window.location = window.location.href.replace("ConfigureExperiment", "ConfigureSubdetectors");					
 				}
 			}
 
