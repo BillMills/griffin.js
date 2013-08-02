@@ -46,7 +46,7 @@ function SHARC(){
             //upstream quad pad back
             //quadBack(this.context, 1*this.cellWidth, 11.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, colors(['SHQ13FN00X', 'SHQ14FN00X', 'SHQ15FN00X', 'SHQ16FN00X'], this.dataBus.SHARC, frame, this.nFrames), 0);
             //upstream quad pad front
-            quadBack(this.context, 1.5*this.cellWidth, 10.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, colors(['SHQ13FP00X', 'SHQ14FP00X', 'SHQ15FP00X', 'SHQ16FP00X'], this.dataBus.SHARC, frame, this.nFrames), 0);       
+            quadBack(this.context, 1.5*this.cellWidth, 10.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, colors(['SHQ13EP00X', 'SHQ14EP00X', 'SHQ15EP00X', 'SHQ16EP00X'], this.dataBus.SHARC, frame, this.nFrames), 0);       
 
             //tooltip:
             if(!this.TTlayerDone){
@@ -59,7 +59,7 @@ function SHARC(){
         }
 
         //upstream quad back
-        quadBack(this.context, 2*this.cellWidth, 9.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, this.meanColor('SHQ13EN', frame, 0).concat(this.meanColor('SHQ14EN', frame, 0), this.meanColor('SHQ15EN', frame, 0), this.meanColor('SHQ16EN', frame, 0)), 0);
+        quadBack(this.context, 2*this.cellWidth, 9.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, this.meanColor('SHQ13DN', frame, 0).concat(this.meanColor('SHQ14DN', frame, 0), this.meanColor('SHQ15DN', frame, 0), this.meanColor('SHQ16DN', frame, 0)), 0);
         //upstream quad front
         quadFront(this.context, 2.5*this.cellWidth, 8.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, this.meanColor('SHQ13DP', frame, 0).concat(this.meanColor('SHQ14DP', frame, 0), this.meanColor('SHQ15DP', frame, 0), this.meanColor('SHQ16DP', frame, 0)), 0);
         //upstream quad tooltip:
@@ -77,7 +77,7 @@ function SHARC(){
         if(this.padsEnabled){
             //horizStack(this.context, 7.5*this.cellWidth, 3.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB11FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
             //horizStack(this.context, 7.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB11FN00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
-            vertStack(this.context, 7.5*this.cellWidth, 4*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, colors(['SHB11FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'v', 0);
+            vertStack(this.context, 7.5*this.cellWidth, 4*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, colors(['SHB11EP00X'], this.dataBus.SHARC, frame, this.nFrames), 'v', 0);
 
             //tooltip:
             if(!this.TTlayerDone){
@@ -88,7 +88,7 @@ function SHARC(){
             }
         }
         //back
-        vertStack(this.context, 6.5*this.cellWidth, 4*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, this.meanColor('SHB11EN', frame, 1), 'v', 0);
+        vertStack(this.context, 6.5*this.cellWidth, 4*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, this.meanColor('SHB11DN', frame, 1), 'v', 0);
         //front
         horizStack(this.context, 5.5*this.cellWidth, 4*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, this.meanColor('SHB11DP', frame, 1), 'v', 0);
         //tooltip:
@@ -106,7 +106,7 @@ function SHARC(){
         if(this.padsEnabled){
             //horizStack(this.context, 3.5*this.cellWidth, 0.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB10FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
             //horizStack(this.context, 4.5*this.cellWidth, 0.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB10FN00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
-            horizStack(this.context, 4*this.cellWidth, 0.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB10FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            horizStack(this.context, 4*this.cellWidth, 0.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB10EP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
             //tooltip:
             if(!this.TTlayerDone){
                 TTcolors = ['rgba(110,110,110,1)'];
@@ -116,7 +116,7 @@ function SHARC(){
             }            
         }
         //back
-        horizStack(this.context, 4*this.cellWidth, 1.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, this.meanColor('SHB10EN', frame, 1), 'h', 0);
+        horizStack(this.context, 4*this.cellWidth, 1.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, this.meanColor('SHB10DN', frame, 1), 'h', 0);
         //front
         vertStack(this.context, 4*this.cellWidth, 2.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, this.meanColor('SHB10DP', frame, 0), 'h', 0);
         //tooltip:
@@ -134,7 +134,7 @@ function SHARC(){
         if(this.padsEnabled){
             //horizStack(this.context, 0.5*this.cellWidth, 3.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB09FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
             //horizStack(this.context, 0.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB09FN00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
-            vertStack(this.context, 0.5*this.cellWidth, 4*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, colors(['SHB09FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'v', 0);
+            vertStack(this.context, 0.5*this.cellWidth, 4*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, colors(['SHB09EP00X'], this.dataBus.SHARC, frame, this.nFrames), 'v', 0);
             //tooltip:
             if(!this.TTlayerDone){
                 TTcolors = ['rgba(109,109,109,1)'];
@@ -144,7 +144,7 @@ function SHARC(){
             } 
         }
         //back
-        vertStack(this.context, 1.5*this.cellWidth, 4*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, this.meanColor('SHB09EN', frame, 1), 'v', 0);
+        vertStack(this.context, 1.5*this.cellWidth, 4*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, this.meanColor('SHB09DN', frame, 1), 'v', 0);
         //front
         horizStack(this.context, 2.5*this.cellWidth, 4*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, this.meanColor('SHB09DP', frame, 0), 'v', 0);
         //tooltip:
@@ -162,7 +162,7 @@ function SHARC(){
         if(this.padsEnabled){
             //horizStack(this.context, 3.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB12FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
             //horizStack(this.context, 4.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB12FN00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
-            horizStack(this.context, 4*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB12FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            horizStack(this.context, 4*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB12EP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
             //tooltip:
             if(!this.TTlayerDone){
                 TTcolors = ['rgba(112,112,112,1)'];
@@ -172,7 +172,7 @@ function SHARC(){
             } 
         }
         //back
-        horizStack(this.context, 4*this.cellWidth, 6.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, this.meanColor('SHB12EN', frame, 1), 'h', 0);
+        horizStack(this.context, 4*this.cellWidth, 6.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, this.meanColor('SHB12DN', frame, 1), 'h', 0);
         //front
         vertStack(this.context, 4*this.cellWidth, 5.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, this.meanColor('SHB12DP', frame, 1), 'h', 0);
         //tooltip:
@@ -190,7 +190,7 @@ function SHARC(){
             //downstream quad pad back
             //quadBack(this.context, 14*this.cellWidth, 0.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, colors(['SHQ01FN00X', 'SHQ02FN00X', 'SHQ03FN00X', 'SHQ04FN00X'], this.dataBus.SHARC, frame, this.nFrames), 0);
             //upstream quad pad front
-            quadBack(this.context, 13.5*this.cellWidth, 1.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, colors(['SHQ01FP00X', 'SHQ02FP00X', 'SHQ03FP00X', 'SHQ04FP00X'], this.dataBus.SHARC, frame, this.nFrames), 0);
+            quadBack(this.context, 13.5*this.cellWidth, 1.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, colors(['SHQ01EP00X', 'SHQ02EP00X', 'SHQ03EP00X', 'SHQ04EP00X'], this.dataBus.SHARC, frame, this.nFrames), 0);
 
             //tooltip:
             if(!this.TTlayerDone){
@@ -204,7 +204,7 @@ function SHARC(){
         }
 
         //downstream quad back
-        quadBack(this.context, 13*this.cellWidth, 2.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, this.meanColor('SHQ01EN', frame, 0).concat(this.meanColor('SHQ02EN', frame, 0), this.meanColor('SHQ03EN', frame, 0), this.meanColor('SHQ04EN', frame, 0)), 0);
+        quadBack(this.context, 13*this.cellWidth, 2.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, this.meanColor('SHQ01DN', frame, 0).concat(this.meanColor('SHQ02DN', frame, 0), this.meanColor('SHQ03DN', frame, 0), this.meanColor('SHQ04DN', frame, 0)), 0);
         //downstream quad front
         quadFront(this.context, 12.5*this.cellWidth, 3.5*this.cellHeight, this.quadInnerRad, this.quadOuterRad, this.quadSquish, this.meanColor('SHQ01DP', frame, 0).concat(this.meanColor('SHQ02DP', frame, 0), this.meanColor('SHQ03DP', frame, 0), this.meanColor('SHQ04DP', frame, 0)), 0);
         //downstream quad tooltip:
@@ -222,7 +222,7 @@ function SHARC(){
         if(this.padsEnabled){
             //horizStack(this.context, 14.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB07FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
             //horizStack(this.context, 14.5*this.cellWidth, 8.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB07FN00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
-            vertStack(this.context, 14.5*this.cellWidth, 8*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, colors(['SHB07FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'v', 0);
+            vertStack(this.context, 14.5*this.cellWidth, 8*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, colors(['SHB07EP00X'], this.dataBus.SHARC, frame, this.nFrames), 'v', 0);
             //tooltip:
             if(!this.TTlayerDone){
                 TTcolors = ['rgba(107,107,107,1)'];
@@ -232,7 +232,7 @@ function SHARC(){
             } 
         }
         //back
-        vertStack(this.context, 13.5*this.cellWidth, 8*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, this.meanColor('SHB07EN', frame, 1), 'v', 0);
+        vertStack(this.context, 13.5*this.cellWidth, 8*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, this.meanColor('SHB07DN', frame, 1), 'v', 0);
         //front
         horizStack(this.context, 12.5*this.cellWidth, 8*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, this.meanColor('SHB07DP', frame, 1), 'v', 0);
         //tooltip:
@@ -250,7 +250,7 @@ function SHARC(){
         if(this.padsEnabled){
             //horizStack(this.context, 10.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB06FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
             //horizStack(this.context, 11.5*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB06FN00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
-            horizStack(this.context, 11*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB06FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            horizStack(this.context, 11*this.cellWidth, 4.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB06EP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
             //tooltip:
             if(!this.TTlayerDone){
                 TTcolors = ['rgba(106,106,106,1)'];
@@ -260,7 +260,7 @@ function SHARC(){
             }
         }
         //back
-        horizStack(this.context, 11*this.cellWidth, 5.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, this.meanColor('SHB06EN', frame, 1), 'h', 0);
+        horizStack(this.context, 11*this.cellWidth, 5.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, this.meanColor('SHB06DN', frame, 1), 'h', 0);
         //front
         vertStack(this.context, 11*this.cellWidth, 6.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, this.meanColor('SHB06DP', frame, 0), 'h', 0);
         //tooltip:
@@ -278,7 +278,7 @@ function SHARC(){
         if(this.padsEnabled){
             //horizStack(this.context, 7.5*this.cellWidth, 7.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB05FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
             //horizStack(this.context, 7.5*this.cellWidth, 8.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB05FN00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
-            vertStack(this.context, 7.5*this.cellWidth, 8*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, colors(['SHB05FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'v', 0);
+            vertStack(this.context, 7.5*this.cellWidth, 8*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, colors(['SHB05EP00X'], this.dataBus.SHARC, frame, this.nFrames), 'v', 0);
             //tooltip:
             if(!this.TTlayerDone){
                 TTcolors = ['rgba(105,105,105,1)'];
@@ -288,7 +288,7 @@ function SHARC(){
             }
         }
         //back
-        vertStack(this.context, 8.5*this.cellWidth, 8*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, this.meanColor('SHB05EN', frame, 1), 'v', 0);
+        vertStack(this.context, 8.5*this.cellWidth, 8*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, this.meanColor('SHB05DN', frame, 1), 'v', 0);
         //front
         horizStack(this.context, 9.5*this.cellWidth, 8*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*2*this.cellHeight*1.7, this.meanColor('SHB05DP', frame, 0), 'v', 0);
         //tooltip:
@@ -306,7 +306,7 @@ function SHARC(){
         if(this.padsEnabled){
             //horizStack(this.context, 10.5*this.cellWidth, 11.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB08FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
             //horizStack(this.context, 11.5*this.cellWidth, 11.5*this.cellHeight, this.scaleDown*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB08FN00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
-            horizStack(this.context, 11*this.cellWidth, 11.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB08FP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
+            horizStack(this.context, 11*this.cellWidth, 11.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, colors(['SHB08EP00X'], this.dataBus.SHARC, frame, this.nFrames), 'h', 0);
             //tooltip:
             if(!this.TTlayerDone){
                 TTcolors = ['rgba(108,108,108,1)'];
@@ -316,7 +316,7 @@ function SHARC(){
             }
         }
         //back
-        horizStack(this.context, 11*this.cellWidth, 10.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, this.meanColor('SHB08EN', frame, 1), 'h', 0);
+        horizStack(this.context, 11*this.cellWidth, 10.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, this.meanColor('SHB08DN', frame, 1), 'h', 0);
         //front
         vertStack(this.context, 11*this.cellWidth, 9.5*this.cellHeight, this.scaleDown*2*this.cellWidth, this.scaleDown*this.cellHeight, this.meanColor('SHB08DP', frame, 1), 'h', 0);
         //tooltip:
@@ -401,7 +401,7 @@ function SHARC(){
             colors = [];
             TTcolors = [];
             for(i=0; i<24; i++){
-                name = 'SHQ' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + 'EN' + ( (i<10) ? '0'+i : i ) + 'X';
+                name = 'SHQ' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + 'DN' + ( (i<10) ? '0'+i : i ) + 'X';
                 colors[colors.length] = frameColor(this.dataBus.SHARC[name], frame, this.nFrames);
                 TTcolors[TTcolors.length] = 'rgba('+(i+16)+','+(i+16)+','+(i+16)+',1)';
             }
@@ -413,13 +413,13 @@ function SHARC(){
             colors = [];
             TTcolors = [];
             if(this.padsEnabled){
-                name = 'SHQ' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + 'FN00X';
+                name = 'SHQ' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + 'EN00X';
                 colors[0] = frameColor(this.dataBus.SHARC[name], frame, this.nFrames);
                 TTcolors[0] = 'rgba(40,40,40,1)';
                 radialQuadrant(this.detailContext, this.canvasWidth*0.9, this.canvasHeight*0.4, this.innerQuadRadDetail/2, this.innerQuadRadDetail*2, this.quadArcDetail, -Math.PI/2, colors);
                 if(!this.TTdetailLayerDone)
                     radialQuadrant(this.TTdetailContext, this.canvasWidth*0.9, this.canvasHeight*0.4, this.innerQuadRadDetail/2, this.innerQuadRadDetail*2, this.quadArcDetail, -Math.PI/2, TTcolors, 1);
-                name = 'SHQ' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + 'FP00X';
+                name = 'SHQ' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + 'EP00X';
                 colors[0] = frameColor(this.dataBus.SHARC[name], frame, this.nFrames);
                 TTcolors[0] = 'rgba(41,41,41,1)';
                 radialQuadrant(this.detailContext, this.canvasWidth*0.9, this.canvasHeight*0.6, this.innerQuadRadDetail/2, this.innerQuadRadDetail*2, this.quadArcDetail, -Math.PI/2, colors);
@@ -450,7 +450,7 @@ function SHARC(){
             colors = [];
             TTcolors = [];
             for(i=0; i<48; i++){
-                name = 'SHB' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + 'EN' + ( (i<10) ? '0'+i : i ) + 'X';
+                name = 'SHB' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + 'DN' + ( (i<10) ? '0'+i : i ) + 'X';
                 colors[colors.length] = frameColor(this.dataBus.SHARC[name], frame, this.nFrames);
                 TTcolors[TTcolors.length] = 'rgba('+(i+24)+','+(i+24)+','+(i+24)+',1)';
             }
@@ -462,13 +462,13 @@ function SHARC(){
             colors = [];
             TTcolors = [];
             if(this.padsEnabled){
-                name = 'SHB' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + 'FN00X';
+                name = 'SHB' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + 'EN00X';
                 colors[0] = frameColor(this.dataBus.SHARC[name], frame, this.nFrames);
                 TTcolors[0] = 'rgba(72,72,72,1)';
                 boxFront(this.detailContext, this.canvasWidth*0.85, this.canvasHeight*0.175, 0.15*this.canvasHeight, 0.1*this.canvasWidth, colors);
                 if(!this.TTdetailLayerDone)
                     boxFront(this.TTdetailContext, this.canvasWidth*0.85, this.canvasHeight*0.175, 0.15*this.canvasHeight, 0.1*this.canvasWidth, TTcolors, 1);
-                name = 'SHB' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + 'FP00X';
+                name = 'SHB' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + 'EP00X';
                 colors[0] = frameColor(this.dataBus.SHARC[name], frame, this.nFrames);
                 TTcolors[0] = 'rgba(73,73,73,1)';
                 boxFront(this.detailContext, this.canvasWidth*0.85, this.canvasHeight*0.375, 0.15*this.canvasHeight, 0.1*this.canvasWidth, colors);
@@ -506,7 +506,7 @@ function SHARC(){
                         }
                     } else { //backs
                         for(i=0; i<24; i++){
-                            objects[objects.length] = 'SHQ' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + 'EN' + ( (i<10) ? '0'+i : i ) + 'X';
+                            objects[objects.length] = 'SHQ' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + 'DN' + ( (i<10) ? '0'+i : i ) + 'X';
                         }
                     }            
                 } else{ //boxes
@@ -518,7 +518,7 @@ function SHARC(){
                     } else { //backs
                         //backs
                         for(i=0; i<48; i++){
-                            objects[objects.length] = 'SHB' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + 'EN' + ( (i<10) ? '0'+i : i ) + 'X';
+                            objects[objects.length] = 'SHB' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + 'DN' + ( (i<10) ? '0'+i : i ) + 'X';
                         } 
                     }
 
@@ -530,10 +530,10 @@ function SHARC(){
                 arrayElt = cell - 100;
                 //quadrants
                 if(arrayElt < 5 || arrayElt > 12){
-                    objects[0] = 'SHQ' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + 'FP00X';
+                    objects[0] = 'SHQ' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + 'EP00X';
                     //objects[1] = 'SHQ' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + 'FN00X';
                 } else { //boxes
-                    objects[0] = 'SHB' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + 'FP00X';
+                    objects[0] = 'SHB' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + 'EP00X';
                     //objects[1] = 'SHB' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + 'FN00X';
                 }
                 document.getElementById(this.name+'TT').innerHTML = '';
@@ -543,14 +543,14 @@ function SHARC(){
             arrayElt = Math.ceil(this.detailShowing/2);
             if(arrayElt < 5 || arrayElt > 12){
                 if(cell < 40)
-                    name = 'SHQ' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + ( (cell < 16) ? ('DP' + ((cell<10)?'0'+cell:cell) ) : ('EN' + ((cell-16<10)?'0'+(cell-16):(cell-16))) ) + 'X';
+                    name = 'SHQ' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + ( (cell < 16) ? ('DP' + ((cell<10)?'0'+cell:cell) ) : ('DN' + ((cell-16<10)?'0'+(cell-16):(cell-16))) ) + 'X';
                 else 
-                    name = 'SHQ' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + 'F' + ( (cell==40) ? 'N' : 'P' ) + '00X';
+                    name = 'SHQ' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + 'E' + ( (cell==40) ? 'N' : 'P' ) + '00X';
             } else {
                 if(cell < 72)
-                    name = 'SHB' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + ( (cell < 24) ? ('DP' + ((cell<10)?'0'+cell:cell) ) : ('EN' + ((cell-24<10)?'0'+(cell-24):(cell-24))) ) + 'X';
+                    name = 'SHB' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + ( (cell < 24) ? ('DP' + ((cell<10)?'0'+cell:cell) ) : ('DN' + ((cell-24<10)?'0'+(cell-24):(cell-24))) ) + 'X';
                 else
-                    name = 'SHB' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + 'F' + ( (cell==72) ? 'N' : 'P' ) + '00X';
+                    name = 'SHB' + ( (arrayElt < 10) ? '0'+arrayElt : arrayElt ) + 'E' + ( (cell==72) ? 'N' : 'P' ) + '00X';
             }
             
             document.getElementById(this.detailTooltip.ttDivID).innerHTML = name + '<br><br>' + this.baseTTtext(this.dataBus.SHARC[name].HV, this.dataBus.SHARC[name].threshold, this.dataBus.SHARC[name].rate);
@@ -579,14 +579,14 @@ function SHARC(){
                 quarter = Math.floor(parseInt(key.slice(7,9)) / this.sizeOfQuarter(key));
                 if(window.JSONPstore['thresholds'][key]){
                     this.dataBus.SHARC[key]['threshold'] = window.JSONPstore['thresholds'][key];
-                    if(key.slice(5,6) != 'F'){ //treat pads differently since they don't need to be averaged:
+                    if(key.slice(5,6) != 'E'){ //treat pads differently since they don't need to be averaged:
                         if(this.dataBus.summary[key.slice(0,7) + quarter].threshold != 0xDEADBEEF) 
                             this.dataBus.summary[key.slice(0,7) + quarter].threshold += window.JSONPstore['thresholds'][key];
                     } else 
                         this.dataBus.summary[key].threshold = window.JSONPstore['thresholds'][key];
                 } else{
                     this.dataBus.SHARC[key]['threshold'] = 0xDEADBEEF;
-                    if(key.slice(5,6) != 'F')
+                    if(key.slice(5,6) != 'E')
                         this.dataBus.summary[key.slice(0,7) + quarter].threshold = 0xDEADBEEF;
                     else
                        this.dataBus.summary[key].threshold = 0xDEADBEEF; 
@@ -597,14 +597,14 @@ function SHARC(){
                 quarter = Math.floor(parseInt(key.slice(7,9)) / this.sizeOfQuarter(key));
                 if(window.JSONPstore['scalar'][key]){
                     this.dataBus.SHARC[key]['rate'] = window.JSONPstore['scalar'][key]['TRIGREQ'];
-                    if(key.slice(5,6) != 'F'){ //treat pads differently since they don't need to be averaged:
+                    if(key.slice(5,6) != 'E'){ //treat pads differently since they don't need to be averaged:
                         if(this.dataBus.summary[key.slice(0,7) + quarter].rate != 0xDEADBEEF) 
                             this.dataBus.summary[key.slice(0,7) + quarter].rate += window.JSONPstore['scalar'][key]['TRIGREQ'];
                     } else 
                         this.dataBus.summary[key].rate = window.JSONPstore['scalar'][key]['TRIGREQ'];
                 } else{ 
                     this.dataBus.SHARC[key]['rate'] = 0xDEADBEEF;
-                    if(key.slice(5,6) != 'F')
+                    if(key.slice(5,6) != 'E')
                         this.dataBus.summary[key.slice(0,7) + quarter].rate = 0xDEADBEEF;
                     else
                         this.dataBus.summary[key].rate = 0xDEADBEEF;
@@ -614,7 +614,7 @@ function SHARC(){
 
         //average the summary level cells:
         for(key in this.dataBus.summary){
-            if(this.dataBus.summary.hasOwnProperty(key) && key.slice(5,6)!='F' ){
+            if(this.dataBus.summary.hasOwnProperty(key) && key.slice(5,6)!='E' ){
                 if(this.dataBus.summary[key].HV != 0xDEADBEEF) this.dataBus.summary[key].HV /= this.sizeOfQuarter(key);
                 if(this.dataBus.summary[key].threshold != 0xDEADBEEF) this.dataBus.summary[key].threshold /= this.sizeOfQuarter(key);
                 if(this.dataBus.summary[key].rate != 0xDEADBEEF) this.dataBus.summary[key].rate /= this.sizeOfQuarter(key);
@@ -630,12 +630,12 @@ function SHARC(){
         if(key.slice(0,3) == 'SHB'){
             if(key.slice(5,7) == 'DP')
                 return 6;
-            else if(key.slice(5,7) == 'EN')
+            else if(key.slice(5,7) == 'DN')
                 return 12;
         } else if(key.slice(0,3) == 'SHQ'){
             if(key.slice(5,7) == 'DP')
                 return 4;
-            else if(key.slice(5,7) == 'EN')
+            else if(key.slice(5,7) == 'DN')
                 return 6;
         }        
     };

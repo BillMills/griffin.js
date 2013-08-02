@@ -697,10 +697,11 @@ function tabBKG(canvasID, side){
 }
 */
 //atom spinner:
-function drawSpinner(canvasID){
+function drawSpinner(canvasID, label){
     
     var canvas = document.getElementById(canvasID);
     var context = canvas.getContext('2d');
+    var string = (label) ? label : 'LOADING';
 
         $('#spinner').css('left', window.innerWidth/2 - 100);
         $('#spinner').css('top', window.innerHeight/2 - 100);
@@ -715,7 +716,7 @@ function drawSpinner(canvasID){
 
     context.fillStyle = '#FFFFFF';
     context.font = '16px Arial'
-    context.fillText('LOADING', 100-context.measureText('LOADING').width/2, 145);
+    context.fillText(label, 100-context.measureText(label).width/2, 145);
     window.nProtons = 0;
     window.nNucleons = 0;
 

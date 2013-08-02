@@ -1083,23 +1083,23 @@ function HPGeAssets(){
         insertDOM('tr', 'coreVolt', '', '', 'tigressTTtable', '', '');
         insertDOM('td', 'coreVoltTitle', '', 'text-align:right;', 'coreVolt', '', window.parameters.monitorValues[0])
         insertDOM('td', 'spacer', '', 'width:10px', 'coreVolt', '', '');
-        insertDOM('td', 'coreAhv', '', '', 'coreVolt', '', dataBus.HPGe[cloverLeaf+'N00A'].HV + ' ' + window.parameters.subdetectorUnit[0]);
+        insertDOM('td', 'coreAhv', '', '', 'coreVolt', '', dataBus.HPGe[cloverLeaf+'N00A'].HV.toFixed(0) + ' ' + window.parameters.subdetectorUnit[0]);
         insertDOM('td', 'spacer', '', 'width:50px', 'coreVolt', '', '');
-        insertDOM('td', 'coreBhv', '', '', 'coreVolt', '', dataBus.HPGe[cloverLeaf+'N00B'].HV + ' ' + window.parameters.subdetectorUnit[0]);
+        insertDOM('td', 'coreBhv', '', '', 'coreVolt', '', dataBus.HPGe[cloverLeaf+'N00B'].HV.toFixed(0) + ' ' + window.parameters.subdetectorUnit[0]);
 
         insertDOM('tr', 'coreThreshold', '', '', 'tigressTTtable', '', '');
         insertDOM('td', 'coreThresholdTitle', '', 'text-align:right;', 'coreThreshold', '', window.parameters.monitorValues[1])
         insertDOM('td', 'spacer', '', 'width:10px', 'coreThreshold', '', '');
-        insertDOM('td', 'coreAthreshold', '', '', 'coreThreshold', '', ( (dataBus.HPGe[cloverLeaf+'N00A'].threshold < 0xDEADBEEF) ? dataBus.HPGe[cloverLeaf+'N00A'].threshold + ' ' + window.parameters.subdetectorUnit[1] : 'Not Reporting') );
+        insertDOM('td', 'coreAthreshold', '', '', 'coreThreshold', '', ( (dataBus.HPGe[cloverLeaf+'N00A'].threshold < 0xDEADBEEF) ? dataBus.HPGe[cloverLeaf+'N00A'].threshold.toFixed(0) + ' ' + window.parameters.subdetectorUnit[1] : 'Not Reporting') );
         insertDOM('td', 'spacer', '', 'width:50px', 'coreThreshold', '', '');
-        insertDOM('td', 'coreBthreshold', '', '', 'coreThreshold', '', ( (dataBus.HPGe[cloverLeaf+'N00B'].threshold < 0xDEADBEEF) ? dataBus.HPGe[cloverLeaf+'N00B'].threshold + ' ' + window.parameters.subdetectorUnit[1] : 'Not Reporting') ); 
+        insertDOM('td', 'coreBthreshold', '', '', 'coreThreshold', '', ( (dataBus.HPGe[cloverLeaf+'N00B'].threshold < 0xDEADBEEF) ? dataBus.HPGe[cloverLeaf+'N00B'].threshold.toFixed(0) + ' ' + window.parameters.subdetectorUnit[1] : 'Not Reporting') ); 
 
         insertDOM('tr', 'coreRate', '', '', 'tigressTTtable', '', '');
         insertDOM('td', 'coreRateTitle', '', 'text-align:right;', 'coreRate', '', window.parameters.monitorValues[2])
         insertDOM('td', 'spacer', '', 'width:10px', 'coreRate', '', '');
-        insertDOM('td', 'coreArate', '', '', 'coreRate', '', ( (dataBus.HPGe[cloverLeaf+'N00A'].rate < 0xDEADBEEF) ? dataBus.HPGe[cloverLeaf+'N00A'].rate + ' ' + window.parameters.subdetectorUnit[2] : 'Not Reporting') );
+        insertDOM('td', 'coreArate', '', '', 'coreRate', '', ( (dataBus.HPGe[cloverLeaf+'N00A'].rate < 0xDEADBEEF) ? dataBus.HPGe[cloverLeaf+'N00A'].rate.toFixed(0) + ' ' + window.parameters.subdetectorUnit[2] : 'Not Reporting') );
         insertDOM('td', 'spacer', '', 'width:50px;', 'coreRate', '', '');
-        insertDOM('td', 'coreBrate', '', '', 'coreRate', '', ((dataBus.HPGe[cloverLeaf+'N00B'].rate < 0xDEADBEEF) ? dataBus.HPGe[cloverLeaf+'N00B'].rate + ' ' + window.parameters.subdetectorUnit[2] : 'Not Reporting') ); 
+        insertDOM('td', 'coreBrate', '', '', 'coreRate', '', ((dataBus.HPGe[cloverLeaf+'N00B'].rate < 0xDEADBEEF) ? dataBus.HPGe[cloverLeaf+'N00B'].rate.toFixed(0) + ' ' + window.parameters.subdetectorUnit[2] : 'Not Reporting') ); 
 
         insertDOM('tr', 'divider', '', '', 'tigressTTtable', '', '');
         insertDOM('td', 'line', '', 'border-bottom-style:solid; border-color:white; border-width:1px;', 'divider', '', '');
@@ -1120,23 +1120,23 @@ function HPGeAssets(){
             insertDOM('tr', elt+'Volt', '', '', 'tigressTTtable', '', '');
             insertDOM('td', elt+'VoltTitle', '', 'text-align:right;', elt+'Volt', '', window.parameters.monitorValues[0])
             insertDOM('td', 'spacer', '', 'width:10px', elt+'Volt', '', '');
-            insertDOM('td', elt+'Ahv', '', '', elt+'Volt', '', dataBus.HPGe[eltName1].HV + ' ' + window.parameters.subdetectorUnit[0]);
+            insertDOM('td', elt+'Ahv', '', '', elt+'Volt', '', dataBus.HPGe[eltName1].HV.toFixed(0) + ' ' + window.parameters.subdetectorUnit[0]);
             insertDOM('td', 'spacer', '', 'width:50px', elt+'Volt', '', '');
-            insertDOM('td', elt+'Bhv', '', '', elt+'Volt', '', dataBus.HPGe[eltName2].HV + ' ' + window.parameters.subdetectorUnit[0]);
+            insertDOM('td', elt+'Bhv', '', '', elt+'Volt', '', dataBus.HPGe[eltName2].HV.toFixed(0) + ' ' + window.parameters.subdetectorUnit[0]);
 
             insertDOM('tr', elt+'Threshold', '', '', 'tigressTTtable', '', '');
             insertDOM('td', elt+'ThresholdTitle', '', 'text-align:right;', elt+'Threshold', '', window.parameters.monitorValues[1])
             insertDOM('td', 'spacer', '', 'width:10px', elt+'Threshold', '', '');
-            insertDOM('td', elt+'Athreshold', '', '', elt+'Threshold', '', ((dataBus.HPGe[eltName1].threshold < 0xDEADBEEF) ? dataBus.HPGe[eltName1].threshold + ' ' + window.parameters.subdetectorUnit[1] : 'Not Reporting') );
+            insertDOM('td', elt+'Athreshold', '', '', elt+'Threshold', '', ((dataBus.HPGe[eltName1].threshold < 0xDEADBEEF) ? dataBus.HPGe[eltName1].threshold.toFixed(0) + ' ' + window.parameters.subdetectorUnit[1] : 'Not Reporting') );
             insertDOM('td', 'spacer', '', 'width:50px', elt+'Threshold', '', '');
-            insertDOM('td', elt+'Bthreshold', '', '', elt+'Threshold', '', ( (dataBus.HPGe[eltName2].threshold < 0xDEADBEEF) ? dataBus.HPGe[eltName2].threshold + ' ' + window.parameters.subdetectorUnit[1] : 'Not Reporting') ); 
+            insertDOM('td', elt+'Bthreshold', '', '', elt+'Threshold', '', ( (dataBus.HPGe[eltName2].threshold < 0xDEADBEEF) ? dataBus.HPGe[eltName2].threshold.toFixed(0) + ' ' + window.parameters.subdetectorUnit[1] : 'Not Reporting') ); 
 
             insertDOM('tr', elt+'Rate', '', '', 'tigressTTtable', '', '');
             insertDOM('td', elt+'RateTitle', '', 'text-align:right;', elt+'Rate', '', window.parameters.monitorValues[2])
             insertDOM('td', 'spacer', '', 'width:10px', elt+'Rate', '', '');
-            insertDOM('td', elt+'Arate', '', '', elt+'Rate', '', ( (dataBus.HPGe[eltName1].rate < 0xDEADBEEF) ? dataBus.HPGe[eltName1].rate + ' ' + window.parameters.subdetectorUnit[2] : 'Not Reporting') );
+            insertDOM('td', elt+'Arate', '', '', elt+'Rate', '', ( (dataBus.HPGe[eltName1].rate < 0xDEADBEEF) ? dataBus.HPGe[eltName1].rate.toFixed(0) + ' ' + window.parameters.subdetectorUnit[2] : 'Not Reporting') );
             insertDOM('td', 'spacer', '', 'width:50px;', elt+'Rate', '', '');
-            insertDOM('td', elt+'Brate', '', '', elt+'Rate', '', ( (dataBus.HPGe[eltName2].rate < 0xDEADBEEF) ? dataBus.HPGe[eltName2].rate + ' ' + window.parameters.subdetectorUnit[2] : 'Not Reporting') ); 
+            insertDOM('td', elt+'Brate', '', '', elt+'Rate', '', ( (dataBus.HPGe[eltName2].rate < 0xDEADBEEF) ? dataBus.HPGe[eltName2].rate.toFixed(0) + ' ' + window.parameters.subdetectorUnit[2] : 'Not Reporting') ); 
 
             if(i!=3){
                 insertDOM('tr', elt+'divider', '', '', 'tigressTTtable', '', '');

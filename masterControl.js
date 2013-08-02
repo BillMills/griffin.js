@@ -1,6 +1,10 @@
 function loadJSONP(gatekeeper, callback) {
     var i;
 
+    if(document.getElementById('spinner')){
+        drawSpinner('spinner', 'Waiting for JSONP');
+    }
+
     window.JSONPstore = {'scalar':{}, 'thresholds':{}}; //dump the old store so old junk doesn't persist.
     for(i=0; i<window.parameters.JSONPrepos.length; i++){
 

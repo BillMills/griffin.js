@@ -194,12 +194,12 @@ SHARCDS = function(padsEnabled){
 		}
 		//backs:
 		for(j=0; j<48; j++){
-			name = 'SHB' + ( (i<10) ? '0'+i : i ) + 'EN' + ( (j<10) ? '0'+j : j ) + 'X';
+			name = 'SHB' + ( (i<10) ? '0'+i : i ) + 'DN' + ( (j<10) ? '0'+j : j ) + 'X';
 			deployKeys('SHARC', name, 100*i + 24 + j);
 		}		
 		//pads
 		for(j=1; j<2; j++){ //only fronts actually instrumented?
-			name = 'SHB' + ( (i<10) ? '0'+i : i ) + 'F' + ( (j==0) ? 'N' : 'P' ) + '00X';
+			name = 'SHB' + ( (i<10) ? '0'+i : i ) + 'E' + ( (j==0) ? 'N' : 'P' ) + '00X';
 			deployKeys('SHARC', name, 100*i+72 + j);
 			deployKeys('summary', name, 10*i+8 + j); //summary level, see below
 		}
@@ -216,17 +216,17 @@ SHARCDS = function(padsEnabled){
 		}
 		//backs:
 		for(j=0; j<24; j++){
-			name = 'SHQ' + '0'+i + 'EN' + ( (j<10) ? '0'+j : j ) + 'X'; //upstream
+			name = 'SHQ' + '0'+i + 'DN' + ( (j<10) ? '0'+j : j ) + 'X'; //upstream
 			deployKeys('SHARC', name, 100*i + 16 + j);
-			name = 'SHQ' + (i+12) + 'EN' + ( (j<10) ? '0'+j : j ) + 'X'; //downstream
+			name = 'SHQ' + (i+12) + 'DN' + ( (j<10) ? '0'+j : j ) + 'X'; //downstream
 			deployKeys('SHARC', name, 100*(i+12) + 16 + j);
 		}
 		//pads
 		for(j=1; j<2; j++){  //only fronts actually instrumented?
-			name = 'SHQ0' + i + 'F' + ( (j==0) ? 'N' : 'P' ) + '00X';
+			name = 'SHQ0' + i + 'E' + ( (j==0) ? 'N' : 'P' ) + '00X';
 			deployKeys('SHARC', name, 100*i+40 + j);
 			deployKeys('summary', name, 10*i+8 + j);
-			name = 'SHQ' + (i+12) + 'F' + ( (j==0) ? 'N' : 'P' ) + '00X';
+			name = 'SHQ' + (i+12) + 'E' + ( (j==0) ? 'N' : 'P' ) + '00X';
 			deployKeys('SHARC', name, 100*(i+12)+40 + j);
 			deployKeys('summary', name, 10*(i+12)+8 + j);
 		}
@@ -250,7 +250,7 @@ SHARCDS = function(padsEnabled){
 		}
 		//backs:
 		for(j=0; j<4; j++){
-			name = 'SHB' + ( (i<10) ? '0'+i : i ) + 'EN' + j;
+			name = 'SHB' + ( (i<10) ? '0'+i : i ) + 'DN' + j;
 			deployKeys('summary', name, 10*i + 4 + j);
 		}		
 	}
@@ -266,9 +266,9 @@ SHARCDS = function(padsEnabled){
 		}
 		//backs:
 		for(j=0; j<4; j++){
-			name = 'SHQ' + '0'+i + 'EN' + j; //upstream
+			name = 'SHQ' + '0'+i + 'DN' + j; //upstream
 			deployKeys('summary', name, 10*i + 4 + j);
-			name = 'SHQ' + (i+12) + 'EN' + j; //downstream
+			name = 'SHQ' + (i+12) + 'DN' + j; //downstream
 			deployKeys('summary', name, 10*(i+12) + 4 + j);
 		}
 	}
