@@ -236,7 +236,7 @@ function Dashboard(){
 
 
     //alarm animation test:
-    fadeRed('TIGRESSTab')
+    //fadeRed('TIGRESSTab')
     function fadeBlack(tabID){
         $('#'+tabID).off();
         $('#'+tabID).on('transitionend', function(){fadeRed(tabID)});

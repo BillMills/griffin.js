@@ -16,8 +16,21 @@ function configure(detector){
 		insertDOM('p', 'S2label', '', 'display:inline;', 'BAMBINOmodeLabel', '', 'S2');
 		insertDOM('input', 'BAMBINOmodeS2', '', '', 'BAMBINOmodeLabel', '', '', 'BAMBINOmode', 'radio', 'S2')
 		insertDOM('p', 'S3label', '', 'display:inline; margin-left:10px;', 'BAMBINOmodeLabel', '', 'S3');
-		insertDOM('input', 'BAMBINOmodeS3', '', '', 'BAMBINOmodeLabel', '', '', 'BAMBINOmode', 'radio', 'S3')
+		insertDOM('input', 'BAMBINOmodeS3', '', '', 'BAMBINOmodeLabel', '', '', 'BAMBINOmode', 'radio', 'S3');
+		document.getElementById('BAMBINOmodeS3').setAttribute('checked', true);
 		minmaxTable('BAMBINOdiv', 'BAMBINO');
+		insertDOM('br', 'break', '', '', 'BAMBINOdiv');
+		insertDOM('p', 'BAMBINOupstreamLabel', '', 'float:left; text-align:right;', 'BAMBINOdiv', '', 'Upstream');
+		insertDOM('input', 'BAMBINOupstreamCheck', '', 'float:left;', 'BAMBINOupstreamLabel', '', '', '', 'checkbox', 'deploy');
+		document.getElementById('BAMBINOupstreamCheck').setAttribute('checked', true);
+		insertDOM('p', 'BAMBINOdownstreamLabel', '', 'float:left; text-align:right;', 'BAMBINOdiv', '', 'Downstream');
+		insertDOM('input', 'BAMBINOdownstreamCheck', '', 'float:left; margin-left:10px', 'BAMBINOdownstreamLabel', '', '', '', 'checkbox', 'deploy');
+		document.getElementById('BAMBINOdownstreamCheck').setAttribute('checked', true);
+		//insertDOM('p', 'BAMBINOlayersLabel', '', 'float:left; text-align:right; margin-left:50px;', 'BAMBINOdiv', '', 'Layers:');
+
+		document.getElementById('BAMBINOupstreamCheck').onchange = function(){checkBAMBINO()};
+		document.getElementById('BAMBINOdownstreamCheck').onchange = function(){checkBAMBINO()};
+
 	} else if(detector == 'SCEPTAR'){
 		minmaxTable('SCEPTARdiv', 'SCEPTAR');
 	} else if(detector == 'ZDS'){

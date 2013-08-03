@@ -193,8 +193,9 @@ function fetchCustomParameters(){
     paths[BAMBINO+2] = '/DashboardConfig/BAMBINO/thresholdScale[*]'     //[min thresh, max thresh] on color scale
     paths[BAMBINO+3] = '/DashboardConfig/BAMBINO/rateScale[*]'          //[min rate, max rate] on color scale
     paths[BAMBINO+4] = '/DashboardConfig/BAMBINO/mode'                  //'S2' or 'S3'
+    paths[BAMBINO+5] = '/DashboardConfig/BAMBINO/targetSide[*]'         //[upstream, downstream] deployment
 
-    DANTE = BAMBINO+5;
+    DANTE = BAMBINO+6;
     paths[DANTE] = '/DashboardConfig/DANTE/deploy'
     paths[DANTE+1] = '/DashboardConfig/DANTE/LaBrPMTHVscale[*]'
     paths[DANTE+2] = '/DashboardConfig/DANTE/LaBrPMTthresholdScale[*]'
@@ -300,6 +301,7 @@ function fetchCustomParameters(){
     window.parameters['alarmThresholds'][0] = parseFloat(data[HV]);
     window.parameters['alarmThresholds'][1] = parseFloat(data[HV+1]);
     window.parameters['alarmThresholds'][2] = parseFloat(data[HV+2]);
+    window.parameters['maxTemperature'] = parseFloat(data[HV+2]);
     window.parameters['minVoltage'] = parseFloat(data[HV+3][0]);
     window.parameters['maxVoltage'] = parseFloat(data[HV+3][1]);
     window.parameters['minRampSpeed'] = parseFloat(data[HV+4][0]);
@@ -309,6 +311,8 @@ function fetchCustomParameters(){
     window.parameters.BAMBINO.minima.BAMBINO = [parseFloat(data[BAMBINO+1][0]), parseFloat(data[BAMBINO+2][0]), parseFloat(data[BAMBINO+3][0])];
     window.parameters.BAMBINO.maxima.BAMBINO = [parseFloat(data[BAMBINO+1][1]), parseFloat(data[BAMBINO+2][1]), parseFloat(data[BAMBINO+3][1])];
     window.parameters.BAMBINOmode = data[BAMBINO+4].slice(0, data[BAMBINO+4].length-1);
+    window.parameters.BAMBINOdeployment[0] = parseInt(data[BAMBINO+5][0],10);
+    window.parameters.BAMBINOdeployment[1] = parseInt(data[BAMBINO+5][1],10);
 
     window.parameters.deployment.DANTE = parseFloat(data[DANTE]);
     window.parameters.DANTE.minima.LaBrPMT = [parseFloat(data[DANTE+1][0]), parseFloat(data[DANTE+2][0]), parseFloat(data[DANTE+3][0])];

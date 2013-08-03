@@ -716,7 +716,7 @@ function drawSpinner(canvasID, label){
 
     context.fillStyle = '#FFFFFF';
     context.font = '16px Arial'
-    context.fillText(label, 100-context.measureText(label).width/2, 145);
+    context.fillText(string, 100-context.measureText(string).width/2, 145);
     window.nProtons = 0;
     window.nNucleons = 0;
 

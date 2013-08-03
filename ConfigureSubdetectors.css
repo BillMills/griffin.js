@@ -25,6 +25,12 @@ div.tooltip{
 	padding: 20px;
 }
 
+/*
+#subdetectorParameters{
+	position: relative;
+	top:30px;
+}
+*/
 canvas.iconCanv{
 	margin-top:10px; 
 	margin-bottom:10px;
@@ -36,7 +42,7 @@ canvas.iconCanv{
 	-webkit-transition:opacity 0.5s;
 	*/
 }
-
+/*
 h1#title{
 	opacity: 0.3; 
 	font-family: "Orbitron", sans-serif; 
@@ -45,7 +51,7 @@ h1#title{
 	margin-left:20px;
 	margin-bottom:20px;
 }
-
+*/
 table.minmaxtable{
 	float:left;
 	text-align: center;
@@ -76,4 +82,5 @@ button.button{
 
 :invalid{
 	color: #FF0000;
+	border: 2px solid #FF0000;
 }

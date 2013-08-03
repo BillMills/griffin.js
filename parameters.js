@@ -3,12 +3,12 @@ function loadParameters(){
 				window.parameters = {
 				"devMode" : 0,
 				"MIDASlegacyMode" : 0,
-				"ExpName" : "TIGRESS",
-				"statusURL" : "http://alphadon.triumf.ca:8082/",
-				//"topDeployment" : {"HV":1, "Subsystems":1, "DAQ":1, "Clock":1, "Trigger":0},
-				//"deployment" : {"BAMBINO":1, "DANTE":1, "DESCANT":1, "HPGe":1, "PACES":1, "SCEPTAR":1, "SHARC":1, "SPICE":1, "TIPwall":1, "TIPball":1, "DSSD":0},
-				"topDeployment" : {"HV":0, "Subsystems":1, "DAQ":1, "Clock":0, "Trigger":0},
-				"deployment" : {"BAMBINO":0, "DANTE":0, "DESCANT":0, "HPGe":1, "PACES":0, "SCEPTAR":0, "SHARC":1, "SPICE":0, "TIPwall":0, "TIPball":0, "DSSD":0},
+				"ExpName" : "",
+				"statusURL" : "",
+				"topDeployment" : {"HV":1, "Subsystems":1, "DAQ":1, "Clock":1, "Trigger":0},
+				"deployment" : {"BAMBINO":1, "DANTE":1, "DESCANT":1, "HPGe":1, "PACES":1, "SCEPTAR":1, "SHARC":1, "SPICE":1, "TIPwall":1, "TIPball":1, "DSSD":0},
+				//"topDeployment" : {"HV":0, "Subsystems":1, "DAQ":1, "Clock":0, "Trigger":0},
+				//"deployment" : {"BAMBINO":0, "DANTE":0, "DESCANT":0, "HPGe":1, "PACES":0, "SCEPTAR":0, "SHARC":1, "SPICE":0, "TIPwall":0, "TIPball":0, "DSSD":0},
 				"wrapper" : "waffleplate",
 				"subdetectorUnit" : ["V", "ADC units", "Hz"],
 				"monitorValues" : ["HV", "Thresholds", "Rate", "TAC-Thresholds", "TAC-Rate"],  //for filling tooltip
@@ -23,6 +23,7 @@ function loadParameters(){
 				"scaleMaxima" : [1,1,1,1],
 				"prefix" : ["Demand Voltage: ", "Reported Voltage: ", "Reported Current: ", "Voltage Ramp Up Speed: ", "Voltage Ramp Down Speed", "Temperature: ", "Status: "],
 				"postfix" : ["V", "V", "uA", "V/s", "V/s", "C", ""],
+				//min voltage and max voltage seem unnecessary, TODO: investigate removal.
 				"minVoltage" : 0,
 				"maxVoltage" : 1,
 				"minCurrent" : 0,
@@ -31,10 +32,10 @@ function loadParameters(){
 				"maxTemperature" : 1,
 				"minRampSpeed" : 0,
 				"maxRampSpeed" : 1,
-				"statusPrecision" : 1,
-				"barChartPrecision" : 1,
-				"alarmPrecision" : 1,
-				"tooltipPrecision" : 1,
+				"statusPrecision" : 0,
+				"barChartPrecision" : 0,
+				"alarmPrecision" : 0,
+				"tooltipPrecision" : 0,
 				"voltUnit" : "V",
 				"rampUnit" : "V/s",
 				"currentUnit" : "uA",
@@ -169,7 +170,7 @@ function loadParameters(){
 				"DAQminima" : [0, 0, 0, 0, 0, 0], //minima of element scales: [top level view rate, top level transfer, detail view rate, detail view transfer, master rate, master transfer]
 				"DAQmaxima" : [10000, 100000, 1000, 1000, 50000, 50000],
 
-				"JSONPrepos" : ["http://midtig06.triumf.ca:8091/mother/parameters?jsonp=parseThreshold", "http://midtig06.triumf.ca:8091/mother/scalar?jsonp=parseResponse"]
+				"JSONPrepos" : ["http://midtig06.xtriumf.ca:8091/mother/parameters?jsonp=parseThreshold", "http://midtig06.xtriumf.ca:8091/mother/scalar?jsonp=parseResponse"]
 				}
 
 				window.parameters.warningFill = document.getElementById('warningFill');

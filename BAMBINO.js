@@ -41,16 +41,22 @@ function BAMBINO(spiceMode){
     this.centerBottom = this.canvasHeight*0.6;
     this.radialWidth = (this.CDradius - this.CDinnerRadius) / this.nRadial;
     this.azimuthalArc = 2*Math.PI / this.nAzimuthal;
+
     if(this.layers==1 && window.parameters.BAMBINOdeployment[1]==0)
         this.upstreamTitleCenter = this.canvasWidth/2;
     else if(this.layers==1)
-        this.upstreamTitleCenter = this.centerLeft;    
+        this.upstreamTitleCenter = this.centerLeft;
+    else if(window.parameters.BAMBINOdeployment[1]==1)
+        this.upstreamTitleCenter = (this.centerLeftD + this.centerLeftE)/2
     else
         this.upstreamTitleCenter = this.canvasWidth/2;
+
     if(this.layers==1 && window.parameters.BAMBINOdeployment[0]==0)
         this.downstreamTitleCenter = this.canvasWidth/2;
     else if(this.layers==1)
-        this.downstreamTitleCenter = this.centerRight;    
+        this.downstreamTitleCenter = this.centerRight;
+    else if(window.parameters.BAMBINOdeployment[0]==1)
+        this.downstreamTitleCenter = (this.centerRightD + this.centerRightE)/2   
     else
         this.downstreamTitleCenter = this.canvasWidth/2;    
 

@@ -5,7 +5,6 @@
 	    <script src="zepto.min.js" type="text/javascript"></script>
 	    <script src="utilities.js" type="text/javascript"></script>
 	    <script src="drawing.js" type="text/javascript"></script>
-	    <script src="branding.js" type="text/javascript"></script>
 	    <script src="thumbnails.js" type="text/javascript"></script>
 	    <script src="subdetectorForms.js" type="text/javascript"></script>
 
@@ -13,6 +12,13 @@
 	</head>
 
 	<body style="font-family: 'Raleway', sans-serif; font-size:14px; background-color:#333333; color:#FFFFFF;">
+
+	    <div id='branding' style='width:100%; height:85; text-align:left; border-color:#999999; border-left-style:solid; border-bottom-style:solid; border-left-width:5px; border-bottom-width:5px; border-bottom-left-radius:25px; background-color:#333333; margin-bottom:5px; padding-bottom:5px;'>
+	      <img id='logo' height='75px' width='80px' src='triumf.gif' style='opacity:0.5625; padding-left:10px; margin-bottom:5px;'></img>
+	      <h1 id='title' style='position:relative; display:inline; font: 80px Raleway; top:-10px; margin-left:10px; color:#999999'>TRIUMF</h1>
+	    </div>
+	    <p id='youAreHere' style='float:right; color:#999999; width:100%; text-align:right; font-size:28px; margin-top:0px; margin-bottom:20px;'>Parameter Configuration</p>
+
 		<script type='text/JavaScript'>
 			var i;
 			
@@ -25,21 +31,12 @@
 			window.ttMessages['DESCANTcanv'] = '<u>DESCANT Config</u><br><br>'+scaleLimitMessage;
 			window.ttMessages['PACEScanv'] = '<u>PACES Config</u><br><br>'+scaleLimitMessage;
 			window.ttMessages['DANTEcanv'] = '<u>DANTE Config</u><br><br>'+scaleLimitMessage;
-			window.ttMessages['BAMBINOcanv'] = '<u>BAMBINO Config</u><br><br> Choose which mode to run BAMBINO in, either S2 or S3.<br><br>' + scaleLimitMessage;
+			window.ttMessages['BAMBINOcanv'] = '<u>BAMBINO Config</u><br><br> Choose which mode to run BAMBINO in, either S2 or S3, and whether deployment is upstream, downstream, or both.<br><br>' + scaleLimitMessage;
 			window.ttMessages['SCEPTARcanv'] = '<u>SCEPTAR Config</u><br><br>'+scaleLimitMessage;
 			window.ttMessages['SPICEcanv'] = '<u>SPICE Config</u><br><br>'+scaleLimitMessage;
 			window.ttMessages['TIPwallcanv'] = '<u>TIP Wall Config</u><br><br>'+scaleLimitMessage;
 			window.ttMessages['TIPballcanv'] = '<u>TIP Ball Config</u><br><br>'+scaleLimitMessage;
 			window.ttMessages['ZDScanv'] = '<u>ZDS Config</u><br><br>'+scaleLimitMessage;
-
-			//banner
-			insertDOM('canvas', 'banner', '', '', 'body', '', '');
-			insertDOM('div', 'navBar', '', 'margin:none; margin-bottom:50px', 'body', '', '');
-			insertDOM('p', 'youAreHere', '', 'display: inline; color:rgba(255,255,255,0.3); font-size:24px; margin:0; position:absolute; right:0;', 'navBar', '','');
-			var experiment = ODBGet('DashboardConfig/topLevel/HPGeArray');
-			Banner('banner', 'youAreHere', 'navBar', 'Experimental Deployment', experiment);
-
-			insertDOM('h1', 'title', '', '', 'body', '', 'Initialize Experimental Parameters');
 
 			//which subdetectors are present?
 			var subdetectors = [];
@@ -53,8 +50,8 @@
 			if(ODBGet('DashboardConfig/BAMBINO/deploy') > 0) subdetectors[subdetectors.length] = 'BAMBINO';
 			if(ODBGet('DashboardConfig/SCEPTAR/USdeploy') > 0 || ODBGet('DashboardConfig/SCEPTAR/DSdeploy') > 0) subdetectors[subdetectors.length] = 'SCEPTAR';
 			if(ODBGet('DashboardConfig/SPICE/deploy') > 0) subdetectors[subdetectors.length] = 'SPICE';
-			if(ODBGet('DashboardConfig/TIP/deploy') > 0 && ODBGet('DashboardConfig/TIP/mode').slice(0,4) == 'wall' )subdetectors[subdetectors.length] = 'TIPwall';
-			if(ODBGet('DashboardConfig/TIP/deploy') > 0 && ODBGet('DashboardConfig/TIP/mode').slice(0,4) == 'ball') subdetectors[subdetectors.length] = 'TIPball';
+			if(ODBGet('DashboardConfig/TIPwall/deploy') > 0) subdetectors[subdetectors.length] = 'TIPwall';
+			if(ODBGet('DashboardConfig/TIPball/deploy') > 0) subdetectors[subdetectors.length] = 'TIPball';
 			if(ODBGet('DashboardConfig/ZDS/deploy') > 0) subdetectors[subdetectors.length] = 'ZDS';
 
 			//inject the form to hold all the submission fields:
@@ -84,14 +81,14 @@
     		insertDOM('td', 'topLevelNameLabel', '', 'text-align:right;', 'topLevelName', '', '')
     		insertDOM('p', 'EXPnameLabel', '', '', 'topLevelNameLabel', '', 'Experiment Name');
     		insertDOM('td', 'topLevelNameField', '', '', 'topLevelName', '', '');
-    		insertDOM('input', 'EXPname', '', '', 'topLevelNameField', '', '', '', 'text', 'Experiment');
+    		insertDOM('input', 'EXPname', '', '', 'topLevelNameField', '', '', '', 'text', ODBGet('/Experiment/Name'));
     		document.getElementById('EXPname').setAttribute('size', 40);
     		//status url row
     		insertDOM('tr', 'topLevelURL', '', '', 'topLevelTable', '', '');
     		insertDOM('td', 'topLevelURLlabel', '', 'text-align:right;', 'topLevelURL', '', '');
     		insertDOM('p', 'StatusURLlabel', '', 'display:inline', 'topLevelURLlabel', '', 'Status URL');
     		insertDOM('td', 'topLevelURLfield', '', '', 'topLevelURL', '', '');
-    		insertDOM('input', 'StatusURL', '', '', 'topLevelURLfield', '', '', '', 'text', 'http://alphadon.triumf.ca:8081/');
+    		insertDOM('input', 'StatusURL', '', '', 'topLevelURLfield', '', '', '', 'text', window.location.host);
     		document.getElementById('StatusURL').setAttribute('size', 40);
 
 			//HV Panel://////////////////////////////////////////////////////////////////////////////////////////
@@ -101,7 +98,7 @@
 			thumbnail('hvCanv', 'HV', 'none', '#999999');
     		document.getElementById('hvCanv').onmousemove = function(){
     			window.mousePointing = 'hv';
-    			document.getElementById('tooltip').innerHTML = "<u>HV Conifg</u><br><br> Set the tolerances for the dashboard's Alarm Service.  Voltage tolerance represents how far the measured voltage can be from the demand voltage before throwing an alarm; current and temperature tolerances represent the maximum current and temperature allowed before an alarm is tripped.<br><br>  The Voltage Parameter Limits fix the range of demand voltage and voltage ramp speeds allowed to be set from the dashboard.";
+    			document.getElementById('tooltip').innerHTML = "<u>HV Conifg</u><br><br> Set the tolerances for the dashboard's Alarm Service.  Voltage tolerance represents how far the measured voltage can be from the demand voltage before throwing an alarm; current and temperature tolerances represent the maximum current and temperature allowed before an alarm is tripped.<br><br>  The Voltage Parameter Limits fix the range of voltage ramp speeds allowed to be set from the dashboard.";
     		}
     		document.getElementById('hvCanv').onmouseout = function(){
     			window.mousePointing = '';
@@ -140,7 +137,9 @@
 			document.getElementById('HVTablethresholdUnit').innerHTML = 'V/s';
 			var element = document.getElementById('HVTablerateRow');
             element.parentNode.removeChild(element);
-
+            //min / max voltages seem unnecessary, remove:
+			var element = document.getElementById('HVTableHVRow');
+            element.parentNode.removeChild(element);
 			//subdetector config panels:///////////////////////////////////////////////////////////////////////////////
 			function insertIcon(detector){
 				insertDOM('div', detector+'div', 'sectionDiv', '', 'subdetectorParameters', '', '','','div');
@@ -198,13 +197,14 @@
 				if(document.getElementById('subdetectorParameters').checkValidity()){
 					//top Level
 					ODBSet('/DashboardConfig/topLevel/expName', document.getElementById('EXPname').value);
+					ODBSet('/Experiment/Name', document.getElementById('EXPname').value);  //probably don't need both of these...
 					ODBSet('/DashboardConfig/topLevel/statusURL', document.getElementById('StatusURL').value);
 
 					//HV - funny id's come from repurposing the minmax table
 					ODBSet('/DashboardConfig/HV/voltageTolerance', document.getElementById('voltageTolInput').valueAsNumber);
 					ODBSet('/DashboardConfig/HV/currentTolerance', document.getElementById('currentTolInput').valueAsNumber);
 					ODBSet('/DashboardConfig/HV/tempTolerance', document.getElementById('tempTolInput').valueAsNumber);
-					ODBSet('/DashboardConfig/HV/demandVoltage[*]', [document.getElementById('HVTableHVmin').valueAsNumber, document.getElementById('HVTableHVmax').valueAsNumber] );
+					//ODBSet('/DashboardConfig/HV/demandVoltage[*]', [document.getElementById('HVTableHVmin').valueAsNumber, document.getElementById('HVTableHVmax').valueAsNumber] );
 					ODBSet('/DashboardConfig/HV/voltRampSpeed[*]', [document.getElementById('HVTablethresholdMin').valueAsNumber, document.getElementById('HVTablethresholdMax').valueAsNumber]);
 
 					for(var i=0; i<subdetectors.length; i++){
@@ -213,6 +213,11 @@
 							var bambinoMode = (document.getElementById('BAMBINOmodeS2').checked) ? 'S2' : 'S3';
 							ODBSet('/DashboardConfig/BAMBINO/mode', bambinoMode);
 							setMinMax('BAMBINO', '');
+							var targetSide = [0,0];
+							if(document.getElementById('BAMBINOupstreamCheck').checked) targetSide[0] = 1;
+							if(document.getElementById('BAMBINOdownstreamCheck').checked) targetSide[1] = 1;
+							ODBSet('/DashboardConfig/BAMBINO/targetSide[*]', targetSide);
+
 						}
 
 						//DANTE
@@ -271,7 +276,7 @@
 							setMinMax('ZDS', '');
 						}
 
-						window.location = 'http://alphadon.triumf.ca:8082/CS/Dashboard';
+						window.location = window.location.href.replace("ConfigureSubdetectors", "Dashboard");
 					}
 				} else {
 					alert("Something doesn't make sense.  Check fields for mistakes, highlighted in red.");
@@ -285,6 +290,22 @@
 				ODBSet('/DashboardConfig/'+detector+'/'+subType+'HVscale[*]', [document.getElementById(id+'HVmin').valueAsNumber, document.getElementById(id+'HVmax').valueAsNumber]);
 				ODBSet('/DashboardConfig/'+detector+'/'+subType+'thresholdScale[*]', [document.getElementById(id+'thresholdMin').valueAsNumber, document.getElementById(id+'thresholdMax').valueAsNumber]);
 				ODBSet('/DashboardConfig/'+detector+'/'+subType+'rateScale[*]', [document.getElementById(id+'rateMin').valueAsNumber, document.getElementById(id+'rateMax').valueAsNumber]);
+			}
+
+			//make sure someone has chosen at least one of {upstream, downstream} for BAMBINO
+			function checkBAMBINO(){
+				if(document.getElementById('BAMBINOdownstreamCheck').checked || document.getElementById('BAMBINOupstreamCheck').checked){
+					document.getElementById('BAMBINOdownstreamCheck').setCustomValidity('');
+					document.getElementById('BAMBINOupstreamCheck').setCustomValidity('');
+					document.getElementById('BAMBINOupstreamLabel').style.color='#FFFFFF';
+					document.getElementById('BAMBINOdownstreamLabel').style.color='#FFFFFF';
+				} else {
+					document.getElementById('BAMBINOdownstreamCheck').setCustomValidity('Choose at least one of upstream, downstream for BAMBINO.');
+					document.getElementById('BAMBINOupstreamCheck').setCustomValidity('Choose at least one of upstream, downstream for BAMBINO.');
+					document.getElementById('BAMBINOupstreamLabel').style.color='#FF0000';
+					document.getElementById('BAMBINOdownstreamLabel').style.color='#FF0000';
+				}
+
 			}
 
 
