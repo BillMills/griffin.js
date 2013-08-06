@@ -158,10 +158,25 @@
     <script id='main' type="text/JavaScript">
 
       function main(){
-        var i, j, k;
+        var i, j, k, paths=[], data;
 
         //overwrite default parameters with custom ones:
         if(!window.parameters.devMode) fetchCustomParameters();
+
+        //autodetect how many clocks are present in the ODB - must be registered under /Equipment/Clock[x], x = 0..23
+        for(i=0; i<25; i++){
+          paths[i] = '/Equipment/Clock'+i+'/Variables/Input[0]';
+        }
+        //also grab array of clock parameters:
+        paths[25] = '/Equipment/Clock0/Settings/Names Input[*]';
+        data = ODBMGet(paths);
+        for(i=0; i<25; i++){
+          if(data[i] != '<DB_NO_KEY>\n'){
+            window.parameters.nClocks++;
+            window.parameters.topDeployment['Clock'] = 1;
+          }
+        }
+        window.parameters.clockVariableNames = data[25];
 
         //load things from the ODB
         if(!window.parameters.devMode) ODBgrab();

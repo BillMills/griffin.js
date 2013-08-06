@@ -31,7 +31,7 @@
 			window.ttMessages['DESCANTcanv'] = '<u>DESCANT Config</u><br><br>'+scaleLimitMessage;
 			window.ttMessages['PACEScanv'] = '<u>PACES Config</u><br><br>'+scaleLimitMessage;
 			window.ttMessages['DANTEcanv'] = '<u>DANTE Config</u><br><br>'+scaleLimitMessage;
-			window.ttMessages['BAMBINOcanv'] = '<u>BAMBINO Config</u><br><br> Choose which mode to run BAMBINO in, either S2 or S3, and whether deployment is upstream, downstream, or both.<br><br>' + scaleLimitMessage;
+			window.ttMessages['BAMBINOcanv'] = '<u>BAMBINO Config</u><br><br> Choose which mode to run BAMBINO in, either S2 or S3, whether deployment is upstream, downstream, or both, and whether BAMBINO is running with a single or double layer of detectors.<br><br>' + scaleLimitMessage;
 			window.ttMessages['SCEPTARcanv'] = '<u>SCEPTAR Config</u><br><br>'+scaleLimitMessage;
 			window.ttMessages['SPICEcanv'] = '<u>SPICE Config</u><br><br>'+scaleLimitMessage;
 			window.ttMessages['TIPwallcanv'] = '<u>TIP Wall Config</u><br><br>'+scaleLimitMessage;
@@ -217,12 +217,14 @@
 							if(document.getElementById('BAMBINOupstreamCheck').checked) targetSide[0] = 1;
 							if(document.getElementById('BAMBINOdownstreamCheck').checked) targetSide[1] = 1;
 							ODBSet('/DashboardConfig/BAMBINO/targetSide[*]', targetSide);
-
+							var bambinoLayers = (document.getElementById('BAMBINOsingleLayer').checked) ? 1 : 2;
+							ODBSet('/DashboardConfig/BAMBINO/layers', bambinoLayers);
 						}
 
 						//DANTE
 						if(subdetectors[i] == 'DANTE'){
-							setMinMax('DANTE', 'BaF');
+							setMinMax('DANTE', 'LaBrPMT');
+							setMinMax('DANTE', 'LaBrTAC');
 							setMinMax('DANTE', 'BGO');
 						}
 

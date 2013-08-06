@@ -30,6 +30,7 @@ function AlarmService(sidebarDivID, sidebarDetailDivID){
 	this.currentAlarms = [];
 	this.temperatureAlarms = [];
 	this.rateAlarms = [];
+    this.clockAlarms = [];
 
 	//establish animation parameters:
     this.FPS = 30;
@@ -141,6 +142,11 @@ function AlarmService(sidebarDivID, sidebarDetailDivID){
     		alarmText += this.rateAlarms[i] + '<br>';
     	}
 
+        if(this.clockAlarms.length !=0) alarmText += '<br>Clock Alarms<br>'
+        for(i=0; i<this.clockAlarms.length; i++){
+            alarmText += this.clockAlarms[i]+'<br>';
+        }
+
     	if(alarmText != ''){
     		$('#alarmDetailButton').css('background-color', '#FF0000');
     	} else {
@@ -158,6 +164,7 @@ function AlarmService(sidebarDivID, sidebarDetailDivID){
 		this.currentAlarms = [];
 		this.temperatureAlarms = [];
 		this.rateAlarms = [];
+        this.clockAlarms = [];
     };
 
     //update the text:
@@ -178,7 +185,9 @@ function registerAlarm(object, e){
 		object.temperatureAlarms[object.temperatureAlarms.length] = e.detail.alarmStatus;
 	} else if(e.detail.alarmType == 'rate'){
 		object.rateAlarms[object.rateAlarms.length] = e.detail.alarmStatus;
-	}
+	} else if(e.detail.alarmType == 'clock'){
+        object.clockAlarms[object.clockAlarms.length] = e.detail.alarmStatus;
+    }
 }
 
 function publishAlarms(object){

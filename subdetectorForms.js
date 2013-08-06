@@ -9,27 +9,40 @@ function configure(detector){
 	} else if(detector == 'PACES'){
 		minmaxTable('PACESdiv', 'PACES');
 	} else if(detector == 'DANTE'){
-		minmaxTable('DANTEdiv', 'DANTE BaF');
+		minmaxTable('DANTEdiv', 'DANTE LaBrPMT');
+		minmaxTable('DANTEdiv', 'DANTE LaBrTAC');
 		minmaxTable('DANTEdiv', 'DANTE BGO');
+		document.getElementById('DANTE LaBrPMTTabletitleCell').innerHTML = 'DANTE LaBr PMT Scale Limits';
+		document.getElementById('DANTE LaBrTACTabletitleCell').innerHTML = 'DANTE LaBr TAC Scale Limits';
 	} else if(detector == 'BAMBINO'){
+		//S2 or S3 mode:
 		insertDOM('p', 'BAMBINOmodeLabel', '', 'float:left; text-align:center; padding-right:20px; margin-top:70px', 'BAMBINOdiv', '', 'BAMBINO Mode<br>')
 		insertDOM('p', 'S2label', '', 'display:inline;', 'BAMBINOmodeLabel', '', 'S2');
 		insertDOM('input', 'BAMBINOmodeS2', '', '', 'BAMBINOmodeLabel', '', '', 'BAMBINOmode', 'radio', 'S2')
 		insertDOM('p', 'S3label', '', 'display:inline; margin-left:10px;', 'BAMBINOmodeLabel', '', 'S3');
 		insertDOM('input', 'BAMBINOmodeS3', '', '', 'BAMBINOmodeLabel', '', '', 'BAMBINOmode', 'radio', 'S3');
 		document.getElementById('BAMBINOmodeS3').setAttribute('checked', true);
+		//scale table:
 		minmaxTable('BAMBINOdiv', 'BAMBINO');
 		insertDOM('br', 'break', '', '', 'BAMBINOdiv');
+		//upstream / downstream options
 		insertDOM('p', 'BAMBINOupstreamLabel', '', 'float:left; text-align:right;', 'BAMBINOdiv', '', 'Upstream');
 		insertDOM('input', 'BAMBINOupstreamCheck', '', 'float:left;', 'BAMBINOupstreamLabel', '', '', '', 'checkbox', 'deploy');
 		document.getElementById('BAMBINOupstreamCheck').setAttribute('checked', true);
 		insertDOM('p', 'BAMBINOdownstreamLabel', '', 'float:left; text-align:right;', 'BAMBINOdiv', '', 'Downstream');
 		insertDOM('input', 'BAMBINOdownstreamCheck', '', 'float:left; margin-left:10px', 'BAMBINOdownstreamLabel', '', '', '', 'checkbox', 'deploy');
 		document.getElementById('BAMBINOdownstreamCheck').setAttribute('checked', true);
-		//insertDOM('p', 'BAMBINOlayersLabel', '', 'float:left; text-align:right; margin-left:50px;', 'BAMBINOdiv', '', 'Layers:');
-
+		//groups of checkboxes are a pain for validation, do it in JS:
 		document.getElementById('BAMBINOupstreamCheck').onchange = function(){checkBAMBINO()};
 		document.getElementById('BAMBINOdownstreamCheck').onchange = function(){checkBAMBINO()};
+		//one or two layers:
+		insertDOM('p', 'BAMBINOlayerLabel', '', 'float:left; text-align:center; margin-left:30px;', 'BAMBINOdiv', '', 'Layers: ')
+		insertDOM('p', 'singleLayerLabel', '', 'display:inline;', 'BAMBINOlayerLabel', '', 'Single');
+		insertDOM('input', 'BAMBINOsingleLayer', '', '', 'BAMBINOlayerLabel', '', '', 'BAMBINOlayer', 'radio', 'single')
+		insertDOM('p', 'doubleLayerLabel', '', 'display:inline; margin-left:10px;', 'BAMBINOlayerLabel', '', 'Double');
+		insertDOM('input', 'BAMBINOdoubleLayer', '', '', 'BAMBINOlayerLabel', '', '', 'BAMBINOlayer', 'radio', 'double');
+		document.getElementById('BAMBINOsingleLayer').setAttribute('checked', true);
+
 
 	} else if(detector == 'SCEPTAR'){
 		minmaxTable('SCEPTARdiv', 'SCEPTAR');
@@ -59,7 +72,7 @@ function minmaxTable(wrapper, detType){
 	insertDOM('td', 'spacer', '', '', id+'titleRow', '', '');
 	insertDOM('td', id+'titleCell', '', '', id+'titleRow', '', '');
 	document.getElementById(id+'titleCell').setAttribute('colspan', 2);
-	document.getElementById(id+'titleCell').innerHTML = (detType) ? detType + ' Scale Limits' : 'Scale Limits';
+	document.getElementById(id+'titleCell').innerHTML = ((detType) ? detType + ' Scale Limits' : 'Scale Limits');
 
 	//column headers
 	insertDOM('tr', id+'columnHeadRow', '', '', id, '', '');

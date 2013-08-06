@@ -92,6 +92,13 @@ function masterLoop(callMyself){
                 window.Subdetectors[i].update();
             }
         }
+        //Clock
+        if(window.parameters.topDeployment['Clock']) window.clockPointer.update();
+
+        //let the alarm services know the update is complete:
+        var allDone = new   CustomEvent("refreshComplete", {
+                            });
+        window.AlarmServices.div.dispatchEvent(allDone);
     }
     
     //remove all temporary scripts from the head so they don't accrue:
@@ -134,7 +141,7 @@ function forceUpdate(){
 
 //handle everybody's interval-based fetch from the ODB in one network request:
 function ODBgrab(){
-    var paths = [], 
+    var paths = [], i, j,
     data;
 
     //sidebar
@@ -150,6 +157,10 @@ function ODBgrab(){
     paths[8] = '/Equipment/Trigger/Statistics/kBytes per sec.';
     paths[9] = '/Equipment/Event Builder/Statistics/Events per sec.';
     paths[10] = '/Equipment/Event Builder/Statistics/kBytes per sec.';
+    //Clock
+    for(i=0; i<window.parameters.nClocks; i++){
+        paths[10 + i] = '/Equipment/Clock'+i+'/Variables/Input[*]';
+    }
 
     data = ODBMGet(paths);
 
@@ -166,6 +177,10 @@ function ODBgrab(){
     window.localODB.TrigDPS = data[8];
     window.localODB.EBEPS = data[9];
     window.localODB.EBDPS = data[10];  
+    //Clock
+    for(i=0; i<window.parameters.nClocks; i++){
+        window.localODB['clock'+i] = data[10+i];
+    }
 }
 
 //handle pulling the initial config parameters out of the ODB and replacing the default values in the JSONP-loaded parameter store:
@@ -194,8 +209,9 @@ function fetchCustomParameters(){
     paths[BAMBINO+3] = '/DashboardConfig/BAMBINO/rateScale[*]'          //[min rate, max rate] on color scale
     paths[BAMBINO+4] = '/DashboardConfig/BAMBINO/mode'                  //'S2' or 'S3'
     paths[BAMBINO+5] = '/DashboardConfig/BAMBINO/targetSide[*]'         //[upstream, downstream] deployment
+    paths[BAMBINO+6] = '/DashboardConfig/BAMBINO/layers'                //how many layers (1 or 2)?
 
-    DANTE = BAMBINO+6;
+    DANTE = BAMBINO+7;
     paths[DANTE] = '/DashboardConfig/DANTE/deploy'
     paths[DANTE+1] = '/DashboardConfig/DANTE/LaBrPMTHVscale[*]'
     paths[DANTE+2] = '/DashboardConfig/DANTE/LaBrPMTthresholdScale[*]'
@@ -313,6 +329,7 @@ function fetchCustomParameters(){
     window.parameters.BAMBINOmode = data[BAMBINO+4].slice(0, data[BAMBINO+4].length-1);
     window.parameters.BAMBINOdeployment[0] = parseInt(data[BAMBINO+5][0],10);
     window.parameters.BAMBINOdeployment[1] = parseInt(data[BAMBINO+5][1],10);
+    window.parameters.BAMBINOlayers = parseInt(data[BAMBINO+6],10);
 
     window.parameters.deployment.DANTE = parseFloat(data[DANTE]);
     window.parameters.DANTE.minima.LaBrPMT = [parseFloat(data[DANTE+1][0]), parseFloat(data[DANTE+2][0]), parseFloat(data[DANTE+3][0])];

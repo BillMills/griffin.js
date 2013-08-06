@@ -932,9 +932,10 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
             }
 
             //let the alarm services know the update is complete:
-            var allDone = new   CustomEvent("refreshComplete", {
-                                });
-            AlarmServices.div.dispatchEvent(allDone);
+            //why is this in the HV service?  moved out to the masterLoop, hopefully nothing breaks:
+            //var allDone = new   CustomEvent("refreshComplete", {
+            //                    });
+            //AlarmServices.div.dispatchEvent(allDone);
         };
 
         this.animate = function(){
