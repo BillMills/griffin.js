@@ -44,7 +44,7 @@ function Clock(){
 
     //update the text & alarms for each clock
     this.update = function(){
-        var i;
+        var i, clock, clockData, flag, alarmString;
 
         //sort clocks into array, check to make sure exactly one of them claims to be the master:
         this.mapClocks();
@@ -58,12 +58,13 @@ function Clock(){
             unsetClockAlarm(this.clockID[i]);
         }
 
-        //no unique master alarm:
+        //no unique master alarm://////////////////////////////////////////////////
         if(this.noUniqueMaster){
             //set master bin and all slaves claiming to be masters to red:
             for(i=0; i<window.parameters.nClocks; i++){
-                if(parseInt(window.localODB['clock'+i][1],10))
+                if(parseInt(window.localODB['clock'+i][1],10)){
                     setClockAlarm(this.clockID[i]);
+                }
             }
 
             //post an alarm to the alarm service:
@@ -74,6 +75,57 @@ function Clock(){
                                         }
                                     });
             window.AlarmServices.div.dispatchEvent(nMasterAlarm);
+        }
+
+        //consistency alarms////////////////////////////////////////////////////////
+        for(i=0; i<window.parameters.nClocks; i++){
+            clockData = window.localODB['clock'+i];
+            if(clockData[1] == 1){  //check that something that says it's a master looks like a master
+                flag = 0;
+                if(clockData[2] != 1) flag = 1;     //Master has NIM input
+                if(clockData[3] != 1) flag = 1;     //Master has NIM input
+                if(clockData[4] != 1) flag = 1;     //Master has NIM input
+                if(clockData[11] != 0) flag = 1;    //Master should not bypass itelf on any channel:
+                if(clockData[15] != 0) flag = 1;
+                if(clockData[19] != 0) flag = 1;
+                if(clockData[23] != 0) flag = 1;
+                if(clockData[27] != 0) flag = 1;
+                if(clockData[31] != 0) flag = 1;
+                if(clockData[35] != 0) flag = 1;
+                if(clockData[39] != 0) flag = 1;
+            } else {  //check that something that says it's a slave looks like a slave.
+                flag = 0;
+                if(clockData[2] != 0) flag = 2;     //Master has NIM input
+                if(clockData[3] != 0) flag = 2;     //Master has NIM input
+                if(clockData[4] != 0) flag = 2;     //Master has NIM input
+                if(clockData[11] != 1) flag = 2;    //Master should not bypass itelf on any channel:
+                if(clockData[15] != 1) flag = 2;
+                if(clockData[19] != 1) flag = 2;
+                if(clockData[23] != 1) flag = 2;
+                if(clockData[27] != 1) flag = 2;
+                if(clockData[31] != 1) flag = 2;
+                if(clockData[35] != 1) flag = 2;
+                if(clockData[39] != 1) flag = 2;
+            }
+            if(flag==1){
+                alarmString = 'Clock claims to be a master, but some of its parameters make it look like a slave.'  
+                setClockAlarm(this.clockID[i]);            
+            } else if(flag==2){
+                alarmString = 'Clock claims to be a slave, but some of its parameters make it look like a master.'
+                setClockAlarm(this.clockID[i]);
+            }
+
+            //post an alarm to the alarm service:
+            if(flag!=0){
+                var consistencyAlarm = new  CustomEvent("alarmTrip", {
+                                            detail: {
+                                                alarmType: 'clock',
+                                                alarmStatus: alarmString        
+                                            }
+                                        });
+                window.AlarmServices.div.dispatchEvent(consistencyAlarm);
+            }
+
         }
 
     };
