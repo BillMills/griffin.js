@@ -28,7 +28,6 @@ function Clock(){
     //the clock view is done entirely with dom elements; most convenient to extend the central div to accommodate.
     cellSize = document.getElementById(this.linkWrapperID).offsetWidth / 100;
     insertDOM('div', 'masterClock', 'clock', 'clear:both; width:'+20*cellSize+'px; height:'+10*cellSize+'px; margin-left:auto; margin-right:auto; margin-top:20px;', this.linkWrapperID, function(){showClock(this.id)}, '');
-    toggleSwitch('masterClock', 'testToggle')
     //slaves
     for(i=0; i<window.parameters.nClocks-1; i++){
         clockStyle = 'display:inline-block; width:'+10*cellSize+'px; height:'+10*cellSize+'px; margin-left:'+(2*cellSize)+'px; margin-right:'+(2*cellSize)+'px; margin-bottom:'+2*cellSize+'px; margin-top:'+2*cellSize+'px;'

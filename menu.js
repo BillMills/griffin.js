@@ -8,6 +8,7 @@ function deployMenu(targetDivID, headings, titles){
 		insertDOM('h3', headings[i]+'arrow', '', 'display:inline; float:left;', headings[i]+'Tab', function(){toggleMenu(targetDivID, headings, this.id)}, String.fromCharCode(0x25B6));
 		insertDOM('h3', headings[i]+'title', '', 'display:inline-block; font:20px Orbitron; padding-left:1em', headings[i]+'Tab', '', titles[i]);
 		//toggleSwitch(headings[i]+'Tab', headings[i]+'testToggle')
+		toggleSwitch(headings[i]+'Tab', headings[i]+'testToggle', 'strawberry', 'banana')
 		insertDOM('div', headings[i]+'Content', 'menuContent', '', headings[i]+'Tab', '', '');
 	}
 
@@ -44,7 +45,7 @@ function toggleMenu(wrapperDivID, headings, thisID){
 
 
 //build a toggle switch out of divs:
-function toggleSwitch(parentID, id){
+function toggleSwitch(parentID, id, enabled, disabled){
 
 	//wrapper div:
 	insertDOM('div', 'toggleWrap'+id, 'toggleWrap', '', parentID, '', '');
@@ -53,18 +54,24 @@ function toggleSwitch(parentID, id){
 	//toggle groove:
 	insertDOM('div', 'toggleGroove'+id, 'toggleGroove', '', 'toggleWrap'+id, '', '');
 	//toggle switch:
-	insertDOM('div', 'toggleSwitch'+id, 'toggleSwitch', 'left:0em;', 'toggleGroove'+id, function(){flipToggle('toggleSwitch'+id)}, '');
+	insertDOM('div', 'toggleSwitch'+id, 'toggleSwitch', '', 'toggleGroove'+id, function(){flipToggle(id, enabled, disabled)}, '');
+	//state description
+	insertDOM('div', 'toggleDescription'+id, 'toggleDescription', '', 'toggleWrap'+id, '', disabled);
 
 
 
 }
 
-function flipToggle(id){
-	var grooveID = 'toggleGroove' + id.slice(12,id.length);
-	if(document.getElementById(id).style['left'] == '0em'){
-		document.getElementById(id).style['left'] = '1em';
+function flipToggle(id, enabled, disabled){
+	var switchID = 'toggleSwitch'+id,
+	//grooveID = 'toggleGroove' + id,
+	descriptionID = 'toggleDescription' + id;
+	if(document.getElementById(switchID).style['left'] == '0em'){
+		document.getElementById(switchID).style['left'] = '1em';
+		document.getElementById(descriptionID).innerHTML = enabled;
 	} else{
-		document.getElementById(id).style['left'] = '0em';
+		document.getElementById(switchID).style['left'] = '0em';
+		document.getElementById(descriptionID).innerHTML = disabled;
 	}
 }
 
