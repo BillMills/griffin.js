@@ -19,9 +19,9 @@ function Clock(){
     //deploy right bar menu:
     deployMenu('clockMenus', ['summary', 'outs', 'CSAC'] , ['Clock Summary','Channel Outs','CSAC Parameters']);
     //insert some paragraphs to hold text in the default sidebars:
-    insertDOM('p', 'clockSummaryText', '', 'padding-left:3em; font-size:110%;', 'summaryTab', '', '');
-    insertDOM('p', 'clockOutsText', '', 'padding-left:3em; font-size:110%;', 'outsTab', '', '');
-    insertDOM('p', 'clockCSACText', '', 'padding-left:3em; font-size:110%;', 'CSACTab', '', '');
+    //insertDOM('p', 'clockSummaryText', '', 'padding-left:3em; font-size:110%;', 'summaryTab', '', '');
+    //insertDOM('p', 'clockOutsText', '', 'padding-left:3em; font-size:110%;', 'outsTab', '', '');
+    //insertDOM('p', 'clockCSACText', '', 'padding-left:3em; font-size:110%;', 'CSACTab', '', '');
 
     //nav wrapper div
     insertDOM('div', this.linkWrapperID, 'navPanel', 'width:50%; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;', this.wrapperID, '', '');
@@ -32,6 +32,7 @@ function Clock(){
     //the clock view is done entirely with dom elements; most convenient to extend the central div to accommodate.
     cellSize = document.getElementById(this.linkWrapperID).offsetWidth / 100;
     insertDOM('div', 'masterClock', 'clock', 'width:'+20*cellSize+'px; height:'+10*cellSize+'px; margin-left:auto; margin-right:auto; margin-top:20px;', this.linkWrapperID, function(){showClock(this.id)}, '');
+    toggleSwitch('masterClock', 'testToggle')
     //slaves
     for(i=0; i<24; i++){
         clockStyle = 'display:inline-block; width:'+10*cellSize+'px; height:'+10*cellSize+'px; margin-left:'+( (i%6==0) ? 10*cellSize : 2*cellSize )+'px; margin-right:'+( (i%6==5) ? 10*cellSize : 2*cellSize )+'px; margin-bottom:'+2*cellSize+'px; margin-top:'+2*cellSize+'px;'
@@ -177,21 +178,21 @@ function showClock(id){
     for(i=0; i<9; i++){
         text += window.parameters.clockVariableNames[i] + ': ' + window.localODB['clock'+document.getElementById(id).clockIndex][i] + '<br>';
     }
-    document.getElementById('clockSummaryText').innerHTML = text;
+    document.getElementById('summaryContent').innerHTML = text;
 
     //clock channel outs parameters
     text = '';
     for(i=9; i<41; i++){
         text += window.parameters.clockVariableNames[i] + ': ' + window.localODB['clock'+document.getElementById(id).clockIndex][i] + '<br>';
     }
-    document.getElementById('clockOutsText').innerHTML = text;    
+    document.getElementById('outsContent').innerHTML = text;    
 
     //clock channel outs parameters
     text = '';
     for(i=41; i<52; i++){
         text += window.parameters.clockVariableNames[i] + ': ' + window.localODB['clock'+document.getElementById(id).clockIndex][i] + '<br>';
     }
-    document.getElementById('clockCSACText').innerHTML = text;    
+    document.getElementById('CSACContent').innerHTML = text;    
 
     //highlight the clock
     glowMe(id);

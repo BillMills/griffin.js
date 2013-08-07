@@ -169,9 +169,62 @@ div.collapsableMenu{
 	-moz-box-sizing: border-box; 
 	-webkit-box-sizing: border-box; 
 	box-sizing: border-box;
-	transition:height 0.3s, border 1s ease 0.1s;
-	-moz-transition:height 0.3s, border 1s;
-	-webkit-transition:height 0.3s border 1s;				
+	transition:max-height 0.3s, border 1s;
+	-moz-transition:max-height 0.3s, border 1s;
+	-webkit-transition:max-height 0.3s border 1s;				
+}
+
+div.menuContent{
+	font-size: 110%;
+	padding-left: 3em;
+	padding-top:1em;
+}
+
+div.toggleWrap{
+	height:2em;
+	margin-left:2em;
+}
+
+div.toggleLabel{
+	margin-top:0.5em;
+	margin-bottom: 0.5em;
+	padding:0em;
+	border:0em;
+	display:inline-block;
+}
+
+div.toggleGroove{
+	-webkit-box-sizing:content-box;
+	height:1.5em;
+	width:3em;
+	margin-top:0.25em;
+	margin-bottom:0.25em;
+	border:0.2em solid #000000;
+	border-radius: 0.95em;
+	background-color: #333333;
+	display:inline-block;
+	position:relative;
+	/*
+	background-image: -webkit-linear-gradient(left , #00FF00 0%, #333333 50%);
+	background-image: -moz-linear-gradient(left , #00FF00 0%, #333333 50%);
+	*/
+	transition:background-color 0.3s;
+	-moz-transition:background-color 0.3s;
+	-webkit-transition:background-color 0.3s;
+}
+
+div.toggleSwitch{
+	height:1.5em;
+	width:2em;
+	border-radius: 0.75em;
+	background-color: #999999;
+	padding:0px;
+	border:0.2em solid black;
+	position:absolute;
+	/*top:-0.2em;*/
+	transition:left 0.3s;
+	-moz-transition:left 0.3s;
+	-webkit-transition:left 0.3s;
 }
 
 h3{
