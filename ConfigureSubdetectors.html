@@ -261,20 +261,18 @@
 							setMinMax('SPICE', '');
 							var spiceLayers = (document.getElementById('SPICEsingleLayer').checked) ? 1 : 2;
 							ODBSet('/DashboardConfig/SPICE/SPICEauxLayers', spiceLayers);
+						} else {
+							ODBSet('/DashboardConfig/SPICE/SPICEauxiliary', '')
 						}
 
 						//TIP wall
 						if(subdetectors[i] == 'TIPwall'){
-							setMinMax('TIP', 'CsI');
-							setMinMax('TIP', 'HPGe');
-							setMinMax('TIP', 'BGO');
+							setMinMax('TIPwall', '');
 						}
 
 						//TIP ball
 						if(subdetectors[i] == 'TIPball'){
-							setMinMax('TIP', 'CsI');
-							setMinMax('TIP', 'HPGe');
-							setMinMax('TIP', 'BGO');
+							setMinMax('TIPball', '');
 						}			
 
 						//ZDS

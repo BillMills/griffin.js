@@ -378,8 +378,8 @@ function fetchCustomParameters(){
     window.parameters.TIPwall.maxima.TIPwall = [parseFloat(data[TIPwall+1][1]), parseFloat(data[TIPwall+2][1]), parseFloat(data[TIPwall+3][1])];
 
     window.parameters.deployment.TIPball = parseFloat(data[TIPball]);
-    window.parameters.TIPwall.minima.TIPball = [parseFloat(data[TIPball+1][0]), parseFloat(data[TIPball+2][0]), parseFloat(data[TIPball+3][0])];
-    window.parameters.TIPwall.maxima.TIPball = [parseFloat(data[TIPball+1][1]), parseFloat(data[TIPball+2][1]), parseFloat(data[TIPball+3][1])];
+    window.parameters.TIPball.minima.TIPball = [parseFloat(data[TIPball+1][0]), parseFloat(data[TIPball+2][0]), parseFloat(data[TIPball+3][0])];
+    window.parameters.TIPball.maxima.TIPball = [parseFloat(data[TIPball+1][1]), parseFloat(data[TIPball+2][1]), parseFloat(data[TIPball+3][1])];
 
     window.parameters.DAQminima = [parseFloat(data[DAQ]), parseFloat(data[DAQ+4]), parseFloat(data[DAQ+2]), parseFloat(data[DAQ+6]), parseFloat(data[DAQ+8]), parseFloat(data[DAQ+10])];
     window.parameters.DAQmaxima = [parseFloat(data[DAQ+3]), parseFloat(data[DAQ+5]), parseFloat(data[DAQ+3]), parseFloat(data[DAQ+7]), parseFloat(data[DAQ+9]), parseFloat(data[DAQ+11])];

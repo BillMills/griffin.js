@@ -72,13 +72,9 @@ function configure(detector){
 		document.getElementById('SPICEmodeS2').onchange = function(){hideSPICEaux()};
 		document.getElementById('SPICEnoAux').onchange = function(){hideSPICEaux()};
 	} else if(detector == 'TIPwall'){
-		minmaxTable('TIPwalldiv', 'TIP CsI');
-		minmaxTable('TIPwalldiv', 'TIP HPGe');
-		minmaxTable('TIPwalldiv', 'TIP BGO');
+		minmaxTable('TIPwalldiv', 'TIPwall');
 	} else if(detector == 'TIPball'){
-		minmaxTable('TIPballdiv', 'TIP CsI');
-		minmaxTable('TIPballdiv', 'TIP HPGe');
-		minmaxTable('TIPballdiv', 'TIP BGO');
+		minmaxTable('TIPballdiv', 'TIPball');
 	}	
 }
 
