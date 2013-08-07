@@ -262,8 +262,10 @@ function fetchCustomParameters(){
     paths[SPICE+1] = '/DashboardConfig/SPICE/HVscale[*]'
     paths[SPICE+2] = '/DashboardConfig/SPICE/thresholdScale[*]'
     paths[SPICE+3] = '/DashboardConfig/SPICE/rateScale[*]'
+    paths[SPICE+4] = '/DashboardConfig/SPICE/SPICEauxiliary'
+    paths[SPICE+5] = '/DashboardConfig/SPICE/SPICEauxLayers'
 
-    ZDS = SPICE+4;
+    ZDS = SPICE+6;
     paths[ZDS] = '/DashboardConfig/ZDS/deploy'
     paths[ZDS+1] = '/DashboardConfig/ZDS/HVscale[*]'
     paths[ZDS+2] = '/DashboardConfig/ZDS/thresholdScale[*]'
@@ -368,6 +370,8 @@ function fetchCustomParameters(){
     window.parameters.deployment.SPICE = parseFloat(data[SPICE]);
     window.parameters.SPICE.minima.SPICE = [parseFloat(data[SPICE+1][0]), parseFloat(data[SPICE+2][0]), parseFloat(data[SPICE+3][0])];
     window.parameters.SPICE.maxima.SPICE = [parseFloat(data[SPICE+1][1]), parseFloat(data[SPICE+2][1]), parseFloat(data[SPICE+3][1])];
+    window.parameters.SPICEaux = data[SPICE+4].slice(0,2);
+    window.parameters.SPICEauxLayers = parseInt(data[SPICE+5],10);
 
     window.parameters.deployment.TIPwall = parseFloat(data[TIPwall]);
     window.parameters.TIPwall.minima.TIPwall = [parseFloat(data[TIPwall+1][0]), parseFloat(data[TIPwall+2][0]), parseFloat(data[TIPwall+3][0])];

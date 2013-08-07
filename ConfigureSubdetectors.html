@@ -256,7 +256,11 @@
 
 						//SPICE
 						if(subdetectors[i] == 'SPICE'){
+							var spiceMode = (document.getElementById('SPICEmodeS2').checked) ? 'S2' : ( (document.getElementById('SPICEmodeS3').checked) ? 'S3' : '' );
+							ODBSet('/DashboardConfig/SPICE/SPICEauxiliary', spiceMode);
 							setMinMax('SPICE', '');
+							var spiceLayers = (document.getElementById('SPICEsingleLayer').checked) ? 1 : 2;
+							ODBSet('/DashboardConfig/SPICE/SPICEauxLayers', spiceLayers);
 						}
 
 						//TIP wall

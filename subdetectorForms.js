@@ -49,7 +49,28 @@ function configure(detector){
 	} else if(detector == 'ZDS'){
 		minmaxTable('ZDSdiv', 'ZDS');
 	} else if(detector == 'SPICE'){
+		//S2 or S3 auxiliary:
+		insertDOM('p', 'SPICEmodeLabel', '', 'float:left; text-align:center; padding-right:20px; margin-top:70px', 'SPICEdiv', '', 'SPICE Auxiliary Mode<br>')
+		insertDOM('p', 'S2label', '', 'display:inline;', 'SPICEmodeLabel', '', 'S2');
+		insertDOM('input', 'SPICEmodeS2', '', '', 'SPICEmodeLabel', '', '', 'SPICEmode', 'radio', 'S2')
+		insertDOM('p', 'S3label', '', 'display:inline; margin-left:10px;', 'SPICEmodeLabel', '', 'S3');
+		insertDOM('input', 'SPICEmodeS3', '', '', 'SPICEmodeLabel', '', '', 'SPICEmode', 'radio', 'S3');
+		insertDOM('p', 'noAuxlabel', '', 'display:inline; margin-left:10px;', 'SPICEmodeLabel', '', 'none');
+		insertDOM('input', 'SPICEnoAux', '', '', 'SPICEmodeLabel', '', '', 'SPICEmode', 'radio', 'none');		
+		document.getElementById('SPICEnoAux').setAttribute('checked', true);
 		minmaxTable('SPICEdiv', 'SPICE');
+		//one or two auxiliary layers:
+		insertDOM('br', 'break', '', '', 'SPICEmodeLabel')
+		insertDOM('p', 'SPICElayerLabel', '', 'float:left; text-align:center;', 'SPICEmodeLabel', '', 'Aux. Layers: ')
+		insertDOM('p', 'singleLayerLabel', '', 'display:inline;', 'SPICElayerLabel', '', 'Single');
+		insertDOM('input', 'SPICEsingleLayer', '', '', 'SPICElayerLabel', '', '', 'SPICElayer', 'radio', 'single')
+		insertDOM('p', 'doubleLayerLabel', '', 'display:inline; margin-left:10px;', 'SPICElayerLabel', '', 'Double');
+		insertDOM('input', 'SPICEdoubleLayer', '', '', 'SPICElayerLabel', '', '', 'SPICElayer', 'radio', 'double');
+		document.getElementById('SPICEsingleLayer').setAttribute('checked', true);
+
+		document.getElementById('SPICEmodeS3').onchange = function(){hideSPICEaux()};
+		document.getElementById('SPICEmodeS2').onchange = function(){hideSPICEaux()};
+		document.getElementById('SPICEnoAux').onchange = function(){hideSPICEaux()};
 	} else if(detector == 'TIPwall'){
 		minmaxTable('TIPwalldiv', 'TIP CsI');
 		minmaxTable('TIPwalldiv', 'TIP HPGe');
@@ -59,6 +80,22 @@ function configure(detector){
 		minmaxTable('TIPballdiv', 'TIP HPGe');
 		minmaxTable('TIPballdiv', 'TIP BGO');
 	}	
+}
+
+function hideSPICEaux(){
+	if(document.getElementById('SPICEnoAux').checked){
+		document.getElementById('SPICElayerLabel').style.display = 'block';
+		document.getElementById('singleLayerLabel').style.display = 'inline';
+		document.getElementById('SPICEsingleLayer').style.display = 'inline';
+		document.getElementById('doubleLayerLabel').style.display = 'inline';
+		document.getElementById('SPICEdoubleLayer').style.display = 'inline';
+	} else{
+		document.getElementById('SPICElayerLabel').style.display = 'none';
+		document.getElementById('singleLayerLabel').style.display = 'none';
+		document.getElementById('SPICEsingleLayer').style.display = 'none';
+		document.getElementById('doubleLayerLabel').style.display = 'none';
+		document.getElementById('SPICEdoubleLayer').style.display = 'none';
+	}
 }
 
 function minmaxTable(wrapper, detType){

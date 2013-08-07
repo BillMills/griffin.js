@@ -17,6 +17,7 @@ function BAMBINO(spiceMode){
     this.spiceAux = (spiceMode) ? 1 : 0;
     this.mode = (this.spiceAux) ? spiceMode : window.parameters.BAMBINOmode;      //'S2' or 'S3'
     this.layers = (this.spiceAux) ? window.parameters.SPICEauxLayers : window.parameters.BAMBINOlayers;
+    console.log([this.mode, this.layers])
     this.dataBus = new BAMBINODS(this.mode, this.layers, spiceMode);
     this.nRadial = 24;
     if(this.mode=='S2')
