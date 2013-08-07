@@ -18,24 +18,20 @@ function Clock(){
 
     //deploy right bar menu:
     deployMenu('clockMenus', ['summary', 'outs', 'CSAC'] , ['Clock Summary','Channel Outs','CSAC Parameters']);
-    //insert some paragraphs to hold text in the default sidebars:
-    //insertDOM('p', 'clockSummaryText', '', 'padding-left:3em; font-size:110%;', 'summaryTab', '', '');
-    //insertDOM('p', 'clockOutsText', '', 'padding-left:3em; font-size:110%;', 'outsTab', '', '');
-    //insertDOM('p', 'clockCSACText', '', 'padding-left:3em; font-size:110%;', 'CSACTab', '', '');
 
     //nav wrapper div
-    insertDOM('div', this.linkWrapperID, 'navPanel', 'width:50%; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;', this.wrapperID, '', '');
+    insertDOM('div', this.linkWrapperID, 'navPanel', 'text-align:center; width:50%; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;', this.wrapperID, '', '');
     //nav header
-    insertDOM('h1', 'ClockLinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', window.parameters.ExpName+' Clock Status');
+    insertDOM('h1', 'ClockLinksBanner', 'navPanelHeader', 'float:left; margin-top:0px;', this.linkWrapperID, '', window.parameters.ExpName+' Clock Status');
     insertDOM('br', 'break', '', '', this.linkWrapperID, '', '');
 
     //the clock view is done entirely with dom elements; most convenient to extend the central div to accommodate.
     cellSize = document.getElementById(this.linkWrapperID).offsetWidth / 100;
-    insertDOM('div', 'masterClock', 'clock', 'width:'+20*cellSize+'px; height:'+10*cellSize+'px; margin-left:auto; margin-right:auto; margin-top:20px;', this.linkWrapperID, function(){showClock(this.id)}, '');
+    insertDOM('div', 'masterClock', 'clock', 'clear:both; width:'+20*cellSize+'px; height:'+10*cellSize+'px; margin-left:auto; margin-right:auto; margin-top:20px;', this.linkWrapperID, function(){showClock(this.id)}, '');
     toggleSwitch('masterClock', 'testToggle')
     //slaves
-    for(i=0; i<24; i++){
-        clockStyle = 'display:inline-block; width:'+10*cellSize+'px; height:'+10*cellSize+'px; margin-left:'+( (i%6==0) ? 10*cellSize : 2*cellSize )+'px; margin-right:'+( (i%6==5) ? 10*cellSize : 2*cellSize )+'px; margin-bottom:'+2*cellSize+'px; margin-top:'+2*cellSize+'px;'
+    for(i=0; i<window.parameters.nClocks-1; i++){
+        clockStyle = 'display:inline-block; width:'+10*cellSize+'px; height:'+10*cellSize+'px; margin-left:'+(2*cellSize)+'px; margin-right:'+(2*cellSize)+'px; margin-bottom:'+2*cellSize+'px; margin-top:'+2*cellSize+'px;'
         insertDOM('div', 'slaveClock'+i, 'clock', clockStyle , this.linkWrapperID, function(){showClock(this.id)}, '');
         if(i%6==5) insertDOM('br', 'break', '', '', this.linkWrapperID);
     }
@@ -209,7 +205,7 @@ function glowMe(id){
 
     document.getElementById('masterClock').style['box-shadow'] = '0 0 0px white'; 
 
-    for(i=0; i<24; i++){
+    for(i=0; i<window.parameters.nClocks-1; i++){
         if(document.getElementById('slaveClock'+i))
             document.getElementById('slaveClock'+i).style['box-shadow'] = '0 0 0px white';    
     }

@@ -49,7 +49,7 @@ function toggleSwitch(parentID, id){
 	//wrapper div:
 	insertDOM('div', 'toggleWrap'+id, 'toggleWrap', '', parentID, '', '');
 	//label:
-	insertDOM('div', 'toggleLabel'+id, 'toggleLabel', '', 'toggleWrap'+id, '', '');
+	insertDOM('div', 'toggleLabel'+id, 'toggleLabel', '', 'toggleWrap'+id, '', 'test toggle');
 	//toggle groove:
 	insertDOM('div', 'toggleGroove'+id, 'toggleGroove', '', 'toggleWrap'+id, '', '');
 	//toggle switch:
