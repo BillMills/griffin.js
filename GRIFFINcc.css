@@ -188,11 +188,12 @@ div.toggleWrap{
 div.toggleLabel{
 	margin-top:0.5em;
 	margin-bottom: 0.5em;
-	margin-right:1em;
 	padding:0em;
 	border:0em;
 	display:inline-block;
 	float:left;
+	-webkit-user-select:none;
+	-moz-user-select:none;
 }
 
 div.toggleGroove{
@@ -202,6 +203,8 @@ div.toggleGroove{
 	width:3em;
 	margin-top:0.25em;
 	margin-bottom:0.25em;
+	margin-left: 1em;
+	margin-right: 1em;
 	border:0.2em solid #000000;
 	border-radius: 0.95em;
 	background-color: #333333;
@@ -234,11 +237,12 @@ div.toggleSwitch{
 div.toggleDescription{
 	margin-top:0.5em;
 	margin-bottom: 0.5em;
-	margin-left:1em;
 	padding:0em;
 	border:0em;
 	display:inline-block;
 	float:left;
+	-webkit-user-select:none;
+	-moz-user-select:none;
 }
 
 h3{

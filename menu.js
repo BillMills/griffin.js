@@ -53,23 +53,35 @@ function toggleSwitch(parentID, id, enabled, disabled){
 
 	//wrapper div:
 	insertDOM('div', 'toggleWrap'+id, 'toggleWrap', '', parentID, '', '');
+	//document.getElementById('toggleWrap'+id).onmouseup = function(event){flipToggle(event, id, enabled, disabled)};
 	//label:
 	insertDOM('div', 'toggleLabel'+id, 'toggleLabel', '', 'toggleWrap'+id, '', 'test toggle');
 	//toggle groove:
 	insertDOM('div', 'toggleGroove'+id, 'toggleGroove', '', 'toggleWrap'+id, '', '');
 	//toggle switch:
-	insertDOM('div', 'toggleSwitch'+id, 'toggleSwitch', 'left:0em;', 'toggleGroove'+id, function(){flipToggle(id, enabled, disabled)}, '');
+	insertDOM('div', 'toggleSwitch'+id, 'toggleSwitch', 'left:0em;', 'toggleGroove'+id,'', '');	
+	document.getElementById('toggleSwitch'+id).onmousedown = function(event){
+		document.getElementById('toggleWrap'+id).ready = 1;
+	};
+	document.getElementById('toggleSwitch'+id).onmouseup = function(event){
+		//document.getElementById('toggleWrap'+id).ready = 0;
+		flipToggle(event, id, enabled, disabled);
+	};
+	document.getElementById('toggleSwitch'+id).onmouseout = function(event){flipToggle(event, id, enabled, disabled)};
 	//state description
 	insertDOM('div', 'toggleDescription'+id, 'toggleDescription', '', 'toggleWrap'+id, '', disabled);
 
 
-
 }
 
-function flipToggle(id, enabled, disabled){
+function flipToggle(event, id, enabled, disabled){
 	var switchID = 'toggleSwitch'+id,
 	//grooveID = 'toggleGroove' + id,
 	descriptionID = 'toggleDescription' + id;
+	if(document.getElementById('toggleWrap'+id).ready != 1) return
+
+	//event.preventDefault();
+
 	if(document.getElementById(switchID).style.left == '0em'){
 		document.getElementById(switchID).style.left = '1em';
 		document.getElementById(descriptionID).innerHTML = enabled;
@@ -77,6 +89,8 @@ function flipToggle(id, enabled, disabled){
 		document.getElementById(switchID).style.left = '0em';
 		document.getElementById(descriptionID).innerHTML = disabled;
 	}
+
+	document.getElementById('toggleWrap'+id).ready =0;	
 }
 
 
