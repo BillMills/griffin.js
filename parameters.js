@@ -95,7 +95,7 @@ function loadParameters(){
 						 },
 				"HPGemode" : "GRIFFIN",
 				"BGOenable" : 1,
-				"cloversAbsent" : [1,2,3,4],
+				"cloversAbsent" : [],
 
 				"PACES" : {
 							"minima" : {

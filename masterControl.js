@@ -237,8 +237,10 @@ function fetchCustomParameters(){
     paths[HPGe+4] = '/DashboardConfig/HPGe/HVscale[*]'
     paths[HPGe+5] = '/DashboardConfig/HPGe/thresholdScale[*]'
     paths[HPGe+6] = '/DashboardConfig/HPGe/rateScale[*]'
+    paths[HPGe+7] = '/DashboardConfig/HPGe/upstreamLampAbsent'
+    paths[HPGe+8] = '/DashboardConfig/HPGe/downstreamLampAbsent'
 
-    PACES = HPGe+7;
+    PACES = HPGe+9;
     paths[PACES] = '/DashboardConfig/PACES/deploy'
     paths[PACES+1] = '/DashboardConfig/PACES/HVscale[*]'
     paths[PACES+2] = '/DashboardConfig/PACES/thresholdScale[*]'
@@ -350,6 +352,10 @@ function fetchCustomParameters(){
     window.parameters.HPGe.maxima.BGO = [parseFloat(data[HPGe+1][1]), parseFloat(data[HPGe+2][1]), parseFloat(data[HPGe+3][1])];
     window.parameters.HPGe.minima.HPGe = [parseFloat(data[HPGe+4][0]), parseFloat(data[HPGe+5][0]), parseFloat(data[HPGe+6][0])];
     window.parameters.HPGe.maxima.HPGe = [parseFloat(data[HPGe+4][1]), parseFloat(data[HPGe+5][1]), parseFloat(data[HPGe+6][1])];
+    if(parseInt(data[HPGe+7], 10))
+        window.parameters.cloversAbsent = window.parameters.cloversAbsent.concat([13,14,15,16]);
+    if(parseInt(data[HPGe+8], 10))
+        window.parameters.cloversAbsent = window.parameters.cloversAbsent.concat([1,2,3,4]);
 
     window.parameters.deployment.PACES = parseFloat(data[PACES]);
     window.parameters.PACES.minima.PACES = [parseFloat(data[PACES+1][0]), parseFloat(data[PACES+2][0]), parseFloat(data[PACES+3][0])];

@@ -206,6 +206,9 @@
 					ODBSet('/DashboardConfig/HV/tempTolerance', document.getElementById('tempTolInput').valueAsNumber);
 					//ODBSet('/DashboardConfig/HV/demandVoltage[*]', [document.getElementById('HVTableHVmin').valueAsNumber, document.getElementById('HVTableHVmax').valueAsNumber] );
 					ODBSet('/DashboardConfig/HV/voltRampSpeed[*]', [document.getElementById('HVTablethresholdMin').valueAsNumber, document.getElementById('HVTablethresholdMax').valueAsNumber]);
+					//make sure HPGe defaults to all deployed:
+					ODBSet('/DashboardConfig/HPGe/upstreamLampAbsent', 0)
+					ODBSet('/DashboardConfig/HPGe/downstreamLampAbsent', 0)
 
 					for(var i=0; i<subdetectors.length; i++){
 						//BAMBINO
@@ -230,7 +233,8 @@
 
 						//DESCANT
 						if(subdetectors[i] == 'DESCANT'){
-							setMinMax('DESCANT', '');						
+							setMinMax('DESCANT', '');
+							ODBSet('/DashboardConfig/HPGe/downstreamLampAbsent', 1);						
 						}
 
 						//HPGe
@@ -252,6 +256,7 @@
 						//SHARC
 						if(subdetectors[i] == 'SHARC'){
 							setMinMax('SHARC', '');
+							ODBSet('/DashboardConfig/HPGe/downstreamLampAbsent', 1);	
 						}
 
 						//SPICE
@@ -261,6 +266,7 @@
 							setMinMax('SPICE', '');
 							var spiceLayers = (document.getElementById('SPICEsingleLayer').checked) ? 1 : 2;
 							ODBSet('/DashboardConfig/SPICE/SPICEauxLayers', spiceLayers);
+							ODBSet('/DashboardConfig/HPGe/upstreamLampAbsent', 1);	
 						} else {
 							ODBSet('/DashboardConfig/SPICE/SPICEauxiliary', '')
 						}
