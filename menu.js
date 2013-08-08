@@ -58,7 +58,7 @@ function toggleSwitch(parentID, id, enabled, disabled){
 	//toggle groove:
 	insertDOM('div', 'toggleGroove'+id, 'toggleGroove', '', 'toggleWrap'+id, '', '');
 	//toggle switch:
-	insertDOM('div', 'toggleSwitch'+id, 'toggleSwitch', '', 'toggleGroove'+id, function(){flipToggle(id, enabled, disabled)}, '');
+	insertDOM('div', 'toggleSwitch'+id, 'toggleSwitch', 'left:0em;', 'toggleGroove'+id, function(){flipToggle(id, enabled, disabled)}, '');
 	//state description
 	insertDOM('div', 'toggleDescription'+id, 'toggleDescription', '', 'toggleWrap'+id, '', disabled);
 
