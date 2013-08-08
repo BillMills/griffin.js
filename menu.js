@@ -7,8 +7,12 @@ function deployMenu(targetDivID, headings, titles){
 		insertDOM('div', headings[i]+'Tab', 'collapsableMenu', 'max-height:50px; text-align:left; margin-top:2%;', targetDivID, '', '', '', '', '');
 		insertDOM('h3', headings[i]+'arrow', '', 'display:inline; float:left;', headings[i]+'Tab', function(){toggleMenu(targetDivID, headings, this.id)}, String.fromCharCode(0x25B6));
 		insertDOM('h3', headings[i]+'title', '', 'display:inline-block; font:20px Orbitron; padding-left:1em', headings[i]+'Tab', '', titles[i]);
-		//toggleSwitch(headings[i]+'Tab', headings[i]+'testToggle')
-		toggleSwitch(headings[i]+'Tab', headings[i]+'testToggle', 'strawberry', 'banana')
+		toggleSwitch(headings[i]+'Tab', headings[i]+'testToggle', 'strawberry', 'banana');
+/*
+		insertDOM('input', 'sliderTest', '', '', headings[i]+'Tab', '', '', '', 'range');
+		document.getElementById('sliderTest').min = 0;
+		document.getElementById('sliderTest').max = 1000;
+*/
 		insertDOM('div', headings[i]+'Content', 'menuContent', '', headings[i]+'Tab', '', '');
 	}
 
@@ -22,7 +26,7 @@ function toggleMenu(wrapperDivID, headings, thisID){
         assocDiv, string, i,
         thisOne = thisID.slice(0, thisID.length-5) + 'Tab';  //reconstruct the tab ID from the arrow ID
 
-    if(document.getElementById(thisOne).style['max-height'] == '50px'){ //expand menu:
+    if(document.getElementById(thisOne).style.maxHeight == '50px'){ //expand menu:
         //change the title arrows as appropriate, and resize menus
         for(i=0; i<headings.length; i++){
         	//force others to collapse so only one open at a time?
@@ -33,12 +37,12 @@ function toggleMenu(wrapperDivID, headings, thisID){
 	        	document.getElementById(headings[i]+'arrow').innerHTML = String.fromCharCode(0x25BC);
 	        	//document.getElementById(headings[i]+'Tab').style.height = fullHeight+'px';
 	        	//document.getElementById(headings[i]+'Tab').setAttribute('style', 'height: -webkit-max-content');
-	        	document.getElementById(headings[i]+'Tab').style['max-height'] = (document.getElementById(headings[i]+'Content').offsetHeight+50)+'px';
+	        	document.getElementById(headings[i]+'Tab').style.maxHeight = (document.getElementById(headings[i]+'Content').offsetHeight+50)+'px';
 	        }
         }
     } else {
 	    document.getElementById(thisOne.slice(0,thisOne.length-3)+'arrow').innerHTML = String.fromCharCode(0x25B6);
-	    document.getElementById(thisOne).style['max-height'] = '50px';
+	    document.getElementById(thisOne).style.maxHeight = '50px';
     }
 }
 
@@ -66,11 +70,11 @@ function flipToggle(id, enabled, disabled){
 	var switchID = 'toggleSwitch'+id,
 	//grooveID = 'toggleGroove' + id,
 	descriptionID = 'toggleDescription' + id;
-	if(document.getElementById(switchID).style['left'] == '0em'){
-		document.getElementById(switchID).style['left'] = '1em';
+	if(document.getElementById(switchID).style.left == '0em'){
+		document.getElementById(switchID).style.left = '1em';
 		document.getElementById(descriptionID).innerHTML = enabled;
 	} else{
-		document.getElementById(switchID).style['left'] = '0em';
+		document.getElementById(switchID).style.left = '0em';
 		document.getElementById(descriptionID).innerHTML = disabled;
 	}
 }

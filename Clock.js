@@ -155,13 +155,16 @@ function Clock(){
 //do something when a clock alarm is detected
 function setClockAlarm(id){
     var clock =document.getElementById(id);
-    clock.style['border-color'] = "#FF0000";
+    clock.style.borderColor = "#FF0000";
 }
 
 //do something else when a clock alarm is unset
 function unsetClockAlarm(id){
     var clock =document.getElementById(id);
-    clock.style['border-color'] = "#88FF88";
+    //clock.style['border-color'] = "#88FF88";  //okay in Chrome, does nothing in FF!
+    clock.style.borderColor = "#88FF88";        //camel case versions of names are spec standard, Chrome and IE give CSS-literal option as a bonus.
+    //$('#'+id).css('border-color', '#88FF88');  //Zepto works too
+
 }
 
 //show the relevant clock information when clicked on
@@ -202,11 +205,11 @@ function showClock(id){
 function glowMe(id){
     var i;
 
-    document.getElementById('masterClock').style['box-shadow'] = '0 0 0px white'; 
+    document.getElementById('masterClock').style.boxShadow = '0 0 0px white'; 
 
     for(i=0; i<window.parameters.nClocks-1; i++){
         if(document.getElementById('slaveClock'+i))
-            document.getElementById('slaveClock'+i).style['box-shadow'] = '0 0 0px white';    
+            document.getElementById('slaveClock'+i).style.boxShadow = '0 0 0px white';    
     }
-    document.getElementById(id).style['box-shadow'] = '0 0 20px white';
+    document.getElementById(id).style.boxShadow = '0 0 20px white';
 }

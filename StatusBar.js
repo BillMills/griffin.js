@@ -131,8 +131,8 @@ function StatusBar(wrapper){
             }
         }
         
-        //pull in status table from traditional status page, and put it in the TT:
-        if(!window.parameters.MIDASlegacyMode){
+        //pull in status table from traditional status page, and put it in the TT: - disabled until id's available in MIDAS
+        if(!window.parameters.MIDASlegacyMode && 1==0){
             $.get(window.parameters.statusURL, function(response){
                 var i, headStart, headEnd = '', rowNode;
 
@@ -189,4 +189,5 @@ function StatusBar(wrapper){
     };
 
     this.update();
+
 }

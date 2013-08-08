@@ -197,6 +197,7 @@ div.toggleLabel{
 
 div.toggleGroove{
 	-webkit-box-sizing:content-box;
+	-moz-box-sizing:content-box;
 	height:1.5em;
 	width:3em;
 	margin-top:0.25em;
