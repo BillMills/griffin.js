@@ -159,7 +159,7 @@ function ODBgrab(){
     paths[10] = '/Equipment/Event Builder/Statistics/kBytes per sec.';
     //Clock
     for(i=0; i<window.parameters.nClocks; i++){
-        paths[10 + i] = '/Equipment/Clock'+i+'/Variables/Input[*]';
+        paths[10 + i] = '/Equipment/GRIF-Clk'+i+'/Variables/Input[*]';
     }
 
     data = ODBMGet(paths);

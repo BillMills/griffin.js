@@ -165,10 +165,10 @@
 
         //autodetect how many clocks are present in the ODB - must be registered under /Equipment/Clock[x], x = 0..23
         for(i=0; i<25; i++){
-          paths[i] = '/Equipment/Clock'+i+'/Variables/Input[0]';
+          paths[i] = '/Equipment/GRIF-Clk'+i+'/Variables/Input[0]';
         }
         //also grab array of clock parameters:
-        paths[25] = '/Equipment/Clock0/Settings/Names Input[*]';
+        paths[25] = '/Equipment/GRIF-Clk0/Settings/Names Input[*]';
         data = ODBMGet(paths);
         for(i=0; i<25; i++){
           if(data[i] != '<DB_NO_KEY>\n'){

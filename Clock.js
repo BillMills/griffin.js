@@ -7,8 +7,7 @@ function Clock(){
 	this.canvasID = 'ClockCanvas';		            //ID of canvas to paint clock on
     this.linkWrapperID = 'ClockLinks';              //ID of div to contain clock view header
     this.sidebarID = 'ClockSidebar';                //ID of div to contain clock sidebar
-    this.activeClock = 'masterClock';
-    this.clockID = [];
+    this.activeClock = 'clock0';
     this.noUniqueMaster = 0;
 
 	this.wrapper = document.getElementById(this.wrapperID);
@@ -22,17 +21,16 @@ function Clock(){
     //nav wrapper div
     insertDOM('div', this.linkWrapperID, 'navPanel', 'text-align:center; width:50%; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;', this.wrapperID, '', '');
     //nav header
-    insertDOM('h1', 'ClockLinksBanner', 'navPanelHeader', 'float:left; margin-top:0px;', this.linkWrapperID, '', window.parameters.ExpName+' Clock Status');
-    insertDOM('br', 'break', '', '', this.linkWrapperID, '', '');
+    insertDOM('h1', 'ClockLinksBanner', 'navPanelHeader', 'float:left; margin-top:0px; clear:both;', this.linkWrapperID, '', window.parameters.ExpName+' Clock Status');
+    insertDOM('br', 'break', '', '', this.linkWrapperID, '', ''); 
 
     //the clock view is done entirely with dom elements; most convenient to extend the central div to accommodate.
     cellSize = document.getElementById(this.linkWrapperID).offsetWidth / 100;
-    insertDOM('div', 'masterClock', 'clock', 'clear:both; width:'+20*cellSize+'px; height:'+10*cellSize+'px; margin-left:auto; margin-right:auto; margin-top:20px;', this.linkWrapperID, function(){showClock(this.id)}, '');
-    //slaves
-    for(i=0; i<window.parameters.nClocks-1; i++){
-        clockStyle = 'display:inline-block; width:'+10*cellSize+'px; height:'+10*cellSize+'px; margin-left:'+(2*cellSize)+'px; margin-right:'+(2*cellSize)+'px; margin-bottom:'+2*cellSize+'px; margin-top:'+2*cellSize+'px;'
-        insertDOM('div', 'slaveClock'+i, 'clock', clockStyle , this.linkWrapperID, function(){showClock(this.id)}, '');
-        if(i%6==5) insertDOM('br', 'break', '', '', this.linkWrapperID);
+    //clock divs
+    for(i=0; i<25/*window.parameters.nClocks*/; i++){
+        clockStyle = 'display:inline-block; width:'+10*cellSize+'px; height:'+10*cellSize+'px; margin-left:'+(2*cellSize)+'px; margin-right:'+(2*cellSize)+'px; margin-bottom:'+2*cellSize+'px; margin-top:'+2*cellSize+'px;' + ( (i==0) ? 'clear:both' : '' )
+        insertDOM('div', 'clock'+i, 'clock', clockStyle , this.linkWrapperID, function(){showClock(this.id)}, '');
+        if(i%5==4) insertDOM('br', 'break', '', '', this.linkWrapperID);
     }
 
 	//deploy a canvas for the clock view; this is actually just a dummy to stay consistent with all the other views, so we can use the same transition functions easily.
@@ -42,8 +40,15 @@ function Clock(){
     this.update = function(){
         var i, clock, clockData, flag, alarmString;
 
-        //sort clocks into array, check to make sure exactly one of them claims to be the master:
-        this.mapClocks();
+        //check to make sure exactly one clock claims to be the master:
+        this.noUniqueMaster = 0;
+        for(i=0; i<window.parameters.nClocks; i++){
+            this.noUniqueMaster++;
+        }
+        if(this.noUniqueMaster != 1)
+            this.noUniqueMaster = 1;
+        else
+            this.noUniqueMaster = 0;
 
         //update text for whatever clock is showing:
         showClock(this.activeClock);
@@ -51,7 +56,7 @@ function Clock(){
         //update alarm status
         //unset all stale alarms:
         for(i=0; i<window.parameters.nClocks; i++){
-            unsetClockAlarm(this.clockID[i]);
+            unsetClockAlarm('clock'+i);
         }
 
         //no unique master alarm://////////////////////////////////////////////////
@@ -59,7 +64,7 @@ function Clock(){
             //set master bin and all slaves claiming to be masters to red:
             for(i=0; i<window.parameters.nClocks; i++){
                 if(parseInt(window.localODB['clock'+i][1],10)){
-                    setClockAlarm(this.clockID[i]);
+                    setClockAlarm('clock'+i);
                 }
             }
 
@@ -105,10 +110,10 @@ function Clock(){
             }
             if(flag==1){
                 alarmString = 'Clock claims to be a master, but some of its parameters make it look like a slave.'  
-                setClockAlarm(this.clockID[i]);            
+                setClockAlarm('clock'+i);            
             } else if(flag==2){
                 alarmString = 'Clock claims to be a slave, but some of its parameters make it look like a master.'
-                setClockAlarm(this.clockID[i]);
+                setClockAlarm('clock'+i);
             }
 
             //post an alarm to the alarm service:
@@ -125,30 +130,6 @@ function Clock(){
         }
 
     };
-
-    //map the clocks found in the ODB onto the grid of clock div ID's:
-    this.mapClocks = function(){
-        var i, nMaster=0, slaveNumber = 0;
-        for(i=0; i<window.parameters.nClocks; i++){
-            if(parseInt(window.localODB['clock'+i][1],10) && nMaster==0){  //whichever clock shows the Master flag first gets stuck in the master slot
-                document.getElementById('masterClock').clockIndex = i;  //index 1 in clock data is the Master indicator bit
-                this.clockID[i] = 'masterClock';
-                nMaster++;
-            } else{
-                document.getElementById('slaveClock'+slaveNumber).clockIndex = i;
-                this.clockID[i] = 'slaveClock'+slaveNumber;
-                slaveNumber++;
-                if(parseInt(window.localODB['clock'+i][1],10)) nMaster++; //count the n>1'th clock claiming to be the master, but stick it in a slave slot
-            }
-        }
-
-        //set flag to trigger alarm if there isn't exactly one master:
-        if(nMaster!=1)
-            this.noUniqueMaster = 1;
-        else
-            this.noUniqueMaster = 0;
-    };
-
 }
 
 
@@ -174,21 +155,21 @@ function showClock(id){
     //clock summary parameters
     text = '';
     for(i=0; i<9; i++){
-        text += window.parameters.clockVariableNames[i] + ': ' + window.localODB['clock'+document.getElementById(id).clockIndex][i] + '<br>';
+        text += window.parameters.clockVariableNames[i] + ': ' + window.localODB[id][i] + '<br>';
     }
     document.getElementById('summaryContent').innerHTML = text;
 
     //clock channel outs parameters
     text = '';
     for(i=9; i<41; i++){
-        text += window.parameters.clockVariableNames[i] + ': ' + window.localODB['clock'+document.getElementById(id).clockIndex][i] + '<br>';
+        text += window.parameters.clockVariableNames[i] + ': ' + window.localODB[id][i] + '<br>';
     }
     document.getElementById('outsContent').innerHTML = text;    
 
     //clock channel outs parameters
     text = '';
     for(i=41; i<52; i++){
-        text += window.parameters.clockVariableNames[i] + ': ' + window.localODB['clock'+document.getElementById(id).clockIndex][i] + '<br>';
+        text += window.parameters.clockVariableNames[i] + ': ' + window.localODB[id][i] + '<br>';
     }
     document.getElementById('CSACContent').innerHTML = text;    
 
@@ -205,11 +186,9 @@ function showClock(id){
 function glowMe(id){
     var i;
 
-    document.getElementById('masterClock').style.boxShadow = '0 0 0px white'; 
-
-    for(i=0; i<window.parameters.nClocks-1; i++){
-        if(document.getElementById('slaveClock'+i))
-            document.getElementById('slaveClock'+i).style.boxShadow = '0 0 0px white';    
+    for(i=0; i<window.parameters.nClocks; i++){
+        if(document.getElementById('clock'+i))
+            document.getElementById('clock'+i).style.boxShadow = '0 0 0px white';    
     }
     document.getElementById(id).style.boxShadow = '0 0 20px white';
 }

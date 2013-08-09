@@ -315,6 +315,8 @@ DESCANTDS = function(){
 		this.TTmap[i] = name;
 	}
 
+	//this.DESCANT['DSC034P00X'].rate = 10000;
+
 }
 
 PACESDS = function(){
