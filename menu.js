@@ -7,7 +7,6 @@ function deployMenu(targetDivID, headings, titles){
 		insertDOM('div', headings[i]+'Tab', 'collapsableMenu', 'max-height:50px; text-align:left; margin-top:2%;', targetDivID, '', '', '', '', '');
 		insertDOM('h3', headings[i]+'arrow', '', 'display:inline; float:left;', headings[i]+'Tab', function(){toggleMenu(targetDivID, headings, this.id)}, String.fromCharCode(0x25B6));
 		insertDOM('h3', headings[i]+'title', '', 'display:inline-block; font:20px Orbitron; padding-left:1em', headings[i]+'Tab', '', titles[i]);
-		toggleSwitch(headings[i]+'Tab', headings[i]+'testToggle', 'strawberry', 'banana');
 /*
 		insertDOM('input', 'sliderTest', '', '', headings[i]+'Tab', '', '', '', 'range');
 		document.getElementById('sliderTest').min = 0;
@@ -49,45 +48,47 @@ function toggleMenu(wrapperDivID, headings, thisID){
 
 
 //build a toggle switch out of divs:
-function toggleSwitch(parentID, id, enabled, disabled){
+function toggleSwitch(parentID, id, title, enabled, disabled, onActivate, onDeactivate, initialState){
 
 	//wrapper div:
-	insertDOM('div', 'toggleWrap'+id, 'toggleWrap', '', parentID, '', '');
-	//document.getElementById('toggleWrap'+id).onmouseup = function(event){flipToggle(event, id, enabled, disabled)};
+	insertDOM('div', 'toggleWrap'+id, 'toggleWrap',  ( (title=='') ? 'text-align:center;' : '' ), parentID, '', '');
 	//label:
-	insertDOM('div', 'toggleLabel'+id, 'toggleLabel', '', 'toggleWrap'+id, '', 'test toggle');
+	if(title != '')
+		insertDOM('div', 'toggleLabel'+id, 'toggleLabel', '', 'toggleWrap'+id, '', title);
 	//toggle groove:
-	insertDOM('div', 'toggleGroove'+id, 'toggleGroove', '', 'toggleWrap'+id, '', '');
+	insertDOM('div', 'toggleGroove'+id, 'toggleGroove',  ( (title=='') ? '' : 'float:left;' ), 'toggleWrap'+id, '', '');
 	//toggle switch:
-	insertDOM('div', 'toggleSwitch'+id, 'toggleSwitch', 'left:0em;', 'toggleGroove'+id,'', '');	
+	insertDOM('div', 'toggleSwitch'+id, 'toggleSwitch', ((initialState) ? 'left:1em;' : 'left:0em;'), 'toggleGroove'+id,'', '');	
 	document.getElementById('toggleSwitch'+id).onmousedown = function(event){
 		document.getElementById('toggleWrap'+id).ready = 1;
 	};
 	document.getElementById('toggleSwitch'+id).onmouseup = function(event){
 		//document.getElementById('toggleWrap'+id).ready = 0;
-		flipToggle(event, id, enabled, disabled);
+		flipToggle(event, id, enabled, disabled, onActivate, onDeactivate);
 	};
-	document.getElementById('toggleSwitch'+id).onmouseout = function(event){flipToggle(event, id, enabled, disabled)};
+	document.getElementById('toggleSwitch'+id).onmouseout = function(event){flipToggle(event, id, enabled, disabled, onActivate, onDeactivate)};
 	//state description
-	insertDOM('div', 'toggleDescription'+id, 'toggleDescription', '', 'toggleWrap'+id, '', disabled);
+	if(title=='')
+		insertDOM('br', 'break', '', '', 'toggleWrap'+id);
+	insertDOM('div', 'toggleDescription'+id, 'toggleDescription', ( (title=='') ? 'width:100%' : '' ), 'toggleWrap'+id, '', ((initialState) ? enabled : disabled));
 
 
 }
 
-function flipToggle(event, id, enabled, disabled){
+function flipToggle(event, id, enabled, disabled, onActivate, onDeactivate){
 	var switchID = 'toggleSwitch'+id,
 	//grooveID = 'toggleGroove' + id,
 	descriptionID = 'toggleDescription' + id;
 	if(document.getElementById('toggleWrap'+id).ready != 1) return
 
-	//event.preventDefault();
-
 	if(document.getElementById(switchID).style.left == '0em'){
 		document.getElementById(switchID).style.left = '1em';
 		document.getElementById(descriptionID).innerHTML = enabled;
+		onActivate();
 	} else{
 		document.getElementById(switchID).style.left = '0em';
 		document.getElementById(descriptionID).innerHTML = disabled;
+		onDeactivate();
 	}
 
 	document.getElementById('toggleWrap'+id).ready =0;	
