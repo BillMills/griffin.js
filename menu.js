@@ -2,17 +2,27 @@
 function deployMenu(targetDivID, headings, titles){
 	var i;
 
+	//listener tool for Buchner's dom insertion listener:
+	window.parameters.insertListener = function(event){
+		var prefix, tab;
+
+		if (event.animationName == "nodeInserted") {
+			prefix = event.target.id.slice(0, event.target.id.search('Content'));
+			tab = document.getElementById(prefix+'Tab');
+			resizeMenu(prefix);
+		}
+	}
+
 	//inject the appropriate html into the target div:
 	for(i=0; i<headings.length; i++){
 		insertDOM('div', headings[i]+'Tab', 'collapsableMenu', 'max-height:50px; text-align:left; margin-top:2%;', targetDivID, '', '', '', '', '');
 		insertDOM('h3', headings[i]+'arrow', '', 'display:inline; float:left;', headings[i]+'Tab', function(){toggleMenu(targetDivID, headings, this.id)}, String.fromCharCode(0x25B6));
 		insertDOM('h3', headings[i]+'title', '', 'display:inline-block; font:20px Orbitron; padding-left:1em', headings[i]+'Tab', '', titles[i]);
-/*
-		insertDOM('input', 'sliderTest', '', '', headings[i]+'Tab', '', '', '', 'range');
-		document.getElementById('sliderTest').min = 0;
-		document.getElementById('sliderTest').max = 1000;
-*/
 		insertDOM('div', headings[i]+'Content', 'menuContent', '', headings[i]+'Tab', '', '');
+
+		//make sure the expanded divs maintain an appropriate height even if their contents change:
+		document.addEventListener("animationstart", window.parameters.insertListener, false); // standard + firefox
+		document.addEventListener("webkitAnimationStart", window.parameters.insertListener, false); // Chrome + Safari
 	}
 
 }
@@ -43,6 +53,13 @@ function toggleMenu(wrapperDivID, headings, thisID){
 	    document.getElementById(thisOne.slice(0,thisOne.length-3)+'arrow').innerHTML = String.fromCharCode(0x25B6);
 	    document.getElementById(thisOne).style.maxHeight = '50px';
     }
+}
+
+//resize expanded menu when its Content div changes
+function resizeMenu(id){
+	console.log(id)
+	if(document.getElementById(id+'Tab').style.maxHeight != '50px')
+		document.getElementById(id+'Tab').style.maxHeight = (document.getElementById(id+'Content').offsetHeight+50)+'px';
 }
 
 

@@ -300,6 +300,12 @@ div#tempAlarm
 	left:3%;
 }
 
+p.hanging{
+	padding-left: 2em;
+	text-indent: -2em;
+	margin: 0px;
+}
+
 input.bigButton{
 	width: 40%; 
 	height: 30px;  
@@ -449,4 +455,24 @@ textarea{
 
 tbody tbody a:link{
 	color:#FFFFFF;
+}
+
+/*Buchner's cool dom insertion listener hack, for use with the collabsible menus:*/
+@-moz-keyframes nodeInserted {  
+	from { clip: rect(1px, auto, auto, auto); }
+	to { clip: rect(0px, auto, auto, auto); }
+}
+
+@-webkit-keyframes nodeInserted {  
+	from { clip: rect(1px, auto, auto, auto); }
+	to { clip: rect(0px, auto, auto, auto); }
+}
+
+.menuContent > *{
+    animation-duration: 0.001s;
+    -moz-animation-duration: 0.001s;
+    -webkit-animation-duration: 0.001s;
+    animation-name: nodeInserted;      
+    -moz-animation-name: nodeInserted;
+    -webkit-animation-name: nodeInserted;
 }

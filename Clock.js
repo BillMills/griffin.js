@@ -156,6 +156,11 @@ function Clock(){
         }
 
     };
+
+    //initial populate, and default the summary tab to open:
+    this.update();
+    document.getElementById('summaryarrow').onclick();
+
 }
 
 function setMaster(n){
@@ -211,25 +216,25 @@ function showClock(id){
     var i, text;
 
     //clock summary parameters
-    text = '';
+    document.getElementById('summaryContent').innerHTML = '';
     for(i=0; i<9; i++){
-        text += window.parameters.clockVariableNames[i] + ': ' + window.localODB[id][i] + '<br>';
+        text = String.fromCharCode(0x2022) + ' ' + window.parameters.clockVariableNames[i] + ': ' + humanReadableClock(i, window.localODB[id][i]) + '<br>';
+        insertDOM('p', 'summaryContent'+i, 'hanging', '', 'summaryContent', '', text);
     }
-    document.getElementById('summaryContent').innerHTML = text;
 
     //clock channel outs parameters
-    text = '';
+    document.getElementById('outsContent').innerHTML = '';
     for(i=9; i<41; i++){
-        text += window.parameters.clockVariableNames[i] + ': ' + window.localODB[id][i] + '<br>';
+        text = String.fromCharCode(0x2022) + ' ' + window.parameters.clockVariableNames[i] + ': ' + humanReadableClock(i, window.localODB[id][i]) + '<br>';
+        insertDOM('p', 'outsContent'+i, 'hanging', '', 'outsContent', '', text);
     }
-    document.getElementById('outsContent').innerHTML = text;    
 
     //clock channel outs parameters
-    text = '';
+    document.getElementById('CSACContent').innerHTML = '';
     for(i=41; i<52; i++){
-        text += window.parameters.clockVariableNames[i] + ': ' + window.localODB[id][i] + '<br>';
+        text = String.fromCharCode(0x2022) + ' ' + window.parameters.clockVariableNames[i] + ': ' + humanReadableClock(i, window.localODB[id][i]) + '<br>';
+        insertDOM('p', 'CSACContent'+i, 'hanging', '', 'CSACContent', '', text);
     }
-    document.getElementById('CSACContent').innerHTML = text;    
 
     //highlight the clock
     glowMe(id);
@@ -252,5 +257,24 @@ function glowMe(id){
         document.getElementById('CSACTab').style.opacity = 1;
     else
         document.getElementById('CSACTab').style.opacity = 0;
+
+}
+
+//translate clock parameter i of value v into something a human can comprehend:
+function humanReadableClock(i, v){
+    if(i == 1)
+        return (parseInt(v,10)) ? 'Master' : 'Slave';
+    else if(i == 2)
+        return (parseInt(v,10)) ? 'LEMO connector NIM input' : 'eSATA connector LVDS input';
+    else if(i == 3)
+        return (parseInt(v,10)) ? 'LEMO connector NIM input' : 'eSATA connector LVDS input';
+    else if(i>3 && i<9)
+        return (parseInt(v,10)) ? 'Present' : 'Absent';
+    else if(i==11 || i==15 || i==19 || i==23 || i==27 || i==31 || i==35 || i==39)
+        return (parseInt(v,10)) ? 'Yes' : 'No';
+    else if(i==41)
+        return (parseInt(v,10)) ? 'Up' : 'Down';
+    else
+        return v;
 
 }

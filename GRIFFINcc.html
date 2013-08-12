@@ -167,8 +167,6 @@
         for(i=0; i<25; i++){
           paths[i] = '/Equipment/GRIF-Clk'+i+'/Variables/Input[0]';
         }
-        //also grab array of clock parameters:
-        paths[25] = '/Equipment/GRIF-Clk0/Settings/Names Input[*]';
         data = ODBMGet(paths);
         for(i=0; i<25; i++){
           if(data[i] != '<DB_NO_KEY>\n'){
@@ -176,7 +174,6 @@
             window.parameters.topDeployment['Clock'] = 1;
           }
         }
-        window.parameters.clockVariableNames = data[25];
 
         //load things from the ODB
         if(!window.parameters.devMode) ODBgrab();
