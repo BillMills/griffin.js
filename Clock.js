@@ -217,13 +217,16 @@ function showClock(id){
 
     //clock summary parameters
     document.getElementById('summaryContent').innerHTML = '';
-    for(i=0; i<9; i++){
+    for(i=1; i<9; i++){
         text = String.fromCharCode(0x2022) + ' ' + window.parameters.clockVariableNames[i] + ': ' + humanReadableClock(i, window.localODB[id][i]) + '<br>';
         insertDOM('p', 'summaryContent'+i, 'hanging', '', 'summaryContent', '', text);
     }
 
     //clock channel outs parameters
     document.getElementById('outsContent').innerHTML = '';
+    //special placement for i=0 at user request:
+    text = String.fromCharCode(0x2022) + ' ' + window.parameters.clockVariableNames[0] + ': ' + humanReadableClock(i, window.localODB[id][0]) + '<br>';
+    insertDOM('p', 'outsContent0', 'hanging', '', 'outsContent', '', text);    
     for(i=9; i<41; i++){
         text = String.fromCharCode(0x2022) + ' ' + window.parameters.clockVariableNames[i] + ': ' + humanReadableClock(i, window.localODB[id][i]) + '<br>';
         insertDOM('p', 'outsContent'+i, 'hanging', '', 'outsContent', '', text);
@@ -265,9 +268,9 @@ function humanReadableClock(i, v){
     if(i == 1)
         return (parseInt(v,10)) ? 'Master' : 'Slave';
     else if(i == 2)
-        return (parseInt(v,10)) ? 'LEMO connector NIM input' : 'eSATA connector LVDS input';
+        return (parseInt(v,10)) ? 'LEMO' : 'eSATA';
     else if(i == 3)
-        return (parseInt(v,10)) ? 'LEMO connector NIM input' : 'eSATA connector LVDS input';
+        return (parseInt(v,10)) ? 'LEMO' : 'eSATA';
     else if(i>3 && i<9)
         return (parseInt(v,10)) ? 'Present' : 'Absent';
     else if(i==11 || i==15 || i==19 || i==23 || i==27 || i==31 || i==35 || i==39)
