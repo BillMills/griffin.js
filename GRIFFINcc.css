@@ -497,7 +497,7 @@ tbody tbody a:link{
 }
 
 .sidebarTable tr:nth-child(odd){
-	background-color: #777777;
+	background-color: #333333;
 }
 
 .sidebarTable td:nth-child(odd){
