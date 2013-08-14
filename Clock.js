@@ -17,6 +17,9 @@ function Clock(){
 
     //deploy right bar menu:
     deployMenu('clockMenus', ['summary', 'outs', 'CSAC'] , ['Clock Summary','Channel Outs','CSAC Parameters']);
+    //inject table into div:
+    insertDOM('table', 'summaryContentTable', 'sidebarTable', '', 'summaryContent', '', '');
+    insertDOM('table', 'CSACContentTable', 'sidebarTable', '', 'CSACContent', '', '');
 
     //nav wrapper div
     insertDOM('div', this.linkWrapperID, 'navPanel', 'text-align:center; width:50%; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;', this.wrapperID, '', '');
@@ -213,30 +216,37 @@ function unsetClockAlarm(id){
 
 //show the relevant clock information when clicked on
 function showClock(id){
-    var i, text;
+    var i, text, label, value;
 
     //clock summary parameters
-    document.getElementById('summaryContent').innerHTML = '';
+    document.getElementById('summaryContentTable').innerHTML = '';
     for(i=1; i<9; i++){
-        text = String.fromCharCode(0x2022) + ' ' + window.parameters.clockVariableNames[i] + ': ' + humanReadableClock(i, window.localODB[id][i]) + '<br>';
-        insertDOM('p', 'summaryContent'+i, 'hanging', '', 'summaryContent', '', text);
+        if(parseInt(window.localODB[id][1],10) && i==3) continue; //don't report FanSel for the master.
+        label = window.parameters.clockVariableNames[i];
+        value = humanReadableClock(i, window.localODB[id][i]);
+        insertDOM('tr', 'summaryContentRow'+i, '', '', 'summaryContentTable', '', '');
+        insertDOM('td', 'clockSummaryLabel'+i, '', '', 'summaryContentRow'+i, '', label);
+        insertDOM('td', 'clockSummaryValue'+i, '', '', 'summaryContentRow'+i, '', value);
     }
 
     //clock channel outs parameters
     document.getElementById('outsContent').innerHTML = '';
     //special placement for i=0 at user request:
-    text = String.fromCharCode(0x2022) + ' ' + window.parameters.clockVariableNames[0] + ': ' + humanReadableClock(i, window.localODB[id][0]) + '<br>';
+    text = window.parameters.clockVariableNames[0] + ': ' + humanReadableClock(i, window.localODB[id][0]) + '<br>';
     insertDOM('p', 'outsContent0', 'hanging', '', 'outsContent', '', text);    
     for(i=9; i<41; i++){
-        text = String.fromCharCode(0x2022) + ' ' + window.parameters.clockVariableNames[i] + ': ' + humanReadableClock(i, window.localODB[id][i]) + '<br>';
+        text = window.parameters.clockVariableNames[i] + ': ' + humanReadableClock(i, window.localODB[id][i]) + '<br>';
         insertDOM('p', 'outsContent'+i, 'hanging', '', 'outsContent', '', text);
     }
 
     //clock channel outs parameters
-    document.getElementById('CSACContent').innerHTML = '';
+    document.getElementById('CSACContentTable').innerHTML = '';
     for(i=41; i<52; i++){
-        text = String.fromCharCode(0x2022) + ' ' + window.parameters.clockVariableNames[i] + ': ' + humanReadableClock(i, window.localODB[id][i]) + '<br>';
-        insertDOM('p', 'CSACContent'+i, 'hanging', '', 'CSACContent', '', text);
+        label = window.parameters.clockVariableNames[i];
+        value = humanReadableClock(i, window.localODB[id][i]);
+        insertDOM('tr', 'CSACContentRow'+i, '', '', 'CSACContentTable', '', '');
+        insertDOM('td', 'clockCSACLabel'+i, '', '', 'CSACContentRow'+i, '', label);
+        insertDOM('td', 'clockCSACValue'+i, '', '', 'CSACContentRow'+i, '', value);
     }
 
     //highlight the clock
@@ -271,7 +281,9 @@ function humanReadableClock(i, v){
         return (parseInt(v,10)) ? 'LEMO' : 'eSATA';
     else if(i == 3)
         return (parseInt(v,10)) ? 'LEMO' : 'eSATA';
-    else if(i>3 && i<9)
+    else if(i == 4)
+        return (parseInt(v,10)) ? 'LEMO' : 'Atomic Clock'
+    else if(i>4 && i<9)
         return (parseInt(v,10)) ? 'Present' : 'Absent';
     else if(i==11 || i==15 || i==19 || i==23 || i==27 || i==31 || i==35 || i==39)
         return (parseInt(v,10)) ? 'Yes' : 'No';

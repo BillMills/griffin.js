@@ -182,7 +182,7 @@ div.collapsableMenu{
 
 div.menuContent{
 	font-size: 110%;
-	padding-left: 3em;
+	padding-left: 2em;
 	padding-top:1em;
 }
 
@@ -468,11 +468,55 @@ tbody tbody a:link{
 	to { clip: rect(0px, auto, auto, auto); }
 }
 
-.menuContent > *{
+.menuContent > *, .sidebarTable > *{
     animation-duration: 0.001s;
     -moz-animation-duration: 0.001s;
     -webkit-animation-duration: 0.001s;
     animation-name: nodeInserted;      
     -moz-animation-name: nodeInserted;
     -webkit-animation-name: nodeInserted;
+}
+/*
+.clockLabel{
+	text-align: right;
+	border-right: 1px solid #FFFFFF;
+	margin:0px;
+	padding-right: 1em;
+}
+
+.clockValue{
+	text-align: left;
+	margin:0px;
+	padding-left: 1em;
+}
+*/
+
+.sidebarTable{
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+.sidebarTable tr:nth-child(odd){
+	background-color: #777777;
+}
+
+.sidebarTable td:nth-child(odd){
+	text-align: right;
+	padding:0.5em;
+	border-right: 1px solid #FFFFFF;
+}
+
+.sidebarTable td:nth-child(even){
+	text-align: left;
+	padding:0.5em;
+}
+
+.sidebarTable td:nth-child(4n+1){
+	border-top-left-radius: 1em;
+	border-bottom-left-radius: 1em;
+}
+
+.sidebarTable td:nth-child(4n+2){
+	border-top-right-radius: 1em;
+	border-bottom-right-radius: 1em;
 }

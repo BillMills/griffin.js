@@ -109,7 +109,7 @@ function masterLoop(callMyself){
     }
 
     //next iteration:
-    window.loop = setTimeout(function(){loadJSONP(window.Gatekeeper, 1)}, 3000);
+    window.loop = setTimeout(function(){loadJSONP(window.Gatekeeper, 1)}, 60000);
 }
 
 //determine what size cards are in what slot:

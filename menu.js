@@ -5,7 +5,6 @@ function deployMenu(targetDivID, headings, titles){
 	//listener tool for Buchner's dom insertion listener:
 	window.parameters.insertListener = function(event){
 		var prefix, tab;
-
 		if (event.animationName == "nodeInserted") {
 			prefix = event.target.id.slice(0, event.target.id.search('Content'));
 			tab = document.getElementById(prefix+'Tab');
@@ -57,7 +56,6 @@ function toggleMenu(wrapperDivID, headings, thisID){
 
 //resize expanded menu when its Content div changes
 function resizeMenu(id){
-	console.log(id)
 	if(document.getElementById(id+'Tab').style.maxHeight != '50px')
 		document.getElementById(id+'Tab').style.maxHeight = (document.getElementById(id+'Content').offsetHeight+50)+'px';
 }
