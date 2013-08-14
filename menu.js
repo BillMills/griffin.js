@@ -78,10 +78,11 @@ function toggleSwitch(parentID, id, title, enabled, disabled, onActivate, onDeac
 		document.getElementById('toggleWrap'+id).ready = 1;
 	};
 	document.getElementById('toggleSwitch'+id).onmouseup = function(event){
-		//document.getElementById('toggleWrap'+id).ready = 0;
 		flipToggle(event, id, enabled, disabled, onActivate, onDeactivate);
 	};
-	document.getElementById('toggleSwitch'+id).onmouseout = function(event){flipToggle(event, id, enabled, disabled, onActivate, onDeactivate)};
+	document.getElementById('toggleSwitch'+id).onmouseout = function(event){
+		flipToggle(event, id, enabled, disabled, onActivate, onDeactivate)
+	};
 	//state description
 	if(title=='')
 		insertDOM('br', 'break', '', '', 'toggleWrap'+id);

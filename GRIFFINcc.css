@@ -51,6 +51,9 @@ div.clock{
 	border-radius:25px;
 	background-color: #4C4C4C;
 	padding: 1em;
+	min-width: -moz-min-content;
+	min-width: -webkit-min-content;
+	width: 15%;
 	transition: box-shadow 0.3s ease, border-color 0.3s ease;
 	-moz-transition: box-shadow 0.3s ease, border-color 0.3s ease;
 	-webkit-transition: box-shadow 0.3s ease, border-color 0.3s ease;
@@ -519,4 +522,13 @@ tbody tbody a:link{
 .sidebarTable td:nth-child(4n+2){
 	border-top-right-radius: 1em;
 	border-bottom-right-radius: 1em;
+}
+
+.clockOutputBadge{
+	display:inline-block;
+	text-align:center;
+	margin: 2px;
+	padding:1em;
+	border-radius:25px;
+	border:1px solid #999999;
 }

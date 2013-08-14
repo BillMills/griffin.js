@@ -143,7 +143,6 @@ function DESCANT(){
     		else
     			oldIndex = newIndex - 47 + 4*Math.floor((newIndex-52)/4)
     	}
-    	console.log([newIndex,oldIndex])
     	return oldIndex;
     }
 

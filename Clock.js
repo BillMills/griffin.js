@@ -9,6 +9,7 @@ function Clock(){
     this.sidebarID = 'ClockSidebar';                //ID of div to contain clock sidebar
     this.activeClock = 'clock0';
     this.noUniqueMaster = 0;
+    this.channelTitles = ['eSATA 0', 'eSATA 1', 'eSATA 2', 'eSATA 3', 'eSATA 4', 'eSATA 5', 'Left LEMO', 'Right LEMO'];
 
 	this.wrapper = document.getElementById(this.wrapperID);
 
@@ -17,9 +18,29 @@ function Clock(){
 
     //deploy right bar menu:
     deployMenu('clockMenus', ['summary', 'outs', 'CSAC'] , ['Clock Summary','Channel Outs','CSAC Parameters']);
-    //inject table into div:
+    //inject table into div for summary & CSAC:
     insertDOM('table', 'summaryContentTable', 'sidebarTable', '', 'summaryContent', '', '');
     insertDOM('table', 'CSACContentTable', 'sidebarTable', '', 'CSACContent', '', '');
+    //Channel outs packed as 8 badges:
+    for(i=0; i<8; i++){
+        insertDOM('div', 'outsContentBadge'+i, 'clockOutputBadge', '', 'outsContent', '', this.channelTitles[i]+'<br>');
+
+        //power toggles, don't apply to ch. 5 and 6 (LEMO)
+        if(i!=6 && i!=7)
+            toggleSwitch('outsContentBadge'+i, 'ch'+i+'Toggle', 'off', 'on', 'on', enableChannel.bind(null,i), disableChannel.bind(null,i), 0);
+        //insertDOM('br', 'break', '', '', 'outsContentBadge'+i);
+
+        //frequency control
+        insertDOM('label', 'frequencyLabel'+i, '', '', 'outsContentBadge'+i, '', 'freq.');
+        insertDOM('input', 'frequencyField'+i, '', 'width:5em; margin:2px; margin-top:0.75em', 'outsContentBadge'+i, '', '', '', 'number');
+        insertDOM('label', 'frequencyUnit'+i, '', '', 'outsContentBadge'+i, '', 'MHz');
+        document.getElementById('frequencyLabel'+i).setAttribute('for', 'frequencyField'+i);
+
+        //bypass reporting:
+        insertDOM('p', 'bypassReport'+i, '', 'margin:0px; margin-top:1em', 'outsContentBadge'+i, '', '');
+
+        if(i%2==1) insertDOM('br', 'break', '', '', 'outsContent');
+    }
 
     //nav wrapper div
     insertDOM('div', this.linkWrapperID, 'navPanel', 'text-align:center; width:50%; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;', this.wrapperID, '', '');
@@ -198,6 +219,20 @@ function setSlave(n){
     forceUpdate();
 }
 
+//turn on all four bits corresponding to the ith eSATA channel
+function enableChannel(i){
+    var newSettingWord = window.localODB[window.clockPointer.activeClock][0];
+    newSettingWord = newSettingWord | (0xF << 4*i);
+    ODBSet('/Equipment/GRIF-Clk'+window.clockPointer.activeClock.slice(5, window.clockPointer.activeClock.length)+'/Variables/Input[0]', newSettingWord);
+    forceUpdate();
+}
+
+function disableChannel(i){
+    var newSettingWord = window.localODB[window.clockPointer.activeClock][0];
+    newSettingWord = newSettingWord & ~(0xF << 4*i);
+    ODBSet('/Equipment/GRIF-Clk'+window.clockPointer.activeClock.slice(5, window.clockPointer.activeClock.length)+'/Variables/Input[0]', newSettingWord);
+    forceUpdate();
+}
 
 //do something when a clock alarm is detected
 function setClockAlarm(id){
@@ -216,7 +251,10 @@ function unsetClockAlarm(id){
 
 //show the relevant clock information when clicked on
 function showClock(id){
-    var i, text, label, value;
+    var i, text, label, value, isOn;
+
+    //keep track of which clock is highlit:
+    window.clockPointer.activeClock = id;
 
     //clock summary parameters
     document.getElementById('summaryContentTable').innerHTML = '';
@@ -228,7 +266,7 @@ function showClock(id){
         insertDOM('td', 'clockSummaryLabel'+i, '', '', 'summaryContentRow'+i, '', label);
         insertDOM('td', 'clockSummaryValue'+i, '', '', 'summaryContentRow'+i, '', value);
     }
-
+/*
     //clock channel outs parameters
     document.getElementById('outsContent').innerHTML = '';
     //special placement for i=0 at user request:
@@ -238,6 +276,25 @@ function showClock(id){
         text = window.parameters.clockVariableNames[i] + ': ' + humanReadableClock(i, window.localODB[id][i]) + '<br>';
         insertDOM('p', 'outsContent'+i, 'hanging', '', 'outsContent', '', text);
     }
+*/
+    //manage clock channel out tab
+    //decode which channels are on / off:
+    for(i=0; i<6; i++){
+        isOn = (0xF << 4*i) & window.localODB[id][0];
+        if( (document.getElementById('toggleSwitch'+'ch'+i+'Toggle').style.left=='0em' && isOn) || (document.getElementById('toggleSwitch'+'ch'+i+'Toggle').style.left=='1em' && !isOn) ){
+            document.getElementById('toggleWrap'+'ch'+i+'Toggle').ready = 1;
+            document.getElementById('toggleSwitch'+'ch'+i+'Toggle').onmouseup();
+        }
+    }
+
+    document.getElementById('bypassReport0').innerHTML = 'Bypass: ' + humanReadableClock(11, window.localODB[id][11]);
+    document.getElementById('bypassReport1').innerHTML = 'Bypass: ' + humanReadableClock(15, window.localODB[id][15]);
+    document.getElementById('bypassReport2').innerHTML = 'Bypass: ' + humanReadableClock(19, window.localODB[id][19]);
+    document.getElementById('bypassReport3').innerHTML = 'Bypass: ' + humanReadableClock(23, window.localODB[id][23]);
+    document.getElementById('bypassReport4').innerHTML = 'Bypass: ' + humanReadableClock(27, window.localODB[id][27]);
+    document.getElementById('bypassReport5').innerHTML = 'Bypass: ' + humanReadableClock(39, window.localODB[id][39]);
+    document.getElementById('bypassReport6').innerHTML = 'Bypass: ' + humanReadableClock(31, window.localODB[id][31]);
+    document.getElementById('bypassReport7').innerHTML = 'Bypass: ' + humanReadableClock(35, window.localODB[id][35]);
 
     //clock channel outs parameters
     document.getElementById('CSACContentTable').innerHTML = '';
@@ -253,7 +310,7 @@ function showClock(id){
     glowMe(id);
 
     //keep track of which clock is highlit:
-    window.clockPointer.activeClock = id;
+    //window.clockPointer.activeClock = id;
 
 }
 
