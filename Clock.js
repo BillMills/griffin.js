@@ -249,6 +249,16 @@ function unsetClockAlarm(id){
 
 }
 
+//set the master to use the LEMO as its reference
+function masterLEMO(id){
+    console.log(id)
+}
+
+//set the master to use the atomic clock as its reference
+function masterAC(id){
+    console.log(id)
+}
+
 //show the relevant clock information when clicked on
 function showClock(id){
     var i, text, label, value, isOn;
@@ -265,6 +275,11 @@ function showClock(id){
         insertDOM('tr', 'summaryContentRow'+i, '', '', 'summaryContentTable', '', '');
         insertDOM('td', 'clockSummaryLabel'+i, '', '', 'summaryContentRow'+i, '', label);
         insertDOM('td', 'clockSummaryValue'+i, '', '', 'summaryContentRow'+i, '', value);
+        //master needs switch for LEMO or AC Ref. Clock:
+        if(parseInt(window.localODB[id][1],10)){
+            document.getElementById('clockSummaryValue4').innerHTML = '';
+            toggleSwitch('clockSummaryValue4', 'masterRefToggle', 'LEMO', 'AC', 'AC', masterLEMO.bind(null,id), masterAC.bind(null,id), 0);
+        }
     }
 /*
     //clock channel outs parameters
@@ -296,7 +311,7 @@ function showClock(id){
     document.getElementById('bypassReport6').innerHTML = 'Bypass: ' + humanReadableClock(31, window.localODB[id][31]);
     document.getElementById('bypassReport7').innerHTML = 'Bypass: ' + humanReadableClock(35, window.localODB[id][35]);
 
-    //clock channel outs parameters
+    //CSAC parameters
     document.getElementById('CSACContentTable').innerHTML = '';
     for(i=41; i<52; i++){
         label = window.parameters.clockVariableNames[i];
@@ -309,8 +324,7 @@ function showClock(id){
     //highlight the clock
     glowMe(id);
 
-    //keep track of which clock is highlit:
-    //window.clockPointer.activeClock = id;
+    
 
 }
 
