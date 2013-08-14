@@ -251,12 +251,14 @@ function unsetClockAlarm(id){
 
 //set the master to use the LEMO as its reference
 function masterLEMO(id){
-    console.log(id)
+    ODBSet('/Equipment/GRIF-Clk'+id.slice(5,id.length)+'/Variables/Input[4]', 1);
+    forceUpdate();
 }
 
 //set the master to use the atomic clock as its reference
 function masterAC(id){
-    console.log(id)
+    ODBSet('/Equipment/GRIF-Clk'+id.slice(5,id.length)+'/Variables/Input[4]', 0);
+    forceUpdate();
 }
 
 //show the relevant clock information when clicked on
@@ -275,12 +277,14 @@ function showClock(id){
         insertDOM('tr', 'summaryContentRow'+i, '', '', 'summaryContentTable', '', '');
         insertDOM('td', 'clockSummaryLabel'+i, '', '', 'summaryContentRow'+i, '', label);
         insertDOM('td', 'clockSummaryValue'+i, '', '', 'summaryContentRow'+i, '', value);
-        //master needs switch for LEMO or AC Ref. Clock:
-        if(parseInt(window.localODB[id][1],10)){
-            document.getElementById('clockSummaryValue4').innerHTML = '';
-            toggleSwitch('clockSummaryValue4', 'masterRefToggle', 'LEMO', 'AC', 'AC', masterLEMO.bind(null,id), masterAC.bind(null,id), 0);
-        }
     }
+    //master needs switch for LEMO or AC Ref. Clock:
+    if(parseInt(window.localODB[id][1],10)){
+        document.getElementById('clockSummaryValue4').innerHTML = '';
+        toggleSwitch('clockSummaryValue4', 'masterRefToggle', 'AC', 'LEMO', 'LEMO', masterLEMO.bind(null,id), masterAC.bind(null,id), parseInt(window.localODB[id][4],10));
+    }
+
+
 /*
     //clock channel outs parameters
     document.getElementById('outsContent').innerHTML = '';
