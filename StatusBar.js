@@ -125,9 +125,9 @@ function StatusBar(wrapper){
         
         //message service:
         if(!window.parameters.MIDASlegacyMode){
-            var messages = ODBGetMsg(5);
+            //var messages = ODBGetMsg(5);
             for(i=0; i<5; i++){
-                document.getElementById('message'+i).innerHTML = messages[4-i]; //most recent on top
+                document.getElementById('message'+i).innerHTML = window.localODB.messages[4-i]; //most recent on top
             }
         }
         

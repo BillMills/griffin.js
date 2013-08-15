@@ -175,6 +175,9 @@
           }
         }
 
+        //autodetect what size cards are plugged into what slot:
+        detectCards();
+
         //load things from the ODB
         if(!window.parameters.devMode) ODBgrab();
 
@@ -205,9 +208,6 @@
         //main elements///////////////////////////////////////////////////
         //dashboard
         window.dashboard = new Dashboard();
-
-        //autodetect what size cards are plugged into what slot:
-        detectCards();
 
         //status bar
         window.statusBar = new StatusBar('leftSidebar');

@@ -146,48 +146,79 @@ function rePaint(){
     masterLoop(1, true);
 }
 
-//handle everybody's interval-based fetch from the ODB in one network request:
+//handle everybody's interval-based fetch from the ODB in one network request: (+1 more for the message service, weird...)
 function ODBgrab(){
-    var paths = [], i, j,
+    var paths = [], i, j, k,
+    SIDEBAR, DAQ, HV, CLOCK,
     data;
 
+
     //sidebar
-    paths[0] = '/Experiment/Name';
-    paths[1] = '/Runinfo/Run number';
-    paths[2] = '/Runinfo/State';
-    paths[3] = '/Runinfo/Start time';
-    paths[4] = 'Runinfo/Stop time';
-    paths[5] = 'Runinfo/Start time binary';
-    paths[6] = '/Experiment/Run Parameters/Comment';
+    SIDEBAR = 0;
+    paths[SIDEBAR] = '/Experiment/Name';
+    paths[SIDEBAR+1] = '/Runinfo/Run number';
+    paths[SIDEBAR+2] = '/Runinfo/State';
+    paths[SIDEBAR+3] = '/Runinfo/Start time';
+    paths[SIDEBAR+4] = 'Runinfo/Stop time';
+    paths[SIDEBAR+5] = 'Runinfo/Start time binary';
+    paths[SIDEBAR+6] = '/Experiment/Run Parameters/Comment';
     //DAQ
-    paths[7] = '/Equipment/Trigger/Statistics/Events per sec.';
-    paths[8] = '/Equipment/Trigger/Statistics/kBytes per sec.';
-    paths[9] = '/Equipment/Event Builder/Statistics/Events per sec.';
-    paths[10] = '/Equipment/Event Builder/Statistics/kBytes per sec.';
+    DAQ = SIDEBAR+7;
+    paths[DAQ] = '/Equipment/Trigger/Statistics/Events per sec.';
+    paths[DAQ+1] = '/Equipment/Trigger/Statistics/kBytes per sec.';
+    paths[DAQ+2] = '/Equipment/Event Builder/Statistics/Events per sec.';
+    paths[DAQ+3] = '/Equipment/Event Builder/Statistics/kBytes per sec.';
+    //HV
+    HV = DAQ+4
+    for(k=0; k<window.parameters.moduleSizes.length; k++){  //recall length of module sizes = number of HV crates declared
+        for(i=0; i<window.parameters.ODBkeys.length; i++){
+            paths[HV + k*window.parameters.ODBkeys.length + i] = '/Equipment/'+window.parameters.HVequipmentNames[k]+'/'+window.parameters.ODBkeys[i]+'[*]';
+        }       
+    }
     //Clock
+    CLOCK = HV + window.parameters.moduleSizes.length*window.parameters.ODBkeys.length;
     for(i=0; i<window.parameters.nClocks; i++){
-        paths[10 + i] = '/Equipment/GRIF-Clk'+i+'/Variables/Input[*]';
+        paths[CLOCK + i] = '/Equipment/GRIF-Clk'+i+'/Variables/Input[*]';
     }
 
     data = ODBMGet(paths);
 
     //sidebar
-    window.localODB.expTitle = data[0];
-    window.localODB.runInfo = data[1];
-    window.localODB.runstate = data[2];
-    window.localODB.startInfo = data[3];
-    window.localODB.elapsed = data[4];
-    window.localODB.binaryStart = data[5];
-    window.localODB.comment = data[6];
+    window.localODB.expTitle = data[SIDEBAR];
+    window.localODB.runInfo = data[SIDEBAR+1];
+    window.localODB.runstate = data[SIDEBAR+2];
+    window.localODB.startInfo = data[SIDEBAR+3];
+    window.localODB.elapsed = data[SIDEBAR+4];
+    window.localODB.binaryStart = data[SIDEBAR+5];
+    window.localODB.comment = data[SIDEBAR+6];
     //DAQ
-    window.localODB.TrigEPS = data[7];
-    window.localODB.TrigDPS = data[8];
-    window.localODB.EBEPS = data[9];
-    window.localODB.EBDPS = data[10];  
+    window.localODB.TrigEPS = data[DAQ];
+    window.localODB.TrigDPS = data[DAQ+1];
+    window.localODB.EBEPS = data[DAQ+2];
+    window.localODB.EBDPS = data[DAQ+3];  
+    //HV
+    for(k=0; k<window.parameters.moduleSizes.length; k++){  //recall length of module sizes = number of HV crates declared
+        window.localODB['HV'+k] = [];
+        window.localODB['HV'+k].reqVoltage      = data[HV + k*window.parameters.ODBkeys.length + 0];
+        window.localODB['HV'+k].measVoltage     = data[HV + k*window.parameters.ODBkeys.length + 1];
+        window.localODB['HV'+k].measCurrent     = data[HV + k*window.parameters.ODBkeys.length + 2];
+        window.localODB['HV'+k].rampUp          = data[HV + k*window.parameters.ODBkeys.length + 3];
+        window.localODB['HV'+k].rampDown        = data[HV + k*window.parameters.ODBkeys.length + 4];
+        window.localODB['HV'+k].measTemperature = data[HV + k*window.parameters.ODBkeys.length + 5];
+        window.localODB['HV'+k].repoChState     = data[HV + k*window.parameters.ODBkeys.length + 6];
+        window.localODB['HV'+k].repoChStatus    = data[HV + k*window.parameters.ODBkeys.length + 7];
+        window.localODB['HV'+k].voltageLimit    = data[HV + k*window.parameters.ODBkeys.length + 8];
+        window.localODB['HV'+k].currentLimit    = data[HV + k*window.parameters.ODBkeys.length + 9];
+        window.localODB['HV'+k].chName          = data[HV + k*window.parameters.ODBkeys.length + 10];      
+    }    
     //Clock
     for(i=0; i<window.parameters.nClocks; i++){
-        window.localODB['clock'+i] = data[10+i];
+        window.localODB['clock'+i] = data[CLOCK+i];
     }
+
+    //Message service:
+    window.localODB.messages = ODBGetMsg(5);
+
 }
 
 //handle pulling the initial config parameters out of the ODB and replacing the default values in the JSONP-loaded parameter store:

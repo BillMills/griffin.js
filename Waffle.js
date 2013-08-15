@@ -752,8 +752,8 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
             currentLimit = [],
             paths = [];
         
-            //batch fetch all in one big lump:
-
+            //batch fetch all in one big lump: -depricated, moved out to ODBgrab
+            /*
             for(k=0; k<this.nCrates; k++){
 
                 for(i=0; i<window.parameters.ODBkeys.length; i++){
@@ -776,6 +776,21 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                 repoChStatus[k]    = data[k*window.parameters.ODBkeys.length + 7];
                 voltageLimit[k]    = data[k*window.parameters.ODBkeys.length + 8];
                 currentLimit[k]    = data[k*window.parameters.ODBkeys.length + 9];                    
+            }
+            */
+            //fetch all the HV parameters from the chunk of ODB hanging around locally:
+            for(k=0; k<this.nCrates; k++){
+                chName[k]          = window.localODB['HV'+k].chName;  
+                reqVoltage[k]      = window.localODB['HV'+k].reqVoltage;  
+                measVoltage[k]     = window.localODB['HV'+k].measVoltage;
+                measCurrent[k]     = window.localODB['HV'+k].measCurrent; 
+                rampUp[k]          = window.localODB['HV'+k].rampUp;
+                rampDown[k]        = window.localODB['HV'+k].rampDown;
+                measTemperature[k] = window.localODB['HV'+k].measTemperature;
+                repoChState[k]     = window.localODB['HV'+k].repoChState;
+                repoChStatus[k]    = window.localODB['HV'+k].repoChStatus;
+                voltageLimit[k]    = window.localODB['HV'+k].voltageLimit;
+                currentLimit[k]    = window.localODB['HV'+k].currentLimit;        
             }
                 
 
