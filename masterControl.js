@@ -72,12 +72,12 @@ function gatekeeper(){
     });
 }
 
-function masterLoop(callMyself){
+function masterLoop(callMyself, noFetch){
     var i,j;
 	if(!document.webkitHidden && !document.mozHidden){
 
         //one big ODB grab:
-        ODBgrab();
+        if(!noFetch) ODBgrab();
 
         //update all assets
         //status bar
@@ -94,11 +94,12 @@ function masterLoop(callMyself){
         }
         //Clock
         if(window.parameters.topDeployment['Clock']) window.clockPointer.update();
-
+/*
         //let the alarm services know the update is complete:
         var allDone = new   CustomEvent("refreshComplete", {
                             });
         window.AlarmServices.div.dispatchEvent(allDone);
+*/
     }
     
     //remove all temporary scripts from the head so they don't accrue:
@@ -109,7 +110,7 @@ function masterLoop(callMyself){
     }
 
     //next iteration:
-    window.loop = setTimeout(function(){loadJSONP(window.Gatekeeper, 1)}, 3000);
+    window.loop = setTimeout(function(){loadJSONP(window.Gatekeeper, 1)}, 60000);
 }
 
 //determine what size cards are in what slot:
@@ -137,6 +138,12 @@ function detectCards(){
 function forceUpdate(){
     clearTimeout(window.loop);
     startLoop(1);
+}
+
+//like forceUpdate, but doesn't fetch data - just draws with current parameters
+function rePaint(){
+    clearTimeout(window.loop);
+    masterLoop(1, true);
 }
 
 //handle everybody's interval-based fetch from the ODB in one network request:

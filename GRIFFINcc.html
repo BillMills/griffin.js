@@ -271,7 +271,7 @@
           //make the top level nav button default to the first subdetector in the list:
           document.getElementById('SubsystemsButton').onclick = function(){
             swapView('SubsystemLinks', window.Subdetectors[0].canvasID, 'SubsystemSidebar', 'SubsystemsButton');
-            forceUpdate();
+            rePaint();
           }
 
           //make the nav button of the first subdetector in the list pressed by default:

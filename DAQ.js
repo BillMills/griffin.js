@@ -50,7 +50,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 
     //navigation
     //top level nav button
-    insertDOM('button', this.topNavID, 'navLink', '', 'statusLink', function(){swapView('DAQlinks', 'DAQcanvas', 'DAQsidebar', window.DAQpointer.topNavID); forceUpdate();}, 'DAQ', '', 'button')
+    insertDOM('button', this.topNavID, 'navLink', '', 'statusLink', function(){swapView('DAQlinks', 'DAQcanvas', 'DAQsidebar', window.DAQpointer.topNavID); rePaint();}, 'DAQ', '', 'button')
     //nav wrapper div
     insertDOM('div', this.linkWrapperID, 'navPanel', '', this.monitorID, '', '')
     //nav header

@@ -172,7 +172,7 @@ function parameterDialogue(devName, scales, currentColorScale){
                 element.parentNode.removeChild(element);            
             }, 500);
 
-            forceUpdate();
+            rePaint();
 
         } else{
             alert("Something doesn't make sense.  Check fields for mistakes, highlighted in red.");

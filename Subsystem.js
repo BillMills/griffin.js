@@ -23,7 +23,7 @@ function Subsystem(){
     
     //DOM insertions
     //insert nav link
-	insertDOM('button', this.name+'link', 'navLink', '', this.linkWrapperID, function(){ swapFade(this.id, this.parentPointer, window.subsystemScalars); forceUpdate();}, this.name, '', 'button');
+	insertDOM('button', this.name+'link', 'navLink', '', this.linkWrapperID, function(){ swapFade(this.id, this.parentPointer, window.subsystemScalars); rePaint();}, this.name, '', 'button');
     document.getElementById(this.name+'link').parentPointer = this;
     //scale canvas
 	this.monitor = document.getElementById(this.monitorID);

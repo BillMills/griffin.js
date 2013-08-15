@@ -117,7 +117,7 @@ function Clock(){
                 else
                     alarmString += ' are all claiming to be Master.<br>'
             }
-
+            /*
             //post an alarm to the alarm service:
             var nMasterAlarm = new  CustomEvent("alarmTrip", {
                                         detail: {
@@ -126,6 +126,7 @@ function Clock(){
                                         }
                                     });
             window.AlarmServices.div.dispatchEvent(nMasterAlarm);
+            */
         }
 
         //consistency alarms////////////////////////////////////////////////////////
@@ -165,7 +166,7 @@ function Clock(){
                 alarmString = 'GRIF-Clk '+i+' claims to be a Slave, but some of its parameters make it look like a Master.<br>'
                 setClockAlarm('clock'+i);
             }
-
+            /*
             //post an alarm to the alarm service:
             if(flag!=0){
                 var consistencyAlarm = new  CustomEvent("alarmTrip", {
@@ -176,7 +177,7 @@ function Clock(){
                                         });
                 window.AlarmServices.div.dispatchEvent(consistencyAlarm);
             }
-
+            */
         }
 
     };

@@ -167,7 +167,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
 
         //DOM insertions////////////////////////////////////
         //inject top level nav button
-        insertDOM('button', this.topNavID, 'navLink', '', 'statusLink', function(){swapView(window.HVpointer.linkWrapperID, 'HVgrid0', 'InputLayer', window.HVpointer.topNavID); forceUpdate();}, 'HV Monitor')
+        insertDOM('button', this.topNavID, 'navLink', '', 'statusLink', function(){swapView(window.HVpointer.linkWrapperID, 'HVgrid0', 'InputLayer', window.HVpointer.topNavID); rePaint();}, 'HV Monitor')
 
         //header
         insertDOM('div', this.linkWrapperID, 'navPanel', '', this.wrapperDiv, '', '');
@@ -176,7 +176,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         insertDOM('br', 'break', '', '', this.linkWrapperID, '', '');
         //mainframe navigation
         for(i=0; i<this.nCrates; i++){
-            insertDOM('button', 'Main'+(i+1), (i==0)? 'navLinkDown' : 'navLink', '', this.linkWrapperID, function(){swapHVmainframe(this.crate); forceUpdate();}, 'Mainframe '+(i+1) );
+            insertDOM('button', 'Main'+(i+1), (i==0)? 'navLinkDown' : 'navLink', '', this.linkWrapperID, function(){swapHVmainframe(this.crate); rePaint();}, 'Mainframe '+(i+1) );
             document.getElementById('Main'+(i+1)).crate = i;
         }
         insertDOM('br', 'break', '', '', this.linkWrapperID, '', '');
@@ -897,7 +897,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
 
                         //fire an event at the AlarmServices object for every alarm:
                         //voltage alarms:
-            
+                        /*
                         if(this.dataBus[k].alarmStatus[i][j][0] > 0){
                             var voltageAlarm = new  CustomEvent("alarmTrip", {
                                                         detail: {
@@ -927,6 +927,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                                                         });
                             AlarmServices.div.dispatchEvent(temperatureAlarm);
                         }
+                        */
                     }
                 }
             }

@@ -66,7 +66,7 @@ function swapSubsystemView(buttonID, navWrapperID, viewIndex){
 	window.state.subdetectorView = viewIndex;
 
 	//imediately update the display:
-	forceUpdate();
+	rePaint();
 }
 
 //swap top level views
