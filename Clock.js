@@ -189,50 +189,70 @@ function Clock(){
 }
 
 function setMaster(n){
-    ODBSet('/Equipment/GRIF-Clk'+n+'/Variables/Input[1]', 1);
-    ODBSet('/Equipment/GRIF-Clk'+n+'/Variables/Input[2]', 1);
-    ODBSet('/Equipment/GRIF-Clk'+n+'/Variables/Input[3]', 1);
-    ODBSet('/Equipment/GRIF-Clk'+n+'/Variables/Input[4]', 1);
-    ODBSet('/Equipment/GRIF-Clk'+n+'/Variables/Input[11]', 0);
-    ODBSet('/Equipment/GRIF-Clk'+n+'/Variables/Input[15]', 0);
-    ODBSet('/Equipment/GRIF-Clk'+n+'/Variables/Input[19]', 0);
-    ODBSet('/Equipment/GRIF-Clk'+n+'/Variables/Input[23]', 0);
-    ODBSet('/Equipment/GRIF-Clk'+n+'/Variables/Input[27]', 0);
-    ODBSet('/Equipment/GRIF-Clk'+n+'/Variables/Input[31]', 0);
-    ODBSet('/Equipment/GRIF-Clk'+n+'/Variables/Input[35]', 0);
-    ODBSet('/Equipment/GRIF-Clk'+n+'/Variables/Input[39]', 0);
-    forceUpdate();
+    var i, masterConfig = []
+    for(i=0; i<window.localODB['clock0'].length; i++){
+        masterConfig[i] = window.localODB['clock'+n][i];
+    }
+    masterConfig[1] = 1;
+    masterConfig[2] = 1;
+    masterConfig[3] = 1;
+    masterConfig[4] = 1;
+    masterConfig[11] = 0;
+    masterConfig[15] = 0;
+    masterConfig[19] = 0;
+    masterConfig[23] = 0;
+    masterConfig[27] = 0;
+    masterConfig[31] = 0;
+    masterConfig[35] = 0;
+    masterConfig[39] = 0;
+
+    ODBSet('/Equipment/GRIF-Clk'+n+'/Variables/Input[*]', masterConfig);
+    window.localODB['clock'+n] = masterConfig;
+    rePaint();
 }
 
 function setSlave(n){
-    ODBSet('/Equipment/GRIF-Clk'+n+'/Variables/Input[1]', 0);
-    ODBSet('/Equipment/GRIF-Clk'+n+'/Variables/Input[2]', 0);
-    ODBSet('/Equipment/GRIF-Clk'+n+'/Variables/Input[3]', 0);
-    ODBSet('/Equipment/GRIF-Clk'+n+'/Variables/Input[4]', 0);
-    ODBSet('/Equipment/GRIF-Clk'+n+'/Variables/Input[11]', 1);
-    ODBSet('/Equipment/GRIF-Clk'+n+'/Variables/Input[15]', 1);
-    ODBSet('/Equipment/GRIF-Clk'+n+'/Variables/Input[19]', 1);
-    ODBSet('/Equipment/GRIF-Clk'+n+'/Variables/Input[23]', 1);
-    ODBSet('/Equipment/GRIF-Clk'+n+'/Variables/Input[27]', 1);
-    ODBSet('/Equipment/GRIF-Clk'+n+'/Variables/Input[31]', 1);
-    ODBSet('/Equipment/GRIF-Clk'+n+'/Variables/Input[35]', 1);
-    ODBSet('/Equipment/GRIF-Clk'+n+'/Variables/Input[39]', 1);
-    forceUpdate();
+    var i, slaveConfig = []
+    for(i=0; i<window.localODB['clock0'].length; i++){
+        slaveConfig[i] = window.localODB['clock'+n][i];
+    }
+    slaveConfig[1] = 0;
+    slaveConfig[2] = 0;
+    slaveConfig[3] = 0;
+    slaveConfig[4] = 0;
+    slaveConfig[11] = 1;
+    slaveConfig[15] = 1;
+    slaveConfig[19] = 1;
+    slaveConfig[23] = 1;
+    slaveConfig[27] = 1;
+    slaveConfig[31] = 1;
+    slaveConfig[35] = 1;
+    slaveConfig[39] = 1;
+
+    ODBSet('/Equipment/GRIF-Clk'+n+'/Variables/Input[*]', slaveConfig);
+    window.localODB['clock'+n] = slaveConfig;
+    rePaint();
 }
 
 //turn on all four bits corresponding to the ith eSATA channel
 function enableChannel(i){
-    var newSettingWord = window.localODB[window.clockPointer.activeClock][0];
+    var newSettingWord = window.localODB[window.clockPointer.activeClock][0],
+    clockNo = window.clockPointer.activeClock.slice(5, window.clockPointer.activeClock.length);
     newSettingWord = newSettingWord | (0xF << 4*i);
-    ODBSet('/Equipment/GRIF-Clk'+window.clockPointer.activeClock.slice(5, window.clockPointer.activeClock.length)+'/Variables/Input[0]', newSettingWord);
-    forceUpdate();
+    //push to ODB
+    ODBSet('/Equipment/GRIF-Clk'+clockNo+'/Variables/Input[0]', newSettingWord);
+    //push to localODB:
+    window.localODB['clock'+clockNo][0] = newSettingWord;
 }
 
 function disableChannel(i){
-    var newSettingWord = window.localODB[window.clockPointer.activeClock][0];
+    var newSettingWord = window.localODB[window.clockPointer.activeClock][0],
+    clockNo = window.clockPointer.activeClock.slice(5, window.clockPointer.activeClock.length);
     newSettingWord = newSettingWord & ~(0xF << 4*i);
-    ODBSet('/Equipment/GRIF-Clk'+window.clockPointer.activeClock.slice(5, window.clockPointer.activeClock.length)+'/Variables/Input[0]', newSettingWord);
-    forceUpdate();
+    //push to ODB
+    ODBSet('/Equipment/GRIF-Clk'+clockNo+'/Variables/Input[0]', newSettingWord);
+    //push to localODB:
+    window.localODB['clock'+clockNo][0] = newSettingWord;
 }
 
 //do something when a clock alarm is detected
@@ -252,19 +272,27 @@ function unsetClockAlarm(id){
 
 //set the master to use the LEMO as its reference
 function masterLEMO(id){
+    //push to the ODB:
     ODBSet('/Equipment/GRIF-Clk'+id.slice(5,id.length)+'/Variables/Input[4]', 1);
-    forceUpdate();
+    //push to localODB so we don't actually have to re-fetch:
+    window.localODB['clock'+id.slice(5,id.length)][4] = 1;
+    rePaint();
 }
 
 //set the master to use the atomic clock as its reference
 function masterAC(id){
+    //push to ODB:
     ODBSet('/Equipment/GRIF-Clk'+id.slice(5,id.length)+'/Variables/Input[4]', 0);
-    forceUpdate();
+    //push to local ODB:
+    window.localODB['clock'+id.slice(5,id.length)][4] = 0;
+    rePaint();
 }
 
 //show the relevant clock information when clicked on
 function showClock(id){
     var i, text, label, value, isOn;
+
+    glowMe(id);
 
     //keep track of which clock is highlit:
     window.clockPointer.activeClock = id;
@@ -326,21 +354,15 @@ function showClock(id){
         insertDOM('td', 'clockCSACValue'+i, '', '', 'CSACContentRow'+i, '', value);
     }
 
-    //highlight the clock
-    glowMe(id);
-
-    
-
 }
 
 function glowMe(id){
     var i, index;
 
-    for(i=0; i<window.parameters.nClocks; i++){
-        if(document.getElementById('clock'+i))
-            document.getElementById('clock'+i).style.boxShadow = '0 0 0px white';    
-    }
+    document.getElementById(window.clockPointer.activeClock).style.boxShadow = '0 0 0px white';
     document.getElementById(id).style.boxShadow = '0 0 20px white';
+
+    //only show CSAC tab for Master:
     index = parseInt(id.slice(5,id.length),10);
     if(parseInt(window.localODB['clock'+index][1],10) )
         document.getElementById('CSACTab').style.opacity = 1;
