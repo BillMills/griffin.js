@@ -1,0 +1,16 @@
+cp ../../plumbing/utilities.js .
+cp ../../plumbing/drawing.js .
+cp ../ConfigureSubdetectors.html .
+cp ../ConfigureSubdetectors.css .
+cp ../thumbnails.js .
+cp ../subdetectorForms.js .
+
+rm configureSubdetectors.min.js
+source concatenate
+#a.out < combined.js > configureSubdetectors.min.js
+cp combined.js  configureSubdetectors.min.js
+
+sed '1,/<\/head>/d' ConfigureSubdetectors.html > test
+cat head test >> test2
+rm test
+mv test2 ConfigureSubdetectors.html

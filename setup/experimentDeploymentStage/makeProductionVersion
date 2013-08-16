@@ -1,0 +1,15 @@
+cp ../../plumbing/utilities.js .
+cp ../../plumbing/drawing.js .
+cp ../ConfigureExperiment.html .
+cp ../ConfigureExperiment.css .
+cp ../thumbnails.js .
+
+rm configure.min.js
+source concatenate
+#a.out < combined.js > configure.min.js
+cp combined.js configure.min.js
+
+sed '1,/<\/head>/d' ConfigureExperiment.html > test
+cat head test >> test2
+rm test
+mv test2 ConfigureExperiment.html
