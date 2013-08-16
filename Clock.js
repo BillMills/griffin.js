@@ -9,6 +9,7 @@ function Clock(){
     this.sidebarID = 'ClockSidebar';                //ID of div to contain clock sidebar
     this.activeClock = 'clock0';
     this.noUniqueMaster = 0;
+    this.masterLEMOfreq = 200;
     this.channelTitles = ['eSATA 0', 'eSATA 1', 'eSATA 2', 'eSATA 3', 'eSATA 4', 'eSATA 5', 'Left LEMO', 'Right LEMO'];
 
 	this.wrapper = document.getElementById(this.wrapperID);
@@ -18,15 +19,15 @@ function Clock(){
 
     //deploy right bar menu:
     deployMenu('clockMenus', ['summary', 'outs', 'CSAC'] , ['Clock Summary','Channel Outs','CSAC Parameters']);
-    //inject table into div for summary:
+    //inject table into div for summary tab:
     insertDOM('table', 'summaryContentTable', 'sidebarTable', '', 'summaryContent', '', '');
     for(i=1; i<9; i++){
         label = window.parameters.clockVariableNames[i];
         insertDOM('tr', 'summaryContentRow'+i, '', '', 'summaryContentTable', '', '');
         insertDOM('td', 'clockSummaryLabel'+i, '', '', 'summaryContentRow'+i, '', label);
-        insertDOM('td', 'clockSummaryValue'+i, '', '', 'summaryContentRow'+i, '', '');
+        insertDOM('td', 'clockSummaryValue'+i, (i==4) ? 'summaryContentCell' : '', '', 'summaryContentRow'+i, '', '');
     }    
-    //inject table for CSAC:
+    //inject table for CSAC tab:
     insertDOM('table', 'CSACContentTable', 'sidebarTable', '', 'CSACContent', '', '');
     for(i=41; i<52; i++){
         label = window.parameters.clockVariableNames[i];
@@ -34,7 +35,37 @@ function Clock(){
         insertDOM('td', 'clockCSACLabel'+i, '', '', 'CSACContentRow'+i, '', label);
         insertDOM('td', 'clockCSACValue'+i, '', '', 'CSACContentRow'+i, '', '');
     }
-    //Channel outs packed as 8 badges:
+    //Channel outs packed as 8 badges, with master step down slider at the top:
+    insertDOM('div', 'outsContentmasterStepdownSliderDiv', '', 'display:block;', 'outsContent', '', 'Master Output Freq.<br>');
+    insertDOM('input', 'outsContentmasterStepdownSlider', '', '', 'outsContentmasterStepdownSliderDiv', '', '', '', 'range');
+    insertDOM('label', 'outsContentLabel', '', 'padding-left:0.5em;', 'outsContentmasterStepdownSliderDiv', '', ' MHz');
+    document.getElementById('outsContentLabel').setAttribute('for', 'outsContentmasterStepdownSlider');
+    document.getElementById('outsContentmasterStepdownSlider').setAttribute('min', 1); 
+    document.getElementById('outsContentmasterStepdownSlider').setAttribute('max', 10);
+    document.getElementById('outsContentmasterStepdownSlider').setAttribute('value', 11-parseInt(window.localODB['clock'+0][9],10) );
+    document.getElementById('outsContentLabel').innerHTML = (window.localODB.masterLEMOfreq / (1-(document.getElementById('outsContentmasterStepdownSlider').valueAsNumber - parseInt(document.getElementById('outsContentmasterStepdownSlider').max,10)-1))).toFixed(1) + ' MHz';
+    document.getElementById('outsContentmasterStepdownSlider').onchange = function(){
+        var stepdown = -(this.valueAsNumber - parseInt(this.max,10)-1),
+            freqOut = window.localODB.masterLEMOfreq / (1+stepdown), 
+            i, masterConfig=[];
+            window.clockPointer.masterFreqOut = freqOut;
+
+        document.getElementById('outsContentLabel').innerHTML = freqOut.toFixed(1) + ' MHz';
+        for(i=0; i<8; i++){
+            document.getElementById('frequencyOut'+i).innerHTML = freqOut.toFixed(1) + ' MHz out'
+        }
+
+        //commit new stepdown to ODB:
+        for(i=0; i<window.localODB['clock0'].length; i++){
+            masterConfig[i] = window.localODB[window.clockPointer.activeClock][i];
+        }
+        for(i=0; i<8; i++){
+            masterConfig[9+4*i] = stepdown;
+            masterConfig[10+4*i] = stepdown;
+        }
+        ODBSet('/Equipment/GRIF-Clk'+window.clockPointer.activeClock.slice(5, window.clockPointer.activeClock.length)+'/Variables/Input[*]', masterConfig);
+        window.localODB[window.clockPointer.activeClock] = masterConfig;
+    };
     for(i=0; i<8; i++){
         insertDOM('div', 'outsContentBadge'+i, 'clockOutputBadge', '', 'outsContent', '', this.channelTitles[i]+'<br>');
 
@@ -43,17 +74,15 @@ function Clock(){
             toggleSwitch('outsContentBadge'+i, 'ch'+i+'Toggle', 'off', 'on', 'on', enableChannel.bind(null,i), disableChannel.bind(null,i), 0);
         //insertDOM('br', 'break', '', '', 'outsContentBadge'+i);
 
-        //frequency control
-        insertDOM('label', 'frequencyLabel'+i, '', '', 'outsContentBadge'+i, '', 'freq.');
-        insertDOM('input', 'frequencyField'+i, '', 'width:5em; margin:2px; margin-top:0.75em', 'outsContentBadge'+i, '', '', '', 'number');
-        insertDOM('label', 'frequencyUnit'+i, '', '', 'outsContentBadge'+i, '', 'MHz');
-        document.getElementById('frequencyLabel'+i).setAttribute('for', 'frequencyField'+i);
+        //output frequency report
+        insertDOM('p', 'frequencyOut'+i, '', 'margins:0px; margin-top:1em;', 'outsContentBadge'+i, '', '');
 
         //bypass reporting:
         insertDOM('p', 'bypassReport'+i, '', 'margin:0px; margin-top:1em', 'outsContentBadge'+i, '', '');
 
         if(i%2==1) insertDOM('br', 'break', '', '', 'outsContent');
     }
+    document.getElementById('outsContentmasterStepdownSlider').onchange();
 
     //nav wrapper div
     insertDOM('div', this.linkWrapperID, 'navPanel', 'text-align:center; width:50%; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;', this.wrapperID, '', '');
@@ -289,7 +318,9 @@ function masterLEMO(id){
     ODBSet('/Equipment/GRIF-Clk'+id.slice(5,id.length)+'/Variables/Input[4]', 1);
     //push to localODB so we don't actually have to re-fetch:
     window.localODB['clock'+id.slice(5,id.length)][4] = 1;
-    document.getElementById('clockSummaryValue3').innerHTML = '<input id="masterLEMOfreq" type="number"></input>';
+    masterInputFrequency('clockSummaryValue3');
+    window.localODB.masterLEMOfreq = window.clockPointer.masterLEMOfreq;  //restore previously selected value
+    document.getElementById('outsContentmasterStepdownSlider').onchange();
     rePaint();
 }
 
@@ -300,7 +331,20 @@ function masterAC(id){
     //push to local ODB:
     window.localODB['clock'+id.slice(5,id.length)][4] = 0;
     document.getElementById('clockSummaryValue3').innerHTML = '200 MHz';
+    window.clockPointer.masterLEMOfreq = window.localODB.masterLEMOfreq // going to co-opt this variable in AC mode to keep slider code simple, hang onto value to replace later
+    window.localODB.masterLEMOfreq = 200;
+    document.getElementById('outsContentmasterStepdownSlider').onchange();
     rePaint();
+}
+
+//deploy the input field for master input frequency:
+function masterInputFrequency(targetID){
+    document.getElementById(targetID).innerHTML = '<input id="summaryContentMasterLEMOfreq" type="number" min=0 value='+window.localODB.masterLEMOfreq+'></input>';
+    document.getElementById('summaryContentMasterLEMOfreq').onchange = function(){
+        ODBSet('/DashboardConfig/Clock/Master LEMO freq', parseInt(this.value,10) );
+        window.localODB.masterLEMOfreq = parseInt(this.value,10);
+        document.getElementById('outsContentmasterStepdownSlider').onchange();
+    }    
 }
 
 //show the relevant clock information when clicked on
@@ -327,7 +371,7 @@ function showClock(id){
         //also, don't report FanSel for the master, replace with frequency info:
         document.getElementById('clockSummaryLabel4').innerHTML = 'Input Freq. (MHz):';
         if(document.getElementById('toggleSwitchmasterRefToggle').style.left=='1em'){
-            document.getElementById('clockSummaryValue4').innerHTML = '<input id="masterLEMOfreq" type="number" value="200" min="0"></input>';
+            masterInputFrequency('clockSummaryValue4');
         } else{
             document.getElementById('clockSummaryValue4').innerHTML = '200 MHz';
         }
@@ -336,19 +380,15 @@ function showClock(id){
         document.getElementById('clockSummaryLabel4').innerHTML = 'Ref. Clock';
     }
 
-
-/*
-    //clock channel outs parameters
-    document.getElementById('outsContent').innerHTML = '';
-    //special placement for i=0 at user request:
-    text = window.parameters.clockVariableNames[0] + ': ' + humanReadableClock(i, window.localODB[id][0]) + '<br>';
-    insertDOM('p', 'outsContent0', 'hanging', '', 'outsContent', '', text);    
-    for(i=9; i<41; i++){
-        text = window.parameters.clockVariableNames[i] + ': ' + humanReadableClock(i, window.localODB[id][i]) + '<br>';
-        insertDOM('p', 'outsContent'+i, 'hanging', '', 'outsContent', '', text);
-    }
-*/
     //manage clock channel out tab
+    //only need master slider for master view:
+    if(parseInt(window.localODB[id][1],10)){
+        document.getElementById('outsContentmasterStepdownSliderDiv').style.display='block';
+    } else{
+        document.getElementById('outsContentmasterStepdownSliderDiv').style.display='none';
+    }
+
+
     //decode which channels are on / off:
     for(i=0; i<6; i++){
         isOn = (0xF << 4*i) & window.localODB[id][0];
@@ -366,6 +406,10 @@ function showClock(id){
     document.getElementById('bypassReport5').innerHTML = 'Bypass: ' + humanReadableClock(39, window.localODB[id][39]);
     document.getElementById('bypassReport6').innerHTML = 'Bypass: ' + humanReadableClock(31, window.localODB[id][31]);
     document.getElementById('bypassReport7').innerHTML = 'Bypass: ' + humanReadableClock(35, window.localODB[id][35]);
+
+    //make sure the LEMO badges match width with the rest:
+    document.getElementById('outsContentBadge6').style.minWidth = document.getElementById('outsContentBadge4').offsetWidth;
+    document.getElementById('outsContentBadge7').style.minWidth = document.getElementById('outsContentBadge5').offsetWidth;
 
     //CSAC parameters
     for(i=41; i<52; i++){

@@ -471,7 +471,7 @@ tbody tbody a:link{
 	to { clip: rect(0px, auto, auto, auto); }
 }
 
-.menuContent > *, .sidebarTable > *{
+.menuContent > *, .sidebarTable > *, .summaryContentCell > *{
     animation-duration: 0.001s;
     -moz-animation-duration: 0.001s;
     -webkit-animation-duration: 0.001s;
@@ -524,7 +524,7 @@ tbody tbody a:link{
 	border-bottom-right-radius: 1em;
 }
 
-.clockOutputBadge{
+.clockOutputBadge, #outsContentmasterStepdownSliderDiv{
 	display:inline-block;
 	text-align:center;
 	margin: 2px;
