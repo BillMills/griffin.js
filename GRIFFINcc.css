@@ -532,3 +532,12 @@ tbody tbody a:link{
 	border-radius:25px;
 	border:1px solid #999999;
 }
+
+#summaryContentTable td:nth-child(odd), #CSACContentTable td:nth-child(odd){
+	font: italic 100% sans-serif; 
+}
+
+:invalid{
+	color: #FF0000;
+	border: 2px solid #FF0000;
+}

@@ -18,9 +18,22 @@ function Clock(){
 
     //deploy right bar menu:
     deployMenu('clockMenus', ['summary', 'outs', 'CSAC'] , ['Clock Summary','Channel Outs','CSAC Parameters']);
-    //inject table into div for summary & CSAC:
+    //inject table into div for summary:
     insertDOM('table', 'summaryContentTable', 'sidebarTable', '', 'summaryContent', '', '');
+    for(i=1; i<9; i++){
+        label = window.parameters.clockVariableNames[i];
+        insertDOM('tr', 'summaryContentRow'+i, '', '', 'summaryContentTable', '', '');
+        insertDOM('td', 'clockSummaryLabel'+i, '', '', 'summaryContentRow'+i, '', label);
+        insertDOM('td', 'clockSummaryValue'+i, '', '', 'summaryContentRow'+i, '', '');
+    }    
+    //inject table for CSAC:
     insertDOM('table', 'CSACContentTable', 'sidebarTable', '', 'CSACContent', '', '');
+    for(i=41; i<52; i++){
+        label = window.parameters.clockVariableNames[i];
+        insertDOM('tr', 'CSACContentRow'+i, '', '', 'CSACContentTable', '', '');
+        insertDOM('td', 'clockCSACLabel'+i, '', '', 'CSACContentRow'+i, '', label);
+        insertDOM('td', 'clockCSACValue'+i, '', '', 'CSACContentRow'+i, '', '');
+    }
     //Channel outs packed as 8 badges:
     for(i=0; i<8; i++){
         insertDOM('div', 'outsContentBadge'+i, 'clockOutputBadge', '', 'outsContent', '', this.channelTitles[i]+'<br>');
@@ -276,6 +289,7 @@ function masterLEMO(id){
     ODBSet('/Equipment/GRIF-Clk'+id.slice(5,id.length)+'/Variables/Input[4]', 1);
     //push to localODB so we don't actually have to re-fetch:
     window.localODB['clock'+id.slice(5,id.length)][4] = 1;
+    document.getElementById('clockSummaryValue3').innerHTML = '<input id="masterLEMOfreq" type="number"></input>';
     rePaint();
 }
 
@@ -285,6 +299,7 @@ function masterAC(id){
     ODBSet('/Equipment/GRIF-Clk'+id.slice(5,id.length)+'/Variables/Input[4]', 0);
     //push to local ODB:
     window.localODB['clock'+id.slice(5,id.length)][4] = 0;
+    document.getElementById('clockSummaryValue3').innerHTML = '200 MHz';
     rePaint();
 }
 
@@ -298,19 +313,27 @@ function showClock(id){
     window.clockPointer.activeClock = id;
 
     //clock summary parameters
-    document.getElementById('summaryContentTable').innerHTML = '';
     for(i=1; i<9; i++){
-        if(parseInt(window.localODB[id][1],10) && i==3) continue; //don't report FanSel for the master.
-        label = window.parameters.clockVariableNames[i];
         value = humanReadableClock(i, window.localODB[id][i]);
-        insertDOM('tr', 'summaryContentRow'+i, '', '', 'summaryContentTable', '', '');
-        insertDOM('td', 'clockSummaryLabel'+i, '', '', 'summaryContentRow'+i, '', label);
-        insertDOM('td', 'clockSummaryValue'+i, '', '', 'summaryContentRow'+i, '', value);
+        document.getElementById('clockSummaryValue'+i).innerHTML = value;
     }
+
     //master needs switch for LEMO or AC Ref. Clock:
     if(parseInt(window.localODB[id][1],10)){
-        document.getElementById('clockSummaryValue4').innerHTML = '';
-        toggleSwitch('clockSummaryValue4', 'masterRefToggle', 'AC', 'LEMO', 'LEMO', masterLEMO.bind(null,id), masterAC.bind(null,id), parseInt(window.localODB[id][4],10));
+        document.getElementById('clockSummaryLabel3').innerHTML = 'Ref. Clock';
+        document.getElementById('clockSummaryValue3').innerHTML = '';
+        toggleSwitch('clockSummaryValue3', 'masterRefToggle', 'AC', 'LEMO', 'LEMO', masterLEMO.bind(null,id), masterAC.bind(null,id), parseInt(window.localODB[id][4],10));
+
+        //also, don't report FanSel for the master, replace with frequency info:
+        document.getElementById('clockSummaryLabel4').innerHTML = 'Input Freq. (MHz):';
+        if(document.getElementById('toggleSwitchmasterRefToggle').style.left=='1em'){
+            document.getElementById('clockSummaryValue4').innerHTML = '<input id="masterLEMOfreq" type="number" value="200" min="0"></input>';
+        } else{
+            document.getElementById('clockSummaryValue4').innerHTML = '200 MHz';
+        }
+    } else{
+        document.getElementById('clockSummaryLabel3').innerHTML = 'Clock Source';
+        document.getElementById('clockSummaryLabel4').innerHTML = 'Ref. Clock';
     }
 
 
@@ -345,13 +368,9 @@ function showClock(id){
     document.getElementById('bypassReport7').innerHTML = 'Bypass: ' + humanReadableClock(35, window.localODB[id][35]);
 
     //CSAC parameters
-    document.getElementById('CSACContentTable').innerHTML = '';
     for(i=41; i<52; i++){
-        label = window.parameters.clockVariableNames[i];
         value = humanReadableClock(i, window.localODB[id][i]);
-        insertDOM('tr', 'CSACContentRow'+i, '', '', 'CSACContentTable', '', '');
-        insertDOM('td', 'clockCSACLabel'+i, '', '', 'CSACContentRow'+i, '', label);
-        insertDOM('td', 'clockCSACValue'+i, '', '', 'CSACContentRow'+i, '', value);
+        document.getElementById('clockCSACValue'+i).innerHTML = value;
     }
 
 }
