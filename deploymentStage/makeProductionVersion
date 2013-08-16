@@ -1,0 +1,50 @@
+cp ../sections/AlarmService.js .
+cp ../subdetectors/BAMBINO.js .
+cp ../sections/BarGraph.js .
+cp ../sections/Clock.js .
+cp ../subdetectors/DANTE.js .
+cp ../sections/DAQ.js .
+cp ../subdetectors/DESCANT.js .
+cp ../sections/Dashboard.js .
+cp ../plumbing/DataStructures.js .
+cp ../GRIFFINcc.css .
+cp ../GRIFFINcc.html .
+cp ../subdetectors/HPGE.js .
+cp ../subdetectors/PACES.js .
+cp ../subdetectors/SCEPTAR.js .
+cp ../subdetectors/SHARC.js .
+cp ../subdetectors/SPICE.js .
+cp ../sections/StatusBar.js .
+cp ../subdetectors/TIP.js .
+cp ../sections/Trigger.js .
+cp ../sections/Waffle.js .
+cp ../plumbing/drawing.js .
+cp ../plumbing/fillMeter.js .
+cp ../plumbing/formHandler.js .
+cp ../plumbing/masterControl.js .
+cp ../plumbing/slider.js .
+cp ../plumbing/tooltip.js .
+cp ../plumbing/utilities.js .
+cp ../plumbing/viewTransitions.js .
+cp ../subdetectors/Subsystem.js .
+cp ../plumbing/parameters.js .
+cp ../subdetectors/DSSD.js .
+cp ../plumbing/menu.js .
+
+rm griffin.min.js
+source concatenate
+#a.out < combined.js > griffin.min.js
+cp combined.js griffin.min.js
+
+sed '1,/<\/head>/d' GRIFFINcc.html > test
+cat head test >> test2
+rm test
+mv test2 GRIFFINcc.html
+
+sed 's/parameters.json/parametersJSON!/g' GRIFFINcc.html >> test3
+mv test3 GRIFFINcc.html
+
+#cp ../img/logo.gif .
+#cp ../img/triumf.gif .
+#cp ../img/static.gif
+#cp ../zepto.min.js .
