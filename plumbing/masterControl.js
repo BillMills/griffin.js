@@ -94,6 +94,8 @@ function masterLoop(callMyself, noFetch){
         }
         //Clock
         if(window.parameters.topDeployment['Clock']) window.clockPointer.update();
+        //Trigger
+        if(window.parameters.topDeployment['Trigger']) window.triggerPointer.update();
 /*
         //let the alarm services know the update is complete:
         var allDone = new   CustomEvent("refreshComplete", {

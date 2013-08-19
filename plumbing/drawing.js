@@ -783,4 +783,18 @@ function curveText(text, context, x0, y0, rad, startAngle){
     }           
 }
 
+function arrow(context, x0, y0, x1, y1, headScale){
+    context.beginPath();
+    context.moveTo(x0,y0);
+    context.lineTo(x1,y1);
+
+    context.save();
+    context.translate(x1, y1);
+    context.rotate(Math.atan((x1-x0)/(y1-y0)));
+    context.moveTo(-headScale, headScale);
+    context.lineTo(0,0);
+    context.lineTo(headScale, headScale);
+    context.restore();
+}
+
 

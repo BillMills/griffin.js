@@ -5,7 +5,7 @@ function loadParameters(){
 				"MIDASlegacyMode" : 0,
 				"ExpName" : "",
 				"statusURL" : "",
-				"topDeployment" : {"HV":1, "Subsystems":1, "DAQ":1, "Clock":0, "Trigger":0},
+				"topDeployment" : {"HV":1, "Subsystems":1, "DAQ":1, "Clock":0, "Trigger":1},
 				"deployment" : {"BAMBINO":1, "DANTE":1, "DESCANT":1, "HPGe":1, "PACES":1, "SCEPTAR":1, "SHARC":1, "SPICE":1, "TIPwall":1, "TIPball":1, "DSSD":0},
 				//"topDeployment" : {"HV":0, "Subsystems":1, "DAQ":1, "Clock":0, "Trigger":0},
 				//"deployment" : {"BAMBINO":0, "DANTE":0, "DESCANT":0, "HPGe":1, "PACES":0, "SCEPTAR":0, "SHARC":1, "SPICE":0, "TIPwall":0, "TIPball":0, "DSSD":0},
