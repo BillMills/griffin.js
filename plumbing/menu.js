@@ -7,7 +7,7 @@ function deployMenu(targetDivID, headings, titles){
 		var prefix, tab;
 		if (event.animationName == "nodeInserted") {
 			prefix = event.target.id.slice(0, event.target.id.search('Content'));
-			tab = document.getElementById(prefix+'Tab');
+			//tab = document.getElementById(prefix+'Tab');
 			resizeMenu(prefix);
 		}
 	}

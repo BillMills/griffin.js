@@ -197,11 +197,14 @@ function Trigger(){
             fontSize = fitFont(this.context, 'Short-Term', this.shortBufferWidth-this.textMargin*2);
             this.context.font = fontSize+'px Raleway';
             this.context.textBaseline = 'middle';
-            //Input link:
-            this.context.fillText('Input Link', this.inputLinkX0+this.textMargin, this.inputLinkY0 + this.inputLinkHeight/2);
+
             //Short-term buffer:
             this.context.fillText('Short-Term', this.shortBufferX0+this.textMargin, this.shortBufferY0+this.textMargin);
             this.context.fillText('Buffer', this.shortBufferX0+this.textMargin, this.shortBufferY0+this.textMargin+fontSize);
+            if(fontSize < 16)
+                this.context.font = '16px Raleway';
+            //Input link:
+            this.context.fillText('Input Link', this.inputLinkX0+this.textMargin, this.inputLinkY0 + this.inputLinkHeight/2);
             //Raw Data
             this.context.fillText('Raw Data', this.rawDataX0+this.textMargin, this.rawDataY0+1.2*this.textMargin);
             //Master Core
@@ -272,25 +275,24 @@ function Trigger(){
     };
 
     this.populateSidebar = function(cell){
-
         //Input Link
         if(cell==0){
-            document.getElementById('detailContent').innerHTML = 'Input Link';
+            insertDOM('p', 'detailContentMessage', '', '', 'detailContent', '', 'Input Link');
         //Short Term Buffer
         } else if(cell==1){
-            document.getElementById('detailContent').innerHTML = 'Short Term Buffer';
+            insertDOM('p', 'detailContentMessage', '', '', 'detailContent', '', 'Short-Term Buffer');
         //Raw Data
         } else if(cell==2){
-            document.getElementById('detailContent').innerHTML = 'Raw Data';
+            insertDOM('p', 'detailContentMessage', '', '', 'detailContent', '', 'Raw Data');
         //Master Core
         } else if(cell==3){
-            document.getElementById('detailContent').innerHTML = 'Master Core';
+            insertDOM('p', 'detailContentMessage', '', '', 'detailContent', '', 'Master Core');
         //Long Term Buffer
         } else if(cell==4){
-            document.getElementById('detailContent').innerHTML = 'Long Term Buffer';
+            insertDOM('p', 'detailContentMessage', '', '', 'detailContent', '', 'Long-Term Buffer');
         //Computer Link
         } else if(cell==5){
-            document.getElementById('detailContent').innerHTML = 'Computer Link';
+            insertDOM('p', 'detailContentMessage', '', '', 'detailContent', '', 'Computer Link');
         }
     }
 }
