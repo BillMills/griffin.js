@@ -1,11 +1,12 @@
 function Trigger(){
-    that = this;
+    var that = this;
     window.triggerPointer = that;
 
 	this.wrapperID = window.parameters.wrapper;	//ID of wrapping div
 	this.canvasID = 'TriggerCanvas';	        //ID of canvas to paint trigger on
     this.linkWrapperID = 'TriggerLinks';        //ID of div to contain clock view header
     this.sidebarID = 'TriggerSidebar';          //ID of sidebar div
+    this.TTcanvasID = 'TTtriggerCanvas';
 
 	this.wrapper = document.getElementById(this.wrapperID);
 
@@ -21,19 +22,35 @@ function Trigger(){
 	//deploy a canvas for the trigger view:
     this.canvasWidth = 0.48*$(this.wrapper).width();
     this.canvasHeight = 1*$(this.wrapper).height();
+
     insertDOM('canvas', this.canvasID, 'monitor', 'top:' + ($('#TriggerLinks').height() + 5) +'px;', this.wrapperID, '', '')
     this.canvas = document.getElementById('TriggerCanvas');
     this.context = this.canvas.getContext('2d');
-    this.canvas.setAttribute('width', this.canvasWidth)
-    this.canvas.setAttribute('height', this.canvasHeight)
+    this.canvas.setAttribute('width', this.canvasWidth);
+    this.canvas.setAttribute('height', this.canvasHeight);
+
+    //and the tt layer:
+    insertDOM('canvas', this.TTcanvasID, 'monitor', 'top:' + ($('#TriggerLinks').height() + 5) +'px;', this.wrapperID, '', '')
+    this.TTcanvas = document.getElementById('TTtriggerCanvas');
+    this.TTcontext = this.TTcanvas.getContext('2d');
+    this.TTcanvas.setAttribute('width', this.canvasWidth);
+    this.TTcanvas.setAttribute('height', this.canvasHeight);
+
+    //set up tooltip:
+    this.TTcontext.fillStyle = '#123456';
+    this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
+    this.tooltip = new Tooltip(this.canvasID, 'triggerTT', this.wrapperID, [], []);
+    this.tooltip.obj = that;
 
     //right sidebar
-    insertDOM('div', this.sidebarID, 'Sidebar', '', this.wrapperID, '', '')
+    insertDOM('div', this.sidebarID, 'collapsableSidebar', 'float:right; height:80%;', this.wrapperID, '', '')
+    //deploy right bar menu:
+    deployMenu(this.sidebarID, ['detail'] , ['Filter Detail']);
 
     //drawing parameters:
     this.lineWeight = 4;
     this.context.lineWidth = this.lineWeight;
-    //this.context.fillStyle = '#444444';
+    this.context.fillStyle = '#444444';
 
     this.scaleHeight = 0.2*this.canvasHeight;
 
@@ -84,37 +101,37 @@ function Trigger(){
         //Input Link
         this.context.strokeStyle = '#000000';
         roundBox(this.context, this.inputLinkX0, this.inputLinkY0, this.inputLinkWidth, this.inputLinkHeight, 25);
-        //this.context.fill();
+        this.context.fill();
         this.context.stroke();
 
         //Short term Buffer
         this.context.strokeStyle = '#000000';
         roundBox(this.context, this.shortBufferX0, this.shortBufferY0, this.shortBufferWidth, this.shortBufferHeight, 25);
-        //this.context.fill();
+        this.context.fill();
         this.context.stroke();
 
         //Raw Data
         this.context.strokeStyle = '#000000';
         roundBox(this.context, this.rawDataX0, this.rawDataY0, this.rawDataWidth, this.rawDataHeight, 25);
-        //this.context.fill();
+        this.context.fill();
         this.context.stroke();
 
         //Master Core 
         this.context.strokeStyle = '#000000';
         roundBox(this.context, this.masterCoreX0, this.masterCoreY0, this.masterCoreWidth, this.masterCoreHeight, 25);
-        //this.context.fill();
+        this.context.fill();
         this.context.stroke();
 
         //Long term Buffer
         this.context.strokeStyle = '#000000';
         roundBox(this.context, this.longBufferX0, this.longBufferY0, this.longBufferWidth, this.longBufferHeight, 25);
-        //this.context.fill();
+        this.context.fill();
         this.context.stroke();
 
         //Computer Link
         this.context.strokeStyle = '#000000';
         roundBox(this.context, this.compLinkX0, this.compLinkY0, this.compLinkWidth, this.compLinkHeight, 25);
-        //this.context.fill();
+        this.context.fill();
         this.context.stroke();
 
         //arrows:
@@ -151,7 +168,45 @@ function Trigger(){
         arrow(this.context, 0.5*this.canvasWidth, 0.15*this.canvasHeight, 0.5*this.canvasWidth, 0.08*this.canvasHeight+this.lineWeight - this.arrowOver, 0.01*this.canvasHeight);
         this.context.stroke(); 
 
+        //draw scale
+        //if(frame==0)
+        //    this.drawScale(this.context);
+
     };
+
+    this.drawTTlayer = function(){
+        //Input Link
+        this.TTcontext.fillStyle = '#000000';
+        roundBox(this.TTcontext, this.inputLinkX0, this.inputLinkY0, this.inputLinkWidth, this.inputLinkHeight, 25);
+        this.TTcontext.fill();
+
+        //Short term Buffer
+        this.TTcontext.fillStyle = '#010101';
+        roundBox(this.TTcontext, this.shortBufferX0, this.shortBufferY0, this.shortBufferWidth, this.shortBufferHeight, 25);
+        this.TTcontext.fill();
+
+        //Raw Data
+        this.TTcontext.fillStyle = '#020202';
+        roundBox(this.TTcontext, this.rawDataX0, this.rawDataY0, this.rawDataWidth, this.rawDataHeight, 25);
+        this.TTcontext.fill();
+
+        //Master Core 
+        this.TTcontext.fillStyle = '#030303';
+        roundBox(this.TTcontext, this.masterCoreX0, this.masterCoreY0, this.masterCoreWidth, this.masterCoreHeight, 25);
+        this.TTcontext.fill();
+
+        //Long term Buffer
+        this.TTcontext.fillStyle = '#040404';
+        roundBox(this.TTcontext, this.longBufferX0, this.longBufferY0, this.longBufferWidth, this.longBufferHeight, 25);
+        this.TTcontext.fill();
+
+        //Computer Link
+        this.TTcontext.fillStyle = '#050505';
+        roundBox(this.TTcontext, this.compLinkX0, this.compLinkY0, this.compLinkWidth, this.compLinkHeight, 25);
+        this.TTcontext.fill();
+    };
+    //paint the tt layer exactly once :)
+    this.drawTTlayer();
 
     this.update = function(){
         this.draw(0);
@@ -160,5 +215,19 @@ function Trigger(){
     this.animate = function(){
         if(window.onDisplay == this.canvasID /*|| window.freshLoad*/) animate(this, 0);
         else this.draw(this.nFrames);
+    };
+
+    this.findCell = function(x, y){
+        var imageData = this.TTcontext.getImageData(x,y,1,1), 
+            index;
+        
+        index = -1;
+        if(imageData.data[0] == imageData.data[1] && imageData.data[0] == imageData.data[2]) index = imageData.data[0];
+
+        return index;
+    };
+
+    this.defineText = function(cell){
+         document.getElementById(this.tooltip.ttDivID).innerHTML = cell;
     };
 }
