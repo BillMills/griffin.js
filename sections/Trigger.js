@@ -42,6 +42,25 @@ function Trigger(){
     this.tooltip = new Tooltip(this.canvasID, 'triggerTT', this.wrapperID, [], []);
     this.tooltip.obj = that;
 
+    this.canvas.onclick =   function(event){
+                                var x,y, cell;
+                                x = event.pageX - that.canvas.offsetLeft - that.wrapper.offsetLeft;
+                                y = event.pageY - that.canvas.offsetTop - that.wrapper.offsetTop;
+                                cell = that.findCell(x,y);
+                                //draw and swap out if user clicked on a valid clover
+                                if(cell > -1 && cell < 6){
+                                    that.populateSidebar(cell);
+                                }
+                                /*
+                                //set up scale range dialogue:
+                                if(y>that.canvasHeight - that.scaleHeight){
+                                    parameterDialogue('DAQ', [ ['Transfer Rate', window.parameters.DAQminima[1], window.parameters.DAQmaxima[1], 'Bps', '/DashboardConfig/DAQ/transferMinTopView', '/DashboardConfig/DAQ/transferMaxTopView' ], ['Trigger Rate', window.parameters.DAQminima[0], window.parameters.DAQmaxima[0], 'Hz', '/DashboardConfig/DAQ/rateMinTopView', '/DashboardConfig/DAQ/rateMaxTopView']  ], window.parameters.colorScale[window.DAQpointer.DAQcolor]);
+                                } else if(y<that.masterBottom){
+                                    parameterDialogue('Device Summary',[ ['Trig Requests', window.parameters.DAQminima[4], window.parameters.DAQmaxima[5], 'Hz', '/DashboardConfig/DAQ/rateMinMaster', '/DashboardConfig/DAQ/rateMaxMaster'], ['Data Rate', window.parameters.DAQminima[5], window.parameters.DAQmaxima[5], 'Bps', '/DashboardConfig/DAQ/transferMinMaster', '/DashboardConfig/DAQ/transferMaxMaster']  ]);
+                                }
+                                */
+                            };
+
     //right sidebar
     insertDOM('div', this.sidebarID, 'collapsableSidebar', 'float:right; height:80%;', this.wrapperID, '', '')
     //deploy right bar menu:
@@ -87,6 +106,8 @@ function Trigger(){
     this.compLinkX0 = 0.1*this.canvasWidth + this.lineWeight/2;
     this.compLinkY0 = this.lineWeight/2;
 
+    this.textMargin = 20;
+
     //establish animation parameters////////////////////////////////////////////////////////////////////
     this.FPS = 30;
     this.duration = 0.5;
@@ -97,7 +118,9 @@ function Trigger(){
     //member functions/////////////////////////////////////////////
 
     this.draw = function(frame){
+        var fontSize;
 
+        this.context.fillStyle = '#444444';
         //Input Link
         this.context.strokeStyle = '#000000';
         roundBox(this.context, this.inputLinkX0, this.inputLinkY0, this.inputLinkWidth, this.inputLinkHeight, 25);
@@ -168,9 +191,26 @@ function Trigger(){
         arrow(this.context, 0.5*this.canvasWidth, 0.15*this.canvasHeight, 0.5*this.canvasWidth, 0.08*this.canvasHeight+this.lineWeight - this.arrowOver, 0.01*this.canvasHeight);
         this.context.stroke(); 
 
-        //draw scale
-        //if(frame==0)
-        //    this.drawScale(this.context);
+        //labels
+        if(frame == 0){
+            this.context.fillStyle = '#EEEEEE';
+            fontSize = fitFont(this.context, 'Short-Term', this.shortBufferWidth-this.textMargin*2);
+            this.context.font = fontSize+'px Raleway';
+            this.context.textBaseline = 'middle';
+            //Input link:
+            this.context.fillText('Input Link', this.inputLinkX0+this.textMargin, this.inputLinkY0 + this.inputLinkHeight/2);
+            //Short-term buffer:
+            this.context.fillText('Short-Term', this.shortBufferX0+this.textMargin, this.shortBufferY0+this.textMargin);
+            this.context.fillText('Buffer', this.shortBufferX0+this.textMargin, this.shortBufferY0+this.textMargin+fontSize);
+            //Raw Data
+            this.context.fillText('Raw Data', this.rawDataX0+this.textMargin, this.rawDataY0+1.2*this.textMargin);
+            //Master Core
+            this.context.fillText('Master Core', this.masterCoreX0 + this.masterCoreWidth - this.context.measureText('Master Core').width -this.textMargin, this.masterCoreY0+1.2*this.textMargin);
+            //Long Term Buffer
+            this.context.fillText('Long-Term Buffer', this.longBufferX0+this.longBufferWidth - this.context.measureText('Long-Term Buffer').width - this.textMargin, this.longBufferY0+this.longBufferHeight/2);
+            //Computer Link
+            this.context.fillText('Computer Link', this.compLinkX0+this.compLinkWidth - this.context.measureText('Computer Link').width - this.textMargin, this.compLinkY0+this.compLinkHeight/2);            
+        }
 
     };
 
@@ -210,7 +250,7 @@ function Trigger(){
 
     this.update = function(){
         this.draw(0);
-    }
+    };
 
     this.animate = function(){
         if(window.onDisplay == this.canvasID /*|| window.freshLoad*/) animate(this, 0);
@@ -230,4 +270,27 @@ function Trigger(){
     this.defineText = function(cell){
          document.getElementById(this.tooltip.ttDivID).innerHTML = cell;
     };
+
+    this.populateSidebar = function(cell){
+
+        //Input Link
+        if(cell==0){
+            document.getElementById('detailContent').innerHTML = 'Input Link';
+        //Short Term Buffer
+        } else if(cell==1){
+            document.getElementById('detailContent').innerHTML = 'Short Term Buffer';
+        //Raw Data
+        } else if(cell==2){
+            document.getElementById('detailContent').innerHTML = 'Raw Data';
+        //Master Core
+        } else if(cell==3){
+            document.getElementById('detailContent').innerHTML = 'Master Core';
+        //Long Term Buffer
+        } else if(cell==4){
+            document.getElementById('detailContent').innerHTML = 'Long Term Buffer';
+        //Computer Link
+        } else if(cell==5){
+            document.getElementById('detailContent').innerHTML = 'Computer Link';
+        }
+    }
 }
