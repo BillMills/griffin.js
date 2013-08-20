@@ -96,6 +96,8 @@ function masterLoop(callMyself, noFetch){
         if(window.parameters.topDeployment['Clock']) window.clockPointer.update();
         //Trigger
         if(window.parameters.topDeployment['Trigger']) window.triggerPointer.update();
+        //VME
+        if(window.parameters.topDeployment['VME']) window.VMEpointer.update();        
 /*
         //let the alarm services know the update is complete:
         var allDone = new   CustomEvent("refreshComplete", {

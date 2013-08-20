@@ -7,7 +7,7 @@ function Clock(){
 	this.canvasID = 'ClockCanvas';		            //ID of canvas to paint clock on
     this.linkWrapperID = 'ClockLinks';              //ID of div to contain clock view header
     this.sidebarID = 'ClockSidebar';                //ID of div to contain clock sidebar
-    this.activeClock = 'clock0';
+    this.activeElt = 'clock0';
     this.noUniqueMaster = 0;
     this.masterLEMOfreq = 200;
     this.channelTitles = ['eSATA 0', 'eSATA 1', 'eSATA 2', 'eSATA 3', 'eSATA 4', 'eSATA 5', 'Left LEMO', 'Right LEMO'];
@@ -57,14 +57,14 @@ function Clock(){
 
         //commit new stepdown to ODB:
         for(i=0; i<window.localODB['clock0'].length; i++){
-            masterConfig[i] = window.localODB[window.clockPointer.activeClock][i];
+            masterConfig[i] = window.localODB[window.clockPointer.activeElt][i];
         }
         for(i=0; i<8; i++){
             masterConfig[9+4*i] = stepdown;
             masterConfig[10+4*i] = stepdown;
         }
-        ODBSet('/Equipment/GRIF-Clk'+window.clockPointer.activeClock.slice(5, window.clockPointer.activeClock.length)+'/Variables/Input[*]', masterConfig);
-        window.localODB[window.clockPointer.activeClock] = masterConfig;
+        ODBSet('/Equipment/GRIF-Clk'+window.clockPointer.activeElt.slice(5, window.clockPointer.activeElt.length)+'/Variables/Input[*]', masterConfig);
+        window.localODB[window.clockPointer.activeElt] = masterConfig;
     };
     for(i=0; i<8; i++){
         insertDOM('div', 'outsContentBadge'+i, 'clockOutputBadge', '', 'outsContent', '', this.channelTitles[i]+'<br>');
@@ -120,7 +120,7 @@ function Clock(){
             this.noUniqueMaster = 0;
 
         //update text for whatever clock is showing:
-        showClock(this.activeClock);
+        showClock(this.activeElt);
 
         //update alarm status
         //unset all stale alarms:
@@ -278,8 +278,8 @@ function setSlave(n){
 
 //turn on all four bits corresponding to the ith eSATA channel
 function enableChannel(i){
-    var newSettingWord = window.localODB[window.clockPointer.activeClock][0],
-    clockNo = window.clockPointer.activeClock.slice(5, window.clockPointer.activeClock.length);
+    var newSettingWord = window.localODB[window.clockPointer.activeElt][0],
+    clockNo = window.clockPointer.activeElt.slice(5, window.clockPointer.activeElt.length);
     newSettingWord = newSettingWord | (0xF << 4*i);
     //push to ODB
     ODBSet('/Equipment/GRIF-Clk'+clockNo+'/Variables/Input[0]', newSettingWord);
@@ -288,8 +288,8 @@ function enableChannel(i){
 }
 
 function disableChannel(i){
-    var newSettingWord = window.localODB[window.clockPointer.activeClock][0],
-    clockNo = window.clockPointer.activeClock.slice(5, window.clockPointer.activeClock.length);
+    var newSettingWord = window.localODB[window.clockPointer.activeElt][0],
+    clockNo = window.clockPointer.activeElt.slice(5, window.clockPointer.activeElt.length);
     newSettingWord = newSettingWord & ~(0xF << 4*i);
     //push to ODB
     ODBSet('/Equipment/GRIF-Clk'+clockNo+'/Variables/Input[0]', newSettingWord);
@@ -349,12 +349,18 @@ function masterInputFrequency(targetID){
 
 //show the relevant clock information when clicked on
 function showClock(id){
-    var i, text, label, value, isOn;
+    var i, text, label, value, isOn, index;
 
-    glowMe(id);
+    glowMe.apply(window.clockPointer, [id]);
+    //only show CSAC tab for Master:
+    index = parseInt(id.slice(5,id.length),10);
+    if(parseInt(window.localODB['clock'+index][1],10) )
+        document.getElementById('CSACTab').style.opacity = 1;
+    else
+        document.getElementById('CSACTab').style.opacity = 0;
 
     //keep track of which clock is highlit:
-    window.clockPointer.activeClock = id;
+    window.clockPointer.activeElt = id;
 
     //clock summary parameters
     for(i=1; i<9; i++){
@@ -420,18 +426,8 @@ function showClock(id){
 }
 
 function glowMe(id){
-    var i, index;
-
-    document.getElementById(window.clockPointer.activeClock).style.boxShadow = '0 0 0px white';
+    document.getElementById(this.activeElt).style.boxShadow = '0 0 0px white';
     document.getElementById(id).style.boxShadow = '0 0 20px white';
-
-    //only show CSAC tab for Master:
-    index = parseInt(id.slice(5,id.length),10);
-    if(parseInt(window.localODB['clock'+index][1],10) )
-        document.getElementById('CSACTab').style.opacity = 1;
-    else
-        document.getElementById('CSACTab').style.opacity = 0;
-
 }
 
 //translate clock parameter i of value v into something a human can comprehend:

@@ -78,9 +78,10 @@
       <!--Spinner Canvas////////////////-->
       <canvas id='spinner' style='position:fixed; z-index:100000; transition:opacity 0.5s; -moz-transition:opacity 0.5s; -webkit-transition:opacity 0.5s;' width='200px' height='200px'> </canvas>
 
-      <!--Collapsible menus for dashboard & clock page-->
+      <!--Collapsible menus for dashboard & clock & VME page-->
       <div id='dashboardMenus' class='collapsableSidebar' style='float:right; height:80%; width:24%;'></div>
       <div id='clockMenus' class='collapsableSidebar' style='float:right; height:80%;'></div>
+      <div id='VMEMenus' class='collapsableSidebar' style='float:right; height:80%;'></div>
 
     </div>
 
@@ -174,6 +175,9 @@
             window.parameters.topDeployment['Clock'] = 1;
           }
         }
+
+        //autodetect how many VMEs are present:
+        window.parameters.nVME = 12; //TBD
 
         //autodetect what size cards are plugged into what slot:
         detectCards();
@@ -287,6 +291,9 @@
         //Trigger
         if(window.parameters.topDeployment['Trigger'])
           window.Trigger = new Trigger();
+        //VME
+        if(window.parameters.topDeployment['VME'])
+          window.VME = new VME();
         //end main elements////////////////////////////////////////////////////////////////////////////
 
         //set up channel navigation dropdowns:

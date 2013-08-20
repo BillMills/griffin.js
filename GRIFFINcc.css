@@ -45,7 +45,7 @@ div.navPanel{
 	-webkit-transition:opacity 0.5s, z-index 0.5s;
 }
 
-div.clock{
+div.clock, div.VME{
 	border:5px solid;
 	border-color: #000000;
 	border-radius:25px;

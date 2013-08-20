@@ -30,6 +30,7 @@ cp ../subdetectors/Subsystem.js .
 cp ../plumbing/parameters.js .
 cp ../subdetectors/DSSD.js .
 cp ../plumbing/menu.js .
+cp ../sections/VME.js .
 
 rm griffin.min.js
 source concatenate
