@@ -187,6 +187,7 @@ div.menuContent{
 	font-size: 110%;
 	padding-left: 2em;
 	padding-top:1em;
+	padding-right:1em;
 }
 
 div.toggleWrap{
@@ -309,7 +310,7 @@ p.hanging{
 	margin: 0px;
 }
 
-input.bigButton{
+.bigButton{
 	width: 40%; 
 	height: 30px;  
 	margin-left: 5%; 
@@ -499,7 +500,7 @@ tbody tbody a:link{
 	border-spacing: 0;
 }
 
-.sidebarTable tr:nth-child(odd){
+.sidebarTable tr:nth-child(odd), #VMEContentTable tr:nth-child(even), #VMEContentTable2 tr:nth-child(odd){
 	background-color: #404040;
 }
 
@@ -514,12 +515,12 @@ tbody tbody a:link{
 	padding:0.5em;
 }
 
-.sidebarTable td:nth-child(4n+1){
+.sidebarTable td:nth-child(4n+1), #VMEContentTable td:nth-child(3n+1), #VMEContentTable2 td:nth-child(2n+1){
 	border-top-left-radius: 1em;
 	border-bottom-left-radius: 1em;
 }
 
-.sidebarTable td:nth-child(4n+2){
+.sidebarTable td:nth-child(4n+2), #VMEContentTable td:nth-child(3n+3), #VMEContentTable2 td:nth-child(2n){
 	border-top-right-radius: 1em;
 	border-bottom-right-radius: 1em;
 }
@@ -533,9 +534,38 @@ tbody tbody a:link{
 	border:1px solid #999999;
 }
 
-#summaryContentTable td:nth-child(odd), #CSACContentTable td:nth-child(odd){
+#summaryContentTable td:nth-child(odd), #CSACContentTable td:nth-child(odd), #VMEContentTable2 td:nth-child(odd){
 	font: italic 100% sans-serif; 
+	text-align: right;
+	border-right:1px solid #FFFFFF;
+	padding:0.5em;
 }
+
+.VMEContentCell{
+	text-align:center;
+}
+
+.VMEStatusCell, #VMEContentTable td:nth-child(3n+1), #VMEContentTable2 td:nth-child(odd){
+	padding-left:1em;
+}
+
+#VMEContentTable, #VMEContentTable2{
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+#VMEContentTable td, #VMEContentTable2 td{
+	padding-top:0.5em;
+	padding-bottom:0.5em;
+}
+
+#VMEContentTable2{
+	margin-top:1em;
+	margin-left: auto;
+	margin-right:auto;
+}
+
+
 
 :invalid{
 	color: #FF0000;

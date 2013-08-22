@@ -9,7 +9,7 @@ function Clock(){
     this.sidebarID = 'ClockSidebar';                //ID of div to contain clock sidebar
     this.activeElt = 'clock0';
     this.noUniqueMaster = 0;
-    this.masterLEMOfreq = 200;
+    this.masterFreq = 200;  //master always steps down from 200MHz, at least for GRIFFIN.
     this.channelTitles = ['eSATA 0', 'eSATA 1', 'eSATA 2', 'eSATA 3', 'eSATA 4', 'eSATA 5', 'Left LEMO', 'Right LEMO'];
 
 	this.wrapper = document.getElementById(this.wrapperID);
@@ -43,10 +43,10 @@ function Clock(){
     document.getElementById('outsContentmasterStepdownSlider').setAttribute('min', 1); 
     document.getElementById('outsContentmasterStepdownSlider').setAttribute('max', 10);
     document.getElementById('outsContentmasterStepdownSlider').setAttribute('value', 11-parseInt(window.localODB['clock'+0][9],10) );
-    document.getElementById('outsContentLabel').innerHTML = (window.localODB.masterLEMOfreq / (1-(document.getElementById('outsContentmasterStepdownSlider').valueAsNumber - parseInt(document.getElementById('outsContentmasterStepdownSlider').max,10)-1))).toFixed(1) + ' MHz';
+    document.getElementById('outsContentLabel').innerHTML = (this.masterFreq / (1-(document.getElementById('outsContentmasterStepdownSlider').valueAsNumber - parseInt(document.getElementById('outsContentmasterStepdownSlider').max,10)-1))).toFixed(1) + ' MHz';
     document.getElementById('outsContentmasterStepdownSlider').onchange = function(){
         var stepdown = -(this.valueAsNumber - parseInt(this.max,10)-1),
-            freqOut = window.localODB.masterLEMOfreq / (1+stepdown), 
+            freqOut = window.clockPointer.masterFreq / (1+stepdown), 
             i, masterConfig=[];
             window.clockPointer.masterFreqOut = freqOut;
 
@@ -178,7 +178,7 @@ function Clock(){
                 flag = 0;
                 if(clockData[2] != 1) flag = 1;     //Master has NIM input
                 if(clockData[3] != 1) flag = 1;     //Master has NIM input
-                if(clockData[4] != 1) flag = 1;     //Master has NIM input
+                //if(clockData[4] != 1) flag = 1;     //Master has NIM input
                 if(clockData[11] != 0) flag = 1;    //Master should not bypass itelf on any channel:
                 if(clockData[15] != 0) flag = 1;
                 if(clockData[19] != 0) flag = 1;
@@ -191,7 +191,7 @@ function Clock(){
                 flag = 0;
                 if(clockData[2] != 0) flag = 2;     //Master has NIM input
                 if(clockData[3] != 0) flag = 2;     //Master has NIM input
-                if(clockData[4] != 0) flag = 2;     //Master has NIM input
+                //if(clockData[4] != 0) flag = 2;     //Master has NIM input
                 if(clockData[11] != 1) flag = 2;    //Master should not bypass itelf on any channel:
                 if(clockData[15] != 1) flag = 2;
                 if(clockData[19] != 1) flag = 2;
@@ -238,7 +238,7 @@ function setMaster(n){
     masterConfig[1] = 1;
     masterConfig[2] = 1;
     masterConfig[3] = 1;
-    masterConfig[4] = 1;
+    //masterConfig[4] = 1;
     masterConfig[11] = 0;
     masterConfig[15] = 0;
     masterConfig[19] = 0;
@@ -261,7 +261,7 @@ function setSlave(n){
     slaveConfig[1] = 0;
     slaveConfig[2] = 0;
     slaveConfig[3] = 0;
-    slaveConfig[4] = 0;
+    //slaveConfig[4] = 0;
     slaveConfig[11] = 1;
     slaveConfig[15] = 1;
     slaveConfig[19] = 1;
@@ -318,10 +318,9 @@ function masterLEMO(id){
     ODBSet('/Equipment/GRIF-Clk'+id.slice(5,id.length)+'/Variables/Input[4]', 1);
     //push to localODB so we don't actually have to re-fetch:
     window.localODB['clock'+id.slice(5,id.length)][4] = 1;
-    masterInputFrequency('clockSummaryValue3');
-    window.localODB.masterLEMOfreq = window.clockPointer.masterLEMOfreq;  //restore previously selected value
-    document.getElementById('outsContentmasterStepdownSlider').onchange();
-    rePaint();
+    //document.getElementById('clockSummaryValue3').innerHTML = '10 MHz'
+    //document.getElementById('outsContentmasterStepdownSlider').onchange();
+    //rePaint();
 }
 
 //set the master to use the atomic clock as its reference
@@ -330,21 +329,21 @@ function masterAC(id){
     ODBSet('/Equipment/GRIF-Clk'+id.slice(5,id.length)+'/Variables/Input[4]', 0);
     //push to local ODB:
     window.localODB['clock'+id.slice(5,id.length)][4] = 0;
-    document.getElementById('clockSummaryValue3').innerHTML = '200 MHz';
-    window.clockPointer.masterLEMOfreq = window.localODB.masterLEMOfreq // going to co-opt this variable in AC mode to keep slider code simple, hang onto value to replace later
-    window.localODB.masterLEMOfreq = 200;
-    document.getElementById('outsContentmasterStepdownSlider').onchange();
-    rePaint();
+    //document.getElementById('clockSummaryValue3').innerHTML = '10 MHz';
+    //document.getElementById('outsContentmasterStepdownSlider').onchange();
+    //rePaint();
 }
 
 //deploy the input field for master input frequency:
 function masterInputFrequency(targetID){
-    document.getElementById(targetID).innerHTML = '<input id="summaryContentMasterLEMOfreq" type="number" min=0 value='+window.localODB.masterLEMOfreq+'></input>';
+    document.getElementById(targetID).innerHTML = '10 MHz' //'<input id="summaryContentMasterLEMOfreq" type="number" min=0 value='+window.localODB.masterLEMOfreq+'></input>';
+    /*
     document.getElementById('summaryContentMasterLEMOfreq').onchange = function(){
         ODBSet('/DashboardConfig/Clock/Master LEMO freq', parseInt(this.value,10) );
         window.localODB.masterLEMOfreq = parseInt(this.value,10);
         document.getElementById('outsContentmasterStepdownSlider').onchange();
-    }    
+    } 
+    */   
 }
 
 //show the relevant clock information when clicked on
@@ -375,12 +374,8 @@ function showClock(id){
         toggleSwitch('clockSummaryValue3', 'masterRefToggle', 'AC', 'LEMO', 'LEMO', masterLEMO.bind(null,id), masterAC.bind(null,id), parseInt(window.localODB[id][4],10));
 
         //also, don't report FanSel for the master, replace with frequency info:
-        document.getElementById('clockSummaryLabel4').innerHTML = 'Input Freq. (MHz):';
-        if(document.getElementById('toggleSwitchmasterRefToggle').style.left=='1em'){
-            masterInputFrequency('clockSummaryValue4');
-        } else{
-            document.getElementById('clockSummaryValue4').innerHTML = '200 MHz';
-        }
+        document.getElementById('clockSummaryLabel4').innerHTML = 'Input Freq.:';
+        document.getElementById('clockSummaryValue4').innerHTML = '10 MHz';
     } else{
         document.getElementById('clockSummaryLabel3').innerHTML = 'Clock Source';
         document.getElementById('clockSummaryLabel4').innerHTML = 'Ref. Clock';

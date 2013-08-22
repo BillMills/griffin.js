@@ -1,5 +1,5 @@
 function VME(){
-	var VMEStyle, cellSize, that = this;
+	var VMEStyle, string, cellSize, that = this;
 	window.VMEpointer = that;
 
 	//member variables
@@ -17,8 +17,59 @@ function VME(){
     //deploy right bar menu:
     deployMenu('VMEMenus', ['VME'] , ['Crate Summary']);
     //insert a table and maybe some buttons into the right bar
-    //...
-    //
+    //insertDOM('table', 'VMEContentTable', '', '', 'VMEContent', '', '');
+    //insertDOM('tr', '')
+    string = '';
+    string += '<h3 id="VMEContentTitle" style="text-align:center; margin-top:0px;">VME 0</h3>\n'
+    string += '<table id="VMEContentTable">\n';
+    string +=     '<tr id="VMEContentTitle">\n';
+    string +=         '<td></td>\n';
+    string +=         '<td>Voltage [V]</td>\n';
+    string +=         '<td style="padding-left:1em;">Current [A]</td>\n';
+    string +=     '</tr>\n';
+    string +=     '<tr>\n'
+    string +=         '<td>+12 V</td>\n'
+    string +=         '<td id="p12voltage" class="VMEContentCell">0</td>\n'
+    string +=         '<td id="p12current" class="VMEContentCell">0</td>\n'
+    string +=     '</tr>\n';
+    string +=     '<tr>\n'
+    string +=         '<td>+5 V</td>\n'
+    string +=         '<td id="p5voltage" class="VMEContentCell">0</td>\n'
+    string +=         '<td id="p5current" class="VMEContentCell">0</td>\n'
+    string +=     '</tr>\n';
+    string +=     '<tr>\n'
+    string +=         '<td>+3.3 V</td>\n'
+    string +=         '<td id="p3voltage" class="VMEContentCell">0</td>\n'
+    string +=         '<td id="p3current" class="VMEContentCell">0</td>\n'
+    string +=     '</tr>\n';
+    string +=     '<tr>\n'
+    string +=         '<td>-12 V</td>\n'
+    string +=         '<td id="n12voltage" class="VMEContentCell">0</td>\n'
+    string +=         '<td id="n12current" class="VMEContentCell">0</td>\n'
+    string +=     '</tr>\n';
+    string += '</table>\n';
+    string += '<table id="VMEContentTable2">\n';
+    string +=     '<tr>\n'
+    string +=         '<td>Fan Temp</td>\n'
+    string +=         '<td id="fanTemp" class="VMEStatusCell">0 '+String.fromCharCode(0x00B0)+'F</td>\n'
+    string +=     '</tr>\n';
+    string +=     '<tr>\n'
+    string +=         '<td>Fan Speed</td>\n'
+    string +=         '<td id="fanSpeed" class="VMEStatusCell">0 rpm</td>\n'
+    string +=     '</tr>\n';
+    string +=     '<tr>\n'
+    string +=         '<td>PS Time</td>\n'
+    string +=         '<td id="psTime" class="VMEStatusCell">0 hrs</td>\n'
+    string +=     '</tr>\n';
+    string +=     '<tr>\n'
+    string +=         '<td>Fan Time</td>\n'
+    string +=         '<td id="fanTime" class="VMEStatusCell">0 hrs</td>\n'
+    string +=     '</tr>\n';
+    string += '</table>\n';
+    //string += '<button id="VMEContentPwrCycle" class="bigButton" style="margin-left:auto; margin-right:auto;" type="submit">Power Cycle</button>\n'
+    document.getElementById('VMEContent').innerHTML = string;
+    insertDOM('button', 'VMEContentPwrCycle', 'bigButton', 'width:auto; height:auto; padding:0.5em; margin-top:1em;', 'VMEContent', '', 'Power Cycle', '', 'button');
+    document.getElementById('VMEContent').style.textAlign = 'center';
 
     //nav wrapper div
     insertDOM('div', this.linkWrapperID, 'navPanel', 'text-align:center; width:50%; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;', this.wrapperID, '', '');

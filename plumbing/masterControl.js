@@ -184,7 +184,6 @@ function ODBgrab(){
     for(i=0; i<window.parameters.nClocks; i++){
         paths[CLOCK + i] = '/Equipment/GRIF-Clk'+i+'/Variables/Input[*]';
     }
-    paths[CLOCK + window.parameters.nClocks] = '/DashboardConfig/Clock/Master LEMO freq';
 
     data = ODBMGet(paths);
 
@@ -220,7 +219,6 @@ function ODBgrab(){
     for(i=0; i<window.parameters.nClocks; i++){
         window.localODB['clock'+i] = data[CLOCK+i];
     }
-    window.localODB.masterLEMOfreq = data[CLOCK + window.parameters.nClocks];
 
     //Message service:
     window.localODB.messages = ODBGetMsg(5);
