@@ -379,6 +379,7 @@ function showClock(id){
     } else{
         document.getElementById('clockSummaryLabel3').innerHTML = 'Clock Source';
         document.getElementById('clockSummaryLabel4').innerHTML = 'Ref. Clock';
+        document.getElementById('clockSummaryValue4').innerHTML = 'N/A';
     }
 
     //manage clock channel out tab

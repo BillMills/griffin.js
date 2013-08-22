@@ -68,7 +68,7 @@ function VME(){
     string += '</table>\n';
     //string += '<button id="VMEContentPwrCycle" class="bigButton" style="margin-left:auto; margin-right:auto;" type="submit">Power Cycle</button>\n'
     document.getElementById('VMEContent').innerHTML = string;
-    insertDOM('button', 'VMEContentPwrCycle', 'bigButton', 'width:auto; height:auto; padding:0.5em; margin-top:1em;', 'VMEContent', '', 'Power Cycle', '', 'button');
+    insertDOM('button', 'VMEContentPwrCycle', 'bigButton', 'width:auto; height:auto; padding:0.5em; margin-top:1em;', 'VMEContent', function(){confirmPS()}, 'Power Cycle', '', 'button');
     document.getElementById('VMEContent').style.textAlign = 'center';
 
     //nav wrapper div
@@ -105,4 +105,74 @@ function showVME(id){
 
     //keep track of which clock is highlit:
     window.VMEpointer.activeElt = id;
+
+    //update table
+    document.getElementById('VMEContentTitle').innerHTML = 'VME' + id.slice(3,id.length);
 }
+
+function powerCycleVME(id){
+	//turn VME off
+
+	//turn VME back on again.
+}
+
+function confirmPS(){
+    var i, j, ODBpath;
+
+    //insert div and title
+    insertDOM('div', 'tempDiv', '', 'z-index:10; position:absolute; text-align:center; opacity:0; transition:opacity 0.5s; -moz-transition:opacity 0.5s; -webkit-transition:opacity 0.5s; background:rgba(0,0,0,0.8); border: 5px solid; border-radius:10px;', 'waffleplate', '', '', '');
+    var dialogue = document.getElementById('tempDiv');
+    insertDOM('h2', 'dialogHeader', '', 'position:relative; font:24px Orbitron; top:10px; margin-bottom:6%; margin-left:auto; margin-right:auto;', 'tempDiv', '', 'Confirm VME Power Cycle');
+
+    //fix dimensions
+    var width = 0.35*window.innerWidth;
+    $('#dialogHeader').width(width)
+
+    //center dialogue
+    $('#tempDiv').css('left', ($('#waffleplate').width()/2 - width/2))
+
+    //warning text
+    insertDOM('p', 'PSwarning', '', 'padding: 1em; font-size:120%;', 'tempDiv', '', '');
+    document.getElementById('PSwarning').innerHTML = 'Confirming will power cycle VME ' + window.VMEpointer.activeElt.slice(3, window.VMEpointer.activeElt.length) + '; are you sure you want to do this?' 
+
+    //insert submit button
+    insertDOM('input', 'confirmPS', 'bigButton', 'width:auto; height:auto; padding:0.5em; margin-bottom:1em; margin-left:0px', 'tempDiv', '', '', '', 'button', 'Confirm Power Cycle')
+    insertDOM('input', 'abortPS', 'bigButton', 'width:auto; height:auto; padding:0.5em; margin-bottom:1em', 'tempDiv', '', '', '', 'button', 'Abort')
+
+    document.getElementById('confirmPS').onclick = function(event){
+
+    	powerCycleVME(window.VMEpointer.activeElt);
+
+        document.getElementById('tempDiv').style.opacity = 0;
+        setTimeout(function(){
+            var element = document.getElementById('tempDiv');
+            element.parentNode.removeChild(element);            
+        }, 500);
+
+        rePaint();
+    }
+
+    document.getElementById('abortPS').onclick = function(event){
+        document.getElementById('tempDiv').style.opacity = 0;
+        setTimeout(function(){
+            var element = document.getElementById('tempDiv');
+            element.parentNode.removeChild(element);            
+        }, 500);
+    }
+
+    //fade the div in:
+    dialogue.style.opacity = 1
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
