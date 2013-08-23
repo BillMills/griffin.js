@@ -1,3 +1,5 @@
+//collapsible menu/////////////////////////////////////////////////////////////////////////////////////////////////
+
 //create a vertical collapsible menu that occupies a target div.
 function deployMenu(targetDivID, headings, titles){
 	var i;
@@ -22,6 +24,13 @@ function deployMenu(targetDivID, headings, titles){
 		//make sure the expanded divs maintain an appropriate height even if their contents change:
 		document.addEventListener("animationstart", window.parameters.insertListener, false); // standard + firefox
 		document.addEventListener("webkitAnimationStart", window.parameters.insertListener, false); // Chrome + Safari
+
+		/*
+		document.getElementById(headings[i]+'Tab').addEventListener('transitionend', function(){
+				if( this.style.opacity==0 )
+		            this.style.display='none';    
+	    });
+		*/
 	}
 
 }
@@ -60,7 +69,17 @@ function resizeMenu(id){
 		document.getElementById(id+'Tab').style.maxHeight = (document.getElementById(id+'Content').offsetHeight+50)+'px';
 }
 
+//dismiss a tab
+function dismissTab(id){
+	document.getElementById(id).style.opacity = 0;
+}
 
+function recallTab(id){
+	//document.getElementById(id).style.display = 'block';
+	document.getElementById(id).style.opacity = 1;	
+}
+
+//toggle switch//////////////////////////////////////////////////////////////////////////
 
 //build a toggle switch out of divs:
 function toggleSwitch(parentID, id, title, enabled, disabled, onActivate, onDeactivate, initialState){
@@ -110,6 +129,17 @@ function flipToggle(event, id, enabled, disabled, onActivate, onDeactivate){
 	document.getElementById('toggleWrap'+id).ready =0;	
 }
 
+/*
+//option scroll//////////////////////////////////////////
+function createOptionScroll(wrapperID, id, options, width){
+
+	insertDOM('div', id, 'scrollWrapper', 'width:'+width+'px', wrapperID, '', '');
+	insertDOM('div', id+'LeftArrow', 'scrollArrow', '', id, '', String.fromCharCode(0x2190));
+	insertDOM('div', id+'Selected', 'scrollSelected', '', id, '', '');
+	insertDOM('div', id+'RightArrow', 'scrollArrow', '', id, '', String.fromCharCode(0x2192));
+
+}
+*/
 
 
 

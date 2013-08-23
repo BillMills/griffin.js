@@ -1,37 +1,40 @@
-function Trigger(){
-    var that = this;
-    window.triggerPointer = that;
+function Filter(){
+    var that = this,
+    i;
+    window.filterPointer = that;
 
 	this.wrapperID = window.parameters.wrapper;	//ID of wrapping div
-	this.canvasID = 'TriggerCanvas';	        //ID of canvas to paint trigger on
-    this.linkWrapperID = 'TriggerLinks';        //ID of div to contain clock view header
-    this.sidebarID = 'TriggerSidebar';          //ID of sidebar div
-    this.TTcanvasID = 'TTtriggerCanvas';
+	this.canvasID = 'FilterCanvas';	        //ID of canvas to paint filter on
+    this.linkWrapperID = 'FilterLinks';        //ID of div to contain clock view header
+    this.sidebarID = 'FilterSidebar';          //ID of sidebar div
+    this.TTcanvasID = 'TTfilterCanvas';
+    this.filterSystems = ['GRI', 'PAC', 'DTE', 'inter'] //subsytems available to participate in the filter, dummy for now
+    this.filterSystemsNames = ['GRIFFIN', 'PACES', 'DANTE'];  //human readable version
 
 	this.wrapper = document.getElementById(this.wrapperID);
 
     //add top level nav button:
-    insertDOM('button', 'TriggerButton', 'navLink', '', 'statusLink', function(){swapView('TriggerLinks', 'TriggerCanvas', 'TriggerSidebar', 'TriggerButton')}, 'Trigger', '', 'button')
+    insertDOM('button', 'FilterButton', 'navLink', '', 'statusLink', function(){swapView('FilterLinks', 'FilterCanvas', 'FilterSidebar', 'FilterButton')}, 'Filter', '', 'button')
 
     //nav wrapper div
     insertDOM('div', this.linkWrapperID, 'navPanel', '', this.wrapperID, '', '')
     //nav header
-    insertDOM('h1', 'TriggerLinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', window.parameters.ExpName+' Trigger Status')
+    insertDOM('h1', 'FilterLinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', window.parameters.ExpName+' Filter Status')
     insertDOM('br', 'break', '', '', this.linkWrapperID, '', '')
 
-	//deploy a canvas for the trigger view:
+	//deploy a canvas for the filter view:
     this.canvasWidth = 0.48*$(this.wrapper).width();
     this.canvasHeight = 1*$(this.wrapper).height();
 
-    insertDOM('canvas', this.canvasID, 'monitor', 'top:' + ($('#TriggerLinks').height() + 5) +'px;', this.wrapperID, '', '')
-    this.canvas = document.getElementById('TriggerCanvas');
+    insertDOM('canvas', this.canvasID, 'monitor', 'top:' + ($('#FilterLinks').height() + 5) +'px;', this.wrapperID, '', '')
+    this.canvas = document.getElementById('FilterCanvas');
     this.context = this.canvas.getContext('2d');
     this.canvas.setAttribute('width', this.canvasWidth);
     this.canvas.setAttribute('height', this.canvasHeight);
 
     //and the tt layer:
-    insertDOM('canvas', this.TTcanvasID, 'monitor', 'top:' + ($('#TriggerLinks').height() + 5) +'px;', this.wrapperID, '', '')
-    this.TTcanvas = document.getElementById('TTtriggerCanvas');
+    insertDOM('canvas', this.TTcanvasID, 'monitor', 'top:' + ($('#FilterLinks').height() + 5) +'px;', this.wrapperID, '', '')
+    this.TTcanvas = document.getElementById('TTfilterCanvas');
     this.TTcontext = this.TTcanvas.getContext('2d');
     this.TTcanvas.setAttribute('width', this.canvasWidth);
     this.TTcanvas.setAttribute('height', this.canvasHeight);
@@ -39,7 +42,7 @@ function Trigger(){
     //set up tooltip:
     this.TTcontext.fillStyle = '#123456';
     this.TTcontext.fillRect(0,0,this.canvasWidth, this.canvasHeight);
-    this.tooltip = new Tooltip(this.canvasID, 'triggerTT', this.wrapperID, [], []);
+    this.tooltip = new Tooltip(this.canvasID, 'filterTT', this.wrapperID, [], []);
     this.tooltip.obj = that;
 
     this.canvas.onclick =   function(event){
@@ -54,7 +57,7 @@ function Trigger(){
                                 /*
                                 //set up scale range dialogue:
                                 if(y>that.canvasHeight - that.scaleHeight){
-                                    parameterDialogue('DAQ', [ ['Transfer Rate', window.parameters.DAQminima[1], window.parameters.DAQmaxima[1], 'Bps', '/DashboardConfig/DAQ/transferMinTopView', '/DashboardConfig/DAQ/transferMaxTopView' ], ['Trigger Rate', window.parameters.DAQminima[0], window.parameters.DAQmaxima[0], 'Hz', '/DashboardConfig/DAQ/rateMinTopView', '/DashboardConfig/DAQ/rateMaxTopView']  ], window.parameters.colorScale[window.DAQpointer.DAQcolor]);
+                                    parameterDialogue('DAQ', [ ['Transfer Rate', window.parameters.DAQminima[1], window.parameters.DAQmaxima[1], 'Bps', '/DashboardConfig/DAQ/transferMinTopView', '/DashboardConfig/DAQ/transferMaxTopView' ], ['Filter Rate', window.parameters.DAQminima[0], window.parameters.DAQmaxima[0], 'Hz', '/DashboardConfig/DAQ/rateMinTopView', '/DashboardConfig/DAQ/rateMaxTopView']  ], window.parameters.colorScale[window.DAQpointer.DAQcolor]);
                                 } else if(y<that.masterBottom){
                                     parameterDialogue('Device Summary',[ ['Trig Requests', window.parameters.DAQminima[4], window.parameters.DAQmaxima[5], 'Hz', '/DashboardConfig/DAQ/rateMinMaster', '/DashboardConfig/DAQ/rateMaxMaster'], ['Data Rate', window.parameters.DAQminima[5], window.parameters.DAQmaxima[5], 'Bps', '/DashboardConfig/DAQ/transferMinMaster', '/DashboardConfig/DAQ/transferMaxMaster']  ]);
                                 }
@@ -64,7 +67,26 @@ function Trigger(){
     //right sidebar
     insertDOM('div', this.sidebarID, 'collapsableSidebar', 'float:right; height:80%;', this.wrapperID, '', '')
     //deploy right bar menu:
-    deployMenu(this.sidebarID, ['detail'] , ['Filter Detail']);
+    deployMenu(this.sidebarID, this.filterSystems.concat(['detail']) , this.filterSystemsNames.concat(['Interstream', 'Filter Detail']) );
+    //inject inputs into filterable subsystem tabs:
+    for(i=0; i<this.filterSystemsNames.length; i++){
+        //prescale input + label
+        insertDOM('input', this.filterSystems[i]+'ContentPS', '', '', this.filterSystems[i]+'Content', '', '', '', 'number');
+        insertDOM('label', this.filterSystems[i]+'ContentPSlabel', '', '', this.filterSystems[i]+'Content', '', 'Prescale Factor');
+        document.getElementById(this.filterSystems[i]+'ContentPSlabel').setAttribute('for', this.filterSystems[i]+'ContentPS');
+        insertDOM('br', 'break', '', '', this.filterSystems[i]+'Content');
+
+        //coinc multiplicity input + label
+        insertDOM('input', this.filterSystems[i]+'ContentMulti', '', '', this.filterSystems[i]+'Content', '', '', '', 'number');
+        insertDOM('label', this.filterSystems[i]+'ContentMultiLabel', '', '', this.filterSystems[i]+'Content', '', 'Coinc. Multiplicity');
+        document.getElementById(this.filterSystems[i]+'ContentMultiLabel').setAttribute('for', this.filterSystems[i]+'ContentMulti');
+        insertDOM('br', 'break', '', '', this.filterSystems[i]+'Content');
+
+        //prescale input + label
+        insertDOM('input', this.filterSystems[i]+'ContentCoincWindow', '', '', this.filterSystems[i]+'Content', '', '', '', 'number');
+        insertDOM('label', this.filterSystems[i]+'ContentCoincWindowLabel', '', '', this.filterSystems[i]+'Content', '', 'Coinc. Window [ns]');
+        document.getElementById(this.filterSystems[i]+'ContentCoincWindowLabel').setAttribute('for', this.filterSystems[i]+'ContentCoincWindow');
+    }
 
     //drawing parameters:
     this.lineWeight = 4;
@@ -139,7 +161,7 @@ function Trigger(){
         this.context.fill();
         this.context.stroke();
 
-        //Master Core 
+        //Filter Core 
         this.context.strokeStyle = '#000000';
         roundBox(this.context, this.masterCoreX0, this.masterCoreY0, this.masterCoreWidth, this.masterCoreHeight, 25);
         this.context.fill();
@@ -207,8 +229,8 @@ function Trigger(){
             this.context.fillText('Input Link', this.inputLinkX0+this.textMargin, this.inputLinkY0 + this.inputLinkHeight/2);
             //Raw Data
             this.context.fillText('Raw Data', this.rawDataX0+this.textMargin, this.rawDataY0+1.2*this.textMargin);
-            //Master Core
-            this.context.fillText('Master Core', this.masterCoreX0 + this.masterCoreWidth - this.context.measureText('Master Core').width -this.textMargin, this.masterCoreY0+1.2*this.textMargin);
+            //Filter Core
+            this.context.fillText('Filter Core', this.masterCoreX0 + this.masterCoreWidth - this.context.measureText('Filter Core').width -this.textMargin, this.masterCoreY0+1.2*this.textMargin);
             //Long Term Buffer
             this.context.fillText('Long-Term Buffer', this.longBufferX0+this.longBufferWidth - this.context.measureText('Long-Term Buffer').width - this.textMargin, this.longBufferY0+this.longBufferHeight/2);
             //Computer Link
@@ -233,7 +255,7 @@ function Trigger(){
         roundBox(this.TTcontext, this.rawDataX0, this.rawDataY0, this.rawDataWidth, this.rawDataHeight, 25);
         this.TTcontext.fill();
 
-        //Master Core 
+        //Filter Core 
         this.TTcontext.fillStyle = '#030303';
         roundBox(this.TTcontext, this.masterCoreX0, this.masterCoreY0, this.masterCoreWidth, this.masterCoreHeight, 25);
         this.TTcontext.fill();
@@ -278,21 +300,48 @@ function Trigger(){
         //Input Link
         if(cell==0){
             insertDOM('p', 'detailContentMessage', '', '', 'detailContent', '', 'Input Link');
+            recallTab('detailTab');
+            for(i=0; i<this.filterSystems.length; i++){
+                //dismissTab(this.filterSystems[i]+'Tab');
+            }
         //Short Term Buffer
         } else if(cell==1){
             insertDOM('p', 'detailContentMessage', '', '', 'detailContent', '', 'Short-Term Buffer');
+            recallTab('detailTab');
+            for(i=0; i<this.filterSystems.length; i++){
+                //dismissTab(this.filterSystems[i]+'Tab');
+            }
         //Raw Data
         } else if(cell==2){
             insertDOM('p', 'detailContentMessage', '', '', 'detailContent', '', 'Raw Data');
-        //Master Core
+            recallTab('detailTab');
+            for(i=0; i<this.filterSystems.length; i++){
+                //dismissTab(this.filterSystems[i]+'Tab');
+            }
+        //Filter Core
         } else if(cell==3){
-            insertDOM('p', 'detailContentMessage', '', '', 'detailContent', '', 'Master Core');
+            //insertDOM('p', 'detailContentMessage', '', '', 'detailContent', '', 'Filter Core');
+            for(i=0; i<this.filterSystems.length; i++){
+                //recallTab(this.filterSystems[i]+'Tab');
+            }
+            dismissTab('detailTab');
         //Long Term Buffer
         } else if(cell==4){
             insertDOM('p', 'detailContentMessage', '', '', 'detailContent', '', 'Long-Term Buffer');
+            recallTab('detailTab');
+            for(i=0; i<this.filterSystems.length; i++){
+                //dismissTab(this.filterSystems[i]+'Tab');
+            }
         //Computer Link
         } else if(cell==5){
             insertDOM('p', 'detailContentMessage', '', '', 'detailContent', '', 'Computer Link');
+            recallTab('detailTab');
+            for(i=0; i<this.filterSystems.length; i++){
+                //dismissTab(this.filterSystems[i]+'Tab');
+            }
         }
-    }
+    };
+
+    //start with filter core sidebar displayed:
+    this.populateSidebar(3);
 }

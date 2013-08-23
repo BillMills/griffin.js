@@ -16,7 +16,7 @@ cp ../subdetectors/SHARC.js .
 cp ../subdetectors/SPICE.js .
 cp ../sections/StatusBar.js .
 cp ../subdetectors/TIP.js .
-cp ../sections/Trigger.js .
+cp ../sections/Filter.js .
 cp ../sections/Waffle.js .
 cp ../plumbing/drawing.js .
 cp ../plumbing/fillMeter.js .

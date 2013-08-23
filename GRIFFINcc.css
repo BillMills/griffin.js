@@ -570,7 +570,19 @@ tbody tbody a:link{
 	margin-right:auto;
 }
 
+/*
+.scrollArrow{
+	color:#999999;
+}
 
+.scrollArrow:hover{
+	color:#FFFFFF;
+}
+
+.scrollSelected{
+	overflow:hidden;
+}
+*/
 
 :invalid{
 	color: #FF0000;

@@ -94,8 +94,8 @@ function masterLoop(callMyself, noFetch){
         }
         //Clock
         if(window.parameters.topDeployment['Clock']) window.clockPointer.update();
-        //Trigger
-        if(window.parameters.topDeployment['Trigger']) window.triggerPointer.update();
+        //Filter
+        if(window.parameters.topDeployment['Filter']) window.filterPointer.update();
         //VME
         if(window.parameters.topDeployment['VME']) window.VMEpointer.update();        
 /*
