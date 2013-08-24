@@ -129,17 +129,54 @@ function flipToggle(event, id, enabled, disabled, onActivate, onDeactivate){
 	document.getElementById('toggleWrap'+id).ready =0;	
 }
 
-/*
-//option scroll//////////////////////////////////////////
-function createOptionScroll(wrapperID, id, options, width){
 
-	insertDOM('div', id, 'scrollWrapper', 'width:'+width+'px', wrapperID, '', '');
-	insertDOM('div', id+'LeftArrow', 'scrollArrow', '', id, '', String.fromCharCode(0x2190));
-	insertDOM('div', id+'Selected', 'scrollSelected', '', id, '', '');
-	insertDOM('div', id+'RightArrow', 'scrollArrow', '', id, '', String.fromCharCode(0x2192));
+//option scroll//////////////////////////////////////////
+function createOptionScroll(wrapperID, id, options, maxWidth){
+	var i, stringWidths = [], optionWidth;
+
+	insertDOM('div', id, 'scrollWrapper', 'width:'+maxWidth+'px', wrapperID, '', '');
+	insertDOM('div', id+'LeftArrow', 'scrollArrow', 'padding-right:0.5em;', id, '', String.fromCharCode(0x25C0));
+	insertDOM('div', id+'Selected', 'scrollSelected', '', id, '', options[0]);
+	insertDOM('div', id+'RightArrow', 'scrollArrow', 'padding-left:0.5em;', id, '', String.fromCharCode(0x25B6));
+	//start off on option 0:
+	document.getElementById(id).chosen = 0;
+	document.getElementById(id).options = options;
+
+	//fix width of option cell:
+	for(i=0; i<options.length; i++){
+		stringWidths[i] = options[i].width('14px Raleway');
+	}
+	optionWidth = Math.min(Math.max.apply(null, stringWidths), maxWidth);
+	document.getElementById(id+'Selected').style.width = optionWidth+'px';
+
+
+	//make the scroll arrows scroll through options:
+	document.getElementById(id+'LeftArrow').onclick = function(){
+		var id = this.id.slice(0, this.id.indexOf('LeftArrow')),
+			scroll = document.getElementById(id);
+
+		if(scroll.chosen == 0){
+			scroll.chosen = scroll.options.length-1;
+		} else {
+			scroll.chosen--;
+		}
+		document.getElementById(id+'Selected').innerHTML = scroll.options[scroll.chosen];
+	}
+
+	document.getElementById(id+'RightArrow').onclick = function(){
+		var id = this.id.slice(0, this.id.indexOf('RightArrow')),
+			scroll = document.getElementById(id);
+
+		if(scroll.chosen == scroll.options.length-1){
+			scroll.chosen = 0;
+		} else {
+			scroll.chosen++;
+		}
+		document.getElementById(id+'Selected').innerHTML = scroll.options[scroll.chosen];
+	}	
 
 }
-*/
+
 
 
 

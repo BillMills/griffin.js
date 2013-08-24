@@ -797,4 +797,24 @@ function arrow(context, x0, y0, x1, y1, headScale){
     context.restore();
 }
 
+function closeX(context, x0, y0, radius){
+    context.strokeStyle = '#FFFFFF';
+    context.fillStyle = '#FF0000';
+    context.lineWidth = 1;
 
+    context.beginPath();
+    context.arc(x0, y0, radius, 0, Math.PI*2, true);
+    context.closePath();
+    context.fill();
+    context.stroke();
+
+    context.beginPath();
+    context.lineWidth = 2;
+    context.moveTo(x0 - 0.4*radius, y0 - 0.4*radius);
+    context.lineTo(x0 + 0.4*radius, y0 + 0.4*radius);
+    context.stroke();
+    
+    context.moveTo(x0 + 0.4*radius, y0 - 0.4*radius);
+    context.lineTo(x0 - 0.4*radius, y0 + 0.4*radius);
+    context.stroke();
+}

@@ -372,8 +372,50 @@ function colors(elements, dataStore, frame, nFrames){
     return colors;
 }
 
+String.prototype.width = function(font) {
+  var f = font || '12px arial',
+      o = $('<div>' + this + '</div>')
+            .css({'position': 'absolute', 'float': 'left', 'white-space': 'nowrap', 'visibility': 'hidden', 'font': f})
+            .appendTo($('body')),
+      w = o.width();
 
+  o.remove();
 
+  return w;
+}
+
+function relMouseCoords(event){
+    var totalOffsetX = 0,
+    totalOffsetY = 0,
+    canvasX = 0,
+    canvasY = 0,
+    currentElement = this,
+    test = [],
+    elts = [];
+
+    if (event.offsetX !== undefined && event.offsetY !== undefined) { return {x:event.offsetX, y:event.offsetY}; }
+    //if (event.layerX !== undefined && event.layerY !== undefined) { return {x:event.layerX, y:event.layerY}; }
+
+    do{
+        totalOffsetX += currentElement.offsetLeft - currentElement.scrollLeft;
+        totalOffsetY += currentElement.offsetTop - currentElement.scrollTop;
+        //test[test.length] = currentElement.offsetLeft - currentElement.scrollLeft
+        //elts[elts.length] = currentElement
+    }
+    while(currentElement = currentElement.offsetParent)
+
+    canvasX = event.pageX - totalOffsetX;
+    canvasY = event.pageY - totalOffsetY;
+
+    //hack to deal with FF scroll, better solution TBD:
+    if(event.offsetX == undefined){
+        canvasX -= document.body.scrollLeft;
+        canvasY -= document.body.scrollTop;
+    }
+
+    return {x:canvasX, y:canvasY}
+}
+HTMLCanvasElement.prototype.relMouseCoords = relMouseCoords;
 
 
 

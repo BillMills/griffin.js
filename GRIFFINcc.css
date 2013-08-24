@@ -570,9 +570,10 @@ tbody tbody a:link{
 	margin-right:auto;
 }
 
-/*
+
 .scrollArrow{
 	color:#999999;
+	display:inline;
 }
 
 .scrollArrow:hover{
@@ -581,8 +582,25 @@ tbody tbody a:link{
 
 .scrollSelected{
 	overflow:hidden;
+	display:inline-block;
 }
-*/
+
+
+.filterDiv{
+	border: 5px solid #999999;
+	border-radius: 25px;
+	min-height: 100px;
+	margin:2px;
+	padding-bottom:1em;
+}
+
+.filterBadge{
+	border: 2px solid #999999;
+	border-radius:5px;
+	text-align:center; 
+	display:inline-block;
+	padding:5px;
+}
 
 :invalid{
 	color: #FF0000;

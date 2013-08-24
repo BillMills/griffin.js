@@ -8,7 +8,7 @@ function Filter(){
     this.linkWrapperID = 'FilterLinks';        //ID of div to contain clock view header
     this.sidebarID = 'FilterSidebar';          //ID of sidebar div
     this.TTcanvasID = 'TTfilterCanvas';
-    this.filterSystems = ['GRI', 'PAC', 'DTE', 'inter'] //subsytems available to participate in the filter, dummy for now
+    this.filterSystems = ['GRI', 'PAC', 'DTE'] //subsytems available to participate in the filter, dummy for now
     this.filterSystemsNames = ['GRIFFIN', 'PACES', 'DANTE'];  //human readable version
 
 	this.wrapper = document.getElementById(this.wrapperID);
@@ -67,25 +67,14 @@ function Filter(){
     //right sidebar
     insertDOM('div', this.sidebarID, 'collapsableSidebar', 'float:right; height:80%;', this.wrapperID, '', '')
     //deploy right bar menu:
-    deployMenu(this.sidebarID, this.filterSystems.concat(['detail']) , this.filterSystemsNames.concat(['Interstream', 'Filter Detail']) );
-    //inject inputs into filterable subsystem tabs:
-    for(i=0; i<this.filterSystemsNames.length; i++){
-        //prescale input + label
-        insertDOM('input', this.filterSystems[i]+'ContentPS', '', '', this.filterSystems[i]+'Content', '', '', '', 'number');
-        insertDOM('label', this.filterSystems[i]+'ContentPSlabel', '', '', this.filterSystems[i]+'Content', '', 'Prescale Factor');
-        document.getElementById(this.filterSystems[i]+'ContentPSlabel').setAttribute('for', this.filterSystems[i]+'ContentPS');
-        insertDOM('br', 'break', '', '', this.filterSystems[i]+'Content');
+    deployMenu(this.sidebarID, ['detail'] , ['Filter Detail'] );
+    //start with menu open:
+    document.getElementById('detailarrow').onclick();
 
-        //coinc multiplicity input + label
-        insertDOM('input', this.filterSystems[i]+'ContentMulti', '', '', this.filterSystems[i]+'Content', '', '', '', 'number');
-        insertDOM('label', this.filterSystems[i]+'ContentMultiLabel', '', '', this.filterSystems[i]+'Content', '', 'Coinc. Multiplicity');
-        document.getElementById(this.filterSystems[i]+'ContentMultiLabel').setAttribute('for', this.filterSystems[i]+'ContentMulti');
-        insertDOM('br', 'break', '', '', this.filterSystems[i]+'Content');
-
-        //prescale input + label
-        insertDOM('input', this.filterSystems[i]+'ContentCoincWindow', '', '', this.filterSystems[i]+'Content', '', '', '', 'number');
-        insertDOM('label', this.filterSystems[i]+'ContentCoincWindowLabel', '', '', this.filterSystems[i]+'Content', '', 'Coinc. Window [ns]');
-        document.getElementById(this.filterSystems[i]+'ContentCoincWindowLabel').setAttribute('for', this.filterSystems[i]+'ContentCoincWindow');
+    //edit filter button
+    insertDOM('input', 'detailContentEditFilters', 'bigButton', 'width:auto; height:auto; padding:0.5em; margin:1em', 'detailContent', '', '', '', 'button', 'Edit Filters');
+    document.getElementById('detailContentEditFilters').onclick = function(){
+        swapView('editFilterLinks', 'editFilterCanvas', 'editFilterSidebar', 'FilterButton')
     }
 
     //drawing parameters:
@@ -300,48 +289,175 @@ function Filter(){
         //Input Link
         if(cell==0){
             insertDOM('p', 'detailContentMessage', '', '', 'detailContent', '', 'Input Link');
-            recallTab('detailTab');
-            for(i=0; i<this.filterSystems.length; i++){
-                //dismissTab(this.filterSystems[i]+'Tab');
-            }
         //Short Term Buffer
         } else if(cell==1){
             insertDOM('p', 'detailContentMessage', '', '', 'detailContent', '', 'Short-Term Buffer');
-            recallTab('detailTab');
-            for(i=0; i<this.filterSystems.length; i++){
-                //dismissTab(this.filterSystems[i]+'Tab');
-            }
         //Raw Data
         } else if(cell==2){
             insertDOM('p', 'detailContentMessage', '', '', 'detailContent', '', 'Raw Data');
-            recallTab('detailTab');
-            for(i=0; i<this.filterSystems.length; i++){
-                //dismissTab(this.filterSystems[i]+'Tab');
-            }
         //Filter Core
         } else if(cell==3){
-            //insertDOM('p', 'detailContentMessage', '', '', 'detailContent', '', 'Filter Core');
-            for(i=0; i<this.filterSystems.length; i++){
-                //recallTab(this.filterSystems[i]+'Tab');
-            }
-            dismissTab('detailTab');
+            insertDOM('p', 'detailContentMessage', '', '', 'detailContent', '', 'Filter Core');
         //Long Term Buffer
         } else if(cell==4){
             insertDOM('p', 'detailContentMessage', '', '', 'detailContent', '', 'Long-Term Buffer');
-            recallTab('detailTab');
-            for(i=0; i<this.filterSystems.length; i++){
-                //dismissTab(this.filterSystems[i]+'Tab');
-            }
         //Computer Link
         } else if(cell==5){
             insertDOM('p', 'detailContentMessage', '', '', 'detailContent', '', 'Computer Link');
-            recallTab('detailTab');
-            for(i=0; i<this.filterSystems.length; i++){
-                //dismissTab(this.filterSystems[i]+'Tab');
-            }
         }
     };
 
     //start with filter core sidebar displayed:
     this.populateSidebar(3);
+    //deploy the editFilter page
+    window.editFilter = new editFilter(this.filterSystems, this.filterSystemsNames)
 }
+
+function editFilter(filterSystems, filterSystemsNames){
+    var that = this,
+    i;
+    window.filterEditPointer = that;
+
+    this.wrapperID = window.parameters.wrapper; //ID of wrapping div
+    this.canvasID = 'editFilterCanvas';         //ID of canvas to paint filter on
+    this.linkWrapperID = 'editFilterLinks';        //ID of div to contain clock view header
+    this.sidebarID = 'editFilterSidebar';          //ID of sidebar div
+    this.filterSystems = filterSystems; //subsytems available to participate in the filter
+    this.filterSystemsNames = filterSystemsNames //human readable filterSystems
+
+    this.wrapper = document.getElementById(this.wrapperID);
+
+    //nav wrapper div
+    insertDOM('div', this.linkWrapperID, 'navPanel', '', this.wrapperID, '', '')
+    //nav header
+    insertDOM('h1', 'editFilterLinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', 'Edit Filter')
+    insertDOM('br', 'break', '', '', this.linkWrapperID, '', '')
+    //nav buttons
+    insertDOM('button', 'commitFilter', 'navLink', '', this.linkWrapperID, function(){}, 'Commit Filter and Return', '', 'button');
+    insertDOM('button', 'abortFilter', 'navLink', '', this.linkWrapperID, function(){}, 'Abandon Changes and Return', '', 'button');
+    insertDOM('button', 'resetFilter', 'navLink', '', this.linkWrapperID, function(){}, 'Start Over', '', 'button');
+    insertDOM('br', 'break', '', '', this.linkWrapperID);
+    insertDOM('label', 'filterNameLabel', '', 'margin-left:10px;', this.linkWrapperID, '', 'Name this Filter: ');
+    insertDOM('input', 'filterName', '', '', this.linkWrapperID, '', '', '', 'text', 'newFilter');
+    document.getElementById('filterNameLabel').setAttribute('for', 'filterName');
+    insertDOM('br', 'break', '', '', this.linkWrapperID);
+
+    //div structure for drag and drop area: right panel for detector palete, two-div column for Single Stream and Interstream Filters:
+    insertDOM('div', 'editFilterWrapper', '', 'width:'+0.48*$(this.wrapper).width()+'px', this.linkWrapperID, '', '');
+    insertDOM('div', 'filterWrap', '', 'float:left; width:79%', 'editFilterWrapper', '', '');  //79 kind of kludgy, to accommodate margins.
+    insertDOM('div', 'singleStreamFilters', 'filterDiv', 'width:100%; padding-left:1em; padding-right:1em;', 'filterWrap', '', '');
+    insertDOM('h2', 'singleStreamTitle', '', 'text-align:center; margin:0.5em;', 'singleStreamFilters', '', 'Single-Stream Filters');
+    insertDOM('div', 'interstreamFilters', 'filterDiv', 'width:100%; padding-left:1em; padding-right:1em;', 'filterWrap', '', '');
+    insertDOM('h2', 'interstreamTitle', '', 'text-align:center; margin:0.5em;', 'interstreamFilters', '', 'Interstream Filters');
+    insertDOM('div', 'filterPalete', 'filterDiv', 'width:20%; height:300px; float:right; text-align:center; padding-top:1em;', 'editFilterWrapper', '', '');
+    document.getElementById('singleStreamFilters').addEventListener('dragover', dragOver, false);
+    document.getElementById('singleStreamFilters').addEventListener('drop', handleDrop, false);
+
+    //deploy a dummy canvas for the filter view:
+    this.canvasWidth = 0// 0.48*$(this.wrapper).width();
+    this.canvasHeight = 0 //1*$(this.wrapper).height();
+
+    insertDOM('canvas', this.canvasID, 'monitor', 'top:' + ($('#editFilterLinks').height() + 5) +'px;', this.wrapperID, '', '')
+    this.canvas = document.getElementById('editFilterCanvas');
+    this.context = this.canvas.getContext('2d');
+    this.canvas.setAttribute('width', this.canvasWidth);
+    this.canvas.setAttribute('height', this.canvasHeight);
+
+    //right sidebar
+    insertDOM('div', this.sidebarID, 'collapsableSidebar', 'float:right; height:80%;', this.wrapperID, '', '')
+    //deploy right bar menu:
+    deployMenu(this.sidebarID, this.filterSystems, this.filterSystemsNames);    
+
+    //inject inputs into filterable subsystem tabs:
+    for(i=0; i<this.filterSystemsNames.length; i++){
+        //prescale input + label
+        insertDOM('input', this.filterSystems[i]+'ContentPS', '', '', this.filterSystems[i]+'Content', '', '', '', 'number');
+        insertDOM('label', this.filterSystems[i]+'ContentPSlabel', '', '', this.filterSystems[i]+'Content', '', 'Prescale Factor');
+        document.getElementById(this.filterSystems[i]+'ContentPSlabel').setAttribute('for', this.filterSystems[i]+'ContentPS');
+        insertDOM('br', 'break', '', '', this.filterSystems[i]+'Content');
+
+        //coinc multiplicity input + label
+        insertDOM('input', this.filterSystems[i]+'ContentMulti', '', '', this.filterSystems[i]+'Content', '', '', '', 'number');
+        insertDOM('label', this.filterSystems[i]+'ContentMultiLabel', '', '', this.filterSystems[i]+'Content', '', 'Coinc. Multiplicity');
+        document.getElementById(this.filterSystems[i]+'ContentMultiLabel').setAttribute('for', this.filterSystems[i]+'ContentMulti');
+        insertDOM('br', 'break', '', '', this.filterSystems[i]+'Content');
+
+        //prescale input + label
+        insertDOM('input', this.filterSystems[i]+'ContentCoincWindow', '', '', this.filterSystems[i]+'Content', '', '', '', 'number');
+        insertDOM('label', this.filterSystems[i]+'ContentCoincWindowLabel', '', '', this.filterSystems[i]+'Content', '', 'Coinc. Window [ns]');
+        document.getElementById(this.filterSystems[i]+'ContentCoincWindowLabel').setAttribute('for', this.filterSystems[i]+'ContentCoincWindow');
+    }
+
+    //inject detector options into palete
+    this.badgeWidth = document.getElementById('filterPalete').offsetWidth*0.9;
+    this.badgeHeight = 100;
+    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'dantePaleteBadge', 'filterPalete', dante, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.25, '#999999'], 'DANTE', true);
+
+}
+
+//drag and drop handler functions:
+function dragStart(event){
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/plain', 'DANTE');
+}
+
+function handleDrop(event){
+    event.stopPropagation();
+
+    if(event.dataTransfer.getData('text/plain') == 'DANTE'){
+        deployFilterBadge('DANTEfilterBadge', this.id, function(){deployBadgeCanvas(window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'DANTEfilterBadgeCanvas', 'DANTEfilterBadge', dante, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.25, '#999999'], 'DANTE', false)});
+    } else {
+        console.log(event.dataTransfer.getData('text/plain'));
+    }
+    return false;
+}
+
+function dragOver(event){
+    event.stopPropagation();
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+    return false;
+}
+
+//create a badge canvas
+function deployBadgeCanvas(width, height, id, wrapperID, paintThumb, thumbArgs, label, draggable){
+    var canvas, context;
+
+    insertDOM('canvas', id, '', 'width:'+this.badgeWidth+'px; height:'+this.badgeHeight+'px;', wrapperID, '', '');
+    canvas = document.getElementById(id);
+    context = canvas.getContext('2d');
+    canvas.setAttribute('width', width);
+    canvas.setAttribute('height', height);
+    context.font = '14px Raleway';
+    paintThumb.apply(null, [context].concat(thumbArgs));
+    context.fillStyle = '#FFFFFF';
+    context.fillText(label, width/2 - context.measureText(label).width/2, height-10);    
+    //palete
+    if(draggable){
+        canvas.setAttribute('draggable', 'true');
+        canvas.addEventListener('dragstart', dragStart, false);
+    //filters
+    } else{
+        closeX(context, width - 10, 10, 7 );
+        canvas.onclick = function(event){
+
+                                var element, x,y,
+                                    coords = this.relMouseCoords(event);
+                                x = coords.x;
+                                y = coords.y;
+                                if( Math.pow(window.filterEditPointer.badgeWidth-10 - x, 2) + Math.pow(y-10,2) < 49 ){
+                                    element = document.getElementById(this.id.slice(0, this.id.indexOf('Canvas')));
+                                    if(element)
+                                        element.parentNode.removeChild(element);
+                                }
+                            };
+    }
+}
+
+//create the full badge for the filter divs
+function deployFilterBadge(id, wrapperID, createCanvas){
+    insertDOM('div', id, 'filterBadge', '', wrapperID, '', '');
+    createCanvas();
+    createOptionScroll(id, id+'scroll', ['Singles', 'Coincidence', 'Prescaled'], document.getElementById(id).offsetWidth);
+}
+
