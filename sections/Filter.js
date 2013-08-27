@@ -313,10 +313,18 @@ function Filter(){
     window.editFilter = new editFilter(this.filterSystems, this.filterSystemsNames)
 }
 
+
+
+
+
+
+
+
 function editFilter(filterSystems, filterSystemsNames){
     var that = this,
     i;
     window.filterEditPointer = that;
+    this.nInterstreams = 0;
 
     this.wrapperID = window.parameters.wrapper; //ID of wrapping div
     this.canvasID = 'editFilterCanvas';         //ID of canvas to paint filter on
@@ -347,11 +355,19 @@ function editFilter(filterSystems, filterSystemsNames){
     insertDOM('div', 'filterWrap', '', 'float:left; width:79%', 'editFilterWrapper', '', '');  //79 kind of kludgy, to accommodate margins.
     insertDOM('div', 'singleStreamFilters', 'filterDiv', 'width:100%; padding-left:1em; padding-right:1em;', 'filterWrap', '', '');
     insertDOM('h2', 'singleStreamTitle', '', 'text-align:center; margin:0.5em;', 'singleStreamFilters', '', 'Single-Stream Filters');
-    insertDOM('div', 'interstreamFilters', 'filterDiv', 'width:100%; padding-left:1em; padding-right:1em;', 'filterWrap', '', '');
+    insertDOM('div', 'interstreamFilters', 'filterDiv', 'width:100%; padding-left:1em; padding-right:1em; text-align:center;', 'filterWrap', '', '');
     insertDOM('h2', 'interstreamTitle', '', 'text-align:center; margin:0.5em;', 'interstreamFilters', '', 'Interstream Filters');
-    insertDOM('div', 'filterPalete', 'filterDiv', 'width:20%; height:300px; float:right; text-align:center; padding-top:1em;', 'editFilterWrapper', '', '');
+    insertDOM('div', 'filterPalete', 'filterDiv', 'width:20%; float:right; text-align:center; padding-top:1em; max-height:500px; overflow:scroll;', 'editFilterWrapper', '', '');
     document.getElementById('singleStreamFilters').addEventListener('dragover', dragOver, false);
     document.getElementById('singleStreamFilters').addEventListener('drop', handleDrop, false);
+
+    //Interstream section needs a button to spawn a new filter group:
+    insertDOM('button', 'spawnInterstream', 'navLink', '', 'interstreamFilters', function(){
+        insertDOM('div', 'interstream'+window.filterEditPointer.nInterstreams, 'interstreamDiv', '', 'interstreamFilters', '', '');
+        document.getElementById('interstream'+window.filterEditPointer.nInterstreams).addEventListener('dragover', dragOver, false);
+        document.getElementById('interstream'+window.filterEditPointer.nInterstreams).addEventListener('drop', handleDrop, false);
+        window.filterEditPointer.nInterstreams++;
+    }, 'New Interstream Filter', '', 'button');
 
     //deploy a dummy canvas for the filter view:
     this.canvasWidth = 0// 0.48*$(this.wrapper).width();
@@ -391,21 +407,61 @@ function editFilter(filterSystems, filterSystemsNames){
     //inject detector options into palete
     this.badgeWidth = document.getElementById('filterPalete').offsetWidth*0.9;
     this.badgeHeight = 100;
-    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'dantePaleteBadge', 'filterPalete', dante, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.25, '#999999'], 'DANTE', true);
-
+    //DANTE
+    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'DANTEPaleteBadge', 'filterPalete', dante, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.25, '#999999'], 'DANTE', true);
+    //PACES
+    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'PACESPaleteBadge', 'filterPalete', paces, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.25, this.badgeHeight*0.25/3], 'PACES', true);
+    //SCEPTAR
+    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'SCEPTARPaleteBadge', 'filterPalete', sceptar, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.25], 'SCEPTAR', true);
+    //HPGE
+    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'HPGEPaleteBadge', 'filterPalete', tigress, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.25], 'HPGE', true); 
+    //ZDS
+    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'ZDSPaleteBadge', 'filterPalete', zds, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.25], 'ZDS', true);
+    //SPICE
+    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'SPICEPaleteBadge', 'filterPalete', spice, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.25], 'SPICE', true);
+    //DESCANT
+    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'DESCANTPaleteBadge', 'filterPalete', descant, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.12], 'DESCANT', true);
+    //BAMBINO
+    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'BAMBINOPaleteBadge', 'filterPalete', bambino, [this.badgeWidth*0.45, this.badgeWidth*0.55, this.badgeHeight/3, this.badgeHeight*0.6, this.badgeHeight*0.12], 'BAMBINO', true);
+    //SHARC
+    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'SHARCPaleteBadge', 'filterPalete', sharc, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeWidth*0.3, this.badgeHeight*0.7], 'SHARC', true);
+    //TIPwall
+    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'TIPwallPaleteBadge', 'filterPalete', tipWall, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.7], 'TIP Wall', true);
+    //TIPball
+    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'TIPballPaleteBadge', 'filterPalete', tipBall, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.35], 'TIP Ball', true);
 }
 
 //drag and drop handler functions:
 function dragStart(event){
     event.dataTransfer.effectAllowed = 'move';
-    event.dataTransfer.setData('text/plain', 'DANTE');
+    event.dataTransfer.setData('text/plain', this.id.slice(0, this.id.indexOf('PaleteBadge')));
 }
 
 function handleDrop(event){
     event.stopPropagation();
 
-    if(event.dataTransfer.getData('text/plain') == 'DANTE'){
-        deployFilterBadge('DANTEfilterBadge', this.id, function(){deployBadgeCanvas(window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'DANTEfilterBadgeCanvas', 'DANTEfilterBadge', dante, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.25, '#999999'], 'DANTE', false)});
+    if(event.dataTransfer.getData('text/plain') == 'DANTE' && !this.querySelector('#DANTEfilterBadge') ){
+        deployFilterBadge('DANTEfilterBadge', this.id, deployBadgeCanvas.bind(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'DANTEfilterBadgeCanvas', 'DANTEfilterBadge'+this.id, dante, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.25, '#999999'], 'DANTE', false));
+    } else if(event.dataTransfer.getData('text/plain') == 'PACES' && !this.querySelector('#PACESfilterBadge') ){
+        deployFilterBadge('PACESfilterBadge', this.id, deployBadgeCanvas.bind(null,window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'PACESfilterBadgeCanvas', 'PACESfilterBadge'+this.id, paces, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.25, window.filterEditPointer.badgeHeight*0.25/3], 'PACES', false));
+    } else if(event.dataTransfer.getData('text/plain') == 'SCEPTAR' && !this.querySelector('#SCEPTARfilterBadge') ){
+        deployFilterBadge('SCEPTARfilterBadge', this.id, deployBadgeCanvas.bind(null,window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'SCEPTARfilterBadgeCanvas', 'SCEPTARfilterBadge'+this.id, sceptar, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.25], 'SCEPTAR', false));
+    } else if(event.dataTransfer.getData('text/plain') == 'HPGE' && !this.querySelector('#HPGEfilterBadge') ){
+        deployFilterBadge('HPGEfilterBadge', this.id, deployBadgeCanvas.bind(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'HPGEfilterBadgeCanvas', 'HPGEfilterBadge'+this.id, tigress, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.25], 'HPGE', false));
+    } else if(event.dataTransfer.getData('text/plain') == 'ZDS' && !this.querySelector('#ZDSfilterBadge') ){
+        deployFilterBadge('ZDSfilterBadge', this.id, deployBadgeCanvas.bind(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'ZDSfilterBadgeCanvas', 'ZDSfilterBadge'+this.id, zds, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.25], 'ZDS', false));
+    } else if(event.dataTransfer.getData('text/plain') == 'SPICE' && !this.querySelector('#SPICEfilterBadge') ){
+        deployFilterBadge('SPICEfilterBadge', this.id, deployBadgeCanvas.bind(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'SPICEfilterBadgeCanvas', 'SPICEfilterBadge'+this.id, spice, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.25], 'SPICE', false));
+    } else if(event.dataTransfer.getData('text/plain') == 'DESCANT' && !this.querySelector('#DESCANTfilterBadge') ){
+        deployFilterBadge('DESCANTfilterBadge', this.id, deployBadgeCanvas(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'DESCANTfilterBadgeCanvas', 'DESCANTfilterBadge'+this.id, descant, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.12], 'DESCANT', false));
+    } else if(event.dataTransfer.getData('text/plain') == 'BAMBINO' && !this.querySelector('#BAMBINOfilterBadge') ){
+        deployFilterBadge('BAMBINOfilterBadge', this.id, deployBadgeCanvas(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'BAMBINOfilterBadgeCanvas', 'BAMBINOfilterBadge'+this.id, bambino, [window.filterEditPointer.badgeWidth*0.45, window.filterEditPointer.badgeWidth*0.55, window.filterEditPointer.badgeHeight/3, window.filterEditPointer.badgeHeight*0.6, window.filterEditPointer.badgeHeight*0.12], 'BAMBINO', false));
+    } else if(event.dataTransfer.getData('text/plain') == 'SHARC' && !this.querySelector('#SHARCfilterBadge') ){
+        deployFilterBadge('SHARCfilterBadge', this.id, deployBadgeCanvas(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'SHARCfilterBadgeCanvas', 'SHARCfilterBadge'+this.id, sharc, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeWidth*0.3, window.filterEditPointer.badgeHeight*0.7], 'SHARC', false));
+    } else if(event.dataTransfer.getData('text/plain') == 'TIPwall' && !this.querySelector('#TIPwallfilterBadge') ){
+        deployFilterBadge('TIPwallfilterBadge', this.id, deployBadgeCanvas(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'TIPwallfilterBadgeCanvas', 'TIPwallfilterBadge'+this.id, tipWall, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.7], 'TIP Wall', false));
+    } else if(event.dataTransfer.getData('text/plain') == 'TIPball' && !this.querySelector('#TIPballfilterBadge') ){
+        deployFilterBadge('TIPballfilterBadge', this.id, deployBadgeCanvas(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'TIPballfilterBadgeCanvas', 'TIPballfilterBadge'+this.id, tipBall, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.35], 'TIP Ball', false));
     } else {
         console.log(event.dataTransfer.getData('text/plain'));
     }
@@ -423,12 +479,14 @@ function dragOver(event){
 function deployBadgeCanvas(width, height, id, wrapperID, paintThumb, thumbArgs, label, draggable){
     var canvas, context;
 
-    insertDOM('canvas', id, '', 'width:'+this.badgeWidth+'px; height:'+this.badgeHeight+'px;', wrapperID, '', '');
-    canvas = document.getElementById(id);
+    insertDOM('canvas', id+wrapperID, '', 'width:'+this.badgeWidth+'px; height:'+this.badgeHeight+'px;', wrapperID, '', '');
+    canvas = document.getElementById(id+wrapperID);
     context = canvas.getContext('2d');
     canvas.setAttribute('width', width);
     canvas.setAttribute('height', height);
     context.font = '14px Raleway';
+    context.fillStyle = '#999999';
+    context.strokeStyle = '#999999';
     paintThumb.apply(null, [context].concat(thumbArgs));
     context.fillStyle = '#FFFFFF';
     context.fillText(label, width/2 - context.measureText(label).width/2, height-10);    
@@ -456,8 +514,9 @@ function deployBadgeCanvas(width, height, id, wrapperID, paintThumb, thumbArgs, 
 
 //create the full badge for the filter divs
 function deployFilterBadge(id, wrapperID, createCanvas){
-    insertDOM('div', id, 'filterBadge', '', wrapperID, '', '');
+
+    insertDOM('div', id+wrapperID, 'filterBadge', '', wrapperID, '', '');
     createCanvas();
-    createOptionScroll(id, id+'scroll', ['Singles', 'Coincidence', 'Prescaled'], document.getElementById(id).offsetWidth);
+    createOptionScroll(id+wrapperID, id+wrapperID+'scroll', ['Singles', 'Coincidence', 'Prescaled'], document.getElementById(id+wrapperID).offsetWidth);
 }
 

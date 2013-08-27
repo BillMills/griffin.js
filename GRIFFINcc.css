@@ -600,6 +600,22 @@ tbody tbody a:link{
 	text-align:center; 
 	display:inline-block;
 	padding:5px;
+	margin-right:2px;
+	margin-bottom:2px;
+}
+
+#interstreamFilters div:nth-child(odd){
+	background-color: #444444;
+}
+
+.interstreamDiv{
+	text-align: left;
+	padding:0.5em;
+	min-height:100px;
+	width:100%;
+	border-radius: 1em;
+	border:1px solid #999999;
+	margin-bottom: 2px;
 }
 
 :invalid{
