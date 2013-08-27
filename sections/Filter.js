@@ -355,6 +355,7 @@ function editFilter(filterSystems, filterSystemsNames){
     insertDOM('div', 'filterWrap', '', 'float:left; width:79%', 'editFilterWrapper', '', '');  //79 kind of kludgy, to accommodate margins.
     insertDOM('div', 'singleStreamFilters', 'filterDiv', 'width:100%; padding-left:1em; padding-right:1em;', 'filterWrap', '', '');
     insertDOM('h2', 'singleStreamTitle', '', 'text-align:center; margin:0.5em;', 'singleStreamFilters', '', 'Single-Stream Filters');
+    insertDOM('h5', 'singleStreamHelp', '', 'text-align:center; margin:0px; margin-bottom:1em;', 'singleStreamFilters', '', 'Any of these:');
     insertDOM('div', 'interstreamFilters', 'filterDiv', 'width:100%; padding-left:1em; padding-right:1em; text-align:center;', 'filterWrap', '', '');
     insertDOM('h2', 'interstreamTitle', '', 'text-align:center; margin:0.5em;', 'interstreamFilters', '', 'Interstream Filters');
     insertDOM('div', 'filterPalete', 'filterDiv', 'width:20%; float:right; text-align:center; padding-top:1em; max-height:500px; overflow:scroll;', 'editFilterWrapper', '', '');
@@ -366,6 +367,7 @@ function editFilter(filterSystems, filterSystemsNames){
         insertDOM('div', 'interstream'+window.filterEditPointer.nInterstreams, 'interstreamDiv', '', 'interstreamFilters', '', '');
         document.getElementById('interstream'+window.filterEditPointer.nInterstreams).addEventListener('dragover', dragOver, false);
         document.getElementById('interstream'+window.filterEditPointer.nInterstreams).addEventListener('drop', handleDrop, false);
+        insertDOM('h5', 'interstreamHelp'+window.filterEditPointer.nInterstreams, '', 'text-align:center; margin:0px; margin-bottom:1em;', 'interstream'+window.filterEditPointer.nInterstreams, '', 'or ALL of these:');
         window.filterEditPointer.nInterstreams++;
     }, 'New Interstream Filter', '', 'button');
 
@@ -504,7 +506,7 @@ function deployBadgeCanvas(width, height, id, wrapperID, paintThumb, thumbArgs, 
                                 x = coords.x;
                                 y = coords.y;
                                 if( Math.pow(window.filterEditPointer.badgeWidth-10 - x, 2) + Math.pow(y-10,2) < 49 ){
-                                    element = document.getElementById(this.id.slice(0, this.id.indexOf('Canvas')));
+                                    element = document.getElementById(this.id.slice(this.id.indexOf('Canvas')+6, this.id.length));
                                     if(element)
                                         element.parentNode.removeChild(element);
                                 }
