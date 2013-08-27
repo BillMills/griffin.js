@@ -367,7 +367,14 @@ function editFilter(filterSystems, filterSystemsNames){
         insertDOM('div', 'interstream'+window.filterEditPointer.nInterstreams, 'interstreamDiv', '', 'interstreamFilters', '', '');
         document.getElementById('interstream'+window.filterEditPointer.nInterstreams).addEventListener('dragover', dragOver, false);
         document.getElementById('interstream'+window.filterEditPointer.nInterstreams).addEventListener('drop', handleDrop, false);
+        //what does this box mean?:
         insertDOM('h5', 'interstreamHelp'+window.filterEditPointer.nInterstreams, '', 'text-align:center; margin:0px; margin-bottom:1em;', 'interstream'+window.filterEditPointer.nInterstreams, '', 'or ALL of these:');
+        //off button
+        insertDOM('button', 'deleteInterstream'+window.filterEditPointer.nInterstreams, 'deleteButton', '', 'interstream'+window.filterEditPointer.nInterstreams, function(){
+            var element = document.getElementById(this.id);
+            element.parentNode.parentNode.removeChild(element.parentNode);
+        }, String.fromCharCode(0x2573), '', 'button');
+
         window.filterEditPointer.nInterstreams++;
     }, 'New Interstream Filter', '', 'button');
 

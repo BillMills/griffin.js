@@ -809,7 +809,7 @@ function closeX(context, x0, y0, radius){
     context.stroke();
 
     context.beginPath();
-    context.lineWidth = 2;
+    context.lineWidth = 1;
     context.moveTo(x0 - 0.4*radius, y0 - 0.4*radius);
     context.lineTo(x0 + 0.4*radius, y0 + 0.4*radius);
     context.stroke();
