@@ -574,6 +574,7 @@ tbody tbody a:link{
 .scrollArrow{
 	color:#999999;
 	display:inline;
+	background-color: #333333 !important;
 }
 
 .scrollArrow:hover{
@@ -602,6 +603,7 @@ tbody tbody a:link{
 	padding:5px;
 	margin-right:2px;
 	margin-bottom:2px;
+	background-color: #333333 !important;
 }
 
 #interstreamFilters div:nth-child(odd){
