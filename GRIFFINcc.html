@@ -162,7 +162,7 @@
         var i, j, k, paths=[], data;
 
         //overwrite default parameters with custom ones:
-        if(!window.parameters.devMode) fetchCustomParameters();
+        fetchCustomParameters();
 
         //autodetect how many clocks are present in the ODB - must be registered under /Equipment/Clock[x], x = 0..23
         for(i=0; i<25; i++){
@@ -183,7 +183,7 @@
         detectCards();
 
         //load things from the ODB
-        if(!window.parameters.devMode) ODBgrab();
+        ODBgrab();
 
         //let the MIDAS status link, left sidebar & branding appear:
         $('#branding').css('opacity', 1);

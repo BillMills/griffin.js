@@ -40,14 +40,12 @@ function DESCANT(){
 		var i, j, key, fill;
 		this.context.clearRect(0,0,this.canvasWidth, this.canvasHeight-this.scaleHeight);
 
-		//for(i=0; i<70; i++){
         for(key in this.dataBus.DESCANT){
             //i = this.dataBus.DESCANT[key].index - 1;
             i = this.chMap(this.dataBus.DESCANT[key].index);
 			this.context.save();
 			this.context.translate(this.centerX, this.centerY);
 			this.context.rotate(this.drawRules[i][3]);
-
 			fill = colors(key, this.dataBus.DESCANT, frame, this.nFrames);
 			this.context.fillStyle =  (fill == 0xDEADBEEF) ? this.context.createPattern(window.parameters.warningFill, 'repeat') : fill;
 
@@ -112,7 +110,7 @@ function DESCANT(){
 	}
 
     //do an initial populate:
-    this.update();
+    //this.update();
 
     //they changed the detector numbering on me.  Here's a function to map from the new numbering scheme to the old one used in the rest of the code.
     this.chMap = function(newIndex){

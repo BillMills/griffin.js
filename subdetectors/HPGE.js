@@ -194,6 +194,7 @@ function HPGe(){
     };
 
     this.update = function(){
+        console.log(this.dataBus.summary['GRG01G'])
         //get new data
         this.fetchNewData();
 
@@ -214,5 +215,6 @@ function HPGe(){
     };
 
     //do an initial populate
-    this.update();
+    //console.log('first Update')
+    //this.update();
 }

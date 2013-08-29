@@ -84,5 +84,5 @@ function SPICE(){
 
     
     //do an initial populate:
-    this.update();
+    //this.update();
 }

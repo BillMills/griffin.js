@@ -61,7 +61,7 @@ function TIPwall(){
     };
 
     //do an initial populate:
-    this.update();
+    //this.update();
 }
 
 TIPball.prototype = Object.create(Subsystem.prototype);
@@ -153,5 +153,5 @@ function TIPball(){
     };
 
     //do an initial populate:
-    this.update();
+    //this.update();
 }

@@ -212,6 +212,6 @@ function BAMBINO(spiceMode){
     };
 
     //do an initial populate:
-    this.update();
+    //this.update();
 
 }

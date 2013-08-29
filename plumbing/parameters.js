@@ -1,7 +1,7 @@
 function loadParameters(){
 
 				window.parameters = {
-				"devMode" : 0,
+				"devMode" : 1,
 				"MIDASlegacyMode" : 0,
 				"ExpName" : "",
 				"statusURL" : "",

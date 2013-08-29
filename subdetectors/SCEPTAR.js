@@ -167,5 +167,5 @@ function SCEPTAR(){
     }
 
     //do an initial populate:
-    this.update();
+    //this.update();
 }
