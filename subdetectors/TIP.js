@@ -37,7 +37,8 @@ function TIPwall(){
             iAdj = this.dataBus.TIPwall[key].index;
             if (iAdj>11) iAdj++;
 
-            this.context.fillStyle = colors(key, this.dataBus.TIPwall, frame, this.nFrames);
+            fill = colors(key, this.dataBus.TIPwall, frame, this.nFrames);
+            this.context.fillStyle =  (fill == 0xDEADBEEF) ? this.context.createPattern(window.parameters.warningFill, 'repeat') : fill;
 
             this.context.fillRect(this.CsIx0 + this.CsIcellSide*(iAdj%5), this.CsIy0 + this.CsIcellSide*Math.floor(iAdj/5), this.CsIcellSide, this.CsIcellSide);
             this.context.strokeRect(this.CsIx0 + this.CsIcellSide*(iAdj%5), this.CsIy0 + this.CsIcellSide*Math.floor(iAdj/5), this.CsIcellSide, this.CsIcellSide);
@@ -106,6 +107,8 @@ function TIPball(){
         for(i=0; i<this.detsPerRing.length; i++){
             for(j=0; j<this.detsPerRing[i]; j++){
                 this.context.fillStyle = colors(this.dataBus.TTmap[this.DAQmap(index)], this.dataBus.TIPball, frame, this.nFrames);
+                fill = colors(this.dataBus.TTmap[this.DAQmap(index)], this.dataBus.TIPball, frame, this.nFrames);
+                this.context.fillStyle =  (fill == 0xDEADBEEF) ? this.context.createPattern(window.parameters.warningFill, 'repeat') : fill;
                 //draw dashboard:
                 this.context.fillRect(this.canvasWidth/2 - this.cellSide*this.detsPerRing[i]/2 + this.cellSide*j, this.rowTop, this.cellSide, this.cellSide);
                 this.context.strokeRect(this.canvasWidth/2 - this.cellSide*this.detsPerRing[i]/2 + this.cellSide*j, this.rowTop, this.cellSide, this.cellSide);

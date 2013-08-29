@@ -22,7 +22,7 @@ function PACES(){
 
     this.draw = function(frame){
 
-    	var i, name;
+    	var i, name, fill;
     	this.context.strokeStyle = '#999999'
 
         //Thresholds & Rate view///////////////////////////////////////
@@ -36,8 +36,8 @@ function PACES(){
         		this.context.translate(this.centerX, this.centerY);
         		this.context.rotate(i*Math.PI*72/180);
 
-                if(window.state.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.PACES[name].oldThresholdColor), parseHexColor(this.dataBus.PACES[name].thresholdColor), frame/this.nFrames);
-                else if(window.state.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.PACES[name].oldRateColor), parseHexColor(this.dataBus.PACES[name].rateColor), frame/this.nFrames);
+                fill = colors(name, this.dataBus.PACES, frame, this.nFrames);
+                this.context.fillStyle =  (fill == 0xDEADBEEF) ? this.context.createPattern(window.parameters.warningFill, 'repeat') : fill;
         		this.context.beginPath();
         		this.context.arc(0, -this.arrayRadius, this.SiLiRadius, 0, Math.PI);
         		this.context.closePath();
@@ -46,8 +46,8 @@ function PACES(){
 
                 name = 'PAC0'+(i+1)+'XN00B';
 
-                if(window.state.subdetectorView == 1) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.PACES[name].oldThresholdColor), parseHexColor(this.dataBus.PACES[name].thresholdColor), frame/this.nFrames);
-                else if(window.state.subdetectorView == 2) this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.PACES[name].oldRateColor), parseHexColor(this.dataBus.PACES[name].rateColor), frame/this.nFrames);
+                fill = colors(name, this.dataBus.PACES, frame, this.nFrames);
+                this.context.fillStyle =  (fill == 0xDEADBEEF) ? this.context.createPattern(window.parameters.warningFill, 'repeat') : fill;
                 this.context.beginPath();
                 this.context.arc(0, -this.arrayRadius, this.SiLiRadius, Math.PI, 0);
                 this.context.closePath();
@@ -88,7 +88,8 @@ function PACES(){
 
                 name = 'PAC0'+(i+1)+'XN00A';  //real voltage is plugged into seg. A; seg B voltage contains garbage data, don't use.
 
-                this.context.fillStyle = interpolateColor(parseHexColor(this.dataBus.PACES[name].oldHVcolor), parseHexColor(this.dataBus.PACES[name].HVcolor), frame/this.nFrames);
+                fill = colors(name, this.dataBus.PACES, frame, this.nFrames);
+                this.context.fillStyle =  (fill == 0xDEADBEEF) ? this.context.createPattern(window.parameters.warningFill, 'repeat') : fill;
                 this.context.save();
                 this.context.translate(this.centerX, this.centerY);
                 this.context.rotate(i*Math.PI*72/180);
