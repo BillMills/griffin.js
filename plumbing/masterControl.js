@@ -66,7 +66,7 @@ function gatekeeper(){
 
         if(window.Gatekeeper.copyBack == window.parameters.JSONPrepos.length){
             window.Gatekeeper.copyBack = 0;
-            if(e.detail.cb == 'main') main();
+            if(e.detail.cb == 'main') main.apply(null); //apply construction turns this into anon to avoid funky main collisions
             else masterLoop(e.detail.cb);
         }
     });
@@ -97,7 +97,9 @@ function masterLoop(callMyself, noFetch){
         //Filter
         if(window.parameters.topDeployment['Filter']) window.filterPointer.update();
         //VME
-        if(window.parameters.topDeployment['VME']) window.VMEpointer.update();        
+        if(window.parameters.topDeployment['VME']) window.VMEpointer.update();
+        //Dashboard
+        window.dashboard.update();       
 /*
         //let the alarm services know the update is complete:
         var allDone = new   CustomEvent("refreshComplete", {
@@ -228,7 +230,7 @@ function ODBgrab(){
 //handle pulling the initial config parameters out of the ODB and replacing the default values in the JSONP-loaded parameter store:
 function fetchCustomParameters(){
 
-    var topLevel=0, HV, BAMBINO, DANTE, DESCANT, HPGe, PACES, SCEPTAR, SHARC, SPICE, ZDS, TIPwall, TIPball, DAQ, DSSD;
+    var topLevel=0, HV, BAMBINO, DANTE, DESCANT, HPGe, PACES, SCEPTAR, SHARC, SPICE, ZDS, TIPwall, TIPball, DAQ, DSSD, DASHBOARD;
 
     //define keys
     var paths = [];
@@ -346,6 +348,10 @@ function fetchCustomParameters(){
     paths[DSSD+1] = '/DashboardConfig/DSSD/thresholdScale[*]';
     paths[DSSD+2] = '/DashboardConfig/DSSD/rateScale[*]';
 
+    DASHBOARD = DSSD+3;
+    paths[DASHBOARD] = '/DashboardConfig/Dashboard/dashboardMin';
+    paths[DASHBOARD+1] = '/DashboardConfig/Dashboard/dashboardMax';
+
     //fetch:
     var data = ODBMGet(paths);
     //console.log(data[78].slice(0,11) == '<DB_NO_KEY>')
@@ -435,6 +441,9 @@ function fetchCustomParameters(){
 
     window.parameters.DSSD.minima.DSSD = [parseFloat(data[DSSD][0]), parseFloat(data[DSSD+1][0]), parseFloat(data[DSSD+2][0])];
     window.parameters.DSSD.maxima.DSSD = [parseFloat(data[DSSD][1]), parseFloat(data[DSSD+1][1]), parseFloat(data[DSSD+2][1])];
+
+    window.parameters.dashboardMin = data[DASHBOARD];
+    window.parameters.dashboardMax = data[DASHBOARD+1];
     
 }
 

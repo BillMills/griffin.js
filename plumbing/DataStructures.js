@@ -184,6 +184,7 @@ SHARCDS = function(padsEnabled){
 	this.SHARC = {};
 	this.TTmap = [];
 	this.summary = {};
+	this.totalRate = 0;
 	//SHARC detail level index logic: hundreds correspond to Array Position, ones and tens count through Segments front to back to pads. 
 	//boxes:
 	for(i=5; i<13; i++){
@@ -292,11 +293,11 @@ SHARCDS = function(padsEnabled){
 }
 
 DESCANTDS = function(){
-
 	var i, name;
 
 	this.DESCANT = {};
 	this.TTmap = [];
+	this.totalRate = 0;
 	for(i=1; i<71; i++){
 		name = (i<10) ? 'DSC00'+i+'P00X' : 'DSC0'+i+'P00X';
 		this.DESCANT[name] = {
@@ -324,6 +325,7 @@ PACESDS = function(){
 
 	this.PACES = {};
 	this.TTmap = [];
+	this.totalRate = 0;
 	for(i=1; i<6; i++){
 		name = 'PAC0'+i+'XN00A';
 		this.PACES[name] = {
@@ -364,6 +366,7 @@ DANTEDS = function(){
 
 	this.DANTE = {};
 	this.TTmap = [];
+	this.totalRate = 0;
 	for(i=1; i<11; i++){
 		//LaBr PMT channels
 		name = (i<10) ? 'DAL0'+i+'XN00X' : 'DAL'+i+'XN00X';
@@ -492,6 +495,7 @@ BAMBINODS = function(mode, layers, spiceMode){
 
 	this.BAMBINO = {};
 	this.TTmap = [];
+	this.totalRate = 0;
 	for(i=1; i<3; i++){  //1 for upstream, 2 for downstream
 		for(j=0; j<layers; j++){ //telescope layers
 			for(k=0; k<24+( (mode=='S2') ? 16 : 32 ); k++ ){  //segments, 16 azimuthal in S2 mode, 32 in S3
@@ -521,7 +525,7 @@ SCEPTARDS = function(config){
 
 	this.SCEPTAR = {};
 	this.TTmap = [];
-
+	this.totalRate = 0;
 	//upstream SCEPTAR
 	if(config[0]){
 		for(i=1; i<11; i++){
@@ -588,6 +592,7 @@ SPICEDS = function(){
 
 	this.SPICE = {};
 	this.TTmap = [];
+	this.totalRate = 0;
 	for(i=1; i<121; i++){
 		name = 'SPI00XN';
 		if(i<10) name += '00'+i;
@@ -614,6 +619,7 @@ TIPwallDS = function(){
 	var i, j, k, name, key, subKey;
 
 	this.TIPwall = {};
+	this.totalRate = 0;
 	for(i=1; i<25; i++){
 		var name = (i<10) ? 'TPW00'+i+'P00X' : 'TPW0'+i+'P00X';
 		this.TIPwall[name] = {
@@ -666,6 +672,7 @@ TIPballDS = function(){
 	var i, j, k, name, key, subKey;
 
 	this.TIPball = {};
+	this.totalRate = 0;
 	for(i=1; i<129; i++){
 		var name = (i<10) ? 'TPC00'+i+'P00X' : ( (i<100) ? 'TCW0'+i+'P00X' : 'TCW'+i+'P00X');
 		this.TIPball[name] = {

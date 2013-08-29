@@ -233,6 +233,7 @@ function Subsystem(){
     this.fetchNewData = function(){
         
         var key;
+        this.dataBus.totalRate = 0;
 
         for(key in this.dataBus[this.name]){
             
@@ -245,9 +246,10 @@ function Subsystem(){
 
             if(window.JSONPstore['scalar']){
                 if(window.JSONPstore['scalar'][key]){
-                    if(typeof window.JSONPstore['scalar'][key]['TRIGREQ'] == 'number')
+                    if(typeof window.JSONPstore['scalar'][key]['TRIGREQ'] == 'number'){
                         this.dataBus[this.name][key]['rate'] = window.JSONPstore['scalar'][key]['TRIGREQ'];
-                    else 
+                        this.dataBus.totalRate += window.JSONPstore['scalar'][key]['TRIGREQ'];
+                    } else 
                         this.dataBus[this.name][key]['rate'] = 0xDEADBEEF;
                 } else{
                     this.dataBus[this.name][key]['rate'] = 0xDEADBEEF;

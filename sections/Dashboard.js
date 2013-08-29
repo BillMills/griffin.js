@@ -1,6 +1,6 @@
 function Dashboard(){
 
-    var subsPresent, key;
+    var subsPresent, key, that = this;
 
 	this.wrapperID = window.parameters.wrapper;             //ID of wrapping div
 	this.canvasID = 'DashboardCanvas';	                    //ID of canvas to paint dashboard on
@@ -65,18 +65,28 @@ function Dashboard(){
 
 	//deploy a canvas for the dashboard view:
     this.canvasWidth = 0.48*$(this.wrapper).width();
-    this.canvasHeight = 0.8*$(this.wrapper).height();
+    this.canvasHeight = 0.9*$(this.wrapper).height();
     insertDOM('canvas', this.canvasID, 'monitor', 'position:absolute; left:24%; top:' + ($('#DashboardLinks').height() + 5) +'px;', this.wrapperID, '', '')
     this.canvas = document.getElementById('DashboardCanvas');
     this.context = this.canvas.getContext('2d');
     this.canvas.setAttribute('width', this.canvasWidth)
     this.canvas.setAttribute('height', this.canvasHeight)
+    this.scaleHeight = 0.2*this.canvasHeight;
+
+    this.canvas.onclick =   function(event){
+                                var y,
+                                    coords = this.relMouseCoords(event);
+                                y = coords.y;
+                                if(y>that.canvasHeight - that.scaleHeight){
+                                    parameterDialogue('Dashboard', [ ['Rate', parseFloat(window.parameters.dashboardMin), parseFloat(window.parameters.dashboardMax), 'Hz', '/DashboardConfig/Dashboard/dashboardMin', '/DashboardConfig/Dashboard/dashboardMax' ]  ], 'Sunset' );
+                                }
+                            };
 
     //drawing parameters:
     this.x0 = this.canvasWidth / 2;
-    this.y0 = this.canvasHeight / 2;
-    this.outerRad = this.canvasHeight*0.4;
-    this.innerRad = this.canvasHeight*0.25;
+    this.y0 = this.canvasHeight*0.4;
+    this.outerRad = this.canvasHeight*0.36;
+    this.innerRad = this.canvasHeight*0.2;
     this.gapArc = Math.PI/180 * 5;
     this.lampshadeArc = Math.PI/180 * 25;
     this.coronaArc = Math.PI/180 * 60;
@@ -99,6 +109,9 @@ function Dashboard(){
         this.context.strokeStyle = '#999999';
         this.context.lineWidth = 1;
 
+        if(frame==0)
+            this.context.clearRect(0,0,this.canvasWidth, this.canvasHeight-this.scaleHeight);
+
         //downstream lampshade
         //port side
         this.context.beginPath();
@@ -113,19 +126,21 @@ function Dashboard(){
         this.context.closePath();
         this.context.stroke();      
 
-        //upstream lampshade  
-        //port side
-        this.context.beginPath();
-        this.context.arc(this.x0, this.y0, this.outerRad, -1.5*this.coronaArc - 6*this.gapArc - 3*this.auxCoronaArc - 3*this.lampshadeArc - this.beampipeArc, -1.5*this.coronaArc - 6*this.gapArc - 3*this.auxCoronaArc - 2*this.lampshadeArc - this.beampipeArc, false);
-        this.context.arc(this.x0, this.y0, this.innerRad, -1.5*this.coronaArc - 6*this.gapArc - 3*this.auxCoronaArc - 2*this.lampshadeArc - this.beampipeArc, -1.5*this.coronaArc - 6*this.gapArc - 3*this.auxCoronaArc - 3*this.lampshadeArc - this.beampipeArc, true);
-        this.context.closePath();
-        this.context.stroke();
-        //starboard side
-        this.context.beginPath();
-        this.context.arc(this.x0, this.y0, this.outerRad, this.coronaArc/2 + 2*this.gapArc + this.auxCoronaArc, this.coronaArc/2 + 2*this.gapArc + this.auxCoronaArc + this.lampshadeArc, false);
-        this.context.arc(this.x0, this.y0, this.innerRad, this.coronaArc/2 + 2*this.gapArc + this.auxCoronaArc + this.lampshadeArc, this.coronaArc/2 + 2*this.gapArc + this.auxCoronaArc, true);
-        this.context.closePath();
-        this.context.stroke();  
+        if(this.labels[2]){
+            //upstream lampshade  
+            //port side
+            this.context.beginPath();
+            this.context.arc(this.x0, this.y0, this.outerRad, -1.5*this.coronaArc - 6*this.gapArc - 3*this.auxCoronaArc - 3*this.lampshadeArc - this.beampipeArc, -1.5*this.coronaArc - 6*this.gapArc - 3*this.auxCoronaArc - 2*this.lampshadeArc - this.beampipeArc, false);
+            this.context.arc(this.x0, this.y0, this.innerRad, -1.5*this.coronaArc - 6*this.gapArc - 3*this.auxCoronaArc - 2*this.lampshadeArc - this.beampipeArc, -1.5*this.coronaArc - 6*this.gapArc - 3*this.auxCoronaArc - 3*this.lampshadeArc - this.beampipeArc, true);
+            this.context.closePath();
+            this.context.stroke();
+            //starboard side
+            this.context.beginPath();
+            this.context.arc(this.x0, this.y0, this.outerRad, this.coronaArc/2 + 2*this.gapArc + this.auxCoronaArc, this.coronaArc/2 + 2*this.gapArc + this.auxCoronaArc + this.lampshadeArc, false);
+            this.context.arc(this.x0, this.y0, this.innerRad, this.coronaArc/2 + 2*this.gapArc + this.auxCoronaArc + this.lampshadeArc, this.coronaArc/2 + 2*this.gapArc + this.auxCoronaArc, true);
+            this.context.closePath();
+            this.context.stroke();  
+        }
 
         if(this.labels[3]){
             //downstream auxillary corona
@@ -180,14 +195,14 @@ function Dashboard(){
         }
 
         //beamdump
-        this.context.strokeRect(this.x0 - this.canvasHeight*0.1, this.canvasHeight*0.01, this.canvasHeight*0.2, this.canvasHeight*0.5 - this.outerRad - 2*this.canvasHeight*0.01);
+        this.context.strokeRect(this.x0 - this.canvasHeight*0.08, this.canvasHeight*0.008, this.canvasHeight*0.16, this.canvasHeight*0.4 - this.outerRad - 2*this.canvasHeight*0.008);
 
         //beam arrow
         this.context.lineWidth = 2;
         this.context.beginPath();
-        this.context.moveTo(this.x0, this.canvasHeight*0.98);
-        this.context.lineTo(this.x0, this.canvasHeight*0.78);
-        this.context.lineTo(this.x0 - this.canvasHeight*0.02, this.canvasHeight*0.78 + this.canvasHeight*0.02);
+        this.context.moveTo(this.x0, this.canvasHeight*0.98*0.8);
+        this.context.lineTo(this.x0, this.canvasHeight*0.78*0.8);
+        this.context.lineTo(this.x0 - this.canvasHeight*0.02*0.8, this.canvasHeight*0.78*0.8 + this.canvasHeight*0.02*0.8);
         this.context.stroke();
 
         //labels
@@ -222,9 +237,12 @@ function Dashboard(){
             this.context.fillText(this.labels[5], this.x0 - this.context.measureText(this.labels[5]).width/2, this.y0 + 0.4*this.innerRad);
         }
         //beam dump
-        this.context.font = Math.min(20,fitFont(this.context, this.labels[6], this.canvasHeight*0.16))+'px Orbitron';
+        this.context.font = Math.min(20,fitFont(this.context, this.labels[6], this.canvasHeight*0.16*0.8))+'px Orbitron';
         this.context.textBaseline = 'top';
-        this.context.fillText(this.labels[6], this.x0 - this.context.measureText(this.labels[6]).width/2, this.canvasHeight*0.5 - this.outerRad);        
+        this.context.fillText(this.labels[6], this.x0 - this.context.measureText(this.labels[6]).width/2, this.canvasHeight*0.4 - this.outerRad); 
+
+        if(frame==0)
+            this.drawScale();       
     };
 
     this.animate = function(){
@@ -232,8 +250,10 @@ function Dashboard(){
         else this.draw(this.nFrames);
     };
 
-    this.draw(0);
 
+    this.update = function(){
+        this.draw(0);
+    };
 
     //alarm animation test:
     //fadeRed('TIGRESSTab')
@@ -242,13 +262,71 @@ function Dashboard(){
         $('#'+tabID).on('transitionend', function(){fadeRed(tabID)});
         document.getElementById(tabID).style.border = '2px solid black';
         document.getElementById(tabID).style['border-right'] = 'none';
-    }
+    };
     function fadeRed(tabID){
         $('#'+tabID).off();
         $('#'+tabID).on('transitionend', function(){fadeBlack(tabID)});
         document.getElementById(tabID).style.border = '2px solid red';
         document.getElementById(tabID).style['border-right'] = 'none';
-    }    
+    };
 
+    this.drawScale = function(){
 
+        var i, j, string, unit, title;
+
+        this.context.clearRect(0, this.canvasHeight - this.scaleHeight, this.canvasWidth, this.canvasHeight);
+
+        //titles
+        this.context.fillStyle = '#999999';
+        this.context.font="24px 'Orbitron'";
+        this.context.textBaseline = 'middle';
+        if(window.parameters.detectorLogMode.DashboardButton){
+            title = 'log(Rate)';
+        } else {
+            title = 'Rate';
+        }
+        this.context.fillText(title, this.canvasWidth/2 - this.context.measureText(title).width/2, this.canvasHeight-this.scaleHeight/2 + 20 + 20);
+        this.context.textBaseline = 'alphabetic';
+
+        //tickmark;
+        this.context.strokeStyle = '#999999';
+        this.context.lineWidth = 1;
+        this.context.font="12px 'Raleway'";
+
+        //determine unit:
+        unit = window.parameters.dashboardMax;
+        if(unit > 1000000) unit = ' MHz';
+        else if(unit > 1000) unit = ' kHz';
+        else unit = ' Hz';
+        if(window.parameters.detectorLogMode.DashboardButton) unit = ' log(Hz)';
+
+        this.context.beginPath();
+        this.context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2 + 20);
+        this.context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2 + 20 + 10);
+        this.context.stroke();
+        if(window.parameters.detectorLogMode.DashboardButton) string = Math.log( window.parameters.dashboardMin ) + ' log(Hz)';
+        else string = (window.parameters.dashboardMin) + ' Hz';
+        this.context.fillText( string, this.canvasWidth*0.05 - this.context.measureText(string).width/2, this.canvasHeight-this.scaleHeight/2 + 45);
+
+        this.context.beginPath();
+        this.context.moveTo(this.canvasWidth*0.95-1, this.canvasHeight - this.scaleHeight/2 + 20);
+        this.context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - this.scaleHeight/2 + 20 + 10); 
+        this.context.stroke();
+
+        string = window.parameters.dashboardMax;
+        if(window.parameters.detectorLogMode. DashboardButton){
+            string = Math.log(string).toFixed(1) + unit;
+        } else {
+            if(string > 1000000) string = string/1000000 + unit;
+            else if(string > 1000) string = string/1000 + unit;
+            else string = string + unit;
+        }
+        this.context.fillText(string, this.canvasWidth*0.95 - this.context.measureText(string).width/2, this.canvasHeight-this.scaleHeight/2 + 45);
+
+        for(i=0; i<3000; i++){
+            this.context.fillStyle = scalepickr(0.001*(i%1000), 'Sunset');
+            this.context.fillRect(this.canvasWidth*0.05 + this.canvasWidth*0.9/1000*(i%1000), this.canvasHeight-this.scaleHeight/2, this.canvasWidth*0.9/1000, 20);
+        }
+
+    };   
 }

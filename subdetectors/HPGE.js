@@ -194,7 +194,6 @@ function HPGe(){
     };
 
     this.update = function(){
-        console.log(this.dataBus.summary['GRG01G'])
         //get new data
         this.fetchNewData();
 
