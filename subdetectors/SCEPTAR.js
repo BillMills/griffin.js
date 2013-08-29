@@ -24,17 +24,21 @@ function SCEPTAR(){
         }
     }
 
+    //make the button say ZDS if only ZDS is deployed:
+    if(this.config[2]==1 && this.config[0]==0 && this.config[1]==0)
+        document.getElementById('SCEPTARlink').innerHTML = 'ZDS';
+
     //drawing parameters///////////////////////////////////////
     this.ZDSradius = this.canvasHeight*0.5 / 4; 
-    this.ZDScenterX = this.canvasWidth*0.5 + Math.max(this.config[0], this.config[1])*this.canvasWidth*0.25;
+    this.ZDScenterX = this.canvasWidth*0.5 + (this.config[0] +this.config[1] + this.config[2] - 1)*this.canvasWidth*0.25;
     this.ZDScenterY = 0.4*this.canvasHeight;
     this.SCEPTARx0 = this.canvasWidth*0.1;
     this.SCEPTARy0 = this.canvasHeight*0.1;
 
     this.SCEPTARspoke = this.canvasHeight/5;
-    this.USSCx0 = 0.25*this.canvasWidth;
+    this.USSCx0 = (this.config[0] + this.config[1] + this.config[2] == 2) ? 0.25*this.canvasWidth : 0.5*this.canvasWidth;
     this.USSCy0 = 0.4*this.canvasHeight;
-    this.DSSCx0 = 0.75*this.canvasWidth;
+    this.DSSCx0 = (this.config[0] + this.config[1] + this.config[2] == 2) ? 0.75*this.canvasWidth : 0.5*this.canvasWidth;
     this.DSSCy0 = 0.4*this.canvasHeight;
 
     //member functions///////////////////////////////////////////////////////////////////

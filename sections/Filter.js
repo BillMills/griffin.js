@@ -341,7 +341,7 @@ function editFilter(filterSystems, filterSystemsNames){
     insertDOM('h1', 'editFilterLinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', 'Edit Filter')
     insertDOM('br', 'break', '', '', this.linkWrapperID, '', '')
     //nav buttons
-    insertDOM('button', 'commitFilter', 'navLink', '', this.linkWrapperID, function(){}, 'Commit Filter and Return', '', 'button');
+    insertDOM('button', 'commitFilter', 'navLink', '', this.linkWrapperID, function(){buildFilter()}, 'Commit Filter and Return', '', 'button');
     insertDOM('button', 'abortFilter', 'navLink', '', this.linkWrapperID, function(){}, 'Abandon Changes and Return', '', 'button');
     insertDOM('button', 'resetFilter', 'navLink', '', this.linkWrapperID, function(){}, 'Start Over', '', 'button');
     insertDOM('br', 'break', '', '', this.linkWrapperID);
@@ -351,11 +351,11 @@ function editFilter(filterSystems, filterSystemsNames){
     insertDOM('br', 'break', '', '', this.linkWrapperID);
 
     //div structure for drag and drop area: right panel for detector palete, two-div column for Single Stream and Interstream Filters:
-    insertDOM('div', 'editFilterWrapper', '', 'width:'+0.48*$(this.wrapper).width()+'px', this.linkWrapperID, '', '');
+    insertDOM('div', 'editFilterWrapper', '', 'width:'+0.48*$(this.wrapper).width()+'px; display:inline-block;', this.linkWrapperID, '', '');
     insertDOM('div', 'filterWrap', '', 'float:left; width:79%', 'editFilterWrapper', '', '');  //79 kind of kludgy, to accommodate margins.
     insertDOM('div', 'singleStreamFilters', 'filterDiv', 'width:100%; padding-left:1em; padding-right:1em;', 'filterWrap', '', '');
     insertDOM('h2', 'singleStreamTitle', '', 'text-align:center; margin:0.5em;', 'singleStreamFilters', '', 'Single-Stream Filters');
-    insertDOM('h5', 'singleStreamHelp', '', 'text-align:center; margin:0px; margin-bottom:1em;', 'singleStreamFilters', '', 'Any of these:');
+    insertDOM('h5', 'singleStreamHelp', '', 'text-align:center; margin:0px; margin-bottom:1em;', 'singleStreamFilters', '', 'Drag a detector here to define a single-stream filter condition.');
     insertDOM('div', 'interstreamFilters', 'filterDiv', 'width:100%; padding-left:1em; padding-right:1em; text-align:center;', 'filterWrap', '', '');
     insertDOM('h2', 'interstreamTitle', '', 'text-align:center; margin:0.5em;', 'interstreamFilters', '', 'Interstream Filters');
     insertDOM('div', 'filterPalete', 'filterDiv', 'width:20%; float:right; text-align:center; padding-top:1em; max-height:500px; overflow:scroll;', 'editFilterWrapper', '', '');
@@ -368,7 +368,7 @@ function editFilter(filterSystems, filterSystemsNames){
         document.getElementById('interstream'+window.filterEditPointer.nInterstreams).addEventListener('dragover', dragOver, false);
         document.getElementById('interstream'+window.filterEditPointer.nInterstreams).addEventListener('drop', handleDrop, false);
         //what does this box mean?:
-        insertDOM('h5', 'interstreamHelp'+window.filterEditPointer.nInterstreams, '', 'text-align:center; margin:0px; margin-bottom:1em;', 'interstream'+window.filterEditPointer.nInterstreams, '', 'or ALL of these:');
+        insertDOM('h5', 'interstreamHelp'+window.filterEditPointer.nInterstreams, '', 'text-align:center; margin:0px; margin-bottom:1em;', 'interstream'+window.filterEditPointer.nInterstreams, '', 'Drag detectors here to AND them together in a multi-stream filter condition.');
         //off button
         insertDOM('button', 'deleteInterstream'+window.filterEditPointer.nInterstreams, 'deleteButton', '', 'interstream'+window.filterEditPointer.nInterstreams, function(){
             var element = document.getElementById(this.id);
@@ -523,9 +523,58 @@ function deployBadgeCanvas(width, height, id, wrapperID, paintThumb, thumbArgs, 
 
 //create the full badge for the filter divs
 function deployFilterBadge(id, wrapperID, createCanvas){
-
     insertDOM('div', id+wrapperID, 'filterBadge', '', wrapperID, '', '');
+    document.getElementById(id+wrapperID).filterTag = filterTag(id.slice(0, id.indexOf('filterBadge')));
     createCanvas();
     createOptionScroll(id+wrapperID, id+wrapperID+'scroll', ['Singles', 'Coincidence', 'Prescaled'], document.getElementById(id+wrapperID).offsetWidth);
+
+    //update help messages:
+    if(wrapperID == 'singleStreamFilters')
+        document.getElementById('singleStreamHelp').innerHTML = 'Any of these:';
+    else if(wrapperID.slice(0,11) == 'interstream')
+        document.getElementById('interstreamHelp'+wrapperID.slice(11, wrapperID.length)).innerHTML = 'or ALL of these:'
 }
 
+//parse the detector names into their tokens for the filter definition
+function filterTag(detName){
+    if(detName == 'DANTE')
+        return 'DAB';
+    else if(detName == 'PACES')
+        return 'PAC';
+    else if(detName == 'SCEPTAR')
+        return 'SEP';
+    else if(detName == 'HPGE')
+        return 'GRG';
+    else if(detName == 'ZDS')
+        return 'ZDS';
+    else if(detName == 'SPICES')
+        return 'SPI';
+    else if(detName == 'DESCANT')
+        return 'DSC';
+    else if(detName == 'BAMBINO')
+        return 'BAE';
+    else if(detName == 'SHARC')
+        return 'SHB';
+    else if(detName == 'TIPwall')
+        return 'TPW';
+    else if(detName == 'TIPball')
+        return 'TPC';
+    else
+        return detName;
+}
+
+//parse whatever is currently declared into a filter string definition
+function buildFilter(){
+    var i, j,
+        singleStreamFilters = document.getElementById('singleStreamFilters'),
+        filterString = '';
+
+    //standalone filter streams:
+    for(i=0; i<singleStreamFilters.childNodes.length; i++){
+        if(singleStreamFilters.childNodes[i].filterTag)
+            filterString += singleStreamFilters.childNodes[i].filterTag + '_';
+    }
+
+    //interstream filters:
+
+}
