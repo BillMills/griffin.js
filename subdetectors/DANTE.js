@@ -35,7 +35,7 @@ function DANTE(){
 
     this.draw = function(frame){
 
-    	var j, ringCenter, x0, y0, name;
+    	var j, ringCenter, x0, y0, name, fill;
     	this.context.strokeStyle = '#999999';
 
     	this.context.beginPath();
@@ -55,7 +55,8 @@ function DANTE(){
 
             //suppressors
             name = 'DAS0'+(j+1)+'XN00X';
-            this.context.fillStyle = colors(name, this.dataBus.DANTE, frame, this.nFrames);
+            fill = colors(name, this.dataBus.DANTE, frame, this.nFrames);
+            this.context.fillStyle = (fill==0xDEADBEEF) ? this.context.createPattern(window.parameters.warningFill, 'repeat') : fill;
     		this.context.beginPath();
     		this.context.arc(x0,y0,this.shieldOuterRadius,0,2*Math.PI);
     		this.context.closePath();
@@ -76,7 +77,8 @@ function DANTE(){
             //TAC
             else
                 name = 'DAL0'+(j+1)+'XT00X'
-            this.context.fillStyle = colors(name, this.dataBus.DANTE, frame, this.nFrames);
+            fill = colors(name, this.dataBus.DANTE, frame, this.nFrames);
+            this.context.fillStyle = (fill==0xDEADBEEF) ? this.context.createPattern(window.parameters.warningFill, 'repeat') : fill;
     		this.context.beginPath();
     		this.context.arc(x0,y0,this.detectorRadius,0,2*Math.PI);
     		this.context.closePath();

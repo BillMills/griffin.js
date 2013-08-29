@@ -33,7 +33,7 @@ function SPICE(){
 
 
     this.draw = function(frame){
-    	var i=0, key, ring, sector;
+    	var i=0, key, ring, sector, fill;
 
     	this.context.strokeStyle = '#999999';
     	
@@ -42,7 +42,8 @@ function SPICE(){
     		sector = i%12;
     		ring = Math.floor(i/12);
 
-            this.context.fillStyle = colors(key, this.dataBus.SPICE, frame, this.nFrames)
+            fill = colors(key, this.dataBus.SPICE, frame, this.nFrames);
+            this.context.fillStyle = (fill==0xDEADBEEF) ? this.context.createPattern(window.parameters.warningFill, 'repeat') : fill;
 
 		    this.context.beginPath();
 		    this.context.arc(this.centerX, this.centerY, this.innerRadius + ring*this.radialStep, -sector*this.azimuthalStep, -(sector+1)*this.azimuthalStep, true);

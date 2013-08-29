@@ -37,7 +37,7 @@ function DESCANT(){
 
 
 	this.draw = function(frame){
-		var i, j, key;
+		var i, j, key, fill;
 		this.context.clearRect(0,0,this.canvasWidth, this.canvasHeight-this.scaleHeight);
 
 		//for(i=0; i<70; i++){
@@ -48,7 +48,8 @@ function DESCANT(){
 			this.context.translate(this.centerX, this.centerY);
 			this.context.rotate(this.drawRules[i][3]);
 
-			this.context.fillStyle = colors(key, this.dataBus.DESCANT, frame, this.nFrames)
+			fill = colors(key, this.dataBus.DESCANT, frame, this.nFrames);
+			this.context.fillStyle =  (fill == 0xDEADBEEF) ? this.context.createPattern(window.parameters.warningFill, 'repeat') : fill;
 
 			if(this.drawRules[i][0] == 'white')whiteDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, 0);
 			else if(this.drawRules[i][0] == 'red') redDetector(this.context, this.drawRules[i][1], this.drawRules[i][2], this.scale, 0, this.drawRules[i][4], 0);

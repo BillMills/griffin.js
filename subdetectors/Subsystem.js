@@ -239,12 +239,18 @@ function Subsystem(){
             if(window.JSONPstore['thresholds']){
                 if(typeof window.JSONPstore['thresholds'][key] == 'number')
                     this.dataBus[this.name][key]['threshold'] = window.JSONPstore['thresholds'][key];
+                else
+                     this.dataBus[this.name][key]['threshold'] = 0xDEADBEEF; 
             }
 
             if(window.JSONPstore['scalar']){
                 if(window.JSONPstore['scalar'][key]){
                     if(typeof window.JSONPstore['scalar'][key]['TRIGREQ'] == 'number')
                         this.dataBus[this.name][key]['rate'] = window.JSONPstore['scalar'][key]['TRIGREQ'];
+                    else 
+                        this.dataBus[this.name][key]['rate'] = 0xDEADBEEF;
+                } else{
+                    this.dataBus[this.name][key]['rate'] = 0xDEADBEEF;
                 }
             }
 

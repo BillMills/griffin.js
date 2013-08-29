@@ -45,7 +45,7 @@ function SCEPTAR(){
 
 
     this.draw = function(frame){
-    	var i, row, col;
+    	var i, row, col, fill;
 
         //once for display view...
     	this.context.strokeStyle = '#999999';
@@ -59,7 +59,8 @@ function SCEPTAR(){
         }
     	//ZDS
         if(this.config[2] == 1){
-            this.context.fillStyle = colors('ZDS01XN00X', this.dataBus.SCEPTAR, frame, this.nFrames)
+            fill = colors('ZDS01XN00X', this.dataBus.SCEPTAR, frame, this.nFrames);
+            this.context.fillStyle = (fill==0xDEADBEEF) ? this.context.createPattern(window.parameters.warningFill, 'repeat') : fill;
         	this.context.beginPath();
     	    this.context.arc(this.ZDScenterX, this.ZDScenterY, this.ZDSradius, 0, 2*Math.PI);
         	this.context.closePath();
@@ -131,7 +132,8 @@ function SCEPTAR(){
             name = (indexStart+i+1<10) ? 'SEP0'+(indexStart+i+1)+'XN00X' : 'SEP'+(indexStart+i+1)+'XN00X'
 
             if(context == this.context){
-                context.fillStyle = colors(name, this.dataBus.SCEPTAR, frame, this.nFrames)
+                fill = colors(name, this.dataBus.SCEPTAR, frame, this.nFrames);
+                this.context.fillStyle = (fill==0xDEADBEEF) ? this.context.createPattern(window.parameters.warningFill, 'repeat') : fill;
             }
             else if(context == this.TTcontext) context.fillStyle = '#123456'; //anti-antialiasing
             context.save();

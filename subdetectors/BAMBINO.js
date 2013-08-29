@@ -12,12 +12,11 @@ function BAMBINO(spiceMode){
     //change the button name if we're deploying in spice mode:
     if(window.parameters.SPICEaux)
         document.getElementById('BAMBINOlink').innerHTML = 'SPICE '+window.parameters.SPICEaux
-
     //member variables///////////////////////////////////
     this.spiceAux = (spiceMode) ? 1 : 0;
     this.mode = (this.spiceAux) ? spiceMode : window.parameters.BAMBINOmode;      //'S2' or 'S3'
     this.layers = (this.spiceAux) ? window.parameters.SPICEauxLayers : window.parameters.BAMBINOlayers;
-    console.log([this.mode, this.layers])
+
     this.dataBus = new BAMBINODS(this.mode, this.layers, spiceMode);
     this.nRadial = 24;
     if(this.mode=='S2')
