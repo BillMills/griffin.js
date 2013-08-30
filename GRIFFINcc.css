@@ -337,7 +337,7 @@ button.MFlink{
     display: inline;
 }
 
-button.navLink{
+.navLink{
 	background: #4C4C4C; 
 	color: #FFFFFF;
 	border-color: #333333; 
@@ -347,11 +347,11 @@ button.navLink{
     font-size:14px;
 }
 
-button.navLink:hover{
+.navLink:hover{
 	background: #777777;
 }
 
-button.navLinkDown{
+.navLinkDown{
 	background: #777777; 
 	color: #FFFFFF;
 	border-color: #333333;  

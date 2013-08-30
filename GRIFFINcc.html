@@ -281,6 +281,8 @@
 
         //dashboard
         window.dashboard = new Dashboard();
+        //move the dashboard button after the MIDAS status button
+        document.getElementById('statusLink').insertBefore(document.getElementById('DashboardButton'), document.getElementById('MIDASstatusLink').nextSibling );
 
         //DAQ
         if(window.parameters.topDeployment['DAQ'])

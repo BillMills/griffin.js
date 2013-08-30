@@ -26,6 +26,14 @@ function StatusBar(wrapper){
     //run info
 	insertDOM('p', this.runInfoID, '', 'position:relative; margin-top:10px; margin-left:auto; margin-right:auto; padding-left:5%; padding-right:5%; text-align:center; font-size:16px; width: 80%;', 'statusHeader', '', 'Run Info Unavailable in pre-2011 MIDAS');
 
+    //run control buttons
+    insertDOM('form', 'runControl', '', '', 'statusHeader', '', '');
+    insertDOM('input', 'startButton', 'navLink', '', 'runControl', '', '', 'cmd', 'submit', 'Start');
+    insertDOM('input', 'stopButton', 'navLink', '', 'runControl', '', '', 'cmd', 'submit', 'Stop');
+    insertDOM('input', 'pauseButton', 'navLink', '', 'runControl', '', '', 'cmd', 'submit', 'Pause');
+    insertDOM('input', 'resumeButton', 'navLink', '', 'runControl', '', '', 'cmd', 'submit', 'Resume');
+    insertDOM('input', 'redirKludge', '', '', 'runControl', '', '', 'redir', 'hidden', 'http://alphadon.triumf.ca:8082/CS/Dashboard');
+
     //Alarm Service
     window.AlarmServices = new AlarmService('leftSidebar', 'leftSidebarDetail');
 
@@ -81,14 +89,26 @@ function StatusBar(wrapper){
         	if(this.runstate == 1){ 
                 this.runInfo += 'Stopped';
                 $('#statusHeader').css('border-color', '#FF3333');
+                document.getElementById('startButton').style.display = 'inline';
+                document.getElementById('stopButton').style.display = 'none';
+                document.getElementById('pauseButton').style.display = 'none';
+                document.getElementById('resumeButton').style.display = 'none';
             }
         	else if(this.runstate == 2){
                 this.runInfo += 'Paused';
-                $('#statusHeader').css('border-color', '#FFFF33');   
+                $('#statusHeader').css('border-color', '#FFFF33');
+                document.getElementById('startButton').style.display = 'none';
+                document.getElementById('stopButton').style.display = 'none';
+                document.getElementById('pauseButton').style.display = 'none';
+                document.getElementById('resumeButton').style.display = 'inline';   
             }
         	else if (this.runstate == 3){
                 this.runInfo += 'Live';
                 $('#statusHeader').css('border-color', '#66FF66');
+                document.getElementById('startButton').style.display = 'none';
+                document.getElementById('stopButton').style.display = 'inline';
+                document.getElementById('pauseButton').style.display = 'inline';
+                document.getElementById('resumeButton').style.display = 'none';
             }
         	else this.runInfo += 'State Unknown';
         

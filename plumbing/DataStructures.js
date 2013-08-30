@@ -49,6 +49,7 @@ function cloverDS(nClovers, mode){
 	this.colorQuads = ['G', 'B', 'W', 'R'];
 	var pfx = (mode == 'TIGRESS') ? 'TI' : 'GR';
 	this.HPGe = {};
+	this.totalRate = 0;
 	for(i=1; i<1+nClovers; i++){
 		//loop over quadrants
 		for(j=0; j<4; j++){

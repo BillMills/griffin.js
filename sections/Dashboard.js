@@ -25,6 +25,10 @@ function Dashboard(){
     this.dumpOldColor = '#000000';
 
     //determine which detectors go where:
+    //HPGe, overwritten below if absent:
+    this.pointers[0] = window.HPGepointer;
+    this.pointers[1] = window.HPGepointer;
+    this.pointers[2] = window.HPGepointer;
     //corona auxilary
     if(window.parameters.deployment.DANTE){
         this.labels[3] = 'DANTE';
@@ -154,10 +158,10 @@ function Dashboard(){
         this.context.clearRect(0,0,this.canvasWidth, this.canvasHeight-this.scaleHeight);
 
         //downstream lampshade
-        //port side
-        this.context.beginPath();
         fill = interpolateColor(parseHexColor(this.DSLoldColor), parseHexColor(this.DSLcolor), frame/this.nFrames);
         this.context.fillStyle = (fill==0xDEADBEEF) ? this.context.createPattern(window.parameters.warningFill, 'repeat') : fill;
+        //port side
+        this.context.beginPath();
         this.context.arc(this.x0, this.y0, this.outerRad, -this.coronaArc/2 - 2*this.gapArc - this.auxCoronaArc - 2*this.lampshadeArc - this.beampipeArc, -this.coronaArc/2 - 2*this.gapArc - this.auxCoronaArc - this.lampshadeArc - this.beampipeArc, false);
         this.context.arc(this.x0, this.y0, this.innerRad, -this.coronaArc/2 - 2*this.gapArc - this.auxCoronaArc - this.lampshadeArc - this.beampipeArc, -this.coronaArc/2 - 2*this.gapArc - this.auxCoronaArc - 2*this.lampshadeArc - this.beampipeArc, true);
         this.context.closePath();
@@ -173,33 +177,41 @@ function Dashboard(){
 
         if(this.labels[2]){
             //upstream lampshade  
+            fill = interpolateColor(parseHexColor(this.USLoldColor), parseHexColor(this.USLcolor), frame/this.nFrames);
+            this.context.fillStyle = (fill==0xDEADBEEF) ? this.context.createPattern(window.parameters.warningFill, 'repeat') : fill;
             //port side
             this.context.beginPath();
             this.context.arc(this.x0, this.y0, this.outerRad, -1.5*this.coronaArc - 6*this.gapArc - 3*this.auxCoronaArc - 3*this.lampshadeArc - this.beampipeArc, -1.5*this.coronaArc - 6*this.gapArc - 3*this.auxCoronaArc - 2*this.lampshadeArc - this.beampipeArc, false);
             this.context.arc(this.x0, this.y0, this.innerRad, -1.5*this.coronaArc - 6*this.gapArc - 3*this.auxCoronaArc - 2*this.lampshadeArc - this.beampipeArc, -1.5*this.coronaArc - 6*this.gapArc - 3*this.auxCoronaArc - 3*this.lampshadeArc - this.beampipeArc, true);
             this.context.closePath();
+            this.context.fill();
             this.context.stroke();
             //starboard side
             this.context.beginPath();
             this.context.arc(this.x0, this.y0, this.outerRad, this.coronaArc/2 + 2*this.gapArc + this.auxCoronaArc, this.coronaArc/2 + 2*this.gapArc + this.auxCoronaArc + this.lampshadeArc, false);
             this.context.arc(this.x0, this.y0, this.innerRad, this.coronaArc/2 + 2*this.gapArc + this.auxCoronaArc + this.lampshadeArc, this.coronaArc/2 + 2*this.gapArc + this.auxCoronaArc, true);
             this.context.closePath();
+            this.context.fill();
             this.context.stroke();  
         }
 
         if(this.labels[3]){
             //downstream auxillary corona
+            fill = interpolateColor(parseHexColor(this.auxCoronaOldColor), parseHexColor(this.auxCoronaColor), frame/this.nFrames);
+            this.context.fillStyle = (fill==0xDEADBEEF) ? this.context.createPattern(window.parameters.warningFill, 'repeat') : fill;
             //port side
             this.context.beginPath();
             this.context.arc(this.x0, this.y0, this.outerRad, -this.coronaArc/2 - 3*this.gapArc - 2*this.auxCoronaArc - 2*this.lampshadeArc - this.beampipeArc, -this.coronaArc/2 - 3*this.gapArc - this.auxCoronaArc - 2*this.lampshadeArc - this.beampipeArc, false);
             this.context.arc(this.x0, this.y0, this.innerRad, -this.coronaArc/2 - 3*this.gapArc - this.auxCoronaArc - 2*this.lampshadeArc - this.beampipeArc, -this.coronaArc/2 - 3*this.gapArc - 2*this.auxCoronaArc - 2*this.lampshadeArc - this.beampipeArc, true);
             this.context.closePath();
+            this.context.fill();
             this.context.stroke();
             //starboard side
             this.context.beginPath();
             this.context.arc(this.x0, this.y0, this.outerRad, -this.coronaArc/2 - this.gapArc - this.auxCoronaArc, -this.coronaArc/2 - this.gapArc, false);
             this.context.arc(this.x0, this.y0, this.innerRad, -this.coronaArc/2 - this.gapArc, -this.coronaArc/2 - this.gapArc - this.auxCoronaArc, true);
             this.context.closePath();
+            this.context.fill();
             this.context.stroke();      
 
             //upstream auxilary corona
@@ -208,38 +220,55 @@ function Dashboard(){
             this.context.arc(this.x0, this.y0, this.outerRad, -1.5*this.coronaArc - 5*this.gapArc - 3*this.auxCoronaArc - 2*this.lampshadeArc - this.beampipeArc, -1.5*this.coronaArc - 5*this.gapArc - 2*this.auxCoronaArc - 2*this.lampshadeArc - this.beampipeArc, false);
             this.context.arc(this.x0, this.y0, this.innerRad, -1.5*this.coronaArc - 5*this.gapArc - 2*this.auxCoronaArc - 2*this.lampshadeArc - this.beampipeArc, -1.5*this.coronaArc - 5*this.gapArc - 3*this.auxCoronaArc - 2*this.lampshadeArc - this.beampipeArc, true);
             this.context.closePath();
+            this.context.fill();
             this.context.stroke();
             //starboard side
             this.context.beginPath();
             this.context.arc(this.x0, this.y0, this.outerRad, this.coronaArc/2 + this.gapArc, this.coronaArc/2 + this.gapArc + this.auxCoronaArc, false);
             this.context.arc(this.x0, this.y0, this.innerRad, this.coronaArc/2 + this.gapArc + this.auxCoronaArc, this.coronaArc/2 + this.gapArc, true);
             this.context.closePath();
+            this.context.fill();
             this.context.stroke();      
         }
+
+        //corona
+        fill = interpolateColor(parseHexColor(this.coronaOldColor), parseHexColor(this.coronaColor), frame/this.nFrames);
+        this.context.fillStyle = (fill==0xDEADBEEF) ? this.context.createPattern(window.parameters.warningFill, 'repeat') : fill;
         //port corona
         this.context.beginPath();
         this.context.arc(this.x0, this.y0, this.outerRad, -Math.PI -0.5*this.coronaArc, -Math.PI + 0.5*this.coronaArc, false);
         this.context.arc(this.x0, this.y0, this.innerRad, -Math.PI + 0.5*this.coronaArc, -Math.PI - 0.5*this.coronaArc, true);
         this.context.closePath();
+        this.context.fill();
         this.context.stroke();
         //starboard corona
         this.context.beginPath();
         this.context.arc(this.x0, this.y0, this.outerRad, -0.5*this.coronaArc, 0.5*this.coronaArc, false);
         this.context.arc(this.x0, this.y0, this.innerRad, 0.5*this.coronaArc, -0.5*this.coronaArc, true);
         this.context.closePath();
+        this.context.fill();
         this.context.stroke();
 
         //target chamber
         if(this.labels[4]){
             //downstream
+            fill = interpolateColor(parseHexColor(this.DSchamberOldColor), parseHexColor(this.DSchamberColor), frame/this.nFrames);
+            this.context.fillStyle = (fill==0xDEADBEEF) ? this.context.createPattern(window.parameters.warningFill, 'repeat') : fill;
+            this.context.fillRect(this.x0 - 0.75*this.innerRad/2, this.y0-this.innerRad/2, 0.75*this.innerRad, this.innerRad/10);
             this.context.strokeRect(this.x0 - 0.75*this.innerRad/2, this.y0-this.innerRad/2, 0.75*this.innerRad, this.innerRad/10);
         }
         if(this.labels[5]){
             //upstream
+            fill = interpolateColor(parseHexColor(this.USchamberOldColor), parseHexColor(this.USchamberColor), frame/this.nFrames);
+            this.context.fillStyle = (fill==0xDEADBEEF) ? this.context.createPattern(window.parameters.warningFill, 'repeat') : fill;
+            this.context.fillRect(this.x0 - 0.75*this.innerRad/2, this.y0+this.innerRad/2 - this.innerRad/10, 0.75*this.innerRad, this.innerRad/10);
             this.context.strokeRect(this.x0 - 0.75*this.innerRad/2, this.y0+this.innerRad/2 - this.innerRad/10, 0.75*this.innerRad, this.innerRad/10);
         }
 
         //beamdump
+        fill = interpolateColor(parseHexColor(this.dumpOldColor), parseHexColor(this.dumpColor), frame/this.nFrames);
+        this.context.fillStyle = (fill==0xDEADBEEF) ? this.context.createPattern(window.parameters.warningFill, 'repeat') : fill;
+        this.context.fillRect(this.x0 - this.canvasHeight*0.08, this.canvasHeight*0.008, this.canvasHeight*0.16, this.canvasHeight*0.4 - this.outerRad - 2*this.canvasHeight*0.008);
         this.context.strokeRect(this.x0 - this.canvasHeight*0.08, this.canvasHeight*0.008, this.canvasHeight*0.16, this.canvasHeight*0.4 - this.outerRad - 2*this.canvasHeight*0.008);
 
         //beam arrow
@@ -291,7 +320,7 @@ function Dashboard(){
     };
 
     this.animate = function(){
-        if(window.onDisplay == this.canvasID /*|| window.freshLoad*/) animate(this, 0);
+        if(window.onDisplay == this.canvasID) animate(this, 0);
         else this.draw(this.nFrames);
     };
 
@@ -312,9 +341,13 @@ function Dashboard(){
         this.USchamberOldColor = this.USchamberColor;
         this.dumpOldColor = this.dumpColor;
 
-        //this.USLcolor = this.parseColor(this.pointers[2].dataBus.totalRate);
-        //this.coronaColor =
+        this.USLcolor = this.parseColor(this.pointers[2].dataBus.totalRate);
+        this.coronaColor = this.parseColor(this.pointers[0].dataBus.totalRate);
+        this.auxCoronaColor = this.parseColor(this.pointers[3].dataBus.totalRate);
         this.DSLcolor = this.parseColor(this.pointers[1].dataBus.totalRate);
+        this.DSchamberColor = this.parseColor(this.pointers[4].dataBus.totalRate);
+        this.USchamberColor = this.parseColor(this.pointers[5].dataBus.totalRate);
+        //this.dumpColor = this.parseColor(this.pointers[6].dataBus.totalRate);
     };
 
     //alarm animation test:

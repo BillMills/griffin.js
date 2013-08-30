@@ -248,12 +248,12 @@ function Subsystem(){
                 if(window.JSONPstore['scalar'][key]){
                     if(typeof window.JSONPstore['scalar'][key]['TRIGREQ'] == 'number'){
                         this.dataBus[this.name][key]['rate'] = window.JSONPstore['scalar'][key]['TRIGREQ'];
-                        this.dataBus.totalRate += window.JSONPstore['scalar'][key]['TRIGREQ'];
                     } else 
                         this.dataBus[this.name][key]['rate'] = 0xDEADBEEF;
                 } else{
                     this.dataBus[this.name][key]['rate'] = 0xDEADBEEF;
                 }
+                this.dataBus.totalRate += window.JSONPstore['scalar'][key]['TRIGREQ'];
             }
 
         }
@@ -905,6 +905,7 @@ function HPGeAssets(){
 
     this.fetchHPGeData = function(){
         var i, j, key;
+        this.dataBus.totalRate = 0;
 
         //HPGe + BGO detail
         for(key in this.dataBus.HPGe){
@@ -924,6 +925,7 @@ function HPGeAssets(){
                         this.dataBus.HPGe[key]['rate'] = 0xDEADBEEF;
                 } else
                     this.dataBus.HPGe[key]['rate'] = 0xDEADBEEF;
+                this.dataBus.totalRate += this.dataBus.HPGe[key]['rate'];
             }
         }
 
