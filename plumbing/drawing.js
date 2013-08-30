@@ -502,7 +502,7 @@ colorScale = function(colors,scale){
     return constructHexColor([scale*(colors[3]-colors[0])+colors[0], scale*(colors[4]-colors[1])+colors[1], scale*(colors[5]-colors[2])+colors[2]]);
 }
 
-//map [0,1] onto black->purple->red->orange->yellow->white
+//map [0,1] onto various color scales
 scalepickr = function(scale, palette){
     //map scale onto [0,360]:
     var H = scale*300 / 60;

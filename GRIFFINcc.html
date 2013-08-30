@@ -210,9 +210,6 @@
         //declare objects:
 
         //main elements///////////////////////////////////////////////////
-        //dashboard
-        window.dashboard = new Dashboard();
-
         //status bar
         window.statusBar = new StatusBar('leftSidebar');
 
@@ -281,6 +278,9 @@
           //make the nav button of the first subdetector in the list pressed by default:
           document.getElementById(window.Subdetectors[0].subviewLink).setAttribute('class', 'navLinkDown');
         } //end subsystem deployment
+
+        //dashboard
+        window.dashboard = new Dashboard();
 
         //DAQ
         if(window.parameters.topDeployment['DAQ'])

@@ -7,39 +7,80 @@ function Dashboard(){
     this.linkWrapperID = 'DashboardLinks';                  //ID of div to contain clock view header
     this.sidebarID = 'dashboardMenus';                      //ID of dashboard sidebar div
     this.labels = [window.parameters.ExpName, window.parameters.ExpName, window.parameters.ExpName, 0, 0, 0, 'DUMP']      //names of corona, downstream lamp, upstream lamp, corona auxilary, chamber ds, chamber us, beamdump detectors
+    this.pointers = []; //global pointers to subsystems, to fetch the correct total rate for each section
+    //colors:
+    this.USLcolor = '#000000';
+    this.USLoldColor = '#000000';
+    this.coronaColor = '#000000';
+    this.coronaOldColor = '#000000';
+    this.auxCoronaColor = '#000000';
+    this.auxCoronaOldColor = '#000000';
+    this.DSLcolor = '#000000';
+    this.DSLoldColor = '#000000';
+    this.DSchamberColor = '#000000';
+    this.DSchamberOldColor = '#000000';
+    this.USchamberColor = '#000000';
+    this.USchamberOldColor = '#000000';
+    this.dumpColor = '#000000';
+    this.dumpOldColor = '#000000';
 
     //determine which detectors go where:
     //corona auxilary
-    if(window.parameters.deployment.DANTE)
+    if(window.parameters.deployment.DANTE){
         this.labels[3] = 'DANTE';
+        this.pointers[3] = window.DANTEpointer;
+    }
     //chamber
-    if(window.parameters.BAMBINOdeployment[0])  //upstream BAMBINO
+    if(window.parameters.BAMBINOdeployment[0]){  //upstream BAMBINO
         this.labels[5] = 'BAMBINO';
-    if(window.parameters.BAMBINOdeployment[1])  //downstream BAMBINO
+        this.pointers[5] = window.BAMBINOpointer;
+    }
+    if(window.parameters.BAMBINOdeployment[1]){  //downstream BAMBINO
         this.labels[4] = 'BAMBINO';
+        this.pointers[5] = window.BAMBINOpointer;
+    }
     if(window.parameters.deployment.SHARC){
         this.labels[4] = 'SHARC';
+        this.pointers[4] = window.SHARCpointer;
     }
-    if(window.parameters.deployment.TIP && window.parameters.TIPmode == 'Wall')
-        this.labels[4] = 'TIP Wall'
-    if(window.parameters.deployment.TIP && window.parameters.TIPmode == 'Ball')
-        this.labels[4] = 'TIP Ball'
-    if(window.parameters.deployment.SCEPTAR && window.parameters.SCEPTARconfig[0]) //upstream SCEPTAR
-        this.labels[5] = 'SCEPTAR'
-    if(window.parameters.deployment.SCEPTAR && window.parameters.SCEPTARconfig[1]) //downstream SCEPTAR
-        this.labels[4] = 'SCEPTAR'
-    if(window.parameters.deployment.SCEPTAR && window.parameters.SCEPTARconfig[2]) //ZDS
-        this.labels[4] = 'ZDS'    
-    if(window.parameters.deployment.PACES)
-        this.labels[5] = 'PACES'
-    if(window.parameters.deployment.SPICE)
-        this.labels[5] = 'SPICE'
+    if(window.parameters.deployment.TIP && window.parameters.TIPmode == 'Wall'){
+        this.labels[4] = 'TIP Wall';
+        this.pointers[4] = window.TIPwallpointer;
+    }
+    if(window.parameters.deployment.TIP && window.parameters.TIPmode == 'Ball'){
+        this.labels[4] = 'TIP Ball';
+        this.pointers[4] = window.TIPballpointer;
+    }
+    if(window.parameters.deployment.SCEPTAR && window.parameters.SCEPTARconfig[0]){ //upstream SCEPTAR
+        this.labels[5] = 'SCEPTAR';
+        this.pointers[5] = window.SCEPTARpointer;
+    }
+    if(window.parameters.deployment.SCEPTAR && window.parameters.SCEPTARconfig[1]){ //downstream SCEPTAR
+        this.labels[4] = 'SCEPTAR';
+        this.pointers[4] = window.SCEPTARpointer;
+    }
+    if(window.parameters.deployment.SCEPTAR && window.parameters.SCEPTARconfig[2]){ //ZDS
+        this.labels[4] = 'ZDS';
+        this.pointers[4] = window.ZDSpointer;
+    }
+    if(window.parameters.deployment.PACES){
+        this.labels[5] = 'PACES';
+        this.pointers[5] = window.PACESpointer;
+    }
+    if(window.parameters.deployment.SPICE){
+        this.labels[5] = 'SPICE';
+        this.pointers[5] = window.SPICEpointer;
+    }
     //downstream lampshade
-    if(window.parameters.deployment.DESCANT)
+    if(window.parameters.deployment.DESCANT){
         this.labels[1] = 'DESCANT';
+        this.pointers[1] = window.DESCANTpointer;
+    }
     //upstream lampshade
-    if(window.parameters.deployment.SPICE)
+    if(window.parameters.deployment.SPICE){
         this.labels[2] = 0;
+        this.pointers[2] = window.SPICEpointer;
+    }
 
 	this.wrapper = document.getElementById(this.wrapperID);
 
@@ -52,7 +93,7 @@ function Dashboard(){
     deployMenu(this.sidebarID, subsPresent , subsPresent);
 
     //add top level nav button:
-    insertDOM('button', 'DashboardButton', 'navLinkDown', '', 'statusLink', function(){swapView('DashboardLinks', 'DashboardCanvas', 'dashboardMenus', 'DashboardButton')}, 'Dashboard', '', 'button')
+    insertDOM('button', 'DashboardButton', 'navLinkDown', '', 'statusLink', function(){swapView('DashboardLinks', 'DashboardCanvas', 'dashboardMenus', 'DashboardButton'); rePaint();}, 'Dashboard', '', 'button')
 
     //nav wrapper div
     insertDOM('div', this.linkWrapperID, 'navPanel', '', this.wrapperID, '', '')
@@ -105,25 +146,29 @@ function Dashboard(){
     //member functions/////////////////////////////////////////////
 
     this.draw = function(frame){
+        var fill;
 
         this.context.strokeStyle = '#999999';
         this.context.lineWidth = 1;
 
-        if(frame==0)
-            this.context.clearRect(0,0,this.canvasWidth, this.canvasHeight-this.scaleHeight);
+        this.context.clearRect(0,0,this.canvasWidth, this.canvasHeight-this.scaleHeight);
 
         //downstream lampshade
         //port side
         this.context.beginPath();
+        fill = interpolateColor(parseHexColor(this.DSLoldColor), parseHexColor(this.DSLcolor), frame/this.nFrames);
+        this.context.fillStyle = (fill==0xDEADBEEF) ? this.context.createPattern(window.parameters.warningFill, 'repeat') : fill;
         this.context.arc(this.x0, this.y0, this.outerRad, -this.coronaArc/2 - 2*this.gapArc - this.auxCoronaArc - 2*this.lampshadeArc - this.beampipeArc, -this.coronaArc/2 - 2*this.gapArc - this.auxCoronaArc - this.lampshadeArc - this.beampipeArc, false);
         this.context.arc(this.x0, this.y0, this.innerRad, -this.coronaArc/2 - 2*this.gapArc - this.auxCoronaArc - this.lampshadeArc - this.beampipeArc, -this.coronaArc/2 - 2*this.gapArc - this.auxCoronaArc - 2*this.lampshadeArc - this.beampipeArc, true);
         this.context.closePath();
+        this.context.fill();
         this.context.stroke();
         //starboard side
         this.context.beginPath();
         this.context.arc(this.x0, this.y0, this.outerRad, -this.coronaArc/2 - 2*this.gapArc - this.auxCoronaArc - this.lampshadeArc, -this.coronaArc/2 - 2*this.gapArc - this.auxCoronaArc, false);
         this.context.arc(this.x0, this.y0, this.innerRad, -this.coronaArc/2 - 2*this.gapArc - this.auxCoronaArc, -this.coronaArc/2 - 2*this.gapArc - this.auxCoronaArc - this.lampshadeArc, true);
         this.context.closePath();
+        this.context.fill();
         this.context.stroke();      
 
         if(this.labels[2]){
@@ -252,7 +297,24 @@ function Dashboard(){
 
 
     this.update = function(){
-        this.draw(0);
+        this.fetchNewData();
+
+        this.animate();
+    };
+
+    //parse the count rates into colors for each sector:
+    this.fetchNewData = function(){
+        this.USLoldColor = this.USLcolor;
+        this.coronaOldColor = this.coronaColor;
+        this.auxCoronaOldColor = this.auxCoronaColor;
+        this.DSLoldColor = this.DSLcolor;
+        this.DSchamberOldColor = this.DSchamberColor;
+        this.USchamberOldColor = this.USchamberColor;
+        this.dumpOldColor = this.dumpColor;
+
+        //this.USLcolor = this.parseColor(this.pointers[2].dataBus.totalRate);
+        //this.coronaColor =
+        this.DSLcolor = this.parseColor(this.pointers[1].dataBus.totalRate);
     };
 
     //alarm animation test:
@@ -327,6 +389,20 @@ function Dashboard(){
             this.context.fillStyle = scalepickr(0.001*(i%1000), 'Sunset');
             this.context.fillRect(this.canvasWidth*0.05 + this.canvasWidth*0.9/1000*(i%1000), this.canvasHeight-this.scaleHeight/2, this.canvasWidth*0.9/1000, 20);
         }
+
+    };
+
+    this.parseColor = function(scalar){
+        var scale;
+
+        //how far along the scale are we?
+        if(window.parameters.detectorLogMode.DashboardButton){  //log mode
+            scale = (Math.log(scalar) - Math.log(window.parameters.dashboardMin) )/ (Math.log(window.parameters.dashboardMax) - Math.log(window.parameters.dashboardMin ));
+        } else {  //linear mode
+            scale = (scalar - window.parameters.dashboardMin ) / (window.parameters.dashboardMax - window.parameters.dashboardMin);
+        }
+
+        return scalepickr(scale, 'Sunset');
 
     };   
 }
