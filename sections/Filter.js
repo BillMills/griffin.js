@@ -381,7 +381,6 @@ function editFilter(filterSystems, filterSystemsNames){
     //deploy a dummy canvas for the filter view:
     this.canvasWidth = 0// 0.48*$(this.wrapper).width();
     this.canvasHeight = 0 //1*$(this.wrapper).height();
-
     insertDOM('canvas', this.canvasID, 'monitor', 'top:' + ($('#editFilterLinks').height() + 5) +'px;', this.wrapperID, '', '')
     this.canvas = document.getElementById('editFilterCanvas');
     this.context = this.canvas.getContext('2d');
@@ -501,7 +500,7 @@ function deployBadgeCanvas(width, height, id, wrapperID, paintThumb, thumbArgs, 
     context.fillText(label, width/2 - context.measureText(label).width/2, height-10);    
     //palete
     if(draggable){
-        canvas.setAttribute('draggable', 'true');
+        canvas.setAttribute('draggable', true);
         canvas.addEventListener('dragstart', dragStart, false);
     //filters
     } else{

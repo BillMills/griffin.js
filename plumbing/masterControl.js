@@ -98,6 +98,8 @@ function masterLoop(callMyself, noFetch){
         if(window.parameters.topDeployment['Filter']) window.filterPointer.update();
         //VME
         if(window.parameters.topDeployment['VME']) window.VMEpointer.update();
+        //Cycle
+        if(window.parameters.topDeployment['Cycle']) window.cyclePointer.update();
         //Dashboard
         window.dashboard.update();       
 /*

@@ -82,6 +82,7 @@
       <div id='dashboardMenus' class='collapsableSidebar' style='float:right; height:80%; width:24%;'></div>
       <div id='clockMenus' class='collapsableSidebar' style='float:right; height:80%;'></div>
       <div id='VMEMenus' class='collapsableSidebar' style='float:right; height:80%;'></div>
+      <div id='cycleMenus' class='collapsableSidebar' style='float:right; height:80%;'></div>
 
     </div>
 
@@ -296,6 +297,9 @@
         //VME
         if(window.parameters.topDeployment['VME'])
           window.VME = new VME();
+        //Cycle
+        if(window.parameters.topDeployment['Cycle'])
+          window.Cycle = new Cycle();
         //end main elements////////////////////////////////////////////////////////////////////////////
 
         //set up channel navigation dropdowns:

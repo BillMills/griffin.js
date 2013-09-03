@@ -587,7 +587,7 @@ tbody tbody a:link{
 }
 
 
-.filterDiv{
+.filterDiv, .cycleDiv{
 	border: 5px solid #999999;
 	border-radius: 25px;
 	min-height: 100px;

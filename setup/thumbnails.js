@@ -540,4 +540,17 @@ function glowy(canvasID){
 
 }
 
+//cycle badges/////////////////////////////////////////////////////
+function clearScalars(context, width, height, x0, y0){
+	context.beginPath();
+	context.arc(x0,y0, height*0.3, 0, Math.PI*2);
+	context.stroke();
+	context.closePath();
+}
 
+function moveTape(context, width, height, x0, y0){
+	context.beginPath();
+	context.arc(x0,y0, height*0.3, 0, Math.PI*2);
+	context.stroke();
+	context.closePath();
+}
