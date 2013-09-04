@@ -640,6 +640,14 @@ tbody tbody a:link{
 	top:5px; left:5px;
 }
 
+.cycleStep{
+	margin:0px;
+	border-radius: 25px;
+	padding:1em;
+	border:5px solid #999999;
+
+}
+
 :invalid{
 	color: #FF0000;
 	border: 2px solid #FF0000;
