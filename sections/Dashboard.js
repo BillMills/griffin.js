@@ -1,12 +1,12 @@
 function Dashboard(){
 
-    var subsPresent, key, that = this;
+    var subsPresent, subsNames, key, that = this;
 
 	this.wrapperID = window.parameters.wrapper;             //ID of wrapping div
 	this.canvasID = 'DashboardCanvas';	                    //ID of canvas to paint dashboard on
     this.linkWrapperID = 'DashboardLinks';                  //ID of div to contain clock view header
     this.sidebarID = 'dashboardMenus';                      //ID of dashboard sidebar div
-    this.labels = [window.parameters.ExpName, window.parameters.ExpName, window.parameters.ExpName, 0, 0, 0, 'DUMP']      //names of corona, downstream lamp, upstream lamp, corona auxilary, chamber ds, chamber us, beamdump detectors
+    this.labels = [window.parameters.HPGemode, window.parameters.HPGemode, window.parameters.HPGemode, 0, 0, 0, 'DUMP']      //names of corona, downstream lamp, upstream lamp, corona auxilary, chamber ds, chamber us, beamdump detectors
     this.pointers = []; //global pointers to subsystems, to fetch the correct total rate for each section
     //colors:
     this.USLcolor = '#000000';
@@ -47,11 +47,11 @@ function Dashboard(){
         this.labels[4] = 'SHARC';
         this.pointers[4] = window.SHARCpointer;
     }
-    if(window.parameters.deployment.TIP && window.parameters.TIPmode == 'Wall'){
+    if(window.parameters.deployment.TIPwall){
         this.labels[4] = 'TIP Wall';
         this.pointers[4] = window.TIPwallpointer;
     }
-    if(window.parameters.deployment.TIP && window.parameters.TIPmode == 'Ball'){
+    if(window.parameters.deployment.TIPball){
         this.labels[4] = 'TIP Ball';
         this.pointers[4] = window.TIPballpointer;
     }
@@ -89,12 +89,20 @@ function Dashboard(){
 	this.wrapper = document.getElementById(this.wrapperID);
 
     //right sidebar menus
-    subsPresent = [window.parameters.ExpName];
+    subsPresent = [window.parameters.HPGemode];
+    subsNames = [window.parameters.HPGemode];
     for(key in window.parameters.deployment){
-        if(window.parameters.deployment[key] && key!='HPGe')
+        if(window.parameters.deployment[key] && key!='HPGe'){
             subsPresent[subsPresent.length] = key;
+            if(key == 'TIPwall')
+                subsNames[subsNames.length] = 'TIP Wall';
+            else if(key == 'TIPball')
+                subsNames[subsNames.length] = 'TIP Ball'
+            else
+                subsNames[subsNames.length] = key;
+        }
     }
-    deployMenu(this.sidebarID, subsPresent , subsPresent);
+    deployMenu(this.sidebarID, subsPresent , subsNames);
 
     //add top level nav button:
     insertDOM('button', 'DashboardButton', 'navLinkDown', '', 'statusLink', function(){swapView('DashboardLinks', 'DashboardCanvas', 'dashboardMenus', 'DashboardButton'); rePaint();}, 'Dashboard', '', 'button')
@@ -343,10 +351,13 @@ function Dashboard(){
 
         this.USLcolor = this.parseColor(this.pointers[2].dataBus.totalRate);
         this.coronaColor = this.parseColor(this.pointers[0].dataBus.totalRate);
-        this.auxCoronaColor = this.parseColor(this.pointers[3].dataBus.totalRate);
+        if(this.pointers[3])
+            this.auxCoronaColor = this.parseColor(this.pointers[3].dataBus.totalRate);
         this.DSLcolor = this.parseColor(this.pointers[1].dataBus.totalRate);
-        this.DSchamberColor = this.parseColor(this.pointers[4].dataBus.totalRate);
-        this.USchamberColor = this.parseColor(this.pointers[5].dataBus.totalRate);
+        if(this.pointers[4])
+            this.DSchamberColor = this.parseColor(this.pointers[4].dataBus.totalRate);
+        if(this.pointers[5])
+            this.USchamberColor = this.parseColor(this.pointers[5].dataBus.totalRate);
         //this.dumpColor = this.parseColor(this.pointers[6].dataBus.totalRate);
     };
 
