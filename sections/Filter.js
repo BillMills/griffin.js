@@ -1,3 +1,6 @@
+//TODO: both the Filter and Cycle pages make use of a draggable badge system of defining groups and relationships.  The code for this
+//is currently pretty spaghetti, should factor out a reusable class.
+
 function Filter(){
     var that = this,
     i;
@@ -487,12 +490,15 @@ function dragOver(event){
 function deployBadgeCanvas(width, height, id, wrapperID, paintThumb, thumbArgs, label, draggable){
     var canvas, context;
 
+    //bail out if canvas already exists:
+    if(document.getElementById(id+wrapperID)) return;
+
     insertDOM('canvas', id+wrapperID, '', 'width:'+this.badgeWidth+'px; height:'+this.badgeHeight+'px;', wrapperID, '', '');
     canvas = document.getElementById(id+wrapperID);
     context = canvas.getContext('2d');
     canvas.setAttribute('width', width);
     canvas.setAttribute('height', height);
-    context.font = '14px Raleway';
+    context.font = Math.min(14, fitFont(context, label, width))+'px Raleway';
     context.fillStyle = '#999999';
     context.strokeStyle = '#999999';
     paintThumb.apply(null, [context].concat(thumbArgs));
@@ -508,13 +514,20 @@ function deployBadgeCanvas(width, height, id, wrapperID, paintThumb, thumbArgs, 
         canvas.onclick = function(event){
 
                                 var element, x,y,
-                                    coords = this.relMouseCoords(event);
+                                    coords = this.relMouseCoords(event),
+                                    width = (window.onDisplay == 'editFilterCanvas') ? window.filterEditPointer.badgeWidth : window.cyclePointer.badgeWidth;
                                 x = coords.x;
                                 y = coords.y;
-                                if( Math.pow(window.filterEditPointer.badgeWidth-10 - x, 2) + Math.pow(y-10,2) < 49 ){
+                                if( Math.pow(width-10 - x, 2) + Math.pow(y-10,2) < 49 ){
+                                    /*
                                     element = document.getElementById(this.id.slice(this.id.indexOf('Canvas')+6, this.id.length));
                                     if(element)
                                         element.parentNode.removeChild(element);
+                                    */
+                                    if(window.onDisplay == 'editFilterCanvas')
+                                        this.parentNode.parentNode.removeChild(this.parentNode);
+                                    else if(window.onDisplay == 'cycleCanvas')
+                                        this.parentNode.removeChild(this);
                                 }
                             };
     }

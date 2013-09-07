@@ -34,7 +34,7 @@ function Cycle(){
 
     //div structure for drag and drop area: right panel for detector palete, two-div column for Single Stream and Interstream Filters:
     insertDOM('div', 'cycleWrapper', '', 'width:'+0.48*$(this.wrapper).width()+'px; margin-top:1em; display:block', this.linkWrapperID, '', '');
-    insertDOM('div', 'cycleSteps', '', 'width:78%; padding:1em; float:left; text-align:center;', 'cycleWrapper', '', '');
+    insertDOM('div', 'cycleSteps', '', 'width:79%; padding:0.5em; float:left; text-align:center;', 'cycleWrapper', '', '');
     insertDOM('div', 'cyclePalete', 'cycleDiv', 'width:20%; float:right; text-align:center; padding-top:1em;', 'cycleWrapper', '', '');
 
     //start display off with one drop target, filled with just an instruction on how to proceed:
@@ -57,16 +57,21 @@ function Cycle(){
     deployMenu(this.sidebarID, ['Cycle'], ['Cycle Details']);    
 
     //inject options into palete
-    this.badgeWidth = document.getElementById('cyclePalete').offsetWidth*0.9;
+    this.badgeWidth = document.getElementById('cyclePalete').offsetWidth*0.6//0.9;
     this.badgeHeight = 100;
     //Clear Scalars
     deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'clearScalarsPaleteBadge', 'cyclePalete', clearScalars, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Clear Scalars', true);
     //Move Tape
     deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'moveTapePaleteBadge', 'cyclePalete', moveTape, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Move Tape', true);
+    //Trigers On
+    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'triggersOnPaleteBadge', 'cyclePalete', triggersOn, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Triggers On', true);
+    //Beam On
+    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'beamOnPaleteBadge', 'cyclePalete', beamOn, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Beam On', true);
     //modify the dragstart of the palete badges:
     document.getElementById('clearScalarsPaleteBadgecyclePalete').addEventListener('dragstart', paleteDragStart, false);
     document.getElementById('moveTapePaleteBadgecyclePalete').addEventListener('dragstart', paleteDragStart, false);
-
+    document.getElementById('triggersOnPaleteBadgecyclePalete').addEventListener('dragstart', paleteDragStart, false);
+    document.getElementById('beamOnPaleteBadgecyclePalete').addEventListener('dragstart', paleteDragStart, false);
 
 
 
@@ -151,9 +156,8 @@ function cycleDrop(event){
     //do stuff with the payload data
     if(!(payload.slice(0,9)=='cycleStep')){
         if(contentBlock.innerHTML.indexOf(window.cyclePointer.helpMessage) != -1)
-            contentBlock.innerHTML = event.dataTransfer.getData('text/plain'); 
-        else
-            contentBlock.innerHTML += event.dataTransfer.getData('text/plain');
+            contentBlock.innerHTML = ''; 
+        deployBadge.apply(window.cyclePointer, [payload, contentBlock.id]);
     }
 
     return false;   
@@ -200,7 +204,8 @@ function createCycleStep(input){
     stepDiv.contentID = 'cycleContent'+window.cyclePointer.nCycleSteps
     insertDOM('div', stepDiv.contentID, '', 'display:inline;', 'cycleStep'+window.cyclePointer.nCycleSteps, '', '');
     //deploy the div with something in it:
-    document.getElementById(stepDiv.contentID).innerHTML = input;
+    //document.getElementById(stepDiv.contentID).innerHTML = input;
+    deployBadge.apply(window.cyclePointer, [input, 'cycleContent'+window.cyclePointer.nCycleSteps]);
 
     //duration block:
     durationBadge(window.cyclePointer.nCycleSteps, 'cycleStep'+window.cyclePointer.nCycleSteps);
@@ -263,10 +268,10 @@ function durationBadge(index, parentID){
     insertDOM('input', 'durationInput'+index, '', 'background-color:#333333; border:0px; color:#FFFFFF; font-size:200%; font-family:Raleway; width:3em', 'durationDiv'+index, '', '', '', 'number');
     insertDOM('br', 'break', '', '', 'durationDiv'+index);
     //unit
-    createOptionScroll('durationDiv'+index, 'durationScroll'+index, ['millisec', 'seconds', 'minutes'], window.cyclePointer.badgeWidth);
+    createOptionScroll('durationDiv'+index, 'durationScroll'+index, ['millisec', 'seconds', 'minutes'], window.cyclePointer.badgeWidth*1.3);
     insertDOM('br', 'break', '', '', 'durationDiv'+index);
     //slider
-    insertDOM('input', 'durationSlider'+index, '', '', 'durationDiv'+index, '', '', '', 'range');
+    insertDOM('input', 'durationSlider'+index, '', 'width:80%; margin:0px', 'durationDiv'+index, '', '', '', 'range');
     document.getElementById('durationSlider'+index).min = 0;
     document.getElementById('durationSlider'+index).max = 1000;
     document.getElementById('durationSlider'+index).onchange = function(){
@@ -277,7 +282,21 @@ function durationBadge(index, parentID){
 
 }
 
+//insert the appropriate badge into the command div:
+function deployBadge(badge, commandID){
 
+
+    if(badge == 'clearScalars')
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'clearScalarsPaleteBadge', commandID, clearScalars, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Clear Scalars', false);
+    else if(badge == 'moveTape')
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'moveTapePaleteBadge', commandID, moveTape, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Move Tape', false);
+    else if(badge == 'triggersOn')
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'triggersOnPaleteBadge', commandID, triggersOn, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Triggers On', false);
+    else if(badge == 'beamOn')
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'beamOnPaleteBadge', commandID, beamOn, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Beam On', false);
+    else
+        document.getElementById(commandID).innerHTML = badge;
+}
 
 
 
