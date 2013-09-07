@@ -79,6 +79,8 @@ function Cycle(){
 
 }
 
+
+//functions for drag and drop event listeners to call////////////////////////////////////////////////////
 function paleteDragStart(){
     event.dataTransfer.effectAllowed = 'move';
     event.dataTransfer.setData('text/plain', this.id.slice(0, this.id.indexOf('PaleteBadge')));
@@ -175,6 +177,8 @@ function cycleDragLeave(){
     return false;
 }
 
+//extended page elements/////////////////////////////////////////////////////////////////////////////////////////////
+
 //create a cycle step div based on the <input> recieved from the drop event:
 function createCycleStep(input){
     var stepDiv;
@@ -197,6 +201,9 @@ function createCycleStep(input){
     insertDOM('div', stepDiv.contentID, '', 'display:inline;', 'cycleStep'+window.cyclePointer.nCycleSteps, '', '');
     //deploy the div with something in it:
     document.getElementById(stepDiv.contentID).innerHTML = input;
+
+    //duration block:
+    durationBadge(window.cyclePointer.nCycleSteps, 'cycleStep'+window.cyclePointer.nCycleSteps);
 
     //kill button
     insertDOM('button', 'deleteCycleStep'+window.cyclePointer.nCycleSteps, 'deleteButton', 'position:static; float:right;', 'cycleStep'+window.cyclePointer.nCycleSteps, function(){
@@ -246,6 +253,29 @@ function terminationBadge(){
         window.cyclePointer.nCycleSteps++;}, 'New Command', '', 'button');
 }
 
+//create a duration control badge for deployment in each cycle step
+function durationBadge(index, parentID){
+    var canvas, context;
+
+    //wrapper div
+    insertDOM('div', 'durationDiv'+index, '', 'display:inline-block; text-align:center;', parentID, '', '');
+    //number input
+    insertDOM('input', 'durationInput'+index, '', 'background-color:#333333; border:0px; color:#FFFFFF; font-size:200%; font-family:Raleway; width:3em', 'durationDiv'+index, '', '', '', 'number');
+    insertDOM('br', 'break', '', '', 'durationDiv'+index);
+    //unit
+    createOptionScroll('durationDiv'+index, 'durationScroll'+index, ['millisec', 'seconds', 'minutes'], window.cyclePointer.badgeWidth);
+    insertDOM('br', 'break', '', '', 'durationDiv'+index);
+    //slider
+    insertDOM('input', 'durationSlider'+index, '', '', 'durationDiv'+index, '', '', '', 'range');
+    document.getElementById('durationSlider'+index).min = 0;
+    document.getElementById('durationSlider'+index).max = 1000;
+    document.getElementById('durationSlider'+index).onchange = function(){
+        document.getElementById('durationInput'+index).value = this.valueAsNumber;
+    }
+    document.getElementById('durationInput'+index).value = document.getElementById('durationSlider'+index).valueAsNumber;
+    
+
+}
 
 
 
