@@ -103,10 +103,8 @@ function masterLoop(callMyself, noFetch){
         //Dashboard
         window.dashboard.update();       
 
-        //let the alarm services know the update is complete:
-        var allDone = new   CustomEvent("refreshComplete", {
-                            });
-        window.AlarmServices.div.dispatchEvent(allDone);
+        //let the alarm service do it's thing now that the update is complete:
+        window.AlarmServices.publishAlarms();
 
     }
     

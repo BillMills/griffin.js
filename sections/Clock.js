@@ -159,16 +159,7 @@ function Clock(){
                 else
                     alarmString += ' are all claiming to be Master.<br>'
             }
-            /*
-            //post an alarm to the alarm service:
-            var nMasterAlarm = new  CustomEvent("alarmTrip", {
-                                        detail: {
-                                            alarmType: 'clock',
-                                            alarmStatus: alarmString
-                                        }
-                                    });
-            window.AlarmServices.div.dispatchEvent(nMasterAlarm);
-            */
+            window.AlarmServices.clockAlarms[window.AlarmServices.clockAlarms.length] = alarmString;
         }
 
         //consistency alarms////////////////////////////////////////////////////////
@@ -208,18 +199,8 @@ function Clock(){
                 alarmString = 'GRIF-Clk '+i+' claims to be a Slave, but some of its parameters make it look like a Master.<br>'
                 setClockAlarm('clock'+i);
             }
-            /*
-            //post an alarm to the alarm service:
-            if(flag!=0){
-                var consistencyAlarm = new  CustomEvent("alarmTrip", {
-                                            detail: {
-                                                alarmType: 'clock',
-                                                alarmStatus: alarmString        
-                                            }
-                                        });
-                window.AlarmServices.div.dispatchEvent(consistencyAlarm);
-            }
-            */
+            if(flag!=0)
+                window.AlarmServices.clockAlarms[window.AlarmServices.clockAlarms.length] = alarmString;
         }
 
     };
@@ -227,6 +208,8 @@ function Clock(){
     //initial populate, and default the summary tab to open:
     this.update();
     document.getElementById('summaryarrow').onclick();
+    //make sure no double counting in the alarm service:
+    window.AlarmServices.wipeAlarms();
 
 }
 

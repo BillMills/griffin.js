@@ -910,48 +910,23 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                             this.dataBus[k].alarmStatus[i][j][2] = -1;
                         }
 
-                        //fire an event at the AlarmServices object for every alarm:
+                        //register alarms in AlarmServices object:
                         //voltage alarms:
-                        
                         if(this.dataBus[k].alarmStatus[i][j][0] > 0){
-                            var voltageAlarm = new  CustomEvent("alarmTrip", {
-                                                        detail: {
-                                                            alarmType: 'voltage',
-                                                            alarmStatus: [i,j,k,this.dataBus[k].alarmStatus[i][j][0]]        
-                                                        }
-                                                    });
-                            AlarmServices.div.dispatchEvent(voltageAlarm);
+                            AlarmServices.voltageAlarms[AlarmServices.voltageAlarms.length] = [i,j,k,this.dataBus[k].alarmStatus[i][j][0]];
                         }
                         //current alarms:
                         if(this.dataBus[k].alarmStatus[i][j][1] > 0){
-                            var currentAlarm = new  CustomEvent("alarmTrip", {
-                                                        detail: {
-                                                            alarmType: 'current',
-                                                            alarmStatus: [i,j,k,this.dataBus[k].alarmStatus[i][j][1]]        
-                                                        }
-                                                    });
-                            AlarmServices.div.dispatchEvent(currentAlarm);
+                            AlarmServices.currentAlarms[AlarmServices.currentAlarms.length] = [i,j,k,this.dataBus[k].alarmStatus[i][j][0]];
                         }
                         //temperature alarms:
                         if(this.dataBus[k].alarmStatus[i][j][2] > 0){
-                            var temperatureAlarm = new  CustomEvent("alarmTrip", {
-                                                            detail: {
-                                                                alarmType: 'temperature',
-                                                                alarmStatus: [i,j,k,this.dataBus[k].alarmStatus[i][j][2]]        
-                                                            }
-                                                        });
-                            AlarmServices.div.dispatchEvent(temperatureAlarm);
+                            AlarmServices.temperatureAlarms[AlarmServices.temperatureAlarms.length] = [i,j,k,this.dataBus[k].alarmStatus[i][j][0]];   
                         }
                         
                     }
                 }
             }
-
-            //let the alarm services know the update is complete:
-            //why is this in the HV service?  moved out to the masterLoop, hopefully nothing breaks:
-            //var allDone = new   CustomEvent("refreshComplete", {
-            //                    });
-            //AlarmServices.div.dispatchEvent(allDone);
         };
 
         this.animate = function(){
