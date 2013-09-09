@@ -428,7 +428,9 @@ button.alarmButton{
 }
 
 p.alarmPara{
-	text-align:center;
+	text-align:left;
+	padding-left:2em;
+	padding-right:1em;
 	z-index:1;
 	opacity:1;
 	transition:opacity 0.5s, z-index 0.5s;

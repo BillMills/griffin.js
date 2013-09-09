@@ -102,12 +102,12 @@ function masterLoop(callMyself, noFetch){
         if(window.parameters.topDeployment['Cycle']) window.cyclePointer.update();
         //Dashboard
         window.dashboard.update();       
-/*
+
         //let the alarm services know the update is complete:
         var allDone = new   CustomEvent("refreshComplete", {
                             });
         window.AlarmServices.div.dispatchEvent(allDone);
-*/
+
     }
     
     //remove all temporary scripts from the head so they don't accrue:
@@ -118,7 +118,7 @@ function masterLoop(callMyself, noFetch){
     }
 
     //next iteration:
-    window.loop = setTimeout(function(){loadJSONP(window.Gatekeeper, 1)}, 60000);
+    window.loop = setTimeout(function(){loadJSONP(window.Gatekeeper, 1)}, 3000);
 }
 
 //determine what size cards are in what slot:

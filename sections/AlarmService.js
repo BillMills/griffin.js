@@ -32,6 +32,13 @@ function AlarmService(sidebarDivID, sidebarDetailDivID){
 	this.rateAlarms = [];
     this.clockAlarms = [];
 
+    //remember last message printed to the message log, only print when the message changes:
+    this.lastVoltageMessage = '';
+    this.lastCurrentMessage = '';
+    this.lastTemperatureMessage = '';
+    this.lastRateMessage = '';
+    this.lastClockMessage = '';
+
 	//establish animation parameters:
     this.FPS = 30;
     this.duration = 0.3;
@@ -96,12 +103,27 @@ function AlarmService(sidebarDivID, sidebarDetailDivID){
 
     //print the alarms to the <p>:
     this.printAlarms = function(){
-    	var i;
-    	var alarmText = '';
-    	var slot = -1;
-    	var channel = -1;
+    	var i,
+    	    alarmText = '',
+    	    slot = -1,
+    	    channel = -1,
+            messageLogText = '',
+            MIDASalarms = ODBGetAlarms();
 
-    	if(this.voltageAlarms.length != 0) alarmText += 'Voltage Alarms<br>'
+        //include all the MIDAS alarms:
+        if(MIDASalarms.length > 0){
+            alarmText += '<h2>MIDAS Alarms</h2>'
+            for(i=0; i<MIDASalarms.length; i++){
+                alarmText += MIDASalarms[i] + '<br><br>';
+            }
+        }
+
+        //Voltage, loop this with current and temperature plz
+        messageLogText = '';
+    	if(this.voltageAlarms.length != 0){
+            alarmText += '<h2>Voltage Alarms</h2>';
+            messageLogText = 'Voltage alarms thrown by ';
+        }
     	for(i=0; i<Math.min(this.voltageAlarms.length, this.nAlarms); i++){
     		slot = primaryBin(window.parameters.moduleSizes[this.voltageAlarms[i][2]], this.voltageAlarms[i][1]);
     		channel = channelMap(this.voltageAlarms[i][1], this.voltageAlarms[i][0], window.parameters.moduleSizes[this.voltageAlarms[i][2]], window.parameters.rows + 1);
@@ -113,9 +135,26 @@ function AlarmService(sidebarDivID, sidebarDetailDivID){
     		alarmText += 'Demand Voltage: ' + (this.demandVoltage[this.voltageAlarms[i][2]][this.voltageAlarms[i][0]][this.voltageAlarms[i][1]]).toFixed(window.parameters.alarmPrecision) + ' V<br>';
     		alarmText += 'Report Voltage: ' + (this.reportVoltage[this.voltageAlarms[i][2]][this.voltageAlarms[i][0]][this.voltageAlarms[i][1]]).toFixed(window.parameters.alarmPrecision) + ' V<br><br>';
 
-    	}
+            if(i>0) messageLogText += ', ';
+            messageLogText += (channel == -1) ? ('Slot ' + slot + ' Primary') : ('Slot ' + slot + ', Ch. ' + channel);
 
-    	if(this.currentAlarms.length != 0) alarmText += '<br>Current Alarms<br>'
+    	}
+        if(messageLogText != this.lastVoltageMessage){
+            if(messageLogText == '')
+                ODBSet('/DashboardConfig/CustomAlarms/Voltage', 0);
+            else{    
+                ODBSet('/DashboardConfig/CustomAlarms/Voltage', 1);
+                ODBGenerateMsg(messageLogText);
+                this.lastVoltageMessage = messageLogText;
+            }
+        }
+
+        //current
+        messageLogText = '';
+    	if(this.currentAlarms.length != 0){ 
+            alarmText += '<h2>Current Alarms</h2>';
+            messageLogText = 'Current alarms thrown by ';
+        }
     	for(i=0; i<Math.min(this.currentAlarms.length, this.nAlarms); i++){
     		slot = primaryBin(window.parameters.moduleSizes[this.currentAlarms[i][2]], this.currentAlarms[i][1]);
     		channel = channelMap(this.currentAlarms[i][1], this.currentAlarms[i][0], window.parameters.moduleSizes[this.currentAlarms[i][2]], window.parameters.rows + 1);
@@ -124,9 +163,26 @@ function AlarmService(sidebarDivID, sidebarDetailDivID){
     		} else
 	    		alarmText += 'Slot ' + slot + ', Ch. ' + channel + '<br>';
     		alarmText += (this.reportCurrent[this.currentAlarms[i][2]][this.currentAlarms[i][0]][this.currentAlarms[i][1]]).toFixed(window.parameters.alarmPrecision) + ' uA<br><br>';
-    	}
 
-    	if(this.temperatureAlarms.length != 0) alarmText += '<br>Temperature Alarms<br>'
+            if(i>0) messageLogText += ', ';
+            messageLogText += (channel == -1) ? ('Slot ' + slot + ' Primary') : ('Slot ' + slot + ', Ch. ' + channel);
+    	}
+        if(messageLogText != this.lastCurrentMessage){
+            if(messageLogText == '')
+                ODBSet('/DashboardConfig/CustomAlarms/Current', 0);
+            else{    
+                ODBSet('/DashboardConfig/CustomAlarms/Current', 1);
+                ODBGenerateMsg(messageLogText);
+                this.lastCurrentMessage = messageLogText;
+            }
+        }
+
+        //temperature
+        messageLogText = '';
+    	if(this.temperatureAlarms.length != 0){
+            alarmText += '<h2>Temperature Alarms</h2>';
+            messageLogText = 'Temperature alarms thrown by ';
+        }
     	for(i=0; i<Math.min(this.temperatureAlarms.length, this.nAlarms); i++){
 	   		slot = primaryBin(window.parameters.moduleSizes[this.temperatureAlarms[i][2]], this.temperatureAlarms[i][1]);
     		channel = channelMap(this.temperatureAlarms[i][1], this.temperatureAlarms[i][0], window.parameters.moduleSizes[this.temperatureAlarms[i][2]], window.parameters.rows + 1);
@@ -135,14 +191,28 @@ function AlarmService(sidebarDivID, sidebarDetailDivID){
     		} else
 	    		alarmText += 'Slot ' + slot + ', Ch. ' + channel + '<br>';
     		alarmText += (this.reportTemperature[this.temperatureAlarms[i][2]][this.temperatureAlarms[i][0]][this.temperatureAlarms[i][1]]).toFixed(window.parameters.alarmPrecision) + ' C<br><br>';
-    	}
 
-    	if(this.rateAlarms.length != 0) alarmText += '<br>Rate Alarms<br>'
+            if(i>0) messageLogText += ', ';
+            messageLogText += (channel == -1) ? ('Slot ' + slot + ' Primary') : ('Slot ' + slot + ', Ch. ' + channel);            
+    	}
+        if(messageLogText != this.lastCurrentMessage){
+            if(messageLogText == '')
+                ODBSet('/DashboardConfig/CustomAlarms/Temperature', 0);
+            else{    
+                ODBSet('/DashboardConfig/CustomAlarms/Temperature', 1);
+                ODBGenerateMsg(messageLogText);
+                this.lastTemperatureMessage = messageLogText;
+            }
+        }
+
+        //rate TBD
+    	if(this.rateAlarms.length != 0) alarmText += '<h2>Rate Alarms</h2>'
     	for(i=0; i<Math.min(this.rateAlarms.length, this.nAlarms); i++){
     		alarmText += this.rateAlarms[i] + '<br>';
     	}
 
-        if(this.clockAlarms.length !=0) alarmText += '<br>Clock Alarms<br>'
+        //clock TBD
+        if(this.clockAlarms.length !=0) alarmText += '<h2>Clock Alarms</h2>'
         for(i=0; i<this.clockAlarms.length; i++){
             alarmText += this.clockAlarms[i]+'<br>';
         }

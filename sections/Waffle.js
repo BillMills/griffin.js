@@ -912,7 +912,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
 
                         //fire an event at the AlarmServices object for every alarm:
                         //voltage alarms:
-                        /*
+                        
                         if(this.dataBus[k].alarmStatus[i][j][0] > 0){
                             var voltageAlarm = new  CustomEvent("alarmTrip", {
                                                         detail: {
@@ -942,7 +942,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                                                         });
                             AlarmServices.div.dispatchEvent(temperatureAlarm);
                         }
-                        */
+                        
                     }
                 }
             }
@@ -980,6 +980,8 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
 
         //do an initial populate of the waffle:
         this.fetchNewData();
+        //don't double count the alarms:
+        window.AlarmServices.wipeAlarms();
         //also, draw the input sidebar for 0,0 on first call:
         channelSelect(that);
 }
