@@ -649,6 +649,25 @@ tbody tbody a:link{
 	border:5px solid #999999;
 }
 
+#terminateCycle{
+	border:5px solid #999999; 
+	border-radius:25px; 
+	width:-moz-min-content;
+	width:-webkit-min-content; 
+	padding:1em; 
+	margin-left:auto; 
+	margin-right:auto;
+}
+
+.cycleDurationInput{
+	background-color:#333333; 
+	border:0px; 
+	color:#FFFFFF; 
+	font-size:200%; 
+	font-family:Raleway; 
+	width:3em;
+}
+
 :invalid{
 	color: #FF0000;
 	border: 2px solid #FF0000;

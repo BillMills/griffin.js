@@ -131,7 +131,7 @@ function flipToggle(event, id, enabled, disabled, onActivate, onDeactivate){
 
 
 //option scroll//////////////////////////////////////////
-function createOptionScroll(wrapperID, id, options, maxWidth){
+function createOptionScroll(wrapperID, id, options, maxWidth, callback){
 	var i, stringWidths = [], optionWidth;
 
 	insertDOM('div', id, 'scrollWrapper', 'width:'+maxWidth+'px', wrapperID, '', '');
@@ -161,6 +161,10 @@ function createOptionScroll(wrapperID, id, options, maxWidth){
 			scroll.chosen--;
 		}
 		document.getElementById(id+'Selected').innerHTML = scroll.options[scroll.chosen];
+
+		if(callback)
+			callback();
+
 	}
 
 	document.getElementById(id+'RightArrow').onclick = function(){
@@ -173,6 +177,9 @@ function createOptionScroll(wrapperID, id, options, maxWidth){
 			scroll.chosen++;
 		}
 		document.getElementById(id+'Selected').innerHTML = scroll.options[scroll.chosen];
+
+		if(callback)
+			callback();
 	}	
 
 }

@@ -37,6 +37,10 @@ function Cycle(){
     insertDOM('div', 'cycleSteps', '', 'width:79%; padding:0.5em; float:left; text-align:center;', 'cycleWrapper', '', '');
     insertDOM('div', 'cyclePalete', 'cycleDiv', 'width:20%; float:right; text-align:center; padding-top:1em;', 'cycleWrapper', '', '');
 
+    //inject options into palete
+    this.badgeWidth = document.getElementById('cyclePalete').offsetWidth*0.6//0.9;
+    this.badgeHeight = 100;
+
     //start display off with one drop target, filled with just an instruction on how to proceed:
     createCycleStep(this.helpMessage);
     this.nCycleSteps++;
@@ -56,9 +60,6 @@ function Cycle(){
     //deploy right bar menu:
     deployMenu(this.sidebarID, ['Cycle'], ['Cycle Details']);    
 
-    //inject options into palete
-    this.badgeWidth = document.getElementById('cyclePalete').offsetWidth*0.6//0.9;
-    this.badgeHeight = 100;
     //Clear Scalars
     deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'clearScalarsPaleteBadge', 'cyclePalete', clearScalars, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Clear Scalars', true);
     //Move Tape
@@ -155,8 +156,10 @@ function cycleDrop(event){
 
     //do stuff with the payload data
     if(!(payload.slice(0,9)=='cycleStep')){
-        if(contentBlock.innerHTML.indexOf(window.cyclePointer.helpMessage) != -1)
-            contentBlock.innerHTML = ''; 
+        if(contentBlock.innerHTML.indexOf(window.cyclePointer.helpMessage) != -1){
+            contentBlock.innerHTML = '';
+            contentBlock.setAttribute('style', 'display:inline;'); 
+        }
         deployBadge.apply(window.cyclePointer, [payload, contentBlock.id]);
     }
 
@@ -188,7 +191,7 @@ function createCycleStep(input){
     var stepDiv;
 
     //actual div
-    insertDOM('div', 'cycleStep'+window.cyclePointer.nCycleSteps, 'cycleStep', '', 'cycleSteps', '', '');
+    insertDOM('div', 'cycleStep'+window.cyclePointer.nCycleSteps, 'cycleStep', 'display:inline-block; margin-left:auto; margin-right:auto;', 'cycleSteps', '', '');
     stepDiv = document.getElementById('cycleStep'+window.cyclePointer.nCycleSteps)
     stepDiv.draggable = 'true';
 
@@ -214,6 +217,9 @@ function createCycleStep(input){
     insertDOM('button', 'deleteCycleStep'+window.cyclePointer.nCycleSteps, 'deleteButton', 'position:static; float:right;', 'cycleStep'+window.cyclePointer.nCycleSteps, function(){
         //delete only if there's a button to make a new div:
         if(document.getElementById('terminateCycle')){
+            //delete linebreak:
+            var linebreak = document.getElementById('break'+this.id.slice(15, this.id.length));
+            linebreak.parentNode.removeChild(linebreak);
             //delete timeline divs:
             var leftDiv = document.getElementById('leftCycleSpacer'+this.id.slice(15, this.id.length));
             leftDiv.parentNode.removeChild(leftDiv);
@@ -233,6 +239,7 @@ function createCycleStep(input){
     
 
     //spacer divs to create timeline:
+    insertDOM('br', 'break'+window.cyclePointer.nCycleSteps, '', '', 'cycleSteps');
     insertDOM('div', 'leftCycleSpacer'+window.cyclePointer.nCycleSteps, '', 'display:inline-block; height:50px; width:50%', 'cycleSteps', '', '');
     insertDOM('div', 'rightCycleSpacer'+window.cyclePointer.nCycleSteps, '', 'display:inline-block; border-left: 5px solid #999999; height:50px; width:50%', 'cycleSteps', '', '');
     //spacers listen for things to be dropped on them, so commands can be inserted mid-stream
@@ -252,10 +259,12 @@ function createCycleStep(input){
 
 //create a timeline termination badge that includes a button to create a new empty command:
 function terminationBadge(){
-    insertDOM('div', 'terminateCycle', '', 'border:5px solid #999999; width:30%; margin-left:auto; margin-right:auto;', 'cycleSteps', '', '');
+    insertDOM('div', 'terminateCycle', '', '', 'cycleSteps', '', '');
     insertDOM('button', 'newCommand', 'navLink', '','terminateCycle', function(){
-        createCycleStep(window.cyclePointer.helpMessage); 
-        window.cyclePointer.nCycleSteps++;}, 'New Command', '', 'button');
+        createCycleStep(window.cyclePointer.helpMessage);
+        document.getElementById('cycleContent'+window.cyclePointer.nCycleSteps).setAttribute('style', 'display:inline; float:left; padding-top:30px; max-width:65%') 
+        window.cyclePointer.nCycleSteps++;
+    }, 'New Command', '', 'button');
 }
 
 //create a duration control badge for deployment in each cycle step
@@ -263,12 +272,25 @@ function durationBadge(index, parentID){
     var canvas, context;
 
     //wrapper div
-    insertDOM('div', 'durationDiv'+index, '', 'display:inline-block; text-align:center;', parentID, '', '');
+    insertDOM('div', 'durationDiv'+index, '', 'display:inline-block; text-align:center; border-left:1px solid #999999; margin-left:5px;', parentID, '', '');
     //number input
-    insertDOM('input', 'durationInput'+index, '', 'background-color:#333333; border:0px; color:#FFFFFF; font-size:200%; font-family:Raleway; width:3em', 'durationDiv'+index, '', '', '', 'number');
+    insertDOM('input', 'durationInput'+index, 'cycleDurationInput', '', 'durationDiv'+index, '', '', '', 'number');
     insertDOM('br', 'break', '', '', 'durationDiv'+index);
+    insertDOM('p', 'infiniteDuration'+index, '', 'display:none; font-size:230%; margin:0px;', 'durationDiv'+index, '', String.fromCharCode(0x221E) );
     //unit
-    createOptionScroll('durationDiv'+index, 'durationScroll'+index, ['millisec', 'seconds', 'minutes'], window.cyclePointer.badgeWidth*1.3);
+    createOptionScroll('durationDiv'+index, 'durationScroll'+index, ['millisec', 'seconds', 'minutes', 'infinite'], window.cyclePointer.badgeWidth*1.3,
+        function(){
+            if(document.getElementById('durationScroll'+index+'Selected').innerHTML == 'infinite'){
+                document.getElementById('durationInput'+index).style.display = 'none';
+                document.getElementById('durationSlider'+index).style.display = 'none';
+                document.getElementById('infiniteDuration'+index).style.display = 'block';
+            } else{
+                document.getElementById('durationInput'+index).style.display = '';
+                document.getElementById('durationSlider'+index).style.display = '';
+                document.getElementById('infiniteDuration'+index).style.display = 'none';                
+            }
+        });
+    //when infinite is selected, remove UI elements and just show infinite:
     insertDOM('br', 'break', '', '', 'durationDiv'+index);
     //slider
     insertDOM('input', 'durationSlider'+index, '', 'width:80%; margin:0px', 'durationDiv'+index, '', '', '', 'range');
@@ -278,6 +300,11 @@ function durationBadge(index, parentID){
         document.getElementById('durationInput'+index).value = this.valueAsNumber;
     }
     document.getElementById('durationInput'+index).value = document.getElementById('durationSlider'+index).valueAsNumber;
+    document.getElementById('durationInput'+index).min = 0;
+    document.getElementById('durationInput'+index).max = 1000;
+    document.getElementById('durationInput'+index).onchange = function(){
+        document.getElementById('durationSlider'+index).value = this.valueAsNumber;
+    }
     
 
 }
@@ -294,8 +321,10 @@ function deployBadge(badge, commandID){
         deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'triggersOnPaleteBadge', commandID, triggersOn, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Triggers On', false);
     else if(badge == 'beamOn')
         deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'beamOnPaleteBadge', commandID, beamOn, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Beam On', false);
-    else
+    else{
         document.getElementById(commandID).innerHTML = badge;
+        document.getElementById(commandID).setAttribute('style', 'display:inline; float:left; padding-top:30px; max-width:65%');
+    }
 }
 
 
