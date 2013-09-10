@@ -276,7 +276,7 @@ function durationBadge(index, parentID){
     //number input
     insertDOM('input', 'durationInput'+index, 'cycleDurationInput', '', 'durationDiv'+index, '', '', '', 'number');
     insertDOM('br', 'break', '', '', 'durationDiv'+index);
-    insertDOM('p', 'infiniteDuration'+index, '', 'display:none; font-size:230%; margin:0px;', 'durationDiv'+index, '', String.fromCharCode(0x221E) );
+    insertDOM('p', 'infiniteDuration'+index, '', 'display:none; font-size:225%; margin:0px;', 'durationDiv'+index, '', String.fromCharCode(0x221E) );
     //unit
     createOptionScroll('durationDiv'+index, 'durationScroll'+index, ['millisec', 'seconds', 'minutes', 'infinite'], window.cyclePointer.badgeWidth*1.3,
         function(){
