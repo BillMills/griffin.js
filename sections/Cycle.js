@@ -109,7 +109,8 @@ function spacerDrop(event){
 
     //and move it to where it should go:
     document.getElementById('cycleSteps').insertBefore(document.getElementById('cycleStep'+window.cyclePointer.nCycleSteps), document.getElementById('rightCycleSpacer' + targetIndex).nextSibling);
-    document.getElementById('cycleSteps').insertBefore(document.getElementById('leftCycleSpacer'+window.cyclePointer.nCycleSteps), document.getElementById('cycleStep'+window.cyclePointer.nCycleSteps).nextSibling );
+    document.getElementById('cycleSteps').insertBefore(document.getElementById('cycleStepsBreak'+window.cyclePointer.nCycleSteps), document.getElementById('cycleStep'+window.cyclePointer.nCycleSteps).nextSibling);
+    document.getElementById('cycleSteps').insertBefore(document.getElementById('leftCycleSpacer'+window.cyclePointer.nCycleSteps), document.getElementById('cycleStepsBreak'+window.cyclePointer.nCycleSteps).nextSibling );
     document.getElementById('cycleSteps').insertBefore(document.getElementById('rightCycleSpacer'+window.cyclePointer.nCycleSteps), document.getElementById('leftCycleSpacer'+window.cyclePointer.nCycleSteps).nextSibling );
 
     //if a command was getting dragged, move it into position:
@@ -218,7 +219,7 @@ function createCycleStep(input){
         //delete only if there's a button to make a new div:
         if(document.getElementById('terminateCycle')){
             //delete linebreak:
-            var linebreak = document.getElementById('break'+this.id.slice(15, this.id.length));
+            var linebreak = document.getElementById('cycleStepsBreak'+this.id.slice(15, this.id.length));
             linebreak.parentNode.removeChild(linebreak);
             //delete timeline divs:
             var leftDiv = document.getElementById('leftCycleSpacer'+this.id.slice(15, this.id.length));
@@ -239,7 +240,7 @@ function createCycleStep(input){
     
 
     //spacer divs to create timeline:
-    insertDOM('br', 'break'+window.cyclePointer.nCycleSteps, '', '', 'cycleSteps');
+    insertDOM('br', 'cycleStepsBreak'+window.cyclePointer.nCycleSteps, '', '', 'cycleSteps');
     insertDOM('div', 'leftCycleSpacer'+window.cyclePointer.nCycleSteps, '', 'display:inline-block; height:50px; width:50%', 'cycleSteps', '', '');
     insertDOM('div', 'rightCycleSpacer'+window.cyclePointer.nCycleSteps, '', 'display:inline-block; border-left: 5px solid #999999; height:50px; width:50%', 'cycleSteps', '', '');
     //spacers listen for things to be dropped on them, so commands can be inserted mid-stream
@@ -275,18 +276,20 @@ function durationBadge(index, parentID){
     insertDOM('div', 'durationDiv'+index, '', 'display:inline-block; text-align:center; border-left:1px solid #999999; margin-left:5px;', parentID, '', '');
     //number input
     insertDOM('input', 'durationInput'+index, 'cycleDurationInput', '', 'durationDiv'+index, '', '', '', 'number');
-    insertDOM('br', 'break', '', '', 'durationDiv'+index);
-    insertDOM('p', 'infiniteDuration'+index, '', 'display:none; font-size:225%; margin:0px;', 'durationDiv'+index, '', String.fromCharCode(0x221E) );
+    insertDOM('p', 'infiniteDuration'+index, '', 'display:none; font-size:230%; margin:0px;', 'durationDiv'+index, '', String.fromCharCode(0x221E) );
+    insertDOM('br', 'durationBreak'+index, '', '', 'durationDiv'+index);
     //unit
     createOptionScroll('durationDiv'+index, 'durationScroll'+index, ['millisec', 'seconds', 'minutes', 'infinite'], window.cyclePointer.badgeWidth*1.3,
         function(){
             if(document.getElementById('durationScroll'+index+'Selected').innerHTML == 'infinite'){
                 document.getElementById('durationInput'+index).style.display = 'none';
                 document.getElementById('durationSlider'+index).style.display = 'none';
+                document.getElementById('durationBreak'+index).style.display = 'none';
                 document.getElementById('infiniteDuration'+index).style.display = 'block';
             } else{
                 document.getElementById('durationInput'+index).style.display = '';
                 document.getElementById('durationSlider'+index).style.display = '';
+                document.getElementById('durationBreak'+index).style.display = '';
                 document.getElementById('infiniteDuration'+index).style.display = 'none';                
             }
         });
