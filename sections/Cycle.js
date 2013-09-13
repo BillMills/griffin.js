@@ -10,6 +10,17 @@ function Cycle(){
     this.nCycleSteps = 0;
     this.helpMessage = 'Drag an action from the right here to define a command step, or leave as-is for a delay.';
     this.currentDrag = '';
+    this.codex = {
+        'beamOn'        : 0x00000001,
+        'syncClocks'    : 0x00000010,
+        'clearScalars'  : 0x00000020,
+        'moveTape'      : 0x00000040,
+        'enableHPGe'    : 0x00000080,
+        'enableSCEPTAR' : 0x00000100,
+        'enablePACES'   : 0x00000200,
+        'enableDANTE'   : 0x00000400,
+        'enableDESCANT' : 0x00000800
+    };
 
     this.wrapper = document.getElementById(this.wrapperID);
 
@@ -22,8 +33,8 @@ function Cycle(){
     insertDOM('h1', 'cycleLinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', 'Edit Cycle');
 
     insertDOM('br', 'break', '', '', this.linkWrapperID, '', '');
-    //nav buttons
-    insertDOM('button', 'commitCycle', 'navLink', '', this.linkWrapperID, function(){}, 'Commit Cycle and Return', '', 'button');
+    //nav buttons & cycle save / load interface:
+    insertDOM('button', 'commitCycle', 'navLink', '', this.linkWrapperID, buildCycle.bind(null), 'Commit Cycle and Return', '', 'button');
     insertDOM('button', 'abortCycle', 'navLink', '', this.linkWrapperID, function(){}, 'Abandon Changes and Return', '', 'button');
     insertDOM('button', 'resetCycle', 'navLink', '', this.linkWrapperID, function(){}, 'Start Over', '', 'button');
     insertDOM('br', 'break', '', '', this.linkWrapperID);
@@ -31,11 +42,17 @@ function Cycle(){
     insertDOM('input', 'cycleName', '', '', this.linkWrapperID, '', '', '', 'text', 'newCycle');
     document.getElementById('cycleNameLabel').setAttribute('for', 'cycleName');
     insertDOM('br', 'break', '', '', this.linkWrapperID);
+    insertDOM('label', 'loadCycleLabel', '', 'margin-left:10px;', this.linkWrapperID, '', 'Load Cycle: ');
+    insertDOM('select', 'cycleOptions', '', '', this.linkWrapperID, '', '');
+    document.getElementById('loadCycleLabel').setAttribute('for', 'cycleOptions');
+    loadCycleOptions();
+    insertDOM('button', 'loadCycle', 'navLink', '', this.linkWrapperID, function(){deployCommand(1,0)}, 'Load', '', 'button');
+
 
     //div structure for drag and drop area: right panel for detector palete, two-div column for Single Stream and Interstream Filters:
     insertDOM('div', 'cycleWrapper', '', 'width:'+0.48*$(this.wrapper).width()+'px; margin-top:1em; display:block', this.linkWrapperID, '', '');
     insertDOM('div', 'cycleSteps', '', 'width:79%; padding:0.5em; float:left; text-align:center;', 'cycleWrapper', '', '');
-    insertDOM('div', 'cyclePalete', 'cycleDiv', 'width:20%; float:right; text-align:center; padding-top:1em;', 'cycleWrapper', '', '');
+    insertDOM('div', 'cyclePalete', 'cycleDiv', 'width:'+0.2*0.48*$(this.wrapper).width()+'; float:right; text-align:center; padding-top:1em; position:relative; top:0px;', 'cycleWrapper', '', '');
 
     //inject options into palete
     this.badgeWidth = document.getElementById('cyclePalete').offsetWidth*0.6//0.9;
@@ -74,14 +91,12 @@ function Cycle(){
     document.getElementById('triggersOnPaleteBadgecyclePalete').addEventListener('dragstart', paleteDragStart, false);
     document.getElementById('beamOnPaleteBadgecyclePalete').addEventListener('dragstart', paleteDragStart, false);
 
-
-
-
-
-
     this.update = function(){
 
+
     };
+
+    parseCommand(1)
 
 }
 
@@ -330,7 +345,126 @@ function deployBadge(badge, commandID){
     }
 }
 
+//step through the cycle, and construct the appropriate command and duration arrays
+function buildCycle(){
+    var i, j, commandNode, contentNode, actionNode, stepCode, durationNode, duration, timeUnit,
+        nCycleSteps = (document.getElementById('cycleSteps').childNodes.length-1)/4, //-1 for the termination badge, /4 for command+2spacers+linebreak.
+        commands = [],
+        durations = [];
 
+        for(i=0; i<nCycleSteps; i++){
+            commandNode = document.getElementById('cycleSteps').childNodes[i*4] ;
+            contentNode = commandNode.childNodes[0];
+            //build the command word:
+            stepCode = 0;
+            if(contentNode.childNodes.length != 1 || contentNode.childNodes[0].nodeType != Node.TEXT_NODE){
+                for(j=0; j<contentNode.childNodes.length; j++){
+                    actionNode = contentNode.childNodes[j];
+                    if(actionNode.id.indexOf('cycleContent') != -1){
+                        stepCode = stepCode | window.cyclePointer.codex[actionNode.id.slice(0, actionNode.id.indexOf('Palete'))];
+                    }
+                }
+            } 
+            commands[commands.length] = stepCode;
+            //extract duration in ms:
+            durationNode = commandNode.childNodes[1];
+            duration = durationNode.firstChild.valueAsNumber;
+            timeUnit = durationNode.childNodes[3].childNodes[1].innerHTML;
+            if(timeUnit == 'seconds')
+                duration *= 1000;
+            else if(timeUnit == 'minutes')
+                duration *= 1000*60;
+            else if(timeUnit == 'infinite')
+                duration = 0;
+            durations[durations.length] = duration;
+        }
+
+        //write this out somewhere, console dump for now:
+        console.log(commands)
+        console.log(durations)
+}
+
+//parse a command word into its component actions:
+function parseCommand(command){
+    var key,
+        actions = window.cyclePointer.codex;
+
+    for(key in window.cyclePointer.codex){
+        if(command & window.cyclePointer.codex[key])
+            actions[key] = 1;
+        else
+            actions[key] = 0;
+    }
+
+    return actions;
+}
+
+//deploy a command step as defined by its command word and duration:
+function deployCommand(command, duration){
+    var i, key, cycleChildren, time, units, durationBadge,
+        actions = parseCommand(command);
+
+    //get rid of any commands hanging around:
+    cycleChildren = document.getElementById('cycleSteps').childNodes;
+    for(i=0; i<(cycleChildren.length-1)/4; i++ ){
+        //console.log('deleteC'+cycleChildren[i].id.slice(1,cycleChildren[i].id.length))
+        document.getElementById('deleteC'+cycleChildren[i].id.slice(1,cycleChildren[i].id.length)).onclick();
+    }
+
+    //use the new command button to insert a new command:
+    document.getElementById('newCommand').onclick();
+    for(key in actions){
+        if(actions[key] == 1){
+            document.getElementById('cycleContent'+(window.cyclePointer.nCycleSteps-1)).setAttribute('class', 'cycleContent');
+            document.getElementById('cycleContent'+(window.cyclePointer.nCycleSteps-1)).innerHTML = '';
+            break;
+        }
+    }
+
+    //deploy the appropriate badges:
+    for(key in actions){
+        if(actions[key] == 1)
+            deployBadge.apply(window.cyclePointer, [key, 'cycleContent'+(window.cyclePointer.nCycleSteps-1)]);
+    }
+
+    //set the duration badge:
+    if(duration >= 60000){
+        time = Math.floor(duration/60000);
+        unit = 'minutes';
+    } else if(duration >= 1000){
+        time = Math.floor(duration/1000);
+        unit = 'seconds';
+    } else if(duration == 0){
+        time = duration;
+        unit = 'infinite';
+    } else{
+        time = duration;
+        unit = 'millisec';
+    }
+    durationBadge = document.getElementById('durationDiv'+(window.cyclePointer.nCycleSteps-1));
+    if(time!=0)
+        durationBadge.childNodes[0].value = time;
+    while(durationBadge.childNodes[3].childNodes[1].innerHTML != unit)
+         durationBadge.childNodes[3].childNodes[2].onclick();
+
+}
+
+//fetch the predefined cycle options and make them choices in the loading dropdown:
+function loadCycleOptions(){
+    var option = [];
+
+    option[0] = document.createElement('option');
+    option[0].text = 'Unicycle';
+    document.getElementById('cycleOptions').add(option[0], null);
+
+    option[1] = document.createElement('option');
+    option[1].text = 'Bicycle';
+    document.getElementById('cycleOptions').add(option[1], null);
+
+    option[2] = document.createElement('option');
+    option[2].text = 'Tricycle';
+    document.getElementById('cycleOptions').add(option[2], null);
+}
 
 
 

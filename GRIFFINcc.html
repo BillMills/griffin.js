@@ -300,6 +300,12 @@
         //Cycle
         if(window.parameters.topDeployment['Cycle'])
           window.Cycle = new Cycle();
+
+        //window event listeners:
+        //make the cycle palete scoll with the window - fixed positioning is acting a bit weird, so handle manually instead:
+        window.onscroll = function(){
+          document.getElementById('cyclePalete').style.top = window.scrollY;
+        }
         //end main elements////////////////////////////////////////////////////////////////////////////
 
         //set up channel navigation dropdowns:
