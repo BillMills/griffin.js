@@ -547,10 +547,26 @@ function clearScalars(context, width, height, x0, y0){
 }
 
 function moveTape(context, width, height, x0, y0){
-	context.beginPath();
-	context.arc(x0,y0, height*0.3, 0, Math.PI*2);
-	context.stroke();
-	context.closePath();
+	var i,
+		tapeTop = 0.1*height;
+		tapeHeight = 0.6*height;
+		holeSide = tapeHeight/10;
+		holeSpacing = holeSide/2;
+
+	context.fillStyle = '#999999';
+	context.fillRect(0, tapeTop, width, tapeHeight);
+	context.fillStyle = '#333333';
+	for(i=0; i<20; i++){
+		context.fillRect(i*(holeSpacing+holeSide), tapeTop+holeSpacing, holeSide, holeSide );
+		context.fillRect(i*(holeSpacing+holeSide), tapeTop+tapeHeight - holeSpacing - holeSide, holeSide, holeSide );
+	}
+	roundBox(context, -0.1*width, tapeTop+2*holeSpacing+holeSide, 0.33*width, tapeHeight - 2*(2*holeSpacing+holeSide), 5);
+	context.fill();
+	roundBox(context, 0.25*width, tapeTop+2*holeSpacing+holeSide, 0.5*width, tapeHeight - 2*(2*holeSpacing+holeSide), 5);
+	context.fill();
+	roundBox(context, 0.77*width, tapeTop+2*holeSpacing+holeSide, 0.5*width, tapeHeight - 2*(2*holeSpacing+holeSide), 5);
+	context.fill();
+
 }
 
 function beamOn(context, width, height, x0, y0){
