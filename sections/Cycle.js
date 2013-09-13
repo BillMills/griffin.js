@@ -159,7 +159,7 @@ function cycleDrop(event){
     if(!(payload.slice(0,9)=='cycleStep')){
         if(contentBlock.innerHTML.indexOf(window.cyclePointer.helpMessage) != -1){
             contentBlock.innerHTML = '';
-            contentBlock.setAttribute('style', 'display:inline;'); 
+            contentBlock.setAttribute('class', 'cycleContent'); 
         }
         deployBadge.apply(window.cyclePointer, [payload, contentBlock.id]);
     }
@@ -206,7 +206,7 @@ function createCycleStep(input){
 
     //content block:
     stepDiv.contentID = 'cycleContent'+window.cyclePointer.nCycleSteps
-    insertDOM('div', stepDiv.contentID, '', 'display:inline;', 'cycleStep'+window.cyclePointer.nCycleSteps, '', '');
+    insertDOM('div', stepDiv.contentID, 'cycleContent', '', 'cycleStep'+window.cyclePointer.nCycleSteps, '', '');
     //deploy the div with something in it:
     //document.getElementById(stepDiv.contentID).innerHTML = input;
     deployBadge.apply(window.cyclePointer, [input, 'cycleContent'+window.cyclePointer.nCycleSteps]);
@@ -263,7 +263,7 @@ function terminationBadge(){
     insertDOM('div', 'terminateCycle', '', '', 'cycleSteps', '', '');
     insertDOM('button', 'newCommand', 'navLink', '','terminateCycle', function(){
         createCycleStep(window.cyclePointer.helpMessage);
-        document.getElementById('cycleContent'+window.cyclePointer.nCycleSteps).setAttribute('style', 'display:inline; float:left; padding-top:30px; max-width:65%') 
+        document.getElementById('cycleContent'+window.cyclePointer.nCycleSteps).setAttribute('class', 'delayCycleContent') 
         window.cyclePointer.nCycleSteps++;
     }, 'New Command', '', 'button');
 }
@@ -326,7 +326,7 @@ function deployBadge(badge, commandID){
         deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'beamOnPaleteBadge', commandID, beamOn, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Beam On', false);
     else{
         document.getElementById(commandID).innerHTML = badge;
-        document.getElementById(commandID).setAttribute('style', 'display:inline; float:left; padding-top:30px; max-width:65%');
+        document.getElementById(commandID).setAttribute('class', 'delayCycleContent');
     }
 }
 

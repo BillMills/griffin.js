@@ -526,7 +526,7 @@ function deployBadgeCanvas(width, height, id, wrapperID, paintThumb, thumbArgs, 
                                         this.parentNode.removeChild(this);
                                         if(pointer.innerHTML == '')
                                             pointer.innerHTML = window.cyclePointer.helpMessage;
-                                            pointer.setAttribute('style', 'display:inline; float:left; padding-top:30px; max-width:65%;');
+                                            pointer.setAttribute('class', 'delayCycleContent');
                                     }
                                 }
                             };

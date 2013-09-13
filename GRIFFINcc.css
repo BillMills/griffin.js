@@ -669,6 +669,17 @@ tbody tbody a:link{
 	text-align:center;
 }
 
+.delayCycleContent{
+	display:inline; 
+	float:left; 
+	padding-top:30px; 
+	max-width:65%;
+}
+
+.cycleContent{
+	display: inline;
+}
+
 :invalid{
 	color: #FF0000;
 	border: 2px solid #FF0000;
