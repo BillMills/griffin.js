@@ -666,6 +666,7 @@ tbody tbody a:link{
 	font-size:200%; 
 	font-family:Raleway; 
 	width:3em;
+	text-align:center;
 }
 
 :invalid{

@@ -513,21 +513,21 @@ function deployBadgeCanvas(width, height, id, wrapperID, paintThumb, thumbArgs, 
         closeX(context, width - 10, 10, 7 );
         canvas.onclick = function(event){
 
-                                var element, x,y,
+                                var element, x,y, pointer,
                                     coords = this.relMouseCoords(event),
                                     width = (window.onDisplay == 'editFilterCanvas') ? window.filterEditPointer.badgeWidth : window.cyclePointer.badgeWidth;
                                 x = coords.x;
                                 y = coords.y;
                                 if( Math.pow(width-10 - x, 2) + Math.pow(y-10,2) < 49 ){
-                                    /*
-                                    element = document.getElementById(this.id.slice(this.id.indexOf('Canvas')+6, this.id.length));
-                                    if(element)
-                                        element.parentNode.removeChild(element);
-                                    */
                                     if(window.onDisplay == 'editFilterCanvas')
                                         this.parentNode.parentNode.removeChild(this.parentNode);
-                                    else if(window.onDisplay == 'cycleCanvas')
+                                    else if(window.onDisplay == 'cycleCanvas'){
+                                        pointer = this.parentNode;
                                         this.parentNode.removeChild(this);
+                                        if(pointer.innerHTML == '')
+                                            pointer.innerHTML = window.cyclePointer.helpMessage;
+                                            pointer.setAttribute('style', 'display:inline; float:left; padding-top:30px; max-width:65%;');
+                                    }
                                 }
                             };
     }

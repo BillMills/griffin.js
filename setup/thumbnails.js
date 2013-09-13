@@ -472,8 +472,6 @@ function beamdump(context, x0, y0, width){
 	context.moveTo(width*0.45, 0);
 	context.lineTo(width*0.1, -10)
 
-
-
 	context.stroke();
 	context.restore();
 
@@ -556,10 +554,7 @@ function moveTape(context, width, height, x0, y0){
 }
 
 function beamOn(context, width, height, x0, y0){
-	context.beginPath();
-	context.arc(x0,y0, height*0.3, 0, Math.PI*2);
-	context.stroke();
-	context.closePath();
+	beamdump(context, x0, y0, width);
 }
 
 function triggersOn(context, width, height, x0, y0){

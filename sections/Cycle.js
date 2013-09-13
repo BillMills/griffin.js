@@ -8,7 +8,7 @@ function Cycle(){
     this.linkWrapperID = 'cycleLinks';        //ID of div to contain clock view header
     this.sidebarID = 'cycleSidebar';          //ID of sidebar div
     this.nCycleSteps = 0;
-    this.helpMessage = 'Drag an action from the right here to define a command step.';
+    this.helpMessage = 'Drag an action from the right here to define a command step, or leave as-is for a delay.';
     this.currentDrag = '';
 
     this.wrapper = document.getElementById(this.wrapperID);
@@ -104,25 +104,25 @@ function spacerDrop(event){
     //determine ID of right-hand spacer in the pair:
     targetIndex = this.id.slice(this.id.indexOf('Spacer')+6, this.id.length);
 
-    //make the cycle step per usual:
-    createCycleStep(payload);
-
-    //and move it to where it should go:
-    document.getElementById('cycleSteps').insertBefore(document.getElementById('cycleStep'+window.cyclePointer.nCycleSteps), document.getElementById('rightCycleSpacer' + targetIndex).nextSibling);
-    document.getElementById('cycleSteps').insertBefore(document.getElementById('cycleStepsBreak'+window.cyclePointer.nCycleSteps), document.getElementById('cycleStep'+window.cyclePointer.nCycleSteps).nextSibling);
-    document.getElementById('cycleSteps').insertBefore(document.getElementById('leftCycleSpacer'+window.cyclePointer.nCycleSteps), document.getElementById('cycleStepsBreak'+window.cyclePointer.nCycleSteps).nextSibling );
-    document.getElementById('cycleSteps').insertBefore(document.getElementById('rightCycleSpacer'+window.cyclePointer.nCycleSteps), document.getElementById('leftCycleSpacer'+window.cyclePointer.nCycleSteps).nextSibling );
-
     //if a command was getting dragged, move it into position:
     if(payload.slice(0,9) == 'cycleStep'){
-        //clone HTML
-        document.getElementById('cycleContent'+window.cyclePointer.nCycleSteps).innerHTML = document.getElementById(document.getElementById(payload).contentID).innerHTML;
-        //delete from old position:
-        document.getElementById('deleteCycleStep'+payload.slice(9, payload.length)).onclick();
-
-    //otherwise, just increment the number of commands
+        moveCommand(payload.slice(9,payload.length), targetIndex);
+    //otherwise handle a new command getting dropped in:
+    } else{
+        //make the cycle step per usual:
+        createCycleStep(payload);
+        //and move it to where it should go:
+        moveCommand(window.cyclePointer.nCycleSteps, targetIndex);
+        window.cyclePointer.nCycleSteps++;
     }
-    window.cyclePointer.nCycleSteps++;
+
+    //move a command from one place in the sequence to another:    
+    function moveCommand(origin, destination){
+        document.getElementById('cycleSteps').insertBefore(document.getElementById('cycleStep'+origin), document.getElementById('rightCycleSpacer' + destination).nextSibling);
+        document.getElementById('cycleSteps').insertBefore(document.getElementById('cycleStepsBreak'+origin), document.getElementById('cycleStep'+origin).nextSibling);
+        document.getElementById('cycleSteps').insertBefore(document.getElementById('leftCycleSpacer'+origin), document.getElementById('cycleStepsBreak'+origin).nextSibling );
+        document.getElementById('cycleSteps').insertBefore(document.getElementById('rightCycleSpacer'+origin), document.getElementById('leftCycleSpacer'+origin).nextSibling );
+    }
 
     return false;
 }
