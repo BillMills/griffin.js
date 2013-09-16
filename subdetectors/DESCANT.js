@@ -37,6 +37,19 @@ function DESCANT(){
 
 
 	this.draw = function(frame){
+
+		//color hack for conference demo:
+		this.dataBus.DESCANT.DSC052P00X.rateColor = '#000000';
+		this.dataBus.DESCANT.DSC053P00X.rateColor = '#000000';
+		this.dataBus.DESCANT.DSC054P00X.rateColor = '#000000';
+		this.dataBus.DESCANT.DSC055P00X.rateColor = '#000000';
+		this.dataBus.DESCANT.DSC032P00X.rateColor = '#000000';
+		this.dataBus.DESCANT.DSC033P00X.rateColor = '#000000';
+		this.dataBus.DESCANT.DSC034P00X.rateColor = '#000000';
+		this.dataBus.DESCANT.DSC017P00X.rateColor = '#000000';
+		this.dataBus.DESCANT.DSC018P00X.rateColor = '#000000';
+		this.dataBus.DESCANT.DSC007P00X.rateColor = '#000000';
+
 		var i, j, key, fill;
 		this.context.clearRect(0,0,this.canvasWidth, this.canvasHeight-this.scaleHeight);
 

@@ -230,7 +230,7 @@ function ODBgrab(){
 //handle pulling the initial config parameters out of the ODB and replacing the default values in the JSONP-loaded parameter store:
 function fetchCustomParameters(){
 
-    var topLevel=0, HV, BAMBINO, DANTE, DESCANT, HPGe, PACES, SCEPTAR, SHARC, SPICE, ZDS, TIPwall, TIPball, DAQ, DSSD, DASHBOARD;
+    var topLevel=0, HV, BAMBINO, DANTE, DESCANT, HPGe, PACES, SCEPTAR, SHARC, SPICE, ZDS, TIPwall, TIPball, DAQ, DSSD, DASHBOARD, CYCLE;
 
     //define keys
     var paths = [];
@@ -352,6 +352,12 @@ function fetchCustomParameters(){
     paths[DASHBOARD] = '/DashboardConfig/Dashboard/dashboardMin';
     paths[DASHBOARD+1] = '/DashboardConfig/Dashboard/dashboardMax';
 
+    CYCLE = DASHBOARD+2;
+    paths[CYCLE]   = '/DashboardConfig/Cycles/Names[*]';
+    paths[CYCLE+1] = '/DashboardConfig/Cycles/nSteps[*]';
+    paths[CYCLE+2] = '/DashboardConfig/Cycles/Codes[*]';
+    paths[CYCLE+3] = '/DashboardConfig/Cycles/Durations[*]';
+
     //fetch:
     var data = ODBMGet(paths);
     //console.log(data[78].slice(0,11) == '<DB_NO_KEY>')
@@ -444,6 +450,11 @@ function fetchCustomParameters(){
 
     window.parameters.dashboardMin = data[DASHBOARD];
     window.parameters.dashboardMax = data[DASHBOARD+1];
+
+    window.parameters.cycleNames = data[CYCLE].slice(0, data[CYCLE].length-1);
+    window.parameters.cycleSteps = data[CYCLE+1];
+    window.parameters.cycleCodes = data[CYCLE+2];
+    window.parameters.cycleDurations = data[CYCLE+3];
     
 }
 

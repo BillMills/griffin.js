@@ -147,7 +147,7 @@ function AlarmService(sidebarDivID, sidebarDetailDivID){
                     ODBSet(ODBalarmLocations[j], 0);
                 else{    
                     ODBSet(ODBalarmLocations[j], 1);
-                    ODBGenerateMsg(messageLogText);
+                    //ODBGenerateMsg(messageLogText);
                     this.lastMessage[j] = messageLogText;
                 }
             }

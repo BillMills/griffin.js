@@ -11,15 +11,16 @@ function Cycle(){
     this.helpMessage = 'Drag an action from the right here to define a command step, or leave as-is for a delay.';
     this.currentDrag = '';
     this.codex = {
-        'beamOn'        : 0x00000001,
-        'syncClocks'    : 0x00000010,
-        'clearScalars'  : 0x00000020,
-        'moveTape'      : 0x00000040,
-        'enableHPGe'    : 0x00000080,
-        'enableSCEPTAR' : 0x00000100,
-        'enablePACES'   : 0x00000200,
-        'enableDANTE'   : 0x00000400,
-        'enableDESCANT' : 0x00000800
+        "beamOn"        : 1,    //0x00000001
+        "syncClocks"    : 16,   //0x00000010
+        "clearScalars"  : 32,   //0x00000020
+        "moveTape"      : 64,   //0x00000040
+        "enableHPGe"    : 128,  //0x00000080
+        "enableSCEPTAR" : 256,  //0x00000100
+        "enablePACES"   : 512,  //0x00000200
+        "enableDANTE"   : 1024, //0x00000400
+        "enableDESCANT" : 2048, //0x00000800
+        "triggersOn"    : 3968  //0x00000F80  //as in ALL triggers on.
     };
 
     this.wrapper = document.getElementById(this.wrapperID);
@@ -40,13 +41,14 @@ function Cycle(){
     insertDOM('br', 'break', '', '', this.linkWrapperID);
     insertDOM('label', 'cycleNameLabel', '', 'margin-left:10px;', this.linkWrapperID, '', 'Name this Cycle: ');
     insertDOM('input', 'cycleName', '', '', this.linkWrapperID, '', '', '', 'text', 'newCycle');
+    insertDOM('button', 'saveCycle', 'navLink', '', this.linkWrapperID, function(){}, 'Save', '', 'button');
     document.getElementById('cycleNameLabel').setAttribute('for', 'cycleName');
     insertDOM('br', 'break', '', '', this.linkWrapperID);
     insertDOM('label', 'loadCycleLabel', '', 'margin-left:10px;', this.linkWrapperID, '', 'Load Cycle: ');
     insertDOM('select', 'cycleOptions', '', '', this.linkWrapperID, '', '');
     document.getElementById('loadCycleLabel').setAttribute('for', 'cycleOptions');
     loadCycleOptions();
-    insertDOM('button', 'loadCycle', 'navLink', '', this.linkWrapperID, function(){deployCommand(1,0)}, 'Load', '', 'button');
+    insertDOM('button', 'loadCycle', 'navLink', '', this.linkWrapperID, loadCycle.bind(null), 'Load', '', 'button');
 
 
     //div structure for drag and drop area: right panel for detector palete, two-div column for Single Stream and Interstream Filters:
@@ -95,8 +97,6 @@ function Cycle(){
 
 
     };
-
-    parseCommand(1)
 
 }
 
@@ -365,6 +365,8 @@ function buildCycle(){
                     }
                 }
             } 
+            //first 16 bits mirror last 16 bits for redundancy:
+            stepCode = stepCode | (stepCode<<16)
             commands[commands.length] = stepCode;
             //extract duration in ms:
             durationNode = commandNode.childNodes[1];
@@ -379,15 +381,13 @@ function buildCycle(){
             durations[durations.length] = duration;
         }
 
-        //write this out somewhere, console dump for now:
-        console.log(commands)
-        console.log(durations)
+        return [commands, durations];
 }
 
-//parse a command word into its component actions:
+//parse a 32bit command word into its component actions:
 function parseCommand(command){
     var key,
-        actions = window.cyclePointer.codex;
+        actions = JSON.parse(JSON.stringify(window.cyclePointer.codex));
 
     for(key in window.cyclePointer.codex){
         if(command & window.cyclePointer.codex[key])
@@ -401,15 +401,8 @@ function parseCommand(command){
 
 //deploy a command step as defined by its command word and duration:
 function deployCommand(command, duration){
-    var i, key, cycleChildren, time, units, durationBadge,
+    var key, time, units, durationBadge, allowIndividualTrig,
         actions = parseCommand(command);
-
-    //get rid of any commands hanging around:
-    cycleChildren = document.getElementById('cycleSteps').childNodes;
-    for(i=0; i<(cycleChildren.length-1)/4; i++ ){
-        //console.log('deleteC'+cycleChildren[i].id.slice(1,cycleChildren[i].id.length))
-        document.getElementById('deleteC'+cycleChildren[i].id.slice(1,cycleChildren[i].id.length)).onclick();
-    }
 
     //use the new command button to insert a new command:
     document.getElementById('newCommand').onclick();
@@ -422,8 +415,14 @@ function deployCommand(command, duration){
     }
 
     //deploy the appropriate badges:
+    //either all trigs is enabled, or allow individual system triggers:
+    allowIndividualTrig = 0;
+    if(actions['triggersOn'] == 1)
+        deployBadge.apply( window.cyclePointer, ['triggersOn', 'cycleContent'+(window.cyclePointer.nCycleSteps-1)] );
+    else
+        allowIndividualTrig = 1;
     for(key in actions){
-        if(actions[key] == 1)
+        if(actions[key] == 1 && key!='triggerOn' && !(key.slice(0,6)=='enable' && allowIndividualTrig==0 ) )
             deployBadge.apply(window.cyclePointer, [key, 'cycleContent'+(window.cyclePointer.nCycleSteps-1)]);
     }
 
@@ -451,22 +450,52 @@ function deployCommand(command, duration){
 
 //fetch the predefined cycle options and make them choices in the loading dropdown:
 function loadCycleOptions(){
-    var option = [];
+    var i,
+        option = [];
 
-    option[0] = document.createElement('option');
-    option[0].text = 'Unicycle';
-    document.getElementById('cycleOptions').add(option[0], null);
-
-    option[1] = document.createElement('option');
-    option[1].text = 'Bicycle';
-    document.getElementById('cycleOptions').add(option[1], null);
-
-    option[2] = document.createElement('option');
-    option[2].text = 'Tricycle';
-    document.getElementById('cycleOptions').add(option[2], null);
+    for(i=0; i<window.parameters.cycleNames.length; i++){
+        option[i] = document.createElement('option');
+        option[i].text = window.parameters.cycleNames[i];
+        option[i].value = i;
+        document.getElementById('cycleOptions').add(option[i], null);
+    }
 }
 
+//write the defined cycle to the ODB for later use
+function saveCycle(){
+    var cycle = buildCycle();
 
+}
 
+//load the chosen cycle
+function loadCycle(){
+    var i, nSteps, startIndex,
+        cycleIndex = parseInt(document.getElementById('cycleOptions').value, 10);  //which cycle has been requested?
 
+    //in the Codes and Durations tables, where should we start?
+    startIndex = 0;
+    for(i=0; i<cycleIndex; i++){
+        startIndex += parseInt(window.parameters.cycleSteps[i], 10);
+    }
+
+    nSteps = parseInt(window.parameters.cycleSteps[cycleIndex], 10);
+
+    //dump whatever's displayed currently:
+    resetCycle();
+
+    for(i=startIndex; i<startIndex+nSteps; i++){
+        deployCommand(parseInt(window.parameters.cycleCodes[i],10), parseInt(window.parameters.cycleDurations[i],10));
+    }
+
+}
+
+//dump all commands:
+function resetCycle(){
+
+    document.getElementById('cycleSteps').innerHTML = ''
+
+    window.cyclePointer.nCycleSteps = 0;
+    
+    terminationBadge();
+}
 
