@@ -463,17 +463,17 @@ function loadCycleOptions(){
 
 //write the defined cycle to the ODB for later use - disabled until ODBSet for strings bug is solved
 function saveCycle(){
-    /*
+    
     var i, cycle = buildCycle(),
         name = document.getElementById('cycleName').value,
         nameIndex = (window.parameters.cycleNames.indexOf(name) == -1) ? window.parameters.cycleNames.length : window.parameters.cycleNames.indexOf(name),
         codeIndex = arraySum.call(window.parameters.cycleSteps, 0, nameIndex)
-
+/*
     console.log(window.parameters.cycleNames)
     console.log(window.parameters.cycleSteps)
     console.log(window.parameters.cycleCodes)
     console.log(window.parameters.cycleDurations)
-
+*/
     //remove old commands if they exist, and insert new ones:
     window.parameters.cycleCodes.splice.apply(window.parameters.cycleCodes, [codeIndex, window.parameters.cycleSteps[nameIndex]].concat(cycle[0]));
     //and similarly for durations:
@@ -483,18 +483,21 @@ function saveCycle(){
     //update name
     window.parameters.cycleNames[nameIndex] = name;
 
-
+/*
     console.log(window.parameters.cycleNames)
     console.log(window.parameters.cycleSteps)
     console.log(window.parameters.cycleCodes)
     console.log(window.parameters.cycleDurations)
-
+*/
     //write to ODB
-    ODBSet('/DashboardConfig/Cycles/Names[*]', window.parameters.cycleNames);
+    //ODBSet('/DashboardConfig/Cycles/Names[*]', window.parameters.cycleNames);
     ODBSet('/DashboardConfig/Cycles/nSteps[*]', window.parameters.cycleSteps);
     ODBSet('/DashboardConfig/Cycles/Codes[*]', window.parameters.cycleCodes);
     ODBSet('/DashboardConfig/Cycles/Durations[*]', window.parameters.cycleDurations);
-    */
+    for(i=0; i<window.parameters.cycleNames.length; i++){
+        ODBSet('/DashboardConfig/Cycles/Names['+i+']', window.parameters.cycleNames[i]);
+    }
+
 }
 
 //load the chosen cycle
