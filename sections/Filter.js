@@ -327,7 +327,9 @@ function editFilter(filterSystems, filterSystemsNames){
     var that = this,
     i;
     window.filterEditPointer = that;
-    this.nInterstreams = 0;
+    this.filterConIndex = 0;
+    this.filterConPresent = [];  //keeps track of which filter condition indices are in which position
+    this.newFilterMessage = 'Drag detectors from the right here to AND them together in a filter condition; add more leaves to OR together the different groups.'
 
     this.wrapperID = window.parameters.wrapper; //ID of wrapping div
     this.canvasID = 'editFilterCanvas';         //ID of canvas to paint filter on
@@ -353,33 +355,15 @@ function editFilter(filterSystems, filterSystemsNames){
     document.getElementById('filterNameLabel').setAttribute('for', 'filterName');
     insertDOM('br', 'break', '', '', this.linkWrapperID);
 
-    //div structure for drag and drop area: right panel for detector palete, two-div column for Single Stream and Interstream Filters:
+    //div structure for drag and drop area: right panel for detector palete, gutter for tree lines and main area for trigger groups:
     insertDOM('div', 'editFilterWrapper', '', 'width:'+0.48*$(this.wrapper).width()+'px; display:inline-block;', this.linkWrapperID, '', '');
     insertDOM('div', 'filterWrap', '', 'float:left; width:79%', 'editFilterWrapper', '', '');  //79 kind of kludgy, to accommodate margins.
-    insertDOM('div', 'singleStreamFilters', 'filterDiv', 'width:100%; padding-left:1em; padding-right:1em;', 'filterWrap', '', '');
-    insertDOM('h2', 'singleStreamTitle', '', 'text-align:center; margin:0.5em;', 'singleStreamFilters', '', 'Single-Stream Filters');
-    insertDOM('h5', 'singleStreamHelp', '', 'text-align:center; margin:0px; margin-bottom:1em;', 'singleStreamFilters', '', 'Drag a detector here to define a single-stream filter condition.');
-    insertDOM('div', 'interstreamFilters', 'filterDiv', 'width:100%; padding-left:1em; padding-right:1em; text-align:center;', 'filterWrap', '', '');
-    insertDOM('h2', 'interstreamTitle', '', 'text-align:center; margin:0.5em;', 'interstreamFilters', '', 'Interstream Filters');
+    insertDOM('div', 'treeGutter', '', 'float:left; width:10%', 'filterWrap', '', '');
+    insertDOM('div', 'treeBlockX', '', 'border-bottom: 5px solid #999999; height:20px;', 'treeGutter', '', ''); //top block in tree gutter provides the first branch
+    insertDOM('div', 'filterCons', '', 'float:left; width:69%', 'filterWrap', '', '');
+    deployEmptyFilterCondition();
     insertDOM('div', 'filterPalete', 'filterDiv', 'width:20%; float:right; text-align:center; padding-top:1em; max-height:500px; overflow:scroll;', 'editFilterWrapper', '', '');
-    document.getElementById('singleStreamFilters').addEventListener('dragover', dragOver, false);
-    document.getElementById('singleStreamFilters').addEventListener('drop', handleDrop, false);
-
-    //Interstream section needs a button to spawn a new filter group:
-    insertDOM('button', 'spawnInterstream', 'navLink', '', 'interstreamFilters', function(){
-        insertDOM('div', 'interstream'+window.filterEditPointer.nInterstreams, 'interstreamDiv', '', 'interstreamFilters', '', '');
-        document.getElementById('interstream'+window.filterEditPointer.nInterstreams).addEventListener('dragover', dragOver, false);
-        document.getElementById('interstream'+window.filterEditPointer.nInterstreams).addEventListener('drop', handleDrop, false);
-        //what does this box mean?:
-        insertDOM('h5', 'interstreamHelp'+window.filterEditPointer.nInterstreams, '', 'text-align:center; margin:0px; margin-bottom:1em;', 'interstream'+window.filterEditPointer.nInterstreams, '', 'Drag detectors here to AND them together in a multi-stream filter condition.');
-        //off button
-        insertDOM('button', 'deleteInterstream'+window.filterEditPointer.nInterstreams, 'deleteButton', '', 'interstream'+window.filterEditPointer.nInterstreams, function(){
-            var element = document.getElementById(this.id);
-            element.parentNode.parentNode.removeChild(element.parentNode);
-        }, String.fromCharCode(0x2573), '', 'button');
-
-        window.filterEditPointer.nInterstreams++;
-    }, 'New Interstream Filter', '', 'button');
+    insertDOM('button', 'newFilterCon', 'navLink', '', 'filterWrap', function(){deployEmptyFilterCondition()}, 'New Filter Group', '', 'button' );
 
     //deploy a dummy canvas for the filter view:
     this.canvasWidth = 0// 0.48*$(this.wrapper).width();
@@ -449,7 +433,12 @@ function dragStart(event){
 }
 
 function handleDrop(event){
+    var index = this.id.slice(18, this.id.length);
+
     event.stopPropagation();
+
+    if(this.innerHTML == window.filterEditPointer.newFilterMessage)
+        this.innerHTML = '';
 
     if(event.dataTransfer.getData('text/plain') == 'DANTE' && !this.querySelector('#DANTEfilterBadge'+this.id) ){
         deployFilterBadge('DANTEfilterBadge', this.id, deployBadgeCanvas.bind(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'DANTEfilterBadgeCanvas', 'DANTEfilterBadge'+this.id, dante, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.25, '#999999'], 'DANTE', false));
@@ -476,6 +465,10 @@ function handleDrop(event){
     } else {
         console.log(event.dataTransfer.getData('text/plain'));
     }
+
+    //resize the appropriate tree gutter
+    document.getElementById('treeBlock' + index).style.height = document.getElementById('filterGroup' + index).offsetHeight + parseInt(document.body.style.fontSize);
+
     return false;
 }
 
@@ -519,8 +512,15 @@ function deployBadgeCanvas(width, height, id, wrapperID, paintThumb, thumbArgs, 
                                 x = coords.x;
                                 y = coords.y;
                                 if( Math.pow(width-10 - x, 2) + Math.pow(y-10,2) < 49 ){
-                                    if(window.onDisplay == 'editFilterCanvas')
+                                    if(window.onDisplay == 'editFilterCanvas'){
+                                        var index = this.id.slice(this.id.indexOf('filterGroupContent')+18, this.id.length);
                                         this.parentNode.parentNode.removeChild(this.parentNode);
+                                        //resize the corresponding tree gutter:
+                                        document.getElementById('treeBlock' + index).style.height = document.getElementById('filterGroup' + index).offsetHeight + parseInt(document.body.style.fontSize);
+                                        //replace the intro message if there's nothing else to show:
+                                        if(document.getElementById('filterGroupContent' + index).innerHTML == '')
+                                            document.getElementById('filterGroupContent' + index).innerHTML = window.filterEditPointer.newFilterMessage;
+                                    }
                                     else if(window.onDisplay == 'cycleCanvas'){
                                         pointer = this.parentNode;
                                         this.parentNode.removeChild(this);
@@ -589,4 +589,45 @@ function buildFilter(){
 
     //interstream filters:
 
+}
+
+function deployEmptyFilterCondition(){
+        var bottomFilterConID = window.filterEditPointer.filterConPresent[window.filterEditPointer.filterConPresent.length-1];
+
+        //inject a new filter group:
+        insertDOM('div', 'filterGroup'+window.filterEditPointer.filterConIndex, 'filterCon', '', 'filterCons', '', '');
+        //inject a new tree gutter:
+        insertDOM('div', 'treeBlock'+window.filterEditPointer.filterConIndex, 'treeGutter', 'opacity:0;', 'treeGutter', '', '');
+        //resize the previous tree gutter and reveal it to connect it to the tree:
+        if(bottomFilterConID != undefined){
+            document.getElementById('treeBlock' + bottomFilterConID).style.height = document.getElementById('filterGroup' + bottomFilterConID).offsetHeight + parseInt(document.body.style.fontSize);
+            document.getElementById('treeBlock' + bottomFilterConID).style.opacity = 1;
+        }
+
+        //off button
+        insertDOM('button', 'deleteFilterCon'+window.filterEditPointer.filterConIndex, 'deleteButton', '', 'filterGroup'+window.filterEditPointer.filterConIndex, function(){
+            //refuse if this is the last condition:
+            if(window.filterEditPointer.filterConPresent.length<2)
+                return;
+            //delete elements
+            var index = parseInt(this.id.slice(15, this.id.length), 10),
+                treeGutter = document.getElementById('treeBlock'+index); 
+                element = document.getElementById(this.id);
+            treeGutter.parentNode.removeChild(treeGutter);
+            element.parentNode.parentNode.removeChild(element.parentNode);
+            //need to remove this group's index from filterConPresent
+            window.filterEditPointer.filterConPresent.splice(window.filterEditPointer.filterConPresent.indexOf(index), 1);
+            //hide previous tree gutter
+            document.getElementById('treeBlock'+window.filterEditPointer.filterConPresent[window.filterEditPointer.filterConPresent.length-1]).style.opacity = 0;
+        }, String.fromCharCode(0x2573), '', 'button');
+        //content block
+        insertDOM('div', 'filterGroupContent'+window.filterEditPointer.filterConIndex, '', '', 'filterGroup'+window.filterEditPointer.filterConIndex, '', window.filterEditPointer.newFilterMessage)
+
+        //prepare filter groups to accept new elements:
+        document.getElementById('filterGroupContent'+window.filterEditPointer.filterConIndex).addEventListener('dragover', dragOver, false);
+        document.getElementById('filterGroupContent'+window.filterEditPointer.filterConIndex).addEventListener('drop', handleDrop, false);
+
+        window.filterEditPointer.filterConPresent[window.filterEditPointer.filterConPresent.length] = window.filterEditPointer.filterConIndex;
+        window.filterEditPointer.filterConIndex++;
+console.log(window.filterEditPointer.filterConPresent)
 }
