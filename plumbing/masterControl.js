@@ -230,7 +230,7 @@ function ODBgrab(){
 //handle pulling the initial config parameters out of the ODB and replacing the default values in the JSONP-loaded parameter store:
 function fetchCustomParameters(){
 
-    var topLevel=0, HV, BAMBINO, DANTE, DESCANT, HPGe, PACES, SCEPTAR, SHARC, SPICE, ZDS, TIPwall, TIPball, DAQ, DSSD, DASHBOARD, CYCLE;
+    var i, topLevel=0, HV, BAMBINO, DANTE, DESCANT, HPGe, PACES, SCEPTAR, SHARC, SPICE, ZDS, TIPwall, TIPball, DAQ, DSSD, DASHBOARD, CYCLE;
 
     //define keys
     var paths = [];
@@ -452,10 +452,19 @@ function fetchCustomParameters(){
     window.parameters.dashboardMax = data[DASHBOARD+1];
 
     window.parameters.cycleNames = data[CYCLE].slice(0, data[CYCLE].length-1);
-    window.parameters.cycleSteps = data[CYCLE+1];
-    window.parameters.cycleCodes = data[CYCLE+2];
-    window.parameters.cycleDurations = data[CYCLE+3];
-    
+    window.parameters.cycleSteps = data[CYCLE+1].slice(0, data[CYCLE+1].length-1);
+    //MIDAS returns everything as a string, maddening....:
+    for(i=0; i<window.parameters.cycleSteps.length; i++){
+        window.parameters.cycleSteps[i] = parseInt(window.parameters.cycleSteps[i], 10);
+    }
+    window.parameters.cycleCodes = data[CYCLE+2].slice(0, data[CYCLE+2].length-1);
+    for(i=0; i<window.parameters.cycleCodes.length; i++){
+        window.parameters.cycleCodes[i] = parseInt(window.parameters.cycleCodes[i], 10);
+    }
+    window.parameters.cycleDurations = data[CYCLE+3].slice(0, data[CYCLE+3].length-1);
+    for(i=0; i<window.parameters.cycleDurations.length; i++){
+        window.parameters.cycleDurations[i] = parseInt(window.parameters.cycleDurations[i], 10);
+    }    
 }
 
 //wrap ODBMGet in a function that accepts a key value store populated with ODBpaths, and returns the same object

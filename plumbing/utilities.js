@@ -384,6 +384,18 @@ String.prototype.width = function(font) {
   return w;
 }
 
+function arraySum(start, end) {
+    var i, last, total = 0;
+
+    (end == -1) ? last = this.length : end;
+
+    for(i=start; i<end; i++){
+        total += parseFloat(this[i]);
+    }
+    return total
+}
+
+
 function relMouseCoords(event){
     var totalOffsetX = 0,
     totalOffsetY = 0,

@@ -41,7 +41,7 @@ function Cycle(){
     insertDOM('br', 'break', '', '', this.linkWrapperID);
     insertDOM('label', 'cycleNameLabel', '', 'margin-left:10px;', this.linkWrapperID, '', 'Name this Cycle: ');
     insertDOM('input', 'cycleName', '', '', this.linkWrapperID, '', '', '', 'text', 'newCycle');
-    insertDOM('button', 'saveCycle', 'navLink', '', this.linkWrapperID, function(){}, 'Save', '', 'button');
+    insertDOM('button', 'saveCycle', 'navLink', '', this.linkWrapperID, saveCycle.bind(null), 'Save', '', 'button');
     document.getElementById('cycleNameLabel').setAttribute('for', 'cycleName');
     insertDOM('br', 'break', '', '', this.linkWrapperID);
     insertDOM('label', 'loadCycleLabel', '', 'margin-left:10px;', this.linkWrapperID, '', 'Load Cycle: ');
@@ -461,10 +461,40 @@ function loadCycleOptions(){
     }
 }
 
-//write the defined cycle to the ODB for later use
+//write the defined cycle to the ODB for later use - disabled until ODBSet for strings bug is solved
 function saveCycle(){
-    var cycle = buildCycle();
+    /*
+    var i, cycle = buildCycle(),
+        name = document.getElementById('cycleName').value,
+        nameIndex = (window.parameters.cycleNames.indexOf(name) == -1) ? window.parameters.cycleNames.length : window.parameters.cycleNames.indexOf(name),
+        codeIndex = arraySum.call(window.parameters.cycleSteps, 0, nameIndex)
 
+    console.log(window.parameters.cycleNames)
+    console.log(window.parameters.cycleSteps)
+    console.log(window.parameters.cycleCodes)
+    console.log(window.parameters.cycleDurations)
+
+    //remove old commands if they exist, and insert new ones:
+    window.parameters.cycleCodes.splice.apply(window.parameters.cycleCodes, [codeIndex, window.parameters.cycleSteps[nameIndex]].concat(cycle[0]));
+    //and similarly for durations:
+    window.parameters.cycleDurations.splice.apply(window.parameters.cycleDurations, [codeIndex, window.parameters.cycleDurations[nameIndex]].concat(cycle[1]));
+    //update nSteps:
+    window.parameters.cycleSteps[nameIndex] = cycle[0].length;
+    //update name
+    window.parameters.cycleNames[nameIndex] = name;
+
+
+    console.log(window.parameters.cycleNames)
+    console.log(window.parameters.cycleSteps)
+    console.log(window.parameters.cycleCodes)
+    console.log(window.parameters.cycleDurations)
+
+    //write to ODB
+    ODBSet('/DashboardConfig/Cycles/Names[*]', window.parameters.cycleNames);
+    ODBSet('/DashboardConfig/Cycles/nSteps[*]', window.parameters.cycleSteps);
+    ODBSet('/DashboardConfig/Cycles/Codes[*]', window.parameters.cycleCodes);
+    ODBSet('/DashboardConfig/Cycles/Durations[*]', window.parameters.cycleDurations);
+    */
 }
 
 //load the chosen cycle
@@ -472,6 +502,8 @@ function loadCycle(){
     var i, nSteps, startIndex,
         cycleIndex = parseInt(document.getElementById('cycleOptions').value, 10);  //which cycle has been requested?
 
+    //write the name of the cycle in the cycle name box
+    document.getElementById('cycleName').value = document.getElementById('cycleOptions').childNodes[cycleIndex].text;
     //in the Codes and Durations tables, where should we start?
     startIndex = 0;
     for(i=0; i<cycleIndex; i++){

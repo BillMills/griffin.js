@@ -629,5 +629,4 @@ function deployEmptyFilterCondition(){
 
         window.filterEditPointer.filterConPresent[window.filterEditPointer.filterConPresent.length] = window.filterEditPointer.filterConIndex;
         window.filterEditPointer.filterConIndex++;
-console.log(window.filterEditPointer.filterConPresent)
 }
