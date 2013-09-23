@@ -527,6 +527,7 @@ function deployBadgeCanvas(width, height, id, wrapperID, paintThumb, thumbArgs, 
                                         if(pointer.innerHTML == '')
                                             pointer.innerHTML = window.cyclePointer.helpMessage;
                                             pointer.setAttribute('class', 'delayCycleContent');
+                                        askForCycleDeploy();
                                     }
                                 }
                             };

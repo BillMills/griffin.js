@@ -686,6 +686,33 @@ tbody tbody a:link{
 	border-bottom: 5px solid #999999;
 }
 
+@-webkit-keyframes alertBorder{
+	0%{
+		border-color: #00FFFF;
+	}
+	50%{
+		border-color: #4C4C4C;
+	}
+	100%{
+		border-color: #00FFFF;
+	}
+}
+
+button#commitCycle{
+	animation-name: alertBorder;
+	-webkit-animation-name: alertBorder;
+	-moz-animation-name: alertBorder;
+	animation-duration: 2s;
+	-webkit-animation-duration: 2s;
+	-moz-animation-duration: 2s;
+	animation-timing-function: ease;
+	-webkit-animation-timing-function: ease;
+	-moz-animation-timing-function: ease;
+	animation-iteration-count: infinite;
+	-webkit-animation-iteration-count: infinite;
+	-moz-animation-iteration-count: infinite;
+}
+
 :invalid{
 	color: #FF0000;
 	border: 2px solid #FF0000;

@@ -35,13 +35,12 @@ function Cycle(){
 
     insertDOM('br', 'break', '', '', this.linkWrapperID, '', '');
     //nav buttons & cycle save / load interface:
-    insertDOM('button', 'commitCycle', 'navLink', '', this.linkWrapperID, buildCycle.bind(null), 'Commit Cycle and Return', '', 'button');
-    insertDOM('button', 'abortCycle', 'navLink', '', this.linkWrapperID, function(){}, 'Abandon Changes and Return', '', 'button');
-    insertDOM('button', 'resetCycle', 'navLink', '', this.linkWrapperID, function(){}, 'Start Over', '', 'button');
+    insertDOM('button', 'commitCycle', 'navLink', '-webkit-animation-name:x; -moz-animation-name:x;', this.linkWrapperID, commitCycle.bind(null), 'Deploy Cycle Now', '', 'button');
+    insertDOM('button', 'resetCycle', 'navLink', '', this.linkWrapperID, reloadCycle.bind(null), 'Reload Active Cycle', '', 'button');
     insertDOM('br', 'break', '', '', this.linkWrapperID);
     insertDOM('label', 'cycleNameLabel', '', 'margin-left:10px;', this.linkWrapperID, '', 'Name this Cycle: ');
     insertDOM('input', 'cycleName', '', '', this.linkWrapperID, '', '', '', 'text', 'newCycle');
-    insertDOM('button', 'saveCycle', 'navLink', '', this.linkWrapperID, saveCycle.bind(null), 'Save', '', 'button');
+    insertDOM('button', 'saveCycle', 'navLink', '', this.linkWrapperID, saveCycle.bind(null), 'Save Cycle Definition', '', 'button');
     document.getElementById('cycleNameLabel').setAttribute('for', 'cycleName');
     insertDOM('br', 'break', '', '', this.linkWrapperID);
     insertDOM('label', 'loadCycleLabel', '', 'margin-left:10px;', this.linkWrapperID, '', 'Load Cycle: ');
@@ -49,6 +48,9 @@ function Cycle(){
     document.getElementById('loadCycleLabel').setAttribute('for', 'cycleOptions');
     loadCycleOptions();
     insertDOM('button', 'loadCycle', 'navLink', '', this.linkWrapperID, loadCycle.bind(null), 'Load', '', 'button');
+    insertDOM('button', 'deleteCycle', 'navLink', '', this.linkWrapperID, function(){
+        confirm('Delete Cycle Definition', 'Do you really want to delete '+document.getElementById('cycleOptions').childNodes[parseInt(document.getElementById('cycleOptions').value, 10)].text+'?', deleteCycle.bind(null))
+    }, 'Delete', '', 'button');
 
 
     //div structure for drag and drop area: right panel for detector palete, two-div column for Single Stream and Interstream Filters:
@@ -98,6 +100,8 @@ function Cycle(){
 
     };
 
+    reloadCycle();
+    suspendCycleRequest();
 }
 
 
@@ -139,6 +143,8 @@ function spacerDrop(event){
         document.getElementById('cycleSteps').insertBefore(document.getElementById('rightCycleSpacer'+origin), document.getElementById('leftCycleSpacer'+origin).nextSibling );
     }
 
+    askForCycleDeploy();
+
     return false;
 }
 
@@ -178,6 +184,8 @@ function cycleDrop(event){
         }
         deployBadge.apply(window.cyclePointer, [payload, contentBlock.id]);
     }
+
+    askForCycleDeploy();
 
     return false;   
 }
@@ -244,7 +252,7 @@ function createCycleStep(input){
             //delete cycle div:
             var element = document.getElementById(this.id);
             element.parentNode.parentNode.removeChild(element.parentNode);
-
+            askForCycleDeploy();
         }
     }, String.fromCharCode(0x2573), '', 'button');
 
@@ -280,6 +288,7 @@ function terminationBadge(){
         createCycleStep(window.cyclePointer.helpMessage);
         document.getElementById('cycleContent'+window.cyclePointer.nCycleSteps).setAttribute('class', 'delayCycleContent') 
         window.cyclePointer.nCycleSteps++;
+        askForCycleDeploy();
     }, 'New Command', '', 'button');
 }
 
@@ -307,6 +316,7 @@ function durationBadge(index, parentID){
                 document.getElementById('durationBreak'+index).style.display = '';
                 document.getElementById('infiniteDuration'+index).style.display = 'none';                
             }
+            askForCycleDeploy();
         });
     //when infinite is selected, remove UI elements and just show infinite:
     insertDOM('br', 'break', '', '', 'durationDiv'+index);
@@ -316,12 +326,14 @@ function durationBadge(index, parentID){
     document.getElementById('durationSlider'+index).max = 1000;
     document.getElementById('durationSlider'+index).onchange = function(){
         document.getElementById('durationInput'+index).value = this.valueAsNumber;
+        askForCycleDeploy();
     }
     document.getElementById('durationInput'+index).value = document.getElementById('durationSlider'+index).valueAsNumber;
     document.getElementById('durationInput'+index).min = 0;
     document.getElementById('durationInput'+index).max = 1000;
     document.getElementById('durationInput'+index).onchange = function(){
         document.getElementById('durationSlider'+index).value = this.valueAsNumber;
+        askForCycleDeploy();
     }
     
 
@@ -441,8 +453,10 @@ function deployCommand(command, duration){
         unit = 'millisec';
     }
     durationBadge = document.getElementById('durationDiv'+(window.cyclePointer.nCycleSteps-1));
-    if(time!=0)
+    if(time!=0){
         durationBadge.childNodes[0].value = time;
+        durationBadge.childNodes[5].value = time;
+    }
     while(durationBadge.childNodes[3].childNodes[1].innerHTML != unit)
          durationBadge.childNodes[3].childNodes[2].onclick();
 
@@ -464,16 +478,11 @@ function loadCycleOptions(){
 //write the defined cycle to the ODB for later use - disabled until ODBSet for strings bug is solved
 function saveCycle(){
     
-    var i, cycle = buildCycle(),
+    var i, option, cycle = buildCycle();
         name = document.getElementById('cycleName').value,
         nameIndex = (window.parameters.cycleNames.indexOf(name) == -1) ? window.parameters.cycleNames.length : window.parameters.cycleNames.indexOf(name),
         codeIndex = arraySum.call(window.parameters.cycleSteps, 0, nameIndex)
-/*
-    console.log(window.parameters.cycleNames)
-    console.log(window.parameters.cycleSteps)
-    console.log(window.parameters.cycleCodes)
-    console.log(window.parameters.cycleDurations)
-*/
+
     //remove old commands if they exist, and insert new ones:
     window.parameters.cycleCodes.splice.apply(window.parameters.cycleCodes, [codeIndex, window.parameters.cycleSteps[nameIndex]].concat(cycle[0]));
     //and similarly for durations:
@@ -483,12 +492,6 @@ function saveCycle(){
     //update name
     window.parameters.cycleNames[nameIndex] = name;
 
-/*
-    console.log(window.parameters.cycleNames)
-    console.log(window.parameters.cycleSteps)
-    console.log(window.parameters.cycleCodes)
-    console.log(window.parameters.cycleDurations)
-*/
     //write to ODB
     //ODBSet('/DashboardConfig/Cycles/Names[*]', window.parameters.cycleNames);
     ODBSet('/DashboardConfig/Cycles/nSteps[*]', window.parameters.cycleSteps);
@@ -498,6 +501,67 @@ function saveCycle(){
         ODBSet('/DashboardConfig/Cycles/Names['+i+']', window.parameters.cycleNames[i]);
     }
 
+    //include in dropdown
+    option = document.createElement('option');
+    option.text = name;
+    option.value = window.parameters.cycleNames.length-1;
+    document.getElementById('cycleOptions').add(option, null);
+
+    //console.log(window.parameters.cycleNames)
+    //console.log(window.parameters.cycleSteps)
+    //console.log(window.parameters.cycleCodes)
+    //console.log(window.parameters.cycleDurations)  
+
+}
+
+function deleteCycle(){
+    var cycleIndex = parseInt(document.getElementById('cycleOptions').value, 10),
+        name = document.getElementById('cycleOptions').childNodes[cycleIndex].text,
+        nameIndex = window.parameters.cycleNames.indexOf(name),
+        codeIndex = arraySum.call(window.parameters.cycleSteps, 0, nameIndex);
+
+    //remove commands:
+    window.parameters.cycleCodes.splice(codeIndex, window.parameters.cycleSteps[nameIndex]);
+    //and similarly for durations:
+    window.parameters.cycleDurations.splice(codeIndex, window.parameters.cycleDurations[nameIndex] );
+    //update nSteps:
+    window.parameters.cycleSteps.splice(nameIndex,1);
+    //update name
+    window.parameters.cycleNames.splice(nameIndex,1);
+
+    //write to ODB
+    //ODBSet('/DashboardConfig/Cycles/Names[*]', window.parameters.cycleNames);
+    ODBSet('/DashboardConfig/Cycles/nSteps[*]', window.parameters.cycleSteps);
+    ODBSet('/DashboardConfig/Cycles/Codes[*]', window.parameters.cycleCodes);
+    ODBSet('/DashboardConfig/Cycles/Durations[*]', window.parameters.cycleDurations);
+    for(i=0; i<window.parameters.cycleNames.length; i++){
+        ODBSet('/DashboardConfig/Cycles/Names['+i+']', window.parameters.cycleNames[i]);
+    }   
+}
+
+//load the defined cycle into the ODB for present use:
+function commitCycle(){
+    var cycle = buildCycle();
+    ODBSet('/DashboardConfig/Cycles/Active Pattern[*]', cycle[0]);
+    ODBSet('/DashboardConfig/Cycles/Active Duration[*]', cycle[1]);
+    ODBSet('/DashboardConfig/Cycles/Active Name', document.getElementById('cycleName').value);
+    window.parameters.liveCycle = cycle;
+    window.parameters.liveCycleName = document.getElementById('cycleName').value;
+    suspendCycleRequest();
+}
+
+//load whatever the ODB has currently registered as the active cycle
+function reloadCycle(){
+    var i;
+
+    //dump whatever's displayed currently:
+    resetCycle();
+    //load the active cycle from the ODB:
+    for(i=0; i<window.parameters.liveCycle[0].length; i++){
+        deployCommand(window.parameters.liveCycle[0][i], window.parameters.liveCycle[1][i] );
+    }
+
+    document.getElementById('cycleName').value = window.parameters.liveCycleName;
 }
 
 //load the chosen cycle
@@ -522,6 +586,10 @@ function loadCycle(){
         deployCommand(parseInt(window.parameters.cycleCodes[i],10), parseInt(window.parameters.cycleDurations[i],10));
     }
 
+    //if reloading the active cycle, dismiss any requests for cycle deployment:
+    if(document.getElementById('cycleOptions').childNodes[cycleIndex].text == window.parameters.liveCycleName)
+        suspendCycleRequest();
+
 }
 
 //dump all commands:
@@ -534,3 +602,14 @@ function resetCycle(){
     terminationBadge();
 }
 
+//start the deploy cycle button flashing:
+function askForCycleDeploy(){
+    document.getElementById('commitCycle').style.webkitAnimationName = 'alertBorder';
+    document.getElementById('commitCycle').style.mozAnimationName = 'alertBorder';
+}
+
+//suspend request for cycle deployment
+function suspendCycleRequest(){
+    document.getElementById('commitCycle').style.webkitAnimationName = 'x';
+    document.getElementById('commitCycle').style.mozAnimationName = 'x';    
+}

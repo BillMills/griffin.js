@@ -357,6 +357,9 @@ function fetchCustomParameters(){
     paths[CYCLE+1] = '/DashboardConfig/Cycles/nSteps[*]';
     paths[CYCLE+2] = '/DashboardConfig/Cycles/Codes[*]';
     paths[CYCLE+3] = '/DashboardConfig/Cycles/Durations[*]';
+    paths[CYCLE+4] = '/DashboardConfig/Cycles/Active Pattern[*]';
+    paths[CYCLE+5] = '/DashboardConfig/Cycles/Active Duration[*]';
+    paths[CYCLE+6] = '/DashboardConfig/Cycles/Active Name';
 
     //fetch:
     var data = ODBMGet(paths);
@@ -464,13 +467,14 @@ function fetchCustomParameters(){
     window.parameters.cycleDurations = data[CYCLE+3].slice(0, data[CYCLE+3].length-1);
     for(i=0; i<window.parameters.cycleDurations.length; i++){
         window.parameters.cycleDurations[i] = parseInt(window.parameters.cycleDurations[i], 10);
-    }    
+    }
+    window.parameters.liveCycle = [data[CYCLE+4].slice(0, data[CYCLE+4].length-1) , data[CYCLE+5].slice(0, data[CYCLE+5].length-1)];
+    for(i=0; i<window.parameters.liveCycle[0].length; i++){
+        window.parameters.liveCycle[0][i] = parseInt(window.parameters.liveCycle[0][i], 10);
+        window.parameters.liveCycle[1][i] = parseInt(window.parameters.liveCycle[1][i], 10);
+    }
+    window.parameters.liveCycleName = data[CYCLE+6].slice(0, data[CYCLE+6].length-1);
 }
-
-//wrap ODBMGet in a function that accepts a key value store populated with ODBpaths, and returns the same object
-//with paths replaced by actual values fetched from the ODB
-//coming soon
-
 
 
 

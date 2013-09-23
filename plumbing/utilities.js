@@ -429,7 +429,54 @@ function relMouseCoords(event){
 }
 HTMLCanvasElement.prototype.relMouseCoords = relMouseCoords;
 
+//generic confirmation dialog
+function confirm(headline, detailText, confirmFunc){
+    var i, j, ODBpath;
 
+    //insert div and title
+    insertDOM('div', 'tempDiv', '', 'z-index:10; position:absolute; text-align:center; opacity:0; transition:opacity 0.5s; -moz-transition:opacity 0.5s; -webkit-transition:opacity 0.5s; background:rgba(0,0,0,0.8); border: 5px solid; border-radius:10px;', 'waffleplate', '', '', '');
+    var dialogue = document.getElementById('tempDiv');
+    insertDOM('h2', 'dialogHeader', '', 'position:relative; font:24px Orbitron; top:10px; margin-bottom:6%; margin-left:auto; margin-right:auto;', 'tempDiv', '', headline);
+
+    //fix dimensions
+    var width = 0.35*window.innerWidth;
+    $('#dialogHeader').width(width)
+
+    //center dialogue
+    $('#tempDiv').css('left', ($('#waffleplate').width()/2 - width/2))
+
+    //warning text
+    insertDOM('p', 'warning', '', 'padding: 1em; font-size:120%;', 'tempDiv', '', '');
+    document.getElementById('warning').innerHTML = detailText; 
+
+    //insert submit button
+    insertDOM('input', 'confirmChoice', 'bigButton', 'width:auto; height:auto; padding:0.5em; margin-bottom:1em; margin-left:0px', 'tempDiv', '', '', '', 'button', 'Confirm')
+    insertDOM('input', 'abortChoice', 'bigButton', 'width:auto; height:auto; padding:0.5em; margin-bottom:1em', 'tempDiv', '', '', '', 'button', 'Abort')
+
+    document.getElementById('confirmChoice').onclick = function(event){
+
+        confirmFunc();
+
+        document.getElementById('tempDiv').style.opacity = 0;
+        setTimeout(function(){
+            var element = document.getElementById('tempDiv');
+            element.parentNode.removeChild(element);            
+        }, 500);
+
+        rePaint();
+    }
+
+    document.getElementById('abortChoice').onclick = function(event){
+        document.getElementById('tempDiv').style.opacity = 0;
+        setTimeout(function(){
+            var element = document.getElementById('tempDiv');
+            element.parentNode.removeChild(element);            
+        }, 500);
+    }
+
+    //fade the div in:
+    dialogue.style.opacity = 1
+}
 
 
 
