@@ -474,6 +474,27 @@ function fetchCustomParameters(){
         window.parameters.liveCycle[1][i] = parseInt(window.parameters.liveCycle[1][i], 10);
     }
     window.parameters.liveCycleName = data[CYCLE+6].slice(0, data[CYCLE+6].length-1);
+
+    //all above to be migrated to the following JSON fetch of the whole entire dashboard directory:
+    fetchODB();
+}
+
+function fetchODB(){
+    var key, subkey, subsubkey; //horrible implementation of two-layer deep scrubbing; rewrite for arbitrary depth
+
+    window.parameters.ODB = JSON.parse(ODBCopy('/DashboardConfig'));
+    //dump the metadata for convenient for/in traversal:
+    for(key in window.parameters.ODB){
+        for(subkey in window.parameters.ODB[key]){
+            if(subkey.indexOf('/key') != -1)
+                delete window.parameters.ODB[key][subkey];
+            for(subsubkey in window.parameters.ODB[key][subkey]){
+                if(subsubkey.indexOf('/key') != -1)
+                    delete window.parameters.ODB[key][subkey][subsubkey];
+            }
+
+        }
+    }
 }
 
 

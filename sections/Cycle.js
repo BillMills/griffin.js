@@ -464,90 +464,82 @@ function deployCommand(command, duration){
 
 //fetch the predefined cycle options and make them choices in the loading dropdown:
 function loadCycleOptions(){
-    var i,
+    var key, i=0,
         option = [];
 
-    for(i=0; i<window.parameters.cycleNames.length; i++){
-        option[i] = document.createElement('option');
-        option[i].text = window.parameters.cycleNames[i];
-        option[i].value = i;
-        document.getElementById('cycleOptions').add(option[i], null);
+    for(key in window.parameters.ODB.Cycles){
+        if(window.parameters.ODB.Cycles.hasOwnProperty(key) && typeof window.parameters.ODB.Cycles[key] == 'object' && !Array.isArray(window.parameters.ODB.Cycles[key]) ){
+            option[i] = document.createElement('option');
+            option[i].text = key;
+            option[i].value = i;
+            document.getElementById('cycleOptions').add(option[i], null);
+            i++;
+        }
     }
 }
 
 //write the defined cycle to the ODB for later use - disabled until ODBSet for strings bug is solved
 function saveCycle(){
     
-    var i, option, cycle = buildCycle();
+    var deleteCode, option, cycle = buildCycle();
         name = document.getElementById('cycleName').value,
-        nameIndex = (window.parameters.cycleNames.indexOf(name) == -1) ? window.parameters.cycleNames.length : window.parameters.cycleNames.indexOf(name),
-        codeIndex = arraySum.call(window.parameters.cycleSteps, 0, nameIndex)
 
-    //remove old commands if they exist, and insert new ones:
-    window.parameters.cycleCodes.splice.apply(window.parameters.cycleCodes, [codeIndex, window.parameters.cycleSteps[nameIndex]].concat(cycle[0]));
-    //and similarly for durations:
-    window.parameters.cycleDurations.splice.apply(window.parameters.cycleDurations, [codeIndex, window.parameters.cycleDurations[nameIndex]].concat(cycle[1]));
-    //update nSteps:
-    window.parameters.cycleSteps[nameIndex] = cycle[0].length;
-    //update name
-    window.parameters.cycleNames[nameIndex] = name;
+    //remove old instance of this cycle, in case this is an edit:
+    deleteCode = JSON.parse(ODBMDelete(['/DashboardConfig/Cycles/'+name]));
+    //recreate:
+    ODBMCreate(['/DashboardConfig/Cycles/'+name, '/DashboardConfig/Cycles/'+name+'/Code', '/DashboardConfig/Cycles/'+name+'/Duration'], [TID_KEY, TID_INT, TID_INT]);
+    //insert data:
+    ODBSet('/DashboardConfig/Cycles/'+name+'/Code[*]', cycle[0]);
+    ODBSet('/DashboardConfig/Cycles/'+name+'/Duration[*]', cycle[1]);
 
-    //write to ODB
-    //ODBSet('/DashboardConfig/Cycles/Names[*]', window.parameters.cycleNames);
-    ODBSet('/DashboardConfig/Cycles/nSteps[*]', window.parameters.cycleSteps);
-    ODBSet('/DashboardConfig/Cycles/Codes[*]', window.parameters.cycleCodes);
-    ODBSet('/DashboardConfig/Cycles/Durations[*]', window.parameters.cycleDurations);
-    for(i=0; i<window.parameters.cycleNames.length; i++){
-        ODBSet('/DashboardConfig/Cycles/Names['+i+']', window.parameters.cycleNames[i]);
-    }
+    //regrab parameter store; performant enough or update local copy by hand to avoid traffic? TBD.
+    window.parameters.ODB = fetchODB();
 
-    //include in dropdown
-    option = document.createElement('option');
-    option.text = name;
-    option.value = window.parameters.cycleNames.length-1;
-    document.getElementById('cycleOptions').add(option, null);
-
-    //console.log(window.parameters.cycleNames)
-    //console.log(window.parameters.cycleSteps)
-    //console.log(window.parameters.cycleCodes)
-    //console.log(window.parameters.cycleDurations)  
-
+    //include in dropdown if new
+    if(deleteCode[0] == 312){
+        option = document.createElement('option');
+        option.text = name;
+        option.value = window.parameters.cycleNames.length-1;
+        document.getElementById('cycleOptions').add(option, null);
+    } else
+        console.log(deleteCode[0])
 }
 
 function deleteCycle(){
-    var cycleIndex = parseInt(document.getElementById('cycleOptions').value, 10),
-        name = document.getElementById('cycleOptions').childNodes[cycleIndex].text,
-        nameIndex = window.parameters.cycleNames.indexOf(name),
-        codeIndex = arraySum.call(window.parameters.cycleSteps, 0, nameIndex);
+    var i,
+        dropdown = document.getElementById('cycleOptions'),
+        cycleIndex = parseInt(dropdown.value, 10),
+        name = dropdown.childNodes[cycleIndex].text;
 
-    //remove commands:
-    window.parameters.cycleCodes.splice(codeIndex, window.parameters.cycleSteps[nameIndex]);
-    //and similarly for durations:
-    window.parameters.cycleDurations.splice(codeIndex, window.parameters.cycleDurations[nameIndex] );
-    //update nSteps:
-    window.parameters.cycleSteps.splice(nameIndex,1);
-    //update name
-    window.parameters.cycleNames.splice(nameIndex,1);
+    //remove from ODB
+    ODBMDelete(['/DashboardConfig/Cycles/'+name]);
 
-    //write to ODB
-    //ODBSet('/DashboardConfig/Cycles/Names[*]', window.parameters.cycleNames);
-    ODBSet('/DashboardConfig/Cycles/nSteps[*]', window.parameters.cycleSteps);
-    ODBSet('/DashboardConfig/Cycles/Codes[*]', window.parameters.cycleCodes);
-    ODBSet('/DashboardConfig/Cycles/Durations[*]', window.parameters.cycleDurations);
-    for(i=0; i<window.parameters.cycleNames.length; i++){
-        ODBSet('/DashboardConfig/Cycles/Names['+i+']', window.parameters.cycleNames[i]);
-    }   
+    //remove from dropdown
+    for(i=0; i<dropdown.childNodes.length; i++){
+        if(dropdown.childNodes[i].value == cycleIndex){
+            dropdown.childNodes[i].parentNode.removeChild(dropdown.childNodes[i]);
+        }
+    }
+
+    //technically the cycle is still floating around in memory now until page refresh.
 }
 
 //load the defined cycle into the ODB for present use:
 function commitCycle(){
     var cycle = buildCycle();
+
+    ODBMDelete(['/DashboardConfig/Cycles/Active Pattern', '/DashboardConfig/Cycles/Active Duration']);
+    ODBMCreate(['/DashboardConfig/Cycles/Active Pattern', '/DashboardConfig/Cycles/Active Duration'], [TID_INT, TID_INT]);
+
     ODBSet('/DashboardConfig/Cycles/Active Pattern[*]', cycle[0]);
     ODBSet('/DashboardConfig/Cycles/Active Duration[*]', cycle[1]);
     ODBSet('/DashboardConfig/Cycles/Active Name', document.getElementById('cycleName').value);
     window.parameters.liveCycle = cycle;
     window.parameters.liveCycleName = document.getElementById('cycleName').value;
     suspendCycleRequest();
+
+    //regrab ODB
+    window.parameters.ODB = fetchODB();
 }
 
 //load whatever the ODB has currently registered as the active cycle
@@ -562,43 +554,40 @@ function reloadCycle(){
     }
 
     document.getElementById('cycleName').value = window.parameters.liveCycleName;
+
+    suspendCycleRequest();
 }
 
 //load the chosen cycle
 function loadCycle(){
     var i, nSteps, startIndex,
-        cycleIndex = parseInt(document.getElementById('cycleOptions').value, 10);  //which cycle has been requested?
+        cycleIndex = parseInt(document.getElementById('cycleOptions').value, 10),  //which cycle has been requested?
+        name = document.getElementById('cycleOptions').childNodes[cycleIndex].text;
 
     //write the name of the cycle in the cycle name box
-    document.getElementById('cycleName').value = document.getElementById('cycleOptions').childNodes[cycleIndex].text;
-    //in the Codes and Durations tables, where should we start?
-    startIndex = 0;
-    for(i=0; i<cycleIndex; i++){
-        startIndex += parseInt(window.parameters.cycleSteps[i], 10);
-    }
-
-    nSteps = parseInt(window.parameters.cycleSteps[cycleIndex], 10);
+    document.getElementById('cycleName').value = name;
 
     //dump whatever's displayed currently:
     resetCycle();
 
-    for(i=startIndex; i<startIndex+nSteps; i++){
-        deployCommand(parseInt(window.parameters.cycleCodes[i],10), parseInt(window.parameters.cycleDurations[i],10));
+    //weirdness with one-entry array, workaround for now:
+    if(window.parameters.ODB.Cycles[name].Code.length > 1){
+        for(i=0; i<window.parameters.ODB.Cycles[name].Code.length; i++){
+            deployCommand(parseInt(window.parameters.ODB.Cycles[name].Code[i],10), parseInt(window.parameters.ODB.Cycles[name].Duration[i],10));
+        }
+    } else {
+        deployCommand(parseInt(window.parameters.ODB.Cycles[name].Code,10), parseInt(window.parameters.ODB.Cycles[name].Duration,10));
     }
 
     //if reloading the active cycle, dismiss any requests for cycle deployment:
-    if(document.getElementById('cycleOptions').childNodes[cycleIndex].text == window.parameters.liveCycleName)
+    if(name == window.parameters.liveCycleName)
         suspendCycleRequest();
-
 }
 
 //dump all commands:
 function resetCycle(){
-
     document.getElementById('cycleSteps').innerHTML = ''
-
     window.cyclePointer.nCycleSteps = 0;
-    
     terminationBadge();
 }
 

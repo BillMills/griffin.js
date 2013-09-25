@@ -478,5 +478,24 @@ function confirm(headline, detailText, confirmFunc){
     dialogue.style.opacity = 1
 }
 
+/*
+//shouldn't this return something???  otherwise have to use with new keyword to be able to extract anything from the this's.
+function ODBKey(path)
+{
+   var request = XMLHttpRequestGeneric();
 
+   var url = ODBUrlBase + '?cmd=jkey&odb=' + path;
+   request.open('GET', url, false);
+   request.send(null);
+   if (request.responseText == null)
+      return null;
+   var res = request.responseText.split('\n');
+   this.name = res[0];
+   this.type = res[1];
+   this.num_values = res[2];
+   this.item_size = res[3];
+   this.last_written = res[4];
 
+   return this;
+}
+*/
