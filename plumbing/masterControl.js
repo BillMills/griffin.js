@@ -476,25 +476,27 @@ function fetchCustomParameters(){
     window.parameters.liveCycleName = data[CYCLE+6].slice(0, data[CYCLE+6].length-1);
 */
     //all above to be migrated to the following JSON fetch of the whole entire dashboard directory:
-    //set up some keys for useful derived and / or internally defined quantities:
-    window.parameters.cycleNames = [];
     fetchODB();
 }
 
 function fetchODB(){
-    var key, subkey, subsubkey; //horrible implementation of two-layer deep scrubbing; rewrite for arbitrary depth
 
     window.parameters.ODB = JSON.parse(ODBCopy('/DashboardConfig'));
-    //dump the metadata for convenient for/in traversal:
-    for(key in window.parameters.ODB){
-        for(subkey in window.parameters.ODB[key]){
-            if(subkey.indexOf('/key') != -1)
-                delete window.parameters.ODB[key][subkey];
-            for(subsubkey in window.parameters.ODB[key][subkey]){
-                if(subsubkey.indexOf('/key') != -1)
-                    delete window.parameters.ODB[key][subkey][subsubkey];
-            }
+    scrubMeta(window.parameters.ODB);
 
+    //every leaf has a metadata leaf parallel to it, screws up for/in traversal.  Scrub: 
+    function scrubMeta(object){
+        var key;
+
+        //scrub metadata:
+        for(key in object){
+            if(key.indexOf('/key') != -1)
+                delete object[key];
+            else{
+                //recurse?
+                if(typeof object[key] == 'object' && !Array.isArray(object[key]))
+                    scrubMeta(object[key]);
+            }
         }
     }
 }

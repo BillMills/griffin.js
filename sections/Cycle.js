@@ -22,6 +22,14 @@ function Cycle(){
         "enableDESCANT" : 2048, //0x00000800
         "triggersOn"    : 3968  //0x00000F80  //as in ALL triggers on.
     };
+    //keep an internal list of all available cycles:
+    this.cycleNames = [];
+    //generate initial cycle list:
+    for(key in window.parameters.ODB.Cycles){
+        if(window.parameters.ODB.Cycles.hasOwnProperty(key) && typeof window.parameters.ODB.Cycles[key] == 'object' && !Array.isArray(window.parameters.ODB.Cycles[key])){
+            this.cycleNames[this.cycleNames.length] = key;
+        }
+    }
 
     this.wrapper = document.getElementById(this.wrapperID);
 
@@ -103,13 +111,6 @@ function Cycle(){
     document.getElementById('moveTapePaleteBadgecyclePalete').addEventListener('dragstart', paleteDragStart, false);
     document.getElementById('triggersOnPaleteBadgecyclePalete').addEventListener('dragstart', paleteDragStart, false);
     document.getElementById('beamOnPaleteBadgecyclePalete').addEventListener('dragstart', paleteDragStart, false);
-
-    //generate initial cycle list:
-    for(key in window.parameters.ODB.Cycles){
-        if(window.parameters.ODB.Cycles.hasOwnProperty(key) && typeof window.parameters.ODB.Cycles[key] == 'object' && !Array.isArray(window.parameters.ODB.Cycles[key])){
-            window.parameters.cycleNames[window.parameters.cycleNames.length] = key;
-        }
-    }
 
     this.update = function(){
     };
@@ -513,8 +514,8 @@ function saveCycle(){
     if(deleteCode[0] == 312){
         option = document.createElement('option');
         option.text = name;
-        option.value = window.parameters.cycleNames.length;
-        window.parameters.cycleNames[window.parameters.cycleNames.length] = name;
+        option.value = window.cyclePointer.cycleNames.length;
+        window.cyclePointer.cycleNames[window.cyclePointer.cycleNames.length] = name;
         document.getElementById('cycleOptions').add(option, null);
     }
 }
