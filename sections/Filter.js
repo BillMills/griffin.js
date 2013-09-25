@@ -356,14 +356,14 @@ function editFilter(filterSystems, filterSystemsNames){
     insertDOM('br', 'break', '', '', this.linkWrapperID);
 
     //div structure for drag and drop area: right panel for detector palete, gutter for tree lines and main area for trigger groups:
-    insertDOM('div', 'editFilterWrapper', '', 'width:'+0.48*$(this.wrapper).width()+'px; display:inline-block;', this.linkWrapperID, '', '');
+    insertDOM('div', 'editFilterWrapper', '', 'width:'+0.48*$(this.wrapper).width()+'px; display:inline-block; margin-top:1em', this.linkWrapperID, '', '');
     insertDOM('div', 'filterWrap', '', 'float:left; width:79%', 'editFilterWrapper', '', '');  //79 kind of kludgy, to accommodate margins.
-    insertDOM('div', 'treeGutter', '', 'float:left; width:10%', 'filterWrap', '', '');
+    insertDOM('div', 'treeGutter', '', 'float:left; width:10%; text-align:center;', 'filterWrap', '', '');
     insertDOM('div', 'treeBlockX', '', 'border-bottom: 5px solid #999999; height:20px;', 'treeGutter', '', ''); //top block in tree gutter provides the first branch
     insertDOM('div', 'filterCons', '', 'float:left; width:69%', 'filterWrap', '', '');
     deployEmptyFilterCondition();
     insertDOM('div', 'filterPalete', 'filterDiv', 'width:20%; float:right; text-align:center; padding-top:1em; max-height:500px; overflow:scroll;', 'editFilterWrapper', '', '');
-    insertDOM('button', 'newFilterCon', 'navLink', '', 'filterWrap', function(){deployEmptyFilterCondition()}, 'New Filter Group', '', 'button' );
+    insertDOM('button', 'newFilterCon', 'addButton', '', 'treeGutter', function(){deployEmptyFilterCondition()}, '+', '', 'button' );
 
     //deploy a dummy canvas for the filter view:
     this.canvasWidth = 0// 0.48*$(this.wrapper).width();
@@ -578,17 +578,31 @@ function filterTag(detName){
 
 //parse whatever is currently declared into a filter string definition
 function buildFilter(){
-    var i, j,
-        singleStreamFilters = document.getElementById('singleStreamFilters'),
+    var i, j, k, modeTag,
+        filterConditions = document.getElementById('filterCons'),
         filterString = '';
 
-    //standalone filter streams:
-    for(i=0; i<singleStreamFilters.childNodes.length; i++){
-        if(singleStreamFilters.childNodes[i].filterTag)
-            filterString += singleStreamFilters.childNodes[i].filterTag + '_';
+    for(i=0; i<filterConditions.childNodes.length; i++){
+        for(j=0; j<filterConditions.childNodes[i].childNodes.length; j++){
+            for(k=0; k<filterConditions.childNodes[i].childNodes[j].childNodes.length; k++){
+                if(filterConditions.childNodes[i].childNodes[j].childNodes[k].filterTag){
+                    //add subsystem tag
+                    filterString += filterConditions.childNodes[i].childNodes[j].childNodes[k].filterTag;
+                    //add Singles / Coinc / Prescale tag:
+                    modeTag = filterConditions.childNodes[i].childNodes[j].childNodes[k].childNodes[1].childNodes[1].innerHTML;
+                    modeTag = ( (modeTag == 'Singles') ? 'S' : ( (modeTag=='Prescaled') ? 'P' : 'C' ) );
+                    filterString += modeTag+'&';
+                }
+            }
+            filterString = filterString.slice(0, filterString.length-1);
+            filterString += '|';
+        }
     }
+    //trim some overkill:
+    filterString = filterString.slice(0, filterString.length-1);
+    filterString = filterString.slice(1, filterString.length);
 
-    //interstream filters:
+    console.log(filterString);
 
 }
 
@@ -598,11 +612,13 @@ function deployEmptyFilterCondition(){
         //inject a new filter group:
         insertDOM('div', 'filterGroup'+window.filterEditPointer.filterConIndex, 'filterCon', '', 'filterCons', '', '');
         //inject a new tree gutter:
-        insertDOM('div', 'treeBlock'+window.filterEditPointer.filterConIndex, 'treeGutter', 'opacity:0;', 'treeGutter', '', '');
+        insertDOM('div', 'treeBlock'+window.filterEditPointer.filterConIndex, 'treeGutter', 'display:none;', 'treeGutter', '', '');
+        //make sure the tree gutter comes above the new button:
+        document.getElementById('treeGutter').insertBefore(document.getElementById('treeBlock'+window.filterEditPointer.filterConIndex), document.getElementById('newFilterCon'))
         //resize the previous tree gutter and reveal it to connect it to the tree:
         if(bottomFilterConID != undefined){
             document.getElementById('treeBlock' + bottomFilterConID).style.height = document.getElementById('filterGroup' + bottomFilterConID).offsetHeight + parseInt(document.body.style.fontSize);
-            document.getElementById('treeBlock' + bottomFilterConID).style.opacity = 1;
+            document.getElementById('treeBlock' + bottomFilterConID).style.display = 'block';
         }
 
         //off button
@@ -619,7 +635,7 @@ function deployEmptyFilterCondition(){
             //need to remove this group's index from filterConPresent
             window.filterEditPointer.filterConPresent.splice(window.filterEditPointer.filterConPresent.indexOf(index), 1);
             //hide previous tree gutter
-            document.getElementById('treeBlock'+window.filterEditPointer.filterConPresent[window.filterEditPointer.filterConPresent.length-1]).style.opacity = 0;
+            document.getElementById('treeBlock'+window.filterEditPointer.filterConPresent[window.filterEditPointer.filterConPresent.length-1]).style.display = 'none';
         }, String.fromCharCode(0x2573), '', 'button');
         //content block
         insertDOM('div', 'filterGroupContent'+window.filterEditPointer.filterConIndex, '', '', 'filterGroup'+window.filterEditPointer.filterConIndex, '', window.filterEditPointer.newFilterMessage)

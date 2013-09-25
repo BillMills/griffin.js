@@ -643,6 +643,20 @@ tbody tbody a:link{
 	float:left;
 }
 
+.addButton{
+	width:1.5em;
+	height:1.5em;
+	border-radius: 0.75em;
+	border:3px solid #FFFFFF;
+	background-color: #009900;
+	font-size: 200%;
+	color:#FFFFFF;
+	text-align: center;
+	padding:0px;
+	margin-top: 0.5em;
+	padding-bottom:0.5em;
+}
+
 .cycleStep{
 	margin:0px;
 	border-radius: 25px;
