@@ -1,6 +1,6 @@
 function Cycle(){
     var that = this,
-    i;
+    i, key;
     window.cyclePointer = that;
 
     this.wrapperID = window.parameters.wrapper; //ID of wrapping div
@@ -49,7 +49,16 @@ function Cycle(){
     loadCycleOptions();
     insertDOM('button', 'loadCycle', 'navLink', '', this.linkWrapperID, loadCycle.bind(null), 'Load', '', 'button');
     insertDOM('button', 'deleteCycle', 'navLink', '', this.linkWrapperID, function(){
-        confirm('Delete Cycle Definition', 'Do you really want to delete '+document.getElementById('cycleOptions').childNodes[parseInt(document.getElementById('cycleOptions').value, 10)].text+'?', deleteCycle.bind(null))
+        var i, name,
+            dropdown = document.getElementById('cycleOptions'),
+            cycleIndex = parseInt(dropdown.value, 10);
+
+        for(i=0; i<dropdown.childNodes.length; i++){
+            if(dropdown.childNodes[i].value == cycleIndex){
+                name = dropdown.childNodes[i].innerHTML;
+            }            
+        }
+        confirm('Delete Cycle Definition', 'Do you really want to delete '+name+'?', deleteCycle.bind(null))
     }, 'Delete', '', 'button');
 
 
@@ -95,9 +104,14 @@ function Cycle(){
     document.getElementById('triggersOnPaleteBadgecyclePalete').addEventListener('dragstart', paleteDragStart, false);
     document.getElementById('beamOnPaleteBadgecyclePalete').addEventListener('dragstart', paleteDragStart, false);
 
+    //generate initial cycle list:
+    for(key in window.parameters.ODB.Cycles){
+        if(window.parameters.ODB.Cycles.hasOwnProperty(key) && typeof window.parameters.ODB.Cycles[key] == 'object' && !Array.isArray(window.parameters.ODB.Cycles[key])){
+            window.parameters.cycleNames[window.parameters.cycleNames.length] = key;
+        }
+    }
+
     this.update = function(){
-
-
     };
 
     reloadCycle();
@@ -499,28 +513,27 @@ function saveCycle(){
     if(deleteCode[0] == 312){
         option = document.createElement('option');
         option.text = name;
-        option.value = window.parameters.cycleNames.length-1;
+        option.value = window.parameters.cycleNames.length;
+        window.parameters.cycleNames[window.parameters.cycleNames.length] = name;
         document.getElementById('cycleOptions').add(option, null);
-    } else
-        console.log(deleteCode[0])
+    }
 }
 
 function deleteCycle(){
     var i,
         dropdown = document.getElementById('cycleOptions'),
         cycleIndex = parseInt(dropdown.value, 10),
-        name = dropdown.childNodes[cycleIndex].text;
+        name;
+        //find name and remove from dropdown
+        for(i=0; i<dropdown.childNodes.length; i++){
+            if(dropdown.childNodes[i].value == cycleIndex){
+                name = dropdown.childNodes[i].innerHTML;
+                dropdown.childNodes[i].parentNode.removeChild(dropdown.childNodes[i]);
+            }            
+        }
 
     //remove from ODB
     ODBMDelete(['/DashboardConfig/Cycles/'+name]);
-
-    //remove from dropdown
-    for(i=0; i<dropdown.childNodes.length; i++){
-        if(dropdown.childNodes[i].value == cycleIndex){
-            dropdown.childNodes[i].parentNode.removeChild(dropdown.childNodes[i]);
-        }
-    }
-
     //technically the cycle is still floating around in memory now until page refresh.
 }
 
@@ -534,8 +547,6 @@ function commitCycle(){
     ODBSet('/DashboardConfig/Cycles/Active Pattern[*]', cycle[0]);
     ODBSet('/DashboardConfig/Cycles/Active Duration[*]', cycle[1]);
     ODBSet('/DashboardConfig/Cycles/Active Name', document.getElementById('cycleName').value);
-    window.parameters.liveCycle = cycle;
-    window.parameters.liveCycleName = document.getElementById('cycleName').value;
     suspendCycleRequest();
 
     //regrab ODB
@@ -549,11 +560,11 @@ function reloadCycle(){
     //dump whatever's displayed currently:
     resetCycle();
     //load the active cycle from the ODB:
-    for(i=0; i<window.parameters.liveCycle[0].length; i++){
-        deployCommand(window.parameters.liveCycle[0][i], window.parameters.liveCycle[1][i] );
+    for(i=0; i<window.parameters.ODB.Cycles['Active Pattern'].length; i++){
+        deployCommand(window.parameters.ODB.Cycles['Active Pattern'][i], window.parameters.ODB.Cycles['Active Duration'][i] );
     }
 
-    document.getElementById('cycleName').value = window.parameters.liveCycleName;
+    document.getElementById('cycleName').value = window.parameters.ODB.Cycles['Active Name'];
 
     suspendCycleRequest();
 }
@@ -580,7 +591,7 @@ function loadCycle(){
     }
 
     //if reloading the active cycle, dismiss any requests for cycle deployment:
-    if(name == window.parameters.liveCycleName)
+    if(name == window.parameters.ODB.Cycles['Active Name'])
         suspendCycleRequest();
 }
 

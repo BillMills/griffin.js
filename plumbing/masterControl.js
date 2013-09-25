@@ -453,7 +453,7 @@ function fetchCustomParameters(){
 
     window.parameters.dashboardMin = data[DASHBOARD];
     window.parameters.dashboardMax = data[DASHBOARD+1];
-
+/*
     window.parameters.cycleNames = data[CYCLE].slice(0, data[CYCLE].length-1);
     window.parameters.cycleSteps = data[CYCLE+1].slice(0, data[CYCLE+1].length-1);
     //MIDAS returns everything as a string, maddening....:
@@ -474,8 +474,10 @@ function fetchCustomParameters(){
         window.parameters.liveCycle[1][i] = parseInt(window.parameters.liveCycle[1][i], 10);
     }
     window.parameters.liveCycleName = data[CYCLE+6].slice(0, data[CYCLE+6].length-1);
-
+*/
     //all above to be migrated to the following JSON fetch of the whole entire dashboard directory:
+    //set up some keys for useful derived and / or internally defined quantities:
+    window.parameters.cycleNames = [];
     fetchODB();
 }
 
