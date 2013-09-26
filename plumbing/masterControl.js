@@ -436,11 +436,11 @@ function fetchCustomParameters(){
     window.parameters.SPICEaux = data[SPICE+4].slice(0,2);
     if(data[SPICE+4]=='\n') window.parameters.SPICEaux = false;
     window.parameters.SPICEauxLayers = parseInt(data[SPICE+5],10);
-/*
+
     window.parameters.deployment.TIPwall = parseFloat(data[TIPwall]);
     window.parameters.TIPwall.minima.TIPwall = [parseFloat(data[TIPwall+1][0]), parseFloat(data[TIPwall+2][0]), parseFloat(data[TIPwall+3][0])];
     window.parameters.TIPwall.maxima.TIPwall = [parseFloat(data[TIPwall+1][1]), parseFloat(data[TIPwall+2][1]), parseFloat(data[TIPwall+3][1])];
-/*
+
     window.parameters.deployment.TIPball = parseFloat(data[TIPball]);
     window.parameters.TIPball.minima.TIPball = [parseFloat(data[TIPball+1][0]), parseFloat(data[TIPball+2][0]), parseFloat(data[TIPball+3][0])];
     window.parameters.TIPball.maxima.TIPball = [parseFloat(data[TIPball+1][1]), parseFloat(data[TIPball+2][1]), parseFloat(data[TIPball+3][1])];

@@ -43,7 +43,7 @@ function Dashboard(){
         this.labels[4] = 'BAMBINO';
         this.pointers[5] = window.BAMBINOpointer;
     }
-    if(window.parameters.deployment.SHARC){
+    if(window.parameters.ODB.SHARC.deploy){
         this.labels[4] = 'SHARC';
         this.pointers[4] = window.SHARCpointer;
     }

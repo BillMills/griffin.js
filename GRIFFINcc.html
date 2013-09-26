@@ -234,7 +234,7 @@
           window.Subdetectors = [];
 
           if(window.parameters.deployment["HPGe"]) window.Subdetectors[window.Subdetectors.length] = new HPGe();
-          if(window.parameters.deployment["SHARC"]) window.Subdetectors[window.Subdetectors.length] = new SHARC();
+          if(window.parameters.ODB.SHARC.deploy) window.Subdetectors[window.Subdetectors.length] = new SHARC();
           if(window.parameters.deployment["DESCANT"]) window.Subdetectors[window.Subdetectors.length] = new DESCANT();
           if(window.parameters.deployment["PACES"]) window.Subdetectors[window.Subdetectors.length] = new PACES();
           if(window.parameters.deployment["DANTE"]) window.Subdetectors[window.Subdetectors.length] = new DANTE();

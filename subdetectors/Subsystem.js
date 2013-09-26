@@ -60,7 +60,7 @@ function Subsystem(){
     this.canvas.onclick = function(event){
         var y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;
         if(y > that.canvasHeight - that.scaleHeight)
-            parameterDialogue(that.name, [[that.name, window.parameters.ODB[that.name].minima[that.name][window.state.subdetectorView], window.parameters.ODB[that.name].maxima[that.name][window.state.subdetectorView], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/'+that.name+'/'+scaleType()+'[0]', '/DashboardConfig/'+that.name+'/'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.state.subdetectorView]);
+            parameterDialogue(that.name, [[that.name, window.parameters.ODB[that.name][that.constructMinMaxKey(that.name)][0], window.parameters.ODB[that.name][that.constructMinMaxKey(that.name)][1], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/'+that.name+'/'+scaleType()+'[0]', '/DashboardConfig/'+that.name+'/'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.state.subdetectorView]);
     }
     
     //member functions
@@ -79,8 +79,7 @@ function Subsystem(){
             limitKey += 'rateScale'
 
         return limitKey;
-    }
-
+    };
 
     //determine which color <scalar> corresponds to
     this.parseColor = function(scalar, detector){
