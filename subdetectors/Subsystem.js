@@ -60,23 +60,40 @@ function Subsystem(){
     this.canvas.onclick = function(event){
         var y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;
         if(y > that.canvasHeight - that.scaleHeight)
-            parameterDialogue(that.name, [[that.name, window.parameters[that.name].minima[that.name][window.state.subdetectorView], window.parameters[that.name].maxima[that.name][window.state.subdetectorView], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/'+that.name+'/'+scaleType()+'[0]', '/DashboardConfig/'+that.name+'/'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.state.subdetectorView]);
+            parameterDialogue(that.name, [[that.name, window.parameters.ODB[that.name].minima[that.name][window.state.subdetectorView], window.parameters.ODB[that.name].maxima[that.name][window.state.subdetectorView], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/'+that.name+'/'+scaleType()+'[0]', '/DashboardConfig/'+that.name+'/'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.state.subdetectorView]);
     }
     
     //member functions
+    //construct the key pointing to the display min and max of detector
+    this.constructMinMaxKey = function(detector){
+        var limitIndex, limitKey;
+
+        //construct key pointing to relevant minima and maxima, = subsystem name + view state + 'Scale'
+        limitIndex = (window.state.subdetectorView < 3) ? window.state.subdetectorView : window.state.subdetectorView-2;
+        limitKey = (that.name == detector) ? '' : detector;
+        if(limitIndex == 0)
+            limitKey += 'HVscale'
+        else if(limitIndex == 1)
+            limitKey += 'thresholdScale'
+        else if(limitIndex == 2)
+            limitKey += 'rateScale'
+
+        return limitKey;
+    }
+
+
     //determine which color <scalar> corresponds to
     this.parseColor = function(scalar, detector){
-        var scale, limitIndex;
+        var scale,
+        limitKey = this.constructMinMaxKey(detector);
 
         if(scalar == 0xDEADBEEF) return 0xDEADBEEF
 
-        limitIndex = (window.state.subdetectorView < 3) ? window.state.subdetectorView : window.state.subdetectorView-2;
-
         //how far along the scale are we?  Technically this will produce the wrong color for canvases not currently on display.
         if(window.parameters.detectorLogMode.SubsystemsButton){
-            scale = (Math.log(scalar) - Math.log(window.parameters[this.name].minima[detector][limitIndex])) / (Math.log(window.parameters[this.name].maxima[detector][limitIndex]) - Math.log(window.parameters[this.name].minima[detector][limitIndex]));
+            scale = (Math.log(scalar) - Math.log(window.parameters.ODB[this.name][limitKey][0])) / (Math.log(window.parameters.ODB[this.name][limitKey][1]) - Math.log(window.parameters.ODB[this.name][limitKey][0]));
         } else {
-            scale = (scalar - window.parameters[this.name].minima[detector][limitIndex]) / (window.parameters[this.name].maxima[detector][limitIndex] - window.parameters[this.name].minima[detector][limitIndex]);
+            scale = (scalar - window.parameters.ODB[this.name][limitKey][0]) / (window.parameters.ODB[this.name][limitKey][1] - window.parameters.ODB[this.name][limitKey][0]);
         }
 
         //different scales for different meters to aid visual recognition:
@@ -87,7 +104,7 @@ function Subsystem(){
 
     //draw the color scale
     this.drawScale = function(context, frame){
-        var i, j, key, nKeys=0, label, limitIndex;
+        var i, j, key, nKeys=0, label, limitIndex, limitKey;
         var scaleFraction = 0.8  //fraction of canvas to span with the scale
         //clear the scale region
         context.clearRect(0, this.canvasHeight - this.scaleHeight, this.canvasWidth, this.canvasHeight);
@@ -103,21 +120,22 @@ function Subsystem(){
         var maxTicks = [];
         title = window.parameters.monitorValues[limitIndex];
         if(window.parameters.detectorLogMode.SubsystemsButton) title = 'log(' + title + ')';
-        for(key in window.parameters[this.name].minima){
+        for(i=0; i<this.subdetectors.length; i++){
+            limitKey = this.constructMinMaxKey(this.subdetectors[i]);
             if(window.parameters.detectorLogMode.SubsystemsButton){
                 //minimas
-                minTicks[key] = key+': ' + Math.log(window.parameters[this.name].minima[key][limitIndex]).toFixed(1) + ' log(' + window.parameters.subdetectorUnit[limitIndex]+')';
+                minTicks[this.subdetectors[i]] = this.subdetectors[i]+': ' + Math.log(window.parameters.ODB[this.name][limitKey][0]).toFixed(1) + ' log(' + window.parameters.subdetectorUnit[limitIndex]+')';
                 //maximas:
-                maxTicks[key] = key+': ' + Math.log(window.parameters[this.name].maxima[key][limitIndex]).toFixed(1) + ' log(' + window.parameters.subdetectorUnit[limitIndex]+')';
+                maxTicks[this.subdetectors[i]] = this.subdetectors[i]+': ' + Math.log(window.parameters.ODB[this.name][limitKey][1]).toFixed(1) + ' log(' + window.parameters.subdetectorUnit[limitIndex]+')';
             } else {
                 //minimas
-                if(window.parameters[this.name].minima[key][limitIndex] < 1000) minTicks[key] = key+': ' + window.parameters[this.name].minima[key][limitIndex] + ' ' + window.parameters.subdetectorUnit[limitIndex];
-                else minTicks[key] = key + ': ' + window.parameters[this.name].minima[key][limitIndex]/1000 + scaleUnit[limitIndex] + window.parameters.subdetectorUnit[limitIndex];
+                if(window.parameters.ODB[this.name][limitKey][0] < 1000) minTicks[this.subdetectors[i]] = this.subdetectors[i]+': ' + window.parameters.ODB[this.name][limitKey][0] + ' ' + window.parameters.subdetectorUnit[limitIndex];
+                else minTicks[this.subdetectors[i]] = this.subdetectors[i] + ': ' + window.parameters.ODB[this.name][limitKey][0]/1000 + scaleUnit[limitIndex] + window.parameters.subdetectorUnit[limitIndex];
                 //maximas:
-                if(window.parameters[this.name].maxima[key][limitIndex] < 1000) maxTicks[key] = key+': ' + window.parameters[this.name].maxima[key][limitIndex] + ' ' + window.parameters.subdetectorUnit[limitIndex];
-                else maxTicks[key] = key + ': ' + window.parameters[this.name].maxima[key][limitIndex]/1000 + scaleUnit[limitIndex] + window.parameters.subdetectorUnit[limitIndex];
+                if(window.parameters.ODB[this.name][limitKey][1] < 1000) maxTicks[this.subdetectors[i]] = this.subdetectors[i]+': ' + window.parameters.ODB[this.name][limitKey][1] + ' ' + window.parameters.subdetectorUnit[limitIndex];
+                else maxTicks[this.subdetectors[i]] = this.subdetectors[i] + ': ' + window.parameters.ODB[this.name][limitKey][1]/1000 + scaleUnit[limitIndex] + window.parameters.subdetectorUnit[limitIndex];
             }
-            nKeys++;
+            nKeys++;            
         }
 
         //titles
@@ -135,11 +153,9 @@ function Subsystem(){
         context.moveTo(this.canvasWidth*(1-scaleFraction)/2+1, this.canvasHeight - this.scaleHeight/2);
         context.lineTo(this.canvasWidth*(1-scaleFraction)/2+1, this.canvasHeight - this.scaleHeight/2 + 10);
         context.stroke();
-        i=0;
-        for(key in window.parameters[this.name].minima){
-            label = (nKeys == 1) ? minTicks[key].slice(minTicks[key].indexOf(':')+2, minTicks[key].length+1) : minTicks[key];
+        for(i=0; i<this.subdetectors.length; i++){
+            label = ((nKeys == 1) ? minTicks[this.subdetectors[i]].slice(minTicks[this.subdetectors[i]].indexOf(':')+2, minTicks[this.subdetectors[i]].length+1) : minTicks[this.subdetectors[i]]);
             context.fillText( label, this.canvasWidth*(1-scaleFraction)/2 - context.measureText(label).width/2, this.canvasHeight-this.scaleHeight/2 + 25+12*i);
-            i++;
         }
 
         //max tick
@@ -147,11 +163,9 @@ function Subsystem(){
         context.moveTo(this.canvasWidth*(1-(1-scaleFraction)/2)-1, this.canvasHeight - this.scaleHeight/2);
         context.lineTo(this.canvasWidth*(1-(1-scaleFraction)/2)-1, this.canvasHeight - this.scaleHeight/2 + 10); 
         context.stroke();
-        i=0;
-        for(key in window.parameters[this.name].minima){
-            label = (nKeys == 1) ? maxTicks[key].slice(maxTicks[key].indexOf(':')+2, maxTicks[key].length+1) : maxTicks[key]
+        for(i=0; i<this.subdetectors.length; i++){
+            label = ((nKeys == 1) ? maxTicks[this.subdetectors[i]].slice(maxTicks[this.subdetectors[i]].indexOf(':')+2, maxTicks[this.subdetectors[i]].length+1) : maxTicks[this.subdetectors[i]]);
             context.fillText(label, this.canvasWidth*(1-(1-scaleFraction)/2) - context.measureText(label).width/2, this.canvasHeight-this.scaleHeight/2 + 25+12*i);
-            i++;
         }
 
         var colorSteps = 150

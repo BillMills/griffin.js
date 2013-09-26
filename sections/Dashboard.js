@@ -47,11 +47,11 @@ function Dashboard(){
         this.labels[4] = 'SHARC';
         this.pointers[4] = window.SHARCpointer;
     }
-    if(window.parameters.deployment.TIPwall){
+    if(window.parameters.ODB.TIPwall.deploy){
         this.labels[4] = 'TIP Wall';
         this.pointers[4] = window.TIPwallpointer;
     }
-    if(window.parameters.deployment.TIPball){
+    if(window.parameters.ODB.TIPball.deploy){
         this.labels[4] = 'TIP Ball';
         this.pointers[4] = window.TIPballpointer;
     }
@@ -71,7 +71,7 @@ function Dashboard(){
         this.labels[5] = 'PACES';
         this.pointers[5] = window.PACESpointer;
     }
-    if(window.parameters.deployment.SPICE){
+    if(window.parameters.ODB.SPICE.deploy){
         this.labels[5] = 'SPICE';
         this.pointers[5] = window.SPICEpointer;
     }
@@ -81,7 +81,7 @@ function Dashboard(){
         this.pointers[1] = window.DESCANTpointer;
     }
     //upstream lampshade
-    if(window.parameters.deployment.SPICE){
+    if(window.parameters.ODB.SPICE.deploy){
         this.labels[2] = 0;
         this.pointers[2] = window.SPICEpointer;
     }
@@ -131,7 +131,7 @@ function Dashboard(){
                                     coords = this.relMouseCoords(event);
                                 y = coords.y;
                                 if(y>that.canvasHeight - that.scaleHeight){
-                                    parameterDialogue('Dashboard', [ ['Rate', parseFloat(window.parameters.dashboardMin), parseFloat(window.parameters.dashboardMax), 'Hz', '/DashboardConfig/Dashboard/dashboardMin', '/DashboardConfig/Dashboard/dashboardMax' ]  ], 'Sunset' );
+                                    parameterDialogue('Dashboard', [ ['Rate', parseFloat(window.parameters.ODB.Dashboard.dashboardMin), parseFloat(window.parameters.ODB.Dashboard.dashboardMax), 'Hz', '/DashboardConfig/Dashboard/dashboardMin', '/DashboardConfig/Dashboard/dashboardMax' ]  ], 'Sunset' );
                                 }
                             };
 
@@ -400,7 +400,7 @@ function Dashboard(){
         this.context.font="12px 'Raleway'";
 
         //determine unit:
-        unit = window.parameters.dashboardMax;
+        unit = window.parameters.ODB.Dashboard.dashboardMax;
         if(unit > 1000000) unit = ' MHz';
         else if(unit > 1000) unit = ' kHz';
         else unit = ' Hz';
@@ -410,8 +410,8 @@ function Dashboard(){
         this.context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2 + 20);
         this.context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2 + 20 + 10);
         this.context.stroke();
-        if(window.parameters.detectorLogMode.DashboardButton) string = Math.log( window.parameters.dashboardMin ) + ' log(Hz)';
-        else string = (window.parameters.dashboardMin) + ' Hz';
+        if(window.parameters.detectorLogMode.DashboardButton) string = Math.log( window.parameters.ODB.Dashboard.dashboardMin ) + ' log(Hz)';
+        else string = (window.parameters.ODB.Dashboard.dashboardMin) + ' Hz';
         this.context.fillText( string, this.canvasWidth*0.05 - this.context.measureText(string).width/2, this.canvasHeight-this.scaleHeight/2 + 45);
 
         this.context.beginPath();
@@ -419,7 +419,7 @@ function Dashboard(){
         this.context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - this.scaleHeight/2 + 20 + 10); 
         this.context.stroke();
 
-        string = window.parameters.dashboardMax;
+        string = window.parameters.ODB.Dashboard.dashboardMax;
         if(window.parameters.detectorLogMode. DashboardButton){
             string = Math.log(string).toFixed(1) + unit;
         } else {
@@ -441,9 +441,9 @@ function Dashboard(){
 
         //how far along the scale are we?
         if(window.parameters.detectorLogMode.DashboardButton){  //log mode
-            scale = (Math.log(scalar) - Math.log(window.parameters.dashboardMin) )/ (Math.log(window.parameters.dashboardMax) - Math.log(window.parameters.dashboardMin ));
+            scale = (Math.log(scalar) - Math.log(window.parameters.ODB.Dashboard.dashboardMin) )/ (Math.log(window.parameters.ODB.Dashboard.dashboardMax) - Math.log(window.parameters.ODB.Dashboard.dashboardMin ));
         } else {  //linear mode
-            scale = (scalar - window.parameters.dashboardMin ) / (window.parameters.dashboardMax - window.parameters.dashboardMin);
+            scale = (scalar - window.parameters.ODB.Dashboard.dashboardMin ) / (window.parameters.ODB.Dashboard.dashboardMax - window.parameters.ODB.Dashboard.dashboardMin);
         }
 
         return scalepickr(scale, 'Sunset');

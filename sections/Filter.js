@@ -57,14 +57,6 @@ function Filter(){
                                 if(cell > -1 && cell < 6){
                                     that.populateSidebar(cell);
                                 }
-                                /*
-                                //set up scale range dialogue:
-                                if(y>that.canvasHeight - that.scaleHeight){
-                                    parameterDialogue('DAQ', [ ['Transfer Rate', window.parameters.DAQminima[1], window.parameters.DAQmaxima[1], 'Bps', '/DashboardConfig/DAQ/transferMinTopView', '/DashboardConfig/DAQ/transferMaxTopView' ], ['Filter Rate', window.parameters.DAQminima[0], window.parameters.DAQmaxima[0], 'Hz', '/DashboardConfig/DAQ/rateMinTopView', '/DashboardConfig/DAQ/rateMaxTopView']  ], window.parameters.colorScale[window.DAQpointer.DAQcolor]);
-                                } else if(y<that.masterBottom){
-                                    parameterDialogue('Device Summary',[ ['Trig Requests', window.parameters.DAQminima[4], window.parameters.DAQmaxima[5], 'Hz', '/DashboardConfig/DAQ/rateMinMaster', '/DashboardConfig/DAQ/rateMaxMaster'], ['Data Rate', window.parameters.DAQminima[5], window.parameters.DAQmaxima[5], 'Bps', '/DashboardConfig/DAQ/transferMinMaster', '/DashboardConfig/DAQ/transferMaxMaster']  ]);
-                                }
-                                */
                             };
 
     //right sidebar

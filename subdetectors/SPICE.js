@@ -9,7 +9,7 @@ function SPICE(){
     this.dataBus = new SPICEDS();
     //SPICE can be deployed with an S2 or S3 downstream in the chamber;
     //these are identical to BAMBINO, so we deploy BAMBINO in 'SPICE mode':
-    if(window.parameters.SPICEaux == 'S2' || window.parameters.SPICEaux == 'S3'){
+    if(window.parameters.ODB.SPICE.SPICEauxiliary == 'S2' || window.parameters.ODB.SPICE.SPICEauxiliary == 'S3'){
         window.parameters.deployment.BAMBINO = 1;
         window.parameters.BAMBINOdeployment = [0,1];
     }
@@ -19,7 +19,8 @@ function SPICE(){
     //member variables///////////////////////////////////
 	this.nRadial = 10;
 	this.nAzimuthal = 12;
-
+    //list of elements with distinct minima and maxima on subdetector views:
+    this.subdetectors = ['SPICE'];
 
     //drawing parameters///////////////////////////////////////
     this.centerX = this.canvasWidth/2;

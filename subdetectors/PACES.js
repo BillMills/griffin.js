@@ -11,6 +11,8 @@ function PACES(){
     window.PACESpointer = that;
 
     //member variables///////////////////////////////////
+    //list of elements with distinct minima and maxima on subdetector views:
+    this.subdetectors = ['PACES'];
 
     //drawing parameters
     this.centerX = this.canvasWidth/2;

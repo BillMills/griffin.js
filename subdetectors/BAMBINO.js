@@ -10,12 +10,12 @@ function BAMBINO(spiceMode){
     window.BAMBINOpointer = that;
 
     //change the button name if we're deploying in spice mode:
-    if(window.parameters.SPICEaux)
-        document.getElementById('BAMBINOlink').innerHTML = 'SPICE '+window.parameters.SPICEaux
+    if(window.parameters.ODB.SPICE.SPICEauxiliary)
+        document.getElementById('BAMBINOlink').innerHTML = 'SPICE '+window.parameters.ODB.SPICE.SPICEauxiliary;
     //member variables///////////////////////////////////
     this.spiceAux = (spiceMode) ? 1 : 0;
     this.mode = (this.spiceAux) ? spiceMode : window.parameters.BAMBINOmode;      //'S2' or 'S3'
-    this.layers = (this.spiceAux) ? window.parameters.SPICEauxLayers : window.parameters.BAMBINOlayers;
+    this.layers = (this.spiceAux) ? window.parameters.ODB.SPICE.SPICEauxLayers : window.parameters.BAMBINOlayers;
 
     this.dataBus = new BAMBINODS(this.mode, this.layers, spiceMode);
     this.nRadial = 24;
@@ -23,6 +23,9 @@ function BAMBINO(spiceMode){
     	this.nAzimuthal = 16;
     else if(this.mode=='S3')
         this.nAzimuthal = 32;
+
+    //list of elements with distinct minima and maxima on subdetector views:
+    this.subdetectors = ['BAMBINO'];
 
     //drawing parameters//////////////////////////////////////////////////
     this.centerX = this.canvasWidth/2;

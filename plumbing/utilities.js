@@ -235,8 +235,8 @@ function fakeScalars(){
         key, subKey;
 
 
-    for(key in window.parameters.deployment){
-        if(window.parameters.deployment[key]){            
+    for(key in window.parameters.ODB){
+        if(window.parameters.ODB[key].deploy){            
             for(subKey in window[key+'pointer'].dataBus[key]){
                 JSONP.scalar[subKey] = {"TRIGREQ" : 1000*Math.random()};
             }
@@ -252,9 +252,9 @@ function fakeThresholds(){
     var JSONP = {'parameters' : {'thresholds' : {} } },
         key, subKey;
 
-    for(key in window.parameters.deployment){
-        if(window.parameters.deployment[key]){
-            for(subKey in window[key+'pointer'].dataBus[key]){
+    for(key in window.parameters.ODB){
+        if(window.parameters.ODB[key].deploy){
+            for(subKey in window[key+'pointer'].dataBus[key] ){
                 JSONP.parameters.thresholds[subKey] = 1000*Math.random();
             }
         }

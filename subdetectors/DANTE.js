@@ -11,7 +11,8 @@ function DANTE(){
     window.DANTEpointer = that;
 
     //member variables///////////////////////////////////
-
+    //list of elements with distinct minima and maxima on subdetector views:
+    this.subdetectors = ['BGO', 'LaBrTAC', 'LaBrPMT'];
 
     //set up scale adjust dialog:
     this.canvas.onclick = function(event){

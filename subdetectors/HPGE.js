@@ -26,6 +26,9 @@ function HPGe(){
     DetailView.call(this);                          //inject the infrastructure for a detail-level view
     HPGeAssets.call(this);                          //inject the HPGe drawing assets
 
+    //list of elements with distinct minima and maxima on subdetector views:
+    this.subdetectors = ['HPGe', 'BGO'];
+
     //onclick switch between top and detail view:
     this.detailCanvas.onclick = function(event){
                                     var y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;    

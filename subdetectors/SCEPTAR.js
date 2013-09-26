@@ -12,7 +12,8 @@ function SCEPTAR(){
 
     //member variables///////////////////////////////////
     this.config = window.parameters.SCEPTARconfig;  //subsystems on: [upstream sceptar, downstream sceptar, downstream ZDS]
-
+    //list of elements with distinct minima and maxima on subdetector views:
+    this.subdetectors = ['SCEPTAR', 'ZDS'];
 
     //set up scale adjust dialog:
     this.canvas.onclick = function(event){

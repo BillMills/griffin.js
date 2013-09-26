@@ -11,6 +11,8 @@ function DESCANT(){
     window.DESCANTpointer = that;
 
     //member variables///////////////////////////////////
+    //list of elements with distinct minima and maxima on subdetector views:
+    this.subdetectors = ['DESCANT'];
 
     //drawing parameters//////////////////////////////////////////////////////////////////////////////////
 	//center of DESCANT

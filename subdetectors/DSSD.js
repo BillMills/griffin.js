@@ -9,6 +9,8 @@ function DSSD(){
     Subsystem.call(this);
     this.dataBus = new DSSDDS();
     window.DSSDpointer = that;
+    //list of elements with distinct minima and maxima on subdetector views:
+    this.subdetectors = ['DSSD'];
 
     //drawing parameters//////////////////////////////////////////////////////////////////////////////////
 

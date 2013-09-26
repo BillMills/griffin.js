@@ -9,6 +9,8 @@ function TIPwall(){
     this.dataBus = new TIPwallDS();
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
     window.TIPwallpointer = that;
+    //list of elements with distinct minima and maxima on subdetector views:
+    this.subdetectors = ['TIPwall'];
 
     //drawing parameters
     //general
@@ -75,6 +77,8 @@ function TIPball(){
     this.dataBus = new TIPballDS();
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
     window.TIPballpointer = that;
+    //list of elements with distinct minima and maxima on subdetector views:
+    this.subdetectors = ['TIPball'];
 
     //member variables
     this.detsPerRing = [4,6,12,16,20,18,18,14,12,8];  //how many detectors are in each ring?

@@ -429,31 +429,31 @@ function fetchCustomParameters(){
     window.parameters.deployment.SHARC = parseFloat(data[SHARC]);
     window.parameters.SHARC.minima.SHARC = [parseFloat(data[SHARC+1][0]), parseFloat(data[SHARC+2][0]), parseFloat(data[SHARC+3][0])];
     window.parameters.SHARC.maxima.SHARC = [parseFloat(data[SHARC+1][1]), parseFloat(data[SHARC+2][1]), parseFloat(data[SHARC+3][1])];
-
+/*
     window.parameters.deployment.SPICE = parseFloat(data[SPICE]);
     window.parameters.SPICE.minima.SPICE = [parseFloat(data[SPICE+1][0]), parseFloat(data[SPICE+2][0]), parseFloat(data[SPICE+3][0])];
     window.parameters.SPICE.maxima.SPICE = [parseFloat(data[SPICE+1][1]), parseFloat(data[SPICE+2][1]), parseFloat(data[SPICE+3][1])];
     window.parameters.SPICEaux = data[SPICE+4].slice(0,2);
     if(data[SPICE+4]=='\n') window.parameters.SPICEaux = false;
     window.parameters.SPICEauxLayers = parseInt(data[SPICE+5],10);
-
+/*
     window.parameters.deployment.TIPwall = parseFloat(data[TIPwall]);
     window.parameters.TIPwall.minima.TIPwall = [parseFloat(data[TIPwall+1][0]), parseFloat(data[TIPwall+2][0]), parseFloat(data[TIPwall+3][0])];
     window.parameters.TIPwall.maxima.TIPwall = [parseFloat(data[TIPwall+1][1]), parseFloat(data[TIPwall+2][1]), parseFloat(data[TIPwall+3][1])];
-
+/*
     window.parameters.deployment.TIPball = parseFloat(data[TIPball]);
     window.parameters.TIPball.minima.TIPball = [parseFloat(data[TIPball+1][0]), parseFloat(data[TIPball+2][0]), parseFloat(data[TIPball+3][0])];
     window.parameters.TIPball.maxima.TIPball = [parseFloat(data[TIPball+1][1]), parseFloat(data[TIPball+2][1]), parseFloat(data[TIPball+3][1])];
 
     window.parameters.DAQminima = [parseFloat(data[DAQ]), parseFloat(data[DAQ+4]), parseFloat(data[DAQ+2]), parseFloat(data[DAQ+6]), parseFloat(data[DAQ+8]), parseFloat(data[DAQ+10])];
-    window.parameters.DAQmaxima = [parseFloat(data[DAQ+3]), parseFloat(data[DAQ+5]), parseFloat(data[DAQ+3]), parseFloat(data[DAQ+7]), parseFloat(data[DAQ+9]), parseFloat(data[DAQ+11])];
+    window.parameters.DAQmaxima = [parseFloat(data[DAQ+1]), parseFloat(data[DAQ+5]), parseFloat(data[DAQ+3]), parseFloat(data[DAQ+7]), parseFloat(data[DAQ+9]), parseFloat(data[DAQ+11])];
 
     window.parameters.DSSD.minima.DSSD = [parseFloat(data[DSSD][0]), parseFloat(data[DSSD+1][0]), parseFloat(data[DSSD+2][0])];
     window.parameters.DSSD.maxima.DSSD = [parseFloat(data[DSSD][1]), parseFloat(data[DSSD+1][1]), parseFloat(data[DSSD+2][1])];
 
     window.parameters.dashboardMin = data[DASHBOARD];
     window.parameters.dashboardMax = data[DASHBOARD+1];
-/*
+
     window.parameters.cycleNames = data[CYCLE].slice(0, data[CYCLE].length-1);
     window.parameters.cycleSteps = data[CYCLE+1].slice(0, data[CYCLE+1].length-1);
     //MIDAS returns everything as a string, maddening....:

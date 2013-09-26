@@ -11,6 +11,8 @@ function SHARC(){
     //member variables////////////////////
     this.padsEnabled = window.parameters.SHARCpads;     //are the pads present?
     this.detailShowing = 0;                             //is the detail view on display?
+    //list of elements with distinct minima and maxima on subdetector views:
+    this.subdetectors = ['SHARC'];
 
     //drawing parameters:
     //summary view is laid out on a 15x12 grid:
