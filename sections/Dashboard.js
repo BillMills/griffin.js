@@ -6,7 +6,7 @@ function Dashboard(){
 	this.canvasID = 'DashboardCanvas';	                    //ID of canvas to paint dashboard on
     this.linkWrapperID = 'DashboardLinks';                  //ID of div to contain clock view header
     this.sidebarID = 'dashboardMenus';                      //ID of dashboard sidebar div
-    this.labels = [window.parameters.HPGemode, window.parameters.HPGemode, window.parameters.HPGemode, 0, 0, 0, 'DUMP']      //names of corona, downstream lamp, upstream lamp, corona auxilary, chamber ds, chamber us, beamdump detectors
+    this.labels = [ODB.topLevel.HPGeArray, ODB.topLevel.HPGeArray, ODB.topLevel.HPGeArray, 0, 0, 0, 'DUMP']      //names of corona, downstream lamp, upstream lamp, corona auxilary, chamber ds, chamber us, beamdump detectors
     this.pointers = []; //global pointers to subsystems, to fetch the correct total rate for each section
     //colors:
     this.USLcolor = '#000000';
@@ -30,58 +30,58 @@ function Dashboard(){
     this.pointers[1] = window.HPGepointer;
     this.pointers[2] = window.HPGepointer;
     //corona auxilary
-    if(window.parameters.deployment.DANTE){
+    if(ODB.DANTE.deploy){
         this.labels[3] = 'DANTE';
         this.pointers[3] = window.DANTEpointer;
     }
     //chamber
-    if(window.parameters.BAMBINOdeployment[0]){  //upstream BAMBINO
+    if(ODB.BAMBINO.USdeploy){  //upstream BAMBINO
         this.labels[5] = 'BAMBINO';
         this.pointers[5] = window.BAMBINOpointer;
     }
-    if(window.parameters.BAMBINOdeployment[1]){  //downstream BAMBINO
+    if(ODB.BAMBINO.DSdeploy){  //downstream BAMBINO
         this.labels[4] = 'BAMBINO';
         this.pointers[5] = window.BAMBINOpointer;
     }
-    if(window.parameters.ODB.SHARC.deploy){
+    if(ODB.SHARC.deploy){
         this.labels[4] = 'SHARC';
         this.pointers[4] = window.SHARCpointer;
     }
-    if(window.parameters.ODB.TIPwall.deploy){
+    if(ODB.TIPwall.deploy){
         this.labels[4] = 'TIP Wall';
         this.pointers[4] = window.TIPwallpointer;
     }
-    if(window.parameters.ODB.TIPball.deploy){
+    if(ODB.TIPball.deploy){
         this.labels[4] = 'TIP Ball';
         this.pointers[4] = window.TIPballpointer;
     }
-    if(window.parameters.ODB.SCEPTAR.USdeploy){ //upstream SCEPTAR
+    if(ODB.SCEPTAR.USdeploy){ //upstream SCEPTAR
         this.labels[5] = 'SCEPTAR';
         this.pointers[5] = window.SCEPTARpointer;
     }
-    if(window.parameters.ODB.SCEPTAR.DSdeploy == 1){ //downstream SCEPTAR
+    if(ODB.SCEPTAR.DSdeploy == 1){ //downstream SCEPTAR
         this.labels[4] = 'SCEPTAR';
         this.pointers[4] = window.SCEPTARpointer;
     }
-    if(window.parameters.ODB.SCEPTAR.DSdeploy == 2){ //ZDS
+    if(ODB.SCEPTAR.DSdeploy == 2){ //ZDS
         this.labels[4] = 'ZDS';
         this.pointers[4] = window.ZDSpointer;
     }
-    if(window.parameters.ODB.PACES.deploy){
+    if(ODB.PACES.deploy){
         this.labels[5] = 'PACES';
         this.pointers[5] = window.PACESpointer;
     }
-    if(window.parameters.ODB.SPICE.deploy){
+    if(ODB.SPICE.deploy){
         this.labels[5] = 'SPICE';
         this.pointers[5] = window.SPICEpointer;
     }
     //downstream lampshade
-    if(window.parameters.deployment.DESCANT){
+    if(ODB.DESCANT.deploy){
         this.labels[1] = 'DESCANT';
         this.pointers[1] = window.DESCANTpointer;
     }
     //upstream lampshade
-    if(window.parameters.ODB.SPICE.deploy){
+    if(ODB.SPICE.deploy){
         this.labels[2] = 0;
         this.pointers[2] = window.SPICEpointer;
     }
@@ -89,8 +89,8 @@ function Dashboard(){
 	this.wrapper = document.getElementById(this.wrapperID);
 
     //right sidebar menus
-    subsPresent = [window.parameters.HPGemode];
-    subsNames = [window.parameters.HPGemode];
+    subsPresent = [ODB.topLevel.HPGeArray];
+    subsNames = [ODB.topLevel.HPGeArray];
     for(key in window.parameters.deployment){
         if(window.parameters.deployment[key] && key!='HPGe'){
             subsPresent[subsPresent.length] = key;
@@ -113,7 +113,7 @@ function Dashboard(){
     document.getElementById(this.linkWrapperID).setAttribute('style', 'z-index:1; opacity:1;')
 
     //nav header
-    insertDOM('h1', 'DashboardLinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', window.parameters.ExpName+' Dashboard')
+    insertDOM('h1', 'DashboardLinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', ODB.topLevel.expName+' Dashboard')
     insertDOM('br', 'break', '', '', this.linkWrapperID, '', '')
 
 	//deploy a canvas for the dashboard view:
@@ -131,7 +131,7 @@ function Dashboard(){
                                     coords = this.relMouseCoords(event);
                                 y = coords.y;
                                 if(y>that.canvasHeight - that.scaleHeight){
-                                    parameterDialogue('Dashboard', [ ['Rate', parseFloat(window.parameters.ODB.Dashboard.dashboardMin), parseFloat(window.parameters.ODB.Dashboard.dashboardMax), 'Hz', '/DashboardConfig/Dashboard/dashboardMin', '/DashboardConfig/Dashboard/dashboardMax' ]  ], 'Sunset' );
+                                    parameterDialogue('Dashboard', [ ['Rate', parseFloat(ODB.Dashboard.dashboardMin), parseFloat(ODB.Dashboard.dashboardMax), 'Hz', '/DashboardConfig/Dashboard/dashboardMin', '/DashboardConfig/Dashboard/dashboardMax' ]  ], 'Sunset' );
                                 }
                             };
 
@@ -400,7 +400,7 @@ function Dashboard(){
         this.context.font="12px 'Raleway'";
 
         //determine unit:
-        unit = window.parameters.ODB.Dashboard.dashboardMax;
+        unit = ODB.Dashboard.dashboardMax;
         if(unit > 1000000) unit = ' MHz';
         else if(unit > 1000) unit = ' kHz';
         else unit = ' Hz';
@@ -410,8 +410,8 @@ function Dashboard(){
         this.context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2 + 20);
         this.context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2 + 20 + 10);
         this.context.stroke();
-        if(window.parameters.detectorLogMode.DashboardButton) string = Math.log( window.parameters.ODB.Dashboard.dashboardMin ) + ' log(Hz)';
-        else string = (window.parameters.ODB.Dashboard.dashboardMin) + ' Hz';
+        if(window.parameters.detectorLogMode.DashboardButton) string = Math.log( ODB.Dashboard.dashboardMin ) + ' log(Hz)';
+        else string = (ODB.Dashboard.dashboardMin) + ' Hz';
         this.context.fillText( string, this.canvasWidth*0.05 - this.context.measureText(string).width/2, this.canvasHeight-this.scaleHeight/2 + 45);
 
         this.context.beginPath();
@@ -419,7 +419,7 @@ function Dashboard(){
         this.context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - this.scaleHeight/2 + 20 + 10); 
         this.context.stroke();
 
-        string = window.parameters.ODB.Dashboard.dashboardMax;
+        string = ODB.Dashboard.dashboardMax;
         if(window.parameters.detectorLogMode. DashboardButton){
             string = Math.log(string).toFixed(1) + unit;
         } else {
@@ -441,9 +441,9 @@ function Dashboard(){
 
         //how far along the scale are we?
         if(window.parameters.detectorLogMode.DashboardButton){  //log mode
-            scale = (Math.log(scalar) - Math.log(window.parameters.ODB.Dashboard.dashboardMin) )/ (Math.log(window.parameters.ODB.Dashboard.dashboardMax) - Math.log(window.parameters.ODB.Dashboard.dashboardMin ));
+            scale = (Math.log(scalar) - Math.log(ODB.Dashboard.dashboardMin) )/ (Math.log(ODB.Dashboard.dashboardMax) - Math.log(ODB.Dashboard.dashboardMin ));
         } else {  //linear mode
-            scale = (scalar - window.parameters.ODB.Dashboard.dashboardMin ) / (window.parameters.ODB.Dashboard.dashboardMax - window.parameters.ODB.Dashboard.dashboardMin);
+            scale = (scalar - ODB.Dashboard.dashboardMin ) / (ODB.Dashboard.dashboardMax - ODB.Dashboard.dashboardMin);
         }
 
         return scalepickr(scale, 'Sunset');

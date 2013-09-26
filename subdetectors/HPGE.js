@@ -12,9 +12,14 @@ function HPGe(){
     this.cloverShowing = 1;                         //index of clover currently showing in detail view
     this.detailShowing = 0;                         //is the detail canvas showing?
     this.scalePrefix = 'Clover ';                   //prefix for scale title
+    this.cloversAbsent = [];                        //are any clovers removed to accomodate other subsystems?
+    if(ODB.HPGe.upstreamLampAbsent)
+        this.cloversAbsent = this.cloversAbsent.concat([13,14,15,16]);
+    if(ODB.HPGe.downstreamLampAbsent)
+        this.cloversAbsent = this.cloversAbsent.concat([1,2,3,4]);    
 
-    this.mode = window.parameters.HPGemode;         //mode to run in, either 'TIGRESS' or 'GRIFFIN'
-    this.dataBus = new cloverDS(16, this.mode);                    //called after mode is fetched in order to know what kind of HPGe to deploy
+    this.mode = ODB.topLevel.HPGeArray;         //mode to run in, either 'TIGRESS' or 'GRIFFIN'
+    this.dataBus = new cloverDS(16, this.mode);     //called after mode is fetched in order to know what kind of HPGe to deploy
     this.nHPGesegments = 0;
     if(this.mode == 'TIGRESS')
         this.nHPGesegments = 40;
@@ -36,7 +41,7 @@ function HPGe(){
                                         that.detailShowing = 0;
                                         swapFade(null, that, 1000);
                                     } else{
-                                        parameterDialogue(that.name, [['HPGe', window.parameters.ODB[that.name][that.constructMinMaxKey('HPGe')][0], window.parameters.ODB[that.name][that.constructMinMaxKey('HPGe')][1], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/HPGe/'+scaleType()+'[0]', '/DashboardConfig/HPGe/'+scaleType()+'[1]'], ['BGO', window.parameters.ODB[that.name][that.constructMinMaxKey('BGO')][0], window.parameters.ODB[that.name][that.constructMinMaxKey('BGO')][1],  window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/HPGe/BGO'+scaleType()+'[0]', '/DashboardConfig/HPGe/BGO'+scaleType()+'[1]'] ], window.parameters.subdetectorColors[window.state.subdetectorView]);
+                                        parameterDialogue(that.name, [['HPGe', ODB[that.name][that.constructMinMaxKey('HPGe')][0], ODB[that.name][that.constructMinMaxKey('HPGe')][1], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/HPGe/'+scaleType()+'[0]', '/DashboardConfig/HPGe/'+scaleType()+'[1]'], ['BGO', ODB[that.name][that.constructMinMaxKey('BGO')][0], ODB[that.name][that.constructMinMaxKey('BGO')][1],  window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/HPGe/BGO'+scaleType()+'[0]', '/DashboardConfig/HPGe/BGO'+scaleType()+'[1]'] ], window.parameters.subdetectorColors[window.state.subdetectorView]);
                                     }
                                 };
     this.canvas.onclick =   function(event){
@@ -50,7 +55,7 @@ function HPGe(){
                                 if(cloverClicked != -1){
                                     cloverClicked = Math.floor( (cloverClicked - 108) / 8)+1;
                                     that.TTdetailLayerDone = 0;  //need to redraw detail TT layer for different detail views
-                                    if(window.parameters.cloversAbsent.indexOf(cloverClicked)==-1){
+                                    if(that.cloversAbsent.indexOf(cloverClicked)==-1){
                                         that.cloverShowing = cloverClicked
                                         that.drawDetail(that.detailContext, that.nFrames);
                                         that.drawDetail(that.TTdetailContext, that.nFrames);
@@ -58,7 +63,7 @@ function HPGe(){
                                         swapFade(null, that, 1000)
                                     }
                                 } else if(y > that.canvasHeight - that.scaleHeight){
-                                    parameterDialogue(that.name, [['HPGe', window.parameters.ODB[that.name][that.constructMinMaxKey('HPGe')][0], window.parameters.ODB[that.name][that.constructMinMaxKey('HPGe')][1], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/HPGe/'+scaleType()+'[0]', '/DashboardConfig/HPGe/'+scaleType()+'[1]'], ['BGO', window.parameters.ODB[that.name][that.constructMinMaxKey('BGO')][0], window.parameters.ODB[that.name][that.constructMinMaxKey('BGO')][1],  window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/HPGe/BGO'+scaleType()+'[0]', '/DashboardConfig/HPGe/BGO'+scaleType()+'[1]'] ], window.parameters.subdetectorColors[window.state.subdetectorView]);
+                                    parameterDialogue(that.name, [['HPGe', ODB[that.name][that.constructMinMaxKey('HPGe')][0], ODB[that.name][that.constructMinMaxKey('HPGe')][1], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/HPGe/'+scaleType()+'[0]', '/DashboardConfig/HPGe/'+scaleType()+'[1]'], ['BGO', ODB[that.name][that.constructMinMaxKey('BGO')][0], ODB[that.name][that.constructMinMaxKey('BGO')][1],  window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/HPGe/BGO'+scaleType()+'[0]', '/DashboardConfig/HPGe/BGO'+scaleType()+'[1]'] ], window.parameters.subdetectorColors[window.state.subdetectorView]);
                                 }
                             };
 

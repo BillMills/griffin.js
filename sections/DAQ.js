@@ -54,7 +54,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     //nav wrapper div
     insertDOM('div', this.linkWrapperID, 'navPanel', '', this.monitorID, '', '')
     //nav header
-    insertDOM('h1', 'DAQlinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', window.parameters.ExpName+' DAQ Status')
+    insertDOM('h1', 'DAQlinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', ODB.topLevel.expName+' DAQ Status')
     insertDOM('br', 'break', '', '', this.linkWrapperID, '', '')
     //nav buttons
     insertDOM('button', 'DAQToplink', 'navLinkDown', '', 'DAQlinks', function(){window.DAQpointer.detailShowing=0; window.DAQdetail=-1; swapFade('DAQToplink', window.DAQpointer, 0);}, 'Master', '', 'button')
@@ -105,7 +105,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                                     var y;
                                     y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;
                                     if(y>that.canvasHeight - that.scaleHeight){
-                                        parameterDialogue('DAQ', [ ['Transfer Rate', window.parameters.ODB.DAQ.transferMinDetailView, window.parameters.ODB.DAQ.transferMaxDetailView, 'Bps', '/DashboardConfig/DAQ/transferMinDetailView', '/DashboardConfig/DAQ/transferMaxDetailView' ], ['Trigger Rate', window.parameters.ODB.DAQ.rateMinDetailView, window.parameters.ODB.DAQ.rateMaxDetailView, 'Hz', '/DashboardConfig/DAQ/rateMinDetailView', '/DashboardConfig/DAQ/rateMaxDetailView']  ], window.parameters.colorScale[window.DAQpointer.DAQcolor]);
+                                        parameterDialogue('DAQ', [ ['Transfer Rate', ODB.DAQ.transferMinDetailView, ODB.DAQ.transferMaxDetailView, 'Bps', '/DashboardConfig/DAQ/transferMinDetailView', '/DashboardConfig/DAQ/transferMaxDetailView' ], ['Trigger Rate', ODB.DAQ.rateMinDetailView, ODB.DAQ.rateMaxDetailView, 'Hz', '/DashboardConfig/DAQ/rateMinDetailView', '/DashboardConfig/DAQ/rateMaxDetailView']  ], window.parameters.colorScale[window.DAQpointer.DAQcolor]);
                                     } else {
                                         that.detailShowing = 0;
                                         swapFade('DAQToplink', that, 0);
@@ -127,9 +127,9 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                                 }
                                 //set up scale range dialogue:
                                 if(y>that.canvasHeight - that.scaleHeight){
-                                    parameterDialogue('DAQ', [ ['Transfer Rate', window.parameters.ODB.DAQ.transferMinTopView, window.parameters.ODB.DAQ.transferMaxTopView, 'Bps', '/DashboardConfig/DAQ/transferMinTopView', '/DashboardConfig/DAQ/transferMaxTopView' ], ['Trigger Rate', window.parameters.ODB.DAQ.rateMinTopView, window.parameters.ODB.DAQ.rateMaxTopView, 'Hz', '/DashboardConfig/DAQ/rateMinTopView', '/DashboardConfig/DAQ/rateMaxTopView']  ], window.parameters.colorScale[window.DAQpointer.DAQcolor]);
+                                    parameterDialogue('DAQ', [ ['Transfer Rate', ODB.DAQ.transferMinTopView, ODB.DAQ.transferMaxTopView, 'Bps', '/DashboardConfig/DAQ/transferMinTopView', '/DashboardConfig/DAQ/transferMaxTopView' ], ['Trigger Rate', ODB.DAQ.rateMinTopView, ODB.DAQ.rateMaxTopView, 'Hz', '/DashboardConfig/DAQ/rateMinTopView', '/DashboardConfig/DAQ/rateMaxTopView']  ], window.parameters.colorScale[window.DAQpointer.DAQcolor]);
                                 } else if(y<that.masterBottom){
-                                    parameterDialogue('Device Summary',[ ['Trig Requests', window.parameters.ODB.DAQ.rateMinMaster, window.parameters.ODB.DAQ.transferMaxMaster, 'Hz', '/DashboardConfig/DAQ/rateMinMaster', '/DashboardConfig/DAQ/rateMaxMaster'], ['Data Rate', window.parameters.ODB.DAQ.transferMinMaster, window.parameters.ODB.DAQ.transferMaxMaster, 'Bps', '/DashboardConfig/DAQ/transferMinMaster', '/DashboardConfig/DAQ/transferMaxMaster']  ]);
+                                    parameterDialogue('Device Summary',[ ['Trig Requests', ODB.DAQ.rateMinMaster, ODB.DAQ.transferMaxMaster, 'Hz', '/DashboardConfig/DAQ/rateMinMaster', '/DashboardConfig/DAQ/rateMaxMaster'], ['Data Rate', ODB.DAQ.transferMinMaster, ODB.DAQ.transferMaxMaster, 'Bps', '/DashboardConfig/DAQ/transferMinMaster', '/DashboardConfig/DAQ/transferMaxMaster']  ]);
                                 }
                             };
 
@@ -203,11 +203,11 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 
         //parse the new data into colors
         this.dataBus.oldMasterColor = this.dataBus.masterColor;
-        this.dataBus.masterColor = this.parseColor(this.dataBus.master[0], window.parameters.ODB.DAQ.rateMinTopView, window.parameters.ODB.DAQ.rateMaxTopView);
+        this.dataBus.masterColor = this.parseColor(this.dataBus.master[0], ODB.DAQ.rateMinTopView, ODB.DAQ.rateMaxTopView);
     
         for(i=0; i<this.nCollectorGroups; i++){
             this.dataBus.oldMasterGroupColor[i] = this.dataBus.masterGroupColor[i];
-            this.dataBus.masterGroupColor[i] = this.parseColor(this.dataBus.collectorGroups[i], window.parameters.ODB.DAQ.transferMinTopView, window.parameters.ODB.DAQ.tansferMaxTopView);
+            this.dataBus.masterGroupColor[i] = this.parseColor(this.dataBus.collectorGroups[i], ODB.DAQ.transferMinTopView, ODB.DAQ.tansferMaxTopView);
         }
         for(i=0; i<this.nCollectors; i++){
             this.dataBus.oldMasterLinkColor[i] = this.dataBus.masterLinkColor[i];
@@ -216,23 +216,23 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
             this.dataBus.oldCollectorLinkColor[i] = this.dataBus.collectorLinkColor[i];
             this.dataBus.oldDetailCollectorLinkColor[i] = this.dataBus.detailCollectorLinkColor[i];
             this.dataBus.oldDigiSummaryColor[i] = this.dataBus.digiSummaryColor[i];
-            this.dataBus.masterLinkColor[i] = this.parseColor(this.dataBus.collectorLinks[i], window.parameters.ODB.DAQ.transferMinTopView, window.parameters.ODB.DAQ.tansferMaxTopView);
-            this.dataBus.collectorColor[i] = this.parseColor(this.dataBus.collectors[i], window.parameters.ODB.DAQ.rateMinTopView, window.parameters.ODB.DAQ.rateMaxTopView);
-            this.dataBus.detailCollectorColor[i] = this.parseColor(this.dataBus.collectors[i], window.parameters.ODB.DAQ.rateMinDetailView, window.parameters.ODB.DAQ.rateMaxDetailView);
-            this.dataBus.collectorLinkColor[i]       = this.parseColor(this.dataBus.digitizerGroupSummaryLinks[i], window.parameters.ODB.DAQ.transferMinTopView, window.parameters.ODB.DAQ.tansferMaxTopView);
-            this.dataBus.detailCollectorLinkColor[i] = this.parseColor(this.dataBus.digitizerGroupSummaryLinks[i], window.parameters.ODB.DAQ.transferMinDetailView, window.parameters.ODB.DAQ.transferMaxDetailView);
-            this.dataBus.digiSummaryColor[i] = this.parseColor(this.dataBus.digitizerSummaries[i], window.parameters.ODB.DAQ.rateMinTopView, window.parameters.ODB.DAQ.rateMaxTopView);
+            this.dataBus.masterLinkColor[i] = this.parseColor(this.dataBus.collectorLinks[i], ODB.DAQ.transferMinTopView, ODB.DAQ.tansferMaxTopView);
+            this.dataBus.collectorColor[i] = this.parseColor(this.dataBus.collectors[i], ODB.DAQ.rateMinTopView, ODB.DAQ.rateMaxTopView);
+            this.dataBus.detailCollectorColor[i] = this.parseColor(this.dataBus.collectors[i], ODB.DAQ.rateMinDetailView, ODB.DAQ.rateMaxDetailView);
+            this.dataBus.collectorLinkColor[i]       = this.parseColor(this.dataBus.digitizerGroupSummaryLinks[i], ODB.DAQ.transferMinTopView, ODB.DAQ.tansferMaxTopView);
+            this.dataBus.detailCollectorLinkColor[i] = this.parseColor(this.dataBus.digitizerGroupSummaryLinks[i], ODB.DAQ.transferMinDetailView, ODB.DAQ.transferMaxDetailView);
+            this.dataBus.digiSummaryColor[i] = this.parseColor(this.dataBus.digitizerSummaries[i], ODB.DAQ.rateMinTopView, ODB.DAQ.rateMaxTopView);
 
         }
         for(i=0; i<this.nDigitizerGroups; i++){
             this.dataBus.oldDigiGroupSummaryColor[i] = this.dataBus.digiGroupSummaryColor[i];
-            this.dataBus.digiGroupSummaryColor[i] = this.dataBus.parseColor(this.dataBus.digitizerGroupLinks[i], window.parameters.ODB.DAQ.transferMinDetailView, window.parameters.ODB.DAQ.transferMaxDetailView);
+            this.dataBus.digiGroupSummaryColor[i] = this.dataBus.parseColor(this.dataBus.digitizerGroupLinks[i], ODB.DAQ.transferMinDetailView, ODB.DAQ.transferMaxDetailView);
         }
         for(i=0; i<this.nDigitizers; i++){
             this.dataBus.oldDigitizerLinkColor[i] = this.dataBus.digitizerLinkColor[i];
             this.dataBus.oldDigitizerColor[i] = this.dataBus.digitizerColor[i]; 
-            this.dataBus.digitizerLinkColor[i] = this.parseColor(this.dataBus.digitizerLinks[i], window.parameters.ODB.DAQ.transferMinDetailView, window.parameters.ODB.DAQ.transferMaxDetailView);
-            this.dataBus.digitizerColor[i] = this.parseColor(this.dataBus.digitizers[i], window.parameters.ODB.DAQ.rateMinDetailView, window.parameters.ODB.DAQ.rateMaxDetailView); 
+            this.dataBus.digitizerLinkColor[i] = this.parseColor(this.dataBus.digitizerLinks[i], ODB.DAQ.transferMinDetailView, ODB.DAQ.transferMaxDetailView);
+            this.dataBus.digitizerColor[i] = this.parseColor(this.dataBus.digitizers[i], ODB.DAQ.rateMinDetailView, ODB.DAQ.rateMaxDetailView); 
         }
 
         this.tooltip.update();
@@ -363,7 +363,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 
         //transfer rate
         //determine unit
-        unit = ((context == this.detailContext) ? window.parameters.ODB.DAQ.transferMaxDetailView : window.parameters.ODB.DAQ.transferMaxTopView);
+        unit = ((context == this.detailContext) ? ODB.DAQ.transferMaxDetailView : ODB.DAQ.transferMaxTopView);
         if(unit > 1000000) unit = ' MBps';
         else if(unit > 1000) unit = ' kBps';
         else unit = ' Bps';
@@ -373,8 +373,8 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2);
         context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2-10);
         context.stroke();
-        if(window.parameters.detectorLogMode.DAQbutton) string = Math.log( ((context == this.detailContext) ? window.parameters.ODB.DAQ.transferMinDetailView : window.parameters.ODB.DAQ.transferMinTopView) ) + ' log(Bps)';
-        else string = ((context == this.detailContext) ? window.parameters.ODB.DAQ.transferMinDetailView : window.parameters.ODB.DAQ.transferMinTopView) + ' Bps';
+        if(window.parameters.detectorLogMode.DAQbutton) string = Math.log( ((context == this.detailContext) ? ODB.DAQ.transferMinDetailView : ODB.DAQ.transferMinTopView) ) + ' log(Bps)';
+        else string = ((context == this.detailContext) ? ODB.DAQ.transferMinDetailView : ODB.DAQ.transferMinTopView) + ' Bps';
         context.fillText( string, this.canvasWidth*0.05 - context.measureText(string).width/2, this.canvasHeight-this.scaleHeight/2-15);
 
         context.beginPath();
@@ -382,7 +382,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - this.scaleHeight/2-10); 
         context.stroke();  
 
-        string = ((context == this.detailContext) ? window.parameters.ODB.DAQ.transferMaxDetailView : window.parameters.ODB.DAQ.transferMaxTopView);
+        string = ((context == this.detailContext) ? ODB.DAQ.transferMaxDetailView : ODB.DAQ.transferMaxTopView);
         if(window.parameters.detectorLogMode.DAQbutton){
             string = Math.log(string).toFixed(1) + unit;
         } else{
@@ -395,7 +395,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 
         //trigger rate
         //determine unit:
-        unit = ((context == this.detailContext) ? window.parameters.ODB.DAQ.rateMaxDetailView : window.parameters.ODB.DAQ.rateMaxTopView);
+        unit = ((context == this.detailContext) ? ODB.DAQ.rateMaxDetailView : ODB.DAQ.rateMaxTopView);
         if(unit > 1000000) unit = ' MHz';
         else if(unit > 1000) unit = ' kHz';
         else unit = ' Hz';
@@ -405,8 +405,8 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         context.moveTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2 + 20);
         context.lineTo(this.canvasWidth*0.05+1, this.canvasHeight - this.scaleHeight/2 + 20 + 10);
         context.stroke();
-        if(window.parameters.detectorLogMode.DAQbutton) string = Math.log( ((context == this.detailContext) ? window.parameters.ODB.DAQ.rateMinDetailView : window.parameters.ODB.DAQ.rateMinTopView) ) + ' log(Hz)';
-        else string = ((context == this.detailContext) ? window.parameters.ODB.DAQ.rateMinDetailView : window.parameters.ODB.DAQ.rateMinTopView) + ' Hz';
+        if(window.parameters.detectorLogMode.DAQbutton) string = Math.log( ((context == this.detailContext) ? ODB.DAQ.rateMinDetailView : ODB.DAQ.rateMinTopView) ) + ' log(Hz)';
+        else string = ((context == this.detailContext) ? ODB.DAQ.rateMinDetailView : ODB.DAQ.rateMinTopView) + ' Hz';
         context.fillText( string, this.canvasWidth*0.05 - context.measureText(string).width/2, this.canvasHeight-this.scaleHeight/2 + 45);
 
         context.beginPath();
@@ -414,7 +414,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         context.lineTo(this.canvasWidth*0.95-1, this.canvasHeight - this.scaleHeight/2 + 20 + 10); 
         context.stroke();
 
-        string = ((context == this.detailContext) ? window.parameters.ODB.DAQ.rateMaxDetailView : window.parameters.ODB.DAQ.rateMaxTopView);
+        string = ((context == this.detailContext) ? ODB.DAQ.rateMaxDetailView : ODB.DAQ.rateMaxTopView);
         if(window.parameters.detectorLogMode.DAQbutton){
             string = Math.log(string).toFixed(1) + unit;
         } else {
@@ -840,10 +840,10 @@ function slaveChart(frame, context, x0, y0, FSPC, triggers, transfers, oldTrigge
 
     //label vertical axes
     context.textBaseline = 'middle';
-    context.fillText(window.parameters.ODB.DAQ.transferMinDetailView/1000 + ' kBps', x0-tickmarkLength-context.measureText(window.parameters.ODB.DAQ.transferMinDetailView/1000 + ' kBps').width, y0 );
-    context.fillText(window.parameters.ODB.DAQ.transferMaxDetailView/1000 + ' kBps', x0-tickmarkLength-context.measureText(window.parameters.ODB.DAQ.transferMaxDetailView/1000 + ' kBps').width, y0-chartHeight );
-    context.fillText(window.parameters.ODB.DAQ.rateMinDetailView/1000 + ' kHz', x0+chartWidth+tickmarkLength, y0);
-    context.fillText(window.parameters.ODB.DAQ.rateMaxDetailView/1000 + ' kHz', x0+chartWidth+tickmarkLength, y0-chartHeight);
+    context.fillText(ODB.DAQ.transferMinDetailView/1000 + ' kBps', x0-tickmarkLength-context.measureText(ODB.DAQ.transferMinDetailView/1000 + ' kBps').width, y0 );
+    context.fillText(ODB.DAQ.transferMaxDetailView/1000 + ' kBps', x0-tickmarkLength-context.measureText(ODB.DAQ.transferMaxDetailView/1000 + ' kBps').width, y0-chartHeight );
+    context.fillText(ODB.DAQ.rateMinDetailView/1000 + ' kHz', x0+chartWidth+tickmarkLength, y0);
+    context.fillText(ODB.DAQ.rateMaxDetailView/1000 + ' kHz', x0+chartWidth+tickmarkLength, y0-chartHeight);
     context.save();
     context.translate(x0-innerMargin/2, y0-chartHeight/2)
     context.rotate(-Math.PI/2);
@@ -865,7 +865,7 @@ function slaveChart(frame, context, x0, y0, FSPC, triggers, transfers, oldTrigge
 
 
     function transferBar(frame, oldLevel, level, x0, y0){
-        var height = (oldLevel - window.parameters.ODB.DAQ.transferMinDetailView) / (window.parameters.ODB.DAQ.transferMaxDetailView - window.parameters.ODB.DAQ.transferMinDetailView)*chartHeight + (  (level - window.parameters.ODB.DAQ.transferMinDetailView)/(window.parameters.ODB.DAQ.transferMaxDetailView - window.parameters.ODB.DAQ.transferMinDetailView) - (oldLevel - window.parameters.ODB.DAQ.transferMinDetailView) / (window.parameters.ODB.DAQ.transferMaxDetailView - window.parameters.ODB.DAQ.transferMinDetailView) )*chartHeight*frame/window.DAQpointer.nFrames;
+        var height = (oldLevel - ODB.DAQ.transferMinDetailView) / (ODB.DAQ.transferMaxDetailView - ODB.DAQ.transferMinDetailView)*chartHeight + (  (level - ODB.DAQ.transferMinDetailView)/(ODB.DAQ.transferMaxDetailView - ODB.DAQ.transferMinDetailView) - (oldLevel - ODB.DAQ.transferMinDetailView) / (ODB.DAQ.transferMaxDetailView - ODB.DAQ.transferMinDetailView) )*chartHeight*frame/window.DAQpointer.nFrames;
         if(height>chartHeight) height = chartHeight;
         if(height<0) height = 0;
         context.strokeStyle = '#0000FF';
@@ -882,7 +882,7 @@ function slaveChart(frame, context, x0, y0, FSPC, triggers, transfers, oldTrigge
     }
 
     function triggerBar(frame, oldLevel, level, x0, y0){
-        var height = (oldLevel - window.parameters.ODB.DAQ.rateMinDetailView) / (window.parameters.ODB.DAQ.rateMaxDetailView - window.parameters.ODB.DAQ.rateMinDetailView)*chartHeight + (  (level - window.parameters.ODB.DAQ.rateMinDetailView)/(window.parameters.ODB.DAQ.rateMaxDetailView - window.parameters.ODB.DAQ.rateMinDetailView) - (oldLevel - window.parameters.ODB.DAQ.rateMinDetailView) / (window.parameters.ODB.DAQ.rateMaxDetailView - window.parameters.ODB.DAQ.rateMinDetailView) )*chartHeight*frame/window.DAQpointer.nFrames;
+        var height = (oldLevel - ODB.DAQ.rateMinDetailView) / (ODB.DAQ.rateMaxDetailView - ODB.DAQ.rateMinDetailView)*chartHeight + (  (level - ODB.DAQ.rateMinDetailView)/(ODB.DAQ.rateMaxDetailView - ODB.DAQ.rateMinDetailView) - (oldLevel - ODB.DAQ.rateMinDetailView) / (ODB.DAQ.rateMaxDetailView - ODB.DAQ.rateMinDetailView) )*chartHeight*frame/window.DAQpointer.nFrames;
         if(height>chartHeight) height = chartHeight;
         if(height<0) height = 0;
         context.strokeStyle = '#00FF00';
@@ -906,10 +906,10 @@ function rateChart(frame, data, context, x0, y0, maxLength, barWidth){
     var fontSize = 0.8*barWidth,
     row = 0,  //counts up from bottom
     key,
-    rateScaleMin = window.parameters.ODB.DAQ.rateMinMaster,
-    dataScaleMin = window.parameters.ODB.DAQ.transferMinMaster;    
-    rateScaleMax = window.parameters.ODB.DAQ.rateMaxMaster,
-    dataScaleMax = window.parameters.ODB.DAQ.transferMaxMaster;
+    rateScaleMin = ODB.DAQ.rateMinMaster,
+    dataScaleMin = ODB.DAQ.transferMinMaster;    
+    rateScaleMax = ODB.DAQ.rateMaxMaster,
+    dataScaleMax = ODB.DAQ.transferMaxMaster;
 
     context.font = fontSize+'px Raleway';
     context.lineWidth = 1;

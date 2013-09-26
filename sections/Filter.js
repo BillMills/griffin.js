@@ -22,7 +22,7 @@ function Filter(){
     //nav wrapper div
     insertDOM('div', this.linkWrapperID, 'navPanel', '', this.wrapperID, '', '')
     //nav header
-    insertDOM('h1', 'FilterLinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', window.parameters.ExpName+' Filter Status')
+    insertDOM('h1', 'FilterLinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', ODB.topLevel.expName+' Filter Status')
     insertDOM('br', 'break', '', '', this.linkWrapperID, '', '')
 
 	//deploy a canvas for the filter view:

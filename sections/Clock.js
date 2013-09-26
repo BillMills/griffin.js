@@ -87,7 +87,7 @@ function Clock(){
     //nav wrapper div
     insertDOM('div', this.linkWrapperID, 'navPanel', 'text-align:center; width:50%; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;', this.wrapperID, '', '');
     //nav header
-    insertDOM('h1', 'ClockLinksBanner', 'navPanelHeader', 'float:left; margin-top:0px;', this.linkWrapperID, '', window.parameters.ExpName+' Clock Status');
+    insertDOM('h1', 'ClockLinksBanner', 'navPanelHeader', 'float:left; margin-top:0px;', this.linkWrapperID, '', ODB.topLevel.expName+' Clock Status');
 
     //the clock view is done entirely with dom elements; most convenient to extend the central div to accommodate.
     cellSize = document.getElementById(this.linkWrapperID).offsetWidth / 100;

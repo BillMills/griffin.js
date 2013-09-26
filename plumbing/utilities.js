@@ -150,9 +150,8 @@ function parameterDialogue(devName, scales, currentColorScale){
                 scales[i][2] = parseFloat(document.getElementById('maxfield'+i).value);
                 ODBSet(scales[i][4], scales[i][1]);
                 ODBSet(scales[i][5], scales[i][2]);
-                //fetchCustomParameters(); //pushes back to the parameter store
             }
-            fetchCustomParameters(); //pushes back to the parameter store
+            fetchODB(); //pushes back to the parameter store
 
             if(currentColorScale){
                 if(window.onDisplay.slice(0,3) == 'DAQ'){
@@ -235,8 +234,8 @@ function fakeScalars(){
         key, subKey;
 
 
-    for(key in window.parameters.ODB){
-        if(window.parameters.ODB[key].deploy || window.parameters.ODB[key].USdeploy || window.parameters.ODB[key].DSdeploy){            
+    for(key in ODB){
+        if(ODB[key].deploy || ODB[key].USdeploy || ODB[key].DSdeploy){            
             for(subKey in window[key+'pointer'].dataBus[key]){
                 JSONP.scalar[subKey] = {"TRIGREQ" : 1000*Math.random()};
             }
@@ -252,8 +251,8 @@ function fakeThresholds(){
     var JSONP = {'parameters' : {'thresholds' : {} } },
         key, subKey;
 
-    for(key in window.parameters.ODB){
-        if(window.parameters.ODB[key].deploy || window.parameters.ODB[key].USdeploy || window.parameters.ODB[key].DSdeploy){
+    for(key in ODB){
+        if(ODB[key].deploy || ODB[key].USdeploy || ODB[key].DSdeploy){
             for(subKey in window[key+'pointer'].dataBus[key] ){
                 JSONP.parameters.thresholds[subKey] = 1000*Math.random();
             }

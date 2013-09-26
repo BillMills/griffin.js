@@ -153,7 +153,7 @@ function StatusBar(wrapper){
         
         //pull in status table from traditional status page, and put it in the TT: - disabled until id's available in MIDAS
         if(!window.parameters.MIDASlegacyMode && 1==0){
-            $.get(window.parameters.statusURL, function(response){
+            $.get(ODB.topLevel.statusURL, function(response){
                 var i, headStart, headEnd = '', rowNode;
 
                 //remove the <head> before html is parsed: (todo: oneline this with regex and replace?)

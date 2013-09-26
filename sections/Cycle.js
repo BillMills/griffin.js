@@ -25,8 +25,8 @@ function Cycle(){
     //keep an internal list of all available cycles:
     this.cycleNames = [];
     //generate initial cycle list:
-    for(key in window.parameters.ODB.Cycles){
-        if(window.parameters.ODB.Cycles.hasOwnProperty(key) && typeof window.parameters.ODB.Cycles[key] == 'object' && !Array.isArray(window.parameters.ODB.Cycles[key])){
+    for(key in ODB.Cycles){
+        if(ODB.Cycles.hasOwnProperty(key) && typeof ODB.Cycles[key] == 'object' && !Array.isArray(ODB.Cycles[key])){
             this.cycleNames[this.cycleNames.length] = key;
         }
     }
@@ -482,8 +482,8 @@ function loadCycleOptions(){
     var key, i=0,
         option = [];
 
-    for(key in window.parameters.ODB.Cycles){
-        if(window.parameters.ODB.Cycles.hasOwnProperty(key) && typeof window.parameters.ODB.Cycles[key] == 'object' && !Array.isArray(window.parameters.ODB.Cycles[key]) ){
+    for(key in ODB.Cycles){
+        if(ODB.Cycles.hasOwnProperty(key) && typeof ODB.Cycles[key] == 'object' && !Array.isArray(ODB.Cycles[key]) ){
             option[i] = document.createElement('option');
             option[i].text = key;
             option[i].value = i;
@@ -508,7 +508,7 @@ function saveCycle(){
     ODBSet('/DashboardConfig/Cycles/'+name+'/Duration[*]', cycle[1]);
 
     //regrab parameter store; performant enough or update local copy by hand to avoid traffic? TBD.
-    window.parameters.ODB = fetchODB();
+    ODB = fetchODB();
 
     //include in dropdown if new
     if(deleteCode[0] == 312){
@@ -551,7 +551,7 @@ function commitCycle(){
     suspendCycleRequest();
 
     //regrab ODB
-    window.parameters.ODB = fetchODB();
+    ODB = fetchODB();
 }
 
 //load whatever the ODB has currently registered as the active cycle
@@ -561,11 +561,11 @@ function reloadCycle(){
     //dump whatever's displayed currently:
     resetCycle();
     //load the active cycle from the ODB:
-    for(i=0; i<window.parameters.ODB.Cycles['Active Pattern'].length; i++){
-        deployCommand(window.parameters.ODB.Cycles['Active Pattern'][i], window.parameters.ODB.Cycles['Active Duration'][i] );
+    for(i=0; i<ODB.Cycles['Active Pattern'].length; i++){
+        deployCommand(ODB.Cycles['Active Pattern'][i], ODB.Cycles['Active Duration'][i] );
     }
 
-    document.getElementById('cycleName').value = window.parameters.ODB.Cycles['Active Name'];
+    document.getElementById('cycleName').value = ODB.Cycles['Active Name'];
 
     suspendCycleRequest();
 }
@@ -583,16 +583,16 @@ function loadCycle(){
     resetCycle();
 
     //weirdness with one-entry array, workaround for now:
-    if(window.parameters.ODB.Cycles[name].Code.length > 1){
-        for(i=0; i<window.parameters.ODB.Cycles[name].Code.length; i++){
-            deployCommand(parseInt(window.parameters.ODB.Cycles[name].Code[i],10), parseInt(window.parameters.ODB.Cycles[name].Duration[i],10));
+    if(ODB.Cycles[name].Code.length > 1){
+        for(i=0; i<ODB.Cycles[name].Code.length; i++){
+            deployCommand(parseInt(ODB.Cycles[name].Code[i],10), parseInt(ODB.Cycles[name].Duration[i],10));
         }
     } else {
-        deployCommand(parseInt(window.parameters.ODB.Cycles[name].Code,10), parseInt(window.parameters.ODB.Cycles[name].Duration,10));
+        deployCommand(parseInt(ODB.Cycles[name].Code,10), parseInt(ODB.Cycles[name].Duration,10));
     }
 
     //if reloading the active cycle, dismiss any requests for cycle deployment:
-    if(name == window.parameters.ODB.Cycles['Active Name'])
+    if(name == ODB.Cycles['Active Name'])
         suspendCycleRequest();
 }
 

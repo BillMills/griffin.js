@@ -10,12 +10,12 @@ function BAMBINO(spiceMode){
     window.BAMBINOpointer = that;
 
     //change the button name if we're deploying in spice mode:
-    if(window.parameters.ODB.SPICE.SPICEauxiliary)
-        document.getElementById('BAMBINOlink').innerHTML = 'SPICE '+window.parameters.ODB.SPICE.SPICEauxiliary;
+    if(ODB.SPICE.SPICEauxiliary)
+        document.getElementById('BAMBINOlink').innerHTML = 'SPICE '+ODB.SPICE.SPICEauxiliary;
     //member variables///////////////////////////////////
     this.spiceAux = (spiceMode) ? 1 : 0;
-    this.mode = (this.spiceAux) ? spiceMode : window.parameters.BAMBINOmode;      //'S2' or 'S3'
-    this.layers = (this.spiceAux) ? window.parameters.ODB.SPICE.SPICEauxLayers : window.parameters.BAMBINOlayers;
+    this.mode = (this.spiceAux) ? spiceMode : ODB.BAMBINO.mode;      //'S2' or 'S3'
+    this.layers = (this.spiceAux) ? ODB.SPICE.SPICEauxLayers : ODB.BAMBINO.layers;
 
     this.dataBus = new BAMBINODS(this.mode, this.layers, spiceMode);
     this.nRadial = 24;
@@ -32,7 +32,7 @@ function BAMBINO(spiceMode){
     this.centerY = this.canvasHeight/2;
     this.CDinnerRadius = this.canvasWidth*0.01;
     this.CDradius = (this.layers == 1) ? this.canvasHeight*0.17 : this.canvasWidth*0.12;
-    if(this.layers==1 && !(window.parameters.BAMBINOdeployment[0] && window.parameters.BAMBINOdeployment[1]) )
+    if(this.layers==1 && !(ODB.BAMBINO.USdeploy && ODB.BAMBINO.DSdeploy) )
         this.CDradius *= 1.5
     this.centerLeft = this.canvasWidth*0.25;
     this.centerRight = this.canvasWidth*0.75;
@@ -45,33 +45,33 @@ function BAMBINO(spiceMode){
     this.radialWidth = (this.CDradius - this.CDinnerRadius) / this.nRadial;
     this.azimuthalArc = 2*Math.PI / this.nAzimuthal;
 
-    if(this.layers==1 && window.parameters.BAMBINOdeployment[1]==0)
+    if(this.layers==1 && ODB.BAMBINO.DSdeploy==0)
         this.upstreamTitleCenter = this.canvasWidth/2;
     else if(this.layers==1)
         this.upstreamTitleCenter = this.centerLeft;
-    else if(window.parameters.BAMBINOdeployment[1]==1)
+    else if(ODB.BAMBINO.DSdeploy==1)
         this.upstreamTitleCenter = (this.centerLeftD + this.centerLeftE)/2
     else
         this.upstreamTitleCenter = this.canvasWidth/2;
 
-    if(this.layers==1 && window.parameters.BAMBINOdeployment[0]==0)
+    if(this.layers==1 && ODB.BAMBINO.USdeploy==0)
         this.downstreamTitleCenter = this.canvasWidth/2;
     else if(this.layers==1)
         this.downstreamTitleCenter = this.centerRight;
-    else if(window.parameters.BAMBINOdeployment[0]==1)
+    else if(ODB.BAMBINO.USdeploy==1)
         this.downstreamTitleCenter = (this.centerRightD + this.centerRightE)/2   
     else
         this.downstreamTitleCenter = this.canvasWidth/2;    
 
     //which detectors are present: [upstream layer D, downstream layer D, upstream layer E, downstream layer E];
     this.detPresent = [0,0,0,0]; 
-    if(window.parameters.BAMBINOdeployment[0]){
+    if(ODB.BAMBINO.USdeploy){
         this.detPresent[0] = 1
         if(this.layers == 2){
             this.detPresent[2] = 1   
         }
     }
-    if(window.parameters.BAMBINOdeployment[1]){
+    if(ODB.BAMBINO.DSdeploy){
         this.detPresent[1] = 1
         if(this.layers == 2){
             this.detPresent[3] = 1   
@@ -98,29 +98,29 @@ function BAMBINO(spiceMode){
             if(i==0 || i==1){
                 if(this.layers == 2){
                     x0 = this.centerLeftD; y0 = (i==0) ? this.centerTop : this.centerBottom;
-                } else if(window.parameters.BAMBINOdeployment[1]){
+                } else if(ODB.BAMBINO.DSdeploy){
                     x0 = this.centerLeft; y0 = (i==0) ? this.centerTop : this.centerBottom;
                 } else{
                     x0 = (i==0) ? this.centerLeft : this.centerRight; y0 = this.canvasHeight*0.4;
                 }
             } else if(i==2 || i==3){ //downstream layer D front || back:
-                if(this.layers == 2 && !window.parameters.BAMBINOdeployment[0]){
+                if(this.layers == 2 && !ODB.BAMBINO.USdeploy){
                     x0 = this.centerLeftD; y0 = (i==2) ? this.centerTop : this.centerBottom;
                 } else if(this.layers==2){
                     x0 = this.centerRightD; y0 = (i==2) ? this.centerTop : this.centerBottom;
-                } else if(window.parameters.BAMBINOdeployment[0]){
+                } else if(ODB.BAMBINO.USdeploy){
                     x0 = this.centerRight; y0 = (i==2) ? this.centerTop : this.centerBottom;
                 } else{
                     x0 = (i==2) ? this.centerLeft : this.centerRight; y0 = this.canvasHeight*0.4;
                 }
             } else if(i==4 || i==5){ //upstream layer E front || back:
-                if(window.parameters.BAMBINOdeployment[1]){
+                if(ODB.BAMBINO.DSdeploy){
                     x0 = this.centerLeftE; y0 = (i==4) ? this.centerTop : this.centerBottom;
                 } else{
                     x0 = this.centerRightD; y0 = (i==4) ? this.centerTop : this.centerBottom;
                 }
             } else if(i==6 || i==7){ //downstream layer E front || back:
-                if(window.parameters.BAMBINOdeployment[0]){
+                if(ODB.BAMBINO.USdeploy){
                     x0 = this.centerRightE; y0 = (i==6) ? this.centerTop : this.centerBottom;
                 } else{
                     x0 = this.centerRightD; y0 = (i==6) ? this.centerTop : this.centerBottom;
@@ -206,8 +206,8 @@ function BAMBINO(spiceMode){
             this.context.clearRect(0,0.80*this.canvasHeight,this.canvasWidth,0.20*this.canvasHeight - this.scaleHeight);
             this.context.fillStyle = '#999999';
             this.context.font="24px 'Orbitron'";
-            if(window.parameters.BAMBINOdeployment[0]) this.context.fillText('Upstream', this.upstreamTitleCenter - this.context.measureText('Upstream').width/2, 0.85*this.canvasHeight);
-            if(window.parameters.BAMBINOdeployment[1]) this.context.fillText('Downstream', this.downstreamTitleCenter - this.context.measureText('Downstream').width/2, 0.85*this.canvasHeight);
+            if(ODB.BAMBINO.USdeploy) this.context.fillText('Upstream', this.upstreamTitleCenter - this.context.measureText('Upstream').width/2, 0.85*this.canvasHeight);
+            if(ODB.BAMBINO.DSdeploy) this.context.fillText('Downstream', this.downstreamTitleCenter - this.context.measureText('Downstream').width/2, 0.85*this.canvasHeight);
         }
 
         this.TTlayerDone = 1;

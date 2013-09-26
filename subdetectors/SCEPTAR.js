@@ -7,7 +7,7 @@ function SCEPTAR(){
     var that = this;
     Subsystem.call(this);
     //establish which of USSCEPTAR, DSSCEPTAR, and ZDS are present:
-    this.SCEPTARconfig = [window.parameters.ODB.SCEPTAR.USdeploy, window.parameters.ODB.SCEPTAR.DSdeploy%2, Math.floor(window.parameters.ODB.SCEPTAR.DSdeploy/2)];
+    this.SCEPTARconfig = [ODB.SCEPTAR.USdeploy, ODB.SCEPTAR.DSdeploy%2, Math.floor(ODB.SCEPTAR.DSdeploy/2)];
     this.dataBus = new SCEPTARDS(this.SCEPTARconfig);
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
     window.SCEPTARpointer = that;
@@ -16,14 +16,14 @@ function SCEPTAR(){
     this.config = this.SCEPTARconfig;  //subsystems on: [upstream sceptar, downstream sceptar, downstream ZDS]
     //list of elements with distinct minima and maxima on subdetector views:
     this.subdetectors = ['SCEPTAR'];
-    if(window.parameters.ODB.SCEPTAR.DSdeploy == 2) this.subdetectors[1] = 'ZDS';
+    if(ODB.SCEPTAR.DSdeploy == 2) this.subdetectors[1] = 'ZDS';
 
     //set up scale adjust dialog:
     this.canvas.onclick = function(event){
         var y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;
         if(y > that.canvasHeight - that.scaleHeight){
-            if(that.config[2]) parameterDialogue(that.name, [['SCEPTAR', window.parameters.ODB[that.name][that.constructMinMaxKey('SCEPTAR')][0], window.parameters.ODB[that.name][that.constructMinMaxKey('SCEPTAR')][1], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/SCEPTAR/'+scaleType()+'[0]', '/DashboardConfig/SCEPTAR/'+scaleType()+'[1]'],   ['ZDS', window.parameters.ODB[that.name][that.constructMinMaxKey('ZDS')][0], window.parameters.ODB[that.name][that.constructMinMaxKey('ZDS')][1], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/ZDS/'+scaleType()+'[0]', '/DashboardConfig/ZDS/'+scaleType()+'[1]'] ], window.parameters.subdetectorColors[window.state.subdetectorView]);
-            else parameterDialogue(that.name, [['SCEPTAR', window.parameters.ODB[that.name][that.constructMinMaxKey('SCEPTAR')][0], window.parameters.ODB[that.name][that.constructMinMaxKey('SCEPTAR')][1], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/SCEPTAR/'+scaleType()+'[0]', '/DashboardConfig/SCEPTAR/'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.state.subdetectorView]);
+            if(that.config[2]) parameterDialogue(that.name, [['SCEPTAR', ODB[that.name][that.constructMinMaxKey('SCEPTAR')][0], ODB[that.name][that.constructMinMaxKey('SCEPTAR')][1], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/SCEPTAR/'+scaleType()+'[0]', '/DashboardConfig/SCEPTAR/'+scaleType()+'[1]'],   ['ZDS', ODB[that.name][that.constructMinMaxKey('ZDS')][0], ODB[that.name][that.constructMinMaxKey('ZDS')][1], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/ZDS/'+scaleType()+'[0]', '/DashboardConfig/ZDS/'+scaleType()+'[1]'] ], window.parameters.subdetectorColors[window.state.subdetectorView]);
+            else parameterDialogue(that.name, [['SCEPTAR', ODB[that.name][that.constructMinMaxKey('SCEPTAR')][0], ODB[that.name][that.constructMinMaxKey('SCEPTAR')][1], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/SCEPTAR/'+scaleType()+'[0]', '/DashboardConfig/SCEPTAR/'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.state.subdetectorView]);
 
         }
     }

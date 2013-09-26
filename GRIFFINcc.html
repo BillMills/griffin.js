@@ -163,7 +163,7 @@
         var i, j, k, paths=[], data;
 
         //overwrite default parameters with custom ones:
-        fetchCustomParameters();
+        fetchODB();
 
         //autodetect how many clocks are present in the ODB - must be registered under /Equipment/Clock[x], x = 0..23
         for(i=0; i<25; i++){
@@ -192,7 +192,7 @@
         $('#leftSidebar').css('opacity', 1);
         //plug in MIDAS status page link:
         document.getElementById('MIDASstatusLink').onclick = function(){
-          window.location = 'http://'+window.parameters.statusURL;
+          window.location = 'http://'+ODB.topLevel.statusURL;
           //alert(window.parameters.statusURL)
         };
 
@@ -228,22 +228,22 @@
           //create nav panel for subsystem view:
           insertDOM('div', 'SubsystemLinks', 'navPanel', '', window.parameters.wrapper, '', '');
           //headline for nav panel
-          insertDOM('h1', 'SubsystemLinksBanner', 'navPanelHeader', '', 'SubsystemLinks', '', window.parameters.ExpName+' Subsystem Monitors');
+          insertDOM('h1', 'SubsystemLinksBanner', 'navPanelHeader', '', 'SubsystemLinks', '', ODB.topLevel.expName+' Subsystem Monitors');
           insertDOM('br', 'break', '', '', 'SubsystemLinks', '', '');    
           //subdetectors
           window.Subdetectors = [];
 
-          if(window.parameters.deployment["HPGe"]) window.Subdetectors[window.Subdetectors.length] = new HPGe();
-          if(window.parameters.ODB.SHARC.deploy) window.Subdetectors[window.Subdetectors.length] = new SHARC();
-          if(window.parameters.deployment["DESCANT"]) window.Subdetectors[window.Subdetectors.length] = new DESCANT();
-          if(window.parameters.ODB.PACES.deploy) window.Subdetectors[window.Subdetectors.length] = new PACES();
-          if(window.parameters.deployment["DANTE"]) window.Subdetectors[window.Subdetectors.length] = new DANTE();
-          if(window.parameters.ODB.SPICE.deploy) window.Subdetectors[window.Subdetectors.length] = new SPICE();
-          if(window.parameters.deployment["BAMBINO"] || window.parameters.ODB.SPICE.SPICEauxiliary == 'S2' || window.parameters.ODB.SPICE.SPICEauxiliary == 'S3') window.Subdetectors[window.Subdetectors.length] = new BAMBINO(window.parameters.ODB.SPICE.SPICEauxiliary);
-          if(window.parameters.ODB.SCEPTAR.USdeploy || window.parameters.ODB.SCEPTAR.DSdeploy || window.parameters.ODB.ZDS.deploy) window.Subdetectors[window.Subdetectors.length] = new SCEPTAR();
-          if(window.parameters.ODB.TIPwall.deploy) window.Subdetectors[window.Subdetectors.length] = new TIPwall();
-          if(window.parameters.ODB.TIPball.deploy) window.Subdetectors[window.Subdetectors.length] = new TIPball();
-          if(window.parameters.ODB.DSSD.deploy) window.Subdetectors[window.Subdetectors.length] = new DSSD();
+          if(ODB.HPGe.deploy) window.Subdetectors[window.Subdetectors.length] = new HPGe();
+          if(ODB.SHARC.deploy) window.Subdetectors[window.Subdetectors.length] = new SHARC();
+          if(ODB.DESCANT.deploy) window.Subdetectors[window.Subdetectors.length] = new DESCANT();
+          if(ODB.PACES.deploy) window.Subdetectors[window.Subdetectors.length] = new PACES();
+          if(ODB.DANTE.deploy) window.Subdetectors[window.Subdetectors.length] = new DANTE();
+          if(ODB.SPICE.deploy) window.Subdetectors[window.Subdetectors.length] = new SPICE();
+          if(ODB.BAMBINO.DSdeploy || ODB.BAMBINO.USdeploy || ODB.SPICE.SPICEauxiliary == 'S2' || ODB.SPICE.SPICEauxiliary == 'S3') window.Subdetectors[window.Subdetectors.length] = new BAMBINO(ODB.SPICE.SPICEauxiliary);
+          if(ODB.SCEPTAR.USdeploy || ODB.SCEPTAR.DSdeploy==1 || ODB.SCEPTAR.DSdeploy==2) window.Subdetectors[window.Subdetectors.length] = new SCEPTAR();
+          if(ODB.TIPwall.deploy) window.Subdetectors[window.Subdetectors.length] = new TIPwall();
+          if(ODB.TIPball.deploy) window.Subdetectors[window.Subdetectors.length] = new TIPball();
+          if(ODB.DSSD.deploy) window.Subdetectors[window.Subdetectors.length] = new DSSD();
 
           insertDOM('br', 'break', '', '', 'SubsystemLinks');
           //nav for different reported values:

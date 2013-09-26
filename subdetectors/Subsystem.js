@@ -60,7 +60,7 @@ function Subsystem(){
     this.canvas.onclick = function(event){
         var y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;
         if(y > that.canvasHeight - that.scaleHeight)
-            parameterDialogue(that.name, [[that.name, window.parameters.ODB[that.name][that.constructMinMaxKey(that.name)][0], window.parameters.ODB[that.name][that.constructMinMaxKey(that.name)][1], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/'+that.name+'/'+scaleType()+'[0]', '/DashboardConfig/'+that.name+'/'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.state.subdetectorView]);
+            parameterDialogue(that.name, [[that.name, ODB[that.name][that.constructMinMaxKey(that.name)][0], ODB[that.name][that.constructMinMaxKey(that.name)][1], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/'+that.name+'/'+scaleType()+'[0]', '/DashboardConfig/'+that.name+'/'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.state.subdetectorView]);
     }
     
     //member functions
@@ -90,9 +90,9 @@ function Subsystem(){
 
         //how far along the scale are we?  Technically this will produce the wrong color for canvases not currently on display.
         if(window.parameters.detectorLogMode.SubsystemsButton){
-            scale = (Math.log(scalar) - Math.log(window.parameters.ODB[this.name][limitKey][0])) / (Math.log(window.parameters.ODB[this.name][limitKey][1]) - Math.log(window.parameters.ODB[this.name][limitKey][0]));
+            scale = (Math.log(scalar) - Math.log(ODB[this.name][limitKey][0])) / (Math.log(ODB[this.name][limitKey][1]) - Math.log(ODB[this.name][limitKey][0]));
         } else {
-            scale = (scalar - window.parameters.ODB[this.name][limitKey][0]) / (window.parameters.ODB[this.name][limitKey][1] - window.parameters.ODB[this.name][limitKey][0]);
+            scale = (scalar - ODB[this.name][limitKey][0]) / (ODB[this.name][limitKey][1] - ODB[this.name][limitKey][0]);
         }
 
         //different scales for different meters to aid visual recognition:
@@ -123,16 +123,16 @@ function Subsystem(){
             limitKey = this.constructMinMaxKey(this.subdetectors[i]);
             if(window.parameters.detectorLogMode.SubsystemsButton){
                 //minimas
-                minTicks[this.subdetectors[i]] = this.subdetectors[i]+': ' + Math.log(window.parameters.ODB[this.name][limitKey][0]).toFixed(1) + ' log(' + window.parameters.subdetectorUnit[limitIndex]+')';
+                minTicks[this.subdetectors[i]] = this.subdetectors[i]+': ' + Math.log(ODB[this.name][limitKey][0]).toFixed(1) + ' log(' + window.parameters.subdetectorUnit[limitIndex]+')';
                 //maximas:
-                maxTicks[this.subdetectors[i]] = this.subdetectors[i]+': ' + Math.log(window.parameters.ODB[this.name][limitKey][1]).toFixed(1) + ' log(' + window.parameters.subdetectorUnit[limitIndex]+')';
+                maxTicks[this.subdetectors[i]] = this.subdetectors[i]+': ' + Math.log(ODB[this.name][limitKey][1]).toFixed(1) + ' log(' + window.parameters.subdetectorUnit[limitIndex]+')';
             } else {
                 //minimas
-                if(window.parameters.ODB[this.name][limitKey][0] < 1000) minTicks[this.subdetectors[i]] = this.subdetectors[i]+': ' + window.parameters.ODB[this.name][limitKey][0] + ' ' + window.parameters.subdetectorUnit[limitIndex];
-                else minTicks[this.subdetectors[i]] = this.subdetectors[i] + ': ' + window.parameters.ODB[this.name][limitKey][0]/1000 + scaleUnit[limitIndex] + window.parameters.subdetectorUnit[limitIndex];
+                if(ODB[this.name][limitKey][0] < 1000) minTicks[this.subdetectors[i]] = this.subdetectors[i]+': ' + ODB[this.name][limitKey][0] + ' ' + window.parameters.subdetectorUnit[limitIndex];
+                else minTicks[this.subdetectors[i]] = this.subdetectors[i] + ': ' + ODB[this.name][limitKey][0]/1000 + scaleUnit[limitIndex] + window.parameters.subdetectorUnit[limitIndex];
                 //maximas:
-                if(window.parameters.ODB[this.name][limitKey][1] < 1000) maxTicks[this.subdetectors[i]] = this.subdetectors[i]+': ' + window.parameters.ODB[this.name][limitKey][1] + ' ' + window.parameters.subdetectorUnit[limitIndex];
-                else maxTicks[this.subdetectors[i]] = this.subdetectors[i] + ': ' + window.parameters.ODB[this.name][limitKey][1]/1000 + scaleUnit[limitIndex] + window.parameters.subdetectorUnit[limitIndex];
+                if(ODB[this.name][limitKey][1] < 1000) maxTicks[this.subdetectors[i]] = this.subdetectors[i]+': ' + ODB[this.name][limitKey][1] + ' ' + window.parameters.subdetectorUnit[limitIndex];
+                else maxTicks[this.subdetectors[i]] = this.subdetectors[i] + ': ' + ODB[this.name][limitKey][1]/1000 + scaleUnit[limitIndex] + window.parameters.subdetectorUnit[limitIndex];
             }
             nKeys++;            
         }
@@ -384,7 +384,7 @@ function DetailView(){
                                         that.detailShowing = 0;
                                         swapFade(null, that, 1000);
                                     } else{
-                                        parameterDialogue(that.name, [[that.name, window.parameters.ODB[that.name][that.constructMinMaxKey(that.name)][0], window.parameters.ODB[that.name][that.constructMinMaxKey(that.name)][1], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/'+that.name+'/'+scaleType()+'[0]', '/DashboardConfig/'+that.name+'/'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.state.subdetectorView]);
+                                        parameterDialogue(that.name, [[that.name, ODB[that.name][that.constructMinMaxKey(that.name)][0], ODB[that.name][that.constructMinMaxKey(that.name)][1], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/'+that.name+'/'+scaleType()+'[0]', '/DashboardConfig/'+that.name+'/'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.state.subdetectorView]);
                                     }
                                 };
     this.canvas.onclick =   function(event){
@@ -404,7 +404,7 @@ function DetailView(){
                                     //that.detailShowing = 1;
                                     swapFade(null, that, 1000)
                                 } else if(y > that.canvasHeight - that.scaleHeight){
-                                    parameterDialogue(that.name, [[that.name, window.parameters.ODB[that.name][that.constructMinMaxKey(that.name)][0], window.parameters.ODB[that.name][that.constructMinMaxKey(that.name)][1], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/'+that.name+'/'+scaleType()+'[0]', '/DashboardConfig/'+that.name+'/'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.state.subdetectorView]);
+                                    parameterDialogue(that.name, [[that.name, ODB[that.name][that.constructMinMaxKey(that.name)][0], ODB[that.name][that.constructMinMaxKey(that.name)][1], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/'+that.name+'/'+scaleType()+'[0]', '/DashboardConfig/'+that.name+'/'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.state.subdetectorView]);
                                 }
                             };
 
@@ -617,7 +617,7 @@ function HPGeAssets(){
                     if(interpolateColor(color1, color2, frame/this.nFrames) == 0xDEADBEEF)
                         context.fillStyle = context.createPattern(window.parameters.warningFill, 'repeat');
                 }
-                if( window.parameters.cloversAbsent.indexOf(parseInt(cloverSummaryKey.slice(3,5),10)) != -1 && context!= this.TTcontext)
+                if( this.cloversAbsent.indexOf(parseInt(cloverSummaryKey.slice(3,5),10)) != -1 && context!= this.TTcontext)
                     context.fillStyle = '#333333' //absent clovers transparent
 
                 context.fillRect(Math.round(x0 + (this.BGOouter-this.HPGeside)/2 + (i%2)*(this.lineWeight + this.HPGeside/2)), Math.round(y0 + (this.BGOouter-this.HPGeside)/2 + (i>>1)/2*(2*this.lineWeight + this.HPGeside)), Math.round(this.HPGeside/2),Math.round(this.HPGeside/2));
@@ -649,8 +649,8 @@ function HPGeAssets(){
                     fillColor = interpolateColor(color1, color2, frame/this.nFrames);
                     if(fillColor == 0xDEADBEEF)
                         fillColor = context.createPattern(window.parameters.warningFill, 'repeat');
-                    if( window.parameters.cloversAbsent.indexOf(parseInt(cloverSummaryKey.slice(3,5),10)) != -1 )
-                    fillColor = '#333333' //absent clovers transparent
+                    if( this.cloversAbsent.indexOf(parseInt(cloverSummaryKey.slice(3,5),10)) != -1 )
+                        fillColor = '#333333' //absent clovers transparent
                 }
 
                 this.drawL(context, rotation, Math.round((this.BGOouter - this.BGOinner)/2), Math.round(this.BGOouter/2), Math.round(x0 + (this.BGOouter+this.lineWeight)*(i%2)), Math.round(y0 + (this.BGOouter+this.lineWeight)*(i>>1)), color, fillColor);
@@ -1010,7 +1010,7 @@ function HPGeAssets(){
 
             cloverNumber = Math.floor((cell-100)/8);
             cloverName = pfx+'G'+((cloverNumber<10) ? '0'+cloverNumber : cloverNumber );  //will match the HPGe summary ID of this clover
-            if(window.parameters.cloversAbsent.indexOf(cloverNumber) == -1){  //not in the absentee list
+            if(this.cloversAbsent.indexOf(cloverNumber) == -1){  //not in the absentee list
                 quadrant = ((cell-100)%8)%4;
                 if (quadrant==2) quadrant = 3;
                 else if(quadrant==3) quadrant = 2;

@@ -146,12 +146,12 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
 
         //deploy some sliders in the sidebar  TODO: push into deploySidebar()?
         var sliderWidth = parseFloat($(document.getElementById('InputLayer')).width())*0.5;
-        this.voltageSlider = new Slider(this.sidebarID, 'volageSliderText', 'demandVoltage', 'voltageSlider', 'voltageSliderBKG', 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', window.parameters.minVoltage, window.parameters.maxVoltage, window.parameters.statusPrecision, window.parameters.voltUnit, sliderWidth );
-        this.rampSlider = new Slider(this.sidebarID, 'rampSliderText', 'demandRampSpeed', 'rampSlider', 'rampSliderBKG', 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', window.parameters.minRampSpeed, window.parameters.maxRampSpeed, window.parameters.statusPrecision, window.parameters.rampUnit,  sliderWidth);
-        this.rampDownSlider = new Slider(this.sidebarID, 'rampDownSliderText', 'demandRampDownSpeed', 'rampDownSlider', 'rampDownSliderBKG', 'rampDownSliderKnob', 'rampDownKnobStyle', 'rampDownSliderText', window.parameters.minRampSpeed, window.parameters.maxRampSpeed, window.parameters.statusPrecision, window.parameters.rampUnit,  sliderWidth);
+        this.voltageSlider = new Slider(this.sidebarID, 'volageSliderText', 'demandVoltage', 'voltageSlider', 'voltageSliderBKG', 'voltageSliderKnob', 'voltageKnobStyle', 'voltageSliderText', ODB.HV.demandVoltage[0], ODB.HV.demandVoltage[1], window.parameters.statusPrecision, window.parameters.voltUnit, sliderWidth );
+        this.rampSlider = new Slider(this.sidebarID, 'rampSliderText', 'demandRampSpeed', 'rampSlider', 'rampSliderBKG', 'rampSliderKnob', 'rampKnobStyle', 'rampSliderText', ODB.HV.voltRampSpeed[0], ODB.HV.voltRampSpeed[1], window.parameters.statusPrecision, window.parameters.rampUnit,  sliderWidth);
+        this.rampDownSlider = new Slider(this.sidebarID, 'rampDownSliderText', 'demandRampDownSpeed', 'rampDownSlider', 'rampDownSliderBKG', 'rampDownSliderKnob', 'rampDownKnobStyle', 'rampDownSliderText', ODB.HV.voltRampSpeed[0], ODB.HV.voltRampSpeed[1], window.parameters.statusPrecision, window.parameters.rampUnit,  sliderWidth);
 
         //fill meters  TODO: put these on the waffle object instead of window?
-        window.meter = new FillMeter('voltageMeter', 'InputLayer', 0, window.parameters.minVoltage, window.parameters.maxVoltage, window.parameters.voltUnit, window.parameters.statusPrecision);
+        window.meter = new FillMeter('voltageMeter', 'InputLayer', 0, ODB.HV.demandVoltage[0], ODB.HV.demandVoltage[1], window.parameters.voltUnit, window.parameters.statusPrecision);
         window.currentMeter = new FillMeter('currentMeter', 'InputLayer', 0, window.parameters.minCurrent, window.parameters.maxCurrent, window.parameters.currentUnit, window.parameters.statusPrecision);
         window.temperatureMeter = new FillMeter('temperatureMeter', 'InputLayer', 0, window.parameters.minTemperature, window.parameters.maxTemperature, window.parameters.temperatureUnit, window.parameters.statusPrecision);
 
@@ -172,7 +172,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         //header
         insertDOM('div', this.linkWrapperID, 'navPanel', '', this.wrapperDiv, '', '');
         //title
-        insertDOM('h1', this.linkWrapperID+'Banner', 'navPanelHeader', '', this.linkWrapperID, '', window.parameters.ExpName+' HV Mainframes');
+        insertDOM('h1', this.linkWrapperID+'Banner', 'navPanelHeader', '', this.linkWrapperID, '', ODB.topLevel.expName+' HV Mainframes');
         insertDOM('br', 'break', '', '', this.linkWrapperID, '', '');
         //mainframe navigation
         for(i=0; i<this.nCrates; i++){
@@ -752,32 +752,6 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
             currentLimit = [],
             paths = [];
         
-            //batch fetch all in one big lump: -depricated, moved out to ODBgrab
-            /*
-            for(k=0; k<this.nCrates; k++){
-
-                for(i=0; i<window.parameters.ODBkeys.length; i++){
-                    paths[k*window.parameters.ODBkeys.length + i] = '/Equipment/'+window.parameters.HVequipmentNames[k]+'/'+window.parameters.ODBkeys[i]+'[*]';
-                }
-                
-            }
-            
-            data = ODBMGet(paths);
-
-            for(k=0; k<this.nCrates; k++){
-                chName[k]          = data[k*window.parameters.ODBkeys.length + 10];
-                reqVoltage[k]      = data[k*window.parameters.ODBkeys.length + 0];
-                measVoltage[k]     = data[k*window.parameters.ODBkeys.length + 1];
-                measCurrent[k]     = data[k*window.parameters.ODBkeys.length + 2];
-                rampUp[k]          = data[k*window.parameters.ODBkeys.length + 3];
-                rampDown[k]        = data[k*window.parameters.ODBkeys.length + 4];
-                measTemperature[k] = data[k*window.parameters.ODBkeys.length + 5];
-                repoChState[k]     = data[k*window.parameters.ODBkeys.length + 6];
-                repoChStatus[k]    = data[k*window.parameters.ODBkeys.length + 7];
-                voltageLimit[k]    = data[k*window.parameters.ODBkeys.length + 8];
-                currentLimit[k]    = data[k*window.parameters.ODBkeys.length + 9];                    
-            }
-            */
             //fetch all the HV parameters from the chunk of ODB hanging around locally:
             for(k=0; k<this.nCrates; k++){
                 chName[k]          = window.localODB['HV'+k].chName;  
@@ -890,19 +864,19 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                         //determine alarm status for each cell, recorded as [i][j][voltage alarm, current alarm, temperature alarm]
                         //alarmStatus == 0 indicates all clear, 0 < alarmStatus <= 1 indicates alarm intensity, alarmStatus = -1 indicates channel off,
                         //and alarmStatus == -2 for the voltage alarm indicates voltage ramping, -3 for misc disabled conditions:
-                        if(testParameter < window.parameters.alarmThresholds[0])  this.dataBus[k].alarmStatus[i][j][0] = 0;
-                        else this.dataBus[k].alarmStatus[i][j][0] = Math.min( (testParameter - window.parameters.alarmThresholds[0]) / window.parameters.scaleMaxima[0], 1);
+                        if(testParameter < ODB.HV.voltageTolerance)  this.dataBus[k].alarmStatus[i][j][0] = 0;
+                        else this.dataBus[k].alarmStatus[i][j][0] = Math.min( (testParameter - ODB.HV.voltageTolerance) / window.parameters.scaleMaxima[0], 1);
                         if(this.dataBus[k].rampStatus[i][j] == 3 || this.dataBus[k].rampStatus[i][j] == 5){
                             this.dataBus[k].alarmStatus[i][j][0] = -2;
                         }
                         if(this.dataBus[k].rampStatus[i][j] == 256)
                             this.dataBus[k].alarmStatus[i][j][0] = -3;
 
-                        if(this.dataBus[k].reportCurrent[i][j] < window.parameters.alarmThresholds[1])  this.dataBus[k].alarmStatus[i][j][1] = 0;
-                        else  this.dataBus[k].alarmStatus[i][j][1] = Math.min( (this.dataBus[k].reportCurrent[i][j] - window.parameters.alarmThresholds[1]) / window.parameters.scaleMaxima[1], 1);
+                        if(this.dataBus[k].reportCurrent[i][j] < ODB.HV.currentTolerance)  this.dataBus[k].alarmStatus[i][j][1] = 0;
+                        else  this.dataBus[k].alarmStatus[i][j][1] = Math.min( (this.dataBus[k].reportCurrent[i][j] - ODB.HV.currentTolerance) / window.parameters.scaleMaxima[1], 1);
 
-                        if(this.dataBus[k].reportTemperature[i][j] < window.parameters.alarmThresholds[2])  this.dataBus[k].alarmStatus[i][j][2] = 0;
-                        else  this.dataBus[k].alarmStatus[i][j][2] = Math.min( (this.dataBus[k].reportTemperature[i][j] - window.parameters.alarmThresholds[2]) / window.parameters.scaleMaxima[2], 1);
+                        if(this.dataBus[k].reportTemperature[i][j] < ODB.HV.tempTolerance)  this.dataBus[k].alarmStatus[i][j][2] = 0;
+                        else  this.dataBus[k].alarmStatus[i][j][2] = Math.min( (this.dataBus[k].reportTemperature[i][j] - ODB.HV.tempTolerance) / window.parameters.scaleMaxima[2], 1);
 
                         if(this.dataBus[k].channelMask[i][j] == 0){
                             this.dataBus[k].alarmStatus[i][j][0] = -1;
