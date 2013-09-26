@@ -253,7 +253,7 @@ function fakeThresholds(){
         key, subKey;
 
     for(key in window.parameters.ODB){
-        if(window.parameters.ODB[key].deploy){
+        if(window.parameters.ODB[key].deploy || window.parameters.ODB[key].USdeploy || window.parameters.ODB[key].DSdeploy){
             for(subKey in window[key+'pointer'].dataBus[key] ){
                 JSONP.parameters.thresholds[subKey] = 1000*Math.random();
             }
