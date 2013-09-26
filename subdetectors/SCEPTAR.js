@@ -6,14 +6,17 @@ function SCEPTAR(){
     this.name = 'SCEPTAR';
     var that = this;
     Subsystem.call(this);
-    this.dataBus = new SCEPTARDS(window.parameters.SCEPTARconfig);
+    //establish which of USSCEPTAR, DSSCEPTAR, and ZDS are present:
+    this.SCEPTARconfig = [window.parameters.ODB.SCEPTAR.USdeploy, window.parameters.ODB.SCEPTAR.DSdeploy%2, Math.floor(window.parameters.ODB.SCEPTAR.DSdeploy/2)];
+    this.dataBus = new SCEPTARDS(this.SCEPTARconfig);
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
     window.SCEPTARpointer = that;
 
     //member variables///////////////////////////////////
-    this.config = window.parameters.SCEPTARconfig;  //subsystems on: [upstream sceptar, downstream sceptar, downstream ZDS]
+    this.config = this.SCEPTARconfig;  //subsystems on: [upstream sceptar, downstream sceptar, downstream ZDS]
     //list of elements with distinct minima and maxima on subdetector views:
-    this.subdetectors = ['SCEPTAR', 'ZDS'];
+    this.subdetectors = ['SCEPTAR'];
+    if(window.parameters.ODB.SCEPTAR.DSdeploy == 2) this.subdetectors[1] = 'ZDS';
 
     //set up scale adjust dialog:
     this.canvas.onclick = function(event){

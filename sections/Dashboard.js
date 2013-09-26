@@ -55,19 +55,19 @@ function Dashboard(){
         this.labels[4] = 'TIP Ball';
         this.pointers[4] = window.TIPballpointer;
     }
-    if(window.parameters.deployment.SCEPTAR && window.parameters.SCEPTARconfig[0]){ //upstream SCEPTAR
+    if(window.parameters.ODB.SCEPTAR.USdeploy){ //upstream SCEPTAR
         this.labels[5] = 'SCEPTAR';
         this.pointers[5] = window.SCEPTARpointer;
     }
-    if(window.parameters.deployment.SCEPTAR && window.parameters.SCEPTARconfig[1]){ //downstream SCEPTAR
+    if(window.parameters.ODB.SCEPTAR.DSdeploy == 1){ //downstream SCEPTAR
         this.labels[4] = 'SCEPTAR';
         this.pointers[4] = window.SCEPTARpointer;
     }
-    if(window.parameters.deployment.SCEPTAR && window.parameters.SCEPTARconfig[2]){ //ZDS
+    if(window.parameters.ODB.SCEPTAR.DSdeploy == 2){ //ZDS
         this.labels[4] = 'ZDS';
         this.pointers[4] = window.ZDSpointer;
     }
-    if(window.parameters.deployment.PACES){
+    if(window.parameters.ODB.PACES.deploy){
         this.labels[5] = 'PACES';
         this.pointers[5] = window.PACESpointer;
     }

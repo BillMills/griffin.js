@@ -261,12 +261,15 @@ function Subsystem(){
                 if(window.JSONPstore['scalar'][key]){
                     if(typeof window.JSONPstore['scalar'][key]['TRIGREQ'] == 'number'){
                         this.dataBus[this.name][key]['rate'] = window.JSONPstore['scalar'][key]['TRIGREQ'];
+                        this.dataBus.totalRate += window.JSONPstore['scalar'][key]['TRIGREQ'];
                     } else 
                         this.dataBus[this.name][key]['rate'] = 0xDEADBEEF;
+                        this.dataBus.totalRate = 0xDEADBEEF;
                 } else{
                     this.dataBus[this.name][key]['rate'] = 0xDEADBEEF;
+                    this.dataBus.totalRate = 0xDEADBEEF
                 }
-                this.dataBus.totalRate += window.JSONPstore['scalar'][key]['TRIGREQ'];
+                
             }
 
         }
