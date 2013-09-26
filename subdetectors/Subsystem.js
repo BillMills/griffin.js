@@ -381,7 +381,7 @@ function DetailView(){
                                         that.detailShowing = 0;
                                         swapFade(null, that, 1000);
                                     } else{
-                                        parameterDialogue(that.name, [[that.name, window.parameters[that.name].minima[that.name][window.state.subdetectorView], window.parameters[that.name].maxima[that.name][window.state.subdetectorView], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/'+that.name+'/'+scaleType()+'[0]', '/DashboardConfig/'+that.name+'/'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.state.subdetectorView]);
+                                        parameterDialogue(that.name, [[that.name, window.parameters.ODB[that.name][that.constructMinMaxKey(that.name)][0], window.parameters.ODB[that.name][that.constructMinMaxKey(that.name)][1], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/'+that.name+'/'+scaleType()+'[0]', '/DashboardConfig/'+that.name+'/'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.state.subdetectorView]);
                                     }
                                 };
     this.canvas.onclick =   function(event){
@@ -401,7 +401,7 @@ function DetailView(){
                                     //that.detailShowing = 1;
                                     swapFade(null, that, 1000)
                                 } else if(y > that.canvasHeight - that.scaleHeight){
-                                    parameterDialogue(that.name, [[that.name, window.parameters[that.name].minima[that.name][window.state.subdetectorView], window.parameters[that.name].maxima[that.name][window.state.subdetectorView], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/'+that.name+'/'+scaleType()+'[0]', '/DashboardConfig/'+that.name+'/'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.state.subdetectorView]);
+                                    parameterDialogue(that.name, [[that.name, window.parameters.ODB[that.name][that.constructMinMaxKey(that.name)][0], window.parameters.ODB[that.name][that.constructMinMaxKey(that.name)][1], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/'+that.name+'/'+scaleType()+'[0]', '/DashboardConfig/'+that.name+'/'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.state.subdetectorView]);
                                 }
                             };
 

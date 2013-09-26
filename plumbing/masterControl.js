@@ -418,18 +418,18 @@ function fetchCustomParameters(){
     window.parameters.PACES.minima.PACES = [parseFloat(data[PACES+1][0]), parseFloat(data[PACES+2][0]), parseFloat(data[PACES+3][0])];
     window.parameters.PACES.maxima.PACES = [parseFloat(data[PACES+1][1]), parseFloat(data[PACES+2][1]), parseFloat(data[PACES+3][1])];    
 
-    if(parseFloat(data[SCEPTAR]) || parseFloat(data[SCEPTAR+1]) || parseFloat(data[51])) window.parameters.deployment.SCEPTAR = 1;
+    if(parseFloat(data[SCEPTAR]) || parseFloat(data[SCEPTAR+1]) || parseFloat(data[ZDS])) window.parameters.deployment.SCEPTAR = 1;
     else window.parameters.deployment.SCEPTAR = 0;
     window.parameters.SCEPTARconfig = [parseFloat(data[SCEPTAR]), parseFloat(data[SCEPTAR+1]), parseFloat(data[ZDS])];
     window.parameters.SCEPTAR.minima.SCEPTAR = [parseFloat(data[SCEPTAR+2][0]), parseFloat(data[SCEPTAR+3][0]), parseFloat(data[SCEPTAR+4][0])];
     window.parameters.SCEPTAR.maxima.SCEPTAR = [parseFloat(data[SCEPTAR+2][1]), parseFloat(data[SCEPTAR+3][1]), parseFloat(data[SCEPTAR+4][1])];
     window.parameters.SCEPTAR.minima.ZDS = [parseFloat(data[ZDS+1][0]), parseFloat(data[ZDS+2][0]), parseFloat(data[ZDS+3][0])];
     window.parameters.SCEPTAR.maxima.ZDS = [parseFloat(data[ZDS+1][1]), parseFloat(data[ZDS+2][1]), parseFloat(data[ZDS+3][1])];
-
+/*
     window.parameters.deployment.SHARC = parseFloat(data[SHARC]);
     window.parameters.SHARC.minima.SHARC = [parseFloat(data[SHARC+1][0]), parseFloat(data[SHARC+2][0]), parseFloat(data[SHARC+3][0])];
     window.parameters.SHARC.maxima.SHARC = [parseFloat(data[SHARC+1][1]), parseFloat(data[SHARC+2][1]), parseFloat(data[SHARC+3][1])];
-/*
+
     window.parameters.deployment.SPICE = parseFloat(data[SPICE]);
     window.parameters.SPICE.minima.SPICE = [parseFloat(data[SPICE+1][0]), parseFloat(data[SPICE+2][0]), parseFloat(data[SPICE+3][0])];
     window.parameters.SPICE.maxima.SPICE = [parseFloat(data[SPICE+1][1]), parseFloat(data[SPICE+2][1]), parseFloat(data[SPICE+3][1])];
