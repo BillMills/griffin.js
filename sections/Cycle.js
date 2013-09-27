@@ -54,9 +54,9 @@ function Cycle(){
     insertDOM('label', 'loadCycleLabel', '', 'margin-left:10px;', this.linkWrapperID, '', 'Load Cycle: ');
     insertDOM('select', 'cycleOptions', '', '', this.linkWrapperID, '', '');
     document.getElementById('loadCycleLabel').setAttribute('for', 'cycleOptions');
-    loadCycleOptions();
+    loadOptions(ODB.Cycles, 'cycleOptions');
     insertDOM('button', 'loadCycle', 'navLink', '', this.linkWrapperID, loadCycle.bind(null), 'Load', '', 'button');
-    insertDOM('button', 'deleteCycle', 'navLink', '', this.linkWrapperID, function(){
+    insertDOM('button', 'deleteOption', 'navLink', '', this.linkWrapperID, function(){
         var i, name,
             dropdown = document.getElementById('cycleOptions'),
             cycleIndex = parseInt(dropdown.value, 10);
@@ -66,7 +66,7 @@ function Cycle(){
                 name = dropdown.childNodes[i].innerHTML;
             }            
         }
-        confirm('Delete Cycle Definition', 'Do you really want to delete '+name+'?', deleteCycle.bind(null))
+        confirm('Delete Cycle Definition', 'Do you really want to delete '+name+'?', deleteOption.bind(null, '/DashboardConfig/Cycles/', 'cycleOptions'))
     }, 'Delete', '', 'button');
 
 
@@ -477,17 +477,17 @@ function deployCommand(command, duration){
 
 }
 
-//fetch the predefined cycle options and make them choices in the loading dropdown:
-function loadCycleOptions(){
+//fetch the top-level subkeys from an ODB directory as a set of dropdown options, for use in Filters and Cycles:
+function loadOptions(location, dropdown){
     var key, i=0,
         option = [];
 
-    for(key in ODB.Cycles){
-        if(ODB.Cycles.hasOwnProperty(key) && typeof ODB.Cycles[key] == 'object' && !Array.isArray(ODB.Cycles[key]) ){
+    for(key in location){
+        if(location.hasOwnProperty(key) && typeof location[key] == 'object' && !Array.isArray(location[key]) ){
             option[i] = document.createElement('option');
             option[i].text = key;
             option[i].value = i;
-            document.getElementById('cycleOptions').add(option[i], null);
+            document.getElementById(dropdown).add(option[i], null);
             i++;
         }
     }
@@ -520,9 +520,10 @@ function saveCycle(){
     }
 }
 
-function deleteCycle(){
+//delete a Filter or Cycle option:
+function deleteOption(ODBpointer, dropdown){
     var i,
-        dropdown = document.getElementById('cycleOptions'),
+        dropdown = document.getElementById(dropdown),
         cycleIndex = parseInt(dropdown.value, 10),
         name;
         //find name and remove from dropdown
@@ -534,7 +535,7 @@ function deleteCycle(){
         }
 
     //remove from ODB
-    ODBMDelete(['/DashboardConfig/Cycles/'+name]);
+    ODBMDelete([ODBpointer+name]);
     //technically the cycle is still floating around in memory now until page refresh.
 }
 

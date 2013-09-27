@@ -332,6 +332,15 @@ function editFilter(filterSystems, filterSystemsNames){
 
     this.wrapper = document.getElementById(this.wrapperID);
 
+    //keep an internal list of all available filter:
+    this.filterNames = [];
+    //generate initial cycle list:
+    for(key in ODB.Filters){
+        if(ODB.Filters.hasOwnProperty(key) && typeof ODB.Filters[key] == 'object' && !Array.isArray(ODB.Filters[key])){
+            this.filterNames[this.filterNames.length] = key;
+        }
+    }
+
     //nav wrapper div
     insertDOM('div', this.linkWrapperID, 'navPanel', '', this.wrapperID, '', '')
     //nav header
@@ -345,6 +354,25 @@ function editFilter(filterSystems, filterSystemsNames){
     insertDOM('label', 'filterNameLabel', '', 'margin-left:10px;', this.linkWrapperID, '', 'Name this Filter: ');
     insertDOM('input', 'filterName', '', '', this.linkWrapperID, '', '', '', 'text', 'newFilter');
     document.getElementById('filterNameLabel').setAttribute('for', 'filterName');
+    insertDOM('button', 'saveFilter', 'navLink', '', this.linkWrapperID, saveFilter, 'Save Filter Definition', '', 'button');
+    insertDOM('br', 'break', '', '', this.linkWrapperID);
+    insertDOM('label', 'loadFilterLabel', '', 'margin-left:10px;', this.linkWrapperID, '', 'Load Filter: ');
+    insertDOM('select', 'filterOptions', '', '', this.linkWrapperID, '', '');
+    document.getElementById('loadFilterLabel').setAttribute('for', 'filterOptions');
+    loadOptions(ODB.Filters, 'filterOptions');
+    insertDOM('button', 'loadFilter', 'navLink', '', this.linkWrapperID, loadCycle.bind(null), 'Load', '', 'button');
+    insertDOM('button', 'deleteFilter', 'navLink', '', this.linkWrapperID, function(){
+        var i, name,
+            dropdown = document.getElementById('filterOptions'),
+            filterIndex = parseInt(dropdown.value, 10);
+
+        for(i=0; i<dropdown.childNodes.length; i++){
+            if(dropdown.childNodes[i].value == filterIndex){
+                name = dropdown.childNodes[i].innerHTML;
+            }            
+        }
+        confirm('Delete Filter Definition', 'Do you really want to delete '+name+'?', deleteOption.bind(null, '/DashboardConfig/Filters/', 'filterOptions'))
+    }, 'Delete', '', 'button');
     insertDOM('br', 'break', '', '', this.linkWrapperID);
 
     //div structure for drag and drop area: right panel for detector palete, gutter for tree lines and main area for trigger groups:
@@ -552,7 +580,7 @@ function filterTag(detName){
         return 'GRG';
     else if(detName == 'ZDS')
         return 'ZDS';
-    else if(detName == 'SPICES')
+    else if(detName == 'SPICE')
         return 'SPI';
     else if(detName == 'DESCANT')
         return 'DSC';
@@ -570,32 +598,31 @@ function filterTag(detName){
 
 //parse whatever is currently declared into a filter string definition
 function buildFilter(){
-    var i, j, k, modeTag,
-        filterConditions = document.getElementById('filterCons'),
-        filterString = '';
+    var i, j, k, modeTag, filters = [],
+        filterConditions = document.getElementById('filterCons');
 
     for(i=0; i<filterConditions.childNodes.length; i++){
+        filters[i] = [];
         for(j=0; j<filterConditions.childNodes[i].childNodes.length; j++){
             for(k=0; k<filterConditions.childNodes[i].childNodes[j].childNodes.length; k++){
                 if(filterConditions.childNodes[i].childNodes[j].childNodes[k].filterTag){
+                    filterString = '';
                     //add subsystem tag
                     filterString += filterConditions.childNodes[i].childNodes[j].childNodes[k].filterTag;
                     //add Singles / Coinc / Prescale tag:
                     modeTag = filterConditions.childNodes[i].childNodes[j].childNodes[k].childNodes[1].childNodes[1].innerHTML;
-                    modeTag = ( (modeTag == 'Singles') ? 'S' : ( (modeTag=='Prescaled') ? 'P' : 'C' ) );
-                    filterString += modeTag+'&';
+                    modeTag = ( (modeTag == 'Singles') ? '-S' : ( (modeTag=='Prescaled') ? '-P' : '-C' ) );
+                    filterString += modeTag;
+                    //Include varibale prescale / coincidence multiplicity here; fixed to 1 until I get a real spec:
+                    filterString += '-1';
+
+                    filters[i][k] = filterString;
                 }
             }
-            filterString = filterString.slice(0, filterString.length-1);
-            filterString += '|';
         }
     }
-    //trim some overkill:
-    filterString = filterString.slice(0, filterString.length-1);
-    filterString = filterString.slice(1, filterString.length);
 
-    console.log(filterString);
-
+    return filters;
 }
 
 function deployEmptyFilterCondition(){
@@ -639,3 +666,92 @@ function deployEmptyFilterCondition(){
         window.filterEditPointer.filterConPresent[window.filterEditPointer.filterConPresent.length] = window.filterEditPointer.filterConIndex;
         window.filterEditPointer.filterConIndex++;
 }
+
+function saveFilter(){
+    var i, deleteCode,
+        filter = buildFilter(),
+        intFilter = integerPacking(filter),
+        name = document.getElementById('filterName').value,
+        groups = [], types = [];
+
+        integerPacking(filter)
+
+    //recreate the filter
+    deleteCode = JSON.parse(ODBMDelete(['/DashboardConfig/Filters/'+name]));
+    ODBMCreate(['/DashboardConfig/Filters/'+name], [TID_KEY]);
+
+    //create arrays for each OR'ed group:
+    for(i=0; i<filter.length; i++){
+        groups[i] = '/DashboardConfig/Filters/'+name+'/group'+i;
+        types[i] = TID_INT;
+    }
+    ODBMCreate(groups, types);
+
+    //populate arrays, currently with integer packing until string pushing works better:
+    for(i=0; i<intFilter.length; i++){
+        ODBSet('/DashboardConfig/Filters/'+name+'/group'+i+'[*]', intFilter[i]);
+    }
+
+    //include in dropdown if new
+    if(deleteCode[0] == 312){
+        option = document.createElement('option');
+        option.text = name;
+        option.value = window.filterEditPointer.filterNames.length;
+        window.filterEditPointer.filterNames[window.filterEditPointer.filterNames.length] = name;
+        document.getElementById('filterOptions').add(option, null);
+    }
+}
+
+//MIDAS can't at the moment handle creating arrays of strings; chew results of buildfilter up into integer packed 
+//expressions instead.
+function integerPacking(filter){
+    var i,j,
+        intFilter = [],
+        detCode, modeCode, scale, filterCode, 
+        detKey = {
+            "DAB" : 0,
+            "PAC" : 1,
+            "SEP" : 2,
+            "GRG" : 3,
+            "ZDS" : 4,
+            "SPI" : 5,
+            "DSC" : 6,
+            "BAE" : 7,
+            "SHB" : 8,
+            "TPW" : 9,
+            "TPC" : 10
+        };
+
+
+    for(i=0; i<filter.length; i++){
+        intFilter[i] = [];
+        for(j=0; j<filter[i].length; j++){
+            //parse detector ID
+            detCode = filter[i][j].slice(0,3);
+            filterCode = detKey[detCode];
+            //parse mode
+            modeCode = filter[i][j].slice(4,5);
+            if(modeCode=='S')
+                filterCode = filterCode | (1<<4);
+            else if(modeCode=='P')
+                filterCode = filterCode | (2<<4);
+            else if(modeCode=='C')
+                filterCode = filterCode | (3<<4);
+            //parse scale / multiplicity
+            scale = parseInt( filter[i][j].slice(6,filter[i][j].length) , 10);
+            filterCode = filterCode | (scale << 6);
+
+            intFilter[i][j] = filterCode;
+        }
+    }
+
+    return intFilter;
+}
+
+
+
+
+
+
+
+
