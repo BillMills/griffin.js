@@ -165,8 +165,8 @@ function ODBgrab(){
     paths[SIDEBAR+1] = '/Runinfo/Run number';
     paths[SIDEBAR+2] = '/Runinfo/State';
     paths[SIDEBAR+3] = '/Runinfo/Start time';
-    paths[SIDEBAR+4] = 'Runinfo/Stop time';
-    paths[SIDEBAR+5] = 'Runinfo/Start time binary';
+    paths[SIDEBAR+4] = '/Runinfo/Stop time';
+    paths[SIDEBAR+5] = '/Runinfo/Start time binary';
     paths[SIDEBAR+6] = '/Experiment/Run Parameters/Comment';
     //DAQ
     DAQ = SIDEBAR+7;
@@ -225,6 +225,7 @@ function ODBgrab(){
     //Message service:
     window.localODB.messages = ODBGetMsg(5);
 
+    ///////////////////////////////////////////////////////////////
 }
 
 //handle pulling the initial config parameters out of the ODB and replacing the default values in the JSONP-loaded parameter store:

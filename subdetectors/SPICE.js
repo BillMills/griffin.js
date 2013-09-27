@@ -13,6 +13,8 @@ function SPICE(){
         window.parameters.deployment.BAMBINO = 1;
         ODB.BAMBINO.USdeploy = 0;
         ODB.BAMBINO.DSdeploy = 1;
+        ODBSet('/DashboardConfig/BAMBINO/USdeploy', 0);
+        ODBSet('/DashboardConfig/BAMBINO/DSdeploy', 1);
     }
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
     window.SPICEpointer = that;

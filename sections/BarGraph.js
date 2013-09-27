@@ -68,7 +68,7 @@ function BarGraph(cvas, moduleNumber, nBars, title, yAxisTitle, scaleMin, scaleM
     //seek largest fontsize such that the longest label + height of y axis title fit into margin:
     this.fontscale = 1;
     this.context.font=this.fontscale+"px 'Raleway'";
-    while( this.context.measureText( ((this.scaleMax-this.scaleMin)/(this.yAxisTicks-1)*longestLabelIndex).toFixed(this.precision) ).width + 1.5*this.fontscale < 0.1*this.width/2 ){
+    while( this.context.measureText( ((this.scaleMax-this.scaleMin)/(this.yAxisTicks-1)*longestLabelIndex).toFixed(this.precision) ).width + 2*this.fontscale < 0.1*this.width/2 ){
     	this.fontscale++ 
 	    this.context.font=this.fontscale+"px 'Raleway'";
 	}

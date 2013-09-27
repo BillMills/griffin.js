@@ -608,12 +608,8 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
             for(i=this.prevDigi[clctr]; i<this.prevDigi[clctr] + this.nDigitizersPerCollector[clctr]; i++){
                 //digitizer to collector link:
                 this.detailContext.strokeStyle = interpolateColor(parseHexColor(this.dataBus.oldDigitizerLinkColor[i]), parseHexColor(this.dataBus.digitizerLinkColor[i]), frame/this.nFrames);
-                this.detailContext.beginPath();
-                //old style, direct from digitizer to collector:
-                //this.detailContext.moveTo(this.margin + ((i-this.prevDigi[clctr])+0.5)*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector[clctr], this.canvasHeight*0.6 + topMargin);
-                //this.detailContext.lineTo( this.canvasWidth/2 - this.collectorWidth/2 + ((i-this.prevDigi[clctr])+0.5)*this.collectorWidth/this.nDigitizersPerCollector[clctr], topMargin + this.collectorHeight);
-                //two-tiered links:
                 //from digitizers:
+                this.detailContext.beginPath();
                 this.detailContext.moveTo(this.margin + ((i-this.prevDigi[clctr])+0.5)*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector[clctr], this.canvasHeight*0.6 + topMargin);
                 this.detailContext.lineTo(this.margin + ((i-this.prevDigi[clctr])+0.5)*(this.canvasWidth - 2*this.margin)/this.nDigitizersPerCollector[clctr], this.canvasHeight*0.6 + topMargin - this.collectorHeight);
                 this.detailContext.stroke();
@@ -863,7 +859,6 @@ function slaveChart(frame, context, x0, y0, FSPC, triggers, transfers, oldTrigge
     context.strokeRect(-context.measureText('Triggers').width/2 - innerMargin/5-3,-innerMargin/5/2,innerMargin/5,innerMargin/5);
     context.restore();
 
-
     function transferBar(frame, oldLevel, level, x0, y0){
         var height = (oldLevel - ODB.DAQ.transferMinDetailView) / (ODB.DAQ.transferMaxDetailView - ODB.DAQ.transferMinDetailView)*chartHeight + (  (level - ODB.DAQ.transferMinDetailView)/(ODB.DAQ.transferMaxDetailView - ODB.DAQ.transferMinDetailView) - (oldLevel - ODB.DAQ.transferMinDetailView) / (ODB.DAQ.transferMaxDetailView - ODB.DAQ.transferMinDetailView) )*chartHeight*frame/window.DAQpointer.nFrames;
         if(height>chartHeight) height = chartHeight;
@@ -971,6 +966,7 @@ function rateChart(frame, data, context, x0, y0, maxLength, barWidth){
     context.lineTo(1.1*x0+maxLength, y0);
     context.lineTo(1.1*x0+maxLength, y0+5);
     context.stroke();
+    context.beginPath();
     context.moveTo(1.1*x0-2, y0);
     context.lineTo(1.1*x0-2, y0+5);
     context.stroke();

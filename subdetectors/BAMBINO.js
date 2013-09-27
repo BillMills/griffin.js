@@ -6,6 +6,16 @@ function BAMBINO(spiceMode){
     this.name = 'BAMBINO';
     var that = this;
     Subsystem.call(this);
+
+    //need special implementation of prameter dialog, since the may be deployed as BAMBINO or SPICE AUX
+    this.canvas.onclick = function(event){
+        var name,
+            y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;
+            name = (that.spiceAux) ? "SPICE Auxilliary" : "BAMBINO";
+        if(y > that.canvasHeight - that.scaleHeight)
+            parameterDialogue(name, [[name, ODB[that.name][that.constructMinMaxKey(that.name)][0], ODB[that.name][that.constructMinMaxKey(that.name)][1], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/'+that.name+'/'+scaleType()+'[0]', '/DashboardConfig/'+that.name+'/'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.state.subdetectorView]);
+    }
+
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
     window.BAMBINOpointer = that;
 
