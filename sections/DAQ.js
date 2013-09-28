@@ -745,6 +745,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                 nextLine += 'Total Outbound Data Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]]['dataRate'].toFixed(1) + ' Bps<br><br>';
 
                 //build up arrays and objects to pass to tooltip table builder in the format it expects:
+//console.log(window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]])
                 for(key in window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]]){
                     if(window.codex.dataKeys.indexOf(key) == -1){
                         data[key] = window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]][key]
@@ -950,7 +951,6 @@ function rateChart(frame, data, context, x0, y0, maxLength, barWidth){
         context.strokeRect(1.1*x0, y0 - (barWidth+4)*(row+1) + barWidth/2+2, length, barWidth/2-2);
         context.fillStyle = '#FFFFFF';
         context.font = fontSize*0.6+'px Raleway';
-       //console.log(data[key].totalDataRate/1000)
 // window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]]['dataRate'].toFixed(1)
         var text = (data[key].totalDataRate/1000 > 9999) ? (data[key].totalDataRate/1000).toExponential(0) : (data[key].totalDataRate/1000).toFixed(0);
         text += ' kBps';
@@ -1173,6 +1173,8 @@ DAQcodex = function(){
                                         if( window.JSONPstore['scalar'][this.DAQmap[Fkey][Skey][Pkey][Ckey].detector] ){
                                             this.DAQmap[Fkey][Skey][Pkey][Ckey].trigRequestRate = window.JSONPstore['scalar'][this.DAQmap[Fkey][Skey][Pkey][Ckey].detector]['TRIGREQ'];
                                             this.DAQmap[Fkey][Skey][Pkey][Ckey].dataRate = window.JSONPstore['scalar'][this.DAQmap[Fkey][Skey][Pkey][Ckey].detector]['dataRate'];
+                                            if( this.DAQmap[Fkey][Skey][Pkey][Ckey].dataRate == undefined )
+                                                this.DAQmap[Fkey][Skey][Pkey][Ckey].dataRate = 0xDEADBEEF;
                                             this.DAQmap[Fkey][Skey][Pkey].trigRequestRate += this.DAQmap[Fkey][Skey][Pkey][Ckey].trigRequestRate;
                                             this.DAQmap[Fkey][Skey][Pkey].dataRate += this.DAQmap[Fkey][Skey][Pkey][Ckey].dataRate;
                                             this.detSummary[ this.DAQmap[Fkey][Skey][Pkey][Ckey].detector.slice(0,3) ].totalTrigRequestRate += this.DAQmap[Fkey][Skey][Pkey][Ckey].trigRequestRate;
@@ -1189,6 +1191,7 @@ DAQcodex = function(){
                 }
             }
         }
+        //console.log(this.DAQmap)
 
     };
 

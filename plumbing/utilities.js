@@ -332,14 +332,16 @@ function TTtable(id, data, objects, keys, tableTitle, titles, split){
 
     //fill table:
     n=0;
+//console.log(data)
     for(i=0; i<split.length; i++){
         for(j=0; j<split[i]; j++){
             document.getElementById(id+'row'+j+'cell'+(titles.length*i)).innerHTML = objects[n];
             for(k=0; k<keys.length; k++){
+//console.log([n, k, data[objects[n]][keys[k]] ])
                 if(typeof data[objects[n]][keys[k]] == 'string')
                     cellContent = data[objects[n]][keys[k]];
-                else 
-                    cellContent = data[objects[n]][keys[k]].toFixed(window.parameters.tooltipPrecision)
+                else
+                    cellContent = data[objects[n]][keys[k]].toFixed(window.parameters.tooltipPrecision);
                 if(cellContent == 0xDEADBEEF) cellContent = '0xDEADBEEF'
                 document.getElementById(id+'row'+j+'cell'+(1+titles.length*i+k)).innerHTML = cellContent;
             }
