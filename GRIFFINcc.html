@@ -128,7 +128,7 @@
       }
     </script>
 
-    <script type="text/javascript">
+    <!--script type="text/javascript">
       //load the webfonts, and block the page until they're ready or failed - otherwise lots of rendering bugs happen!
       WebFontConfig = { google: { families: [ 'Orbitron', 'Raleway' ] },
         loading: function(){
@@ -154,7 +154,7 @@
         var s = document.getElementsByTagName('script')[0];
         s.parentNode.insertBefore(wf, s);
       })();
-    </script>
+    </script-->
 
     <!--Main routine/////////////////////////////////////////////////////////////////////-->
     <script id='main' type="text/JavaScript">
@@ -376,9 +376,9 @@
       /////////////////////////////////////////////////
       //no internet mode:
       
-      //drawSpinner('spinner', 'Requesting Styles');
-      //loadParameters();
-      //loadJSONP(window.Gatekeeper, "main");
+      drawSpinner('spinner', 'Requesting Styles');
+      loadParameters();
+      loadJSONP(window.Gatekeeper, "main");
       
 
 

@@ -237,7 +237,7 @@ function fakeScalars(){
     for(key in ODB){
         if(ODB[key].deploy || ODB[key].USdeploy || ODB[key].DSdeploy){            
             for(subKey in window[key+'pointer'].dataBus[key]){
-                JSONP.scalar[subKey] = {"TRIGREQ" : 1000*Math.random()};
+                JSONP.scalar[subKey] = {"TRIGREQ" : 1000*Math.random(), "dataRate" : 1000*Math.random()};
             }
         }
     }
