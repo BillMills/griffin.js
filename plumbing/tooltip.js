@@ -90,7 +90,7 @@ function Tooltip(ttCanvasID, ttDivID, wrapperID, prefix, postfix){
         that.allowUpdate = 0;
     }
 
-    //updater for if the tooltip is stationary on the waffle during a master loop transition:
+    //updater for if the tooltip is stationary during a master loop transition:
     this.update = function(){
         if(this.allowUpdate){
             //establish text:

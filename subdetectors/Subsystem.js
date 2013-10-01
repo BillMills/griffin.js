@@ -23,20 +23,31 @@ function Subsystem(){
     
     //DOM insertions
     //insert nav link
-	insertDOM('button', this.name+'link', 'navLink', '', this.linkWrapperID, function(){ swapFade(this.id, this.parentPointer, window.subsystemScalars); rePaint();}, this.name, '', 'button');
+    injectDOM('button', this.name+'link', this.linkWrapperID, {
+        'class' : 'navLink',
+        'onclick' : function(){swapFade(this.id, this.parentPointer, window.subsystemScalars); rePaint();},
+        'innerHTML' : this.name,
+        'type' : 'button'
+    });
     document.getElementById(this.name+'link').parentPointer = this;
     //scale canvas
 	this.monitor = document.getElementById(this.monitorID);
     this.canvasWidth = 0.48*$(this.monitor).width();
     this.canvasHeight = 0.8*$(this.monitor).height();
     //detector view
-    insertDOM('canvas', this.canvasID, 'monitor', 'top:' + ($('#'+this.linkWrapperID).height()*1.25 + 5) +'px;', this.monitorID, '', '')
+    injectDOM('canvas', this.canvasID, this.monitorID, {
+        'class':'monitor', 
+        'style':'top:' + ($('#'+this.linkWrapperID).height()*1.25 + 5) +'px;'
+    })
     this.canvas = document.getElementById(this.canvasID);
     this.context = this.canvas.getContext('2d');
     this.canvas.setAttribute('width', this.canvasWidth);
     this.canvas.setAttribute('height', this.canvasHeight);
     //hidden Tooltip map layer
-    insertDOM('canvas', this.TTcanvasID, 'monitor', 'top:' + ($('#'+this.linkWrapperID).height()*1.25 + 5) +'px;', this.monitorID, '', '')    
+    injectDOM('canvas', this.TTcanvasID, this.monitorID, {
+        'class' : 'monitor',
+        'style' : 'top:' + ($('#'+this.linkWrapperID).height()*1.25 + 5) +'px;'
+    });
     this.TTcanvas = document.getElementById(this.TTcanvasID);
     this.TTcontext = this.TTcanvas.getContext('2d');
     this.TTcanvas.setAttribute('width', this.canvasWidth);
@@ -357,13 +368,19 @@ function DetailView(){
     this.TTdetailLayerDone = 0;
 
     //insert & scale canvas
-    insertDOM('canvas', this.detailCanvasID, 'monitor', 'top:' + ($('#'+this.linkWrapperID).height()*1.25 + 5) +'px; transition:opacity 0.5s, z-index 0.5s; -moz-transition:opacity 0.5s, z-index 0.5s; -webkit-transition:opacity 0.5s, z-index 0.5s;', this.monitorID, '', '');
+    injectDOM('canvas', this.detailCanvasID, this.monitorID, {
+        'class' : 'monitor',
+        'style' : 'top:' + ($('#'+this.linkWrapperID).height()*1.25 + 5) +'px; transition:opacity 0.5s, z-index 0.5s; -moz-transition:opacity 0.5s, z-index 0.5s; -webkit-transition:opacity 0.5s, z-index 0.5s;'
+    });
     this.detailCanvas = document.getElementById(this.detailCanvasID);
     this.detailContext = this.detailCanvas.getContext('2d');
     this.detailCanvas.setAttribute('width', this.canvasWidth);
     this.detailCanvas.setAttribute('height', this.canvasHeight);
     //hidden Tooltip map layer for detail
-    insertDOM('canvas', this.TTdetailCanvasID, 'monitor', 'top:' + ($('#'+this.linkWrapperID).height()*1.25 + 5) +'px;', this.monitorID, '', '')
+    injectDOM('canvas', this.TTdetailCanvasID, this.monitorID, {
+        'class' : 'monitor',
+        'style' : 'top:' + ($('#'+this.linkWrapperID).height()*1.25 + 5) +'px;'
+    });
     this.TTdetailCanvas = document.getElementById(this.TTdetailCanvasID);
     this.TTdetailContext = this.TTdetailCanvas.getContext('2d');
     this.TTdetailCanvas.setAttribute('width', this.canvasWidth);
@@ -382,6 +399,7 @@ function DetailView(){
                                     var y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;    
                                     if(y < that.canvasHeight - that.scaleHeight){
                                         that.detailShowing = 0;
+                                        that.detailTooltip.canvas.onmouseout();
                                         swapFade(null, that, 1000);
                                     } else{
                                         parameterDialogue(that.name, [[that.name, ODB[that.name][that.constructMinMaxKey(that.name)][0], ODB[that.name][that.constructMinMaxKey(that.name)][1], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/'+that.name+'/'+scaleType()+'[0]', '/DashboardConfig/'+that.name+'/'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.state.subdetectorView]);
@@ -396,12 +414,11 @@ function DetailView(){
                                 detailClicked = that.findCell(x,y);
                                 //draw and swap out if user clicked on a valid detail group
                                 if(detailClicked != -1){
-                                    //detailClicked = Math.floor( (detailClicked - 108) / 8)+1;  //transformation from HPGe implementation of this, drop in general?
                                     that.detailShowing = detailClicked;
                                     that.TTdetailLayerDone = 0 //get ready to draw a new TT layer for the detail view
                                     //draw detail chooses which detail group to draw as a function of that.detailShowing:
                                     that.drawDetail(0,that.nFrames);  //draw detail wants a context for first arg, eliminate
-                                    //that.detailShowing = 1;
+                                    that.tooltip.canvas.onmouseout();
                                     swapFade(null, that, 1000)
                                 } else if(y > that.canvasHeight - that.scaleHeight){
                                     parameterDialogue(that.name, [[that.name, ODB[that.name][that.constructMinMaxKey(that.name)][0], ODB[that.name][that.constructMinMaxKey(that.name)][1], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/'+that.name+'/'+scaleType()+'[0]', '/DashboardConfig/'+that.name+'/'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.state.subdetectorView]);
