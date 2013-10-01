@@ -182,15 +182,15 @@
         //Subsystems:
         if(window.parameters.topDeployment['Subsystems']){
           //Subsystem sidebar:
-          insertDOM('div', 'SubsystemSidebar', 'RightSidebar', '', window.parameters.wrapper, '', '');
+          injectDOM('div', 'SubsystemSidebar', window.parameters.wrapper, {'class':'RightSidebar'});
           //Subsystem menu; universal buttons declared outside of individual subsystems:
           //add top level nav button:
-          insertDOM('button', 'SubsystemsButton', 'navLink', '', 'statusLink', '', 'Subsystem Monitors', '', '');
+          injectDOM('button', 'SubsystemsButton', 'statusLink', {'class':'navLink', 'innerHTML':'Subsystem Monitors'});
           //create nav panel for subsystem view:
-          insertDOM('div', 'SubsystemLinks', 'navPanel', '', window.parameters.wrapper, '', '');
+          injectDOM('div', 'SubsystemLinks', window.parameters.wrapper, {'class':'navPanel'});
           //headline for nav panel
-          insertDOM('h1', 'SubsystemLinksBanner', 'navPanelHeader', '', 'SubsystemLinks', '', ODB.topLevel.expName+' Subsystem Monitors');
-          insertDOM('br', 'break', '', '', 'SubsystemLinks', '', '');    
+          injectDOM('h1', 'SubsystemLinksBanner', 'SubsystemLinks', {'class':'navPanelHeader', 'innerHTML':ODB.topLevel.expName+' Subsystem Monitors'});
+          injectDOM('br', 'break', 'SubsystemLinks', {});    
           //subdetectors
           window.Subdetectors = [];
 
@@ -206,14 +206,20 @@
           if(ODB.TIPball.deploy) window.Subdetectors[window.Subdetectors.length] = new TIPball();
           if(ODB.DSSD.deploy) window.Subdetectors[window.Subdetectors.length] = new DSSD();
 
-          insertDOM('br', 'break', '', '', 'SubsystemLinks');
+          injectDOM('br', 'break', 'SubsystemLinks', {});
           //nav for different reported values:
           for(i=0; i<window.parameters.monitorValues.length; i++){
             var classDef
             //position 2 is default for now:
             if(i==2) classDef = 'navLinkDown';
             else classDef = 'navLink'; 
-            insertDOM('button', 'subsystem'+window.parameters.monitorValues[i], classDef, (i>2) ? 'display:none;' : '', 'SubsystemLinks', function(){swapSubsystemView(this.id, 'SubsystemLinks', this.viewIndex)}, window.parameters.monitorValues[i], '', 'button');
+            injectDOM('button', 'subsystem'+window.parameters.monitorValues[i], 'SubsystemLinks', {
+              'class':((i==2)?'navLinkDown':'navLink'),
+              'style':((i>2)?'display:none;':''),
+              'onclick' : function(){swapSubsystemView(this.id, 'SubsystemLinks', this.viewIndex)},
+              'innerHTML' : window.parameters.monitorValues[i],
+              'type' : 'button'
+            })
             document.getElementById('subsystem'+window.parameters.monitorValues[i]).viewIndex = i;
           }
           window.subsystemScalars = window.parameters.monitorValues.length;
