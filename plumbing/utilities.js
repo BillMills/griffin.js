@@ -60,6 +60,35 @@ function insertDOM(element, id, classTag, style, wrapperID, onclick, content, na
     document.getElementById(id).onclick = onclick;
 }
 
+//more flexible DOM injector; <properties> is an object containing property.value pairs for all properties to be set: 
+function injectDOM(element, id, wrapperID, properties){
+    var key, elt,
+        newElement = document.createElement(element);
+    //explicit ID
+    newElement.setAttribute('id', id);
+    //append to document:
+    if(wrapperID == 'body')
+        document.body.appendChild(newElement)
+    else
+        document.getElementById(wrapperID).appendChild(newElement);
+    elt = document.getElementById(id);
+
+    //some things need to be set specially:
+    if(properties['innerHTML']){
+        elt.innerHTML = properties['innerHTML'];
+        delete properties['innerHTML'];
+    }
+    if(properties['onclick']){
+        elt.onclick = properties['onclick'];
+        delete properties['onclick'];
+    }
+    //send in the clowns:
+    for(key in properties){
+        elt.setAttribute(key, properties[key]);
+    }
+
+}
+
 //devName = device Name, scales = [ [scale title, parameter service minima, parameter service maxima, unit, ODBminpath, ODBmaxpath], ...]
 function parameterDialogue(devName, scales, currentColorScale){
     var i, j, ODBpath;
