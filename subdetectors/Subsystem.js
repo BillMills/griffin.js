@@ -1115,76 +1115,74 @@ function HPGeAssets(){
         var i, elt, eltName1, eltName2;
 
         document.getElementById(wrapperID).innerHTML = ''; //kill off whatever used to be in there
-        insertDOM('table', 'tigressTTtable', '', 'text-align:center; margin:10px; ', wrapperID, '', '');  //new table
-        insertDOM('tr', 'coreTitles', '', '', 'tigressTTtable', '', '');
-        insertDOM('td', 'blank', '', '', 'coreTitles', '', '');
-        insertDOM('td', 'spacer', '', 'width:10px', 'coreTitles', '', '');
-        insertDOM('td', 'coreAname', '', '', 'coreTitles', '', cloverLeaf+'N00A');
-        insertDOM('td', 'spacer', '', 'width:50px', 'coreTitles', '', '');
-        insertDOM('td', 'coreBname', '', '', 'coreTitles', '', cloverLeaf+'N00B');
+        injectDOM('table', 'tigressTTtable', wrapperID, {'style':'text-align:center; margin:10px;'});
+        injectDOM('tr', 'coreTitles', 'tigressTTtable', {});
+        injectDOM('td', 'blank', 'coreTitles', {});
+        injectDOM('td', 'spacer', 'coreTitles', {'style':'width:10px;'});
+        injectDOM('td', 'coreAname', 'coreTitles', {'innerHTML':cloverLeaf+'N00A'});
+        injectDOM('td', 'spacer', 'coreTitles', {'style':'width:50px;'});
+        injectDOM('td', 'coreBname', 'coreTitles', {'innerHTML':cloverLeaf+'N00B'});
 
-        insertDOM('tr', 'coreVolt', '', '', 'tigressTTtable', '', '');
-        insertDOM('td', 'coreVoltTitle', '', 'text-align:right;', 'coreVolt', '', window.parameters.monitorValues[0])
-        insertDOM('td', 'spacer', '', 'width:10px', 'coreVolt', '', '');
-        insertDOM('td', 'coreAhv', '', '', 'coreVolt', '', dataBus.HPGe[cloverLeaf+'N00A'].HV.toFixed(0) + ' ' + window.parameters.subdetectorUnit[0]);
-        insertDOM('td', 'spacer', '', 'width:50px', 'coreVolt', '', '');
-        insertDOM('td', 'coreBhv', '', '', 'coreVolt', '', dataBus.HPGe[cloverLeaf+'N00B'].HV.toFixed(0) + ' ' + window.parameters.subdetectorUnit[0]);
+        injectDOM('tr', 'coreVolt', 'tigressTTtable', {});
+        injectDOM('td', 'coreVoltTitle', 'coreVolt', {'style':'text-align:right', 'innerHTML':window.parameters.monitorValues[0]});
+        injectDOM('td', 'spacer', 'coreVolt', {'style':'width:10px;'});
+        injectDOM('td', 'coreAhv', 'coreVolt', {'innerHTML':dataBus.HPGe[cloverLeaf+'N00A'].HV.toFixed(0) + ' ' + window.parameters.subdetectorUnit[0]});
+        injectDOM('td', 'spacer', 'coreVolt', {'style':'width:50px;'});
+        injectDOM('td', 'coreBhv', 'coreVolt', {'innerHTML':dataBus.HPGe[cloverLeaf+'N00B'].HV.toFixed(0) + ' ' + window.parameters.subdetectorUnit[0]});
 
-        insertDOM('tr', 'coreThreshold', '', '', 'tigressTTtable', '', '');
-        insertDOM('td', 'coreThresholdTitle', '', 'text-align:right;', 'coreThreshold', '', window.parameters.monitorValues[1])
-        insertDOM('td', 'spacer', '', 'width:10px', 'coreThreshold', '', '');
-        insertDOM('td', 'coreAthreshold', '', '', 'coreThreshold', '', ( (dataBus.HPGe[cloverLeaf+'N00A'].threshold < 0xDEADBEEF) ? dataBus.HPGe[cloverLeaf+'N00A'].threshold.toFixed(0) + ' ' + window.parameters.subdetectorUnit[1] : 'Not Reporting') );
-        insertDOM('td', 'spacer', '', 'width:50px', 'coreThreshold', '', '');
-        insertDOM('td', 'coreBthreshold', '', '', 'coreThreshold', '', ( (dataBus.HPGe[cloverLeaf+'N00B'].threshold < 0xDEADBEEF) ? dataBus.HPGe[cloverLeaf+'N00B'].threshold.toFixed(0) + ' ' + window.parameters.subdetectorUnit[1] : 'Not Reporting') ); 
+        injectDOM('tr', 'coreThreshold', 'tigressTTtable', {});
+        injectDOM('td', 'coreThresholdTitle', 'coreThreshold', {'style':'text-align:right;', 'innerHTML':window.parameters.monitorValues[1]});
+        injectDOM('td', 'spacer', 'coreThreshold', {'style':'width:10px;'});
+        injectDOM('td', 'coreAthreshold', 'coreThreshold', {'innerHTML':( (dataBus.HPGe[cloverLeaf+'N00A'].threshold < 0xDEADBEEF) ? dataBus.HPGe[cloverLeaf+'N00A'].threshold.toFixed(0) + ' ' + window.parameters.subdetectorUnit[1] : 'Not Reporting')});
+        injectDOM('td', 'spacer', 'coreThreshold', {'style':'width:50px;'});
+        injectDOM('td', 'coreBthreshold', 'coreThreshold', {'innerHTML':( (dataBus.HPGe[cloverLeaf+'N00B'].threshold < 0xDEADBEEF) ? dataBus.HPGe[cloverLeaf+'N00B'].threshold.toFixed(0) + ' ' + window.parameters.subdetectorUnit[1] : 'Not Reporting')});
 
-        insertDOM('tr', 'coreRate', '', '', 'tigressTTtable', '', '');
-        insertDOM('td', 'coreRateTitle', '', 'text-align:right;', 'coreRate', '', window.parameters.monitorValues[2])
-        insertDOM('td', 'spacer', '', 'width:10px', 'coreRate', '', '');
-        insertDOM('td', 'coreArate', '', '', 'coreRate', '', ( (dataBus.HPGe[cloverLeaf+'N00A'].rate < 0xDEADBEEF) ? dataBus.HPGe[cloverLeaf+'N00A'].rate.toFixed(0) + ' ' + window.parameters.subdetectorUnit[2] : 'Not Reporting') );
-        insertDOM('td', 'spacer', '', 'width:50px;', 'coreRate', '', '');
-        insertDOM('td', 'coreBrate', '', '', 'coreRate', '', ((dataBus.HPGe[cloverLeaf+'N00B'].rate < 0xDEADBEEF) ? dataBus.HPGe[cloverLeaf+'N00B'].rate.toFixed(0) + ' ' + window.parameters.subdetectorUnit[2] : 'Not Reporting') ); 
+        injectDOM('tr', 'coreRate', 'tigressTTtable', {});
+        injectDOM('td', 'coreRateTitle', 'coreRate', {'style':'text-align:right;', 'innerHTML':window.parameters.monitorValues[2]});
+        injectDOM('td', 'spacer', 'coreRate', {'style':'width:10px;'});
+        injectDOM('td', 'coreArate', 'coreRate', {'innerHTML':( (dataBus.HPGe[cloverLeaf+'N00A'].rate < 0xDEADBEEF) ? dataBus.HPGe[cloverLeaf+'N00A'].rate.toFixed(0) + ' ' + window.parameters.subdetectorUnit[2] : 'Not Reporting')});
+        injectDOM('td', 'spacer', 'coreRate', {'style':'width:50px;'});
+        injectDOM('td', 'coreBrate', 'coreRate', {'innerHTML':((dataBus.HPGe[cloverLeaf+'N00B'].rate < 0xDEADBEEF) ? dataBus.HPGe[cloverLeaf+'N00B'].rate.toFixed(0) + ' ' + window.parameters.subdetectorUnit[2] : 'Not Reporting')});
 
-        insertDOM('tr', 'divider', '', '', 'tigressTTtable', '', '');
-        insertDOM('td', 'line', '', 'border-bottom-style:solid; border-color:white; border-width:1px;', 'divider', '', '');
-        document.getElementById('line').setAttribute('colspan', 5);
+        injectDOM('tr', 'divider', 'tigressTTtable', {});
+        injectDOM('td', 'line', 'divider', {'style':'border-bottom-style:solid; border-color:white; border-width:1px;', 'colspan':5})
 
         for(i=0; i<4; i++){
             elt = cloverLeaf+i;
             eltName1 = cloverLeaf + 'P0' + (2*i+1) + 'X';
             eltName2 = cloverLeaf + 'P0' + (2*i+2) + 'X';
 
-            insertDOM('tr', elt+'Titles', '', '', 'tigressTTtable', '', '');
-            insertDOM('td', 'blank', '', '', elt+'Titles', '', '');
-            insertDOM('td', 'spacer', '', 'width:10px', elt+'Titles', '', '');
-            insertDOM('td', elt+'Aname', '', '', elt+'Titles', '', eltName1);
-            insertDOM('td', 'spacer', '', 'width:50px', elt+'Titles', '', '');
-            insertDOM('td', elt+'Bname', '', '', elt+'Titles', '', eltName2);
+            injectDOM('tr', elt+'Titles', 'tigressTTtable', {});
+            injectDOM('td', 'blank', elt+'Titles', {});
+            injectDOM('td', 'spacer', elt+'Titles', {'style':'width:10px;'});
+            injectDOM('td', elt+'Aname', elt+'Titles', {'innerHTML':eltName1});
+            injectDOM('td', 'spacer', elt+'Titles', {'style':'width:50px;'});
+            injectDOM('td', elt+'Bname', elt+'Titles', {'innerHTML':eltName2});
 
-            insertDOM('tr', elt+'Volt', '', '', 'tigressTTtable', '', '');
-            insertDOM('td', elt+'VoltTitle', '', 'text-align:right;', elt+'Volt', '', window.parameters.monitorValues[0])
-            insertDOM('td', 'spacer', '', 'width:10px', elt+'Volt', '', '');
-            insertDOM('td', elt+'Ahv', '', '', elt+'Volt', '', dataBus.HPGe[eltName1].HV.toFixed(0) + ' ' + window.parameters.subdetectorUnit[0]);
-            insertDOM('td', 'spacer', '', 'width:50px', elt+'Volt', '', '');
-            insertDOM('td', elt+'Bhv', '', '', elt+'Volt', '', dataBus.HPGe[eltName2].HV.toFixed(0) + ' ' + window.parameters.subdetectorUnit[0]);
+            injectDOM('tr', elt+'Volt', 'tigressTTtable', {});
+            injectDOM('td', elt+'VoltTitle', elt+'Volt', {'style':'text-align:right;', 'innerHTML':window.parameters.monitorValues[0]});
+            injectDOM('td', 'spacer', elt+'Volt', {'style':'width:10px;'});
+            injectDOM('td', elt+'Ahv', elt+'Volt', {'innerHTML':dataBus.HPGe[eltName1].HV.toFixed(0) + ' ' + window.parameters.subdetectorUnit[0]});
+            injectDOM('td', 'spacer', elt+'Volt', {'style':'width:50px;'});
+            injectDOM('td', elt+'Bhv', elt+'Volt', {'innerHTML':dataBus.HPGe[eltName2].HV.toFixed(0) + ' ' + window.parameters.subdetectorUnit[0]});
 
-            insertDOM('tr', elt+'Threshold', '', '', 'tigressTTtable', '', '');
-            insertDOM('td', elt+'ThresholdTitle', '', 'text-align:right;', elt+'Threshold', '', window.parameters.monitorValues[1])
-            insertDOM('td', 'spacer', '', 'width:10px', elt+'Threshold', '', '');
-            insertDOM('td', elt+'Athreshold', '', '', elt+'Threshold', '', ((dataBus.HPGe[eltName1].threshold < 0xDEADBEEF) ? dataBus.HPGe[eltName1].threshold.toFixed(0) + ' ' + window.parameters.subdetectorUnit[1] : 'Not Reporting') );
-            insertDOM('td', 'spacer', '', 'width:50px', elt+'Threshold', '', '');
-            insertDOM('td', elt+'Bthreshold', '', '', elt+'Threshold', '', ( (dataBus.HPGe[eltName2].threshold < 0xDEADBEEF) ? dataBus.HPGe[eltName2].threshold.toFixed(0) + ' ' + window.parameters.subdetectorUnit[1] : 'Not Reporting') ); 
+            injectDOM('tr', elt+'Threshold', 'tigressTTtable', {});
+            injectDOM('td', elt+'ThresholdTitle', elt+'Threshold', {'style':'text-align:right;', 'innerHTML':window.parameters.monitorValues[1]});
+            injectDOM('td', 'spacer', elt+'Threshold', {'style':'width:10px;'});
+            injectDOM('td', elt+'Athreshold', elt+'Threshold', {'innerHTML':((dataBus.HPGe[eltName1].threshold < 0xDEADBEEF) ? dataBus.HPGe[eltName1].threshold.toFixed(0) + ' ' + window.parameters.subdetectorUnit[1] : 'Not Reporting')});
+            injectDOM('td', 'spacer', elt+'Threshold', {'stlye':'width:50px;'});
+            injectDOM('td', elt+'Bthreshold', elt+'Threshold', {'innerHTML':( (dataBus.HPGe[eltName2].threshold < 0xDEADBEEF) ? dataBus.HPGe[eltName2].threshold.toFixed(0) + ' ' + window.parameters.subdetectorUnit[1] : 'Not Reporting')});
 
-            insertDOM('tr', elt+'Rate', '', '', 'tigressTTtable', '', '');
-            insertDOM('td', elt+'RateTitle', '', 'text-align:right;', elt+'Rate', '', window.parameters.monitorValues[2])
-            insertDOM('td', 'spacer', '', 'width:10px', elt+'Rate', '', '');
-            insertDOM('td', elt+'Arate', '', '', elt+'Rate', '', ( (dataBus.HPGe[eltName1].rate < 0xDEADBEEF) ? dataBus.HPGe[eltName1].rate.toFixed(0) + ' ' + window.parameters.subdetectorUnit[2] : 'Not Reporting') );
-            insertDOM('td', 'spacer', '', 'width:50px;', elt+'Rate', '', '');
-            insertDOM('td', elt+'Brate', '', '', elt+'Rate', '', ( (dataBus.HPGe[eltName2].rate < 0xDEADBEEF) ? dataBus.HPGe[eltName2].rate.toFixed(0) + ' ' + window.parameters.subdetectorUnit[2] : 'Not Reporting') ); 
+            injectDOM('tr', elt+'Rate', 'tigressTTtable', {});
+            injectDOM('td', elt+'RateTitle', elt+'Rate', {'style':'text-align:right;', 'innerHTML':window.parameters.monitorValues[2]});
+            injectDOM('td', 'spacer', elt+'Rate', {'style':'width:10px;'});
+            injectDOM('td', elt+'Arate', elt+'Rate', {'innerHTML':( (dataBus.HPGe[eltName1].rate < 0xDEADBEEF) ? dataBus.HPGe[eltName1].rate.toFixed(0) + ' ' + window.parameters.subdetectorUnit[2] : 'Not Reporting')});
+            injectDOM('td', 'spacer', elt+'Rate', {'style':'width:50px;'});
+            injectDOM('td', elt+'Brate', elt+'Rate', {'innerHTML':( (dataBus.HPGe[eltName2].rate < 0xDEADBEEF) ? dataBus.HPGe[eltName2].rate.toFixed(0) + ' ' + window.parameters.subdetectorUnit[2] : 'Not Reporting')});
 
             if(i!=3){
-                insertDOM('tr', elt+'divider', '', '', 'tigressTTtable', '', '');
-                insertDOM('td', elt+'line', '', 'border-bottom-style:solid; border-color:white; border-width:1px;', elt+'divider', '', '');
-                document.getElementById(elt+'line').setAttribute('colspan', 5);
+                injectDOM('tr', elt+'divider', 'tigressTTtable', {});
+                injectDOM('td', elt+'line', elt+'divider', {'style':'border-bottom-style:solid; border-color:white; border-width:1px;', 'colspan':5});
             }   
 
         }
