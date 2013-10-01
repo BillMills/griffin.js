@@ -1,3 +1,4 @@
+/*Enforce more intuitive box-sizing*/
 * { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
 
 body{
@@ -7,6 +8,11 @@ body{
 	containing all the waffle elements won't work in FF, unless the body height
 	is specified to something other than auto*/ 
 	height: 100%;
+	font-family: 'Raleway', sans-serif; 
+	font-size:14px; 
+	background-color:#333333; 
+	color:#FFFFFF; 
+	margin-left:0px;
 }
 
 div#waffleplate{
@@ -14,6 +20,51 @@ div#waffleplate{
 	margin-right: auto;
 	position:relative;
 	top: 2%; 
+}
+
+div#branding{
+	min-width:1440px; 
+	height:85; 
+	border-color:#999999; 
+	border-left-style:solid; 
+	border-bottom-style:solid; 
+	border-left-width:5px; 
+	border-bottom-width:5px; 
+	border-bottom-left-radius:25px; 
+	background-color:#333333; 
+	margin-bottom:5px; 
+	padding-bottom:5px; 
+	opacity:0;
+}
+
+img#logo{
+	opacity:0.5625; 
+	padding-left:10px; 
+	margin-bottom:5px;
+}
+
+h1#title{
+	position:relative; 
+	display:inline; 
+	font: 80px Raleway; 
+	top:-10px; 
+	margin-left:10px; 
+	color:#999999;
+}
+
+div#statusLink{
+	display:inline; 
+	position:relative; 
+	left:1%;
+}
+
+p#youAreHere{
+	display: inline; 
+	color:rgba(255,255,255,0.3); 
+	font-size:24px; 
+	margin:0px; 
+	position:absolute; 
+	right:0px;
 }
 
 canvas.monitor{

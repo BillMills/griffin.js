@@ -8,7 +8,7 @@ function loadJSONP(gatekeeper, callback) {
     window.JSONPstore = {'scalar':{}, 'thresholds':{}}; //dump the old store so old junk doesn't persist.
     for(i=0; i<window.parameters.JSONPrepos.length; i++){
 
-        var script  = document.createElement('script');
+        var script = document.createElement('script');
 
         //either make some fake data to replace the JSONP service offline in devMode, or use the real thing online:
         if(window.parameters.devMode){

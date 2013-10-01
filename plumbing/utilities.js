@@ -1,19 +1,3 @@
-function partial(func /*, 0..n args */) {
-  var args = Array.prototype.slice.call(arguments, 1);
-  return function() {
-    var allArguments = args.concat(Array.prototype.slice.call(arguments));
-    return func.apply(this, allArguments);
-  };
-}
-
-function curry (fn) {
-    var slice = Array.prototype.slice,
-        args = slice.apply(arguments, [1]);
-    return function () {
-        fn.apply(null, args.concat(slice.apply(arguments)));
-    };
-}
-
 //generic function to execute the animation of some object <thing>, which has memeber function .draw which draws
 //the thing only as a function of what frame the animation is on, and member data .duration, .FPS and .nFrames.
 function animate(thing, frame){
@@ -332,12 +316,12 @@ function TTtable(id, data, objects, keys, tableTitle, titles, split){
 
     //fill table:
     n=0;
-//console.log(data)
+
     for(i=0; i<split.length; i++){
         for(j=0; j<split[i]; j++){
             document.getElementById(id+'row'+j+'cell'+(titles.length*i)).innerHTML = objects[n];
             for(k=0; k<keys.length; k++){
-//console.log([n, k, data[objects[n]][keys[k]] ])
+
                 if(typeof data[objects[n]][keys[k]] == 'string')
                     cellContent = data[objects[n]][keys[k]];
                 else
@@ -479,24 +463,29 @@ function confirm(headline, detailText, confirmFunc){
     dialogue.style.opacity = 1
 }
 
-/*
-//shouldn't this return something???  otherwise have to use with new keyword to be able to extract anything from the this's.
-function ODBKey(path)
-{
-   var request = XMLHttpRequestGeneric();
-
-   var url = ODBUrlBase + '?cmd=jkey&odb=' + path;
-   request.open('GET', url, false);
-   request.send(null);
-   if (request.responseText == null)
-      return null;
-   var res = request.responseText.split('\n');
-   this.name = res[0];
-   this.type = res[1];
-   this.num_values = res[2];
-   this.item_size = res[3];
-   this.last_written = res[4];
-
-   return this;
+//define function to fetch from JSONP service
+//for the scalar service (and anything with the same hierarchy):
+function parseResponse(dataWeGotViaJsonp){
+    var key, subkey;
+    for(key in dataWeGotViaJsonp){
+        if (dataWeGotViaJsonp.hasOwnProperty(key)) {
+            window.JSONPstore[key] = {};
+            for(subkey in dataWeGotViaJsonp[key]){
+                if(dataWeGotViaJsonp[key].hasOwnProperty(subkey)){
+                    window.JSONPstore[key][subkey.toUpperCase()] = dataWeGotViaJsonp[key][subkey];
+                }
+            }
+        }
+    }
 }
-*/
+
+//similar function for the threshold service:
+function parseThreshold(data){
+    var key;
+    if(data['parameters']['thresholds']){
+        window.JSONPstore['thresholds'] = {};
+        for(key in data['parameters']['thresholds']){
+            window.JSONPstore['thresholds'][key.toUpperCase().slice(0,10)] = data['parameters']['thresholds'][key];
+        }
+    }
+}
