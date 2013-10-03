@@ -636,7 +636,7 @@ function deployEmptyFilterCondition(){
         document.getElementById('treeGutter').insertBefore(document.getElementById('treeBlock'+window.filterEditPointer.filterConIndex), document.getElementById('newFilterCon'))
         //resize the previous tree gutter and reveal it to connect it to the tree:
         if(bottomFilterConID != undefined){
-            document.getElementById('treeBlock' + bottomFilterConID).style.height = document.getElementById('filterGroup' + bottomFilterConID).offsetHeight + parseInt(document.body.style.fontSize);
+            document.getElementById('treeBlock' + bottomFilterConID).style.height = document.getElementById('filterGroup' + bottomFilterConID).offsetHeight + parseInt(window.getComputedStyle(document.body).fontSize);
             document.getElementById('treeBlock' + bottomFilterConID).style.display = 'block';
         }
 
