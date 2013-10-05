@@ -5,7 +5,7 @@ function loadJSONP(gatekeeper, callback) {
         drawSpinner('spinner', 'Waiting for JSONP');
     }
 
-    window.JSONPstore = {'scalar':{}, 'thresholds':{}}; //dump the old store so old junk doesn't persist.
+    window.JSONPstore = {'scalar':{}, 'thresholds':{}, 'HV':{}}; //dump the old store so old junk doesn't persist.
     for(i=0; i<window.parameters.JSONPrepos.length; i++){
 
         var script = document.createElement('script');
@@ -158,7 +158,6 @@ function ODBgrab(){
     SIDEBAR, DAQ, HV, CLOCK,
     data;
 
-
     //sidebar
     SIDEBAR = 0;
     paths[SIDEBAR] = '/Experiment/Name';
@@ -225,7 +224,14 @@ function ODBgrab(){
     //Message service:
     window.localODB.messages = ODBGetMsg(5);
 
-    ///////////////////////////////////////////////////////////////
+    //Pull the measured voltages and channel names out and pack them along
+    //with the JSONP stuff for the subdetector views:
+    window.JSONPstore.HV = {};
+    for(k=0; k<window.parameters.moduleSizes.length; k++){   
+        for(i=0; i<window.localODB['HV'+k].chName.length - 1; i++){ //-1 since ODBMGet leaves a weird annoying terminating entry on each array :/
+            window.JSONPstore.HV[window.localODB['HV'+k].chName[i]] = parseFloat(window.localODB['HV'+k].measVoltage[i]);
+        }
+    }
 }
 
 //handle pulling the initial config parameters out of the ODB and replacing the default values in the JSONP-loaded parameter store:

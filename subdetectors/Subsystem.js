@@ -214,14 +214,23 @@ function Subsystem(){
         //HV
         if(arguments.length == 4){
             nextLine = window.parameters.monitorValues[0] + '-A: ';
-            nextLine += HV.toFixed() + ' ' + window.parameters.subdetectorUnit[0];
+            if(HV < 0xDEADBEEF)
+                nextLine += HV.toFixed() + ' ' + window.parameters.subdetectorUnit[0];
+            else
+                nextLine += 'Not Reporting';
             toolTipContent += nextLine + '<br>';
             nextLine = window.parameters.monitorValues[0] + '-B: ';
-            nextLine += HVB.toFixed() + ' ' + window.parameters.subdetectorUnit[0];
+            if(HVB < 0xDEADBEEF)
+                nextLine += HVB.toFixed() + ' ' + window.parameters.subdetectorUnit[0];
+            else
+                nextLine += 'Not Reporting';
             toolTipContent += nextLine + '<br>';
         } else if(arguments.length == 3){
             nextLine = window.parameters.monitorValues[0] + ': ';
-            nextLine += HV.toFixed() + ' ' + window.parameters.subdetectorUnit[0];
+            if(HV < 0xDEADBEEF)
+                nextLine += HV.toFixed() + ' ' + window.parameters.subdetectorUnit[0];
+            else
+                nextLine += 'Not Reporting';
             toolTipContent += nextLine + '<br>';            
         }
 
@@ -260,27 +269,31 @@ function Subsystem(){
         this.dataBus.totalRate = 0;
 
         for(key in this.dataBus[this.name]){
-            
+            //thresholds
+            this.dataBus[this.name][key]['threshold'] = 0xDEADBEEF; 
             if(window.JSONPstore['thresholds']){
                 if(typeof window.JSONPstore['thresholds'][key] == 'number')
                     this.dataBus[this.name][key]['threshold'] = window.JSONPstore['thresholds'][key];
-                else
-                     this.dataBus[this.name][key]['threshold'] = 0xDEADBEEF; 
             }
-
+                   
+            //rates
+            this.dataBus[this.name][key]['rate'] = 0xDEADBEEF;
             if(window.JSONPstore['scalar']){
                 if(window.JSONPstore['scalar'][key]){
                     if(typeof window.JSONPstore['scalar'][key]['TRIGREQ'] == 'number'){
                         this.dataBus[this.name][key]['rate'] = window.JSONPstore['scalar'][key]['TRIGREQ'];
                         this.dataBus.totalRate += window.JSONPstore['scalar'][key]['TRIGREQ'];
-                    } else 
-                        this.dataBus[this.name][key]['rate'] = 0xDEADBEEF;
-                        this.dataBus.totalRate = 0xDEADBEEF;
-                } else{
-                    this.dataBus[this.name][key]['rate'] = 0xDEADBEEF;
-                    this.dataBus.totalRate = 0xDEADBEEF
+                    }
                 }
-                
+            }
+
+            //HV
+            this.dataBus[this.name][key]['HV'] = 0xDEADBEEF;
+            if(window.JSONPstore['HV']){
+                if(window.JSONPstore['HV'][key]){
+                    if(typeof window.JSONPstore['HV'][key] == 'number')
+                        this.dataBus[this.name][key]['HV'] = window.JSONPstore['HV'][key];
+                }
             }
 
         }
@@ -943,22 +956,29 @@ function HPGeAssets(){
         //HPGe + BGO detail
         for(key in this.dataBus.HPGe){
 
+            //thresholds
+            this.dataBus.HPGe[key]['threshold'] = 0xDEADBEEF;
             if(window.JSONPstore['thresholds']){
                 if(typeof window.JSONPstore['thresholds'][key] == 'number')
                     this.dataBus.HPGe[key]['threshold'] = window.JSONPstore['thresholds'][key];
-                else
-                    this.dataBus.HPGe[key]['threshold'] = 0xDEADBEEF;
             }
 
+            //rates
+            this.dataBus.HPGe[key]['rate'] = 0xDEADBEEF;
             if(window.JSONPstore['scalar']){
                 if(window.JSONPstore['scalar'][key]){
-                    if(typeof window.JSONPstore['scalar'][key]['TRIGREQ'] == 'number')
+                    if(typeof window.JSONPstore['scalar'][key]['TRIGREQ'] == 'number'){
                         this.dataBus.HPGe[key]['rate'] = window.JSONPstore['scalar'][key]['TRIGREQ'];
-                    else 
-                        this.dataBus.HPGe[key]['rate'] = 0xDEADBEEF;
-                } else
-                    this.dataBus.HPGe[key]['rate'] = 0xDEADBEEF;
-                this.dataBus.totalRate += this.dataBus.HPGe[key]['rate'];
+                        this.dataBus.totalRate += this.dataBus.HPGe[key]['rate'];
+                    }
+                }
+            }
+
+            //HV
+            this.dataBus.HPGe[key]['HV'] = 0xDEADBEEF;
+            if(window.JSONPstore['HV']){
+                if(window.JSONPstore['HV'][key] == 'number')
+                    this.dataBus.HPGe[key]['HV'] = window.JSONPstore['HV'][key];
             }
         }
 
