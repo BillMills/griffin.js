@@ -46,17 +46,13 @@ function Slider(wrapperID, titleID, inputBoxID, sliderContainerID, sliderBackgro
 
     //DOM manipulation/////////////////////////////////////////////
     //slider background canvas:
-    insertDOM('canvas', this.sliderBackgroundID, 'sliderBKG', '', this.sliderContainerID, '', '')
-    document.getElementById(this.sliderBackgroundID).setAttribute('width', '0');
-    document.getElementById(this.sliderBackgroundID).setAttribute('height', '24');
+    injectDOM('canvas', this.sliderBackgroundID, this.sliderContainerID, {'class':'sliderBKG', 'width':'0', 'height':'24'});
     //slider knob div
-    insertDOM('div', this.sliderKnobID, 'sliderKnob', '', this.sliderContainerID, '', '')
+    injectDOM('div', this.sliderKnobID, this.sliderContainerID, {'class':'sliderKnob'});
     //knob style canvas
-    insertDOM('canvas', this.sliderCanvID, 'knobStyle', '', this.sliderKnobID, '', '')
-    document.getElementById(this.sliderCanvID).setAttribute('width', '24');
-    document.getElementById(this.sliderCanvID).setAttribute('height', '16');
+    injectDOM('canvas', this.sliderCanvID, this.sliderKnobID, {'class':'knobStyle', 'width':'24', 'height':'16'});
     //position feedback paragraph
-    insertDOM('p', this.sliderTextID, 'sliderText', '', this.sliderKnobID, '', '0%')
+    injectDOM('p', this.sliderTextID, this.sliderKnobID, {'class':'sliderText', 'innerHTML':'0%'});
 
     //finished DOM injections//////////////////////////////////////
 
