@@ -16,10 +16,14 @@ function deployMenu(targetDivID, headings, titles){
 
 	//inject the appropriate html into the target div:
 	for(i=0; i<headings.length; i++){
-		insertDOM('div', headings[i]+'Tab', 'collapsableMenu', 'max-height:50px; text-align:left; margin-top:2%;', targetDivID, '', '', '', '', '');
-		insertDOM('h3', headings[i]+'arrow', '', 'display:inline; float:left;', headings[i]+'Tab', function(){toggleMenu(targetDivID, headings, this.id)}, String.fromCharCode(0x25B6));
-		insertDOM('h3', headings[i]+'title', '', 'display:inline-block; font:20px Orbitron; padding-left:1em', headings[i]+'Tab', '', titles[i]);
-		insertDOM('div', headings[i]+'Content', 'menuContent', '', headings[i]+'Tab', '', '');
+		injectDOM('div', headings[i]+'Tab', targetDivID, {'class':'collapsableMenu', 'style':'max-height:50px; text-align:left; margin-top:2%;'});
+		injectDOM('h3', headings[i]+'arrow', headings[i]+'Tab', {
+			'style' : 'display:inline; float:left;',
+			'innerHTML' : String.fromCharCode(0x25B6),
+			'onclick' : function(){toggleMenu(targetDivID, headings, this.id)}
+		});
+		injectDOM('h3', headings[i]+'title', headings[i]+'Tab', {'style':'display:inline-block; font:20px Orbitron; padding-left:1em', 'innerHTML':titles[i]});
+		injectDOM('div', headings[i]+'Content', headings[i]+'Tab', {'class':'menuContent'});
 
 		//make sure the expanded divs maintain an appropriate height even if their contents change:
 		document.addEventListener("animationstart", window.parameters.insertListener, false); // standard + firefox
@@ -85,14 +89,14 @@ function recallTab(id){
 function toggleSwitch(parentID, id, title, enabled, disabled, onActivate, onDeactivate, initialState){
 
 	//wrapper div:
-	insertDOM('div', 'toggleWrap'+id, 'toggleWrap',  ( (title=='') ? 'text-align:center;' : '' ), parentID, '', '');
+	injectDOM('div', 'toggleWrap'+id, parentID, {'class':'toggleWrap', 'style':( (title=='') ? 'text-align:center;' : '' )});
 	//label:
 	if(title != '')
-		insertDOM('div', 'toggleLabel'+id, 'toggleLabel', '', 'toggleWrap'+id, '', title);
+		injectDOM('div', 'toggleLabel'+id, 'toggleWrap'+id, {'class':'toggleLabel', 'innerHTML':title});
 	//toggle groove:
-	insertDOM('div', 'toggleGroove'+id, 'toggleGroove',  ( (title=='') ? '' : 'float:left;' ), 'toggleWrap'+id, '', '');
+	injectDOM('div', 'toggleGroove'+id, 'toggleWrap'+id, {'class':'toggleGroove', 'style':( (title=='') ? '' : 'float:left;' )});
 	//toggle switch:
-	insertDOM('div', 'toggleSwitch'+id, 'toggleSwitch', ((initialState) ? 'left:1em;' : 'left:0em;'), 'toggleGroove'+id,'', '');	
+	injectDOM('div', 'toggleSwitch'+id, 'toggleGroove'+id, {'class':'toggleSwitch', 'style':((initialState) ? 'left:1em;' : 'left:0em;')});
 	document.getElementById('toggleSwitch'+id).onmousedown = function(event){
 		document.getElementById('toggleWrap'+id).ready = 1;
 	};
@@ -104,8 +108,12 @@ function toggleSwitch(parentID, id, title, enabled, disabled, onActivate, onDeac
 	};
 	//state description
 	if(title=='')
-		insertDOM('br', 'break', '', '', 'toggleWrap'+id);
-	insertDOM('div', 'toggleDescription'+id, 'toggleDescription', ( (title=='') ? 'width:100%' : '' ), 'toggleWrap'+id, '', ((initialState) ? enabled : disabled));
+		injectDOM('br', 'break', 'toggleWrap'+id, {});
+	injectDOM('div', 'toggleDescription'+id, 'toggleWrap'+id, {
+		'class' : 'toggleDescription',
+		'style' : ( (title=='') ? 'width:100%' : '' ),
+		'innerHTML' : ((initialState) ? enabled : disabled)
+	})
 
 
 }
@@ -134,10 +142,11 @@ function flipToggle(event, id, enabled, disabled, onActivate, onDeactivate){
 function createOptionScroll(wrapperID, id, options, maxWidth, callback){
 	var i, stringWidths = [], optionWidth;
 
-	insertDOM('div', id, 'scrollWrapper', 'width:'+maxWidth+'px', wrapperID, '', '');
-	insertDOM('div', id+'LeftArrow', 'scrollArrow', 'padding-right:0.5em;', id, '', String.fromCharCode(0x25C0));
-	insertDOM('div', id+'Selected', 'scrollSelected', '', id, '', options[0]);
-	insertDOM('div', id+'RightArrow', 'scrollArrow', 'padding-left:0.5em;', id, '', String.fromCharCode(0x25B6));
+	injectDOM('div', id, wrapperID, {'class':'scrollWrapper', 'style':'width:'+maxWidth+'px'});
+	injectDOM('div', id+'LeftArrow', id, {'class':'scrollArrow', 'style':'padding-right:0.5em;', 'innerHTML':String.fromCharCode(0x25C0)});
+	injectDOM('div', id+'Selected', id, {'class':'scrollSelected', 'innerHTML':options[0]});
+	injectDOM('div', id+'RightArrow', id, {'class':'scrollArrow', 'style':'padding-left:0.5em;', 'innerHTML':String.fromCharCode(0x25B6)});
+
 	//start off on option 0:
 	document.getElementById(id).chosen = 0;
 	document.getElementById(id).options = options;
