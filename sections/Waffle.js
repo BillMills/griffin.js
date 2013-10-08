@@ -62,61 +62,96 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         this.deploySidebar = function(){
 
             //wrapper div
-            insertDOM('div', this.sidebarID, 'RightSidebar', '', this.wrapperDiv, '', '');
+            injectDOM('div', this.sidebarID, this.wrapperDiv, {'class':'RightSidebar'});
             document.getElementById(this.sidebarID).setAttribute('align', 'left');
 
             //title
-            insertDOM('h2', 'inputTitle', '', 'margin-left:10%; margin-top:25px; font-family: "Orbitron", sans-serif;', this.sidebarID, '', 'Sin Titulo');
+            injectDOM('h2', 'inputTitle', this.sidebarID, {'style':'margin-left:10%; margin-top:25px; font-family: "Orbitron", sans-serif;', 'innerHTML':'Sin Titulo'});
             document.getElementById('inputTitle').setAttribute('align', 'left');
 
             //input form
-            insertDOM('form', 'setValues', '', 'margin-bottom:0px;', this.sidebarID, '', '');
+            injectDOM('form', 'setValues', this.sidebarID, {'style':'margin-bottom:0px;'});
 
             //on/off radios:
-            insertDOM('input', 'offButton', '', 'margin-left:10%; margin-bottom:10px', 'setValues', '', '', 'HVswitch', 'radio', 'off');
-            insertDOM('p', 'offSwitch', '', 'display:inline', 'setValues', '', 'Off');
-            insertDOM('input', 'onButton', '', 'margin-left:2%; margin-bottom:10px; display:inline;', 'setValues', '', '', 'HVswitch', 'radio', 'on');
-            insertDOM('p', 'onSwitch', '', 'display:inline', 'setValues', '', 'On');
+            injectDOM('input', 'offButton', 'setValues', {
+                'style' : 'margin-left:10%; margin-bottom:10px',
+                'name' : 'HVswitch',
+                'type' : 'radio',
+                'value' : 'off'
+            });
+            injectDOM('p', 'offSwitch', 'setValues', {'style':'display:inline', 'innerHTML':'Off'});
+            injectDOM('input', 'onButton', 'setValues', {
+                'style' : 'margin-left:2%; margin-bottom:10px; display:inline;',
+                'name' : 'HVswitch',
+                'type' : 'radio',
+                'value' : 'on'
+            });
+            injectDOM('p', 'onSwitch', 'setValues', {'style':'display:inline', 'innerHTML':'On'});
             //submit updates:
-            insertDOM('input', 'submitParameters', 'bigButton', 'z-index:10000;', 'setValues', function(){updateParameter()}, '', '', 'button', 'Commit')
+            injectDOM('input', 'submitParameters', 'setValues', {
+                'class' : 'bigButton',
+                'style' : 'z-index:10000',
+                'onclick' : function(){updateParameter()},
+                'type' : 'button',
+                'value' : 'Commit'
+            });
             document.getElementById('submitParameters').setAttribute('disabled', 'true');
 
             //status report:
-            insertDOM('p', 'status', '', 'margin-left:10%;', 'setValues', '', 'Status:')
+            injectDOM('p', 'status', 'setValues', {'style':'margin-left:10%', 'innerHTML':'Status:'});
 
             //voltage fill meter
-            insertDOM('p', 'voltageMeterTitle', '', 'margin-left:10%; margin-bottom:0px; display:inline; position:relative; top:-18px;', 'setValues', '', 'Voltage [V]')
-            insertDOM('canvas', 'voltageMeter', '', 'margin-left:2px;', 'setValues', '', '')
-            document.getElementById('voltageMeter').setAttribute('align', 'right');
+            injectDOM('p', 'voltageMeterTitle', 'setValues', {
+                'style' : 'margin-left:10%; margin-bottom:0px; display:inline; position:relative; top:-18px;',
+                'innerHTML' : 'Voltage [V]'
+            });
+            injectDOM('canvas', 'voltageMeter', 'setValues', {'style':'margin-left:2px', 'align':'right'});
             //current fill meter
-            insertDOM('p', 'currentMeterTitle', '', 'margin-left:10%; margin-bottom:0px; display:inline; position:relative; top:-18px;', 'setValues', '', 'Current [uA]')
-            insertDOM('canvas', 'currentMeter', '', 'margin-left:2px;', 'setValues', '', '')
-            document.getElementById('currentMeter').setAttribute('align', 'right');
+            injectDOM('p', 'currentMeterTitle', 'setValues', {
+                'style' : 'margin-left:10%; margin-bottom:0px; display:inline; position:relative; top:-18px;',
+                'innerHTML' : 'Current [uA]'
+            });
+            injectDOM('canvas', 'currentMeter', 'setValues', {'style':'margin-left:2px;', 'align':'right'});
             //temperature fill meter
-            insertDOM('p', 'temperatureMeterTitle', '', 'margin-left:10%; margin-bottom:0px; display:inline; position:relative; top:-18px;', 'setValues', '', 'Temperature [C]')
-            insertDOM('canvas', 'temperatureMeter', '', 'margin-left:2px;', 'setValues', '', '')
-            document.getElementById('temperatureMeter').setAttribute('align', 'right');                        
+            injectDOM('p', 'temperatureMeterTitle', 'setValues', {
+                'style' : 'margin-left:10%; margin-bottom:0px; display:inline; position:relative; top:-18px;',
+                'innerHTML' : 'Temperature [C]'
+            });                    
+            injectDOM('canvas', 'temperatureMeter', 'setValues', {'stlye':'margin-left2px', 'align':'right'});
 
             //demand voltage
-            insertDOM('p', 'FieldText', '', 'margin-left:10%', 'setValues', '', 'Demand Voltage [V]')
-            insertDOM('input', 'demandVoltage', '', 'margin-bottom:10px; margin-top: 5px; margin-left:10%; margin-right:5%;', 'setValues', '', '', 'textbox', 'text', 'default')
-            document.getElementById('demandVoltage').setAttribute('size', '6');
-            insertDOM('div', 'voltageSlider', 'slider', '', 'setValues', '', '');
+            injectDOM('p', 'FieldText', 'setValues', {'style':'margin-left:10%', 'innerHTML':'Demand Voltage [V]'});
+            injectDOM('input', 'demandVoltage', 'setValues', {
+                'style' : 'margin-bottom:10px; margin-top: 5px; margin-left:10%; margin-right:5%;',
+                'name' : 'textbox',
+                'type' : 'text',
+                'value' : 'default',
+                'size' : '6'
+            });
+            injectDOM('div', 'voltageSlider', 'setValues', {'class':'slider'});
             //demand voltage ramp up
-            insertDOM('p', 'RampText', '', 'margin:0px; margin-left:10%; margin-top:20px;', 'setValues', '', 'Voltage Ramp Up Speed [V/s]')
-            insertDOM('input', 'demandRampSpeed', '', 'margin-bottom:10px; margin-top: 5px; margin-left:10%; margin-right:5%;', 'setValues', '', '', 'textbox', 'text', 'default')
-            document.getElementById('demandRampSpeed').setAttribute('size', '6');
-            insertDOM('div', 'rampSlider', 'slider', '', 'setValues', '', '');
+            injectDOM('p', 'RampText', 'setValues', {'style':'margin:0px; margin-left:10%; margin-top:20px;', 'innerHTML':'Voltage Ramp Up Speed [V/s]'});
+            injectDOM('input', 'demandRampSpeed', 'setValues', {
+                'style' : 'margin-bottom:10px; margin-top: 5px; margin-left:10%; margin-right:5%;',
+                'name' : 'textbox',
+                'type' : 'text',
+                'value' : 'default',
+                'size' : '6'
+            });
+            injectDOM('div', 'rampSlider', 'setValues', {'class':'slider'});
             //demand voltage ramp down
-            insertDOM('p', 'RampTextDown', '', 'margin:0px; margin-left:10%; margin-top:20px;', 'setValues', '', 'Demand Ramp Down Speed [V/s]')
-            insertDOM('input', 'demandRampDownSpeed', '', 'margin-bottom:10px; margin-top: 5px; margin-left:10%; margin-right:5%;', 'setValues', '', '', 'textbox', 'text', 'default')
-            document.getElementById('demandRampDownSpeed').setAttribute('size', '6');
-            insertDOM('div', 'rampDownSlider', 'slider', '', 'setValues', '', '');
+            injectDOM('p', 'RampTextDown', 'setValues', {'style':'margin:0px; margin-left:10%; margin-top:20px;', 'innerHTML':'Demand Ramp Down Speed [V/s]'});
+            injectDOM('input', 'demandRampDownSpeed', 'setValues', {
+                'style' : 'margin-bottom:10px; margin-top: 5px; margin-left:10%; margin-right:5%;',
+                'name' : 'textbox',
+                'type' : 'text',
+                'value' : 'default',
+                'size' : '6'
+            });
+            injectDOM('div', 'rampDownSlider', 'setValues', {'class':'slider'});
 
             //space canvas:
-            insertDOM('canvas', 'inputSpacer', '', 'margin-left:10%; margin-top:5%;', this.sidebarID, '', '');
-            document.getElementById('inputSpacer').setAttribute('width', '200px');
-            document.getElementById('inputSpacer').setAttribute('height', '5px');
+            injectDOM('canvas', 'inputSpacer', this.sidebarID, {'style' : 'margin-left:10%; margin-top:5%;', 'width':'200px', 'height':'5px'});
             //draw on the canvas:
             var ILcanvas = document.getElementById('inputSpacer');
             var ILcontext = ILcanvas.getContext('2d');
@@ -127,18 +162,27 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
             ILcontext.stroke();
 
             //channel changing form:
-            insertDOM('form', 'changeChannel', '', '', this.sidebarID, '', '')
+            injectDOM('form', 'changeChannel', this.sidebarID, {});
             //title
-            insertDOM('h4', 'ccTitle', '', 'margin-left:10%; margin-bottom:10px;', 'changeChannel', '', 'Change Channel:')
+            injectDOM('h4', 'ccTitle', 'changeChannel', {'style':'margin-left:10%; margin-bottom:10px;', 'innerHTML':'Change Channel:'});
             //cards:
-            insertDOM('p', 'cardTitle', '', 'display:inline; margin-left:10%; margin-right:1%', 'changeChannel', '', 'Card')
-            insertDOM('select', 'CardList', '', 'width:80px;', 'changeChannel', '', '')
-            insertDOM('br', 'break', '', '', 'changeChannel', '', '')
+            injectDOM('p', 'cardTitle', 'changeChannel', {'style':'display:inline; margin-left:10%; margin-right:1%', 'innerHTML':'Card'});
+            injectDOM('select', 'CardList', 'changeChannel', {'style':'width:80px;'});
+            injectDOM('br', 'break', 'changeChannel', {});
             //channels:
-            insertDOM('p', 'channelTitle', '', 'display:inline; margin-left:10%; position:relative; top:-20px; margin-right:1%;', 'changeChannel', '', 'Channel')
-            insertDOM('select', 'ChannelList', '', 'width:80px; position:relative; top:-20px;', 'changeChannel', '', '')
+            injectDOM('p', 'channelTitle', 'changeChannel', {
+                'style' : 'display:inline; margin-left:10%; position:relative; top:-20px; margin-right:1%;',
+                'innerHTML' : 'Channel'
+            });
+            injectDOM('select', 'ChannelList', 'changeChannel', {'style':'width:80px; position:relative; top:-20px;'});
             //submit button:
-            insertDOM('input', 'getChannelButton', 'link', 'position:relative; top:-30px; width: 50px; height:50px; font-size:24px; margin-left:3%; margin-top:10px; border-color:black', 'changeChannel', function(){window.refreshInput = 1; gotoNewChannel(event, window.HVpointer);}, '', '', 'button', 'Go')
+            injectDOM('input', 'getChannelButton', 'changeChannel', {
+                'class' : 'link',
+                'style' : 'position:relative; top:-30px; width: 50px; height:50px; font-size:24px; margin-left:3%; margin-top:10px; border-color:black',
+                'type' : 'button',
+                'value' : 'Go',
+                'onclick' : function(){window.refreshInput = 1; gotoNewChannel(event, window.HVpointer);}
+            });
         };
 
         //deploy a sidebar to interact with this element:
@@ -167,31 +211,49 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
 
         //DOM insertions////////////////////////////////////
         //inject top level nav button
-        insertDOM('button', this.topNavID, 'navLink', '', 'statusLink', function(){swapView(window.HVpointer.linkWrapperID, 'HVgrid0', 'InputLayer', window.HVpointer.topNavID); rePaint();}, 'HV Monitor')
+        injectDOM('button', this.topNavID, 'statusLink', {
+            'class' : 'navLink',
+            'innerHTML' : 'HV Monitor',
+            'onclick' : function(){
+                swapView(window.HVpointer.linkWrapperID, 'HVgrid0', 'InputLayer', window.HVpointer.topNavID); 
+                rePaint();
+            }
+        });
 
         //header
-        insertDOM('div', this.linkWrapperID, 'navPanel', '', this.wrapperDiv, '', '');
+        injectDOM('div', this.linkWrapperID, this.wrapperDiv, {'class':'navPanel'});
         //title
-        insertDOM('h1', this.linkWrapperID+'Banner', 'navPanelHeader', '', this.linkWrapperID, '', ODB.topLevel.expName+' HV Mainframes');
-        insertDOM('br', 'break', '', '', this.linkWrapperID, '', '');
+        injectDOM('h1', this.linkWrapperID+'Banner', this.linkWrapperID, {'class':'navPanelHeader', 'innerHTML':ODB.topLevel.expName+' HV Mainframes'});
+        injectDOM('br', 'break', this.linkWrapperID, {});
         //mainframe navigation
         for(i=0; i<this.nCrates; i++){
-            insertDOM('button', 'Main'+(i+1), (i==0)? 'navLinkDown' : 'navLink', '', this.linkWrapperID, function(){swapHVmainframe(this.crate); rePaint();}, 'Mainframe '+(i+1) );
+            injectDOM('button', 'Main'+(i+1), this.linkWrapperID, {
+                'class' : (i==0)? 'navLinkDown' : 'navLink',
+                'innerHTML' : 'Mainframe '+(i+1),
+                'onclick' : function(){swapHVmainframe(this.crate); rePaint();}
+            });
             document.getElementById('Main'+(i+1)).crate = i;
         }
-        insertDOM('br', 'break', '', '', this.linkWrapperID, '', '');
+        injectDOM('br', 'break', this.linkWrapperID, {});
         //card navigation
         for(i=0; i<this.nCrates; i++){
-            insertDOM('div', this.linkWrapperID+i, 'cardNavPanel', '', this.linkWrapperID, '', '');
+            injectDOM('div', this.linkWrapperID+i, this.linkWrapperID, {'class':'cardNavPanel'});
             for(j=0; j<window.parameters.moduleSizes[i].length; j++){
-                insertDOM('button', 'crate'+i+'card'+j, 'navLink', '', this.linkWrapperID+i, function(){barChartButton(this)}, 'Slot '+j, '', 'button');
+                injectDOM('button', 'crate'+i+'card'+j, this.linkWrapperID+i, {
+                    'class' : 'navLink',
+                    'innerHTML' : 'Slot '+j,
+                    'type' : 'button',
+                    'onclick' : function(){barChartButton(this)}
+                });
                 document.getElementById('crate'+i+'card'+j).cardNumber = j;
             }
 
             //inject canvas into DOM for waffle to paint on:
-            insertDOM('canvas', this.canvasID[i], 'monitor', '', this.wrapperDiv, '', '');
-            document.getElementById(this.canvasID[i]).setAttribute('width', this.totalWidth);
-            document.getElementById(this.canvasID[i]).setAttribute('height', this.totalHeight[i]);
+            injectDOM('canvas', this.canvasID[i], this.wrapperDiv, {
+                'class' : 'monitor',
+                'width' : this.totalWidth,
+                'height' : this.totalHeight[i]
+            });
             this.canvas[i] = document.getElementById(this.canvasID[i]);
             this.context[i] = this.canvas[i].getContext('2d');
 
@@ -285,9 +347,11 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         for(j=0; j<this.nCrates; j++){
             this.barCharts[j] = [];
             for(i=0; i<window.parameters.moduleSizes[j].length; i++){
-                insertDOM('canvas', 'crate'+j+'bar'+i, 'monitor', '', this.wrapperDiv, '', '');
-                document.getElementById('crate'+j+'bar'+i).setAttribute('width', this.totalWidth);
-                document.getElementById('crate'+j+'bar'+i).setAttribute('height', this.totalHeight[i]);
+                injectDOM('canvas', 'crate'+j+'bar'+i, this.wrapperDiv, {
+                    'class' : 'monitor',
+                    'width' : this.totalWidth,
+                    'height' : this.totalHeight[i]
+                });
                 this.barCharts[j][i] = new BarGraph('crate'+j+'bar'+i, i, Math.max(window.parameters.moduleSizes[j][i],1)*12, 'Slot '+i, 'Reported Voltage [V]', 0, window.parameters.scaleMaxima[0], window.parameters.barChartPrecision, that, j);
             }
         }
