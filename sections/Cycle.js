@@ -34,7 +34,6 @@ function Cycle(){
     this.wrapper = document.getElementById(this.wrapperID);
 
     //add top level nav button:
-    //insertDOM('button', 'CycleButton', 'navLink', '', 'statusLink', function(){swapView('cycleLinks', 'cycleCanvas', 'cycleMenus', 'CycleButton');}, 'Cycle');
     injectDOM('button', 'CycleButton', 'statusLink', {
         'class' : 'navLink',
         'onclick' : function(){swapView('cycleLinks', 'cycleCanvas', 'cycleMenus', 'CycleButton');},
@@ -48,8 +47,6 @@ function Cycle(){
     injectDOM('br', 'break', this.linkWrapperID, {});
 
     //nav buttons & cycle save / load interface:
-    insertDOM('button', 'commitCycle', 'navLink', '-webkit-animation-name:x; -moz-animation-name:x;', this.linkWrapperID, commitCycle.bind(null), 'Deploy Cycle Now', '', 'button');
-    /*
     injectDOM('button', 'commitCycle', this.linkWrapperID, {
         'class' : 'navLink',
         'style' : '-webkit-animation-name:x; -moz-animation-name:x;',
@@ -57,62 +54,33 @@ function Cycle(){
         'innerHTML' : 'Deploy Cycle Now',
         'type' : 'button'
     });
-    */
-    insertDOM('button', 'resetCycle', 'navLink', '', this.linkWrapperID, reloadCycle.bind(null), 'Reload Active Cycle', '', 'button');
-    /*
     injectDOM('button', 'resetCycle', this.linkWrapperID, {
         'class' : 'navLink',
         'onclick' : reloadCycle.bind(null),
         'innerHTML' : 'Reload Active Cycle',
         'type' : 'button'
     });
-    */
-    insertDOM('br', 'break', '', '', this.linkWrapperID);
-    //injectDOM('br', 'break', this.linkWrapperID, {});
-    insertDOM('label', 'cycleNameLabel', '', 'margin-left:10px;', this.linkWrapperID, '', 'Name this Cycle: ');
-    //injectDOM('label', 'cycleNameLabel', this.linkWrapperID, {'style':'margin-left:10px;', 'innerHTML':'Name this Cycle: '});
-    insertDOM('input', 'cycleName', '', '', this.linkWrapperID, '', '', '', 'text', 'newCycle');
-    //injectDOM('input', 'cycleName', this.linkWrapperID, {'type' : 'text', 'value' : 'newCycle'});
-    insertDOM('button', 'saveCycle', 'navLink', '', this.linkWrapperID, saveCycle.bind(null), 'Save Cycle Definition', '', 'button');
-    /*
+    injectDOM('br', 'break', this.linkWrapperID, {});
+    injectDOM('label', 'cycleNameLabel', this.linkWrapperID, {'style':'margin-left:10px;', 'innerHTML':'Name this Cycle: '});
+    injectDOM('input', 'cycleName', this.linkWrapperID, {'type' : 'text', 'value' : 'newCycle'});
     injectDOM('button', 'saveCycle', this.linkWrapperID, {
         'class' : 'navLink',
         'onclick' : saveCycle.bind(null),
         'innerHTML' : 'Save Cycle Definition',
         'type' : 'button'
     });
-    */
     document.getElementById('cycleNameLabel').setAttribute('for', 'cycleName');
-    insertDOM('br', 'break', '', '', this.linkWrapperID);
-    //injectDOM('br', 'break', this.linkWrapperID, {});
-    insertDOM('label', 'loadCycleLabel', '', 'margin-left:10px;', this.linkWrapperID, '', 'Load Cycle: ');
-    //injectDOM('label', 'loadCycleLabel', this.linkWrapperID, {'style':'margin-left:10px;', 'innerHTML':'Load Cycle: '});
-    insertDOM('select', 'cycleOptions', '', '', this.linkWrapperID, '', '');
-    //injectDOM('select', 'cycleOptions', this.linkWrapperID, {});
+    injectDOM('br', 'break', this.linkWrapperID, {});
+    injectDOM('label', 'loadCycleLabel', this.linkWrapperID, {'style':'margin-left:10px;', 'innerHTML':'Load Cycle: '});
+    injectDOM('select', 'cycleOptions', this.linkWrapperID, {});
     document.getElementById('loadCycleLabel').setAttribute('for', 'cycleOptions');
     loadOptions(ODB.Cycles, 'cycleOptions');
-    insertDOM('button', 'loadCycle', 'navLink', '', this.linkWrapperID, loadCycle.bind(null), 'Load', '', 'button');
-    /*
     injectDOM('button', 'loadCycle', this.linkWrapperID, {
         'class' : 'navLink',
         'onclick' : loadCycle.bind(null),
         'innerHTML' : 'Load',
         'type' : 'button'
     });
-    */
-    insertDOM('button', 'deleteOption', 'navLink', '', this.linkWrapperID, function(){
-        var i, name,
-            dropdown = document.getElementById('cycleOptions'),
-            cycleIndex = parseInt(dropdown.value, 10);
-
-        for(i=0; i<dropdown.childNodes.length; i++){
-            if(dropdown.childNodes[i].value == cycleIndex){
-                name = dropdown.childNodes[i].innerHTML;
-            }            
-        }
-        confirm('Delete Cycle Definition', 'Do you really want to delete '+name+'?', deleteOption.bind(null, '/DashboardConfig/Cycles/', 'cycleOptions'))
-    }, 'Delete', '', 'button');
-/*
     injectDOM('button', 'deleteOption', this.linkWrapperID, {
         'class' : 'navLink',
         'innerHTML' : 'Delete',
@@ -130,12 +98,15 @@ function Cycle(){
             confirm('Delete Cycle Definition', 'Do you really want to delete '+name+'?', deleteOption.bind(null, '/DashboardConfig/Cycles/', 'cycleOptions'))
         }
     });
-*/
+
 
     //div structure for drag and drop area: right panel for detector palete, two-div column for Single Stream and Interstream Filters:
-    insertDOM('div', 'cycleWrapper', '', 'width:'+0.48*$(this.wrapper).width()+'px; margin-top:1em; display:block', this.linkWrapperID, '', '');
-    insertDOM('div', 'cycleSteps', '', 'width:79%; padding:0.5em; float:left; text-align:center;', 'cycleWrapper', '', '');
-    insertDOM('div', 'cyclePalete', 'cycleDiv', 'width:'+0.2*0.48*$(this.wrapper).width()+'; float:right; text-align:center; padding-top:1em; position:relative; top:0px;', 'cycleWrapper', '', '');
+    injectDOM('div', 'cycleWrapper', this.linkWrapperID, {'style' : 'width:'+0.48*$(this.wrapper).width()+'px; margin-top:1em; display:block'});
+    injectDOM('div', 'cycleSteps', 'cycleWrapper', {'style' : 'width:79%; padding:0.5em; float:left; text-align:center;'});
+    injectDOM('div', 'cyclePalete', 'cycleWrapper', {
+        'class' : 'cycleDiv',
+        'style' : 'width:'+0.2*0.48*$(this.wrapper).width()+'; float:right; text-align:center; padding-top:1em; position:relative; top:0px;',
+    });
 
     //inject options into palete
     this.badgeWidth = document.getElementById('cyclePalete').offsetWidth*0.6//0.9;
@@ -149,16 +120,16 @@ function Cycle(){
     //deploy a dummy canvas for the filter view:
     this.canvasWidth = 0// 0.48*$(this.wrapper).width();
     this.canvasHeight = 0 //1*$(this.wrapper).height();
-    insertDOM('canvas', this.canvasID, 'monitor', 'top:' + ($('#cycleLinks').height() + 5) +'px;', this.wrapperID, '', '')
+    injectDOM('canvas', this.canvasID, this.wrapperID, {'class':'monitor', 'style':'top:' + ($('#cycleLinks').height() + 5) +'px;'});
     this.canvas = document.getElementById('cycleCanvas');
     this.context = this.canvas.getContext('2d');
     this.canvas.setAttribute('width', this.canvasWidth);
     this.canvas.setAttribute('height', this.canvasHeight);
 
     //right sidebar
-    insertDOM('div', this.sidebarID, 'collapsableSidebar', 'float:right; height:80%;', this.wrapperID, '', '')
+    injectDOM('div', this.sidebarID, this.wrapperID, {'class':'collapsableSidebar', 'style':'float:right; height:80%;'});
     //deploy right bar menu:
-    deployMenu(this.sidebarID, ['Cycle'], ['Cycle Details']);    
+    deployMenu('cycleMenus', ['Cycle'], ['Cycle Details']);    
 
     //Clear Scalars
     deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'clearScalarsPaleteBadge', 'cyclePalete', clearScalars, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Clear Scalars', true);
@@ -292,7 +263,7 @@ function createCycleStep(input){
     var stepDiv;
 
     //actual div
-    insertDOM('div', 'cycleStep'+window.cyclePointer.nCycleSteps, 'cycleStep', 'display:inline-block; margin-left:auto; margin-right:auto;', 'cycleSteps', '', '');
+    injectDOM('div', 'cycleStep'+window.cyclePointer.nCycleSteps, 'cycleSteps', {'class':'cycleStep', 'style':'display:inline-block; margin-left:auto; margin-right:auto;'})
     stepDiv = document.getElementById('cycleStep'+window.cyclePointer.nCycleSteps)
     stepDiv.draggable = 'true';
 
@@ -306,7 +277,7 @@ function createCycleStep(input){
 
     //content block:
     stepDiv.contentID = 'cycleContent'+window.cyclePointer.nCycleSteps
-    insertDOM('div', stepDiv.contentID, 'cycleContent', '', 'cycleStep'+window.cyclePointer.nCycleSteps, '', '');
+    injectDOM('div', stepDiv.contentID, 'cycleStep'+window.cyclePointer.nCycleSteps, {'class':'cycleContent'});
     //deploy the div with something in it:
     //document.getElementById(stepDiv.contentID).innerHTML = input;
     deployBadge.apply(window.cyclePointer, [input, 'cycleContent'+window.cyclePointer.nCycleSteps]);
@@ -315,34 +286,39 @@ function createCycleStep(input){
     durationBadge(window.cyclePointer.nCycleSteps, 'cycleStep'+window.cyclePointer.nCycleSteps);
 
     //kill button
-    insertDOM('button', 'deleteCycleStep'+window.cyclePointer.nCycleSteps, 'deleteButton', 'position:static; float:right;', 'cycleStep'+window.cyclePointer.nCycleSteps, function(){
-        //delete only if there's a button to make a new div:
-        if(document.getElementById('terminateCycle')){
-            //delete linebreak:
-            var linebreak = document.getElementById('cycleStepsBreak'+this.id.slice(15, this.id.length));
-            linebreak.parentNode.removeChild(linebreak);
-            //delete timeline divs:
-            var leftDiv = document.getElementById('leftCycleSpacer'+this.id.slice(15, this.id.length));
-            leftDiv.parentNode.removeChild(leftDiv);
-            var rightDiv = document.getElementById('rightCycleSpacer'+this.id.slice(15, this.id.length));
-            rightDiv.parentNode.removeChild(rightDiv);
-            //delete cycle div:
-            var element = document.getElementById(this.id);
-            element.parentNode.parentNode.removeChild(element.parentNode);
-            askForCycleDeploy();
+    injectDOM('button', 'deleteCycleStep'+window.cyclePointer.nCycleSteps, 'cycleStep'+window.cyclePointer.nCycleSteps, {
+        'class' : 'deleteButton',
+        'style' : 'position:static; float:right;',
+        'innerHTML' : String.fromCharCode(0x2573),
+        'type' : 'button',
+        'onclick' : function(){
+            //delete only if there's a button to make a new div:
+            if(document.getElementById('terminateCycle')){
+                //delete linebreak:
+                var linebreak = document.getElementById('cycleStepsBreak'+this.id.slice(15, this.id.length));
+                linebreak.parentNode.removeChild(linebreak);
+                //delete timeline divs:
+                var leftDiv = document.getElementById('leftCycleSpacer'+this.id.slice(15, this.id.length));
+                leftDiv.parentNode.removeChild(leftDiv);
+                var rightDiv = document.getElementById('rightCycleSpacer'+this.id.slice(15, this.id.length));
+                rightDiv.parentNode.removeChild(rightDiv);
+                //delete cycle div:
+                var element = document.getElementById(this.id);
+                element.parentNode.parentNode.removeChild(element.parentNode);
+                askForCycleDeploy();
+            }
         }
-    }, String.fromCharCode(0x2573), '', 'button');
+    });
 
     //cycleStep div listens for things to be dropped on it:
     stepDiv.addEventListener('dragover', cycleDragOver, false);
     stepDiv.addEventListener('dragleave', cycleDragLeave, false);
     stepDiv.addEventListener('drop', cycleDrop, false);
     
+    injectDOM('br', 'cycleStepsBreak'+window.cyclePointer.nCycleSteps, 'cycleSteps', {});
+    injectDOM('div', 'leftCycleSpacer'+window.cyclePointer.nCycleSteps, 'cycleSteps', {'style':'display:inline-block; height:50px; width:50%'});
+    injectDOM('div', 'rightCycleSpacer'+window.cyclePointer.nCycleSteps, 'cycleSteps', {'style':'display:inline-block; border-left: 5px solid #999999; height:50px; width:50%'});
 
-    //spacer divs to create timeline:
-    insertDOM('br', 'cycleStepsBreak'+window.cyclePointer.nCycleSteps, '', '', 'cycleSteps');
-    insertDOM('div', 'leftCycleSpacer'+window.cyclePointer.nCycleSteps, '', 'display:inline-block; height:50px; width:50%', 'cycleSteps', '', '');
-    insertDOM('div', 'rightCycleSpacer'+window.cyclePointer.nCycleSteps, '', 'display:inline-block; border-left: 5px solid #999999; height:50px; width:50%', 'cycleSteps', '', '');
     //spacers listen for things to be dropped on them, so commands can be inserted mid-stream
     document.getElementById('leftCycleSpacer'+window.cyclePointer.nCycleSteps).addEventListener('dragover', spacerDragOver, false);
     document.getElementById('rightCycleSpacer'+window.cyclePointer.nCycleSteps).addEventListener('dragover', spacerDragOver, false);
@@ -360,13 +336,18 @@ function createCycleStep(input){
 
 //create a timeline termination badge that includes a button to create a new empty command:
 function terminationBadge(){
-    insertDOM('div', 'terminateCycle', '', '', 'cycleSteps', '', '');
-    insertDOM('button', 'newCommand', 'navLink', '','terminateCycle', function(){
-        createCycleStep(window.cyclePointer.helpMessage);
-        document.getElementById('cycleContent'+window.cyclePointer.nCycleSteps).setAttribute('class', 'delayCycleContent') 
-        window.cyclePointer.nCycleSteps++;
-        askForCycleDeploy();
-    }, 'New Command', '', 'button');
+    injectDOM('div', 'terminateCycle', 'cycleSteps', {});
+    injectDOM('button', 'newCommand', 'terminateCycle', {
+        'class' : 'navLink',
+        'innerHTML' : 'New Command',
+        'type' : 'button',
+        'onclick' : function(){
+            createCycleStep(window.cyclePointer.helpMessage);
+            document.getElementById('cycleContent'+window.cyclePointer.nCycleSteps).setAttribute('class', 'delayCycleContent') 
+            window.cyclePointer.nCycleSteps++;
+            askForCycleDeploy();
+        }
+    });
 }
 
 //create a duration control badge for deployment in each cycle step
@@ -374,11 +355,17 @@ function durationBadge(index, parentID){
     var canvas, context;
 
     //wrapper div
-    insertDOM('div', 'durationDiv'+index, '', 'display:inline-block; text-align:center; border-left:1px solid #999999; margin-left:5px;', parentID, '', '');
+    injectDOM('div', 'durationDiv'+index, parentID, {'style' : 'display:inline-block; text-align:center; border-left:1px solid #999999; margin-left:5px;'});
     //number input
-    insertDOM('input', 'durationInput'+index, 'cycleDurationInput', '', 'durationDiv'+index, '', '', '', 'number');
-    insertDOM('p', 'infiniteDuration'+index, '', 'display:none; font-size:230%; margin:0px;', 'durationDiv'+index, '', String.fromCharCode(0x221E) );
-    insertDOM('br', 'durationBreak'+index, '', '', 'durationDiv'+index);
+    injectDOM('input', 'durationInput'+index, 'durationDiv'+index, {
+        'class' : 'cycleDurationInput',
+        'type' : 'number'
+    });
+    injectDOM('p', 'infiniteDuration'+index, 'durationDiv'+index, {
+        'style' : 'display:none; font-size:230%; margin:0px;',
+        'innerHTML' : String.fromCharCode(0x221E)
+    });
+    injectDOM('br', 'durationBreak'+index, 'durationDiv'+index, {});
     //unit
     createOptionScroll('durationDiv'+index, 'durationScroll'+index, ['millisec', 'seconds', 'minutes', 'infinite'], window.cyclePointer.badgeWidth*1.3,
         function(){
@@ -396,9 +383,9 @@ function durationBadge(index, parentID){
             askForCycleDeploy();
         });
     //when infinite is selected, remove UI elements and just show infinite:
-    insertDOM('br', 'break', '', '', 'durationDiv'+index);
+    injectDOM('br', 'break', 'durationDiv'+index, {});
     //slider
-    insertDOM('input', 'durationSlider'+index, '', 'width:80%; margin:0px', 'durationDiv'+index, '', '', '', 'range');
+    injectDOM('input', 'durationSlider'+index, 'durationDiv'+index, {'style':'width:80%; margin:0px', 'type':'range'});
     document.getElementById('durationSlider'+index).min = 0;
     document.getElementById('durationSlider'+index).max = 1000;
     document.getElementById('durationSlider'+index).onchange = function(){
@@ -412,8 +399,6 @@ function durationBadge(index, parentID){
         document.getElementById('durationSlider'+index).value = this.valueAsNumber;
         askForCycleDeploy();
     }
-    
-
 }
 
 //insert the appropriate badge into the command div:
