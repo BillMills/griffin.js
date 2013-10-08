@@ -94,9 +94,12 @@ function parameterDialogue(devName, scales, currentColorScale){
     var i, j, ODBpath;
 
     //insert div and title
-    insertDOM('div', 'tempDiv', '', 'z-index:10; position:absolute; text-align:center; opacity:0; transition:opacity 0.5s; -moz-transition:opacity 0.5s; -webkit-transition:opacity 0.5s; background:rgba(0,0,0,0.8); border: 5px solid; border-radius:10px;', 'waffleplate', '', '', '');
+    injectDOM('div', 'tempDiv', 'waffleplate', {'class' : 'tempDialog'});
     var dialogue = document.getElementById('tempDiv');
-    insertDOM('h2', 'dialogHeader', '', 'position:relative; font:24px Orbitron; top:10px; margin-bottom:6%', 'tempDiv', '', 'Adjust '+devName+' Scale');
+    injectDOM('h2', 'dialogHeader', 'tempDiv', {
+        'style' : 'position:relative; font:24px Orbitron; top:10px; margin-bottom:6%',
+        'innerHTML' : 'Adjust '+devName+' Scale'
+    });
 
     //fix dimensions
     var width = 0.35*window.innerWidth;
@@ -106,17 +109,27 @@ function parameterDialogue(devName, scales, currentColorScale){
     $('#tempDiv').css('left', ($('#waffleplate').width()/2 - width/2))
 
     //insert form fields
-    insertDOM('form', 'dialogueValues', '', '', 'tempDiv', '', '');
+    injectDOM('form', 'dialogueValues', 'tempDiv', {});
     for(i=0; i<scales.length; i++){
-        insertDOM('p', 'title'+i, '', 'font-size:16px; margin-top:3%;', 'dialogueValues', '', scales[i][0]+'<br>');
-        insertDOM('p', 'minlabel'+i, '', 'display:inline;', 'dialogueValues', '', 'Minimum: ');
-        insertDOM('input', 'minfield'+i, '', 'display:inline;', 'dialogueValues', '', '', 'textbox', 'number', scales[i][1]);
-        document.getElementById('minfield'+i).setAttribute('size', 6);
-        insertDOM('p', 'minunit'+i, '', 'display:inline; margin-right:3%', 'dialogueValues', '', scales[i][3]);
-        insertDOM('p', 'maxlabel'+i, '', 'display:inline', 'dialogueValues', '', 'Maximum: ');
-        insertDOM('input', 'maxfield'+i, '', 'display:inline;', 'dialogueValues', '', '', 'textbox', 'number', scales[i][2])
-        document.getElementById('maxfield'+i).setAttribute('size', 6);
-        insertDOM('p', 'maxunit'+i, '', 'display:inline;', 'dialogueValues', '', scales[i][3] + '<br>');
+        injectDOM('p', 'title'+i, 'dialogueValues', {'style':'font-size:16px; margin-top:3%;', 'innerHTML':scales[i][0]+'<br>'});
+        injectDOM('p', 'minlabel'+i, 'dialogueValues', {'style':'display:inline', 'innerHTML':'Minimum: '});
+        injectDOM('input', 'minfield'+i, 'dialogueValues', {
+            'style' : 'display:inline;',
+            'name' : 'textbox',
+            'type' : 'number',
+            'value' : scales[i][1],
+            'size' : 6
+        });
+        injectDOM('p', 'minunit'+i, 'dialogueValues', {'style':'display:inline; margin-right:3%', 'innerHTML':scales[i][3]});
+        injectDOM('p', 'maxlabel'+i, 'dialogueValues', {'style':'display:inline;', 'innerHTML':'Maximum: '});
+        injectDOM('input', 'maxfield'+i, 'dialogueValues', {
+            'style' : 'display:inline;',
+            'name' : 'textbox',
+            'type' : 'number',
+            'value' : scales[i][2],
+            'size' : 6
+        });
+        injectDOM('p', 'maxunit'+i, 'dialogueValues', {'style':'display:inline;', 'innerHTML':scales[i][3] + '<br>'});
         //don't allow min > max:
         document.getElementById('minfield'+i).onchange = function(){document.getElementById('maxfield'+this.id[8]).min = document.getElementById(this.id).valueAsNumber;};
 
@@ -124,9 +137,9 @@ function parameterDialogue(devName, scales, currentColorScale){
 
     //insert color scale picker:
     if(currentColorScale){
-        insertDOM('p', 'colorPickerLabel', '', 'display:inline', 'dialogueValues', '', '<br><br>Palette: ');
+        injectDOM('p', 'colorPickerLabel', 'dialogueValues', {'style':'display:inline;', 'innerHTML':'<br><br>Palette: '})
         var colorScales = window.parameters.colorScale;
-        insertDOM('select', 'colorOptions', '', '', 'dialogueValues', '', '');
+        injectDOM('select', 'colorOptions', 'dialogueValues', {});
         var colorDD = document.getElementById('colorOptions');
         var option = [];
         for(i=0; i<colorScales.length; i++){
@@ -136,22 +149,43 @@ function parameterDialogue(devName, scales, currentColorScale){
             colorDD.add(option[i], null);
         }
         colorDD.value = currentColorScale;
-        insertDOM('br', 'break', '', '', 'dialogueValues', '', '');
+        injectDOM('br', 'break', 'dialogueValues', {});
     }
 
     //insert scale linear / log choice:
-    insertDOM('p', 'scalePickerLabel', '', 'display:inline; margin-right:2%', 'dialogueValues', '', '<br><br>Scale: ');
-    insertDOM('p', 'linearRadioLabel', '', 'display:inline', 'dialogueValues', '', 'Linear');
-    insertDOM('input', 'linearRadio', '', 'display:inline; margin-right:2%;', 'dialogueValues', '', '', 'scaleSwitch', 'radio', 'linear');
-    insertDOM('p', 'logRadioLabel', '', 'display:inline;', 'dialogueValues', '', 'Log');
-    insertDOM('input', 'logRadio', '', 'display:inline;', 'dialogueValues', '', '', 'scaleSwitch', 'radio', 'log');
-    insertDOM('br', 'break', '', '', 'dialogueValues', '', '');
+    injectDOM('p', 'scalePickerLabel', 'dialogueValues', {'style':'display:inline; margin-right:2%', 'innerHTML':'<br><br>Scale: '});
+    injectDOM('p', 'linearRadioLabel', 'dialogueValues', {'style':'display:inline', 'innerHTML':'Linear'});
+    injectDOM('input', 'linearRadio', 'dialogueValues', {
+        'style' : 'display:inline; margin-right:2%;',
+        'name' : 'scaleSwitch',
+        'type' : 'radio',
+        'value' : 'linear'
+    });
+    injectDOM('p', 'logRadioLabel', 'dialogueValues', {'style':'display:inline', 'innerHTML':'Log'});
+    injectDOM('input', 'logRadio', 'dialogueValues', {
+        'style' : 'display:inline;',
+        'name' : 'scaleSwitch',
+        'type' : 'radio',
+        'value' : 'log'
+    });
+    injectDOM('br', 'break', 'dialogueValues', {});
+
     if (window.parameters.detectorLogMode[window.viewState] == 1) document.getElementById('logRadio').checked = true;
     else document.getElementById('linearRadio').checked = true;
 
-    //insert submit button
-    insertDOM('input', 'updateParameters', 'bigButton', 'width:20%; margin-right:2%; margin-top:6%', 'dialogueValues', '', '', '', 'button', 'Commit')
-    insertDOM('input', 'dismiss', 'bigButton', 'width:20%; margin-top:6%; margin-bottom:6%;', 'dialogueValues', '', '', '', 'button', 'Dismiss')
+    //insert submit & dismiss button
+    injectDOM('input', 'updateParameters', 'dialogueValues', {
+        'class' : 'bigButton',
+        'style' : 'width:20%; margin-right:2%; margin-top:6%',
+        'type' : 'button',
+        'value' : 'Commit'
+    });
+    injectDOM('input', 'dismiss', 'dialogueValues', {
+        'class' : 'bigButton',
+        'style' : 'width:20%; margin-top:6%; margin-bottom:6%;',
+        'type' : 'button',
+        'value' : 'Dismiss'
+    });
 
     document.getElementById('updateParameters').onclick = function(event){
         var i;
@@ -304,27 +338,26 @@ function frameColor(obj, frame, nFrames){
 function TTtable(id, data, objects, keys, tableTitle, titles, split){
     var i, j, k, n, nContentRows, cellContent;
 
-    insertDOM('table', id + 'table', 'TTtab', 'border-collapse:collapse;', id, '', '');
-    insertDOM('colgroup', id+'colgroup', '', '', id+'table');
+    injectDOM('table', id+'table', id, {'class':'TTtab', 'style':'border-collapse:collapse'});
+    injectDOM('colgroup', id+'colgroup', id+'table', {});
     for(i=0; i<split.length-1; i++){
-        insertDOM('col', id+'colSpace'+i, '', '', id+'colgroup');
-        document.getElementById(id+'colSpace'+i).setAttribute('span', keys.length+1)        
-        insertDOM('col', id+'col'+i, '', 'border-left:1px solid white;', id+'colgroup');
-        document.getElementById(id+'col'+i).setAttribute('span', '1')
+        injectDOM('col', id+'colSpace'+i, id+'colgroup', {'span':keys.length+1});
+        injectDOM('col', id+'col'+i, id+'colgroup', {'style':'border-left:1px solid white;', 'span':'1'});
     }
 
 
     if(tableTitle != ''){
-        insertDOM('tr', id+'tableTitleRow', '', '', id+'table', '', '');
-        insertDOM('td', id+'tableTitle', '', '', id+'tableTitleRow', '', tableTitle);
-        document.getElementById(id+'tableTitle'). setAttribute('colspan', (1+keys.length)*split.length)
+        injectDOM('tr', id+'tableTitleRow', id+'table', {});
+        injectDOM('td', id+'tableTitle', id+'tableTitleRow', {'innerHTML':tableTitle, 'colspan':(1+keys.length)*split.length});
     }
 
-    insertDOM('tr', id+'tableHeaderRow', '', '', id+'table', '', '');
+    injectDOM('tr', id+'tableHeaderRow', id+'table', {});
     for(k=0; k<split.length; k++){
-        //insertDOM('td', 'spacerCell'+k, '', '', id+'tableHeaderRow','','');  
         for(j=0; j<titles.length; j++){
-            insertDOM('td', id+'headerCell'+j+'col'+k, '', 'padding-left:'+( (j==0 && k!=0) ? 25:10 )+'px; padding-right:'+( (j==titles.length-1) ? 25:10 )+'px;', id+'tableHeaderRow','',titles[j]);    
+            injectDOM('td', id+'headerCell'+j+'col'+k, id+'tableHeaderRow', {
+                'style' : 'padding-left:'+( (j==0 && k!=0) ? 25:10 )+'px; padding-right:'+( (j==titles.length-1) ? 25:10 )+'px;',
+                'innerHTML' : titles[j]
+            });
         }
     }
     
@@ -333,10 +366,12 @@ function TTtable(id, data, objects, keys, tableTitle, titles, split){
     //build table:
     for(i=0; i<nContentRows; i++){
         //rows
-        insertDOM('tr', id+'row'+i, '', '', id+'table', '', '');
+        injectDOM('tr', id+'row'+i, id+'table', {});
         //cells
         for(j=0; j<titles.length*split.length; j++){
-            insertDOM('td', id+'row'+i+'cell'+j, '', 'padding:0px; padding-right:'+( (j%(titles.length+1)==0 && j!=0) ? 25:10 )+'px; padding-left:'+( (j%titles.length == 0 && j!=0) ? 25:10 )+'px', id+'row'+i, '', '' );
+            injectDOM('td', id+'row'+i+'cell'+j, id+'row'+i, {
+                'style' : 'padding:0px; padding-right:'+( (j%(titles.length+1)==0 && j!=0) ? 25:10 )+'px; padding-left:'+( (j%titles.length == 0 && j!=0) ? 25:10 )+'px'
+            });
             //if(j%(keys.length+1)==keys.length && j!=titles.length*split.length-1 ){
             //    document.getElementById(id+'row'+i+'cell'+j).setAttribute('style', 'border-right:1px solid white');
             //}
@@ -448,9 +483,12 @@ function confirm(headline, detailText, confirmFunc){
     var i, j, ODBpath;
 
     //insert div and title
-    insertDOM('div', 'tempDiv', '', 'z-index:10; position:absolute; text-align:center; opacity:0; transition:opacity 0.5s; -moz-transition:opacity 0.5s; -webkit-transition:opacity 0.5s; background:rgba(0,0,0,0.8); border: 5px solid; border-radius:10px;', 'waffleplate', '', '', '');
+    injectDOM('div', 'tempDiv', 'waffleplate', {'class':'tempDialog'});
     var dialogue = document.getElementById('tempDiv');
-    insertDOM('h2', 'dialogHeader', '', 'position:relative; font:24px Orbitron; top:10px; margin-bottom:6%; margin-left:auto; margin-right:auto;', 'tempDiv', '', headline);
+    injectDOM('h2', 'dialogHeader', 'tempDiv', {
+        'style' : 'position:relative; font:24px Orbitron; top:10px; margin-bottom:6%; margin-left:auto; margin-right:auto;',
+        'innerHTML' : headline
+    })
 
     //fix dimensions
     var width = 0.35*window.innerWidth;
@@ -460,12 +498,21 @@ function confirm(headline, detailText, confirmFunc){
     $('#tempDiv').css('left', ($('#waffleplate').width()/2 - width/2))
 
     //warning text
-    insertDOM('p', 'warning', '', 'padding: 1em; font-size:120%;', 'tempDiv', '', '');
-    document.getElementById('warning').innerHTML = detailText; 
+    injectDOM('p', 'warning', 'tempDiv', {'style':'padding: 1em; font-size:120%;', 'innerHTML':detailText});
 
-    //insert submit button
-    insertDOM('input', 'confirmChoice', 'bigButton', 'width:auto; height:auto; padding:0.5em; margin-bottom:1em; margin-left:0px', 'tempDiv', '', '', '', 'button', 'Confirm')
-    insertDOM('input', 'abortChoice', 'bigButton', 'width:auto; height:auto; padding:0.5em; margin-bottom:1em', 'tempDiv', '', '', '', 'button', 'Abort')
+    //insert submit & abort button
+    injectDOM('input', 'confirmChoice', 'tempDiv', {
+        'class' : 'bigButton',
+        'style' : 'width:auto; height:auto; padding:0.5em; margin-bottom:1em; margin-left:0px',
+        'type' : 'button',
+        'value' : 'Confirm'
+    });
+    injectDOM('input', 'abortChoice', 'tempDiv', {
+        'class' : 'bigButton',
+        'style' : 'width:auto; height:auto; padding:0.5em; margin-bottom:1em',
+        'type' : 'button',
+        'value' : 'Abort'
+    });
 
     document.getElementById('confirmChoice').onclick = function(event){
 

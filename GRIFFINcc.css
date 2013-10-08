@@ -814,6 +814,19 @@ button#commitCycle{
 	background-color: #333333;
 }
 
+.tempDialog{
+	z-index:10; 
+	position:absolute; 
+	text-align:center; 
+	opacity:0; 
+	transition:opacity 0.5s; 
+	-moz-transition:opacity 0.5s; 
+	-webkit-transition:opacity 0.5s; 
+	background:rgba(0,0,0,0.8); 
+	border: 5px solid; 
+	border-radius:10px;
+}
+
 :invalid{
 	color: #FF0000;
 	border: 2px solid #FF0000;
