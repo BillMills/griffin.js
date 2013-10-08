@@ -75,7 +75,6 @@ function gatekeeper(){
 function masterLoop(callMyself, noFetch){
     var i,j;
 	if(!document.webkitHidden && !document.mozHidden){
-
         //one big ODB grab:
         if(!noFetch) ODBgrab();
 
@@ -254,7 +253,7 @@ function fetchODB(){
                     scrubMeta(object[key]);
             }
         }
-    }
+    };
 }
 
 

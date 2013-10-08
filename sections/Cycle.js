@@ -34,28 +34,72 @@ function Cycle(){
     this.wrapper = document.getElementById(this.wrapperID);
 
     //add top level nav button:
-    insertDOM('button', 'CycleButton', 'navLink', '', 'statusLink', function(){swapView('cycleLinks', 'cycleCanvas', 'cycleMenus', 'CycleButton');}, 'Cycle');
+    //insertDOM('button', 'CycleButton', 'navLink', '', 'statusLink', function(){swapView('cycleLinks', 'cycleCanvas', 'cycleMenus', 'CycleButton');}, 'Cycle');
+    injectDOM('button', 'CycleButton', 'statusLink', {
+        'class' : 'navLink',
+        'onclick' : function(){swapView('cycleLinks', 'cycleCanvas', 'cycleMenus', 'CycleButton');},
+        'innerHTML' : 'Cycle'
+    });
 
     //nav wrapper div
-    insertDOM('div', this.linkWrapperID, 'navPanel', '', this.wrapperID, '', '')
+    injectDOM('div', this.linkWrapperID, this.wrapperID, {'class':'navPanel'});
     //nav header
-    insertDOM('h1', 'cycleLinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', 'Edit Cycle');
+    injectDOM('h1', 'cycleLinksBanner', this.linkWrapperID, {'class' : 'navPanelHeader', 'innerHTML' : 'Edit Cycle'});
+    injectDOM('br', 'break', this.linkWrapperID, {});
 
-    insertDOM('br', 'break', '', '', this.linkWrapperID, '', '');
     //nav buttons & cycle save / load interface:
     insertDOM('button', 'commitCycle', 'navLink', '-webkit-animation-name:x; -moz-animation-name:x;', this.linkWrapperID, commitCycle.bind(null), 'Deploy Cycle Now', '', 'button');
+    /*
+    injectDOM('button', 'commitCycle', this.linkWrapperID, {
+        'class' : 'navLink',
+        'style' : '-webkit-animation-name:x; -moz-animation-name:x;',
+        'onclick' : commitCycle.bind(null),
+        'innerHTML' : 'Deploy Cycle Now',
+        'type' : 'button'
+    });
+    */
     insertDOM('button', 'resetCycle', 'navLink', '', this.linkWrapperID, reloadCycle.bind(null), 'Reload Active Cycle', '', 'button');
+    /*
+    injectDOM('button', 'resetCycle', this.linkWrapperID, {
+        'class' : 'navLink',
+        'onclick' : reloadCycle.bind(null),
+        'innerHTML' : 'Reload Active Cycle',
+        'type' : 'button'
+    });
+    */
     insertDOM('br', 'break', '', '', this.linkWrapperID);
+    //injectDOM('br', 'break', this.linkWrapperID, {});
     insertDOM('label', 'cycleNameLabel', '', 'margin-left:10px;', this.linkWrapperID, '', 'Name this Cycle: ');
+    //injectDOM('label', 'cycleNameLabel', this.linkWrapperID, {'style':'margin-left:10px;', 'innerHTML':'Name this Cycle: '});
     insertDOM('input', 'cycleName', '', '', this.linkWrapperID, '', '', '', 'text', 'newCycle');
+    //injectDOM('input', 'cycleName', this.linkWrapperID, {'type' : 'text', 'value' : 'newCycle'});
     insertDOM('button', 'saveCycle', 'navLink', '', this.linkWrapperID, saveCycle.bind(null), 'Save Cycle Definition', '', 'button');
+    /*
+    injectDOM('button', 'saveCycle', this.linkWrapperID, {
+        'class' : 'navLink',
+        'onclick' : saveCycle.bind(null),
+        'innerHTML' : 'Save Cycle Definition',
+        'type' : 'button'
+    });
+    */
     document.getElementById('cycleNameLabel').setAttribute('for', 'cycleName');
     insertDOM('br', 'break', '', '', this.linkWrapperID);
+    //injectDOM('br', 'break', this.linkWrapperID, {});
     insertDOM('label', 'loadCycleLabel', '', 'margin-left:10px;', this.linkWrapperID, '', 'Load Cycle: ');
+    //injectDOM('label', 'loadCycleLabel', this.linkWrapperID, {'style':'margin-left:10px;', 'innerHTML':'Load Cycle: '});
     insertDOM('select', 'cycleOptions', '', '', this.linkWrapperID, '', '');
+    //injectDOM('select', 'cycleOptions', this.linkWrapperID, {});
     document.getElementById('loadCycleLabel').setAttribute('for', 'cycleOptions');
     loadOptions(ODB.Cycles, 'cycleOptions');
     insertDOM('button', 'loadCycle', 'navLink', '', this.linkWrapperID, loadCycle.bind(null), 'Load', '', 'button');
+    /*
+    injectDOM('button', 'loadCycle', this.linkWrapperID, {
+        'class' : 'navLink',
+        'onclick' : loadCycle.bind(null),
+        'innerHTML' : 'Load',
+        'type' : 'button'
+    });
+    */
     insertDOM('button', 'deleteOption', 'navLink', '', this.linkWrapperID, function(){
         var i, name,
             dropdown = document.getElementById('cycleOptions'),
@@ -68,7 +112,25 @@ function Cycle(){
         }
         confirm('Delete Cycle Definition', 'Do you really want to delete '+name+'?', deleteOption.bind(null, '/DashboardConfig/Cycles/', 'cycleOptions'))
     }, 'Delete', '', 'button');
+/*
+    injectDOM('button', 'deleteOption', this.linkWrapperID, {
+        'class' : 'navLink',
+        'innerHTML' : 'Delete',
+        'tpye' : 'button',
+        'onclick' : function(){
+            var i, name,
+                dropdown = document.getElementById('cycleOptions'),
+                cycleIndex = parseInt(dropdown.value, 10);
 
+            for(i=0; i<dropdown.childNodes.length; i++){
+                if(dropdown.childNodes[i].value == cycleIndex){
+                    name = dropdown.childNodes[i].innerHTML;
+                }            
+            }
+            confirm('Delete Cycle Definition', 'Do you really want to delete '+name+'?', deleteOption.bind(null, '/DashboardConfig/Cycles/', 'cycleOptions'))
+        }
+    });
+*/
 
     //div structure for drag and drop area: right panel for detector palete, two-div column for Single Stream and Interstream Filters:
     insertDOM('div', 'cycleWrapper', '', 'width:'+0.48*$(this.wrapper).width()+'px; margin-top:1em; display:block', this.linkWrapperID, '', '');
@@ -541,6 +603,7 @@ function deleteOption(ODBpointer, dropdown){
 
 //load the defined cycle into the ODB for present use:
 function commitCycle(){
+
     var cycle = buildCycle();
 
     ODBMDelete(['/DashboardConfig/Cycles/Active Pattern', '/DashboardConfig/Cycles/Active Duration']);
@@ -552,7 +615,7 @@ function commitCycle(){
     suspendCycleRequest();
 
     //regrab ODB
-    ODB = fetchODB();
+    fetchODB();
 }
 
 //load whatever the ODB has currently registered as the active cycle
