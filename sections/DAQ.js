@@ -50,48 +50,68 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 
     //navigation
     //top level nav button
-    insertDOM('button', this.topNavID, 'navLink', '', 'statusLink', function(){swapView('DAQlinks', 'DAQcanvas', 'DAQsidebar', window.DAQpointer.topNavID); rePaint();}, 'DAQ', '', 'button')
+    injectDOM('button', this.topNavID, 'statusLink', {
+        'class' : 'navLink',
+        'innerHTML' : 'DAQ',
+        'type' : 'button',
+        'onclick' : function(){swapView('DAQlinks', 'DAQcanvas', 'DAQsidebar', window.DAQpointer.topNavID); rePaint();}
+    });
     //nav wrapper div
-    insertDOM('div', this.linkWrapperID, 'navPanel', '', this.monitorID, '', '')
+    injectDOM('div', this.linkWrapperID, this.monitorID, {'class':'navPanel'});
     //nav header
-    insertDOM('h1', 'DAQlinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', ODB.topLevel.expName+' DAQ Status')
-    insertDOM('br', 'break', '', '', this.linkWrapperID, '', '')
+    injectDOM('h1', 'DAQlinksBanner', this.linkWrapperID, {'class':'navPanelHeader', 'innerHTML':ODB.topLevel.expName+' DAQ Status'});
+    injectDOM('br', 'break', this.linkWrapperID, {});
     //nav buttons
-    insertDOM('button', 'DAQToplink', 'navLinkDown', '', 'DAQlinks', function(){window.DAQpointer.detailShowing=0; window.DAQdetail=-1; swapFade('DAQToplink', window.DAQpointer, 0);}, 'Master', '', 'button')
-    insertDOM('br', 'break', '', '', this.linkWrapperID, '', '')
+    injectDOM('button', 'DAQToplink', 'DAQlinks', {
+        'class' : 'navLinkDown',
+        'innerHTML' : 'Master',
+        'type' : 'button',
+        'onclick' : function(){window.DAQpointer.detailShowing=0; window.DAQdetail=-1; swapFade('DAQToplink', window.DAQpointer, 0);}
+    });
+    injectDOM('br', 'break', this.linkWrapperID, {});
     //p to label row of collector buttons
-    insertDOM('p', 'DAQcollectorTitle', '', 'display:inline; color:#999999; margin-right:5px;', 'DAQlinks', '', 'Slave')
+    injectDOM('p', 'DAQcollectorTitle', 'DAQlinks', {'style':'display:inline; color:#999999; margin-right:5px;', 'innerHTML':'Slave'});
     //deploy collector buttons
     for(i=0; i<this.nCollectors; i++){
-        insertDOM('button', 'Collector'+i, 'navLink', '', this.linkWrapperID, function(){window.DAQpointer.detailShowing=1; swapFade(this.id, window.DAQpointer, 0); animateDetail(window.DAQpointer, 0); window.DAQdetail=this.collectorNumber;}, i+1, '', 'button')
+        injectDOM('button', 'Collector'+i, this.linkWrapperID, {
+            'class' : 'navLink',
+            'innerHTML' : i+1,
+            'type' : 'button',
+            'onclick' : function(){
+                window.DAQpointer.detailShowing=1; 
+                swapFade(this.id, window.DAQpointer, 0); 
+                animateDetail(window.DAQpointer, 0); 
+                window.DAQdetail=this.collectorNumber;
+            }
+        });
         $('#Collector'+i).width( ( 0.95*this.canvasWidth - $('#DAQcollectorTitle').width()) / this.nCollectors );
         document.getElementById('Collector'+i).collectorNumber = i;
     }
 
     //right sidebar
-    insertDOM('div', this.sidebarID, 'RightSidebar', '', this.monitorID, '', '')
+    injectDOM('div', this.sidebarID, this.monitorID, {'class':'RightSidebar'});
 
     //display canvases
     //top view
-    insertDOM('canvas', this.canvasID, 'monitor', 'top: '+ ($('#DAQlinks').height() + 5) +'px;', this.monitorID, '', '')
+    injectDOM('canvas', this.canvasID, this.monitorID, {'class':'monitor', 'style':'top: '+ ($('#DAQlinks').height() + 5) +'px;'});
     this.canvas = document.getElementById(canvas);
     this.context = this.canvas.getContext('2d');
     this.canvas.setAttribute('width', this.canvasWidth);
     this.canvas.setAttribute('height', this.canvasHeight);
     //detailed view
-    insertDOM('canvas', this.detailCanvasID, 'monitor', 'top: '+ ($('#DAQlinks').height() + 5) +'px;', this.monitorID, '', '')
+    injectDOM('canvas', this.detailCanvasID, this.monitorID, {'class':'monitor', 'style':'top: '+ ($('#DAQlinks').height() + 5) +'px;'});
     this.detailCanvas = document.getElementById(detailCanvas);
     this.detailContext = this.detailCanvas.getContext('2d');
     this.detailCanvas.setAttribute('width', this.canvasWidth);
     this.detailCanvas.setAttribute('height', this.canvasHeight);
     //Tooltip for summary level
-    insertDOM('canvas', this.TTcanvasID, 'monitor', 'top:' + ($('#DAQlinks').height()*1.25 + 5) +'px;', this.monitorID, '', '')
+    injectDOM('canvas', this.TTcanvasID, this.monitorID, {'class':'monitor', 'style':'top:' + ($('#DAQlinks').height()*1.25 + 5) +'px;'});
     this.TTcanvas = document.getElementById(this.TTcanvasID);
     this.TTcontext = this.TTcanvas.getContext('2d');
     this.TTcanvas.setAttribute('width', this.canvasWidth);
     this.TTcanvas.setAttribute('height', this.canvasHeight);    
     //hidden Tooltip map layer for detail
-    insertDOM('canvas', this.TTdetailCanvasID, 'monitor', 'top:' + ($('#DAQlinks').height()*1.25 + 5) +'px;', this.monitorID, '', '')    
+    injectDOM('canvas', this.TTdetailCanvasID, this.monitorID, {'class':'monitor', 'style':'top:' + ($('#DAQlinks').height()*1.25 + 5) +'px;'});
     this.TTdetailCanvas = document.getElementById(this.TTdetailCanvasID);
     this.TTdetailContext = this.TTdetailCanvas.getContext('2d');
     this.TTdetailCanvas.setAttribute('width', this.canvasWidth);
