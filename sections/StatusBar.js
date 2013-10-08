@@ -6,7 +6,7 @@ function StatusBar(wrapper){
 	var that = this;
 
     //header info
-    insertDOM('div', 'statusHeader', '', 'background:rgba(0,0,0,0.7); border: 5px solid; border-radius:10px; width:80%; margin-top:5%; margin-bottom:5%; margin-left:auto; margin-right:auto; padding-left:5%; padding-right:5%; transition:border-color 0.5s; -moz-transition:border-color 0.5s; -webkit-transition:border-color 0.5s;', this.wrapperID, '', '')
+    injectDOM('div', 'statusHeader', this.wrapperID, {});
 
     //deploy tooltip:
     //this.tooltip = new Tooltip('LeftSidebarBKG', 'leftSidebarTT', this.wrapperID, [], []);
@@ -21,24 +21,24 @@ function StatusBar(wrapper){
     //this.canvasHeight = document.getElementById('LeftSidebarBKG').height
 
     //experiment title
-    insertDOM('h2', this.titleID, '', 'margin-top:25px; font-family: "Orbitron", sans-serif;', 'statusHeader', '', '')
+    injectDOM('h2', this.titleID, 'statusHeader', {'style':'margin-top:25px; font-family: "Orbitron", sans-serif;'});
 
     //run info
-	insertDOM('p', this.runInfoID, '', 'position:relative; margin-top:10px; margin-left:auto; margin-right:auto; padding-left:5%; padding-right:5%; text-align:center; font-size:16px; width: 80%;', 'statusHeader', '', 'Run Info Unavailable in pre-2011 MIDAS');
+    injectDOM('p', this.runInfoID, 'statusHeader', {'innerHTML' : 'Run Info Unavailable in pre-2011 MIDAS'});
 
     //run control buttons
-    insertDOM('form', 'runControl', '', '', 'statusHeader', '', '');
-    insertDOM('input', 'startButton', 'navLink', '', 'runControl', '', '', 'cmd', 'submit', 'Start');
-    insertDOM('input', 'stopButton', 'navLink', '', 'runControl', '', '', 'cmd', 'submit', 'Stop');
-    insertDOM('input', 'pauseButton', 'navLink', '', 'runControl', '', '', 'cmd', 'submit', 'Pause');
-    insertDOM('input', 'resumeButton', 'navLink', '', 'runControl', '', '', 'cmd', 'submit', 'Resume');
-    insertDOM('input', 'redirKludge', '', '', 'runControl', '', '', 'redir', 'hidden', 'http://alphadon.triumf.ca:8082/CS/Dashboard');
+    injectDOM('form', 'runControl', 'statusHeader', {});
+    injectDOM('input', 'startButton', 'runControl', {'class':'navLink', 'name':'cmd', 'type':'submit', 'value':'Start'});
+    injectDOM('input', 'stopButton', 'runControl', {'class':'navLink', 'name':'cmd', 'type':'submit', 'value':'Stop'});
+    injectDOM('input', 'pauseButton', 'runControl', {'class':'navLink', 'name':'cmd', 'type':'submit', 'value':'Pause'});
+    injectDOM('input', 'resumeButton', 'runControl', {'class':'navLink', 'name':'cmd', 'type':'submit', 'value':'Resume'});
+    injectDOM('input', 'redirKludge', 'runControl', {'name':'redir', 'type':'hidden', 'value':'http://alphadon.triumf.ca:8082/CS/Dashboard'});
 
     //Alarm Service
     window.AlarmServices = new AlarmService('leftSidebar', 'leftSidebarDetail');
 
     //JSONP monitor
-    insertDOM('p', 'JSONPmonitor', '', 'width:80%; margin-left:auto; margin-right:auto; padding-left:5%; padding-right:5%; margin-top:5%;', this.wrapperID, '', '')
+    injectDOM('p', 'JSONPmonitor', this.wrapperID, {'style':'width:80%; margin-left:auto; margin-right:auto; padding-left:5%; padding-right:5%; margin-top:5%;'});
 
     if(!window.parameters.MIDASlegacyMode){
         //message service
@@ -66,11 +66,11 @@ function StatusBar(wrapper){
             }
         }
         */ //end message input///////////////////////////////////////////////////////////////
-        insertDOM('div', 'message0', 'messageServiceCell', 'background:#777777;', this.wrapperID, '');
-        insertDOM('div', 'message1', 'messageServiceCell', 'background:#333333;', this.wrapperID, '');
-        insertDOM('div', 'message2', 'messageServiceCell', 'background:#777777;', this.wrapperID, '');
-        insertDOM('div', 'message3', 'messageServiceCell', 'background:#333333;', this.wrapperID, '');
-        insertDOM('div', 'message4', 'messageServiceCell', 'background:#777777; margin-bottom:20px;', this.wrapperID, '');
+        injectDOM('div', 'message0', this.wrapperID, {'class':'messageServiceCell'});
+        injectDOM('div', 'message1', this.wrapperID, {'class':'messageServiceCell'});
+        injectDOM('div', 'message2', this.wrapperID, {'class':'messageServiceCell'});
+        injectDOM('div', 'message3', this.wrapperID, {'class':'messageServiceCell'});
+        injectDOM('div', 'message4', this.wrapperID, {'class':'messageServiceCell', 'style':'margin-bottom:20px;'});
     }
 
     this.update = function(){

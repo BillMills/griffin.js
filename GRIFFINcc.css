@@ -778,6 +778,42 @@ button#commitCycle{
 	-moz-animation-iteration-count: infinite;
 }
 
+#statusHeader{
+	background:rgba(0,0,0,0.7); 
+	border: 5px solid; 
+	border-radius:10px; 
+	width:80%; 
+	margin-top:5%; 
+	margin-bottom:5%; 
+	margin-left:auto; 
+	margin-right:auto; 
+	padding-left:5%; 
+	padding-right:5%; 
+	transition:border-color 0.5s; 
+	-moz-transition:border-color 0.5s; 
+	-webkit-transition:border-color 0.5s;
+}
+
+#runInfo{
+	position:relative; 
+	margin-top:10px; 
+	margin-left:auto; 
+	margin-right:auto; 
+	padding-left:5%; 
+	padding-right:5%; 
+	text-align:center; 
+	font-size:16px; 
+	width: 80%;
+}
+
+.LeftSidebar .messageServiceCell:nth-child(odd){
+	background-color: #777777;
+}
+
+.LeftSidebar .messageServiceCell:nth-child(even){
+	background-color: #333333;
+}
+
 :invalid{
 	color: #FF0000;
 	border: 2px solid #FF0000;
