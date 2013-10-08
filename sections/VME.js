@@ -12,13 +12,15 @@ function VME(){
 	this.wrapper = document.getElementById(this.wrapperID);
 
     //add top level nav button:
-    insertDOM('button', 'VMEButton', 'navLink', '', 'statusLink', function(){swapView('VMELinks', 'VMECanvas', 'VMEMenus', 'VMEButton');}, 'VME');
+    injectDOM('button', 'VMEButton', 'statusLink', {
+        'class' : 'navLink',
+        'innerHTML' : 'VME',
+        'onclick' : function(){swapView('VMELinks', 'VMECanvas', 'VMEMenus', 'VMEButton');}
+    });
 
     //deploy right bar menu:
     deployMenu('VMEMenus', ['VME'] , ['Crate Summary']);
     //insert a table and maybe some buttons into the right bar
-    //insertDOM('table', 'VMEContentTable', '', '', 'VMEContent', '', '');
-    //insertDOM('tr', '')
     string = '';
     string += '<h3 id="VMEContentTitle" style="text-align:center; margin-top:0px;">VME 0</h3>\n'
     string += '<table id="VMEContentTable">\n';
@@ -68,29 +70,43 @@ function VME(){
     string += '</table>\n';
     //string += '<button id="VMEContentPwrCycle" class="bigButton" style="margin-left:auto; margin-right:auto;" type="submit">Power Cycle</button>\n'
     document.getElementById('VMEContent').innerHTML = string;
-    insertDOM('button', 'VMEContentPwrCycle', 'bigButton', 'width:auto; height:auto; padding:0.5em; margin-top:1em;', 'VMEContent', function(){
-        confirm('Confirm VME Power Cycle', 'Confirming will power cycle VME ' + window.VMEpointer.activeElt.slice(3, window.VMEpointer.activeElt.length) + '; are you sure you want to do this?', powerCycleVME.bind(null,window.VMEpointer.activeElt))
-    }, 'Power Cycle', '', 'button');
+    injectDOM('button', 'VMEContentPwrCycle', 'VMEContent', {
+        'class' : 'bigButton',
+        'style' : 'width:auto; height:auto; padding:0.5em; margin-top:1em;',
+        'innerHTML' : 'Power Cycle',
+        'type' : 'button',
+        'onclick' : function(){
+            confirm('Confirm VME Power Cycle', 'Confirming will power cycle VME ' + window.VMEpointer.activeElt.slice(3, window.VMEpointer.activeElt.length) + '; are you sure you want to do this?', powerCycleVME.bind(null,window.VMEpointer.activeElt));
+        }
+    });
     document.getElementById('VMEContent').style.textAlign = 'center';
 
     //nav wrapper div
-    insertDOM('div', this.linkWrapperID, 'navPanel', 'text-align:center; width:50%; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;', this.wrapperID, '', '');
+    injectDOM('div', this.linkWrapperID, this.wrapperID, {
+        'class' : 'navPanel',
+        'style' : 'text-align:center; width:50%; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;'
+    });
     //nav header
-    insertDOM('h1', 'VMELinksBanner', 'navPanelHeader', 'float:left; margin-top:0px;', this.linkWrapperID, '', ODB.topLevel.expName+' VME Status');
+    injectDOM('h1', 'VMELinksBanner', this.linkWrapperID, {
+        'class':'navPanelHeader', 
+        'style':'float:left; margin-top:0px;',
+        'innerHTML':ODB.topLevel.expName+' VME Status'
+    });
 
     //the VME view is done entirely with dom elements; most convenient to extend the central div to accommodate.
     cellSize = document.getElementById(this.linkWrapperID).offsetWidth / 100;
     //VME divs
-    insertDOM('div', 'VMEWrapper', '', 'clear:left;', this.linkWrapperID, '', '');
+    injectDOM('div', 'VMEWrapper', this.linkWrapperID, {'style':'clear:left;'});
     for(i=0; i<window.parameters.nVME; i++){
         VMEStyle = 'display:inline-block; margin-left:'+(2*cellSize)+'px; margin-right:'+(2*cellSize)+'px; margin-bottom:'+2*cellSize+'px; margin-top:'+2*cellSize+'px;'
-        insertDOM('div', 'VME'+i, 'VME', VMEStyle , 'VMEWrapper', function(){showVME(this.id)}, '');
-        insertDOM('div', 'VME'+i+'title', '', '', 'VME'+i, '', 'VME '+i);
-        if(i%4==3) insertDOM('br', 'break', '', '', 'VMEWrapper');
+        injectDOM('div', 'VME'+i, 'VMEWrapper', {'class':'VME', 'style':VMEStyle, 'onclick':function(){showVME(this.id)}});
+        injectDOM('div', 'VME'+i+'title', 'VME'+i, {'innerHTML':'VME'+i});
+        if(i%4==3)
+            injectDOM('br', 'break', 'VMEWrapper', {});
     }
 
 	//deploy a canvas for the clock view; this is actually just a dummy to stay consistent with all the other views, so we can use the same transition functions easily.
-    insertDOM('canvas', this.canvasID, 'monitor', 'top:' + ($('#VMELinks').height() + 5) +'px;', this.wrapperID, '', '');
+    injectDOM('canvas', this.canvasID, this.wrapperID, {'class':'monitor', 'style':'top:' + ($('#VMELinks').height() + 5) +'px;'});
 
     this.update = function(){
 
