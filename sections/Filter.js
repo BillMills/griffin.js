@@ -17,26 +17,31 @@ function Filter(){
 	this.wrapper = document.getElementById(this.wrapperID);
 
     //add top level nav button:
-    insertDOM('button', 'FilterButton', 'navLink', '', 'statusLink', function(){swapView('FilterLinks', 'FilterCanvas', 'FilterSidebar', 'FilterButton')}, 'Filter', '', 'button')
+    injectDOM('button', 'FilterButton', 'statusLink', {
+        'class' : 'navLink',
+        'innerHTML' : 'Filter',
+        'type' : 'button',
+        'onclick' : function(){swapView('FilterLinks', 'FilterCanvas', 'FilterSidebar', 'FilterButton')}
+    });
 
     //nav wrapper div
-    insertDOM('div', this.linkWrapperID, 'navPanel', '', this.wrapperID, '', '')
+    injectDOM('div', this.linkWrapperID, this.wrapperID, {'class':'navPanel'});
     //nav header
-    insertDOM('h1', 'FilterLinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', ODB.topLevel.expName+' Filter Status')
-    insertDOM('br', 'break', '', '', this.linkWrapperID, '', '')
+    injectDOM('h1', 'FilterLinksBanner', this.linkWrapperID, {'class':'navPanelHeader', 'innerHTML':ODB.topLevel.expName+' Filter Status'});
+    injectDOM('br', 'break', this.linkWrapperID, {});
 
 	//deploy a canvas for the filter view:
     this.canvasWidth = 0.48*$(this.wrapper).width();
     this.canvasHeight = 1*$(this.wrapper).height();
 
-    insertDOM('canvas', this.canvasID, 'monitor', 'top:' + ($('#FilterLinks').height() + 5) +'px;', this.wrapperID, '', '')
+    injectDOM('canvas', this.canvasID, this.wrapperID, {'class':'monitor', 'style':'top:' + ($('#FilterLinks').height() + 5) +'px;'});
     this.canvas = document.getElementById('FilterCanvas');
     this.context = this.canvas.getContext('2d');
     this.canvas.setAttribute('width', this.canvasWidth);
     this.canvas.setAttribute('height', this.canvasHeight);
 
     //and the tt layer:
-    insertDOM('canvas', this.TTcanvasID, 'monitor', 'top:' + ($('#FilterLinks').height() + 5) +'px;', this.wrapperID, '', '')
+    injectDOM('canvas', this.TTcanvasID, this.wrapperID, {'class':'monitor', 'style':'top:' + ($('#FilterLinks').height() + 5) +'px;'});
     this.TTcanvas = document.getElementById('TTfilterCanvas');
     this.TTcontext = this.TTcanvas.getContext('2d');
     this.TTcanvas.setAttribute('width', this.canvasWidth);
@@ -60,14 +65,19 @@ function Filter(){
                             };
 
     //right sidebar
-    insertDOM('div', this.sidebarID, 'collapsableSidebar', 'float:right; height:80%;', this.wrapperID, '', '')
+    injectDOM('div', this.sidebarID, this.wrapperID, {'class':'collapsableSidebar', 'style':'float:right; height:80%;'});
     //deploy right bar menu:
     deployMenu(this.sidebarID, ['detail'] , ['Filter Detail'] );
     //start with menu open:
     document.getElementById('detailarrow').onclick();
 
     //edit filter button
-    insertDOM('input', 'detailContentEditFilters', 'bigButton', 'width:auto; height:auto; padding:0.5em; margin:1em', 'detailContent', '', '', '', 'button', 'Edit Filters');
+    injectDOM('input', 'detailContentEditFilters', 'detailContent', {
+        'class' : 'bigButton',
+        'style' : 'width:auto; height:auto; padding:0.5em; margin:1em',
+        'type' : 'button',
+        'value' : 'Edit Filters'
+    });
     document.getElementById('detailContentEditFilters').onclick = function(){
         swapView('editFilterLinks', 'editFilterCanvas', 'editFilterSidebar', 'FilterButton')
     }
@@ -283,22 +293,22 @@ function Filter(){
     this.populateSidebar = function(cell){
         //Input Link
         if(cell==0){
-            insertDOM('p', 'detailContentMessage', '', '', 'detailContent', '', 'Input Link');
+            injectDOM('p', 'detailContentMessage', 'detailContent', {'innerHTML':'Input Link'});
         //Short Term Buffer
         } else if(cell==1){
-            insertDOM('p', 'detailContentMessage', '', '', 'detailContent', '', 'Short-Term Buffer');
+            injectDOM('p', 'detailContentMessage', 'detailContent', {'innerHTML':'Short-Term Buffer'});
         //Raw Data
         } else if(cell==2){
-            insertDOM('p', 'detailContentMessage', '', '', 'detailContent', '', 'Raw Data');
+            injectDOM('p', 'detailContentMessage', 'detailContent', {'innerHTML':'Raw Data'});
         //Filter Core
         } else if(cell==3){
-            insertDOM('p', 'detailContentMessage', '', '', 'detailContent', '', 'Filter Core');
+            injectDOM('p', 'detailContentMessage', 'detailContent', {'innerHTML':'Filter Core'});
         //Long Term Buffer
         } else if(cell==4){
-            insertDOM('p', 'detailContentMessage', '', '', 'detailContent', '', 'Long-Term Buffer');
+            injectDOM('p', 'detailContentMessage', 'detailContent', {'innerHTML':'Long-Term Buffer'});
         //Computer Link
         } else if(cell==5){
-            insertDOM('p', 'detailContentMessage', '', '', 'detailContent', '', 'Computer Link');
+            injectDOM('p', 'detailContentMessage', 'detailContent', {'innerHTML':'Computer Link'});
         }
     };
 
@@ -342,81 +352,110 @@ function editFilter(filterSystems, filterSystemsNames){
     }
 
     //nav wrapper div
-    insertDOM('div', this.linkWrapperID, 'navPanel', '', this.wrapperID, '', '')
+    injectDOM('div', this.linkWrapperID, this.wrapperID, {'class':'navPanel'});
     //nav header
-    insertDOM('h1', 'editFilterLinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', 'Edit Filter')
-    insertDOM('br', 'break', '', '', this.linkWrapperID, '', '')
+    injectDOM('h1', 'editFilterLinksBanner', this.linkWrapperID, {'class':'navPanelHeader', 'innerHTML':'Edit Filter'});
+    injectDOM('br', 'break', this.linkWrapperID, {});
     //nav buttons
-    insertDOM('button', 'commitFilter', 'navLink', '', this.linkWrapperID, function(){buildFilter()}, 'Commit Filter and Return', '', 'button');
-    insertDOM('button', 'abortFilter', 'navLink', '', this.linkWrapperID, function(){}, 'Abandon Changes and Return', '', 'button');
-    insertDOM('button', 'resetFilter', 'navLink', '', this.linkWrapperID, function(){}, 'Start Over', '', 'button');
-    insertDOM('br', 'break', '', '', this.linkWrapperID);
-    insertDOM('label', 'filterNameLabel', '', 'margin-left:10px;', this.linkWrapperID, '', 'Name this Filter: ');
-    insertDOM('input', 'filterName', '', '', this.linkWrapperID, '', '', '', 'text', 'newFilter');
-    document.getElementById('filterNameLabel').setAttribute('for', 'filterName');
-    insertDOM('button', 'saveFilter', 'navLink', '', this.linkWrapperID, saveFilter, 'Save Filter Definition', '', 'button');
-    insertDOM('br', 'break', '', '', this.linkWrapperID);
-    insertDOM('label', 'loadFilterLabel', '', 'margin-left:10px;', this.linkWrapperID, '', 'Load Filter: ');
-    insertDOM('select', 'filterOptions', '', '', this.linkWrapperID, '', '');
+    injectDOM('button', 'commitFilter', this.linkWrapperID, {
+        'class' : 'navLink',
+        'innerHTML' : 'Commit Filter and Return',
+        'type' : 'button',
+        'onclick' : function(){buildFilter()}
+    });
+    injectDOM('button', 'abortFilter', this.linkWrapperID, {
+        'class' : 'navLink',
+        'innerHTML' : 'Abandon Changes and Return',
+        'type' : 'button',
+        'onclick' : function(){}
+    });
+    injectDOM('button', 'resetFilter', this.linkWrapperID, {
+        'class' : 'navLink',
+        'innerHTML' : 'Start Over',
+        'type' : 'button',
+        'onclick' : function(){}
+    });
+    injectDOM('br', 'break', this.linkWrapperID, {});
+    injectDOM('label', 'filterNameLabel', this.linkWrapperID, {'style' : 'margin-left:10px;', 'innerHTML' : 'Name this Filter: ', 'for':'filterName'});
+    injectDOM('input', 'filterName', this.linkWrapperID, {'type':'text', 'value':'newFilter'});
+    injectDOM('button', 'saveFilter', this.linkWrapperID, {
+        'class' : 'navLink',
+        'innerHTML' : 'Save Filter Definition',
+        'type' : 'button',
+        'onclick' : saveFilter
+    });
+    injectDOM('br', 'break', this.linkWrapperID, {});
+    injectDOM('label', 'loadFilterLabel', this.linkWrapperID, {'style':'margin-left:10px;', 'innerHTML':'Load Filter: '});
+    injectDOM('select', 'filterOptions', this.linkWrapperID, {});
     document.getElementById('loadFilterLabel').setAttribute('for', 'filterOptions');
     loadOptions(ODB.Filters, 'filterOptions');
-    insertDOM('button', 'loadFilter', 'navLink', '', this.linkWrapperID, loadCycle.bind(null), 'Load', '', 'button');
-    insertDOM('button', 'deleteFilter', 'navLink', '', this.linkWrapperID, function(){
-        var i, name,
-            dropdown = document.getElementById('filterOptions'),
-            filterIndex = parseInt(dropdown.value, 10);
+    injectDOM('button', 'loadFilter', this.linkWrapperID, {'class':'navLink', 'innerHTML':'Load', 'type':'button'});
+    injectDOM('button', 'deleteFilter', this.linkWrapperID, {
+        'class' : 'navLink',
+        'innerHTML' : 'Delete',
+        'type' : 'button',
+        'onclick' : function(){
+            var i, name,
+                dropdown = document.getElementById('filterOptions'),
+                filterIndex = parseInt(dropdown.value, 10);
 
-        for(i=0; i<dropdown.childNodes.length; i++){
-            if(dropdown.childNodes[i].value == filterIndex){
-                name = dropdown.childNodes[i].innerHTML;
-            }            
+            for(i=0; i<dropdown.childNodes.length; i++){
+                if(dropdown.childNodes[i].value == filterIndex){
+                    name = dropdown.childNodes[i].innerHTML;
+                }            
+            }
+            confirm('Delete Filter Definition', 'Do you really want to delete '+name+'?', deleteOption.bind(null, '/DashboardConfig/Filters/', 'filterOptions'))
         }
-        confirm('Delete Filter Definition', 'Do you really want to delete '+name+'?', deleteOption.bind(null, '/DashboardConfig/Filters/', 'filterOptions'))
-    }, 'Delete', '', 'button');
-    insertDOM('br', 'break', '', '', this.linkWrapperID);
+    });
+    injectDOM('br', 'break', this.linkWrapperID, {});
 
     //div structure for drag and drop area: right panel for detector palete, gutter for tree lines and main area for trigger groups:
-    insertDOM('div', 'editFilterWrapper', '', 'width:'+0.48*$(this.wrapper).width()+'px; display:inline-block; margin-top:1em', this.linkWrapperID, '', '');
-    insertDOM('div', 'filterWrap', '', 'float:left; width:79%', 'editFilterWrapper', '', '');  //79 kind of kludgy, to accommodate margins.
-    insertDOM('div', 'treeGutter', '', 'float:left; width:10%; text-align:center;', 'filterWrap', '', '');
-    insertDOM('div', 'treeBlockX', '', 'border-bottom: 5px solid #999999; height:20px;', 'treeGutter', '', ''); //top block in tree gutter provides the first branch
-    insertDOM('div', 'filterCons', '', 'float:left; width:69%', 'filterWrap', '', '');
+    injectDOM('div', 'editFilterWrapper', this.linkWrapperID, {'style':'width:'+0.48*$(this.wrapper).width()+'px; display:inline-block; margin-top:1em'});
+    injectDOM('div', 'filterWrap', 'editFilterWrapper', {'style':'float:left; width:79%'}); //79 kind of kludgy, to accommodate margins.
+    injectDOM('div', 'treeGutter', 'filterWrap', {'style':'float:left; width:10%; text-align:center;'});
+    injectDOM('div', 'treeBlockX', 'treeGutter', {'style':'border-bottom: 5px solid #999999; height:20px;'});  //top block in tree gutter provides the first branch
+    injectDOM('div', 'filterCons', 'filterWrap', {'style':'float:left; width:69%'});
     deployEmptyFilterCondition();
-    insertDOM('div', 'filterPalete', 'filterDiv', 'width:20%; float:right; text-align:center; padding-top:1em; max-height:500px; overflow:scroll;', 'editFilterWrapper', '', '');
-    insertDOM('button', 'newFilterCon', 'addButton', '', 'treeGutter', function(){deployEmptyFilterCondition()}, '+', '', 'button' );
+    injectDOM('div', 'filterPalete', 'editFilterWrapper', {
+        'class' : 'filterDiv',
+        'style' : 'width:20%; float:right; text-align:center; padding-top:1em; max-height:500px; overflow:scroll;',
+    });
+    injectDOM('button', 'newFilterCon', 'treeGutter', {
+        'class' : 'addButton',
+        'innerHTML' : '+',
+        'type' : 'button',
+        'onclick' : function(){deployEmptyFilterCondition()}
+    });
 
     //deploy a dummy canvas for the filter view:
     this.canvasWidth = 0// 0.48*$(this.wrapper).width();
     this.canvasHeight = 0 //1*$(this.wrapper).height();
-    insertDOM('canvas', this.canvasID, 'monitor', 'top:' + ($('#editFilterLinks').height() + 5) +'px;', this.wrapperID, '', '')
+    injectDOM('canvas', this.canvasID, this.wrapperID, {'class':'monitor', 'style':'top:' + ($('#editFilterLinks').height() + 5) +'px;'});
     this.canvas = document.getElementById('editFilterCanvas');
     this.context = this.canvas.getContext('2d');
     this.canvas.setAttribute('width', this.canvasWidth);
     this.canvas.setAttribute('height', this.canvasHeight);
 
     //right sidebar
-    insertDOM('div', this.sidebarID, 'collapsableSidebar', 'float:right; height:80%;', this.wrapperID, '', '')
+    injectDOM('div', this.sidebarID, this.wrapperID, {'class':'collapsableSidebar', 'style':'float:right; height:80%;'});
     //deploy right bar menu:
     deployMenu(this.sidebarID, this.filterSystems, this.filterSystemsNames);    
 
     //inject inputs into filterable subsystem tabs:
     for(i=0; i<this.filterSystemsNames.length; i++){
         //prescale input + label
-        insertDOM('input', this.filterSystems[i]+'ContentPS', '', '', this.filterSystems[i]+'Content', '', '', '', 'number');
-        insertDOM('label', this.filterSystems[i]+'ContentPSlabel', '', '', this.filterSystems[i]+'Content', '', 'Prescale Factor');
-        document.getElementById(this.filterSystems[i]+'ContentPSlabel').setAttribute('for', this.filterSystems[i]+'ContentPS');
-        insertDOM('br', 'break', '', '', this.filterSystems[i]+'Content');
+        injectDOM('input', this.filterSystems[i]+'ContentPS', this.filterSystems[i]+'Content', {'type':'number'});
+        injectDOM('label', this.filterSystems[i]+'ContentPSlabel', this.filterSystems[i]+'Content', {'innerHTML':'Prescale Factor', 'for':this.filterSystems[i]+'ContentPS'});
+        injectDOM('br', 'break', this.filterSystems[i]+'Content', {});
 
         //coinc multiplicity input + label
-        insertDOM('input', this.filterSystems[i]+'ContentMulti', '', '', this.filterSystems[i]+'Content', '', '', '', 'number');
-        insertDOM('label', this.filterSystems[i]+'ContentMultiLabel', '', '', this.filterSystems[i]+'Content', '', 'Coinc. Multiplicity');
-        document.getElementById(this.filterSystems[i]+'ContentMultiLabel').setAttribute('for', this.filterSystems[i]+'ContentMulti');
-        insertDOM('br', 'break', '', '', this.filterSystems[i]+'Content');
+        injectDOM('input', this.filterSystems[i]+'ContentMulti', this.filterSystems[i]+'Content', {'type':'number'});
+        injectDOM('label', this.filterSystems[i]+'ContentMultilabel', this.filterSystems[i]+'Content', {'innerHTML':'Coinc. Multiplicity', 'for':this.filterSystems[i]+'ContentMulti'});
+        injectDOM('br', 'break', this.filterSystems[i]+'Content', {});
 
         //prescale input + label
-        insertDOM('input', this.filterSystems[i]+'ContentCoincWindow', '', '', this.filterSystems[i]+'Content', '', '', '', 'number');
-        insertDOM('label', this.filterSystems[i]+'ContentCoincWindowLabel', '', '', this.filterSystems[i]+'Content', '', 'Coinc. Window [ns]');
-        document.getElementById(this.filterSystems[i]+'ContentCoincWindowLabel').setAttribute('for', this.filterSystems[i]+'ContentCoincWindow');
+        injectDOM('input', this.filterSystems[i]+'ContentCoincWindow', this.filterSystems[i]+'Content', {'type':'number'});
+        injectDOM('label', this.filterSystems[i]+'ContentCoincWindowLabel', this.filterSystems[i]+'Content', {'innerHTML':'Coinc. Window [ns]', 'for':this.filterSystems[i]+'ContentCoincWindow'});
     }
 
     //inject detector options into palete
@@ -506,7 +545,7 @@ function deployBadgeCanvas(width, height, id, wrapperID, paintThumb, thumbArgs, 
     //bail out if canvas already exists:
     if(document.getElementById(id+wrapperID)) return;
 
-    insertDOM('canvas', id+wrapperID, '', 'width:'+this.badgeWidth+'px; height:'+this.badgeHeight+'px;', wrapperID, '', '');
+    injectDOM('canvas', id+wrapperID, wrapperID, {'style':'width:'+this.badgeWidth+'px; height:'+this.badgeHeight+'px;'});
     canvas = document.getElementById(id+wrapperID);
     context = canvas.getContext('2d');
     canvas.setAttribute('width', width);
@@ -556,7 +595,7 @@ function deployBadgeCanvas(width, height, id, wrapperID, paintThumb, thumbArgs, 
 
 //create the full badge for the filter divs
 function deployFilterBadge(id, wrapperID, createCanvas){
-    insertDOM('div', id+wrapperID, 'filterBadge', '', wrapperID, '', '');
+    injectDOM('div', id+wrapperID, wrapperID, {'class':'filterBadge'});
     document.getElementById(id+wrapperID).filterTag = filterTag(id.slice(0, id.indexOf('filterBadge')));
     createCanvas();
     createOptionScroll(id+wrapperID, id+wrapperID+'scroll', ['Singles', 'Coincidence', 'Prescaled'], document.getElementById(id+wrapperID).offsetWidth);
@@ -629,9 +668,9 @@ function deployEmptyFilterCondition(){
         var bottomFilterConID = window.filterEditPointer.filterConPresent[window.filterEditPointer.filterConPresent.length-1];
 
         //inject a new filter group:
-        insertDOM('div', 'filterGroup'+window.filterEditPointer.filterConIndex, 'filterCon', '', 'filterCons', '', '');
+        injectDOM('div', 'filterGroup'+window.filterEditPointer.filterConIndex, 'filterCons', {'class':'filterCon'});
         //inject a new tree gutter:
-        insertDOM('div', 'treeBlock'+window.filterEditPointer.filterConIndex, 'treeGutter', 'display:none;', 'treeGutter', '', '');
+        injectDOM('div', 'treeBlock'+window.filterEditPointer.filterConIndex, 'treeGutter', {'class':'treeGutter', 'style':'display:none;'});
         //make sure the tree gutter comes above the new button:
         document.getElementById('treeGutter').insertBefore(document.getElementById('treeBlock'+window.filterEditPointer.filterConIndex), document.getElementById('newFilterCon'))
         //resize the previous tree gutter and reveal it to connect it to the tree:
@@ -641,24 +680,28 @@ function deployEmptyFilterCondition(){
         }
 
         //off button
-        insertDOM('button', 'deleteFilterCon'+window.filterEditPointer.filterConIndex, 'deleteButton', '', 'filterGroup'+window.filterEditPointer.filterConIndex, function(){
-            //refuse if this is the last condition:
-            if(window.filterEditPointer.filterConPresent.length<2)
-                return;
-            //delete elements
-            var index = parseInt(this.id.slice(15, this.id.length), 10),
-                treeGutter = document.getElementById('treeBlock'+index); 
-                element = document.getElementById(this.id);
-            treeGutter.parentNode.removeChild(treeGutter);
-            element.parentNode.parentNode.removeChild(element.parentNode);
-            //need to remove this group's index from filterConPresent
-            window.filterEditPointer.filterConPresent.splice(window.filterEditPointer.filterConPresent.indexOf(index), 1);
-            //hide previous tree gutter
-            document.getElementById('treeBlock'+window.filterEditPointer.filterConPresent[window.filterEditPointer.filterConPresent.length-1]).style.display = 'none';
-        }, String.fromCharCode(0x2573), '', 'button');
+        injectDOM('button', 'deleteFilterCon'+window.filterEditPointer.filterConIndex, 'filterGroup'+window.filterEditPointer.filterConIndex, {
+            'class' : 'deleteButton',
+            'innerHTML' : String.fromCharCode(0x2573),
+            'type' : 'button',
+            'onclick' : function(){
+                //refuse if this is the last condition:
+                if(window.filterEditPointer.filterConPresent.length<2)
+                    return;
+                //delete elements
+                var index = parseInt(this.id.slice(15, this.id.length), 10),
+                    treeGutter = document.getElementById('treeBlock'+index); 
+                    element = document.getElementById(this.id);
+                treeGutter.parentNode.removeChild(treeGutter);
+                element.parentNode.parentNode.removeChild(element.parentNode);
+                //need to remove this group's index from filterConPresent
+                window.filterEditPointer.filterConPresent.splice(window.filterEditPointer.filterConPresent.indexOf(index), 1);
+                //hide previous tree gutter
+                document.getElementById('treeBlock'+window.filterEditPointer.filterConPresent[window.filterEditPointer.filterConPresent.length-1]).style.display = 'none';
+            }
+        });
         //content block
-        insertDOM('div', 'filterGroupContent'+window.filterEditPointer.filterConIndex, '', '', 'filterGroup'+window.filterEditPointer.filterConIndex, '', window.filterEditPointer.newFilterMessage)
-
+        injectDOM('div', 'filterGroupContent'+window.filterEditPointer.filterConIndex, 'filterGroup'+window.filterEditPointer.filterConIndex, {'innerHTML':window.filterEditPointer.newFilterMessage});
         //prepare filter groups to accept new elements:
         document.getElementById('filterGroupContent'+window.filterEditPointer.filterConIndex).addEventListener('dragover', dragOver, false);
         document.getElementById('filterGroupContent'+window.filterEditPointer.filterConIndex).addEventListener('drop', handleDrop, false);
