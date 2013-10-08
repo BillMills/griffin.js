@@ -9,7 +9,7 @@ function Tooltip(ttCanvasID, ttDivID, wrapperID, prefix, postfix){
 
     //inject the necessary DOM elements for this tooltip:
     //wrapper div
-    insertDOM('div', this.ttDivID, 'tooltip', '', 'body', '', '')
+    injectDOM('div', this.ttDivID, 'body', {'class':'tooltip'});
 
     this.canvas = document.getElementById(this.canvasID);
     this.context = this.canvas.getContext('2d'); 
