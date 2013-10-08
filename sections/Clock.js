@@ -15,30 +15,41 @@ function Clock(){
 	this.wrapper = document.getElementById(this.wrapperID);
 
     //add top level nav button:
-    insertDOM('button', 'ClockButton', 'navLink', '', 'statusLink', function(){swapView('ClockLinks', 'ClockCanvas', 'clockMenus', 'ClockButton');}, 'Clock');
+    injectDOM('button', 'ClockButton', 'statusLink', {
+        'class' : 'navLink',
+        'onclick' : function(){swapView('ClockLinks', 'ClockCanvas', 'clockMenus', 'ClockButton');},
+        'innerHTML' : 'Clock'
+    });
 
     //deploy right bar menu:
     deployMenu('clockMenus', ['summary', 'outs', 'CSAC'] , ['Clock Summary','Channel Outs','CSAC Parameters']);
     //inject table into div for summary tab:
-    insertDOM('table', 'summaryContentTable', 'sidebarTable', '', 'summaryContent', '', '');
+    injectDOM('table', 'summaryContentTable', 'summaryContent', {'class' : 'sidebarTable'});
     for(i=1; i<9; i++){
         label = window.parameters.clockVariableNames[i];
-        insertDOM('tr', 'summaryContentRow'+i, '', '', 'summaryContentTable', '', '');
-        insertDOM('td', 'clockSummaryLabel'+i, '', '', 'summaryContentRow'+i, '', label);
-        insertDOM('td', 'clockSummaryValue'+i, (i==4) ? 'summaryContentCell' : '', '', 'summaryContentRow'+i, '', '');
+        injectDOM('tr', 'summaryContentRow'+i, 'summaryContentTable', {});
+        injectDOM('td', 'clockSummaryLabel'+i, 'summaryContentRow'+i, {'innerHTML' : label});
+        injectDOM('td', 'clockSummaryValue'+i, 'summaryContentRow'+i, {'class' : (i==4) ? 'summaryContentCell' : ''});
     }    
     //inject table for CSAC tab:
-    insertDOM('table', 'CSACContentTable', 'sidebarTable', '', 'CSACContent', '', '');
+    injectDOM('table', 'CSACContentTable', 'CSACContent', {'class' : 'sidebarTable'});
     for(i=41; i<52; i++){
         label = window.parameters.clockVariableNames[i];
-        insertDOM('tr', 'CSACContentRow'+i, '', '', 'CSACContentTable', '', '');
-        insertDOM('td', 'clockCSACLabel'+i, '', '', 'CSACContentRow'+i, '', label);
-        insertDOM('td', 'clockCSACValue'+i, '', '', 'CSACContentRow'+i, '', '');
+        injectDOM('tr', 'CSACContentRow'+i, 'CSACContentTable', {});
+        injectDOM('td', 'clockCSACLabel'+i, 'CSACContentRow'+i, {'innerHTML' : label});
+        injectDOM('td', 'clockCSACValue'+i, 'CSACContentRow'+i, {});
     }
     //Channel outs packed as 8 badges, with master step down slider at the top:
-    insertDOM('div', 'outsContentmasterStepdownSliderDiv', '', 'display:block;', 'outsContent', '', 'Master Output Freq.<br>');
-    insertDOM('input', 'outsContentmasterStepdownSlider', '', '', 'outsContentmasterStepdownSliderDiv', '', '', '', 'range');
-    insertDOM('label', 'outsContentLabel', '', 'padding-left:0.5em;', 'outsContentmasterStepdownSliderDiv', '', ' MHz');
+    injectDOM('div', 'outsContentmasterStepdownSliderDiv', 'outsContent', {
+        'style' : 'display:block;',
+        'innerHTML' : 'Master Output Freq.<br>'
+    });
+    injectDOM('input', 'outsContentmasterStepdownSlider', 'outsContentmasterStepdownSliderDiv', {'type' : 'range'});
+    injectDOM('label', 'outsContentLabel', 'outsContentmasterStepdownSliderDiv', {
+        'style' : 'padding-left:0.5em;',
+        'innerHTML' : ' MHz'
+    });
+
     document.getElementById('outsContentLabel').setAttribute('for', 'outsContentmasterStepdownSlider');
     document.getElementById('outsContentmasterStepdownSlider').setAttribute('min', 1); 
     document.getElementById('outsContentmasterStepdownSlider').setAttribute('max', 10);
@@ -67,42 +78,56 @@ function Clock(){
         window.localODB[window.clockPointer.activeElt] = masterConfig;
     };
     for(i=0; i<8; i++){
-        insertDOM('div', 'outsContentBadge'+i, 'clockOutputBadge', '', 'outsContent', '', this.channelTitles[i]+'<br>');
-
+        injectDOM('div', 'outsContentBadge'+i, 'outsContent', {'class':'clockOutputBadge', 'innerHTML':this.channelTitles[i]+'<br>'});
         //power toggles, don't apply to ch. 5 and 6 (LEMO)
         if(i!=6 && i!=7)
             toggleSwitch('outsContentBadge'+i, 'ch'+i+'Toggle', 'off', 'on', 'on', enableChannel.bind(null,i), disableChannel.bind(null,i), 0);
-        //insertDOM('br', 'break', '', '', 'outsContentBadge'+i);
 
         //output frequency report
-        insertDOM('p', 'frequencyOut'+i, '', 'margins:0px; margin-top:1em;', 'outsContentBadge'+i, '', '');
+        injectDOM('p', 'frequencyOut'+i, 'outsContentBadge'+i, {'style':'margins:0px; margin-top:1em;'});
 
         //bypass reporting:
-        insertDOM('p', 'bypassReport'+i, '', 'margin:0px; margin-top:1em', 'outsContentBadge'+i, '', '');
+        injectDOM('p', 'bypassReport'+i, 'outsContentBadge'+i, {'style':'margin:0px; margin-top:1em'})
 
-        if(i%2==1) insertDOM('br', 'break', '', '', 'outsContent');
+        if(i%2==1)
+            injectDOM('br', 'break', 'outsContent', {});
     }
     document.getElementById('outsContentmasterStepdownSlider').onchange();
 
     //nav wrapper div
-    insertDOM('div', this.linkWrapperID, 'navPanel', 'text-align:center; width:50%; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;', this.wrapperID, '', '');
+    injectDOM('div', this.linkWrapperID, this.wrapperID, {
+        'class' : 'navPanel',
+        'style' : 'text-align:center; width:50%; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;'
+    })
     //nav header
-    insertDOM('h1', 'ClockLinksBanner', 'navPanelHeader', 'float:left; margin-top:0px;', this.linkWrapperID, '', ODB.topLevel.expName+' Clock Status');
+    injectDOM('h1', 'ClockLinksBanner', this.linkWrapperID, {
+        'class' : 'navPanelHeader',
+        'style' : 'float:left; margin-top:0px;',
+        'innerHTML' : ODB.topLevel.expName+' Clock Status'
+    });
 
     //the clock view is done entirely with dom elements; most convenient to extend the central div to accommodate.
     cellSize = document.getElementById(this.linkWrapperID).offsetWidth / 100;
     //clock divs
-    insertDOM('div', 'clockWrapper', '', 'clear:left;', this.linkWrapperID, '', '');
+    injectDOM('div', 'clockWrapper', this.linkWrapperID, {'style' : 'clear:left'});
     for(i=0; i<window.parameters.nClocks; i++){
         clockStyle = 'display:inline-block; margin-left:'+(2*cellSize)+'px; margin-right:'+(2*cellSize)+'px; margin-bottom:'+2*cellSize+'px; margin-top:'+2*cellSize+'px;'
-        insertDOM('div', 'clock'+i, 'clock', clockStyle , 'clockWrapper', function(){showClock(this.id)}, '');
-        insertDOM('div', 'clock'+i+'title', '', '', 'clock'+i, '', 'GRIF-Clk '+i);
+        injectDOM('div', 'clock'+i, 'clockWrapper', {
+            'class' : 'clock',
+            'style' : clockStyle,
+            'onclick' : function(){showClock(this.id)}
+        });
+        injectDOM('div', 'clock'+i+'title', 'clock'+i, {'innerHTML':'GRIF-Clk'+i});
         toggleSwitch('clock'+i, 'clock'+i+'Toggle', '', 'Master', 'Slave', setMaster.bind(null,i), setSlave.bind(null,i), parseInt(window.localODB['clock'+i][1],10));
-        if(i%5==4) insertDOM('br', 'break', '', '', 'clockWrapper');
+        if(i%5==4)
+            injectDOM('br', 'break', 'clockWrapper', {});
     }
 
 	//deploy a canvas for the clock view; this is actually just a dummy to stay consistent with all the other views, so we can use the same transition functions easily.
-    insertDOM('canvas', this.canvasID, 'monitor', 'top:' + ($('#ClockLinks').height() + 5) +'px;', this.wrapperID, '', '');
+    injectDOM('canvas', this.canvasID, this.wrapperID, {
+        'class' : 'monitor',
+        'style' : 'top:' + ($('#ClockLinks').height() + 5) +'px;'
+    });
 
     //update the text & alarms for each clock
     this.update = function(){
