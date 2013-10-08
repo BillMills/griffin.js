@@ -105,21 +105,26 @@ function Dashboard(){
     deployMenu(this.sidebarID, subsPresent , subsNames);
 
     //add top level nav button:
-    insertDOM('button', 'DashboardButton', 'navLinkDown', '', 'statusLink', function(){swapView('DashboardLinks', 'DashboardCanvas', 'dashboardMenus', 'DashboardButton'); rePaint();}, 'Dashboard', '', 'button')
+    injectDOM('button', 'DashboardButton', 'statusLink', {
+        'class' : 'navLinkDown',
+        'innerHTML' : 'Dashboard',
+        'type' : 'button',
+        'onclick' : function(){swapView('DashboardLinks', 'DashboardCanvas', 'dashboardMenus', 'DashboardButton'); rePaint();}
+    });
 
     //nav wrapper div
-    insertDOM('div', this.linkWrapperID, 'navPanel', '', this.wrapperID, '', '')
+    injectDOM('div', this.linkWrapperID, this.wrapperID, {'class':'navPanel'});
     //dashboard is the initial view, put the navbar on top:
     document.getElementById(this.linkWrapperID).setAttribute('style', 'z-index:1; opacity:1;')
 
     //nav header
-    insertDOM('h1', 'DashboardLinksBanner', 'navPanelHeader', '', this.linkWrapperID, '', ODB.topLevel.expName+' Dashboard')
-    insertDOM('br', 'break', '', '', this.linkWrapperID, '', '')
+    injectDOM('h1', 'DashboardLinksBanner', this.linkWrapperID, {'class':'navPanelHeader', 'innerHTML':ODB.topLevel.expName+' Dashboard'});
+    injectDOM('br', 'break', this.linkWrapperID, {});
 
 	//deploy a canvas for the dashboard view:
     this.canvasWidth = 0.48*$(this.wrapper).width();
     this.canvasHeight = 0.9*$(this.wrapper).height();
-    insertDOM('canvas', this.canvasID, 'monitor', 'position:absolute; left:24%; top:' + ($('#DashboardLinks').height() + 5) +'px;', this.wrapperID, '', '')
+    injectDOM('canvas', this.canvasID, this.wrapperID, {'class':'monitor', 'style':'position:absolute; left:24%; top:' + ($('#DashboardLinks').height() + 5) +'px;'});
     this.canvas = document.getElementById('DashboardCanvas');
     this.context = this.canvas.getContext('2d');
     this.canvas.setAttribute('width', this.canvasWidth)
