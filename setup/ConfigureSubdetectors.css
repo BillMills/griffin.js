@@ -1,3 +1,11 @@
+body{
+	margin:0px;
+}
+
+input, select, button{
+	outline:none;
+}
+
 div.sectionDiv{
 	display:inline-block;
 	background:rgba(0,0,0,0.7); 
@@ -81,7 +89,40 @@ button.button{
 
 }
 
+button.button:hover{
+	background-image: -webkit-linear-gradient(transparent, #919191);
+    background-image: -moz-linear-gradient(transparent, #919191); 
+} 
+
 :invalid{
 	color: #FF0000;
 	border: 2px solid #FF0000;
+}
+
+/*Footer and footer-related styles////////////////////////////////////////////////////*/
+div#footer{
+	background-color: #999999;
+	text-align: center;
+	padding:2em;
+	color:#333333;
+	border-top:1px solid #000000;
+	height:3em;
+	line-height: 1.2;
+	opacity:0;
+	transition:opacity 0.5s; 
+	-moz-transition:opacity 0.5s; 
+	-webkit-transition:opacity 0.5s;
+}
+
+div#push{
+	height:7em;
+}
+
+div#wrapper{
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin: 0 auto -7em;
+	padding-left:1em;
+	padding-right: 1em;	
 }

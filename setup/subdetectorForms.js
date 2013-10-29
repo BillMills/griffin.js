@@ -16,32 +16,48 @@ function configure(detector){
 		document.getElementById('DANTE LaBrTACTabletitleCell').innerHTML = 'DANTE LaBr TAC Scale Limits';
 	} else if(detector == 'BAMBINO'){
 		//S2 or S3 mode:
-		insertDOM('p', 'BAMBINOmodeLabel', '', 'float:left; text-align:center; padding-right:20px; margin-top:70px', 'BAMBINOdiv', '', 'BAMBINO Mode<br>')
-		insertDOM('p', 'S2label', '', 'display:inline;', 'BAMBINOmodeLabel', '', 'S2');
-		insertDOM('input', 'BAMBINOmodeS2', '', '', 'BAMBINOmodeLabel', '', '', 'BAMBINOmode', 'radio', 'S2')
-		insertDOM('p', 'S3label', '', 'display:inline; margin-left:10px;', 'BAMBINOmodeLabel', '', 'S3');
-		insertDOM('input', 'BAMBINOmodeS3', '', '', 'BAMBINOmodeLabel', '', '', 'BAMBINOmode', 'radio', 'S3');
-		document.getElementById('BAMBINOmodeS3').setAttribute('checked', true);
+		injectDOM('p', 'BAMBINOmodeLabel', 'BAMBINOdiv', {
+			'style' : 'float:left; text-align:center; padding-right:20px; margin-top:70px',
+			'innerHTML' : 'BAMBINO Mode<br>'
+		});
+		injectDOM('p', 'S2label', 'BAMBINOmodeLabel', {'style':'display:inline', 'innerHTML':'S2'});
+		injectDOM('input', 'BAMBINOmodeS2', 'BAMBINOmodeLabel', {'name':'BAMBINOmode', 'type':'radio', 'value':'S2'});
+		injectDOM('p', 'S3label', 'BAMBINOmodeLabel', {'style':'display:inline; margin-left:10px;', 'innerHTML':'S3'});
+		injectDOM('input', 'BAMBINOmodeS3', 'BAMBINOmodeLabel', {'name':'BAMBINOmode', 'type':'radio', 'value':'S3', 'checked':true});
 		//scale table:
 		minmaxTable('BAMBINOdiv', 'BAMBINO');
-		insertDOM('br', 'break', '', '', 'BAMBINOdiv');
+		injectDOM('br', 'break', 'BAMBINOdiv', {});
 		//upstream / downstream options
-		insertDOM('p', 'BAMBINOupstreamLabel', '', 'float:left; text-align:right;', 'BAMBINOdiv', '', 'Upstream');
-		insertDOM('input', 'BAMBINOupstreamCheck', '', 'float:left;', 'BAMBINOupstreamLabel', '', '', '', 'checkbox', 'deploy');
-		document.getElementById('BAMBINOupstreamCheck').setAttribute('checked', true);
-		insertDOM('p', 'BAMBINOdownstreamLabel', '', 'float:left; text-align:right;', 'BAMBINOdiv', '', 'Downstream');
-		insertDOM('input', 'BAMBINOdownstreamCheck', '', 'float:left; margin-left:10px', 'BAMBINOdownstreamLabel', '', '', '', 'checkbox', 'deploy');
-		document.getElementById('BAMBINOdownstreamCheck').setAttribute('checked', true);
-		//groups of checkboxes are a pain for validation, do it in JS:
+		injectDOM('p', 'BAMBINOupstreamLabel', 'BAMBINOdiv', {'style':'float:left; text-align:right;', 'innerHTML':'Upstream'});
+		injectDOM('input', 'BAMBINOupstreamCheck', 'BAMBINOupstreamLabel', {
+			'style':'float:left', 
+			'type':'checkbox', 
+			'value':'deploy', 
+			'checked':true, 
+		});
 		document.getElementById('BAMBINOupstreamCheck').onchange = function(){checkBAMBINO()};
-		document.getElementById('BAMBINOdownstreamCheck').onchange = function(){checkBAMBINO()};
+		injectDOM('p', 'BAMBINOdownstreamLabel', 'BAMBINOdiv', {'style':'float:left; text-align:right;', 'innerHTML':'Downstream'});
+		injectDOM('input', 'BAMBINOdownstreamCheck', 'BAMBINOdownstreamLabel', {
+			'style':'float:left; margin-left:10px', 
+			'type':'checkbox', 
+			'value':'deploy', 
+			'checked':true, 
+		});
+		document.getElementById('BAMBINOdownstreamCheck').onchange = function(){checkBAMBINO()}; 
+		//groups of checkboxes are a pain for validation, do it in JS:
+		//document.getElementById('BAMBINOupstreamCheck').onchange = function(){checkBAMBINO()};
+		//document.getElementById('BAMBINOdownstreamCheck').onchange = function(){checkBAMBINO()};
 		//one or two layers:
-		insertDOM('p', 'BAMBINOlayerLabel', '', 'float:left; text-align:center; margin-left:30px;', 'BAMBINOdiv', '', 'Layers: ')
-		insertDOM('p', 'singleLayerLabel', '', 'display:inline;', 'BAMBINOlayerLabel', '', 'Single');
-		insertDOM('input', 'BAMBINOsingleLayer', '', '', 'BAMBINOlayerLabel', '', '', 'BAMBINOlayer', 'radio', 'single')
-		insertDOM('p', 'doubleLayerLabel', '', 'display:inline; margin-left:10px;', 'BAMBINOlayerLabel', '', 'Double');
-		insertDOM('input', 'BAMBINOdoubleLayer', '', '', 'BAMBINOlayerLabel', '', '', 'BAMBINOlayer', 'radio', 'double');
-		document.getElementById('BAMBINOsingleLayer').setAttribute('checked', true);
+		injectDOM('p', 'BAMBINOlayerLabel', 'BAMBINOdiv', {'style':'float:left; text-align:center; margin-left:30px;', 'innerHTML': 'Layers: '});
+		injectDOM('p', 'singleLayerLabel', 'BAMBINOlayerLabel', {'style':'display:inline;', 'innerHTML':'Single'});
+		injectDOM('input', 'BAMBINOsingleLayer', 'BAMBINOlayerLabel', {
+			'name':'BAMBINOlayer', 
+			'type':'radio', 
+			'value':'single', 
+			'checked':true
+		});
+		injectDOM('p', 'doubleLayerLabel', 'BAMBINOlayerLabel', {'style':'display:inline; margin-left:10px;', 'innerHTML':'Double'});
+		injectDOM('input', 'BAMBINOdoubleLayer', 'BAMBINOlayerLabel', {'name':'BAMBINOlayer', 'type':'radio', 'value':'double'});
 
 
 	} else if(detector == 'SCEPTAR'){
@@ -50,27 +66,29 @@ function configure(detector){
 		minmaxTable('ZDSdiv', 'ZDS');
 	} else if(detector == 'SPICE'){
 		//S2 or S3 auxiliary:
-		insertDOM('p', 'SPICEmodeLabel', '', 'float:left; text-align:center; padding-right:20px; margin-top:70px', 'SPICEdiv', '', 'SPICE Auxiliary Mode<br>')
-		insertDOM('p', 'S2label', '', 'display:inline;', 'SPICEmodeLabel', '', 'S2');
-		insertDOM('input', 'SPICEmodeS2', '', '', 'SPICEmodeLabel', '', '', 'SPICEmode', 'radio', 'S2')
-		insertDOM('p', 'S3label', '', 'display:inline; margin-left:10px;', 'SPICEmodeLabel', '', 'S3');
-		insertDOM('input', 'SPICEmodeS3', '', '', 'SPICEmodeLabel', '', '', 'SPICEmode', 'radio', 'S3');
-		insertDOM('p', 'noAuxlabel', '', 'display:inline; margin-left:10px;', 'SPICEmodeLabel', '', 'none');
-		insertDOM('input', 'SPICEnoAux', '', '', 'SPICEmodeLabel', '', '', 'SPICEmode', 'radio', 'none');		
-		document.getElementById('SPICEnoAux').setAttribute('checked', true);
+		injectDOM('p', 'SPICEmodeLabel', 'SPICEdiv', {
+			'style' : 'float:left; text-align:center; padding-right:20px; margin-top:70px',
+			'innerHTML' : 'SPICE Auxiliary Mode<br>'
+		});
+		injectDOM('p', 'S2label', 'SPICEmodeLabel', {'style':'display:inline', 'innerHTML':'S2'});
+		injectDOM('input', 'SPICEmodeS2', 'SPICEmodeLabel', {'name':'SPICEmode', 'type':'radio', 'value':'S2', 'checked':true});
+		document.getElementById('SPICEmodeS2').onchange = function(){hideSPICEaux()};
+		injectDOM('p', 'S3label', 'SPICEmodeLabel', {'style':'display:inline; margin-left:10px;', 'innerHTML':'S3'});
+		injectDOM('input', 'SPICEmodeS3', 'SPICEmodeLabel', {'name':'SPICEmode', 'type':'radio', 'value':'S3'});
+		document.getElementById('SPICEmodeS3').onchange = function(){hideSPICEaux()};
+		injectDOM('p', 'noAuxlabel', 'SPICEmodeLabel', {'style':'display:inline; margin-left:10px;', 'innerHTML':'none'});
+		injectDOM('input', 'SPICEnoAux', 'SPICEmodeLabel', {'name':'SPICEmode', 'type':'radio', 'value':'none'});
+		document.getElementById('SPICEnoAux').onchange = function(){hideSPICEaux()};
+
 		minmaxTable('SPICEdiv', 'SPICE');
 		//one or two auxiliary layers:
-		insertDOM('br', 'break', '', '', 'SPICEmodeLabel')
-		insertDOM('p', 'SPICElayerLabel', '', 'float:left; text-align:center;', 'SPICEmodeLabel', '', 'Aux. Layers: ')
-		insertDOM('p', 'singleLayerLabel', '', 'display:inline;', 'SPICElayerLabel', '', 'Single');
-		insertDOM('input', 'SPICEsingleLayer', '', '', 'SPICElayerLabel', '', '', 'SPICElayer', 'radio', 'single')
-		insertDOM('p', 'doubleLayerLabel', '', 'display:inline; margin-left:10px;', 'SPICElayerLabel', '', 'Double');
-		insertDOM('input', 'SPICEdoubleLayer', '', '', 'SPICElayerLabel', '', '', 'SPICElayer', 'radio', 'double');
-		document.getElementById('SPICEsingleLayer').setAttribute('checked', true);
+		injectDOM('br', 'break', 'SPICEmodeLabel', {});
+		injectDOM('p', 'SPICElayerLabel', 'SPICEmodeLabel', {'style':'float:left; text-align:center;', 'innerHTML':'Aux. Layers: '});
+		injectDOM('p', 'singleLayerLabel', 'SPICElayerLabel', {'style':'display:inline;', 'innerHTML':'Single'});
+		injectDOM('input', 'SPICEsingleLayer', 'SPICElayerLabel', {'name':'SPICElayer', 'type':'radio', 'value':'single', 'checked':true});
+		injectDOM('p', 'doubleLayerLabel', 'SPICElayerLabel', {'style':'display:inline; margin-left:10px;', 'innerHTML':'Double'});
+		injectDOM('input', 'SPICEdoubleLayer', 'SPICElayerLabel', {'name':'SPICElayer', 'type':'radio', 'value':'double'});
 
-		document.getElementById('SPICEmodeS3').onchange = function(){hideSPICEaux()};
-		document.getElementById('SPICEmodeS2').onchange = function(){hideSPICEaux()};
-		document.getElementById('SPICEnoAux').onchange = function(){hideSPICEaux()};
 	} else if(detector == 'TIPwall'){
 		minmaxTable('TIPwalldiv', 'TIPwall');
 	} else if(detector == 'TIPball'){
@@ -79,7 +97,7 @@ function configure(detector){
 }
 
 function hideSPICEaux(){
-	if(document.getElementById('SPICEnoAux').checked){
+	if(!document.getElementById('SPICEnoAux').checked){
 		document.getElementById('SPICElayerLabel').style.display = 'block';
 		document.getElementById('singleLayerLabel').style.display = 'inline';
 		document.getElementById('SPICEsingleLayer').style.display = 'inline';
@@ -99,72 +117,67 @@ function minmaxTable(wrapper, detType){
 	var id = detType + 'Table';
 
 	//wrap elements in a table
-	insertDOM('table', id, 'minmaxtable', '', wrapper, '', '');
+	injectDOM('table', id, wrapper, {'class':'minmaxtable',});
 	//title
-	insertDOM('tr', id+'titleRow', '', '', id, '', '');
-	insertDOM('td', 'spacer', '', '', id+'titleRow', '', '');
-	insertDOM('td', id+'titleCell', '', '', id+'titleRow', '', '');
-	document.getElementById(id+'titleCell').setAttribute('colspan', 2);
-	document.getElementById(id+'titleCell').innerHTML = ((detType) ? detType + ' Scale Limits' : 'Scale Limits');
+	injectDOM('tr', id+'titleRow', id, {});
+	injectDOM('td', 'spacer', id+'titleRow', {});
+	injectDOM('td', id+'titleCell', id+'titleRow', {'colspan':2, 'innerHTML':((detType) ? detType + ' Scale Limits' : 'Scale Limits')});
 
 	//column headers
-	insertDOM('tr', id+'columnHeadRow', '', '', id, '', '');
-	insertDOM('td', id+'spacer', '', '', id+'columnHeadRow', '', '');
-	insertDOM('td', id+'minHead', '', '', id+'columnHeadRow', '', 'Min');
-	insertDOM('td', id+'maxHead', '', '', id+'columnHeadRow', '', 'Max');
+	injectDOM('tr', id+'columnHeadRow', id, {});
+	injectDOM('td', id+'spacer', id+'columnHeadRow', {});
+	injectDOM('td', id+'minHead', id+'columnHeadRow', {'innerHTML':'Min'});
+	injectDOM('td', id+'maxHead', id+'columnHeadRow', {'innerHTML':'Max'});
 
 	//meter types, one row for each:
 	//HV
-	insertDOM('tr', id+'HVRow', '', '', id, '', '');
-	insertDOM('td', id+'HVTitle', '', 'text-align:right;', id+'HVRow', '', 'HV');
-	insertDOM('td', id+'HVminCell', '', '', id+'HVRow', '', '');
-	insertDOM('td', id+'HVmaxCell', '', '', id+'HVRow', '', '');
-	insertDOM('input', id+'HVmin', 'minmaxCell', '', id+'HVminCell', '', '', '', 'number', '0');
-	insertDOM('input', id+'HVmax', 'minmaxCell', '', id+'HVmaxCell', '', '', '', 'number', '3000');
-	insertDOM('td', id+'HVunitCell', '', 'text-align:left', id+'HVRow', '', '');
-	insertDOM('p', id+'HVunit', '', 'display:inline;', id+'HVunitCell', '', 'V');
-	//max should be > min
-    document.getElementById(id+'HVmin').onchange = function(){document.getElementById(id+'HVmax').min = document.getElementById(id+'HVmin').valueAsNumber;};
+    injectDOM('tr', id+'HVRow', id, {});
+    injectDOM('td', id+'HVTitle', id+'HVRow', {'style':'text-align:right;', 'innerHTML':'HV'});
+    injectDOM('td', id+'HVminCell', id+'HVRow', {});
+    injectDOM('td', id+'HVmaxCell', id+'HVRow', {});
+    injectDOM('input', id+'HVmin', id+'HVminCell', {
+    	'class':'minmaxCell', 
+    	'type':'number', 
+    	'value':0
+    });
+    document.getElementById(id+'HVmin').onchange = function(){document.getElementById(id+'HVmax').min = document.getElementById(id+'HVmin').valueAsNumber;}
+    injectDOM('input', id+'HVmax', id+'HVmaxCell', {'class':'minmaxCell', 'type':'number', 'value':3000});
+    injectDOM('td', id+'HVunitCell', id+'HVRow', {'style':'text-align:left'});
+    injectDOM('p', id+'HVunit', id+'HVunitCell', {'style':'display:inline', 'innerHTML':'V'});
 
 	//threshold
-	insertDOM('tr', id+'thresholdRow', '', '', id, '', '');
-	insertDOM('td', id+'thresholdTitle', '', 'text-align:right;', id+'thresholdRow', '', 'Threshold');
-	insertDOM('td', id+'thresholdMinCell', '', '', id+'thresholdRow', '', '');
-	insertDOM('td', id+'thresholdMaxCell', '', '', id+'thresholdRow', '', '');
-	insertDOM('input', id+'thresholdMin', 'minmaxCell', '', id+'thresholdMinCell', '', '', '', 'number', '0');
-	insertDOM('input', id+'thresholdMax', 'minmaxCell', '', id+'thresholdMaxCell', '', '', '', 'number', '1000');
-	insertDOM('td', id+'thresholdUnitCell', '', 'text-align:left', id+'thresholdRow', '', '');
-	insertDOM('p', id+'thresholdUnit', '', 'display:inline;', id+'thresholdUnitCell', '', 'ADC Units');
-	document.getElementById(id+'thresholdMin').setAttribute('min', 0);
-	//max should be > min
-    document.getElementById(id+'thresholdMin').onchange = function(){document.getElementById(id+'thresholdMax').min = document.getElementById(id+'thresholdMin').valueAsNumber;};
+    injectDOM('tr', id+'thresholdRow', id, {});
+    injectDOM('td', id+'thresholdTitle', id+'thresholdRow', {'style':'text-align:right;', 'innerHTML':'Threshold'});
+    injectDOM('td', id+'thresholdMinCell', id+'thresholdRow', {});
+    injectDOM('td', id+'thresholdMaxCell', id+'thresholdRow', {});
+    injectDOM('input', id+'thresholdMin', id+'thresholdMinCell', {
+    	'class':'minmaxCell', 
+    	'type':'number', 
+    	'value':0,
+    	'min':0
+    });
+    document.getElementById(id+'thresholdMin').onchange = function(){document.getElementById(id+'thresholdMax').min = document.getElementById(id+'thresholdMin').valueAsNumber;}
+    injectDOM('input', id+'thresholdMax', id+'thresholdMaxCell', {'class':'minmaxCell', 'type':'number', 'value':1000});
+    injectDOM('td', id+'thresholdUnitCell', id+'thresholdRow', {'style':'text-align:left'});
+    injectDOM('p', id+'thresholdUnit', id+'thresholdUnitCell', {'style':'display:inline', 'innerHTML':'ADC Units'});
 
 	//rate	
-	insertDOM('tr', id+'rateRow', '', '', id, '', '');
-	insertDOM('td', id+'rateTitle', '', 'text-align:right;', id+'rateRow', '', 'Rate');
-	insertDOM('td', id+'rateMinCell', '', '', id+'rateRow', '', '');
-	insertDOM('td', id+'rateMaxCell', '', '', id+'rateRow', '', '');
-	insertDOM('input', id+'rateMin', 'minmaxCell', '', id+'rateMinCell', '', '', '', 'number', '0');
-	insertDOM('input', id+'rateMax', 'minmaxCell', '', id+'rateMaxCell', '', '', '', 'number', '10000');
-	insertDOM('td', id+'rateUnitCell', '', 'text-align:left', id+'rateRow', '', '');
-	insertDOM('p', id+'rateUnit', '', 'display:inline;', id+'rateUnitCell', '', 'Hz');
-	document.getElementById(id+'rateMin').setAttribute('min', 0);
-	//max should be > min
+    injectDOM('tr', id+'rateRow', id, {});
+    injectDOM('td', id+'rateTitle', id+'rateRow', {'style':'text-align:right;', 'innerHTML':'Rate'});
+    injectDOM('td', id+'rateMinCell', id+'rateRow', {});
+    injectDOM('td', id+'rateMaxCell', id+'rateRow', {});
+    injectDOM('input', id+'rateMin', id+'rateMinCell', {
+    	'class':'minmaxCell', 
+    	'type':'number', 
+    	'value':0,
+    	'min':0
+    });
     document.getElementById(id+'rateMin').onchange = function(){document.getElementById(id+'rateMax').min = document.getElementById(id+'rateMin').valueAsNumber;};
+    injectDOM('input', id+'rateMax', id+'rateMaxCell', {'class':'minmaxCell', 'type':'number', 'value':10000});
+    injectDOM('td', id+'rateUnitCell', id+'rateRow', {'style':'text-align:left'});
+    injectDOM('p', id+'rateUnit', id+'rateUnitCell', {'style':'display:inline;', 'innerHTML':'Hz'});
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

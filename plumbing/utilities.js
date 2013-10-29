@@ -565,3 +565,10 @@ function parseThreshold(data){
         }
     }
 }
+
+function deployFooter(){
+    injectDOM('div', 'footer', 'body', {
+        'innerHTML' : 'GRIFFIN 2013<br>GRIFFIN Collaboration Spokesperson: Adam Garnsworthy (garns@triumf.ca) - UI/UX Design & Web Development: Bill Mills (mills.wj@gmail.com)'
+    });
+
+}

@@ -6,7 +6,7 @@
 
     <script src="/js/mhttpd.js" type="text/javascript"></script>
     <script src="zeptoJS!" type="text/javascript"></script>
-    <script src="configureSubdetectorsJS!" type="text/javascript"></script>
-    <link rel="stylesheet" type="text/css" href="configureSubdetectorsCSS!" />
+    <script src="ConfigureSubdetectorsJS!" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="ConfigureSubdetectorsCSS!" />
 
   </head>

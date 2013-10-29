@@ -701,13 +701,6 @@
 					}
 				}
 
-				function deployFooter(){
-					injectDOM('div', 'footer', 'body', {
-						'innerHTML' : 'GRIFFIN 2013<br>GRIFFIN Collaboration Spokesperson: Adam Garnsworthy (garns@triumf.ca) - UI/UX Design & Web Development: Bill Mills'
-					});
-
-				}
-
 				//base click behavior
 				function clickBehavior(nFigures, prefix, det1, det2){
 					if(this.disabled) return;
@@ -1009,7 +1002,7 @@
 							ODBSet('/DashboardConfig/ZDS/deploy', 1);
 						}
 
-						//window.location = window.location.href.replace("ConfigureExperiment", "ConfigureSubdetectors");
+						window.location = window.location.href.replace("ExperimentSetup", "ConfigureSubdetectors");
 											
 					}
 				}

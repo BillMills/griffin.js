@@ -1,3 +1,7 @@
+body{
+	margin:0px;
+}
+
 input, select, button{
 	outline:none;
 }
@@ -106,14 +110,14 @@ div#footer{
 }
 
 div#push{
-	height:3em;
+	height:7em;
 }
 
 div#wrapper{
     min-height: 100%;
     height: auto !important;
     height: 100%;
-    margin: 0 auto -3em;
+    margin: 0 auto -7em;
 	padding-left:1em;
 	padding-right: 1em;	
 }
