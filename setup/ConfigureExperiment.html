@@ -123,6 +123,7 @@
         							//commit data////////////////////////////////////////////////////////////////////////
 									//insertDOM('button', 'writeParameters', 'button', '', 'body', function(){commitParameters()}, 'Deploy Detectors');
 									injectDOM('button', 'writeParameters', 'body', {
+										'class' : 'button',
 										'onclick': function(){commitParameters()},
 										'innerHTML': 'Deploy Detectors' 
 									});
@@ -363,8 +364,8 @@
 
 				//insertDOM('table', 'chamberTable', 'sectionTable', '', 'Chamber', '', '');
 				//insertDOM('tr', 'chamberPicRow', '', '', 'chamberTable', '', '');
-				injectDOM('table', 'chamberTitle', 'Chamber', {'class' : 'sectionTable'});
-				injectDOM('tr', 'chamberTitle', 'chamberTable', {});
+				injectDOM('table', 'chamberTable', 'Chamber', {'class' : 'sectionTable'});
+				injectDOM('tr', 'chamberPicRow', 'chamberTable', {});
 				//GRIFFIN:
 				if(window.experiment == 'GRIFFIN'){
 					window.leftChamber = ['US SCEPTAR', 'US SCEPTAR', 'PACES', 'PACES', 'SPICE', 'SPICE'];
