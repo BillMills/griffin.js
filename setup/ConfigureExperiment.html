@@ -121,7 +121,11 @@
         		if(window.experiment == 'TIGRESS') setTimeout(function(){document.getElementById('Beamdump').style.opacity = 1;}, 500);
         		setTimeout(function(){
         							//commit data////////////////////////////////////////////////////////////////////////
-									insertDOM('button', 'writeParameters', 'button', '', 'body', function(){commitParameters()}, 'Deploy Detectors');
+									//insertDOM('button', 'writeParameters', 'button', '', 'body', function(){commitParameters()}, 'Deploy Detectors');
+									injectDOM('button', 'writeParameters', 'body', {
+										'onclick': function(){commitParameters()},
+										'innerHTML': 'Deploy Detectors' 
+									});
 									document.getElementById('writeParameters').onmousedown = function(){
 										$('#writeParameters').css('background-color', '#999999');
 									}
@@ -346,18 +350,30 @@
 
 				totalWidth = window.innerWidth;
 
-				insertDOM('div', 'Chamber', 'section', 'clear:both;', 'body', '', '');
-				insertDOM('h1', 'chamberTitle', 'title', '', 'Chamber', '', 'Chamber Configuration' );
+				//insertDOM('div', 'Chamber', 'section', 'clear:both;', 'body', '', '');
+				//insertDOM('h1', 'chamberTitle', 'title', '', 'Chamber', '', 'Chamber Configuration' );
+				injectDOM('div', 'Chamber', 'body', {
+					'class' : 'section',
+					'style' : 'clear:both'
+				});
+				injectDOM('h1', 'chamberTitle', 'Chamber', {
+					'class' : 'title',
+					'innerHTML' : 'Chamber Configuration'
+				});
 
-				insertDOM('table', 'chamberTable', 'sectionTable', '', 'Chamber', '', '');
-				insertDOM('tr', 'chamberPicRow', '', '', 'chamberTable', '', '');
+				//insertDOM('table', 'chamberTable', 'sectionTable', '', 'Chamber', '', '');
+				//insertDOM('tr', 'chamberPicRow', '', '', 'chamberTable', '', '');
+				injectDOM('table', 'chamberTitle', 'Chamber', {'class' : 'sectionTable'});
+				injectDOM('tr', 'chamberTitle', 'chamberTable', {});
 				//GRIFFIN:
 				if(window.experiment == 'GRIFFIN'){
 					window.leftChamber = ['US SCEPTAR', 'US SCEPTAR', 'PACES', 'PACES', 'SPICE', 'SPICE'];
 					window.rightChamber = ['DS SCEPTAR', 'ZDS', 'DS SCEPTAR', 'ZDS', 'ZDS', 'DS SCEPTAR'];
 					for(i=0; i<6; i++){
-						insertDOM('td', 'Gcha'+i+'pic', '', '', 'chamberPicRow', '', '');
-						insertDOM('canvas', 'Gcha'+i+'canv', 'thumbnail', '', 'Gcha'+i+'pic', '', '');
+						//insertDOM('td', 'Gcha'+i+'pic', '', '', 'chamberPicRow', '', '');
+						//insertDOM('canvas', 'Gcha'+i+'canv', 'thumbnail', '', 'Gcha'+i+'pic', '', '');
+						injectDOM('td', 'Gcha'+i+'pic', 'chamberPicRow', {});
+						injectDOM('canvas', 'Gcha'+i+'canv', 'Gcha'+i+'pic', {'class' : 'thumbnail'});
 						document.getElementById('Gcha'+i+'canv').setAttribute('width', 0.9*totalWidth/6);
 						document.getElementById('Gcha'+i+'canv').thumb = i;
 						document.getElementById('Gcha'+i+'canv').chosen = 0;
@@ -382,8 +398,10 @@
 					window.leftChamber = ['BAMBINO', 'SHARC', 'SPICE', 'TIPwall', 'TIPball'];
 					window.rightChamber = ['solo', 'none', 'none', 'none', 'none'];
 					for(i=0; i<5; i++){
-						insertDOM('td', 'Tcha'+i+'pic', '', '', 'chamberPicRow', '', '');
-						insertDOM('canvas', 'Tcha'+i+'canv', 'thumbnail', '', 'Tcha'+i+'pic', '', '');
+						//insertDOM('td', 'Tcha'+i+'pic', '', '', 'chamberPicRow', '', '');
+						//insertDOM('canvas', 'Tcha'+i+'canv', 'thumbnail', '', 'Tcha'+i+'pic', '', '');
+						injectDOM('td', 'Tcha'+i+'pic', 'chamberPicRow', {});
+						injectDOM('canvas', 'Tcha'+i+'canv', 'Tcha'+i+'pic', {'class':'thumbnail'});
 						document.getElementById('Tcha'+i+'canv').setAttribute('width', 0.9*totalWidth/6);
 						document.getElementById('Tcha'+i+'canv').thumb = i;
 						document.getElementById('Tcha'+i+'canv').chosen = 0;
@@ -440,19 +458,28 @@
 
 				totalWidth = window.innerWidth;
 
-				insertDOM('div', 'DSlampshade', 'section', '', 'body', '', '');
-				insertDOM('h1', 'deLampshadeTitle', 'title', '', 'DSlampshade', '', 'Downstream Lampshade Configuration' );
+				//insertDOM('div', 'DSlampshade', 'section', '', 'body', '', '');
+				//insertDOM('h1', 'deLampshadeTitle', 'title', '', 'DSlampshade', '', 'Downstream Lampshade Configuration' );
+				injectDOM('div', 'DSlampshade', 'body', {'class':'section'});
+				injectDOM('h1', 'dsLampshadeTitle', 'DSlampshade', {
+					'class' : 'title',
+					'innerHTML' : 'Downstream Lampshade Configuration'
+				});
 
-				insertDOM('table', 'dsLampTable', 'sectionTable', '', 'DSlampshade', '', '');
-				insertDOM('tr', 'dsLampPicRow', '', '', 'dsLampTable', '', '');
+				//insertDOM('table', 'dsLampTable', 'sectionTable', '', 'DSlampshade', '', '');
+				//insertDOM('tr', 'dsLampPicRow', '', '', 'dsLampTable', '', '');
 				//insertDOM('tr', 'dsLampRadioRow', '', '', 'dsLampTable', '', '');
+				injectDOM('table', 'dsLampTable', 'DSlampshade', {'class' : 'sectionTable'});
+				injectDOM('tr', 'dsLampPicRow', 'dsLampTable', {});
 				//GRIFFIN:
 				if(window.experiment == 'GRIFFIN'){
 					window.leftDSL = ['GRIFFIN', 'DESCANT'];
 					window.rightDSL = ['none', 'none'];
 					for(i=0; i<2; i++){
-						insertDOM('td', 'Gdsl'+i+'pic', '', '', 'dsLampPicRow', '', '');
-						insertDOM('canvas', 'Gdsl'+i+'canv', 'thumbnail', '', 'Gdsl'+i+'pic', '', '');
+						//insertDOM('td', 'Gdsl'+i+'pic', '', '', 'dsLampPicRow', '', '');
+						//insertDOM('canvas', 'Gdsl'+i+'canv', 'thumbnail', '', 'Gdsl'+i+'pic', '', '');
+						injectDOM('td', 'Gdsl'+i+'pic', 'dsLampPicRow', {});
+						injectDOM('canvas', 'Gdsl'+i+'canv', 'Gdsl'+i+'pic', {'class' : 'thumbnail'});
 						document.getElementById('Gdsl'+i+'canv').setAttribute('width', 0.9*totalWidth/6);
 						document.getElementById('Gdsl'+i+'canv').thumb = i;
 						document.getElementById('Gdsl'+i+'canv').chosen = 0;
@@ -474,8 +501,10 @@
 					window.leftDSL = ['TIGRESS', 'SHARC', 'DESCANT'];
 					window.rightDSL = ['none', 'services', 'none'];
 					for(i=0; i<3; i++){
-						insertDOM('td', 'Tdsl'+i+'pic', '', '', 'dsLampPicRow', '', '');
-						insertDOM('canvas', 'Tdsl'+i+'canv', 'thumbnail', '', 'Tdsl'+i+'pic', '', '');
+						//insertDOM('td', 'Tdsl'+i+'pic', '', '', 'dsLampPicRow', '', '');
+						//insertDOM('canvas', 'Tdsl'+i+'canv', 'thumbnail', '', 'Tdsl'+i+'pic', '', '');
+						injectDOM('td', 'Tdsl'+i+'pic', 'dsLampPicRow', {});
+						injectDOM('canvas', 'Tdsl'+i+'canv', 'Tdsl'+i+'pic', {'class' : 'thumbnail'});
 						document.getElementById('Tdsl'+i+'canv').setAttribute('width', 0.9*totalWidth/6);
 						document.getElementById('Tdsl'+i+'canv').thumb = i;
 						document.getElementById('Tdsl'+i+'canv').chosen = 0;
@@ -513,18 +542,27 @@
 
 				totalWidth = window.innerWidth;
 
-				insertDOM('div', 'Corona', 'section', '', 'body', '', '');
-				insertDOM('h1', 'coronaTitle', 'title', '', 'Corona', '', 'Corona Configuration' );
+				//insertDOM('div', 'Corona', 'section', '', 'body', '', '');
+				//insertDOM('h1', 'coronaTitle', 'title', '', 'Corona', '', 'Corona Configuration' );
+				injectDOM('div', 'Corona', 'body', {});
+				injectDOM('h1', 'coronaTitle', 'Corona', {
+					'class' : 'title',
+					'innerHTML' : 'Corona Configuration'
+				});
 
-				insertDOM('table', 'coronaTable', 'sectionTable', '', 'Corona', '', '');
-				insertDOM('tr', 'coronaPicRow', '', '', 'coronaTable', '', '');
+				//insertDOM('table', 'coronaTable', 'sectionTable', '', 'Corona', '', '');
+				//insertDOM('tr', 'coronaPicRow', '', '', 'coronaTable', '', '');
+				injectDOM('table', 'coronaTable', 'Corona', {'class':'sectionTable'});
+				injectDOM('tr', 'coronaPicRow', 'coronaTable', {});
 				//GRIFFIN:
 				if(window.experiment == 'GRIFFIN'){
 					window.leftCor = ['GRIFFIN'];
 					window.rightCor = ['DANTE'];	
 					for(i=0; i<1; i++){
-						insertDOM('td', 'Gcor'+i+'pic', '', '', 'coronaPicRow', '', '');
-						insertDOM('canvas', 'Gcor'+i+'canv', 'thumbnail', '', 'Gcor'+i+'pic', '', '');
+						//insertDOM('td', 'Gcor'+i+'pic', '', '', 'coronaPicRow', '', '');
+						//insertDOM('canvas', 'Gcor'+i+'canv', 'thumbnail', '', 'Gcor'+i+'pic', '', '');
+						injectDOM('td', 'Gcor'+i+'pic', 'coronaPicRow', {});
+						injectDOM('canvas', 'Gcor'+i+'canv', 'Gcor'+i+'pic', {'class':'thumbnail'});
 						document.getElementById('Gcor'+i+'canv').setAttribute('width', 0.9*totalWidth/6);
 						document.getElementById('Gcor'+i+'canv').thumb = i;
 						document.getElementById('Gcor'+i+'canv').chosen = 0;				
@@ -546,8 +584,10 @@
 					window.leftCor = ['TIGRESS'];
 					window.rightCor = ['none'];	
 					for(i=0; i<1; i++){
-						insertDOM('td', 'Tcor'+i+'pic', '', '', 'coronaPicRow', '', '');
-						insertDOM('canvas', 'Tcor'+i+'canv', 'thumbnail', '', 'Tcor'+i+'pic', '', '');
+						//insertDOM('td', 'Tcor'+i+'pic', '', '', 'coronaPicRow', '', '');
+						//insertDOM('canvas', 'Tcor'+i+'canv', 'thumbnail', '', 'Tcor'+i+'pic', '', '');
+						injectDOM('td', 'Tcor'+i+'pic', 'coronaPicRow', {});
+						injectDOM('canvas', 'Tcor'+i+'canv', 'Tcor'+i+'pic', {'class' : 'thumbnail'});
 						document.getElementById('Tcor'+i+'canv').setAttribute('width', 0.9*totalWidth/6);
 						document.getElementById('Tcor'+i+'canv').thumb = i;
 						document.getElementById('Tcor'+i+'canv').chosen = 0;				
@@ -571,19 +611,28 @@
 
 				totalWidth = window.innerWidth;
 
-				insertDOM('div', 'USlampshade', 'section', '', 'body', '', '');
-				insertDOM('h1', 'USlampshadeTitle', 'title', '', 'USlampshade', '', 'Upstream Lampshade Configuration' );
+				//insertDOM('div', 'USlampshade', 'section', '', 'body', '', '');
+				//insertDOM('h1', 'USlampshadeTitle', 'title', '', 'USlampshade', '', 'Upstream Lampshade Configuration' );
+				injectDOM('div', 'USlampshade', 'body', {'class':'section'});
+				injectDOM('h1', 'USlampshadeTitle', 'USlampshade', {
+					'class' : 'title',
+					'innerHTML' : 'Upstream Lampshade Configuration'
+				}); 
 
-				insertDOM('table', 'usLampTable', 'sectionTable', '', 'USlampshade', '', '');
-				insertDOM('tr', 'usLampPicRow', '', '', 'usLampTable', '', '');
+				//insertDOM('table', 'usLampTable', 'sectionTable', '', 'USlampshade', '', '');
+				//insertDOM('tr', 'usLampPicRow', '', '', 'usLampTable', '', '');
 				//insertDOM('tr', 'usLampRadioRow', '', '', 'usLampTable', '', '');
+				injectDOM('table', 'usLampTable', 'USlampshade', {'class' : 'sectionTable'});
+				injectDOM('tr', 'usLampPicRow', 'usLampTable', {});
 				//GRIFFIN:
 				if(window.experiment == 'GRIFFIN'){
 					window.leftUSL = ['GRIFFIN', 'SPICE'];
 					window.rightUSL = ['none', 'services'];
 					for(i=0; i<2; i++){
-						insertDOM('td', 'Gusl'+i+'pic', '', '', 'usLampPicRow', '', '');
-						insertDOM('canvas', 'Gusl'+i+'canv', 'thumbnail', '', 'Gusl'+i+'pic', '', '');
+						//insertDOM('td', 'Gusl'+i+'pic', '', '', 'usLampPicRow', '', '');
+						//insertDOM('canvas', 'Gusl'+i+'canv', 'thumbnail', '', 'Gusl'+i+'pic', '', '');
+						injectDOM('td', 'Gusl'+i+'pic', 'usLampPicRow', {});
+						injectDOM('canvas', 'Gusl'+i+'canv', 'Gusl'+i+'pic', {'class' : 'thumbnail'});
 						document.getElementById('Gusl'+i+'canv').setAttribute('width', 0.9*totalWidth/6);
 						document.getElementById('Gusl'+i+'canv').thumb = i;	
 						document.getElementById('Gusl'+i+'canv').chosen = 0;
@@ -606,8 +655,10 @@
 					window.leftUSL = ['TIGRESS', 'SPICE'];
 					window.rightUSL = ['none', 'services'];
 					for(i=0; i<2; i++){
-						insertDOM('td', 'Tusl'+i+'pic', '', '', 'usLampPicRow', '', '');
-						insertDOM('canvas', 'Tusl'+i+'canv', 'thumbnail', '', 'Tusl'+i+'pic', '', '');
+						//insertDOM('td', 'Tusl'+i+'pic', '', '', 'usLampPicRow', '', '');
+						//insertDOM('canvas', 'Tusl'+i+'canv', 'thumbnail', '', 'Tusl'+i+'pic', '', '');
+						injectDOM('td', 'Tusl'+i+'pic', 'usLampPicRow', {});
+						injectDOM('canvas', 'Tusl'+i+'canv', 'Tusl'+i+'pic', {'class' : 'thumbnail'});
 						document.getElementById('Tusl'+i+'canv').setAttribute('width', 0.9*totalWidth/6);
 						document.getElementById('Tusl'+i+'canv').thumb = i;	
 						document.getElementById('Tusl'+i+'canv').chosen = 0;
@@ -649,12 +700,19 @@
 
 				totalWidth = window.innerWidth;
 
-				insertDOM('div', 'Beamdump', 'section', '', 'body', '', '');
-				insertDOM('h1', 'beamdumpTitle', 'title', '', 'Beamdump', '', 'Beamdump Configuration' );
+				//insertDOM('div', 'Beamdump', 'section', '', 'body', '', '');
+				//insertDOM('h1', 'beamdumpTitle', 'title', '', 'Beamdump', '', 'Beamdump Configuration' );
+				injectDOM('div', 'Beamdump', 'body', {});
+				injectDOM('h1', 'beamdumpTitle', 'Beamdump', {
+					'class' : 'title',
+					'innerHTML' : 'Beamdump Configuration'
+				});
 
-				insertDOM('table', 'beamdumpTable', 'sectionTable', '', 'Beamdump', '', '');
-				insertDOM('tr', 'beamdumpPicRow', '', '', 'beamdumpTable', '', '');
+				//insertDOM('table', 'beamdumpTable', 'sectionTable', '', 'Beamdump', '', '');
+				//insertDOM('tr', 'beamdumpPicRow', '', '', 'beamdumpTable', '', '');
 				//insertDOM('tr', 'beamdumpRadioRow', '', '', 'beamdumpTable', '', '');
+				injectDOM('table', 'beamdumpTable', 'Beamdump', {'class' : 'sectionTable'});
+				injectDOM('tr', 'beamdumpPicRow', 'beamdumpTable', {});
 				//GRIFFIN:
 
 				//TIGRESS:
@@ -662,8 +720,10 @@
 					window.leftBDP = ['beamdump'];
 					window.rightBDP = ['none'];
 					for(i=0; i<1; i++){
-						insertDOM('td', 'Tbdp'+i+'pic', '', '', 'beamdumpPicRow', '', '');
-						insertDOM('canvas', 'Tbdp'+i+'canv', 'thumbnail', '', 'Tbdp'+i+'pic', '', '');
+						//insertDOM('td', 'Tbdp'+i+'pic', '', '', 'beamdumpPicRow', '', '');
+						//insertDOM('canvas', 'Tbdp'+i+'canv', 'thumbnail', '', 'Tbdp'+i+'pic', '', '');
+						injectDOM('td', 'Tbdp'+i+'pic', 'beamdumpPicRow', {});
+						injectDOM('canvas', 'Tbdp'+i+'canv', 'Tbdp'+i+'pic', {'class' : 'thumbnail'});
 						document.getElementById('Tbdp'+i+'canv').setAttribute('width', 0.9*totalWidth/6);
 						document.getElementById('Tbdp'+i+'canv').thumb = i;	
 						document.getElementById('Tbdp'+i+'canv').chosen = 0;
