@@ -47,3 +47,64 @@ canvas.thumbnail{
 	-webkit-transition:left 0.5s, opacity 0.5s; 
 	
 }
+
+/*popup window////////////////////////////////////////////////*/
+.tempDialog{
+	font-family: 'Raleway', sans-serif; 
+	z-index:10; 
+	position:fixed; 
+	text-align:center; 
+	opacity:0; 
+	transition:opacity 0.5s; 
+	-moz-transition:opacity 0.5s; 
+	-webkit-transition:opacity 0.5s; 
+	background:rgba(0,0,0,0.8); 
+	border: 5px solid; 
+	border-radius:10px;
+	top:100px;
+	padding:2em;
+	max-height: 800px;
+	overflow:scroll;
+}
+
+/*/buttons///////////////////////////////*/
+.standardButton{
+	background: #4C4C4C; 
+	color: #FFFFFF;
+	border-color: #333333; 
+	border-radius: 5px;
+    display: inline;
+    font-family: 'Raleway', sans-serif;
+    font-size:100%;
+    padding:1em;
+    cursor: pointer;
+}
+
+.standardButton:hover{
+	background: #777777;
+}
+
+/*Footer and footer-related styles////////////////////////////////////////////////////*/
+div#footer{
+	background-color: #999999;
+	text-align: center;
+	padding:2em;
+	color:#333333;
+	border-top:1px solid #000000;
+	height:3em;
+	line-height: 1.2;
+	opacity:0;
+}
+
+div#push{
+	height:3em;
+}
+
+div#wrapper{
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin: 0 auto -3em;
+	padding-left:1em;
+	padding-right: 1em;	
+}

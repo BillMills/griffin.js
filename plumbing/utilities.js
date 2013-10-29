@@ -483,49 +483,49 @@ function confirm(headline, detailText, confirmFunc){
     var i, j, ODBpath;
 
     //insert div and title
-    injectDOM('div', 'tempDiv', 'waffleplate', {'class':'tempDialog'});
+    injectDOM('div', 'tempDiv', 'body', {'class':'tempDialog'});
     var dialogue = document.getElementById('tempDiv');
     injectDOM('h2', 'dialogHeader', 'tempDiv', {
         'style' : 'position:relative; font:24px Orbitron; top:10px; margin-bottom:6%; margin-left:auto; margin-right:auto;',
         'innerHTML' : headline
     })
 
-    //fix dimensions
-    var width = 0.35*window.innerWidth;
-    $('#dialogHeader').width(width)
-
-    //center dialogue
-    $('#tempDiv').css('left', ($('#waffleplate').width()/2 - width/2))
-
     //warning text
     injectDOM('p', 'warning', 'tempDiv', {'style':'padding: 1em; font-size:120%;', 'innerHTML':detailText});
 
-    //insert submit & abort button
-    injectDOM('input', 'confirmChoice', 'tempDiv', {
-        'class' : 'bigButton',
-        'style' : 'width:auto; height:auto; padding:0.5em; margin-bottom:1em; margin-left:0px',
-        'type' : 'button',
-        'value' : 'Confirm'
-    });
+    //center dialogue
+    var width = document.getElementById('tempDiv').offsetWidth;
+    document.getElementById('tempDiv').style.left = document.body.offsetWidth/2 - width/2;
+
+    //insert submit & abort button if there's a function to excecute on confirm, otherwise just an acknowledge button
+    if(confirmFunc){
+        injectDOM('input', 'confirmChoice', 'tempDiv', {
+            'class' : 'standardButton',
+            'style' : 'width:auto; height:auto; padding:0.5em; margin-bottom:1em; margin-left:0px',
+            'type' : 'button',
+            'value' : 'Confirm'
+        });
+
+        document.getElementById('confirmChoice').onclick = function(event){
+
+            confirmFunc();
+
+            document.getElementById('tempDiv').style.opacity = 0;
+            setTimeout(function(){
+                var element = document.getElementById('tempDiv');
+                element.parentNode.removeChild(element);            
+            }, 500);
+
+            rePaint();
+        }
+    }
+
     injectDOM('input', 'abortChoice', 'tempDiv', {
-        'class' : 'bigButton',
+        'class' : 'standardButton',
         'style' : 'width:auto; height:auto; padding:0.5em; margin-bottom:1em',
         'type' : 'button',
-        'value' : 'Abort'
+        'value' : (confirmFunc == null) ? 'Dismiss' : 'Abort'
     });
-
-    document.getElementById('confirmChoice').onclick = function(event){
-
-        confirmFunc();
-
-        document.getElementById('tempDiv').style.opacity = 0;
-        setTimeout(function(){
-            var element = document.getElementById('tempDiv');
-            element.parentNode.removeChild(element);            
-        }, 500);
-
-        rePaint();
-    }
 
     document.getElementById('abortChoice').onclick = function(event){
         document.getElementById('tempDiv').style.opacity = 0;
