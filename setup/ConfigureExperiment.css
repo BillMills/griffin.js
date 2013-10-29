@@ -1,3 +1,7 @@
+input, select, button{
+	outline:none;
+}
+
 td{
 	text-align: center;
 }
@@ -16,6 +20,11 @@ button.button{
 	margin-right: auto;
 	margin-bottom: 100px;
 }
+
+button.button:hover{
+	background-image: -webkit-linear-gradient(transparent, #919191);
+    background-image: -moz-linear-gradient(transparent, #919191); 
+} 
 
 h1.title{
 	font-family: Orbitron;

@@ -46,7 +46,7 @@
 				document.getElementById('GrifLogo').onclick = function(){
 	      			window.experiment = 'GRIFFIN';
 	      			window.subdetectors['DANTE'] = 1; //DANTE is apparently always in the corona for GRIFFIN
-	      			ODBSet('/DashboardConfig/topLevel/HPGeArray', 'GRIFFIN');
+	      			//ODBSet('/DashboardConfig/topLevel/HPGeArray', 'GRIFFIN');
 					document.getElementById('chooseExperiment').style.opacity = 0;
 	        		setTimeout(function(){
 	            		var element = document.getElementById('chooseExperiment');
@@ -57,7 +57,7 @@
 
 				document.getElementById('TigLogo').onclick = function(){
 	      			window.experiment = 'TIGRESS';
-	      			ODBSet('/DashboardConfig/topLevel/HPGeArray', 'TIGRESS');
+	      			//ODBSet('/DashboardConfig/topLevel/HPGeArray', 'TIGRESS');
 					document.getElementById('chooseExperiment').style.opacity = 0;
 	        		setTimeout(function(){
 	            		var element = document.getElementById('chooseExperiment');
@@ -529,7 +529,7 @@
 
 					totalWidth = window.innerWidth;
 
-					injectDOM('div', 'Corona', 'wrapper', {});
+					injectDOM('div', 'Corona', 'wrapper', {'class' : 'section'});
 					injectDOM('h1', 'coronaTitle', 'Corona', {
 						'class' : 'title',
 						'innerHTML' : 'Corona Configuration'
@@ -752,32 +752,265 @@
 
 				}
 
+				//build the base ODB structure and populate with what info we currently have:
 				function commitParameters(){
+					var address, type, values;
+
 					if(window.choices < 3){
 						//alert('Please click on a deployment option for all sectors.')
 						confirm('More Choice Remain!', 'Please choose a configuration for all detector regions.')
 					} else{
-						for(var key in window.subdetectors){
-							console.log(key);
+						//create ODB structure//////////////////////////////////////////////////////////////
+						//re-declare root dashboard directory:
+						ODBMDelete(['/DashboardConfig']);
+						ODBMCreate(['/DashboardConfig'], [TID_KEY]);
+
+						//top level ODB data
+						address = [	'/DashboardConfig/topLevel', 
+									'/DashboardConfig/topLevel/HPGeArray', 
+									'/DashboardConfig/topLevel/statusURL', 
+									'/DashboardConfig/topLevel/expName', 
+									'/DashboardConfig/topLevel/Experiment'
+								];
+						type = [TID_KEY, TID_STRING, TID_STRING, TID_STRING, TID_STRING];
+						ODBMCreate(address, type);
+						ODBSet('/DashboardConfig/topLevel/HPGeArray', window.experiment);
+
+						//Main dashboard registry
+						address = [	'/DashboardConfig/Dashboard', 
+									'/DashboardConfig/Dashboard/dashboardMin', 
+									'/DashboardConfig/Dashboard/dashboardMax'
+								];
+						type = [TID_KEY, TID_INT, TID_INT];
+						ODBMCreate(address, type);
+
+						//alarm registry
+						address = [	'/DashboardConfig/CustomAlarms', 
+									'/DashboardConfig/CustomAlarms/Voltage', 
+									'/DashboardConfig/CustomAlarms/Current', 
+									'/DashboardConfig/CustomAlarms/Temperature', 
+									'/DashboardConfig/CustomAlarms/Clock'
+								];
+						type = [TID_KEY, TID_INT, TID_INT, TID_INT, TID_INT];
+						ODBMCreate(address, type);
+
+						//cycles
+						ODBMCreate(['/DashboardConfig/Cycles'], [TID_KEY]);
+
+						//filters
+						ODBMCreate(['/DashboardConfig/Filters'], [TID_KEY]);
+
+						//HV
+						address = [	'/DashboardConfig/HV', 
+									'/DashboardConfig/HV/voltageTolerance', 
+									'/DashboardConfig/HV/currentTolerance', 
+									'/DashboardConfig/HV/tempTolerance', 
+									'/DashboardConfig/HV/demandVoltage', 
+									'/DashboardConfig/HV/voltRampSpeed'
+								];
+						type = [TID_KEY, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT];
+						ODBMCreate(address, type);
+
+						//DAQ
+						address = [	'/DashboardConfig/DAQ', 
+									'/DashboardConfig/DAQ/rateMinTopView', 
+									'/DashboardConfig/DAQ/rateMaxTopView', 
+									'/DashboardConfig/DAQ/rateMinDetailView', 
+									'/DashboardConfig/DAQ/rateMaxDetailView', 
+									'/DashboardConfig/DAQ/transferMinTopView', 
+									'/DashboardConfig/DAQ/transferMaxTopView', 
+									'/DashboardConfig/DAQ/transferMinDetailView', 
+									'/DashboardConfig/DAQ/transferMaxDetailView', 
+									'/DashboardConfig/DAQ/rateMinMaster', 
+									'/DashboardConfig/DAQ/rateMaxMaster', 
+									'/DashboardConfig/DAQ/transferMinMaster', 
+									'/DashboardConfig/DAQ/transferMaxMaster'
+								];
+						type = [TID_KEY, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT];
+						ODBMCreate(address, type);
+
+						//BAMBINO
+						if(window.subdetectors['BAMBINO']){
+							address = [	'/DashboardConfig/BAMBINO', 
+										'/DashboardConfig/BAMBINO/deploy', 
+										'/DashboardConfig/BAMBINO/HVscale', 
+										'/DashboardConfig/BAMBINO/thresholdScale', 
+										'/DashboardConfig/BAMBINO/rateScale', 
+										'/DashboardConfig/BAMBINO/mode', 
+										'/DashboardConfig/BAMBINO/layers', 
+										'/DashboardConfig/BAMBINO/USdeploy', 
+										'/DashboardConfig/BAMBINO/DSdeploy'
+									];
+							type = [TID_KEY, TID_INT, TID_INT, TID_INT, TID_INT, TID_STRING, TID_INT, TID_INT, TID_INT];
+							ODBMCreate(address, type);
+
+							ODBSet('/DashboardConfig/BAMBINO/deploy', 1);
 						}
 
-						/*
-						for (var key in window.subdetectors){
-							//SCEPTAR has fancy deployment mode, everything else is just on / off:
-							if(key == 'US SCEPTAR' || key == 'DS SCEPTAR'){ 
-								if(window.subdetectors['US SCEPTAR'] > 0)
-									ODBSet('/DashboardConfig/SCEPTAR/USdeploy', 1);
-								else 
-									ODBSet('/DashboardConfig/SCEPTAR/USdeploy', 0);
-								if(window.subdetectors['DS SCEPTAR'] > 0)
-									ODBSet('/DashboardConfig/SCEPTAR/DSdeploy', 1);
-								else
-									ODBSet('/DashboardConfig/SCEPTAR/DSdeploy', 0);
-							} else
-								ODBSet('/DashboardConfig/'+key+'/deploy', window.subdetectors[key]);
+						//DANTE
+						if(window.subdetectors['DANTE']){
+							address = [ '/DashboardConfig/DANTE',
+										'/DashboardConfig/DANTE/deploy',
+										'/DashboardConfig/DANTE/BGOHVscale',
+										'/DashboardConfig/DANTE/BGOthresholdScale',
+										'/DashboardConfig/DANTE/BGOrateScale',
+										'/DashboardConfig/DANTE/LaBrPMTHVscale',
+										'/DashboardConfig/DANTE/LaBrPMTthresholdScale',
+										'/DashboardConfig/DANTE/LaBrPMTrateScale',
+										'/DashboardConfig/DANTE/LaBrTACHVscale',
+										'/DashboardConfig/DANTE/LaBrTACthresholdScale',
+										'/DashboardConfig/DANTE/LaBrTACrateScale'										
+									];
+							type = [TID_KEY, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT];
+							ODBMCreate(address, type);
+
+							ODBSet('/DashboardConfig/DANTE/deploy', 1);
 						}
-						window.location = window.location.href.replace("ConfigureExperiment", "ConfigureSubdetectors");
-						*/					
+
+						//DESCANT
+						if(window.subdetectors['DESCANT']){
+							address = [	'/DashboardConfig/DESCANT',
+										'/DashboardConfig/DESCANT/deploy',
+										'/DashboardConfig/DESCANT/HVscale',
+										'/DashboardConfig/DESCANT/thresholdScale',
+										'/DashboardConfig/DESCANT/rateScale'
+									];
+
+							type = [TID_KEY, TID_INT, TID_INT, TID_INT, TID_INT];
+							ODBMCreate(address, type); 
+
+							ODBSet('/DashboardConfig/DESCANT/deploy', 1);
+						}
+
+						//HPGe - no if, always in
+						address = [	'/DashboardConfig/HPGe',
+									'/DashboardConfig/HPGe/deploy',
+									'/DashboardConfig/HPGe/BGOHVscale',
+									'/DashboardConfig/HPGe/BGOthresholdScale',
+									'/DashboardConfig/HPGe/BGOrateScale',
+									'/DashboardConfig/HPGe/HVscale',
+									'/DashboardConfig/HPGe/thresholdScale',
+									'/DashboardConfig/HPGe/rateScale',
+									'/DashboardConfig/HPGe/upstreamLampAbsent',
+									'/DashboardConfig/HPGe/downstreamLampAbsent'
+								];
+						type = [TID_KEY, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT];
+						ODBMCreate(address, type); 
+
+						ODBSet('/DashboardConfig/HPGe/deploy', 1);
+
+						//PACES
+						if(window.subdetectors['PACES']){
+							address = [	'/DashboardConfig/PACES',
+										'/DashboardConfig/PACES/deploy',
+										'/DashboardConfig/PACES/HVscale',
+										'/DashboardConfig/PACES/thresholdScale',
+										'/DashboardConfig/PACES/rateScale'
+									];
+
+							type = [TID_KEY, TID_INT, TID_INT, TID_INT, TID_INT];
+							ODBMCreate(address, type); 		
+
+							ODBSet('/DashboardConfig/PACES/deploy', 1);			
+						}
+
+						//SCEPTAR
+						if(window.subdetectors['US SCEPTAR'] || window.subdetectors['DS SCEPTAR']){
+							address = [	'/DashboardConfig/SCEPTAR',
+										'/DashboardConfig/SCEPTAR/USdeploy',
+										'/DashboardConfig/SCEPTAR/DSdeploy',
+										'/DashboardConfig/SCEPTAR/HVscale',
+										'/DashboardConfig/SCEPTAR/thresholdScale',
+										'/DashboardConfig/SCEPTAR/rateScale'
+									];
+
+							type = [TID_KEY, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT];
+							ODBMCreate(address, type);
+
+							ODBSet('/DashboardConfig/SCEPTAR/USdeploy', (window.subdetectors['US SCEPTAR'] ? 1 : 0) );
+							ODBSet('/DashboardConfig/SCEPTAR/DSdeploy', (window.subdetectors['DS SCEPTAR'] ? 1 : 0) );
+
+						}
+
+						//SHARC
+						if(window.subdetectors['SHARC']){
+							address = [	'/DashboardConfig/SHARC',
+										'/DashboardConfig/SHARC/deploy',
+										'/DashboardConfig/SHARC/HVscale',
+										'/DashboardConfig/SHARC/thresholdScale',
+										'/DashboardConfig/SHARC/rateScale'
+									];
+
+							type = [TID_KEY, TID_INT, TID_INT, TID_INT, TID_INT];
+							ODBMCreate(address, type); 
+
+							ODBSet('/DashboardConfig/SHARC/deploy', 1);
+						}						
+
+						//SPICE
+						if(window.subdetectors['SPICE']){
+							address = [	'/DashboardConfig/SPICE',
+										'/DashboardConfig/SPICE/deploy',
+										'/DashboardConfig/SPICE/HVscale',
+										'/DashboardConfig/SPICE/thresholdScale',
+										'/DashboardConfig/SPICE/rateScale',
+										'/DashboardConfig/SPICE/SPICEauxiliary',
+										'/DashboardConfig/SPICE/SPICEauxLayers'
+									];
+
+							type = [TID_KEY, TID_INT, TID_INT, TID_INT, TID_INT, TID_STRING, TID_INT];
+							ODBMCreate(address, type); 
+
+							ODBSet('/DashboardConfig/SPICE/deploy', 1);
+						}
+
+						//TIP ball
+						if(window.subdetectors['TIPball']){
+							address = [	'/DashboardConfig/TIPball',
+										'/DashboardConfig/TIPball/deploy',
+										'/DashboardConfig/TIPball/HVscale',
+										'/DashboardConfig/TIPball/thresholdScale',
+										'/DashboardConfig/TIPball/rateScale'
+									];
+
+							type = [TID_KEY, TID_INT, TID_INT, TID_INT, TID_INT];
+							ODBMCreate(address, type); 
+
+							ODBSet('/DashboardConfig/TIPball/deploy', 1);
+						}
+
+						//TIP wall
+						if(window.subdetectors['TIPwall']){
+							address = [	'/DashboardConfig/TIPwall',
+										'/DashboardConfig/TIPwall/deploy',
+										'/DashboardConfig/TIPwall/HVscale',
+										'/DashboardConfig/TIPwall/thresholdScale',
+										'/DashboardConfig/TIPwall/rateScale'
+									];
+
+							type = [TID_KEY, TID_INT, TID_INT, TID_INT, TID_INT];
+							ODBMCreate(address, type); 
+
+							ODBSet('/DashboardConfig/TIPwall/deploy', 1);
+						}
+
+						//ZDS
+						if(window.subdetectors['ZDS']){
+							address = [	'/DashboardConfig/ZDS',
+										'/DashboardConfig/ZDS/deploy',
+										'/DashboardConfig/ZDS/HVscale',
+										'/DashboardConfig/ZDS/thresholdScale',
+										'/DashboardConfig/ZDS/rateScale'
+									];
+
+							type = [TID_KEY, TID_INT, TID_INT, TID_INT, TID_INT];
+							ODBMCreate(address, type); 
+
+							ODBSet('/DashboardConfig/ZDS/deploy', 1);
+						}
+
+						//window.location = window.location.href.replace("ConfigureExperiment", "ConfigureSubdetectors");
+											
 					}
 				}
 
