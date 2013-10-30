@@ -776,6 +776,7 @@
 								];
 						type = [TID_KEY, TID_INT, TID_INT];
 						ODBMCreate(address, type);
+						ODBSet('/DashboardConfig/Dashboard/dashboardMax', 1000000);
 
 						//alarm registry
 						address = [	'/DashboardConfig/CustomAlarms', 
@@ -788,7 +789,21 @@
 						ODBMCreate(address, type);
 
 						//cycles
-						ODBMCreate(['/DashboardConfig/Cycles'], [TID_KEY]);
+						address = [	'/DashboardConfig/Cycles', 
+									'/DashboardConfig/Cycles/Static Source',
+									'/DashboardConfig/Cycles/Static Source/Code',
+									'/DashboardConfig/Cycles/Static Source/Duration',
+									'/DashboardConfig/Cycles/Active Name',
+									'/DashboardConfig/Cycles/Active Pattern',
+									'/DashboardConfig/Cycles/Active Duration'
+								];
+						type = [TID_KEY, TID_KEY, TID_INT, TID_INT, TID_STRING, TID_INT, TID_INT]
+						ODBMCreate(address, type);
+						ODBSet('/DashboardConfig/Cycles/Static Source/Code', 0);
+						ODBSet('/DashboardConfig/Cycles/Static Source/Duration', 0);
+						ODBSet('/DashboardConfig/Cycles/Active Name', 'Static Source'); //defaults to static source on load
+						ODBSet('/DashboardConfig/Cycles/Active Pattern', 0);
+						ODBSet('/DashboardConfig/Cycles/Active Duration', 0);
 
 						//filters
 						ODBMCreate(['/DashboardConfig/Filters'], [TID_KEY]);
