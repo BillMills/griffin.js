@@ -30,58 +30,58 @@ function Dashboard(){
     this.pointers[1] = window.HPGepointer;
     this.pointers[2] = window.HPGepointer;
     //corona auxilary
-    if(ODB.DANTE.deploy){
+    if(ODB.DANTE){
         this.labels[3] = 'DANTE';
         this.pointers[3] = window.DANTEpointer;
     }
     //chamber
-    if(ODB.BAMBINO.USdeploy){  //upstream BAMBINO
+    if(ODB.BAMBINO && ODB.BAMBINO.USdeploy){  //upstream BAMBINO
         this.labels[5] = 'BAMBINO';
         this.pointers[5] = window.BAMBINOpointer;
     }
-    if(ODB.BAMBINO.DSdeploy){  //downstream BAMBINO
+    if(ODB.BAMBINO && ODB.BAMBINO.DSdeploy){  //downstream BAMBINO
         this.labels[4] = 'BAMBINO';
         this.pointers[5] = window.BAMBINOpointer;
     }
-    if(ODB.SHARC.deploy){
+    if(ODB.SHARC){
         this.labels[4] = 'SHARC';
         this.pointers[4] = window.SHARCpointer;
     }
-    if(ODB.TIPwall.deploy){
+    if(ODB.TIPwall){
         this.labels[4] = 'TIP Wall';
         this.pointers[4] = window.TIPwallpointer;
     }
-    if(ODB.TIPball.deploy){
+    if(ODB.TIPball){
         this.labels[4] = 'TIP Ball';
         this.pointers[4] = window.TIPballpointer;
     }
-    if(ODB.SCEPTAR.USdeploy){ //upstream SCEPTAR
+    if(ODB.SCEPTAR && ODB.SCEPTAR.USdeploy){ //upstream SCEPTAR
         this.labels[5] = 'SCEPTAR';
         this.pointers[5] = window.SCEPTARpointer;
     }
-    if(ODB.SCEPTAR.DSdeploy == 1){ //downstream SCEPTAR
+    if(ODB.SCEPTAR &&  ODB.SCEPTAR.DSdeploy == 1){ //downstream SCEPTAR
         this.labels[4] = 'SCEPTAR';
         this.pointers[4] = window.SCEPTARpointer;
     }
-    if(ODB.SCEPTAR.DSdeploy == 2){ //ZDS
+    if(ODB.SCEPTAR && ODB.SCEPTAR.DSdeploy == 2){ //ZDS
         this.labels[4] = 'ZDS';
         this.pointers[4] = window.ZDSpointer;
     }
-    if(ODB.PACES.deploy){
+    if(ODB.PACES){
         this.labels[5] = 'PACES';
         this.pointers[5] = window.PACESpointer;
     }
-    if(ODB.SPICE.deploy){
+    if(ODB.SPICE){
         this.labels[5] = 'SPICE';
         this.pointers[5] = window.SPICEpointer;
     }
     //downstream lampshade
-    if(ODB.DESCANT.deploy){
+    if(ODB.DESCANT){
         this.labels[1] = 'DESCANT';
         this.pointers[1] = window.DESCANTpointer;
     }
     //upstream lampshade
-    if(ODB.SPICE.deploy){
+    if(ODB.SPICE){
         this.labels[2] = 0;
         this.pointers[2] = window.SPICEpointer;
     }

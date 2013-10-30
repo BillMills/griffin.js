@@ -195,17 +195,17 @@
           //subdetectors
           window.Subdetectors = [];
 
-          if(ODB.HPGe.deploy) window.Subdetectors[window.Subdetectors.length] = new HPGe();
-          if(ODB.SHARC.deploy) window.Subdetectors[window.Subdetectors.length] = new SHARC();
-          if(ODB.DESCANT.deploy) window.Subdetectors[window.Subdetectors.length] = new DESCANT();
-          if(ODB.PACES.deploy) window.Subdetectors[window.Subdetectors.length] = new PACES();
-          if(ODB.DANTE.deploy) window.Subdetectors[window.Subdetectors.length] = new DANTE();
-          if(ODB.SPICE.deploy) window.Subdetectors[window.Subdetectors.length] = new SPICE();
-          if(ODB.BAMBINO.DSdeploy || ODB.BAMBINO.USdeploy || ODB.SPICE.SPICEauxiliary == 'S2' || ODB.SPICE.SPICEauxiliary == 'S3') window.Subdetectors[window.Subdetectors.length] = new BAMBINO(ODB.SPICE.SPICEauxiliary);
-          if(ODB.SCEPTAR.USdeploy || ODB.SCEPTAR.DSdeploy==1 || ODB.SCEPTAR.DSdeploy==2) window.Subdetectors[window.Subdetectors.length] = new SCEPTAR();
-          if(ODB.TIPwall.deploy) window.Subdetectors[window.Subdetectors.length] = new TIPwall();
-          if(ODB.TIPball.deploy) window.Subdetectors[window.Subdetectors.length] = new TIPball();
-          if(ODB.DSSD.deploy) window.Subdetectors[window.Subdetectors.length] = new DSSD();
+          if(ODB.HPGe) window.Subdetectors[window.Subdetectors.length] = new HPGe();
+          if(ODB.SHARC) window.Subdetectors[window.Subdetectors.length] = new SHARC();
+          if(ODB.DESCANT) window.Subdetectors[window.Subdetectors.length] = new DESCANT();
+          if(ODB.PACES) window.Subdetectors[window.Subdetectors.length] = new PACES();
+          if(ODB.DANTE) window.Subdetectors[window.Subdetectors.length] = new DANTE();
+          if(ODB.SPICE) window.Subdetectors[window.Subdetectors.length] = new SPICE();
+          if(ODB.BAMBINO || ( ODB.SPICE && (ODB.SPICE.SPICEauxiliary == 'S2' || ODB.SPICE.SPICEauxiliary == 'S3') ) ) window.Subdetectors[window.Subdetectors.length] = new BAMBINO(ODB.SPICE.SPICEauxiliary);
+          if(ODB.SCEPTAR) window.Subdetectors[window.Subdetectors.length] = new SCEPTAR();
+          if(ODB.TIPwall) window.Subdetectors[window.Subdetectors.length] = new TIPwall();
+          if(ODB.TIPball) window.Subdetectors[window.Subdetectors.length] = new TIPball();
+          if(ODB.DSSD) window.Subdetectors[window.Subdetectors.length] = new DSSD();
 
           injectDOM('br', 'break', 'SubsystemLinks', {});
           //nav for different reported values:
