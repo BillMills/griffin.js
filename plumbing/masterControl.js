@@ -118,6 +118,24 @@ function masterLoop(callMyself, noFetch){
     window.loop = setTimeout(function(){loadJSONP(window.Gatekeeper, 1)}, 3000);
 }
 
+//determine how many crates are declared in the ODB.  Equipment name must be 'HV-xx', where xx == 0-99
+function detectCrates(){
+    var i, paths = [], data = [],
+        maxCrates = 100;
+
+    for(i=0; i<maxCrates; i++){
+      paths[i] = '/Equipment/HV-'+i;
+    }
+    data = ODBMGet(paths);
+    
+    for(i=0; i<maxCrates; i++){
+      if(data[i] != '<DB_NO_KEY>'){
+        window.parameters.HVequipmentNames[window.parameters.HVequipmentNames.length] = 'HV-'+i
+      }
+    }
+
+}
+
 //determine what size cards are in what slot:
 function detectCards(){
     var i, j, crateCode, nSlots;

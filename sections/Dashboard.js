@@ -87,7 +87,8 @@ function Dashboard(){
     }
 
 	this.wrapper = document.getElementById(this.wrapperID);
-
+    
+/*  --redeploy sidebar when I decide what to actually use it for :)
     //right sidebar menus
     subsPresent = [ODB.topLevel.HPGeArray];
     subsNames = [ODB.topLevel.HPGeArray];
@@ -103,7 +104,7 @@ function Dashboard(){
         }
     }
     deployMenu(this.sidebarID, subsPresent , subsNames);
-
+*/
     //add top level nav button:
     injectDOM('button', 'DashboardButton', 'statusLink', {
         'class' : 'navLinkDown',

@@ -133,7 +133,7 @@
         }
         data = ODBMGet(paths);
         for(i=0; i<25; i++){
-          if(data[i] != '<DB_NO_KEY>\n'){
+          if(data[i] != '<DB_NO_KEY>'){
             window.parameters.nClocks++;
             window.parameters.topDeployment['Clock'] = 1;
           }
@@ -141,6 +141,9 @@
 
         //autodetect how many VMEs are present:
         window.parameters.nVME = 12; //TBD
+
+        //autodetect how many crates are plugged into the experiment:
+        detectCrates();
 
         //autodetect what size cards are plugged into what slot:
         detectCards();

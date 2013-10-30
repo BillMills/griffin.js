@@ -40,7 +40,7 @@ function loadParameters(){
 				"rampUnit" : "V/s",
 				"currentUnit" : "uA",
 				"temperatureUnit" : "C",
-				"HVequipmentNames" : ["HV-0", "HV-1", "HV-2"],
+				"HVequipmentNames" : [],
 				"moduleSizes" : [],
 				"colorScale"  : ["ROOT Rainbow", "Greyscale", "Sunset", "Red Scale", "Mayfair"],
 				"subdetectorColors" : ["ROOT Rainbow", "ROOT Rainbow", "Sunset"],
