@@ -214,7 +214,7 @@
 						ODBSet('/DashboardConfig/HV/voltageTolerance', document.getElementById('voltageTolInput').valueAsNumber);
 						ODBSet('/DashboardConfig/HV/currentTolerance', document.getElementById('currentTolInput').valueAsNumber);
 						ODBSet('/DashboardConfig/HV/tempTolerance', document.getElementById('tempTolInput').valueAsNumber);
-						//ODBSet('/DashboardConfig/HV/demandVoltage[*]', [document.getElementById('HVTableHVmin').valueAsNumber, document.getElementById('HVTableHVmax').valueAsNumber] );
+						ODBSet('/DashboardConfig/HV/demandVoltage[*]', [0,5000] );
 						ODBSet('/DashboardConfig/HV/voltRampSpeed[*]', [document.getElementById('HVTablethresholdMin').valueAsNumber, document.getElementById('HVTablethresholdMax').valueAsNumber]);
 						//make sure HPGe defaults to all deployed:
 						ODBSet('/DashboardConfig/HPGe/upstreamLampAbsent', 0)

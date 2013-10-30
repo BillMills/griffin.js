@@ -196,7 +196,7 @@ div.RightSidebar{
 	display:inline;
 	opacity:0;
 	z-index:-1;
-	background-color:#4C4C4C;
+	background-color:#4C4C4C !important;
 	border:2px solid black;
 	border-top-left-radius:20px;
 	border-bottom-left-radius:20px; 

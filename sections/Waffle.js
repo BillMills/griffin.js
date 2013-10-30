@@ -95,7 +95,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                 'type' : 'button',
                 'value' : 'Commit'
             });
-            document.getElementById('submitParameters').setAttribute('disabled', 'true');
+            //document.getElementById('submitParameters').setAttribute('disabled', 'true');
 
             //status report:
             injectDOM('p', 'status', 'setValues', {'style':'margin-left:10%', 'innerHTML':'Status:'});
@@ -197,7 +197,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         //fill meters  TODO: put these on the waffle object instead of window?
         window.meter = new FillMeter('voltageMeter', 'InputLayer', 0, ODB.HV.demandVoltage[0], ODB.HV.demandVoltage[1], window.parameters.voltUnit, window.parameters.statusPrecision);
         window.currentMeter = new FillMeter('currentMeter', 'InputLayer', 0, window.parameters.minCurrent, window.parameters.maxCurrent, window.parameters.currentUnit, window.parameters.statusPrecision);
-        window.temperatureMeter = new FillMeter('temperatureMeter', 'InputLayer', 0, window.parameters.minTemperature, window.parameters.maxTemperature, window.parameters.temperatureUnit, window.parameters.statusPrecision);
+        window.temperatureMeter = new FillMeter('temperatureMeter', 'InputLayer', 0, window.parameters.minTemperature, ODB.HV.tempTolerance, window.parameters.temperatureUnit, window.parameters.statusPrecision);
 
         //determine dimesions of canvas:
         this.totalWidth = Math.round(0.5*$('#'+this.wrapperDiv).width());
@@ -1116,7 +1116,7 @@ function configureDropdowns(ChannelListDD, CardListDD, moduleLabels, moduleSizes
     //establish card list
     var colDD = document.getElementById(CardListDD);
     for(i=0; i<moduleLabels.length; i++){
-        if(moduleSizes[i] != 0){
+        if(parseInt(moduleSizes[i]) ){
             option[i] = document.createElement('option');
             option[i].text = moduleLabels[i];
             colDD.add(option[i], null);
