@@ -270,8 +270,9 @@
 
         //window event listeners:
         //make the cycle palete scoll with the window - fixed positioning is acting a bit weird, so handle manually instead:
+        window.parameters.cyclePaleteMinOffset = $('#cyclePalete').offset().top;
         window.onscroll = function(){
-          document.getElementById('cyclePalete').style.top = window.scrollY;
+          document.getElementById('cyclePalete').style.top = Math.max(0, window.scrollY - window.parameters.cyclePaleteMinOffset);
         }
         //end main elements////////////////////////////////////////////////////////////////////////////
 

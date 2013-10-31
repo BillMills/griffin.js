@@ -12,6 +12,9 @@ function Cycle(){
     this.currentDrag = '';
     this.codex = {
         "beamOn"        : 1,    //0x00000001
+        "wildcard1"     : 2,    //0x00000002
+        "wildcard2"     : 4,    //0x00000004
+        "wildcard3"     : 8,    //0x00000008
         "syncClocks"    : 16,   //0x00000010
         "clearScalars"  : 32,   //0x00000020
         "moveTape"      : 64,   //0x00000040
@@ -21,6 +24,9 @@ function Cycle(){
         "enableDANTE"   : 1024, //0x00000400
         "enableDESCANT" : 2048, //0x00000800
         "enableZDS"     : 4096, //0x00001000
+        "wildcard4"     : 8192, //0x00002000
+        "wildcard5"     : 16384,//0x00004000
+        "wildcard6"     : 32768,//0x00008000 
         "triggersOn"    : 8064  //0x00001F80  //as in ALL triggers on.
     };
     //keep an internal list of all available cycles:
