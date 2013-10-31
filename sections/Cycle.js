@@ -20,7 +20,8 @@ function Cycle(){
         "enablePACES"   : 512,  //0x00000200
         "enableDANTE"   : 1024, //0x00000400
         "enableDESCANT" : 2048, //0x00000800
-        "triggersOn"    : 3968  //0x00000F80  //as in ALL triggers on.
+        "enableZDS"     : 4096, //0x00001000
+        "triggersOn"    : 8064  //0x00001F80  //as in ALL triggers on.
     };
     //keep an internal list of all available cycles:
     this.cycleNames = [];
@@ -139,11 +140,14 @@ function Cycle(){
     deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'triggersOnPaleteBadge', 'cyclePalete', triggersOn, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Triggers On', true);
     //Beam On
     deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'beamOnPaleteBadge', 'cyclePalete', beamOn, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Beam On', true);
+    //Sync Clocks
+    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'syncClocksPaleteBadge', 'cyclePalete', syncClocks, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Sync Clocks', true);
     //modify the dragstart of the palete badges:
     document.getElementById('clearScalarsPaleteBadgecyclePalete').addEventListener('dragstart', paleteDragStart, false);
     document.getElementById('moveTapePaleteBadgecyclePalete').addEventListener('dragstart', paleteDragStart, false);
     document.getElementById('triggersOnPaleteBadgecyclePalete').addEventListener('dragstart', paleteDragStart, false);
     document.getElementById('beamOnPaleteBadgecyclePalete').addEventListener('dragstart', paleteDragStart, false);
+    document.getElementById('syncClocksPaleteBadgecyclePalete').addEventListener('dragstart', paleteDragStart, false);
 
     this.update = function(){
     };
@@ -413,6 +417,8 @@ function deployBadge(badge, commandID){
         deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'triggersOnPaleteBadge', commandID, triggersOn, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Triggers On', false);
     else if(badge == 'beamOn')
         deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'beamOnPaleteBadge', commandID, beamOn, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Beam On', false);
+    else if(badge == 'syncClocks')
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'syncClocksPaleteBadge', commandID, syncClocks, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Sync Clocks', false);
     else{
         document.getElementById(commandID).innerHTML = badge;
         document.getElementById(commandID).setAttribute('class', 'delayCycleContent');
@@ -555,7 +561,7 @@ function saveCycle(){
     ODBSet('/DashboardConfig/Cycles/'+name+'/Duration[*]', cycle[1]);
 
     //regrab parameter store; performant enough or update local copy by hand to avoid traffic? TBD.
-    ODB = fetchODB();
+    fetchODB();
 
     //include in dropdown if new
     if(deleteCode[0] == 312){

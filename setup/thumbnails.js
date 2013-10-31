@@ -579,3 +579,10 @@ function triggersOn(context, width, height, x0, y0){
 	context.stroke();
 	context.closePath();
 }
+
+function syncClocks(context, width, height, x0, y0){
+	context.beginPath();
+	context.arc(x0,y0, height*0.3, 0, Math.PI*2);
+	context.stroke();
+	context.closePath();
+}

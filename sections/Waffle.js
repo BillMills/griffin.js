@@ -140,7 +140,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
             });
             injectDOM('div', 'rampSlider', 'setValues', {'class':'slider'});
             //demand voltage ramp down
-            injectDOM('p', 'RampTextDown', 'setValues', {'style':'margin:0px; margin-left:10%; margin-top:20px;', 'innerHTML':'Demand Ramp Down Speed [V/s]'});
+            injectDOM('p', 'RampTextDown', 'setValues', {'style':'margin:0px; margin-left:10%; margin-top:20px;', 'innerHTML':'Voltage Ramp Down Speed [V/s]'});
             injectDOM('input', 'demandRampDownSpeed', 'setValues', {
                 'style' : 'margin-bottom:10px; margin-top: 5px; margin-left:10%; margin-right:5%;',
                 'name' : 'textbox',

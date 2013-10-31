@@ -21,20 +21,20 @@ function updateParameter(){
 
     //switch channel on/off
     if(document.getElementById('onButton').checked == true){
-      ODBSet("/Equipment/HV/Settings/ChState["+ODBindex+"]",1);
+      ODBSet("/Equipment/HV-"+window.HVview+"/Settings/ChState["+ODBindex+"]",1);
     }
     else{
-      ODBSet("/Equipment/HV/Settings/ChState["+ODBindex+"]",0);
+      ODBSet("/Equipment/HV-"+window.HVview+"/Settings/ChState["+ODBindex+"]",0);
     }
 
     //set demand voltage:
-    ODBSet("/Equipment/HV/Variables/Demand["+ODBindex+"]", parseFloat(userInputs[0]));
+    ODBSet("/Equipment/HV-"+window.HVview+"/Variables/Demand["+ODBindex+"]", parseFloat(userInputs[0]));
 
     //set ramp up voltage:
-    ODBSet("/Equipment/HV/Settings/Ramp Up Speed["+ODBindex+"]", parseFloat(userInputs[1]));
+    ODBSet("/Equipment/HV-"+window.HVview+"/Settings/Ramp Up Speed["+ODBindex+"]", parseFloat(userInputs[1]));
 
     //set ramp down voltage:
-    ODBSet("/Equipment/HV/Settings/Ramp Down Speed["+ODBindex+"]", parseFloat(userInputs[2]));
+    ODBSet("/Equipment/HV-"+window.HVview+"/Settings/Ramp Down Speed["+ODBindex+"]", parseFloat(userInputs[2]));
 
     //once the ODB has been updated, kick the loop to update immediately:
     clearTimeout(window.loop);
