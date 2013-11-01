@@ -802,10 +802,19 @@ function getDrop(dropID){
 function loadFilter(){
     var name = getDrop('filterOptions'),
         filter = JSON.parse(ODBCopy('/DashboardConfig/Filters/'+name)),
-        key, length, i, init=1, rule, detector, mode, factor, groupID, contentID, counter=0, badgeID, scroll, scrollButton;
+        key, length, i, init=1, rule, detector, mode, factor, groupID, contentID, 
+        counter, originalCount, badgeID, scroll, scrollButton;
 
     //load the name into the input box
     document.getElementById('filterName').value = name;
+
+    //find the last rule index declared, and build from there; will delete earlier ones at the end
+    for(i=0; i<window.filterEditPointer.filterConIndex; i++){
+        if(document.getElementById('deleteFilterCon'+i))
+            counter = i;
+    }
+    originalCount = counter;
+    window.filterEditPointer.filterConIndex = counter+1
 
     for(key in filter){
         //skip the metadata
@@ -888,12 +897,17 @@ function loadFilter(){
             }
 
             //assign multiplicity / prescale factor:
-            console.log(badgeID + 'factor')
             document.getElementById(badgeID + 'factor').value = factor;
 
         }
         counter++;
 
+    }
+
+    //delete any rules that may have come before:
+    for(i=0; i<originalCount; i++){
+        if(document.getElementById('deleteFilterCon'+i))
+            document.getElementById('deleteFilterCon'+i).onclick();
     }
 }
 
