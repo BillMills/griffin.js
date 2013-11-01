@@ -167,6 +167,15 @@ function loadParameters(){
 										   },
 						},
 
+				"ZDS" : {
+								"minima" : {
+												"ZDS" : [0,0,0]
+										   },
+								"maxima" : {
+												"ZDS" : [1,1,1]
+										   },
+						},
+
 				"DAQminima" : [0, 0, 0, 0, 0, 0], //minima of element scales: [top level view rate, top level transfer, detail view rate, detail view transfer, master rate, master transfer]
 				"DAQmaxima" : [10000, 100000, 1000, 1000, 50000, 50000],
 

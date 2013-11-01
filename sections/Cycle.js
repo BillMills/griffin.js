@@ -112,7 +112,7 @@ function Cycle(){
     injectDOM('div', 'cycleSteps', 'cycleWrapper', {'style' : 'width:'+0.48*$(this.wrapper).width()+'; padding:0.5em; float:left; text-align:center;'});
     injectDOM('div', 'cyclePalete', 'cycleWrapper', {
         'class' : 'cycleDiv',
-        'style' : 'width:250px; float:right; text-align:center; padding-top:1em; position:relative; top:0px; max-height:'+window.offsetHeight+'; overflow:scroll;',
+        'style' : 'width:250px; float:right; text-align:center; padding-top:1em; position:relative; top:0px; height:'+( $('#leftSidebar').offset().top + $('#leftSidebar').offset().height - $('#cycleSteps').offset().top)+'; overflow:scroll;',
     });
 
     //inject options into palete
@@ -160,7 +160,7 @@ function Cycle(){
         deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'SCEPTARPaleteBadge', 'cyclePalete', sceptar, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.3], 'SCEPTAR Trig', true);
     //PACES Trigger
     if(ODB.PACES)
-        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'PACESPaleteBadge', 'cyclePalete', paces, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight, this.badgeHeight*0.2], 'PACES Trig', true);
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'PACESPaleteBadge', 'cyclePalete', paces, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.2, this.badgeHeight*0.05], 'PACES Trig', true);
     //DANTE Trigger
     if(ODB.DANTE)
         deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'DANTEPaleteBadge', 'cyclePalete', dante, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.2, '#999999'], 'DANTE Trig', true);
@@ -202,6 +202,8 @@ function Cycle(){
 
     reloadCycle();
     suspendCycleRequest();
+
+    document.getElementById('newCommand').onclick();
 }
 
 
@@ -475,7 +477,7 @@ function deployBadge(badge, commandID){
     else if(badge == 'SCEPTAR')
         deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'SCEPTARPaleteBadge', commandID, sceptar, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.3], 'SCEPTAR', false);
     else if(badge == 'PACES')
-        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'PACESPaleteBadge', commandID, paces, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight, this.badgeHeight*0.3], 'PACES', false);
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'PACESPaleteBadge', commandID, paces, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.2, this.badgeHeight*0.05], 'PACES', false);
     else if(badge == 'DANTE')
         deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'DANTEPaleteBadge', commandID, dante, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.2, '#999999'], 'DANTE', false);
     else if(badge == 'DESCANT')

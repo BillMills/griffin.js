@@ -48,14 +48,14 @@
 				if(ODBGet('DashboardConfig/HPGe/deploy') > 0) subdetectors[subdetectors.length] = 'HPGe';
 				if(ODBGet('DashboardConfig/DESCANT/deploy') > 0) subdetectors[subdetectors.length] = 'DESCANT';
 				if(ODBGet('DashboardConfig/PACES/deploy') > 0) subdetectors[subdetectors.length] = 'PACES';
-				if(ODBGet('DashboardConfig/DANTE/deploy') > 0) subdetectors[subdetectors.length] = 'DANTE';
 				if(ODBGet('DashboardConfig/BAMBINO/deploy') > 0) subdetectors[subdetectors.length] = 'BAMBINO';
 				if(ODBGet('DashboardConfig/SCEPTAR/USdeploy') > 0 || ODBGet('DashboardConfig/SCEPTAR/DSdeploy') > 0) subdetectors[subdetectors.length] = 'SCEPTAR';
 				if(ODBGet('DashboardConfig/SPICE/deploy') > 0) subdetectors[subdetectors.length] = 'SPICE';
 				if(ODBGet('DashboardConfig/TIPwall/deploy') > 0) subdetectors[subdetectors.length] = 'TIPwall';
 				if(ODBGet('DashboardConfig/TIPball/deploy') > 0) subdetectors[subdetectors.length] = 'TIPball';
 				if(ODBGet('DashboardConfig/ZDS/deploy') > 0) subdetectors[subdetectors.length] = 'ZDS';
-
+				if(ODBGet('DashboardConfig/DANTE/deploy') > 0) subdetectors[subdetectors.length] = 'DANTE';
+				
 				//inject the form to hold all the submission fields:
 				injectDOM('form', 'subdetectorParameters', 'wrapper', {});
 

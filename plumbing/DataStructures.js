@@ -568,7 +568,7 @@ SCEPTARDS = function(config){
 			this.TTmap[i] = name;
 		}
 	}
-
+/* not sure what I was thinking here
 	//ZDS:
 	if(config[2]){
 		this.SCEPTAR['ZDS01XN00X'] = {
@@ -586,6 +586,26 @@ SCEPTARDS = function(config){
 		}
 		this.TTmap[21] = 'ZDS01XN00X';
 	}
+*/
+}
+
+ZDSDS = function(){
+	this.ZDS = {};
+	this.TTmap = [];
+	this.ZDS['ZDS01XN00X'] = {
+		'HV'		: 0,
+		'threshold' : 0,
+		'rate' 		: 0,
+		'index'		: 0,
+
+		'oldHVcolor' : '#000000',
+		'HVcolor'	 : '#000000',
+		'oldThresholdColor' : '#000000',
+		'thresholdColor' : '#000000',
+		'oldRateColor' : '#000000',
+		'rateColor' : '#000000'		
+	}
+	this.TTmap[0] = 'ZDS01XN00X';
 }
 
 SPICEDS = function(){

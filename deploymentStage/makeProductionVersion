@@ -33,6 +33,7 @@ cp ../plumbing/menu.js .
 cp ../sections/VME.js .
 cp ../sections/Cycle.js .
 cp ../setup/thumbnails.js .
+cp ../subdetectors/ZDS.js .
 
 rm griffin.min.js
 source concatenate

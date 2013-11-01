@@ -583,9 +583,10 @@ function deployBadgeCanvas(width, height, id, wrapperID, paintThumb, thumbArgs, 
                                     else if(window.onDisplay == 'cycleCanvas'){
                                         pointer = this.parentNode;
                                         this.parentNode.removeChild(this);
-                                        if(pointer.innerHTML == '')
+                                        if(pointer.innerHTML == ''){
                                             pointer.innerHTML = window.cyclePointer.helpMessage;
                                             pointer.setAttribute('class', 'delayCycleContent');
+                                        }
                                         askForCycleDeploy();
                                     }
                                 }
