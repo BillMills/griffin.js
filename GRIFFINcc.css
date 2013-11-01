@@ -847,6 +847,13 @@ button#commitCycle{
 	border-radius:10px;
 }
 
+/* http://stackoverflow.com/questions/3790935/can-i-hide-the-html5-number-inputs-spin-box */
+input.filterFactor::-webkit-outer-spin-button,
+input.filterFactor::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 :invalid{
 	color: #FF0000;
 	border: 2px solid #FF0000;

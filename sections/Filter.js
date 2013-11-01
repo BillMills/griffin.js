@@ -607,13 +607,44 @@ function deployFilterBadge(id, wrapperID, createCanvas){
     injectDOM('div', id+wrapperID, wrapperID, {'class':'filterBadge'});
     document.getElementById(id+wrapperID).filterTag = filterTag(id.slice(0, id.indexOf('filterBadge')));
     createCanvas();
-    createOptionScroll(id+wrapperID, id+wrapperID+'scroll', ['Singles', 'Coincidence', 'Prescaled'], document.getElementById(id+wrapperID).offsetWidth);
+    createOptionScroll(id+wrapperID, id+wrapperID+'scroll', ['Singles', 'Coincidence', 'Prescaled'], document.getElementById(id+wrapperID).offsetWidth, filterScrollCB.bind(null, id+wrapperID)  );
+    injectDOM('label', id+wrapperID+'label', id+wrapperID, {
+        'innerHTML' : '',
+        'for' : id+wrapperID+'factor'
+    });
+    injectDOM('input', id+wrapperID+'factor', id+wrapperID, {
+        'type' : 'number',
+        'class' : 'filterFactor',
+        'style' : 'opacity:0',
+        'min' : 0,
+        'value' : 1
+    });
 
     //update help messages:
     if(wrapperID == 'singleStreamFilters')
         document.getElementById('singleStreamHelp').innerHTML = 'Any of these:';
     else if(wrapperID.slice(0,11) == 'interstream')
         document.getElementById('interstreamHelp'+wrapperID.slice(11, wrapperID.length)).innerHTML = 'or ALL of these:'
+}
+
+function filterScrollCB(target){
+    scroll = document.getElementById(target+'scroll');
+    if(scroll.chosen==0){
+        document.getElementById(target+'label').innerHTML = '';
+        document.getElementById(target+'factor').style.width = 0;        
+        document.getElementById(target+'label').style.opacity = 0;
+        document.getElementById(target+'factor').style.opacity = 0;
+    } else if(scroll.chosen==1){
+        document.getElementById(target+'label').innerHTML = 'Multiplicity: ';
+        document.getElementById(target+'factor').style.width = '3em';
+        document.getElementById(target+'label').style.opacity = 1;
+        document.getElementById(target+'factor').style.opacity = 1;        
+    } else if(scroll.chosen==2){
+        document.getElementById(target+'label').innerHTML = 'Prescale Factor: ';
+        document.getElementById(target+'factor').style.width = '6em';
+        document.getElementById(target+'label').style.opacity = 1;
+        document.getElementById(target+'factor').style.opacity = 1;        
+    }
 }
 
 //parse the detector names into their tokens for the filter definition
@@ -658,11 +689,11 @@ function buildFilter(){
                     //add subsystem tag
                     filterString += filterConditions.childNodes[i].childNodes[j].childNodes[k].filterTag;
                     //add Singles / Coinc / Prescale tag:
-                    modeTag = filterConditions.childNodes[i].childNodes[j].childNodes[k].childNodes[1].childNodes[1].innerHTML;
+                    modeTag = filterConditions.childNodes[i].childNodes[j].childNodes[k].childNodes[1].childNodes[1].innerHTML;  //trololololo
                     modeTag = ( (modeTag == 'Singles') ? '-S' : ( (modeTag=='Prescaled') ? '-P' : '-C' ) );
                     filterString += modeTag;
                     //Include varibale prescale / coincidence multiplicity here; fixed to 1 until I get a real spec:
-                    filterString += '-1';
+                    filterString += '-'+filterConditions.childNodes[i].childNodes[j].childNodes[k].childNodes[3].value;
 
                     filters[i][k] = filterString;
                 }
@@ -771,7 +802,7 @@ function getDrop(dropID){
 function loadFilter(){
     var name = getDrop('filterOptions'),
         filter = JSON.parse(ODBCopy('/DashboardConfig/Filters/'+name)),
-        key, length, i, init=1, rule, detector, mode, factor, groupID, counter=0, scrollID, scroll, scrollLabel;
+        key, length, i, init=1, rule, detector, mode, factor, groupID, contentID, counter=0, badgeID, scroll, scrollButton;
 
     //load the name into the input box
     document.getElementById('filterName').value = name;
@@ -791,9 +822,10 @@ function loadFilter(){
 
         //construct the ID for this block:
         groupID = 'filterGroup' + counter;
+        contentID = 'filterGroupContent' + counter;
 
         //dump the default text
-        document.getElementById(groupID).innerHTML = '';
+        document.getElementById(contentID).innerHTML = '';
 
         //deploy all the individual elements in the block
         for(i=0; i<length; i++){
@@ -810,53 +842,54 @@ function loadFilter(){
 
             //set us up the badge:
             if(detector == 'DAB'){
-                deployFilterBadge('DANTEfilterBadge', groupID, deployBadgeCanvas.bind(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'DANTEfilterBadgeCanvas', 'DANTEfilterBadge'+groupID, dante, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.25, '#999999'], 'DANTE', false));
-                scrollID = 'DANTEfilterBadgefilterGroup'+counter+'scroll';
+                deployFilterBadge('DANTEfilterBadge', contentID, deployBadgeCanvas.bind(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'DANTEfilterBadgeCanvas', 'DANTEfilterBadge'+contentID, dante, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.25, '#999999'], 'DANTE', false));
+                badgeID = 'DANTEfilterBadgefilterGroupContent'+counter;
             } else if(detector == 'PAC' ){
-                deployFilterBadge('PACESfilterBadge', groupID, deployBadgeCanvas.bind(null,window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'PACESfilterBadgeCanvas', 'PACESfilterBadge'+groupID, paces, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.25, window.filterEditPointer.badgeHeight*0.25/3], 'PACES', false));
-                scrollID = 'PACESfilterBadgefilterGroup'+counter+'scroll';
+                deployFilterBadge('PACESfilterBadge', contentID, deployBadgeCanvas.bind(null,window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'PACESfilterBadgeCanvas', 'PACESfilterBadge'+contentID, paces, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.25, window.filterEditPointer.badgeHeight*0.25/3], 'PACES', false));
+                badgeID = 'PACESfilterBadgefilterGroupContent'+counter;
             } else if(detector == 'SEP' ){
-                deployFilterBadge('SCEPTARfilterBadge', groupID, deployBadgeCanvas.bind(null,window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'SCEPTARfilterBadgeCanvas', 'SCEPTARfilterBadge'+groupID, sceptar, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.25], 'SCEPTAR', false));
-                scrollID = 'SCEPTARfilterBadgefilterGroup'+counter+'scroll';
+                deployFilterBadge('SCEPTARfilterBadge', contentID, deployBadgeCanvas.bind(null,window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'SCEPTARfilterBadgeCanvas', 'SCEPTARfilterBadge'+contentID, sceptar, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.25], 'SCEPTAR', false));
+                badgeID = 'SCEPTARfilterBadgefilterGroupContent'+counter;
             } else if(detector == 'GRG' ){
-                deployFilterBadge('HPGEfilterBadge', groupID, deployBadgeCanvas.bind(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'HPGEfilterBadgeCanvas', 'HPGEfilterBadge'+groupID, tigress, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.25], 'HPGE', false));
-                scrollID = 'HPGEfilterBadgefilterGroup'+counter+'scroll';
+                deployFilterBadge('HPGEfilterBadge', contentID, deployBadgeCanvas.bind(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'HPGEfilterBadgeCanvas', 'HPGEfilterBadge'+contentID, tigress, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.25], 'HPGE', false));
+                badgeID = 'HPGEfilterBadgefilterGroupContent'+counter;
             } else if(detector == 'ZDS' ){
-                deployFilterBadge('ZDSfilterBadge', groupID, deployBadgeCanvas.bind(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'ZDSfilterBadgeCanvas', 'ZDSfilterBadge'+groupID, zds, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.25], 'ZDS', false));
-                scrollID = 'ZDSfilterBadgefilterGroup'+counter+'scroll';
+                deployFilterBadge('ZDSfilterBadge', contentID, deployBadgeCanvas.bind(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'ZDSfilterBadgeCanvas', 'ZDSfilterBadge'+contentID, zds, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.25], 'ZDS', false));
+                badgeID = 'ZDSfilterBadgefilterGroupContent'+counter;
             } else if(detector == 'SPI' ){
-                deployFilterBadge('SPICEfilterBadge', groupID, deployBadgeCanvas.bind(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'SPICEfilterBadgeCanvas', 'SPICEfilterBadge'+groupID, spice, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.25], 'SPICE', false));
-                scrollID = 'SPICEfilterBadgefilterGroup'+counter+'scroll';
+                deployFilterBadge('SPICEfilterBadge', contentID, deployBadgeCanvas.bind(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'SPICEfilterBadgeCanvas', 'SPICEfilterBadge'+contentID, spice, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.25], 'SPICE', false));
+                badgeID = 'SPICEfilterBadgefilterGroupContent'+counter;
             } else if(detector == 'DSC' ){
-                deployFilterBadge('DESCANTfilterBadge', groupID, deployBadgeCanvas.bind(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'DESCANTfilterBadgeCanvas', 'DESCANTfilterBadge'+groupID, descant, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.12], 'DESCANT', false));
-                scrollID = 'DESCANTfilterBadgefilterGroup'+counter+'scroll';
+                deployFilterBadge('DESCANTfilterBadge', contentID, deployBadgeCanvas.bind(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'DESCANTfilterBadgeCanvas', 'DESCANTfilterBadge'+contentID, descant, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.12], 'DESCANT', false));
+                badgeID = 'DESCANTfilterBadgefilterGroupContent'+counter;
             } else if(detector == 'BAE' ){
-                deployFilterBadge('BAMBINOfilterBadge', groupID, deployBadgeCanvas.bind(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'BAMBINOfilterBadgeCanvas', 'BAMBINOfilterBadge'+groupID, bambino, [window.filterEditPointer.badgeWidth*0.45, window.filterEditPointer.badgeWidth*0.55, window.filterEditPointer.badgeHeight/3, window.filterEditPointer.badgeHeight*0.6, window.filterEditPointer.badgeHeight*0.12], 'BAMBINO', false));
-                scrollID = 'BAMBINOfilterBadgefilterGroup'+counter+'scroll';
+                deployFilterBadge('BAMBINOfilterBadge', contentID, deployBadgeCanvas.bind(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'BAMBINOfilterBadgeCanvas', 'BAMBINOfilterBadge'+contentID, bambino, [window.filterEditPointer.badgeWidth*0.45, window.filterEditPointer.badgeWidth*0.55, window.filterEditPointer.badgeHeight/3, window.filterEditPointer.badgeHeight*0.6, window.filterEditPointer.badgeHeight*0.12], 'BAMBINO', false));
+                badgeID = 'BAMBINOfilterBadgefilterGroupontent'+counter;
             } else if(detector == 'SHB' ){
-                deployFilterBadge('SHARCfilterBadge', groupID, deployBadgeCanvas.bind(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'SHARCfilterBadgeCanvas', 'SHARCfilterBadge'+groupID, sharc, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeWidth*0.3, window.filterEditPointer.badgeHeight*0.7], 'SHARC', false));
-                scrollID = 'SHARCfilterBadgefilterGroup'+counter+'scroll';
+                deployFilterBadge('SHARCfilterBadge', contentID, deployBadgeCanvas.bind(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'SHARCfilterBadgeCanvas', 'SHARCfilterBadge'+contentID, sharc, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeWidth*0.3, window.filterEditPointer.badgeHeight*0.7], 'SHARC', false));
+                badgeID = 'SHARCfilterBadgefilterGroupContent'+counter;
             } else if(detector == 'TPW' ){
-                deployFilterBadge('TIPwallfilterBadge', groupID, deployBadgeCanvas.bind(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'TIPwallfilterBadgeCanvas', 'TIPwallfilterBadge'+groupID, tipWall, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.7], 'TIP Wall', false));
-                scrollID = 'TIPwallfilterBadgefilterGroup'+counter+'scroll';
+                deployFilterBadge('TIPwallfilterBadge', contentID, deployBadgeCanvas.bind(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'TIPwallfilterBadgeCanvas', 'TIPwallfilterBadge'+contentID, tipWall, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.7], 'TIP Wall', false));
+                badgeID = 'TIPwallfilterBadgefilterGroupContent'+counter;
             } else if(detector == 'TPC' ){
-                deployFilterBadge('TIPballfilterBadge', groupID, deployBadgeCanvas.bind(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'TIPballfilterBadgeCanvas', 'TIPballfilterBadge'+groupID, tipBall, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.35], 'TIP Ball', false));
-                scrollID = 'TIPballfilterBadgefilterGroup'+counter+'scroll';
+                deployFilterBadge('TIPballfilterBadge', contentID, deployBadgeCanvas.bind(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'TIPballfilterBadgeCanvas', 'TIPballfilterBadge'+contentID, tipBall, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.35], 'TIP Ball', false));
+                badgeID = 'TIPballfilterBadgefilterGroupContent'+counter;
             }
 
             //get the scroll in the right position:
-            scroll = document.getElementById(scrollID);
-            scrollLabel = document.getElementById(scrollID+'Selected');
+            scroll = document.getElementById(badgeID+'scroll');
+            scrollButton = document.getElementById(badgeID+'scrollLeftArrow');
             if(mode == 'C'){
-                scroll.chosen = 1;
-                scrollLabel.innerHTML = 'Coincidence';
+                while(scroll.chosen != 1)
+                    scrollButton.onclick();
             } else if(mode == 'P'){
-                scroll.chosen = 2;
-                scrollLabel.innerHTML = 'Prescaled';
+                while(scroll.chosen != 2)
+                    scrollButton.onclick();
             }
 
-            console.log([detector, mode, factor])
-
+            //assign multiplicity / prescale factor:
+            console.log(badgeID + 'factor')
+            document.getElementById(badgeID + 'factor').value = factor;
 
         }
         counter++;
