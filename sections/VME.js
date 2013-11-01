@@ -68,7 +68,7 @@ function VME(){
     string +=         '<td id="fanTime" class="VMEStatusCell">0 hrs</td>\n'
     string +=     '</tr>\n';
     string += '</table>\n';
-    //string += '<button id="VMEContentPwrCycle" class="bigButton" style="margin-left:auto; margin-right:auto;" type="submit">Power Cycle</button>\n'
+
     document.getElementById('VMEContent').innerHTML = string;
     injectDOM('button', 'VMEContentPwrCycle', 'VMEContent', {
         'class' : 'bigButton',
@@ -77,6 +77,7 @@ function VME(){
         'type' : 'button',
         'onclick' : function(){
             confirm('Confirm VME Power Cycle', 'Confirming will power cycle VME ' + window.VMEpointer.activeElt.slice(3, window.VMEpointer.activeElt.length) + '; are you sure you want to do this?', powerCycleVME.bind(null,window.VMEpointer.activeElt));
+            document.getElementById('tempDiv').style.top = window.innerHeight*0.2;
         }
     });
     document.getElementById('VMEContent').style.textAlign = 'center';

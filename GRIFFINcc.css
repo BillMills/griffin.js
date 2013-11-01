@@ -1,5 +1,11 @@
 /*Enforce more intuitive box-sizing*/
-* { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
+* { 
+	-moz-box-sizing: border-box; 
+	-webkit-box-sizing: border-box; 
+	box-sizing: border-box; 
+	-webkit-user-select:none;
+	-moz-user-select:none;
+}
 
 body{
 	/*FF will take percentage expression for the dimensions of child elements
@@ -392,7 +398,7 @@ button.MFlink{
     display: inline;
 }
 
-.navLink{
+.navLink, .standardButton{
 	background: #4C4C4C; 
 	color: #FFFFFF;
 	border-color: #333333; 
@@ -402,7 +408,7 @@ button.MFlink{
     font-size:14px;
 }
 
-.navLink:hover{
+.navLink:hover, .standardButton:hover{
 	background: #777777;
 }
 

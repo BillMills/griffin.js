@@ -112,7 +112,7 @@ function Cycle(){
     injectDOM('div', 'cycleSteps', 'cycleWrapper', {'style' : 'width:'+0.48*$(this.wrapper).width()+'; padding:0.5em; float:left; text-align:center;'});
     injectDOM('div', 'cyclePalete', 'cycleWrapper', {
         'class' : 'cycleDiv',
-        'style' : 'width:250px; float:right; text-align:center; padding-top:1em; position:relative; top:0px; height:'+( $('#leftSidebar').offset().top + $('#leftSidebar').offset().height - $('#cycleSteps').offset().top)+'; overflow:scroll;',
+        'style' : 'width:250px; float:right; text-align:center; padding-top:1em; position:relative; top:0px; max-height:'+( $('#leftSidebar').offset().top + $('#leftSidebar').offset().height - $('#cycleSteps').offset().top )+'; overflow:scroll;',
     });
 
     //inject options into palete

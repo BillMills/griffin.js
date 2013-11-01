@@ -486,7 +486,7 @@ function confirm(headline, detailText, confirmFunc){
     injectDOM('div', 'tempDiv', 'body', {'class':'tempDialog'});
     var dialogue = document.getElementById('tempDiv');
     injectDOM('h2', 'dialogHeader', 'tempDiv', {
-        'style' : 'position:relative; font:24px Orbitron; top:10px; margin-bottom:6%; margin-left:auto; margin-right:auto;',
+        'style' : 'position:relative; font:24px Orbitron; top:10px; margin-bottom:6%; margin-left:auto; margin-right:auto; padding:1em;',
         'innerHTML' : headline
     })
 

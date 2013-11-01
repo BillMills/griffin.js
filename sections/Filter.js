@@ -389,22 +389,20 @@ function editFilter(filterSystems, filterSystemsNames){
     injectDOM('select', 'filterOptions', this.linkWrapperID, {});
     document.getElementById('loadFilterLabel').setAttribute('for', 'filterOptions');
     loadOptions(ODB.Filters, 'filterOptions');
-    injectDOM('button', 'loadFilter', this.linkWrapperID, {'class':'navLink', 'innerHTML':'Load', 'type':'button'});
+    injectDOM('button', 'loadFilter', this.linkWrapperID, {
+        'class':'navLink', 
+        'innerHTML':'Load', 
+        'type':'button',
+        'onclick': loadFilter.bind(null)
+    });
     injectDOM('button', 'deleteFilter', this.linkWrapperID, {
         'class' : 'navLink',
         'innerHTML' : 'Delete',
         'type' : 'button',
         'onclick' : function(){
-            var i, name,
-                dropdown = document.getElementById('filterOptions'),
-                filterIndex = parseInt(dropdown.value, 10);
-
-            for(i=0; i<dropdown.childNodes.length; i++){
-                if(dropdown.childNodes[i].value == filterIndex){
-                    name = dropdown.childNodes[i].innerHTML;
-                }            
-            }
-            confirm('Delete Filter Definition', 'Do you really want to delete '+name+'?', deleteOption.bind(null, '/DashboardConfig/Filters/', 'filterOptions'))
+            var name = getDrop('filterOptions');
+            confirm('Delete Filter Definition', 'Do you really want to delete '+name+'?', deleteOption.bind(null, '/DashboardConfig/Filters/', 'filterOptions'));
+            document.getElementById('tempDiv').style.top = window.innerHeight*0.2;
         }
     });
     injectDOM('br', 'break', this.linkWrapperID, {});
@@ -418,7 +416,7 @@ function editFilter(filterSystems, filterSystemsNames){
     deployEmptyFilterCondition();
     injectDOM('div', 'filterPalete', 'editFilterWrapper', {
         'class' : 'filterDiv',
-        'style' : 'width:20%; float:right; text-align:center; padding-top:1em; max-height:500px; overflow:scroll;',
+        'style' : 'width:20%; float:right; text-align:center; padding-top:1em; max-height:'+($('#leftSidebar').offset().top + $('#leftSidebar').offset().height - $('#filterWrap').offset().top)+'px; overflow:scroll;',
     });
     injectDOM('button', 'newFilterCon', 'treeGutter', {
         'class' : 'addButton',
@@ -462,27 +460,37 @@ function editFilter(filterSystems, filterSystemsNames){
     this.badgeWidth = document.getElementById('filterPalete').offsetWidth*0.9;
     this.badgeHeight = 100;
     //DANTE
-    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'DANTEPaleteBadge', 'filterPalete', dante, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.25, '#999999'], 'DANTE', true);
+    if(ODB.DANTE)
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'DANTEPaleteBadge', 'filterPalete', dante, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.25, '#999999'], 'DANTE', true);
     //PACES
-    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'PACESPaleteBadge', 'filterPalete', paces, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.25, this.badgeHeight*0.25/3], 'PACES', true);
+    if(ODB.PACES)
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'PACESPaleteBadge', 'filterPalete', paces, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.25, this.badgeHeight*0.25/3], 'PACES', true);
     //SCEPTAR
-    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'SCEPTARPaleteBadge', 'filterPalete', sceptar, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.25], 'SCEPTAR', true);
+    if(ODB.SCEPTAR)
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'SCEPTARPaleteBadge', 'filterPalete', sceptar, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.25], 'SCEPTAR', true);
     //HPGE
     deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'HPGEPaleteBadge', 'filterPalete', tigress, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.25], 'HPGE', true); 
     //ZDS
-    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'ZDSPaleteBadge', 'filterPalete', zds, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.25], 'ZDS', true);
+    if(ODB.ZDS)
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'ZDSPaleteBadge', 'filterPalete', zds, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.25], 'ZDS', true);
     //SPICE
-    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'SPICEPaleteBadge', 'filterPalete', spice, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.25], 'SPICE', true);
+    if(ODB.SPICE)
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'SPICEPaleteBadge', 'filterPalete', spice, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.25], 'SPICE', true);
     //DESCANT
-    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'DESCANTPaleteBadge', 'filterPalete', descant, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.12], 'DESCANT', true);
+    if(ODB.DESCANT)
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'DESCANTPaleteBadge', 'filterPalete', descant, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.12], 'DESCANT', true);
     //BAMBINO
-    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'BAMBINOPaleteBadge', 'filterPalete', bambino, [this.badgeWidth*0.45, this.badgeWidth*0.55, this.badgeHeight/3, this.badgeHeight*0.6, this.badgeHeight*0.12], 'BAMBINO', true);
+    if(ODB.BAMBINO)
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'BAMBINOPaleteBadge', 'filterPalete', bambino, [this.badgeWidth*0.45, this.badgeWidth*0.55, this.badgeHeight/3, this.badgeHeight*0.6, this.badgeHeight*0.12], 'BAMBINO', true);
     //SHARC
-    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'SHARCPaleteBadge', 'filterPalete', sharc, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeWidth*0.3, this.badgeHeight*0.7], 'SHARC', true);
+    if(ODB.SHARC)
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'SHARCPaleteBadge', 'filterPalete', sharc, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeWidth*0.3, this.badgeHeight*0.7], 'SHARC', true);
     //TIPwall
-    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'TIPwallPaleteBadge', 'filterPalete', tipWall, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.7], 'TIP Wall', true);
+    if(ODB.TIPwall)
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'TIPwallPaleteBadge', 'filterPalete', tipWall, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.7], 'TIP Wall', true);
     //TIPball
-    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'TIPballPaleteBadge', 'filterPalete', tipBall, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.35], 'TIP Ball', true);
+    if(ODB.TIPball)
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'TIPballPaleteBadge', 'filterPalete', tipBall, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.35], 'TIP Ball', true);
 }
 
 //drag and drop handler functions:
@@ -714,11 +722,8 @@ function deployEmptyFilterCondition(){
 function saveFilter(){
     var i, deleteCode,
         filter = buildFilter(),
-        intFilter = integerPacking(filter),
         name = document.getElementById('filterName').value,
-        groups = [], types = [];
-
-        integerPacking(filter)
+        groups = [], types = [], arrayLengths = [], stringLength = [];
 
     //recreate the filter
     deleteCode = JSON.parse(ODBMDelete(['/DashboardConfig/Filters/'+name]));
@@ -727,13 +732,15 @@ function saveFilter(){
     //create arrays for each OR'ed group:
     for(i=0; i<filter.length; i++){
         groups[i] = '/DashboardConfig/Filters/'+name+'/group'+i;
-        types[i] = TID_INT;
+        types[i] = TID_STRING;
+        arrayLengths[i] = filter[i].length;
+        stringLength[i] = 32;
     }
-    ODBMCreate(groups, types);
+    ODBMCreate(groups, types, arrayLengths, stringLength);
 
-    //populate arrays, currently with integer packing until string pushing works better:
-    for(i=0; i<intFilter.length; i++){
-        ODBSet('/DashboardConfig/Filters/'+name+'/group'+i+'[*]', intFilter[i]);
+    //populate arrays
+    for(i=0; i<filter.length; i++){
+        ODBSet('/DashboardConfig/Filters/'+name+'/group'+i+'[*]', filter[i]);   
     }
 
     //include in dropdown if new
@@ -746,52 +753,116 @@ function saveFilter(){
     }
 }
 
-//MIDAS can't at the moment handle creating arrays of strings; chew results of buildfilter up into integer packed 
-//expressions instead.
-function integerPacking(filter){
-    var i,j,
-        intFilter = [],
-        detCode, modeCode, scale, filterCode, 
-        detKey = {
-            "DAB" : 0,
-            "PAC" : 1,
-            "SEP" : 2,
-            "GRG" : 3,
-            "ZDS" : 4,
-            "SPI" : 5,
-            "DSC" : 6,
-            "BAE" : 7,
-            "SHB" : 8,
-            "TPW" : 9,
-            "TPC" : 10
-        };
+//return the innerHTML of the option currently selected on select #dropID
+function getDrop(dropID){
+    var i, name,
+        dropdown = document.getElementById(dropID),
+        filterIndex = parseInt(dropdown.value, 10);
 
-
-    for(i=0; i<filter.length; i++){
-        intFilter[i] = [];
-        for(j=0; j<filter[i].length; j++){
-            //parse detector ID
-            detCode = filter[i][j].slice(0,3);
-            filterCode = detKey[detCode];
-            //parse mode
-            modeCode = filter[i][j].slice(4,5);
-            if(modeCode=='S')
-                filterCode = filterCode | (1<<4);
-            else if(modeCode=='P')
-                filterCode = filterCode | (2<<4);
-            else if(modeCode=='C')
-                filterCode = filterCode | (3<<4);
-            //parse scale / multiplicity
-            scale = parseInt( filter[i][j].slice(6,filter[i][j].length) , 10);
-            filterCode = filterCode | (scale << 6);
-
-            intFilter[i][j] = filterCode;
-        }
+    for(i=0; i<dropdown.childNodes.length; i++){
+        if(dropdown.childNodes[i].value == filterIndex){
+            name = dropdown.childNodes[i].innerHTML;
+        }            
     }
 
-    return intFilter;
+    return name;
 }
 
+function loadFilter(){
+    var name = getDrop('filterOptions'),
+        filter = JSON.parse(ODBCopy('/DashboardConfig/Filters/'+name)),
+        key, length, i, init=1, rule, detector, mode, factor, groupID, counter=0, scrollID, scroll, scrollLabel;
+
+    //load the name into the input box
+    document.getElementById('filterName').value = name;
+
+    for(key in filter){
+        //skip the metadata
+        if(key.indexOf('key') != -1) continue;
+
+        //if there's just one thing, ODBCopy just returns it, not in an array :/
+        length = ( typeof filter[key] == 'string' ) ? 1 : filter[key].length;
+
+        //make a new block for each group:
+        if(!init){
+            document.getElementById('newFilterCon').onclick();
+        } else
+            init = 0;
+
+        //construct the ID for this block:
+        groupID = 'filterGroup' + counter;
+
+        //dump the default text
+        document.getElementById(groupID).innerHTML = '';
+
+        //deploy all the individual elements in the block
+        for(i=0; i<length; i++){
+            //extract an individual rule
+            if(length==1)
+                rule = filter[key];
+            else
+                rule = filter[key][i];
+
+            //slice the rule up into which detector in what mode with what prescale / multi factor:
+            detector = rule.slice(0,3);
+            mode = rule.slice(4,5);
+            factor = parseInt( rule.slice(6, rule.length), 10 );
+
+            //set us up the badge:
+            if(detector == 'DAB'){
+                deployFilterBadge('DANTEfilterBadge', groupID, deployBadgeCanvas.bind(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'DANTEfilterBadgeCanvas', 'DANTEfilterBadge'+groupID, dante, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.25, '#999999'], 'DANTE', false));
+                scrollID = 'DANTEfilterBadgefilterGroup'+counter+'scroll';
+            } else if(detector == 'PAC' ){
+                deployFilterBadge('PACESfilterBadge', groupID, deployBadgeCanvas.bind(null,window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'PACESfilterBadgeCanvas', 'PACESfilterBadge'+groupID, paces, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.25, window.filterEditPointer.badgeHeight*0.25/3], 'PACES', false));
+                scrollID = 'PACESfilterBadgefilterGroup'+counter+'scroll';
+            } else if(detector == 'SEP' ){
+                deployFilterBadge('SCEPTARfilterBadge', groupID, deployBadgeCanvas.bind(null,window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'SCEPTARfilterBadgeCanvas', 'SCEPTARfilterBadge'+groupID, sceptar, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.25], 'SCEPTAR', false));
+                scrollID = 'SCEPTARfilterBadgefilterGroup'+counter+'scroll';
+            } else if(detector == 'GRG' ){
+                deployFilterBadge('HPGEfilterBadge', groupID, deployBadgeCanvas.bind(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'HPGEfilterBadgeCanvas', 'HPGEfilterBadge'+groupID, tigress, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.25], 'HPGE', false));
+                scrollID = 'HPGEfilterBadgefilterGroup'+counter+'scroll';
+            } else if(detector == 'ZDS' ){
+                deployFilterBadge('ZDSfilterBadge', groupID, deployBadgeCanvas.bind(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'ZDSfilterBadgeCanvas', 'ZDSfilterBadge'+groupID, zds, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.25], 'ZDS', false));
+                scrollID = 'ZDSfilterBadgefilterGroup'+counter+'scroll';
+            } else if(detector == 'SPI' ){
+                deployFilterBadge('SPICEfilterBadge', groupID, deployBadgeCanvas.bind(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'SPICEfilterBadgeCanvas', 'SPICEfilterBadge'+groupID, spice, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.25], 'SPICE', false));
+                scrollID = 'SPICEfilterBadgefilterGroup'+counter+'scroll';
+            } else if(detector == 'DSC' ){
+                deployFilterBadge('DESCANTfilterBadge', groupID, deployBadgeCanvas.bind(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'DESCANTfilterBadgeCanvas', 'DESCANTfilterBadge'+groupID, descant, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.12], 'DESCANT', false));
+                scrollID = 'DESCANTfilterBadgefilterGroup'+counter+'scroll';
+            } else if(detector == 'BAE' ){
+                deployFilterBadge('BAMBINOfilterBadge', groupID, deployBadgeCanvas.bind(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'BAMBINOfilterBadgeCanvas', 'BAMBINOfilterBadge'+groupID, bambino, [window.filterEditPointer.badgeWidth*0.45, window.filterEditPointer.badgeWidth*0.55, window.filterEditPointer.badgeHeight/3, window.filterEditPointer.badgeHeight*0.6, window.filterEditPointer.badgeHeight*0.12], 'BAMBINO', false));
+                scrollID = 'BAMBINOfilterBadgefilterGroup'+counter+'scroll';
+            } else if(detector == 'SHB' ){
+                deployFilterBadge('SHARCfilterBadge', groupID, deployBadgeCanvas.bind(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'SHARCfilterBadgeCanvas', 'SHARCfilterBadge'+groupID, sharc, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeWidth*0.3, window.filterEditPointer.badgeHeight*0.7], 'SHARC', false));
+                scrollID = 'SHARCfilterBadgefilterGroup'+counter+'scroll';
+            } else if(detector == 'TPW' ){
+                deployFilterBadge('TIPwallfilterBadge', groupID, deployBadgeCanvas.bind(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'TIPwallfilterBadgeCanvas', 'TIPwallfilterBadge'+groupID, tipWall, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.7], 'TIP Wall', false));
+                scrollID = 'TIPwallfilterBadgefilterGroup'+counter+'scroll';
+            } else if(detector == 'TPC' ){
+                deployFilterBadge('TIPballfilterBadge', groupID, deployBadgeCanvas.bind(null, window.filterEditPointer.badgeWidth, window.filterEditPointer.badgeHeight, 'TIPballfilterBadgeCanvas', 'TIPballfilterBadge'+groupID, tipBall, [window.filterEditPointer.badgeWidth/2, window.filterEditPointer.badgeHeight*0.35, window.filterEditPointer.badgeHeight*0.35], 'TIP Ball', false));
+                scrollID = 'TIPballfilterBadgefilterGroup'+counter+'scroll';
+            }
+
+            //get the scroll in the right position:
+            scroll = document.getElementById(scrollID);
+            scrollLabel = document.getElementById(scrollID+'Selected');
+            if(mode == 'C'){
+                scroll.chosen = 1;
+                scrollLabel.innerHTML = 'Coincidence';
+            } else if(mode == 'P'){
+                scroll.chosen = 2;
+                scrollLabel.innerHTML = 'Prescaled';
+            }
+
+            console.log([detector, mode, factor])
+
+
+        }
+        counter++;
+
+    }
+}
 
 
 
