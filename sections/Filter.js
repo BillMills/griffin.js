@@ -583,7 +583,8 @@ function deployBadgeCanvas(width, height, id, wrapperID, paintThumb, thumbArgs, 
                                         var index = this.id.slice(this.id.indexOf('filterGroupContent')+18, this.id.length);
                                         this.parentNode.parentNode.removeChild(this.parentNode);
                                         //resize the corresponding tree gutter:
-                                        document.getElementById('treeBlock' + index).style.height = document.getElementById('filterGroup' + index).offsetHeight + parseInt(document.body.style.fontSize);
+                                        resizeBranches();
+                                        //document.getElementById('treeBlock' + index).style.height = document.getElementById('filterGroup' + index).offsetHeight + parseInt(document.body.style.fontSize);
                                         //replace the intro message if there's nothing else to show:
                                         if(document.getElementById('filterGroupContent' + index).innerHTML == '')
                                             document.getElementById('filterGroupContent' + index).innerHTML = window.filterEditPointer.newFilterMessage;
@@ -625,6 +626,8 @@ function deployFilterBadge(id, wrapperID, createCanvas){
         document.getElementById('singleStreamHelp').innerHTML = 'Any of these:';
     else if(wrapperID.slice(0,11) == 'interstream')
         document.getElementById('interstreamHelp'+wrapperID.slice(11, wrapperID.length)).innerHTML = 'or ALL of these:'
+
+    resizeBranches();
 }
 
 function filterScrollCB(target){
@@ -748,6 +751,17 @@ function deployEmptyFilterCondition(){
 
         window.filterEditPointer.filterConPresent[window.filterEditPointer.filterConPresent.length] = window.filterEditPointer.filterConIndex;
         window.filterEditPointer.filterConIndex++;
+}
+
+//step through the tree and make sure all the branches are the right size
+function resizeBranches(){
+    var i;
+
+    for(i=0; i<window.filterEditPointer.filterConIndex; i++){
+        if(document.getElementById('deleteFilterCon'+i) ){
+            document.getElementById('treeBlock' + i).style.height = document.getElementById('filterGroup' + i).offsetHeight + parseInt(window.getComputedStyle(document.body).fontSize);
+        }
+    }
 }
 
 function saveFilter(){
