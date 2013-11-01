@@ -108,15 +108,15 @@ function Cycle(){
 
 
     //div structure for drag and drop area: right panel for detector palete, two-div column for Single Stream and Interstream Filters:
-    injectDOM('div', 'cycleWrapper', this.linkWrapperID, {'style' : 'width:'+0.48*$(this.wrapper).width()+'px; margin-top:1em; display:block'});
-    injectDOM('div', 'cycleSteps', 'cycleWrapper', {'style' : 'width:79%; padding:0.5em; float:left; text-align:center;'});
+    injectDOM('div', 'cycleWrapper', this.linkWrapperID, {'style' : 'width:'+(270+0.48*$(this.wrapper).width())+'px; margin-top:1em; display:block'});
+    injectDOM('div', 'cycleSteps', 'cycleWrapper', {'style' : 'width:'+0.48*$(this.wrapper).width()+'; padding:0.5em; float:left; text-align:center;'});
     injectDOM('div', 'cyclePalete', 'cycleWrapper', {
         'class' : 'cycleDiv',
-        'style' : 'width:'+0.2*0.48*$(this.wrapper).width()+'; float:right; text-align:center; padding-top:1em; position:relative; top:0px;',
+        'style' : 'width:250px; float:right; text-align:center; padding-top:1em; position:relative; top:0px; max-height:'+window.offsetHeight+'; overflow:scroll;',
     });
 
     //inject options into palete
-    this.badgeWidth = document.getElementById('cyclePalete').offsetWidth*0.6//0.9;
+    this.badgeWidth = 100;
     this.badgeHeight = 100;
 
     //start display off with one drop target, filled with just an instruction on how to proceed:
@@ -127,16 +127,21 @@ function Cycle(){
     //deploy a dummy canvas for the filter view:
     this.canvasWidth = 0// 0.48*$(this.wrapper).width();
     this.canvasHeight = 0 //1*$(this.wrapper).height();
-    injectDOM('canvas', this.canvasID, this.wrapperID, {'class':'monitor', 'style':'top:' + ($('#cycleLinks').height() + 5) +'px;'});
+    injectDOM('canvas', this.canvasID, this.wrapperID, {
+        'class':'monitor', 
+        'style':'top:' + ($('#cycleLinks').height() + 5) +'px;'
+    });
     this.canvas = document.getElementById('cycleCanvas');
     this.context = this.canvas.getContext('2d');
     this.canvas.setAttribute('width', this.canvasWidth);
     this.canvas.setAttribute('height', this.canvasHeight);
 
+    /*
     //right sidebar
     injectDOM('div', this.sidebarID, this.wrapperID, {'class':'collapsableSidebar', 'style':'float:right; height:80%;'});
     //deploy right bar menu:
     deployMenu('cycleMenus', ['Cycle'], ['Cycle Details']);    
+    */
 
     //Clear Scalars
     deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'clearScalarsPaleteBadge', 'cyclePalete', clearScalars, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Clear Scalars', true);
@@ -148,12 +153,49 @@ function Cycle(){
     deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'beamOnPaleteBadge', 'cyclePalete', beamOn, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Beam On', true);
     //Sync Clocks
     deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'syncClocksPaleteBadge', 'cyclePalete', syncClocks, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Sync Clocks', true);
+    //HPGe Trigger
+    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'HPGePaleteBadge', 'cyclePalete', tigress, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.3], 'HPGe Trig', true);
+    //SCEPTAR Trigger
+    if(ODB.SCEPTAR)
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'SCEPTARPaleteBadge', 'cyclePalete', sceptar, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.3], 'SCEPTAR Trig', true);
+    //PACES Trigger
+    if(ODB.PACES)
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'PACESPaleteBadge', 'cyclePalete', paces, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight, this.badgeHeight*0.2], 'PACES Trig', true);
+    //DANTE Trigger
+    if(ODB.DANTE)
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'DANTEPaleteBadge', 'cyclePalete', dante, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.2, '#999999'], 'DANTE Trig', true);
+    //DESCANT Trigger
+    if(ODB.DESCANT)
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'DESCANTPaleteBadge', 'cyclePalete', descant, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.1], 'DESCANT Trig', true);
+    //ZDS Trigger
+    if(ODB.ZDS)
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'ZDSPaleteBadge', 'cyclePalete', zds, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.3], 'ZDS Trig', true);
+    //Wildcards 1-6:
+    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'wildcard1PaleteBadge', 'cyclePalete', wildcard, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Wildcard 1', true);
+    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'wildcard2PaleteBadge', 'cyclePalete', wildcard, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Wildcard 2', true);
+    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'wildcard3PaleteBadge', 'cyclePalete', wildcard, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Wildcard 3', true);
+    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'wildcard4PaleteBadge', 'cyclePalete', wildcard, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Wildcard 4', true);
+    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'wildcard5PaleteBadge', 'cyclePalete', wildcard, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Wildcard 5', true);
+    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'wildcard6PaleteBadge', 'cyclePalete', wildcard, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Wildcard 6', true);
+
     //modify the dragstart of the palete badges:
     document.getElementById('clearScalarsPaleteBadgecyclePalete').addEventListener('dragstart', paleteDragStart, false);
     document.getElementById('moveTapePaleteBadgecyclePalete').addEventListener('dragstart', paleteDragStart, false);
     document.getElementById('triggersOnPaleteBadgecyclePalete').addEventListener('dragstart', paleteDragStart, false);
     document.getElementById('beamOnPaleteBadgecyclePalete').addEventListener('dragstart', paleteDragStart, false);
     document.getElementById('syncClocksPaleteBadgecyclePalete').addEventListener('dragstart', paleteDragStart, false);
+    document.getElementById('HPGePaleteBadgecyclePalete').addEventListener('dragstart', paleteDragStart, false);
+    if(ODB.SCEPTAR)document.getElementById('SCEPTARPaleteBadgecyclePalete').addEventListener('dragstart', paleteDragStart, false);
+    if(ODB.PACES)document.getElementById('PACESPaleteBadgecyclePalete').addEventListener('dragstart', paleteDragStart, false);
+    if(ODB.DANTE)document.getElementById('DANTEPaleteBadgecyclePalete').addEventListener('dragstart', paleteDragStart, false);
+    if(ODB.DESCANT)document.getElementById('DESCANTPaleteBadgecyclePalete').addEventListener('dragstart', paleteDragStart, false);
+    if(ODB.ZDS)document.getElementById('ZDSPaleteBadgecyclePalete').addEventListener('dragstart', paleteDragStart, false);
+    document.getElementById('wildcard1PaleteBadgecyclePalete').addEventListener('dragstart', paleteDragStart, false);
+    document.getElementById('wildcard2PaleteBadgecyclePalete').addEventListener('dragstart', paleteDragStart, false);
+    document.getElementById('wildcard3PaleteBadgecyclePalete').addEventListener('dragstart', paleteDragStart, false);
+    document.getElementById('wildcard4PaleteBadgecyclePalete').addEventListener('dragstart', paleteDragStart, false);
+    document.getElementById('wildcard5PaleteBadgecyclePalete').addEventListener('dragstart', paleteDragStart, false);
+    document.getElementById('wildcard6PaleteBadgecyclePalete').addEventListener('dragstart', paleteDragStart, false);
 
     this.update = function(){
     };
@@ -287,13 +329,13 @@ function createCycleStep(input){
 
     //content block:
     stepDiv.contentID = 'cycleContent'+window.cyclePointer.nCycleSteps
-    injectDOM('div', stepDiv.contentID, 'cycleStep'+window.cyclePointer.nCycleSteps, {'class':'cycleContent'});
+    injectDOM('div', stepDiv.contentID, 'cycleStep'+window.cyclePointer.nCycleSteps, {
+        'class':'cycleContent',
+        'style': 'max-width:'+0.2*$(window.cyclePointer.wrapper).width()
+    });
     //deploy the div with something in it:
     //document.getElementById(stepDiv.contentID).innerHTML = input;
     deployBadge.apply(window.cyclePointer, [input, 'cycleContent'+window.cyclePointer.nCycleSteps]);
-
-    //duration block:
-    durationBadge(window.cyclePointer.nCycleSteps, 'cycleStep'+window.cyclePointer.nCycleSteps);
 
     //kill button
     injectDOM('button', 'deleteCycleStep'+window.cyclePointer.nCycleSteps, 'cycleStep'+window.cyclePointer.nCycleSteps, {
@@ -319,6 +361,9 @@ function createCycleStep(input){
             }
         }
     });
+
+    //duration block:
+    durationBadge(window.cyclePointer.nCycleSteps, 'cycleStep'+window.cyclePointer.nCycleSteps);
 
     //cycleStep div listens for things to be dropped on it:
     stepDiv.addEventListener('dragover', cycleDragOver, false);
@@ -365,7 +410,7 @@ function durationBadge(index, parentID){
     var canvas, context;
 
     //wrapper div
-    injectDOM('div', 'durationDiv'+index, parentID, {'style' : 'display:inline-block; text-align:center; border-left:1px solid #999999; margin-left:5px;'});
+    injectDOM('div', 'durationDiv'+index, parentID, {'style' : 'float:right; display:inline-block; text-align:center; margin-left:5px;'});
     //number input
     injectDOM('input', 'durationInput'+index, 'durationDiv'+index, {
         'class' : 'cycleDurationInput',
@@ -425,6 +470,30 @@ function deployBadge(badge, commandID){
         deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'beamOnPaleteBadge', commandID, beamOn, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Beam On', false);
     else if(badge == 'syncClocks')
         deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'syncClocksPaleteBadge', commandID, syncClocks, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Sync Clocks', false);
+    else if(badge == 'HPGe')
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'HPGePaleteBadge', commandID, tigress, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.3], 'HPGe', false);
+    else if(badge == 'SCEPTAR')
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'SCEPTARPaleteBadge', commandID, sceptar, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.3], 'SCEPTAR', false);
+    else if(badge == 'PACES')
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'PACESPaleteBadge', commandID, paces, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight, this.badgeHeight*0.3], 'PACES', false);
+    else if(badge == 'DANTE')
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'DANTEPaleteBadge', commandID, dante, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.2, '#999999'], 'DANTE', false);
+    else if(badge == 'DESCANT')
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'DESCANTPaleteBadge', commandID, descant, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.1], 'DESCANT', false);
+    else if(badge == 'ZDS')
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'ZDSPaleteBadge', commandID, zds, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.3], 'ZDS', false);
+    else if(badge == 'wildcard1')
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'wildcard1PaleteBadge', commandID, wildcard, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Wildcard 1', false);
+    else if(badge == 'wildcard2')
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'wildcard2PaleteBadge', commandID, wildcard, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Wildcard 2', false);
+    else if(badge == 'wildcard3')
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'wildcard3PaleteBadge', commandID, wildcard, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Wildcard 3', false);
+    else if(badge == 'wildcard4')
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'wildcard4PaleteBadge', commandID, wildcard, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Wildcard 4', false);
+    else if(badge == 'wildcard5')
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'wildcard5PaleteBadge', commandID, wildcard, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Wildcard 5', false);
+    else if(badge == 'wildcard6')
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'wildcard6PaleteBadge', commandID, wildcard, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Wildcard 6', false);
     else{
         document.getElementById(commandID).innerHTML = badge;
         document.getElementById(commandID).setAttribute('class', 'delayCycleContent');

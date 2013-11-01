@@ -127,7 +127,7 @@ function detectCrates(){
       paths[i] = '/Equipment/HV-'+i;
     }
     data = ODBMGet(paths);
-    
+
     for(i=0; i<maxCrates; i++){
       if(data[i] != '<DB_NO_KEY>'){
         window.parameters.HVequipmentNames[window.parameters.HVequipmentNames.length] = 'HV-'+i
@@ -204,6 +204,7 @@ function ODBgrab(){
     }
 
     data = ODBMGet(paths);
+    //data = JSON.parse(ODBMCopy(paths), null, 'json');
 
     //sidebar
     window.localODB.expTitle = data[SIDEBAR];
@@ -249,6 +250,7 @@ function ODBgrab(){
             window.JSONPstore.HV[window.localODB['HV'+k].chName[i]] = parseFloat(window.localODB['HV'+k].measVoltage[i]);
         }
     }
+
 }
 
 //handle pulling the initial config parameters out of the ODB and replacing the default values in the JSONP-loaded parameter store:

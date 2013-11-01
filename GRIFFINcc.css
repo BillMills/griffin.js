@@ -596,6 +596,14 @@ tbody tbody a:link{
 	border:1px solid #999999;
 }
 
+div#cyclePalete canvas{
+	margin:10px;
+}
+
+div#cyclePalete canvas:nth-child(even){
+	display:inline;
+}
+
 #summaryContentTable td:nth-child(odd), #CSACContentTable td:nth-child(odd), #VMEContentTable2 td:nth-child(odd){
 	font: italic 100% sans-serif; 
 	text-align: right;
@@ -747,7 +755,9 @@ tbody tbody a:link{
 }
 
 .cycleContent{
-	display: inline;
+	display: inline-block;
+	border-right: 1px solid #999999;
+	padding-right:1em;
 }
 
 .treeGutter{
