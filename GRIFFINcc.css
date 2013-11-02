@@ -645,7 +645,7 @@ div#cyclePalete canvas:nth-child(even){
 .scrollArrow{
 	color:#999999;
 	display:inline;
-	background-color: #333333 !important;
+
 }
 
 .scrollArrow:hover{
@@ -692,6 +692,10 @@ div#cyclePalete canvas:nth-child(even){
 	position:relative;
 }
 
+.filterCon{
+	background-color: #222222;
+}
+
 .interstreamLeftTab{
 	float:left;
 }
@@ -731,6 +735,7 @@ div#cyclePalete canvas:nth-child(even){
 	border-radius: 25px;
 	padding:1em;
 	border:5px solid #999999;
+	background-color: #222222;
 }
 
 #terminateCycle{
@@ -767,8 +772,11 @@ div#cyclePalete canvas:nth-child(even){
 }
 
 .treeGutter{
-	border-left: 5px solid #999999;
+	border-left: 10px solid #999999;
 	border-bottom: 5px solid #999999;
+	border-top: 5px solid #999999;
+	border-top-left-radius:25px;
+	border-bottom-left-radius:25px;
 }
 
 @-webkit-keyframes alertBorder{

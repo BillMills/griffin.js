@@ -112,7 +112,7 @@ function Cycle(){
     injectDOM('div', 'cycleSteps', 'cycleWrapper', {'style' : 'width:'+0.48*$(this.wrapper).width()+'; padding:0.5em; float:left; text-align:center;'});
     injectDOM('div', 'cyclePalete', 'cycleWrapper', {
         'class' : 'cycleDiv',
-        'style' : 'width:250px; float:right; text-align:center; padding-top:1em; position:relative; top:0px; max-height:'+( $('#leftSidebar').offset().top + $('#leftSidebar').offset().height - $('#cycleSteps').offset().top )+'; overflow:scroll;',
+        'style' : 'width:250px; float:right; text-align:center; padding-top:1em; position:relative; top:0px; max-height:'+( $('#leftSidebar').offset().top + $('#leftSidebar').offset().height - $('#cycleSteps').offset().top )+'; overflow:scroll; background-color:#222222;',
     });
 
     //inject options into palete
@@ -142,6 +142,7 @@ function Cycle(){
     //deploy right bar menu:
     deployMenu('cycleMenus', ['Cycle'], ['Cycle Details']);    
     */
+    injectDOM('div', this.sidebarID, this.wrapperID, {}); //dummy sidebar for transitions
 
     //Clear Scalars
     deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'clearScalarsPaleteBadge', 'cyclePalete', clearScalars, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Clear Scalars', true);
@@ -393,7 +394,7 @@ function createCycleStep(input){
 
 //create a timeline termination badge that includes a button to create a new empty command:
 function terminationBadge(){
-    injectDOM('div', 'terminateCycle', 'cycleSteps', {});
+    injectDOM('div', 'terminateCycle', 'cycleSteps', {'style':'background-color:#222222'});
     injectDOM('button', 'newCommand', 'terminateCycle', {
         'class' : 'navLink',
         'innerHTML' : 'New Command',
@@ -416,7 +417,8 @@ function durationBadge(index, parentID){
     //number input
     injectDOM('input', 'durationInput'+index, 'durationDiv'+index, {
         'class' : 'cycleDurationInput',
-        'type' : 'number'
+        'type' : 'number',
+        'style' : 'background-color:#222222'
     });
     injectDOM('p', 'infiniteDuration'+index, 'durationDiv'+index, {
         'style' : 'display:none; font-size:230%; margin:0px;',

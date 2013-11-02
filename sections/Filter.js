@@ -408,15 +408,15 @@ function editFilter(filterSystems, filterSystemsNames){
     injectDOM('br', 'break', this.linkWrapperID, {});
 
     //div structure for drag and drop area: right panel for detector palete, gutter for tree lines and main area for trigger groups:
-    injectDOM('div', 'editFilterWrapper', this.linkWrapperID, {'style':'width:'+0.48*$(this.wrapper).width()+'px; display:inline-block; margin-top:1em'});
+    injectDOM('div', 'editFilterWrapper', this.linkWrapperID, {'style':'width:'+0.68*$(this.wrapper).width()+'px; display:inline-block; margin-top:1em'});
     injectDOM('div', 'filterWrap', 'editFilterWrapper', {'style':'float:left; width:79%'}); //79 kind of kludgy, to accommodate margins.
-    injectDOM('div', 'treeGutter', 'filterWrap', {'style':'float:left; width:10%; text-align:center;'});
-    injectDOM('div', 'treeBlockX', 'treeGutter', {'style':'border-bottom: 5px solid #999999; height:20px;'});  //top block in tree gutter provides the first branch
-    injectDOM('div', 'filterCons', 'filterWrap', {'style':'float:left; width:69%'});
+    injectDOM('div', 'treeGutter', 'filterWrap', {'style':'float:left; width:7%; text-align:center;'});
+    injectDOM('div', 'treeBlockX', 'treeGutter', {'style':'height:20px;'});  //top block in tree gutter provides the first branch
+    injectDOM('div', 'filterCons', 'filterWrap', {'style':'float:left; width:89%'});
     deployEmptyFilterCondition();
     injectDOM('div', 'filterPalete', 'editFilterWrapper', {
         'class' : 'filterDiv',
-        'style' : 'width:20%; float:right; text-align:center; padding-top:1em; max-height:'+($('#leftSidebar').offset().top + $('#leftSidebar').offset().height - $('#filterWrap').offset().top)+'px; overflow:scroll;',
+        'style' : 'width:15%; float:right; text-align:center; padding-top:1em; max-height:'+($('#leftSidebar').offset().top + $('#leftSidebar').offset().height - $('#filterWrap').offset().top)+'px; overflow:scroll; background-color:#222222; position:relative;',
     });
     injectDOM('button', 'newFilterCon', 'treeGutter', {
         'class' : 'addButton',
@@ -434,6 +434,7 @@ function editFilter(filterSystems, filterSystemsNames){
     this.canvas.setAttribute('width', this.canvasWidth);
     this.canvas.setAttribute('height', this.canvasHeight);
 
+/*
     //right sidebar
     injectDOM('div', this.sidebarID, this.wrapperID, {'class':'collapsableSidebar', 'style':'float:right; height:80%;'});
     //deploy right bar menu:
@@ -455,6 +456,8 @@ function editFilter(filterSystems, filterSystemsNames){
         injectDOM('input', this.filterSystems[i]+'ContentCoincWindow', this.filterSystems[i]+'Content', {'type':'number'});
         injectDOM('label', this.filterSystems[i]+'ContentCoincWindowLabel', this.filterSystems[i]+'Content', {'innerHTML':'Coinc. Window [ns]', 'for':this.filterSystems[i]+'ContentCoincWindow'});
     }
+*/
+    injectDOM('div', this.sidebarID, this.wrapperID, {}); //dummy sidebar for transitions
 
     //inject detector options into palete
     this.badgeWidth = document.getElementById('filterPalete').offsetWidth*0.9;

@@ -105,6 +105,8 @@ function Dashboard(){
     }
     deployMenu(this.sidebarID, subsPresent , subsNames);
 */
+injectDOM('div', this.sidebarID, this.wrapperID, {}); //dummy sidebar for transitions
+
     //add top level nav button:
     injectDOM('button', 'DashboardButton', 'statusLink', {
         'class' : 'navLinkDown',
