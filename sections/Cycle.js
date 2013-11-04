@@ -65,7 +65,20 @@ function Cycle(){
         'class' : 'navLink',
         'onclick' : reloadCycle.bind(null),
         'innerHTML' : 'Reload Active Cycle',
-        'type' : 'button'
+        'type' : 'button',
+        'onclick' : function(){
+            var dropdown = document.getElementById('cycleOptions'),
+                currentCycle = ODB.Cycles['Active Name'],
+                i;
+
+            for(i=0; i<dropdown.childNodes.length; i++){
+                if(dropdown.childNodes[i].innerHTML == currentCycle){
+                    dropdown.selectedIndex = i;
+                }
+            }
+
+            loadCycle();
+        }
     });
     injectDOM('br', 'break', this.linkWrapperID, {});
     injectDOM('label', 'cycleNameLabel', this.linkWrapperID, {'style':'margin-left:10px;', 'innerHTML':'Name this Cycle: '});
@@ -100,9 +113,10 @@ function Cycle(){
             for(i=0; i<dropdown.childNodes.length; i++){
                 if(dropdown.childNodes[i].value == cycleIndex){
                     name = dropdown.childNodes[i].innerHTML;
-                }            
+                }
             }
-            confirm('Delete Cycle Definition', 'Do you really want to delete '+name+'?', deleteOption.bind(null, '/DashboardConfig/Cycles/', 'cycleOptions'))
+            confirm('Delete Cycle Definition', 'Do you really want to delete '+name+'?', deleteOption.bind(null, '/DashboardConfig/Cycles/', 'cycleOptions'));
+            document.getElementById('tempDiv').style.top = 200;
         }
     });
 
@@ -204,7 +218,6 @@ function Cycle(){
     reloadCycle();
     suspendCycleRequest();
 
-    document.getElementById('newCommand').onclick();
 }
 
 
@@ -503,7 +516,7 @@ function deployBadge(badge, commandID){
         document.getElementById(commandID).setAttribute('class', 'delayCycleContent');
     }
 }
-
+/*
 //step through the cycle, and construct the appropriate command and duration arrays
 function buildCycle(){
     var i, j, commandNode, contentNode, actionNode, stepCode, durationNode, duration, timeUnit,
@@ -538,6 +551,47 @@ function buildCycle(){
             else if(timeUnit == 'infinite')
                 duration = 0;
             durations[durations.length] = duration;
+        }
+
+        return [commands, durations];
+}
+*/
+//step through the cycle, and construct the appropriate command and duration arrays
+function buildCycle(){
+    var i, j, commandNode, contentNode, actionNode, stepCode, duration, timeUnit,
+        //nCycleSteps = (document.getElementById('cycleSteps').childNodes.length-1)/4, //-1 for the termination badge, /4 for command+2spacers+linebreak.
+        commands = [],
+        durations = [];
+
+        for(i=0; i<window.cyclePointer.nCycleSteps; i++){
+            commandNode = document.getElementById('cycleStep'+i);
+            if(commandNode){
+                contentNode = document.getElementById('cycleContent'+i);
+                stepCode = 0;
+                if(contentNode.childNodes.length != 1 || contentNode.childNodes[0].nodeType != Node.TEXT_NODE){
+                    for(j=0; j<contentNode.childNodes.length; j++){
+                        actionNode = contentNode.childNodes[j];
+                        if(actionNode.id.indexOf('cycleContent') != -1){
+                            stepCode = stepCode | window.cyclePointer.codex[actionNode.id.slice(0, actionNode.id.indexOf('Palete'))];
+                        }
+                    }
+                }
+                //first 16 bits mirror last 16 bits for redundancy:
+                stepCode = stepCode | (stepCode<<16)
+                commands[commands.length] = stepCode;
+                //extract duration in ms:
+                duration = document.getElementById('durationInput'+i).valueAsNumber;
+                timeUnit = document.getElementById('durationScroll'+i+'Selected').innerHTML;
+                if(timeUnit == 'seconds')
+                    duration *= 1000;
+                else if(timeUnit == 'minutes')
+                    duration *= 1000*60;
+                else if(timeUnit == 'infinite')
+                    duration = 0;
+                durations[durations.length] = duration;                
+            }     
+
+
         }
 
         return [commands, durations];

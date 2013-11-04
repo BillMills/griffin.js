@@ -9,7 +9,7 @@ function loadParameters(){
 				"colorScale"  : ["ROOT Rainbow", "Greyscale", "Sunset", "Red Scale", "Mayfair"],
 				"detectorLogMode" : {'SubsystemsButton' : 0, 'DAQbutton' : 0, 'DashboardButton' : 0},  //log state a function of ID of button used to summon current view state 
 				"warningFill" : 0, //an img to fill detector channels absent from the JSONP post
-				"JSONPrepos" : ["http://midtig06.xtriumf.ca:8091/mother/parameters?jsonp=parseThreshold", "http://midtig06.xtriumf.ca:8091/mother/scalar?jsonp=parseResponse"]
+				"JSONPrepos" : ["http://midtig06.xtriumf.ca:8091/mother/parameters?jsonp=parseThreshold", "http://midtig06.xtriumf.ca:8091/mother/scalar?jsonp=parseResponse"],
 
 				//HV monitor
 				"ODBkeys" : ["Variables/Demand", "Variables/Measured", "Variables/Current", "Settings/Ramp Up Speed", "Settings/Ramp Down Speed", "Variables/Temperature", "Settings/ChState", "Variables/ChStatus", "Settings/Voltage Limit", "Settings/Current Limit", "Settings/Names"],
@@ -163,7 +163,7 @@ function loadParameters(){
 
 				//clocks
 				"nClocks" : 0,
-				"clockVariableNames" : ['Clock Enable', 'Configuration', 'Sync Source', 'Clock Source', 'Ref. Clock', 'LEMO Clock', 'LEMO Sync', 'eSATA Clock', 'eSATA Sync', 'Ch. 0 Hi Cycles', 'Ch. 0 Lo Cycles', 'Ch. 0 Bypass', 'Ch. 0 Phase', 'Ch. 1 Hi Cycles', 'Ch. 1 Lo Cycles', 'Ch. 1 Bypass', 'Ch. 1 Phase', 'Ch. 2 Hi Cycles', 'Ch. 2 Lo Cycles', 'Ch. 2 Bypass', 'Ch. 2 Phase', 'Ch. 3 Hi Cycles', 'Ch. 3 Lo Cycles', 'Ch. 3 Bypass', 'Ch. 3 Phase', 'Ch. 4 Hi Cycles', 'Ch. 4 Lo Cycles', 'Ch. 4 Bypass', 'Ch. 4 Phase', 'Ch. 5 Hi Cycles', 'Ch. 5 Lo Cycles', 'Ch. 5 Bypass', 'Ch. 5 Phase', 'Ch. 6 Hi Cycles', 'Ch. 6 Lo Cycles', 'Ch. 6 Bypass', 'Ch. 6 Phase', 'Ch. 7 Hi Cycles', 'Ch. 7 Lo Cycles', 'Ch. 7 Bypass', 'Ch. 7 Phase', 'Power', 'Status', 'Mode', 'Alarm', 'Unit Power', 'Tuning Voltage', 'Laser Current', 'Clock Heater Power', 'Temperature', 'Serial No.', 'Firmware Version'],
+				"clockVariableNames" : ['Clock Enable', 'Configuration', 'Sync Source', 'Clock Source', 'Ref. Clock', 'LEMO Clock', 'LEMO Sync', 'eSATA Clock', 'eSATA Sync', 'Ch. 0 Hi Cycles', 'Ch. 0 Lo Cycles', 'Ch. 0 Bypass', 'Ch. 0 Phase', 'Ch. 1 Hi Cycles', 'Ch. 1 Lo Cycles', 'Ch. 1 Bypass', 'Ch. 1 Phase', 'Ch. 2 Hi Cycles', 'Ch. 2 Lo Cycles', 'Ch. 2 Bypass', 'Ch. 2 Phase', 'Ch. 3 Hi Cycles', 'Ch. 3 Lo Cycles', 'Ch. 3 Bypass', 'Ch. 3 Phase', 'Ch. 4 Hi Cycles', 'Ch. 4 Lo Cycles', 'Ch. 4 Bypass', 'Ch. 4 Phase', 'Ch. 5 Hi Cycles', 'Ch. 5 Lo Cycles', 'Ch. 5 Bypass', 'Ch. 5 Phase', 'Ch. 6 Hi Cycles', 'Ch. 6 Lo Cycles', 'Ch. 6 Bypass', 'Ch. 6 Phase', 'Ch. 7 Hi Cycles', 'Ch. 7 Lo Cycles', 'Ch. 7 Bypass', 'Ch. 7 Phase', 'Power', 'Status', 'Mode', 'Alarm', 'Unit Power', 'Tuning Voltage', 'Laser Current', 'Clock Heater Power', 'Temperature', 'Serial No.', 'Firmware Version']
 
 				}
 
