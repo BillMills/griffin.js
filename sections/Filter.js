@@ -359,21 +359,15 @@ function editFilter(filterSystems, filterSystemsNames){
     //nav buttons
     injectDOM('button', 'commitFilter', this.linkWrapperID, {
         'class' : 'navLink',
-        'innerHTML' : 'Commit Filter and Return',
+        'innerHTML' : 'Deploy Filter and Return',
         'type' : 'button',
-        'onclick' : function(){buildFilter()}
+        'onclick' : deployFilter
     });
     injectDOM('button', 'abortFilter', this.linkWrapperID, {
         'class' : 'navLink',
-        'innerHTML' : 'Abandon Changes and Return',
+        'innerHTML' : 'Reload Active Filter',
         'type' : 'button',
-        'onclick' : function(){}
-    });
-    injectDOM('button', 'resetFilter', this.linkWrapperID, {
-        'class' : 'navLink',
-        'innerHTML' : 'Start Over',
-        'type' : 'button',
-        'onclick' : function(){}
+        'onclick' : reloadFilter
     });
     injectDOM('br', 'break', this.linkWrapperID, {});
     injectDOM('label', 'filterNameLabel', this.linkWrapperID, {'style' : 'margin-left:10px;', 'innerHTML' : 'Name this Filter: ', 'for':'filterName'});
@@ -494,6 +488,8 @@ function editFilter(filterSystems, filterSystemsNames){
     //TIPball
     if(ODB.TIPball)
         deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'TIPballPaleteBadge', 'filterPalete', tipBall, [this.badgeWidth/2, this.badgeHeight*0.35, this.badgeHeight*0.35], 'TIP Ball', true);
+
+    reloadFilter();
 }
 
 //drag and drop handler functions:
@@ -591,6 +587,7 @@ function deployBadgeCanvas(width, height, id, wrapperID, paintThumb, thumbArgs, 
                                         //replace the intro message if there's nothing else to show:
                                         if(document.getElementById('filterGroupContent' + index).innerHTML == '')
                                             document.getElementById('filterGroupContent' + index).innerHTML = window.filterEditPointer.newFilterMessage;
+                                        askForFilterDeploy();
                                     }
                                     else if(window.onDisplay == 'cycleCanvas'){
                                         pointer = this.parentNode;
@@ -604,6 +601,7 @@ function deployBadgeCanvas(width, height, id, wrapperID, paintThumb, thumbArgs, 
                                 }
                             };
     }
+
 }
 
 //create the full badge for the filter divs
@@ -629,7 +627,7 @@ function deployFilterBadge(id, wrapperID, createCanvas){
         document.getElementById('singleStreamHelp').innerHTML = 'Any of these:';
     else if(wrapperID.slice(0,11) == 'interstream')
         document.getElementById('interstreamHelp'+wrapperID.slice(11, wrapperID.length)).innerHTML = 'or ALL of these:'
-
+    askForFilterDeploy();
     resizeBranches();
 }
 
@@ -744,6 +742,7 @@ function deployEmptyFilterCondition(){
                 window.filterEditPointer.filterConPresent.splice(window.filterEditPointer.filterConPresent.indexOf(index), 1);
                 //hide previous tree gutter
                 document.getElementById('treeBlock'+window.filterEditPointer.filterConPresent[window.filterEditPointer.filterConPresent.length-1]).style.display = 'none';
+                askForFilterDeploy();
             }
         });
         //content block
@@ -801,19 +800,56 @@ function saveFilter(){
     }
 }
 
-//return the innerHTML of the option currently selected on select #dropID
-function getDrop(dropID){
-    var i, name,
-        dropdown = document.getElementById(dropID),
-        filterIndex = parseInt(dropdown.value, 10);
+function deployFilter(){
 
-    for(i=0; i<dropdown.childNodes.length; i++){
-        if(dropdown.childNodes[i].value == filterIndex){
-            name = dropdown.childNodes[i].innerHTML;
-        }            
+    var name = document.getElementById('filterName').value,
+        filter = buildFilter(),
+        i, deleteCode, oldGroups = [], groups = [], types = [], arrayLengths = [], stringLength = [];
+
+    //write name:
+    ODBSet('/DashboardConfig/Filters/Active Name', name);
+
+    //delete old groups, max 100 OR'd conditions:
+    for(i=0; i<100; i++){
+        if(ODB.Filters['group'+i])
+            oldGroups[oldGroups.length] = '/DashboardConfig/Filters/group'+i;
+    }
+    ODBMDelete(oldGroups);
+
+    //write new filter groups
+    //create arrays for each OR'ed group:
+    for(i=0; i<filter.length; i++){
+        groups[i] = '/DashboardConfig/Filters/group'+i;
+        types[i] = TID_STRING;
+        arrayLengths[i] = filter[i].length;
+        stringLength[i] = 32;
+    }
+    ODBMCreate(groups, types, arrayLengths, stringLength);
+
+    //populate arrays
+    for(i=0; i<filter.length; i++){
+        ODBSet('/DashboardConfig/Filters/group'+i+'[*]', filter[i]);   
     }
 
-    return name;
+    //regrab ODB
+    fetchODB();
+    suspendFilterRequest();
+    document.getElementById('FilterButton').onclick();
+}
+
+function reloadFilter(){
+    var i,
+        dropdown = document.getElementById('filterOptions');
+
+    for(i=0; i<dropdown.childNodes.length; i++){
+        if(dropdown.childNodes[i].innerHTML == ODB.Filters['Active Name']){
+            dropdown.selectedIndex = i;
+        }
+    }
+
+    loadFilter();
+    suspendFilterRequest();
+    fetchODB();
 }
 
 function loadFilter(){
@@ -926,9 +962,21 @@ function loadFilter(){
         if(document.getElementById('deleteFilterCon'+i))
             document.getElementById('deleteFilterCon'+i).onclick();
     }
+
+    askForFilterDeploy();
 }
 
+//start the deploy filter button flashing:
+function askForFilterDeploy(){
+    document.getElementById('commitFilter').style.webkitAnimationName = 'alertBorder';
+    document.getElementById('commitFilter').style.mozAnimationName = 'alertBorder';
+}
 
+//suspend request for cycle deployment
+function suspendFilterRequest(){
+    document.getElementById('commitFilter').style.webkitAnimationName = 'x';
+    document.getElementById('commitFilter').style.mozAnimationName = 'x';    
+}
 
 
 

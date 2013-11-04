@@ -516,46 +516,7 @@ function deployBadge(badge, commandID){
         document.getElementById(commandID).setAttribute('class', 'delayCycleContent');
     }
 }
-/*
-//step through the cycle, and construct the appropriate command and duration arrays
-function buildCycle(){
-    var i, j, commandNode, contentNode, actionNode, stepCode, durationNode, duration, timeUnit,
-        nCycleSteps = (document.getElementById('cycleSteps').childNodes.length-1)/4, //-1 for the termination badge, /4 for command+2spacers+linebreak.
-        commands = [],
-        durations = [];
 
-        for(i=0; i<nCycleSteps; i++){
-            commandNode = document.getElementById('cycleSteps').childNodes[i*4] ;
-            contentNode = commandNode.childNodes[0];
-            //build the command word:
-            stepCode = 0;
-            if(contentNode.childNodes.length != 1 || contentNode.childNodes[0].nodeType != Node.TEXT_NODE){
-                for(j=0; j<contentNode.childNodes.length; j++){
-                    actionNode = contentNode.childNodes[j];
-                    if(actionNode.id.indexOf('cycleContent') != -1){
-                        stepCode = stepCode | window.cyclePointer.codex[actionNode.id.slice(0, actionNode.id.indexOf('Palete'))];
-                    }
-                }
-            } 
-            //first 16 bits mirror last 16 bits for redundancy:
-            stepCode = stepCode | (stepCode<<16)
-            commands[commands.length] = stepCode;
-            //extract duration in ms:
-            durationNode = commandNode.childNodes[1];
-            duration = durationNode.firstChild.valueAsNumber;
-            timeUnit = durationNode.childNodes[3].childNodes[1].innerHTML;
-            if(timeUnit == 'seconds')
-                duration *= 1000;
-            else if(timeUnit == 'minutes')
-                duration *= 1000*60;
-            else if(timeUnit == 'infinite')
-                duration = 0;
-            durations[durations.length] = duration;
-        }
-
-        return [commands, durations];
-}
-*/
 //step through the cycle, and construct the appropriate command and duration arrays
 function buildCycle(){
     var i, j, commandNode, contentNode, actionNode, stepCode, duration, timeUnit,
@@ -679,7 +640,7 @@ function loadOptions(location, dropdown){
     }
 }
 
-//write the defined cycle to the ODB for later use - disabled until ODBSet for strings bug is solved
+//write the defined cycle to the ODB for later use
 function saveCycle(){
     
     var deleteCode, option, cycle = buildCycle();

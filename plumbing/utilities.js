@@ -486,12 +486,12 @@ function confirm(headline, detailText, confirmFunc){
     injectDOM('div', 'tempDiv', 'body', {'class':'tempDialog'});
     var dialogue = document.getElementById('tempDiv');
     injectDOM('h2', 'dialogHeader', 'tempDiv', {
-        'style' : 'position:relative; font:24px Orbitron; top:10px; margin-bottom:6%; margin-left:auto; margin-right:auto; padding:1em;',
+        'style' : 'position:relative; font:24px Orbitron; top:10px; margin:0px; margin-left:auto; margin-right:auto; padding:1em; padding-top:0;',
         'innerHTML' : headline
     })
 
     //warning text
-    injectDOM('p', 'warning', 'tempDiv', {'style':'padding: 1em; font-size:120%;', 'innerHTML':detailText});
+    injectDOM('p', 'warning', 'tempDiv', {'style':'padding: 1em; margin:0px; font-size:120%;', 'innerHTML':detailText});
 
     //center dialogue
     var width = document.getElementById('tempDiv').offsetWidth;
@@ -501,7 +501,7 @@ function confirm(headline, detailText, confirmFunc){
     if(confirmFunc){
         injectDOM('input', 'confirmChoice', 'tempDiv', {
             'class' : 'standardButton',
-            'style' : 'width:auto; height:auto; padding:0.5em; margin-bottom:1em; margin-left:0px',
+            'style' : 'width:auto; height:auto; padding:0.5em; margin-left:0px',
             'type' : 'button',
             'value' : 'Confirm'
         });
@@ -522,7 +522,7 @@ function confirm(headline, detailText, confirmFunc){
 
     injectDOM('input', 'abortChoice', 'tempDiv', {
         'class' : 'standardButton',
-        'style' : 'width:auto; height:auto; padding:0.5em; margin-bottom:1em',
+        'style' : 'width:auto; height:auto; padding:0.5em;',
         'type' : 'button',
         'value' : (confirmFunc == null) ? 'Dismiss' : 'Abort'
     });
@@ -571,4 +571,19 @@ function deployFooter(){
         'innerHTML' : 'GRIFFIN 2013<br>GRIFFIN Collaboration Spokesperson: Adam Garnsworthy (garns@triumf.ca) - UI/UX Design & Web Development: Bill Mills (mills.wj@gmail.com)'
     });
 
+}
+
+//return the innerHTML of the option currently selected on select #dropID
+function getDrop(dropID){
+    var i, name,
+        dropdown = document.getElementById(dropID),
+        filterIndex = parseInt(dropdown.value, 10);
+
+    for(i=0; i<dropdown.childNodes.length; i++){
+        if(dropdown.childNodes[i].value == filterIndex){
+            name = dropdown.childNodes[i].innerHTML;
+        }            
+    }
+
+    return name;
 }

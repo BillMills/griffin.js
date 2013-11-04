@@ -806,7 +806,7 @@
 						ODBSet('/DashboardConfig/Cycles/Active Duration', 0);
 
 						//filters
-						ODBMCreate(['/DashboardConfig/Filters'], [TID_KEY]);
+						ODBMCreate(['/DashboardConfig/Filters', '/DashboardConfig/Filters/Active Name', , [128,128]], [TID_KEY, TID_STRING]);
 
 						//HV
 						address = [	'/DashboardConfig/HV', 

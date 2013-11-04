@@ -791,7 +791,7 @@ div#cyclePalete canvas:nth-child(even){
 	}
 }
 
-button#commitCycle{
+button#commitCycle, button#commitFilter{
 	animation-name: alertBorder;
 	-webkit-animation-name: alertBorder;
 	-moz-animation-name: alertBorder;
@@ -853,6 +853,7 @@ button#commitCycle{
 	background:rgba(0,0,0,0.8); 
 	border: 5px solid; 
 	border-radius:10px;
+	padding: 4em;
 }
 
 /* http://stackoverflow.com/questions/3790935/can-i-hide-the-html5-number-inputs-spin-box */
