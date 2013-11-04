@@ -57,9 +57,9 @@
       <p id="youAreHere"></p>
     </div>
 
-    <!--Waffleplate////////////////////////////////////////////////////////-->
+    <!--Top-level wrapper////////////////////////////////////////////////////////-->
 
-    <div id="waffleplate" style='margin-top:2%'>      
+    <div id="topWrapper" style='margin-top:2%'>      
       <!--Left Sidebar: alarms, run control, etc-->
       <div id='leftSidebarDetail' class='LeftSidebar' style='z-index:-1; opacity:0; height:80%; overflow:scroll; padding:10px;'></div>
       <div id='leftSidebar' class='LeftSidebar' style='z-index:1; opacity:0'></div>
@@ -158,7 +158,6 @@
         //plug in MIDAS status page link:
         document.getElementById('MIDASstatusLink').onclick = function(){
           window.location = 'http://'+ODB.topLevel.statusURL;
-          //alert(window.parameters.statusURL)
         };
 
         //state variables for what the subdetector view is showing: 0->HV, 1->Thresholds, 2->Rate

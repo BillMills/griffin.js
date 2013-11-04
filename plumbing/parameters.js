@@ -1,53 +1,35 @@
 function loadParameters(){
 
 				window.parameters = {
+				//global
 				"devMode" : 1,
-				"MIDASlegacyMode" : 0,
-				"ExpName" : "",
-				"statusURL" : "",
-				"topDeployment" : {"HV":1, "Subsystems":1, "DAQ":1, "Clock":0, "Filter":1, "VME":1, "Cycle":1},
-				"deployment" : {"BAMBINO":1, "DANTE":1, "DESCANT":1, "HPGe":1, "PACES":1, "SCEPTAR":1, "SHARC":1, "SPICE":1, "TIPwall":1, "TIPball":1, "DSSD":0},
-				//"topDeployment" : {"HV":0, "Subsystems":1, "DAQ":1, "Clock":0, "Trigger":0},
-				//"deployment" : {"BAMBINO":0, "DANTE":0, "DESCANT":0, "HPGe":1, "PACES":0, "SCEPTAR":0, "SHARC":1, "SPICE":0, "TIPwall":0, "TIPball":0, "DSSD":0},
-				"wrapper" : "waffleplate",
-				"subdetectorUnit" : ["V", "ADC units", "Hz"],
-				"monitorValues" : ["HV", "Thresholds", "Rate", "TAC-Thresholds", "TAC-Rate"],  //for filling tooltip
-				"keyLookup" : ['HV', 'threshold', 'rate'], //for mapping subdetectorView index onto keys
-				//"ODBkeys" : ["/Location/Of/Device/Varibles", "/Location/Of/Device/Settings", "Demand Voltage Key", "Measured Voltage Key", "Measured Current Key", "Voltage Ramp Up Key", "Voltage Ramp Down Key", "Temperature Key", "ChState Key", "ChStatus Key", "Voltage Limit Key", "Current Limit Key", "Channel Name Key"],
-				//"ODBkeys" : ["/Equipment/HV/Variables", "/Equipment/HV/Settings", "Demand", "Measured", "Current", "Ramp Up Speed", "Ramp Down Speed", "Temperature", "ChState", "ChStatus", "Voltage Limit", "Current Limit", "Names"],
+				"topDeployment" : {"HV":1, "Subsystems":1, "DAQ":1, "Clock":1, "Filter":1, "VME":1, "Cycle":1},
+				"wrapper" : "topWrapper",
+				"tooltipPrecision" : 0,
+				"colorScale"  : ["ROOT Rainbow", "Greyscale", "Sunset", "Red Scale", "Mayfair"],
+				"detectorLogMode" : {'SubsystemsButton' : 0, 'DAQbutton' : 0, 'DashboardButton' : 0},  //log state a function of ID of button used to summon current view state 
+				"warningFill" : 0, //an img to fill detector channels absent from the JSONP post
+				"JSONPrepos" : ["http://midtig06.xtriumf.ca:8091/mother/parameters?jsonp=parseThreshold", "http://midtig06.xtriumf.ca:8091/mother/scalar?jsonp=parseResponse"]
+
+				//HV monitor
 				"ODBkeys" : ["Variables/Demand", "Variables/Measured", "Variables/Current", "Settings/Ramp Up Speed", "Settings/Ramp Down Speed", "Variables/Temperature", "Settings/ChState", "Variables/ChStatus", "Settings/Voltage Limit", "Settings/Current Limit", "Settings/Names"],
 				"rows" : 12,
 				"columns": [],
-				"rowTitles" : ["Ch.", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"],
-				"alarmThresholds" : [20, 10000, 100, 0],
 				"scaleMaxima" : [1,1,1,1],
-				"prefix" : ["Demand Voltage: ", "Reported Voltage: ", "Reported Current: ", "Voltage Ramp Up Speed: ", "Voltage Ramp Down Speed", "Temperature: ", "Status: "],
-				"postfix" : ["V", "V", "uA", "V/s", "V/s", "C", ""],
-				//min voltage and max voltage seem unnecessary, TODO: investigate removal.
-				"minVoltage" : 0,
-				"maxVoltage" : 1,
-				"minCurrent" : 0,
-				"maxCurrent" : 1,
-				"minTemperature" : 0,
-				"maxTemperature" : 1,
-				"minRampSpeed" : 0,
-				"maxRampSpeed" : 1,
 				"statusPrecision" : 0,
 				"barChartPrecision" : 0,
 				"alarmPrecision" : 0,
-				"tooltipPrecision" : 0,
 				"voltUnit" : "V",
 				"rampUnit" : "V/s",
 				"currentUnit" : "uA",
 				"temperatureUnit" : "C",
 				"HVequipmentNames" : [],
 				"moduleSizes" : [],
-				"colorScale"  : ["ROOT Rainbow", "Greyscale", "Sunset", "Red Scale", "Mayfair"],
-				"subdetectorColors" : ["ROOT Rainbow", "ROOT Rainbow", "Sunset"],
-				"validDetectors" : ["TIG", "TIS", "GRG", "GRS", "HPG", "HPS", "BAE", "BAZ", "SHQ", "SHB", "MAD", "MAM", "CSD", "CSM", "SPI", "SPE", "DSC", "SEP", "SET", "PAC", "DAL", "DAB", "DAS", "TPC", "TPW", "TPP", "TPG", "TPE", "ZDS", "ZDP", "ZDM", "ZDD", "TBR", "YBP", "YBB", "TRF", "RFL", "RFS"],
-				"detectorLogMode" : {'SubsystemsButton' : 0, 'DAQbutton' : 0, 'DashboardButton' : 0},  //log state a function of ID of button used to summon current view state 
-				"warningFill" : 0, //an img to fill detector channels absent from the JSONP post
 
+				//Subdetector monitors
+				"subdetectorUnit" : ["V", "ADC units", "Hz"],
+				"monitorValues" : ["HV", "Thresholds", "Rate", "TAC-Thresholds", "TAC-Rate"],
+				"subdetectorColors" : ["ROOT Rainbow", "ROOT Rainbow", "Sunset"],
 
 				"BAMBINO" : {
 								"minima" : {
@@ -176,16 +158,13 @@ function loadParameters(){
 										   },
 						},
 
-				"DAQminima" : [0, 0, 0, 0, 0, 0], //minima of element scales: [top level view rate, top level transfer, detail view rate, detail view transfer, master rate, master transfer]
-				"DAQmaxima" : [10000, 100000, 1000, 1000, 50000, 50000],
+				//DAQ
+				"validDetectors" : ["TIG", "TIS", "GRG", "GRS", "HPG", "HPS", "BAE", "BAZ", "SHQ", "SHB", "MAD", "MAM", "CSD", "CSM", "SPI", "SPE", "DSC", "SEP", "SET", "PAC", "DAL", "DAB", "DAS", "TPC", "TPW", "TPP", "TPG", "TPE", "ZDS", "ZDP", "ZDM", "ZDD", "TBR", "YBP", "YBB", "TRF", "RFL", "RFS"],
 
+				//clocks
 				"nClocks" : 0,
 				"clockVariableNames" : ['Clock Enable', 'Configuration', 'Sync Source', 'Clock Source', 'Ref. Clock', 'LEMO Clock', 'LEMO Sync', 'eSATA Clock', 'eSATA Sync', 'Ch. 0 Hi Cycles', 'Ch. 0 Lo Cycles', 'Ch. 0 Bypass', 'Ch. 0 Phase', 'Ch. 1 Hi Cycles', 'Ch. 1 Lo Cycles', 'Ch. 1 Bypass', 'Ch. 1 Phase', 'Ch. 2 Hi Cycles', 'Ch. 2 Lo Cycles', 'Ch. 2 Bypass', 'Ch. 2 Phase', 'Ch. 3 Hi Cycles', 'Ch. 3 Lo Cycles', 'Ch. 3 Bypass', 'Ch. 3 Phase', 'Ch. 4 Hi Cycles', 'Ch. 4 Lo Cycles', 'Ch. 4 Bypass', 'Ch. 4 Phase', 'Ch. 5 Hi Cycles', 'Ch. 5 Lo Cycles', 'Ch. 5 Bypass', 'Ch. 5 Phase', 'Ch. 6 Hi Cycles', 'Ch. 6 Lo Cycles', 'Ch. 6 Bypass', 'Ch. 6 Phase', 'Ch. 7 Hi Cycles', 'Ch. 7 Lo Cycles', 'Ch. 7 Bypass', 'Ch. 7 Phase', 'Power', 'Status', 'Mode', 'Alarm', 'Unit Power', 'Tuning Voltage', 'Laser Current', 'Clock Heater Power', 'Temperature', 'Serial No.', 'Firmware Version'],
 
-				"dashboardMin" : 1,
-				"dashboardMax" : 1000000,
-
-				"JSONPrepos" : ["http://midtig06.xtriumf.ca:8091/mother/parameters?jsonp=parseThreshold", "http://midtig06.xtriumf.ca:8091/mother/scalar?jsonp=parseResponse"]
 				}
 
 				window.parameters.warningFill = document.getElementById('warningFill');
@@ -193,6 +172,60 @@ function loadParameters(){
 			}
 
 /*Parameter Dictionary//////////////////////////////////////
+//Global
+devMode							1 = generate fake data for testing, 0 = go looking for the JSON posts in JSONPrepos
+topDeployment					indicates which subsections will be deployed - TODO: revalidate & debug, probably broken.
+wrapper  						ID for div that wraps most of the page content
+tooltipPrecision				precision for most generic tooltip table
+colorScale						Names of defined color scales 
+detectorLogMode					default linear (=0) or log (=1) state for various widgets
+warningFill						an image for filling absent channels
+JSONPrepos						array containing URLs of all JSONP data to be pulled in at each update: [thresholds, scalars]
+
+//HV monitor
+ODBkeys 						[	"Demand Voltage Key", 
+									"Measured Voltage Key", 
+									"Measured Current Key", 
+									"Voltage Ramp Up Key", 
+									"Voltage Ramp Down Key", 
+									"Temperature Key", 
+									"ChState Key", 
+									"ChStatus Key", 
+									"Voltage Limit Key", 
+									"Current Limit Key",
+									"Name Key"
+								]
+rows							number of rows in the HV monitor, not counting the primary row
+columns							number of columns in HV monitor.
+scaleMaxima						Saturation point for [HV, current, temperature, rate] alarm color scale; ie scaleMaxima[0] = 7 -> full alarm color if Vmeas-Vdemand > 7 
+statusPrecision					number of decimal places to keep in the status sidebar
+barChartPrecision				number of decimal places to keep in the barchart scale
+alarmPrecision					number of decimal places to keep in the alarm reporting sidebar
+voltUnit						unit to be used for voltage reporting
+rampUnit						""
+currentUnit						""
+temperatureUnit					""
+HVequipmentNames				Array of names of HV slow control front ends, autogenerated, n FE must be named as HV-0, HV-1... HV-n
+moduleSizes	                    Array containing a size code for each slot in the HV crate: 0=empty, 1=12 ch card, 4=48 ch card.
+
+//Subdetector monitors
+subdetectorUnit                 units for the scale in each of the subdetector views [HV, thresholds, rates]
+monitorValues					monitoring options on the subdetector pages
+subdetectorColors				default color scales for the different subdetector views
+
+//DAQ
+validDetectors					Prefixes of detectors recognized in this project
+
+//Clocks
+nClocks							Autodetected number of clocks, slow control frontend name GRIF-Clk<n>
+clockVariableNames				list of variable names used when constructing the clock right sidebar
+
+
+
+
+
+
+///////////////old//////////////////////////////
 //Global
 devMode							Flag that toggles between actually fetching ODB values and generating dummy values
 statusURL:						String containing the url of the MIDAS status page
@@ -203,7 +236,7 @@ subdetectorUnit                 units for the scale in each of the subdetector v
 monitorValues					monitoring options on the subdetector pages
 
 //HV monitor
-ODBkeys: 						["/Location/Of/Device/Varibles", "/Location/Of/Device/Settings", "Demand Voltage Key", "Measured Voltage Key", "Measured Current Key", "Voltage Ramp Up Key", "Voltage Ramp Down Key", "Temperature Key", "ChState Key", "ChStatus Key", "Voltage Limit Key", "Current Limit Key"]
+
 rows:							number of rows in the HV monitor, not counting the primary row
 columns:						number of columns in HV monitor.
 rowTitles:						Array of strings descrbing the row titles

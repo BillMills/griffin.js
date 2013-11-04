@@ -56,7 +56,7 @@ function loadJSONP(gatekeeper, callback) {
 
 //an object to block the page update until all the JSONP requests have reported back. 
 function gatekeeper(){
-    this.listener = document.getElementById('waffleplate')
+    this.listener = document.getElementById(window.parameters.wrapper)
 
     //how many JSONP assets have checked in?
     this.copyBack = 0;

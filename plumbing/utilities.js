@@ -94,7 +94,7 @@ function parameterDialogue(devName, scales, currentColorScale){
     var i, j, ODBpath;
 
     //insert div and title
-    injectDOM('div', 'tempDiv', 'waffleplate', {'class' : 'tempDialog'});
+    injectDOM('div', 'tempDiv', window.parameters.wrapper, {'class' : 'tempDialog'});
     var dialogue = document.getElementById('tempDiv');
     injectDOM('h2', 'dialogHeader', 'tempDiv', {
         'style' : 'position:relative; font:24px Orbitron; top:10px; margin-bottom:6%',
@@ -106,7 +106,7 @@ function parameterDialogue(devName, scales, currentColorScale){
     $('#dialogHeader').width(width)
 
     //center dialogue
-    $('#tempDiv').css('left', ($('#waffleplate').width()/2 - width/2))
+    $('#tempDiv').css('left', ($('#'+window.parameters.wrapper).width()/2 - width/2))
 
     //insert form fields
     injectDOM('form', 'dialogueValues', 'tempDiv', {});

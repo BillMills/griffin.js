@@ -10,7 +10,7 @@ function SPICE(){
     //SPICE can be deployed with an S2 or S3 downstream in the chamber;
     //these are identical to BAMBINO, so we deploy BAMBINO in 'SPICE mode':
     if(ODB.SPICE.SPICEauxiliary == 'S2' || ODB.SPICE.SPICEauxiliary == 'S3'){
-        window.parameters.deployment.BAMBINO = 1;
+        //window.parameters.deployment.BAMBINO = 1;
         ODB.BAMBINO.USdeploy = 0;
         ODB.BAMBINO.DSdeploy = 1;
         ODBSet('/DashboardConfig/BAMBINO/USdeploy', 0);

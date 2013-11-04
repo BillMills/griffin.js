@@ -46,6 +46,13 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         //index address of where the input panel is pointing:
         this.dialogX;
         this.dialogY;
+        //prefix / postfix text to use in HV tooltip:
+        this.prefix = ["Demand Voltage: ", "Reported Voltage: ", "Reported Current: ", "Voltage Ramp Up Speed: ", "Voltage Ramp Down Speed", "Temperature: ", "Status: "],
+        this.postfix = ["V", "V", "uA", "V/s", "V/s", "C", ""],
+        //fill meter limits:
+        this.currentMin = 0;
+        this.currentMax = 1;
+        this.temperatureMin = 0;    
 
 
         //make sure the waffle is pointing at a channel that actually has something in it before the initial populate:
@@ -196,8 +203,8 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
 
         //fill meters  TODO: put these on the waffle object instead of window?
         window.meter = new FillMeter('voltageMeter', 'InputLayer', 0, ODB.HV.demandVoltage[0], ODB.HV.demandVoltage[1], window.parameters.voltUnit, window.parameters.statusPrecision);
-        window.currentMeter = new FillMeter('currentMeter', 'InputLayer', 0, window.parameters.minCurrent, window.parameters.maxCurrent, window.parameters.currentUnit, window.parameters.statusPrecision);
-        window.temperatureMeter = new FillMeter('temperatureMeter', 'InputLayer', 0, window.parameters.minTemperature, ODB.HV.tempTolerance, window.parameters.temperatureUnit, window.parameters.statusPrecision);
+        window.currentMeter = new FillMeter('currentMeter', 'InputLayer', 0, this.currentMin, this.currentMax, window.parameters.currentUnit, window.parameters.statusPrecision);
+        window.temperatureMeter = new FillMeter('temperatureMeter', 'InputLayer', 0, this.temperatureMin, ODB.HV.tempTolerance, window.parameters.temperatureUnit, window.parameters.statusPrecision);
 
         //determine dimesions of canvas:
         this.totalWidth = Math.round(0.5*$('#'+this.wrapperDiv).width());
@@ -294,7 +301,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
         //make a tooltip for each crate:
         this.tooltip = [];
         for(i=0; i<this.nCrates; i++){
-            this.tooltip[i] = new Tooltip(this.canvasID[i], 'MFTT'+i, this.wrapperDiv, window.parameters.prefix, window.parameters.postfix);
+            this.tooltip[i] = new Tooltip(this.canvasID[i], 'MFTT'+i, this.wrapperDiv, this.prefix, this.postfix);
             //give the tooltip a pointer back to this object:
             this.tooltip[i].obj = that;
             //tooltip looks for members canvasWidth and canvasHeight to make sure its in a valid place:
@@ -761,7 +768,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
             else cardIndex = primaryBin(window.parameters.moduleSizes[window.HVview], col);
 
             //Title for normal channels:
-            if(row != 0) nextLine = this.moduleLabels[cardIndex]+', '+window.parameters.rowTitles[0]+' '+channelMap(col, row, window.parameters.moduleSizes[window.HVview], this.rows)+'<br>';
+            if(row != 0) nextLine = this.moduleLabels[cardIndex]+', Ch. '+channelMap(col, row, window.parameters.moduleSizes[window.HVview], this.rows)+'<br>';
             //Title for primary channels:
             else nextLine = this.moduleLabels[cardIndex]+' Primary <br>';
             toolTipContent += nextLine;
