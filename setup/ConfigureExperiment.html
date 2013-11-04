@@ -747,7 +747,7 @@
 
 				//build the base ODB structure and populate with what info we currently have:
 				function commitParameters(){
-					var address, type, values;
+					var address, type, values, arrayLengths;
 
 					if(window.choices < 3){
 						//alert('Please click on a deployment option for all sectors.')
@@ -793,20 +793,30 @@
 									'/DashboardConfig/Cycles/Static Source',
 									'/DashboardConfig/Cycles/Static Source/Code',
 									'/DashboardConfig/Cycles/Static Source/Duration',
+									'/DashboardConfig/Cycles/Standard Cycle',
+									'/DashboardConfig/Cycles/Standard Cycle/Code',
+									'/DashboardConfig/Cycles/Standard Cycle/Duration',									
 									'/DashboardConfig/Cycles/Active Name',
 									'/DashboardConfig/Cycles/Active Pattern',
 									'/DashboardConfig/Cycles/Active Duration'
 								];
-						type = [TID_KEY, TID_KEY, TID_INT, TID_INT, TID_STRING, TID_INT, TID_INT]
-						ODBMCreate(address, type);
-						ODBSet('/DashboardConfig/Cycles/Static Source/Code', 0);
-						ODBSet('/DashboardConfig/Cycles/Static Source/Duration', 0);
+						type = [TID_KEY, TID_KEY, TID_INT, TID_INT, TID_KEY, TID_INT, TID_INT, TID_STRING, TID_INT, TID_INT];
+						arrayLengths = [1, 1, 2, 2, 1, 5, 5, 1, 2, 2];
+						ODBMCreate(address, type, arrayLengths);
+						ODBSet('/DashboardConfig/Cycles/Static Source/Code[*]', [0x300030, 0x1F811F81]);
+						ODBSet('/DashboardConfig/Cycles/Static Source/Duration[*]', [100, 0]);
+						ODBSet('/DashboardConfig/Cycles/Standard Cycle/Code[*]', [0x300030, 0x400040, 0x1F801F80, 0x1F811F81, 0x1F801F80]);
+						ODBSet('/DashboardConfig/Cycles/Standard Cycle/Duration[*]', [100, 500, 1000, 15000, 5000]);
 						ODBSet('/DashboardConfig/Cycles/Active Name', 'Static Source'); //defaults to static source on load
-						ODBSet('/DashboardConfig/Cycles/Active Pattern', 0);
-						ODBSet('/DashboardConfig/Cycles/Active Duration', 0);
+						ODBSet('/DashboardConfig/Cycles/Active Pattern[*]', [0x300030, 0x1F811F81]);
+						ODBSet('/DashboardConfig/Cycles/Active Duration[*]', [100, 0]);
 
 						//filters
-						ODBMCreate(['/DashboardConfig/Filters', '/DashboardConfig/Filters/Active Name', , [128,128]], [TID_KEY, TID_STRING]);
+						ODBMCreate(['/DashboardConfig/Filters', '/DashboardConfig/Filters/HPGe Singles'], [TID_KEY, TID_KEY]);
+						ODBMCreate(['/DashboardConfig/Filters/Active Name', '/DashboardConfig/Filters/group0', '/DashboardConfig/Filters/HPGe Singles/group0'], [TID_STRING, TID_STRING, TID_STRING], [1,1,1], [32, 32, 32]);
+						ODBSet('/DashboardConfig/Filters/Active Name[*]', 'HPGe Singles');
+						ODBSet('/DashboardConfig/Filters/group0[*]', 'GRG-S-1');
+						ODBSet('/DashboardConfig/Filters/HPGe Singles/group0[*]', 'GRG-S-1');
 
 						//HV
 						address = [	'/DashboardConfig/HV', 
