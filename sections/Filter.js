@@ -34,14 +34,14 @@ function Filter(){
     this.canvasWidth = 0.48*$(this.wrapper).width();
     this.canvasHeight = 1*$(this.wrapper).height();
 
-    injectDOM('canvas', this.canvasID, this.wrapperID, {'class':'monitor', 'style':'top:' + ($('#FilterLinks').height() + 5) +'px;'});
+    injectDOM('canvas', this.canvasID, this.wrapperID, {'class':'monitor', 'style':'top:' + ($('#FilterLinks').offset().top + $('#FilterLinks').height() + 5) +'px;'});
     this.canvas = document.getElementById('FilterCanvas');
     this.context = this.canvas.getContext('2d');
     this.canvas.setAttribute('width', this.canvasWidth);
     this.canvas.setAttribute('height', this.canvasHeight);
 
     //and the tt layer:
-    injectDOM('canvas', this.TTcanvasID, this.wrapperID, {'class':'monitor', 'style':'top:' + ($('#FilterLinks').height() + 5) +'px;'});
+    injectDOM('canvas', this.TTcanvasID, this.wrapperID, {'class':'monitor', 'style':'top:' + ($('#FilterLinks').offset().top + $('#FilterLinks').height() + 5) +'px;'});
     this.TTcanvas = document.getElementById('TTfilterCanvas');
     this.TTcontext = this.TTcanvas.getContext('2d');
     this.TTcanvas.setAttribute('width', this.canvasWidth);

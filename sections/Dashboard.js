@@ -127,7 +127,7 @@ injectDOM('div', this.sidebarID, this.wrapperID, {}); //dummy sidebar for transi
 	//deploy a canvas for the dashboard view:
     this.canvasWidth = 0.48*$(this.wrapper).width();
     this.canvasHeight = 0.9*$(this.wrapper).height();
-    injectDOM('canvas', this.canvasID, this.wrapperID, {'class':'monitor', 'style':'position:absolute; left:24%; top:' + ($('#DashboardLinks').height() + 5) +'px;'});
+    injectDOM('canvas', this.canvasID, this.wrapperID, {'class':'monitor', 'style':'position:absolute; left:24%; top:' + ($('#DashboardLinks').offset().top + $('#DashboardLinks').height() + 5) +'px;'});
     this.canvas = document.getElementById('DashboardCanvas');
     this.context = this.canvas.getContext('2d');
     this.canvas.setAttribute('width', this.canvasWidth)

@@ -52,7 +52,7 @@ function BarGraph(cvas, moduleNumber, nBars, title, yAxisTitle, scaleMin, scaleM
     this.headerHeight = masterWaffle.headerHeight[crate];
     $('#'+cvas).attr('width', this.width);
     $('#'+cvas).attr('height', this.height);
-    $('#'+cvas).css('top', this.headerHeight);
+    //$('#'+cvas).css('top', this.headerHeight);
 
     //determine optimal font sizes for labels:
     //determine longest y-axis tick label:

@@ -342,7 +342,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
             this.headerHeight[i] = $('#'+this.linkWrapperID).height();
             document.getElementById(this.linkWrapperID+i).style.display = 'none';
             //make the vertical spacing between the waffle and nav header nice:
-            $('#'+this.canvasID[i]).css('top', ((this.headerHeight[i])+5)+'px !important;' );
+            $('#'+this.canvasID[i]).css('top', ( $('#mainframeLinks').offset().top + (this.headerHeight[i])+5)+'px !important;' );
         }
         //turn top crate's slot navigation on:
         document.getElementById(this.linkWrapperID+window.HVview).style.display = 'block';
@@ -357,7 +357,8 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                 injectDOM('canvas', 'crate'+j+'bar'+i, this.wrapperDiv, {
                     'class' : 'monitor',
                     'width' : this.totalWidth,
-                    'height' : this.totalHeight[i]
+                    'height' : this.totalHeight[i],
+                    'style' : 'top:' + ($('#mainframeLinks').offset().top + $('#mainframeLinks').offset().height +5) + 'px'
                 });
                 this.barCharts[j][i] = new BarGraph('crate'+j+'bar'+i, i, Math.max(window.parameters.moduleSizes[j][i],1)*12, 'Slot '+i, 'Reported Voltage [V]', 0, window.parameters.scaleMaxima[0], window.parameters.barChartPrecision, that, j);
             }

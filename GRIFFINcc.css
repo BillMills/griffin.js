@@ -18,7 +18,9 @@ body{
 	font-size:14px; 
 	background-color:#333333; 
 	color:#FFFFFF; 
-	margin-left:0px;
+	margin:0px;
+	height:-moz-min-content;
+	height:-webkit-min-content; 
 }
 
 input, select, button{
@@ -26,10 +28,12 @@ input, select, button{
 }
 
 div#topWrapper{
+
+	margin:0px;
 	margin-left: auto;
 	margin-right: auto;
-	position:relative;
-	top: 2%; 
+	position:relative; 
+	
 }
 
 div#branding{
@@ -866,4 +870,16 @@ input.filterFactor::-webkit-inner-spin-button {
 :invalid{
 	color: #FF0000;
 	border: 2px solid #FF0000;
+}
+
+/*Footer and footer-related styles////////////////////////////////////////////////////*/
+div#footer{
+	background-color: #999999;
+	text-align: center;
+	padding:2em;
+	color:#333333;
+	border-top:1px solid #000000;
+	height:6em;
+	line-height: 1.2;
+	margin-top: 2em;
 }

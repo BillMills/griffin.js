@@ -42,24 +42,23 @@
 
   <body> 
 
-    <!--Branding///////////////////////////////////////////////////////////-->
-    <div id='branding'>
-      <img id='logo' height='70px' width='80px' src='triumf.gif'></img>
-      <h1 id='title'>TRIUMF</h1>
-    </div>
-
-    <!--Top Level Navigation////////////////////////////////////////////////////////////-->
-    <div id="navBar" style='margin:none;'>
-      <div id='statusLink'>
-        <button id='MIDASstatusLink' class='navLink' style='opacity:0;' type="submit">MIDAS Status</button>
-        <!--All other objects will insert their nav buttons here-->
-      </div>
-      <p id="youAreHere"></p>
-    </div>
-
     <!--Top-level wrapper////////////////////////////////////////////////////////-->
+    <div id="topWrapper"> 
+      <!--Branding///////////////////////////////////////////////////////////-->
+      <div id='branding'>
+        <img id='logo' height='70px' width='80px' src='triumf.gif'></img>
+        <h1 id='title'>TRIUMF</h1>
+      </div>
 
-    <div id="topWrapper" style='margin-top:2%'>      
+      <!--Top Level Navigation////////////////////////////////////////////////////////////-->
+      <div id="navBar" style='margin:none;'>
+        <div id='statusLink'>
+          <button id='MIDASstatusLink' class='navLink' style='opacity:0; margin-bottom:5em' type="submit">MIDAS Status</button>
+          <!--All other objects will insert their nav buttons here-->
+        </div>
+        <p id="youAreHere"></p>
+      </div>
+     
       <!--Left Sidebar: alarms, run control, etc-->
       <div id='leftSidebarDetail' class='LeftSidebar' style='z-index:-1; opacity:0; height:80%; overflow:scroll; padding:10px;'></div>
       <div id='leftSidebar' class='LeftSidebar' style='z-index:1; opacity:0'></div>
@@ -185,7 +184,7 @@
         //Subsystems:
         if(window.parameters.topDeployment['Subsystems']){
           //Subsystem sidebar:
-          injectDOM('div', 'SubsystemSidebar', window.parameters.wrapper, {'class':'RightSidebar'});
+          injectDOM('div', 'SubsystemSidebar', window.parameters.wrapper, {'class':'RightSidebar', 'style':'display:none'});
           //Subsystem menu; universal buttons declared outside of individual subsystems:
           //add top level nav button:
           injectDOM('button', 'SubsystemsButton', 'statusLink', {'class':'navLink', 'innerHTML':'Subsystem Monitors'});
@@ -315,6 +314,10 @@
         //else if(!window.parameters.topDeployment['Trigger']) swapView('mainframeLinks', 'HVgrid0', 'InputLayer', 'HVmonitorButton');
         //hack to patch in HV assets:
         //insertDOM('button', 'HVhackButton', 'navLink', '', 'statusLink', function(){window.location="http://alphadon.triumf.ca:8082/CS/Dashboard"}, 'HV Status', '', 'submit');
+
+        document.getElementById('topWrapper').style.height = document.body.scrollHeight
+        //inject footer
+        deployFooter();
 
         startLoop(); 
 

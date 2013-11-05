@@ -93,25 +93,25 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 
     //display canvases
     //top view
-    injectDOM('canvas', this.canvasID, this.monitorID, {'class':'monitor', 'style':'top: '+ ($('#DAQlinks').height() + 5) +'px;'});
+    injectDOM('canvas', this.canvasID, this.monitorID, {'class':'monitor', 'style':'top: '+ ($('#DAQlinks').offset().top + $('#DAQlinks').height() + 5) +'px;'});
     this.canvas = document.getElementById(canvas);
     this.context = this.canvas.getContext('2d');
     this.canvas.setAttribute('width', this.canvasWidth);
     this.canvas.setAttribute('height', this.canvasHeight);
     //detailed view
-    injectDOM('canvas', this.detailCanvasID, this.monitorID, {'class':'monitor', 'style':'top: '+ ($('#DAQlinks').height() + 5) +'px;'});
+    injectDOM('canvas', this.detailCanvasID, this.monitorID, {'class':'monitor', 'style':'top: '+ ($('#DAQlinks').offset().top + $('#DAQlinks').height() + 5) +'px;'});
     this.detailCanvas = document.getElementById(detailCanvas);
     this.detailContext = this.detailCanvas.getContext('2d');
     this.detailCanvas.setAttribute('width', this.canvasWidth);
     this.detailCanvas.setAttribute('height', this.canvasHeight);
     //Tooltip for summary level
-    injectDOM('canvas', this.TTcanvasID, this.monitorID, {'class':'monitor', 'style':'top:' + ($('#DAQlinks').height()*1.25 + 5) +'px;'});
+    injectDOM('canvas', this.TTcanvasID, this.monitorID, {'class':'monitor', 'style':'top:' + ($('#DAQlinks').offset().top + $('#DAQlinks').height()*1.25 + 5) +'px;'});
     this.TTcanvas = document.getElementById(this.TTcanvasID);
     this.TTcontext = this.TTcanvas.getContext('2d');
     this.TTcanvas.setAttribute('width', this.canvasWidth);
     this.TTcanvas.setAttribute('height', this.canvasHeight);    
     //hidden Tooltip map layer for detail
-    injectDOM('canvas', this.TTdetailCanvasID, this.monitorID, {'class':'monitor', 'style':'top:' + ($('#DAQlinks').height()*1.25 + 5) +'px;'});
+    injectDOM('canvas', this.TTdetailCanvasID, this.monitorID, {'class':'monitor', 'style':'top:' + ($('#DAQlinks').offset().top + $('#DAQlinks').height()*1.25 + 5) +'px;'});
     this.TTdetailCanvas = document.getElementById(this.TTdetailCanvasID);
     this.TTdetailContext = this.TTdetailCanvas.getContext('2d');
     this.TTdetailCanvas.setAttribute('width', this.canvasWidth);

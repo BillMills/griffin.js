@@ -37,7 +37,7 @@ function Subsystem(){
     //detector view
     injectDOM('canvas', this.canvasID, this.monitorID, {
         'class':'monitor', 
-        'style':'top:' + ($('#'+this.linkWrapperID).height()*1.25 + 5) +'px;'
+        'style':'top:' + ($('#'+this.linkWrapperID).offset().top + $('#'+this.linkWrapperID).height()*1.25 + 5) +'px;'
     })
     this.canvas = document.getElementById(this.canvasID);
     this.context = this.canvas.getContext('2d');
@@ -46,7 +46,7 @@ function Subsystem(){
     //hidden Tooltip map layer
     injectDOM('canvas', this.TTcanvasID, this.monitorID, {
         'class' : 'monitor',
-        'style' : 'top:' + ($('#'+this.linkWrapperID).height()*1.25 + 5) +'px;'
+        'style' : 'top:' + ($('#'+this.linkWrapperID).offset().top + $('#'+this.linkWrapperID).height()*1.25 + 5) +'px;'
     });
     this.TTcanvas = document.getElementById(this.TTcanvasID);
     this.TTcontext = this.TTcanvas.getContext('2d');
@@ -383,7 +383,7 @@ function DetailView(){
     //insert & scale canvas
     injectDOM('canvas', this.detailCanvasID, this.monitorID, {
         'class' : 'monitor',
-        'style' : 'top:' + ($('#'+this.linkWrapperID).height()*1.25 + 5) +'px; transition:opacity 0.5s, z-index 0.5s; -moz-transition:opacity 0.5s, z-index 0.5s; -webkit-transition:opacity 0.5s, z-index 0.5s;'
+        'style' : 'top:' + ($('#'+this.linkWrapperID).offset().top + $('#'+this.linkWrapperID).height()*1.25 + 5) +'px; transition:opacity 0.5s, z-index 0.5s; -moz-transition:opacity 0.5s, z-index 0.5s; -webkit-transition:opacity 0.5s, z-index 0.5s;'
     });
     this.detailCanvas = document.getElementById(this.detailCanvasID);
     this.detailContext = this.detailCanvas.getContext('2d');
@@ -392,7 +392,7 @@ function DetailView(){
     //hidden Tooltip map layer for detail
     injectDOM('canvas', this.TTdetailCanvasID, this.monitorID, {
         'class' : 'monitor',
-        'style' : 'top:' + ($('#'+this.linkWrapperID).height()*1.25 + 5) +'px;'
+        'style' : 'top:' + ($('#'+this.linkWrapperID).offset().top + $('#'+this.linkWrapperID).height()*1.25 + 5) +'px;'
     });
     this.TTdetailCanvas = document.getElementById(this.TTdetailCanvasID);
     this.TTdetailContext = this.TTdetailCanvas.getContext('2d');
