@@ -818,3 +818,53 @@ function closeX(context, x0, y0, radius){
     context.lineTo(x0 - 0.4*radius, y0 + 0.4*radius);
     context.stroke();
 }
+
+//draws a digit like on an old digital clock.  cells is an array describing which cells
+//are lit, indexed 0-5 around the edge starting on top, and 6 for the middle bar.
+function digitalDigit(cells, context, height, x0, y0){
+
+    var cellWidth = 0.05*height,
+        width = 0.5*height,
+        cellHeight = 0.5*height;
+
+    if(cells[0]){
+        context.beginPath();
+        context.moveTo(x0+cellWidth, y0);
+        context.lineTo(x0+cellWidth+width, y0);
+        context.lineTo(x0+width, y0+cellWidth);
+        context.lineTo(x0+2*cellWidth, y0+cellWidth);
+        context.closePath();
+        context.fill();
+    }
+
+    if(cells[1]){
+        context.beginPath();
+        context.moveTo(x0+width+2*cellWidth, y0+cellWidth);
+        context.lineTo(x0+width+2*cellWidth, y0+cellWidth+cellHeight);
+        context.lineTo(x0+width+cellWidth, y0+cellHeight);
+        context.lineTo(x0+width+cellWidth, y0+2*cellWidth);
+        context.closePath();
+        context.fill();
+    }
+
+    if(cells[2]){
+        context.beginPath();
+        context.moveTo(x0+width+2*cellWidth, y0+3*cellWidth+cellHeight);
+        context.lineTo(x0+width+2*cellWidth, y0+3*cellWidth+2*cellHeight);
+        context.lineTo(x0+width+cellWidth, y0+2*cellWidth+2*cellHeight);
+        context.lineTo(x0+width+cellWidth, y0+4*cellWidth+cellHeight);     
+        context.closePath();
+        context.fill();   
+    }
+
+    if(cells[3]){
+        context.beginPath();
+        context.moveTo(x0+cellWidth+width, y0+4*cellWidth+2*cellHeight);
+        context.lineTo(x0+cellWidth, y0+4*cellWidth+2*cellHeight);
+        context.lineTo(x0+2*cellWidth, y0+3*cellWidth+2*cellHeight);
+        context.lineTo(x0+width, y0+3*cellWidth+2*cellHeight);
+        context.closePath();
+        context.fill();
+    }
+
+}

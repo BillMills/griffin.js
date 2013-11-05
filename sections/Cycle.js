@@ -159,7 +159,7 @@ function Cycle(){
     injectDOM('div', this.sidebarID, this.wrapperID, {}); //dummy sidebar for transitions
 
     //Clear Scalars
-    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'clearScalarsPaleteBadge', 'cyclePalete', clearScalars, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Clear Scalars', true);
+    deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'clearScalarsPaleteBadge', 'cyclePalete', clearScalars, [this.badgeHeight, this.badgeWidth*0.05, this.badgeHeight*0.05], 'Clear Scalars', true);
     //Move Tape
     deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'moveTapePaleteBadge', 'cyclePalete', moveTape, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Move Tape', true);
     //Trigers On
@@ -478,7 +478,7 @@ function deployBadge(badge, commandID){
 
 
     if(badge == 'clearScalars')
-        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'clearScalarsPaleteBadge', commandID, clearScalars, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Clear Scalars', false);
+        deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'clearScalarsPaleteBadge', commandID, clearScalars, [this.badgeHeight*0.5, this.badgeWidth*0.05, this.badgeHeight*0.05], 'Clear Scalars', false);
     else if(badge == 'moveTape')
         deployBadgeCanvas(this.badgeWidth, this.badgeHeight, 'moveTapePaleteBadge', commandID, moveTape, [this.badgeWidth, this.badgeHeight, this.badgeWidth/2, this.badgeHeight*0.35], 'Move Tape', false);
     else if(badge == 'triggersOn')
