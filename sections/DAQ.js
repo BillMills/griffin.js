@@ -5,6 +5,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     //make a pointer at window level back to this object, so we can pass by reference to the nav button onclick
     window.DAQpointer = that;
 
+    //member variables//////////////////////////////////////////////////////////////////////////////////////////////////////////////
     this.monitorID = window.parameters.wrapper;  //div ID of wrapper div
     this.canvasID = 'DAQcanvas';			     //ID of canvas to draw DAQ on
     this.detailCanvasID = 'DAQdetailCanvas';     //ID of canvas to draw detailed view on
@@ -89,7 +90,8 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     }
 
     //right sidebar
-    injectDOM('div', this.sidebarID, this.monitorID, {'class':'RightSidebar'});
+    //injectDOM('div', this.sidebarID, this.monitorID, {'class':'RightSidebar'});
+    injectDOM('div', this.sidebarID, this.monitorID, {}); //dummy sidebar for transitions
 
     //display canvases
     //top view
@@ -116,9 +118,11 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     this.TTdetailContext = this.TTdetailCanvas.getContext('2d');
     this.TTdetailCanvas.setAttribute('width', this.canvasWidth);
     this.TTdetailCanvas.setAttribute('height', this.canvasHeight);    
-    //finished adding to the DOM////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    this.scaleHeight = this.canvasHeight*0.2;//110;
+
+    //interactions & tooltip setup////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    this.scaleHeight = this.canvasHeight*0.2;
 
     //onclick switch between top and detail view:
     this.detailCanvas.onclick = function(event){
@@ -172,7 +176,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     this.detailTooltip.obj = that;
 
 
-    //drawing parameters//////////////////////////////////////////////
+    //drawing parameters////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
     this.cellColor = '#4C4C4C';
@@ -197,7 +201,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     this.digiSummaryTop = this.digiSummaryLinkBottom;
     this.digiSummaryBottom = this.digiSummaryTop + this.collectorHeight;
 
-    //establish animation parameters////////////////////////////////////////////////////////////////////
+    //animation parameters
     this.FPS = 30;
     this.duration = 0.5;
     this.nFrames = this.FPS*this.duration;
@@ -205,7 +209,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     this.inboundCollector = -1;
     this.presentCollector = -1;
 
-    //member functions///////////////////////////////////////////////
+    //member functions////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     //decide which view to transition to when this object is navigated to
     this.view = function(){
@@ -219,7 +223,8 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 	this.update = function(){
 		var i;
 
-        this.fetchNewData();
+        //this.fetchNewData();
+        window.codex.update();
 
         //parse the new data into colors
         this.dataBus.oldMasterColor = this.dataBus.masterColor;
@@ -263,21 +268,37 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 
 	};
 
-	//parse scalar into a color on a color scale bounded by min and max 
-	this.parseColor = function(scalar, min, max){
-		//how far along the scale are we?
-		var scale 
-        if(window.parameters.detectorLogMode.DAQbutton){
-            scale = (Math.log(scalar) - Math.log(min)) / (Math.log(max) - Math.log(min));
-        } else {
-            scale = (scalar - min) / (max - min);
-        }
-        if(scale<0) scale = 0;
-        if(scale>1) scale = 1;
+/*
+    this.fetchNewData = function(){
+        var i, j, Fkey, Skey, Pkey;
 
-		//return redScale(scale);
-        return scalepickr(scale, window.parameters.colorScale[this.DAQcolor])
-	};
+        window.codex.update();
+        i=0; j=0;
+        for(Fkey in window.codex.DAQmap){
+            if(window.codex.dataKeys.indexOf(Fkey) == -1){
+                this.dataBus.master[0] = window.codex.DAQmap[Fkey].trigRequestRate;
+                for(Skey in window.codex.DAQmap[Fkey]){
+                    if(window.codex.dataKeys.indexOf(Skey) == -1){
+                        this.dataBus.collectors[j] = window.codex.DAQmap[Fkey][Skey].trigRequestRate;
+                        this.dataBus.digitizerSummaries[j] = window.codex.DAQmap[Fkey][Skey].trigRequestRate;  //currently the same as the collector level since no filtering.
+                        this.dataBus.collectorLinks[j] = window.codex.DAQmap[Fkey][Skey].dataRate;
+                        this.dataBus.digitizerGroupSummaryLinks[j] = window.codex.DAQmap[Fkey][Skey].dataRate;  //again, redundant with collectors until some busy blocking or something is available
+                        j++;
+                        for(Pkey in window.codex.DAQmap[Fkey][Skey]){
+                            if(window.codex.dataKeys.indexOf(Pkey) == -1){
+                                this.dataBus.digitizers[i] = window.codex.DAQmap[Fkey][Skey][Pkey].trigRequestRate;
+                                this.dataBus.digitizerLinks[i] = window.codex.DAQmap[Fkey][Skey][Pkey].dataRate;
+                                i++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    };
+*/
+
 
 	this.draw = function(frame){
 		var color, i, j, k, fontSize, headerString;
@@ -700,35 +721,6 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 
     };
 
-    this.fetchNewData = function(){
-        var i, j, Fkey, Skey, Pkey;
-
-        window.codex.update();
-        i=0; j=0;
-        for(Fkey in window.codex.DAQmap){
-            if(window.codex.dataKeys.indexOf(Fkey) == -1){
-                this.dataBus.master[0] = window.codex.DAQmap[Fkey].trigRequestRate;
-                for(Skey in window.codex.DAQmap[Fkey]){
-                    if(window.codex.dataKeys.indexOf(Skey) == -1){
-                        this.dataBus.collectors[j] = window.codex.DAQmap[Fkey][Skey].trigRequestRate;
-                        this.dataBus.digitizerSummaries[j] = window.codex.DAQmap[Fkey][Skey].trigRequestRate;  //currently the same as the collector level since no filtering.
-                        this.dataBus.collectorLinks[j] = window.codex.DAQmap[Fkey][Skey].dataRate;
-                        this.dataBus.digitizerGroupSummaryLinks[j] = window.codex.DAQmap[Fkey][Skey].dataRate;  //again, redundant with collectors until some busy blocking or something is available
-                        j++;
-                        for(Pkey in window.codex.DAQmap[Fkey][Skey]){
-                            if(window.codex.dataKeys.indexOf(Pkey) == -1){
-                                this.dataBus.digitizers[i] = window.codex.DAQmap[Fkey][Skey][Pkey].trigRequestRate;
-                                this.dataBus.digitizerLinks[i] = window.codex.DAQmap[Fkey][Skey][Pkey].dataRate;
-                                i++;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-    };
-
     this.findCell = function(x, y){
         var imageData 
         if(this.detailShowing == 1){
@@ -765,7 +757,6 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                 nextLine += 'Total Outbound Data Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]]['dataRate'].toFixed(1) + ' Bps<br><br>';
 
                 //build up arrays and objects to pass to tooltip table builder in the format it expects:
-//console.log(window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]])
                 for(key in window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]]){
                     if(window.codex.dataKeys.indexOf(key) == -1){
                         data[key] = window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]][key]
@@ -971,7 +962,7 @@ function rateChart(frame, data, context, x0, y0, maxLength, barWidth){
         context.strokeRect(1.1*x0, y0 - (barWidth+4)*(row+1) + barWidth/2+2, length, barWidth/2-2);
         context.fillStyle = '#FFFFFF';
         context.font = fontSize*0.6+'px Raleway';
-// window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]]['dataRate'].toFixed(1)
+
         var text = (data[key].totalDataRate/1000 > 9999) ? (data[key].totalDataRate/1000).toExponential(0) : (data[key].totalDataRate/1000).toFixed(0);
         text += ' kBps';
         context.fillText( text, 1.1*x0 + length + 5,  y0 - (barWidth+4)*(row+1) + barWidth/2+2 + barWidth/4 - 1);
@@ -1016,135 +1007,184 @@ function rateChart(frame, data, context, x0, y0, maxLength, barWidth){
 
 
 
-//masterCodex imports a table from which the DAQ is mapped
+
+
+
+
+
+//Codex imports a table from which the DAQ is mapped
 DAQcodex = function(){
-    var i, Fkey, Skey, Pkey, Ckey;
+    var i, masterKey, slaveKey, digiKey, slaveGroupKey;
 
     //Parse DAQ Assets///////////////////////////////////////////////////////////////////////
-    //pull the FSPC table info in from the ODB
-    this.DAQpath = ['/Analyzer/Parameters/Cathode/Config/FSCP[*]', '/Analyzer/Parameters/Cathode/Config/Name[*]', '/Analyzer/Parameters/Cathode/Config/N'];       
-    this.DAQtable = ODBMGet(this.DAQpath);
-    this.FSPC  = this.DAQtable[0];
-    this.Name  = this.DAQtable[1];
-    this.nRows = this.DAQtable[2];
+    //pull the FSPC (TIGRESS) or MSC (GRIFFIN) table info in from the ODB
+    if(ODB.HPGeArray == 'TIGRESS'){
+        this.DAQpath = ['/Analyzer/Parameters/Cathode/Config/Name[*]', '/Analyzer/Parameters/Cathode/Config/FSCP[*]'];       
+        this.DAQtable = ODBMGet(this.DAQpath);
+    } else {
+        this.DAQpath = ['/DashboardConfig/DAQ/Channel', '/DashboardConfig/DAQ/MSC'];
+        this.DAQtable = JSON.parse(ODBMCopy(this.DAQpath));
+        this.DAQtable[0] = this.DAQtable[0]['Channel'] //crush the metadata
+        this.DAQtable[1] = this.DAQtable[1]['MSC']
+    }
+    this.Name        = this.DAQtable[0];
+    this.encodedDAQ  = this.DAQtable[1];
+    this.nRows       = this.DAQtable[0].length;
 
     //parse into DAQ levels, and sort:    
     this.table = [];
-    this.F = [];
-    this.S = [];
-    this.P = [];
-    this.C = [];
-    this.DAQmap = {};
-    this.detSummary = {};
+    this.masterChannel = [];  //channel master is recieving this data on
+    this.slaveChannel = [];   //channel collector is recieving on
+    this.digiChannel = [];    //individual digitizer channel
+    //this.DAQmap = {};
+    //this.detSummary = {};
 
-    for(i=0; i<this.nRows; i++){
-        this.F[i] = Math.floor(this.FSPC[i] / 0x10000000);                                          //first digit (on left)
-        this.S[i] = Math.floor(this.FSPC[i] / 0x100000) - this.F[i]*0x100;                          //second
-        this.P[i] = Math.floor(this.FSPC[i] / 0x100) - this.F[i]*0x100000 - this.S[i]*0x1000;       //third-fifth
-        this.C[i] = this.FSPC[i] - this.F[i]*0x10000000 - this.S[i]*0x100000 - this.P[i]*0x100;     //sixth and seventh
-        if(this.S[i] <= 12){
+    if(ODB.HPGeArray == 'TIGRESS'){
+        for(i=0; i<this.nRows; i++){
+            this.masterChannel = (this.encodedDAQ[i] & 0xFF00000) >> 20;
+            this.slaveChannel = (this.encodedDAQ[i] & 0xFFF00) >> 8;
+            this.digiChannel = this.encodedDAQ[i] & 0xFF;
             this.table.push({
-                F : this.F[i],
-                S : this.S[i],
-                P : this.P[i],
-                C : this.C[i],
-                Name : this.Name[i]
-            })
+                master: this.masterChannel[i],
+                slave: this.slaveChannel[i],
+                digi: this.digiChannel[i],
+                Name: this.Name[i],
+                encoded: this.encodedDAQ[i]
+            });
+        }
+    } else { //GRIFFIN
+        for(i=0; i<this.nRows; i++){
+            this.masterChannel[i] = (this.encodedDAQ[i] & 0xF000) >> 12; //corresponds to 'M' in GRIFFIN MSC, the master channel
+            this.slaveChannel[i] = (this.encodedDAQ[i] & 0x0F00) >> 8; //corresponds to 'S' in GRIFFIN MSC, the slave channel
+            this.digiChannel[i] = this.encodedDAQ[i] & 0x00FF; //corresponds to 'C' in GRIFFIN MSC, the individual digitizer
+            this.table.push({
+                master : this.masterChannel[i],
+                slave : this.slaveChannel[i],
+                digi : this.digiChannel[i],
+                Name : this.Name[i],
+                encoded : this.encodedDAQ[i]
+            });             
         }
     }
 
-    function sortFSPC(a, b){
-        if(a.F == b.F){
-            if(a.S == b.S){
-                if(a.P == b.P){
-                    if(a.C == b.C){
-                        return -9999; //this should never happen
-                    } else {
-                        if (a.C > b.C) return 1;
-                        if (a.C < b.C) return -1;
-                        else return 0;                        
-                    }                 
+    function sortDAQ(a, b){
+        if(a.master == b.master){
+            if(a.slave == b.slave){
+                if(a.digi == b.digi){
+                    return -9999; //this should never happen, indicates a channel appearing in the ODB DAQ table twice.
                 } else {
-                    if (a.P > b.P) return 1;
-                    if (a.P < b.P) return -1;
-                    else return 0;                    
-                }
+                    if (a.digi > b.digi) return 1;
+                    if (a.digi < b.digi) return -1;
+                    else return 0;                        
+                }                 
             } else {
-                if (a.S > b.S) return 1;
-                if (a.S < b.S) return -1;
-                else return 0;                
+                if (a.slave > b.slave) return 1;
+                if (a.slave < b.slave) return -1;
+                else return 0;                    
             }
         } else {
-            if (a.F > b.F) return 1;
-            if (a.F < b.F) return -1;
-            else return 0;          
+            if (a.master > b.master) return 1;
+            if (a.master < b.master) return -1;
+            else return 0;                
         }
     } 
 
-    this.table.sort(sortFSPC);  
-    this.F = []; this.S = []; this.P = []; this.C = []; this.Name = [];
+    this.table.sort(sortDAQ);  
+    this.master = []; this.slave = []; this.digi = []; this.Name = [], this.encoded = [];
 
     for(i=0; i<this.table.length; i++){
-        this.F[i] = this.table[i].F;
-        this.S[i] = this.table[i].S;
-        this.C[i] = this.table[i].C;
-        this.P[i] = this.table[i].P;
-        this.Name[i] = this.table[i].Name.slice(0,10).toUpperCase();        
+        this.master[i] = this.table[i].master;
+        this.slave[i] = this.table[i].slave;
+        this.digi[i] = this.table[i].digi;
+        this.Name[i] = this.table[i].Name.slice(0,10).toUpperCase();
+        this.encoded[i] = this.table[i].encoded;
     }
     this.nRows = this.table.length;
 
-    //loop over all rows, creating a 4-level object that reflects the structure of the DAQ:
+    //loop over all rows, creating an object that reflects the structure of the DAQ:
+    this.DAQmap = {};
+    this.detSummary = {};
     for(i=0; i<this.nRows; i++){
 
         //build keys
-        Fkey = '0x'+this.F[i].toString(16).toUpperCase()+'XXXXXX';
-        Skey = '0x'+this.F[i].toString(16).toUpperCase()+this.S[i].toString(16).toUpperCase()+'XXXXX';
-        Pkey = '0x'+this.F[i].toString(16).toUpperCase()+this.S[i].toString(16).toUpperCase()+'00'+this.P[i].toString(16).toUpperCase()+'XX';
-        Ckey = '0x'+this.F[i].toString(16).toUpperCase()+this.S[i].toString(16).toUpperCase()+'00'+this.P[i].toString(16).toUpperCase() + ( (this.C[i] < 10) ? '0' : '' ) + this.C[i].toString(16).toUpperCase();
+        masterKey = 'master'+this.master[i];
+        slaveKey  = 'slave'+this.slave[i];
+        digiKey   = 'digi'+this.digi[i];
+        //GRIFFIN uses 4-1 cables to plug 4 digitizers into one channel on the slave, will need its own color:
+        slaveGroupKey = 'slaveGroup' + Math.floor(this.slave[i]/4);
+        //...and similarly for 4-1 cables between slaves and master:
+        masterGroupKey = 'masterGroup' + Math.floor(this.master[i]/4);
 
-        if(this.DAQmap[Fkey]){
-            this.DAQmap[Fkey].trigRequestRate = 0;
-            if(this.DAQmap[Fkey][Skey]){
-                this.DAQmap[Fkey][Skey].trigRequestRate = 0;
-                this.DAQmap[Fkey][Skey].dataRate = 0;  //how much data is this collector pushing upstream?
-                if(this.DAQmap[Fkey][Skey][Pkey]){
-                    this.DAQmap[Fkey][Skey][Pkey].trigRequestRate = 0;
-                    this.DAQmap[Fkey][Skey][Pkey].dataRate = 0;  //how much data is this digitizer pushing upstream?
-                    this.DAQmap[Fkey][Skey][Pkey].oldTrigRequestRate = 0;  //values from previous iteration
-                    this.DAQmap[Fkey][Skey][Pkey].oldDataRate = 0;
-                    this.DAQmap[Fkey][Skey][Pkey][Ckey] = {'detector' : this.Name[i], 'FSPC' : Ckey, 'trigRequestRate' : 0, 'dataRate' : 0};
-                    this.detSummary[this.Name[i].slice(0,3)] = {'totalTrigRequestRate' : 0, 'prevTrigReqRate' : 0, 'totalDataRate' : 0, 'prevDataRate' : 0};
-                } else {
-                    this.DAQmap[Fkey][Skey][Pkey] = {};
-                    i--;
-                }
-            } else {
-                this.DAQmap[Fkey][Skey] = {};
+        //navigate through the DAQmap to declare the data object for each channel, creating new child objects as necessary.
+        //DAQmap structure is 
+        //DAQmap{
+        //    masterXX : {
+        //        slaveYY : {
+        //            digiZZ : {<raw data>},
+        //            <more digitizers>, 
+        //            slaveYY summary data: <data> 
+        //        },
+        //        <more slave channels>,
+        //        masterXX summary data: <data>,
+        //        <slave groups for GRIFFIN>
+        //    },
+        //    <more master channels>,
+        //    top level summary data: <data>
+        //}
+
+        if(this.DAQmap[masterKey]){
+            this.DAQmap[masterKey].trigRequestRate = 0; //how many trig requests are arriving at master on this master channel?
+            this.DAQmap[masterKey].dataRate = 0; //what is the data rate arriving at master on this master channel?
+            if(this.DAQmap[masterKey][slaveKey]){
+                this.DAQmap[masterKey][slaveKey].trigRequestRate = 0;  //how many trig requests are arriving at this slave on this channel?
+                this.DAQmap[masterKey][slaveKey].dataRate = 0;         //what is the inbound data rate to this slave on this channel?              
+                this.DAQmap[masterKey][slaveKey][digiKey] = {'detector' : this.Name[i], 'DAQcode' : this.encoded[i], 'trigRequestRate' : 0, 'dataRate' : 0};
+                this.detSummary[this.Name[i].slice(0,3)] = {'totalTrigRequestRate' : 0, 'prevTrigReqRate' : 0, 'totalDataRate' : 0, 'prevDataRate' : 0};
+            } else{
+                this.DAQmap[masterKey][slaveKey] = {};
                 i--;
             }
-        } else {
-            this.DAQmap[Fkey] = {};
+            //GRIFFIN uses 1-4 connectors between digitizers and slaves:
+            if(ODB.topLevel.HPGeArray == 'GRIFFIN'){
+                if(this.DAQmap[masterKey][slaveGroupKey]){
+                    this.DAQmap[masterKey][slaveGroupKey].dataRate = 0;
+                } else{
+                    this.DAQmap[masterKey][slaveGroupKey] = {};
+                }
+            }
+        } else{
+            this.DAQmap[masterKey] = {};
             i--;
         }
+        //GRIFFIN uses 1-4 connectors between master and slaves:
+        if(ODB.topLevel.HPGeArray == 'GRIFFIN'){
+            if(this.DAQmap[masterGroupKey]){
+                this.DAQmap[masterGroupKey].dataRate = 0;
+            } else{
+                this.DAQmap[masterGroupKey] = {};
+            }
+        }        
+        this.DAQmap.trigRequestRate = 0; //what is the total trigger request rate to master?
+        this.DAQmap.oldTrigRequestRate = 0;
     }
-
+console.log(this.DAQmap)
     //keep track of all the key names in the DAQmap that contain data directly, and aren't part of the hierarchy, so we can ignore them when traversing the DAQ tree:
-    this.dataKeys = ['detector', 'FSPC', 'trigRequestRate', 'dataRate', 'oldTrigRequestRate', 'oldDataRate'];
-
-    //0x0XXXXXX == currently hard coded to only look at one master, loop over Fkey to generalize
+    this.dataKeys = ['detector', 'DAQcode', 'trigRequestRate', 'dataRate', 'oldTrigRequestRate', 'oldDataRate'];
+    //count how many collectors are present == number of distinct master channels
     this.nCollectors = 0;
-    for(Skey in this.DAQmap['0x0XXXXXX']){
-        if(this.dataKeys.indexOf(Skey) == -1)
+    for(masterKey in this.DAQmap){
+        if(this.dataKeys.indexOf(masterKey) == -1)
             this.nCollectors++;
     }
+    //count how many digitizers are present in total and also on each collector:
     this.nDigitizers = 0;
     this.nDigitizersPerCollector = [];
     i = 0;
-    for(Skey in this.DAQmap['0x0XXXXXX']){
-        if(this.dataKeys.indexOf(Skey) == -1){
+    for(masterKey in this.DAQmap){
+        if(this.dataKeys.indexOf(masterKey) == -1){
             this.nDigitizersPerCollector[i] = 0;
-            for(Pkey in this.DAQmap['0x0XXXXXX'][Skey]){
-                if(this.dataKeys.indexOf(Pkey) == -1){
+            for(slaveKey in this.DAQmap[masterKey]){
+                if(this.dataKeys.indexOf(slaveKey) == -1){
                     this.nDigitizers++;
                     this.nDigitizersPerCollector[i]++;
                 }
@@ -1153,10 +1193,26 @@ DAQcodex = function(){
         }
     }
 
+    //parse scalar into a color on a color scale bounded by min and max 
+    this.parseColor = function(scalar, min, max){
+        //how far along the scale are we?
+        var scale 
+        if(window.parameters.detectorLogMode.DAQbutton){
+            scale = (Math.log(scalar) - Math.log(min)) / (Math.log(max) - Math.log(min));
+        } else {
+            scale = (scalar - min) / (max - min);
+        }
+        if(scale<0) scale = 0;
+        if(scale>1) scale = 1;
+
+        //return redScale(scale);
+        return scalepickr(scale, window.parameters.colorScale[this.DAQcolor])
+    };
+
     //populate this.DAQmap with all the relevant information from the JSONPstore.
     this.update = function(){
         
-        var key, Fkey, Skey, Pkey, Ckey, ODBpaths, data;
+        var key, masterKey, slaveKey, digiKey, slaveGroupKey, masterGroupKey, name;
 
         //get summary data from ODB
         this.triggerRate = parseFloat(window.localODB.TrigEPS).toFixed(1);
@@ -1174,45 +1230,76 @@ DAQcodex = function(){
             this.detSummary[key].totalDataRate = 0;            
         }
 
-        //map data from the JSONP store into the DAQ object, summing rates as we move upstream:
-        for(Fkey in this.DAQmap){
-            if(this.dataKeys.indexOf(Fkey) == -1){
-                this.DAQmap[Fkey].trigRequestRate = 0;
-                for(Skey in this.DAQmap[Fkey]){
-                    if(this.dataKeys.indexOf(Skey) == -1){
-                        this.DAQmap[Fkey][Skey].trigRequestRate = 0;
-                        this.DAQmap[Fkey][Skey].dataRate = 0;
-                        for(Pkey in this.DAQmap[Fkey][Skey]){
-                            if(this.dataKeys.indexOf(Pkey) == -1){
-                                this.DAQmap[Fkey][Skey][Pkey].oldTrigRequestRate = this.DAQmap[Fkey][Skey][Pkey].trigRequestRate;
-                                this.DAQmap[Fkey][Skey][Pkey].oldDataRate = this.DAQmap[Fkey][Skey][Pkey].dataRate;
-                                this.DAQmap[Fkey][Skey][Pkey].trigRequestRate = 0;
-                                this.DAQmap[Fkey][Skey][Pkey].dataRate = 0;
-                                for(Ckey in this.DAQmap[Fkey][Skey][Pkey]){
-                                    if(window.JSONPstore['scalar']){
-                                        if( window.JSONPstore['scalar'][this.DAQmap[Fkey][Skey][Pkey][Ckey].detector] ){
-                                            this.DAQmap[Fkey][Skey][Pkey][Ckey].trigRequestRate = window.JSONPstore['scalar'][this.DAQmap[Fkey][Skey][Pkey][Ckey].detector]['TRIGREQ'];
-                                            this.DAQmap[Fkey][Skey][Pkey][Ckey].dataRate = window.JSONPstore['scalar'][this.DAQmap[Fkey][Skey][Pkey][Ckey].detector]['dataRate'];
-                                            if( this.DAQmap[Fkey][Skey][Pkey][Ckey].dataRate == undefined )
-                                                this.DAQmap[Fkey][Skey][Pkey][Ckey].dataRate = 0xDEADBEEF;
-                                            this.DAQmap[Fkey][Skey][Pkey].trigRequestRate += this.DAQmap[Fkey][Skey][Pkey][Ckey].trigRequestRate;
-                                            this.DAQmap[Fkey][Skey][Pkey].dataRate += this.DAQmap[Fkey][Skey][Pkey][Ckey].dataRate;
-                                            this.detSummary[ this.DAQmap[Fkey][Skey][Pkey][Ckey].detector.slice(0,3) ].totalTrigRequestRate += this.DAQmap[Fkey][Skey][Pkey][Ckey].trigRequestRate;
-                                            this.detSummary[ this.DAQmap[Fkey][Skey][Pkey][Ckey].detector.slice(0,3) ].totalDataRate += this.DAQmap[Fkey][Skey][Pkey][Ckey].dataRate;
-                                        }
-                                    }
-                                }
-                                this.DAQmap[Fkey][Skey].trigRequestRate += this.DAQmap[Fkey][Skey][Pkey].trigRequestRate;
-                                this.DAQmap[Fkey][Skey].dataRate += this.DAQmap[Fkey][Skey][Pkey].dataRate;
-                            }
-                        }
-                        this.DAQmap[Fkey].trigRequestRate += this.DAQmap[Fkey][Skey].trigRequestRate;
+        //sort data from JSON post into the DAQmap every update///////////////////////////////////////////
+        //reset the master level summary:
+        this.DAQmap.trigRequestRate = 0;
+        //loop over the DAQmap:
+        for(masterKey in this.DAQmap){
+            //reset any GRIFFIN-style slave group link summaries:
+            if(masterKey.indexOf('Group') != -1)
+                this.DAQmap[masterKey].dataRate = 0;            
+            if(this.dataKeys.indexOf(masterKey) != -1 || masterKey.indexOf('Group') != -1) continue;  //bail out if this key isn't a master, slave or digitizer
+            //reset all the master-link level summaries:
+            this.DAQmap[masterKey].trigRequestRate = 0;
+            this.DAQmap[masterKey].dataRate = 0;
+            //move on to per-slave link level:
+            for(slaveKey in this.DAQmap[masterKey]){
+                //reset any GRIFFIN-style slave group link summaries:
+                if(slaveKey.indexOf('Group') != -1)
+                    this.DAQmap[masterKey][slaveKey].dataRate = 0;
+                if(this.dataKeys.indexOf(slaveKey) != -1 || slaveKey.indexOf('Group') != -1 ) continue;
+                //reset all the slave-link level summaries:
+                this.DAQmap[masterKey][slaveKey].trigRequestRate = 0;
+                this.DAQmap[masterKey][slaveKey].dataRate = 0;
+                //move on to per-digitzer level:
+                for(digiKey in this.DAQmap[masterKey][slaveKey]){
+                    if(this.dataKeys.indexOf(digiKey) != -1) continue;
+
+                    //codename of the detector we're pointing at
+                    name = this.DAQmap[masterKey][slaveKey][digiKey].detector;  
+                    //get the base per channel data from the JSON store if it exists:
+                    if(window.JSONPstore['scalar'] && window.JSONPstore['scalar'][name]){
+                        this.DAQmap[masterKey][slaveKey][digiKey].trigRequestRate = window.JSONPstore['scalar'][name]['TRIGREQ'];
+                        this.DAQmap[masterKey][slaveKey][digiKey].dataRate = window.JSONPstore['scalar'][name]['dataRate'];
                     }
+                    //add the triggers and data rates from each digitizer to the total for the digitizer & slave link:
+                    this.DAQmap[masterKey][slaveKey].trigRequestRate += this.DAQmap[masterKey][slaveKey][digiKey].trigRequestRate;
+                    this.DAQmap[masterKey][slaveKey].dataRate += this.DAQmap[masterKey][slaveKey][digiKey].dataRate;
+                    //also add these numbers to the per-subsystem summary statistics:
+                    this.detSummary[ name.slice(0,3) ].totalTrigRequestRate += this.DAQmap[masterKey][slaveKey][digiKey].trigRequestRate;
+                    this.detSummary[ name.slice(0,3) ].totalDataRate += this.DAQmap[masterKey][slaveKey][digiKey].dataRate;
                 }
+                //use the total triggers to pick a color for the digitizer, and the total data rate to pick a color for its slave channel:
+                this.DAQmap[masterKey][slaveKey].oldDigiColor = this.DAQmap[masterKey][slaveKey].digiColor;
+                this.DAQmap[masterKey][slaveKey].digiColor = this.parseColor(this.DAQmap[masterKey][slaveKey].trigRequestRate, ODB.DAQ.rateMinDetailView, ODB.DAQ.rateMaxDetailView);
+                this.DAQmap[masterKey][slaveKey].oldSlaveChannelColor = this.DAQmap[masterKey][slaveKey].slaveChannelColor;
+                this.DAQmap[masterKey][slaveKey].slaveChannelColor = this.parseColor(this.DAQmap[masterKey][slaveKey].dataRate, ODB.DAQ.transferMinDetailView, ODB.DAQ.transferMaxDetailView);
+                //add the triggers and data rates from each slave link to the total for the collector & master link:
+                this.DAQmap[masterKey].trigRequestRate += this.DAQmap[masterKey][slaveKey].trigRequestRate;
+                this.DAQmap[masterKey].dataRate += this.DAQmap[masterKey][slaveKey].dataRate;
+                //GRIFFIN additionally needs a sum of every 4 consecutive digitizer-collector links, to represent 4-1 cables:
+                if(ODB.topLevel.HPGeArray == 'GRIFFIN'){
+                    slaveGroupKey = 'slaveGroup' + Math.floor(parseInt(slaveKey.slice(5,slaveKey.length),10)/4);
+                    this.DAQmap[masterKey][slaveGroupKey].dataRate += this.DAQmap[masterKey][slaveKey].dataRate;
+                }
+
+            }
+            //use the total triggers to pick a color for the slave, and the total data rate to pick a color for its master channel:
+            this.DAQmap[masterKey].oldSlaveColor = this.DAQmap[masterKey].slaveColor;
+            this.DAQmap[masterKey].slaveColor = this.parseColor(this.DAQmap[masterKey].trigRequestRate, ODB.DAQ.rateMinTopView, ODB.DAQ.rateMaxTopView);
+            this.DAQmap[masterKey].oldMasterChannelColor = this.DAQmap[masterKey].masterChannelColor;
+            this.DAQmap[masterKey].masterChannelColor = this.parseColor(this.DAQmap[masterKey].dataRate, ODB.DAQ.transferMinTopView, ODB.DAQ.transferMaxTopView);
+            //add the trigger request rate from this master link to the master:
+            this.DAQmap.trigRequestRate += this.DAQmap[masterKey].trigRequestRate;
+            //GRIFFIN additionally needs a sum of every 4 consecutive slave-master links, to represent 4-1 cables:
+            if(ODB.topLevel.HPGeArray == 'GRIFFIN'){
+                masterGroupKey = 'masterGroup' + Math.floor(parseInt(masterKey.slice(6,masterKey.length),10)/4);
+                this.DAQmap[masterGroupKey].dataRate += this.DAQmap[masterKey].dataRate;
             }
         }
-        //console.log(this.DAQmap)
-
+        //use the total triggers to pick a color for the master:
+        this.DAQmap.oldMasterColor = this.DAQmap.masterColor;
+        this.DAQmap.masterColor = this.parseColor(this.DAQmap.trigRequestRate, ODB.DAQ.rateMinMaster, ODB.DAQ.rateMaxMaster);
     };
 
 }
