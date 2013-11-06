@@ -1122,51 +1122,74 @@ DAQcodex = function(){
         //        slaveYY : {
         //            digiZZ : {<raw data>},
         //            <more digitizers>, 
-        //            slaveYY summary data: <data> 
+        //            slaveYY summary data: <data>
+        //            slaveYY colors
         //        },
         //        <more slave channels>,
         //        masterXX summary data: <data>,
         //        <slave groups for GRIFFIN>
+        //        masterXX colors
         //    },
         //    <more master channels>,
         //    top level summary data: <data>
+        //    <master groups for GRIFFIN>
         //}
 
         if(this.DAQmap[masterKey]){
+            //data pointers
             this.DAQmap[masterKey].trigRequestRate = 0; //how many trig requests are arriving at master on this master channel?
             this.DAQmap[masterKey].dataRate = 0; //what is the data rate arriving at master on this master channel?
+            //colors
+            this.DAQmap[masterKey].oldSlaveColor = '#333333';
+            this.DAQmap[masterKey].slaveColor = '#333333';
+            this.DAQmap[masterKey].oldMasterChannelColor = '#333333';
+            this.DAQmap[masterKey].masterChannelColor = '#333333';
             if(this.DAQmap[masterKey][slaveKey]){
+                //data pointers
                 this.DAQmap[masterKey][slaveKey].trigRequestRate = 0;  //how many trig requests are arriving at this slave on this channel?
                 this.DAQmap[masterKey][slaveKey].dataRate = 0;         //what is the inbound data rate to this slave on this channel?              
                 this.DAQmap[masterKey][slaveKey][digiKey] = {'detector' : this.Name[i], 'DAQcode' : this.encoded[i], 'trigRequestRate' : 0, 'dataRate' : 0};
                 this.detSummary[this.Name[i].slice(0,3)] = {'totalTrigRequestRate' : 0, 'prevTrigReqRate' : 0, 'totalDataRate' : 0, 'prevDataRate' : 0};
+                //colors
+                this.DAQmap[masterKey][slaveKey].oldDigiColor = '#333333';
+                this.DAQmap[masterKey][slaveKey].digiColor = '#333333';
+                this.DAQmap[masterKey][slaveKey].oldSlaveChannelColor = '#333333';
+                this.DAQmap[masterKey][slaveKey].slaveChannelColor = '#333333';               
             } else{
                 this.DAQmap[masterKey][slaveKey] = {};
                 i--;
             }
             //GRIFFIN uses 1-4 connectors between digitizers and slaves:
-            if(ODB.topLevel.HPGeArray == 'GRIFFIN'){
-                if(this.DAQmap[masterKey][slaveGroupKey]){
-                    this.DAQmap[masterKey][slaveGroupKey].dataRate = 0;
-                } else{
-                    this.DAQmap[masterKey][slaveGroupKey] = {};
-                }
+            if(this.DAQmap[masterKey][slaveGroupKey]){
+                //data pointer
+                this.DAQmap[masterKey][slaveGroupKey].dataRate = 0;
+                //colors
+                this.DAQmap[masterKey][slaveGroupKey].oldSlaveGroupColor = '#333333';
+                this.DAQmap[masterKey][slaveGroupKey].slaveGroupColor = '#333333';
+            } else{
+                this.DAQmap[masterKey][slaveGroupKey] = {};
             }
+            
         } else{
             this.DAQmap[masterKey] = {};
             i--;
         }
         //GRIFFIN uses 1-4 connectors between master and slaves:
-        if(ODB.topLevel.HPGeArray == 'GRIFFIN'){
-            if(this.DAQmap[masterGroupKey]){
-                this.DAQmap[masterGroupKey].dataRate = 0;
-            } else{
-                this.DAQmap[masterGroupKey] = {};
-            }
-        }        
-        this.DAQmap.trigRequestRate = 0; //what is the total trigger request rate to master?
-        this.DAQmap.oldTrigRequestRate = 0;
+        if(this.DAQmap[masterGroupKey]){
+            //data pointer
+            this.DAQmap[masterGroupKey].dataRate = 0;
+            //colors
+            this.DAQmap[masterGroupKey].oldMasterGroupColor = '#333333';
+            this.DAQmap[masterGroupKey].masterGroupColor = '#333333';
+        } else{
+            this.DAQmap[masterGroupKey] = {};
+        }
+        
     }
+    this.DAQmap.trigRequestRate = 0; //what is the total trigger request rate to master?
+    this.DAQmap.oldMasterColor = '#333333';
+    this.DAQmap.masterColor = '#333333';
+
 console.log(this.DAQmap)
     //keep track of all the key names in the DAQmap that contain data directly, and aren't part of the hierarchy, so we can ignore them when traversing the DAQ tree:
     this.dataKeys = ['detector', 'DAQcode', 'trigRequestRate', 'dataRate', 'oldTrigRequestRate', 'oldDataRate'];
@@ -1235,69 +1258,91 @@ console.log(this.DAQmap)
         this.DAQmap.trigRequestRate = 0;
         //loop over the DAQmap:
         for(masterKey in this.DAQmap){
-            //reset any GRIFFIN-style slave group link summaries:
+            //reset any GRIFFIN-style master group link summaries:
             if(masterKey.indexOf('Group') != -1)
-                this.DAQmap[masterKey].dataRate = 0;            
-            if(this.dataKeys.indexOf(masterKey) != -1 || masterKey.indexOf('Group') != -1) continue;  //bail out if this key isn't a master, slave or digitizer
+                this.DAQmap[masterKey].dataRate = 0;  
+
+            //bail out if this key isn't a master, slave or digitizer
+            if(this.dataKeys.indexOf(masterKey) != -1 || masterKey.indexOf('Group') != -1) continue;
+
+            //construct which master group we're in (only matters for GRIFFIN)
+            masterGroupKey = 'masterGroup' + Math.floor(parseInt(masterKey.slice(6,masterKey.length),10)/4);
+
             //reset all the master-link level summaries:
             this.DAQmap[masterKey].trigRequestRate = 0;
             this.DAQmap[masterKey].dataRate = 0;
+
             //move on to per-slave link level:
             for(slaveKey in this.DAQmap[masterKey]){
                 //reset any GRIFFIN-style slave group link summaries:
                 if(slaveKey.indexOf('Group') != -1)
                     this.DAQmap[masterKey][slaveKey].dataRate = 0;
+
+                //bail out if this key isn't a master, slave or digitizer
                 if(this.dataKeys.indexOf(slaveKey) != -1 || slaveKey.indexOf('Group') != -1 ) continue;
+
+                //construct which slave group we're in (only matters for GRIFFIN)
+                slaveGroupKey = 'slaveGroup' + Math.floor(parseInt(slaveKey.slice(5,slaveKey.length),10)/4);
+
                 //reset all the slave-link level summaries:
                 this.DAQmap[masterKey][slaveKey].trigRequestRate = 0;
                 this.DAQmap[masterKey][slaveKey].dataRate = 0;
+
                 //move on to per-digitzer level:
                 for(digiKey in this.DAQmap[masterKey][slaveKey]){
+                    //bail out if this key isn't a master, slave or digitizer
                     if(this.dataKeys.indexOf(digiKey) != -1) continue;
 
                     //codename of the detector we're pointing at
-                    name = this.DAQmap[masterKey][slaveKey][digiKey].detector;  
+                    name = this.DAQmap[masterKey][slaveKey][digiKey].detector; 
+
                     //get the base per channel data from the JSON store if it exists:
                     if(window.JSONPstore['scalar'] && window.JSONPstore['scalar'][name]){
                         this.DAQmap[masterKey][slaveKey][digiKey].trigRequestRate = window.JSONPstore['scalar'][name]['TRIGREQ'];
                         this.DAQmap[masterKey][slaveKey][digiKey].dataRate = window.JSONPstore['scalar'][name]['dataRate'];
                     }
-                    //add the triggers and data rates from each digitizer to the total for the digitizer & slave link:
+
+                    //add the triggers and data rates from each digitizer to the downstream objects they contribute to:
+                    //digitizer trigger rate:
                     this.DAQmap[masterKey][slaveKey].trigRequestRate += this.DAQmap[masterKey][slaveKey][digiKey].trigRequestRate;
+                    //outbound digitizer link:
                     this.DAQmap[masterKey][slaveKey].dataRate += this.DAQmap[masterKey][slaveKey][digiKey].dataRate;
+                    //slave group data rate (the 1 side of GRIFFIN 4-1 cables)
+                    this.DAQmap[masterKey][slaveGroupKey].dataRate += this.DAQmap[masterKey][slaveKey][digiKey].dataRate;
+                    //slave trigger rate:
+                    this.DAQmap[masterKey].trigRequestRate += this.DAQmap[masterKey][slaveKey][digiKey].trigRequestRate;
+                    //slave outbound data rate:
+                    this.DAQmap[masterKey].dataRate += this.DAQmap[masterKey][slaveKey][digiKey].dataRate;
+                    //master group data rate (the 1 side of GRIFFIN 4-1 cables)
+                    this.DAQmap[masterGroupKey].dataRate += this.DAQmap[masterKey][slaveKey][digiKey].dataRate;
+                    //master triger rate
+                    this.DAQmap.trigRequestRate += this.DAQmap[masterKey][slaveKey][digiKey].trigRequestRate;
+
                     //also add these numbers to the per-subsystem summary statistics:
                     this.detSummary[ name.slice(0,3) ].totalTrigRequestRate += this.DAQmap[masterKey][slaveKey][digiKey].trigRequestRate;
                     this.detSummary[ name.slice(0,3) ].totalDataRate += this.DAQmap[masterKey][slaveKey][digiKey].dataRate;
                 }
-                //use the total triggers to pick a color for the digitizer, and the total data rate to pick a color for its slave channel:
+                //use the totals to pick a color for the digitizer:
                 this.DAQmap[masterKey][slaveKey].oldDigiColor = this.DAQmap[masterKey][slaveKey].digiColor;
                 this.DAQmap[masterKey][slaveKey].digiColor = this.parseColor(this.DAQmap[masterKey][slaveKey].trigRequestRate, ODB.DAQ.rateMinDetailView, ODB.DAQ.rateMaxDetailView);
+                //pick a color for the outbound digitizer to slave link:
                 this.DAQmap[masterKey][slaveKey].oldSlaveChannelColor = this.DAQmap[masterKey][slaveKey].slaveChannelColor;
                 this.DAQmap[masterKey][slaveKey].slaveChannelColor = this.parseColor(this.DAQmap[masterKey][slaveKey].dataRate, ODB.DAQ.transferMinDetailView, ODB.DAQ.transferMaxDetailView);
-                //add the triggers and data rates from each slave link to the total for the collector & master link:
-                this.DAQmap[masterKey].trigRequestRate += this.DAQmap[masterKey][slaveKey].trigRequestRate;
-                this.DAQmap[masterKey].dataRate += this.DAQmap[masterKey][slaveKey].dataRate;
-                //GRIFFIN additionally needs a sum of every 4 consecutive digitizer-collector links, to represent 4-1 cables:
-                if(ODB.topLevel.HPGeArray == 'GRIFFIN'){
-                    slaveGroupKey = 'slaveGroup' + Math.floor(parseInt(slaveKey.slice(5,slaveKey.length),10)/4);
-                    this.DAQmap[masterKey][slaveGroupKey].dataRate += this.DAQmap[masterKey][slaveKey].dataRate;
-                }
-
+                //pick a color for the slave group link (GRIFFIN)
+                this.DAQmap[masterKey][slaveGroupKey].oldSlaveGroupColor = this.DAQmap[masterKey][slaveGroupKey].slaveGroupColor;
+                this.DAQmap[masterKey][slaveGroupKey].slaveGroupColor = this.parseColor(this.DAQmap[masterKey][slaveGroupKey].dataRate, ODB.DAQ.transferMinDetailView, ODB.DAQ.transferMaxDetailView);
             }
-            //use the total triggers to pick a color for the slave, and the total data rate to pick a color for its master channel:
+            //use the totals to pick a color for the slave:
             this.DAQmap[masterKey].oldSlaveColor = this.DAQmap[masterKey].slaveColor;
             this.DAQmap[masterKey].slaveColor = this.parseColor(this.DAQmap[masterKey].trigRequestRate, ODB.DAQ.rateMinTopView, ODB.DAQ.rateMaxTopView);
+            //pick a color for the outbound slave to master link:
             this.DAQmap[masterKey].oldMasterChannelColor = this.DAQmap[masterKey].masterChannelColor;
             this.DAQmap[masterKey].masterChannelColor = this.parseColor(this.DAQmap[masterKey].dataRate, ODB.DAQ.transferMinTopView, ODB.DAQ.transferMaxTopView);
-            //add the trigger request rate from this master link to the master:
-            this.DAQmap.trigRequestRate += this.DAQmap[masterKey].trigRequestRate;
-            //GRIFFIN additionally needs a sum of every 4 consecutive slave-master links, to represent 4-1 cables:
-            if(ODB.topLevel.HPGeArray == 'GRIFFIN'){
-                masterGroupKey = 'masterGroup' + Math.floor(parseInt(masterKey.slice(6,masterKey.length),10)/4);
-                this.DAQmap[masterGroupKey].dataRate += this.DAQmap[masterKey].dataRate;
-            }
+            //pick a color for the master group link (GRIFFIN)
+            this.DAQmap[masterGroupKey].oldMasterGroupColor = this.DAQmap[masterGroupKey].masterGroupColor;
+            this.DAQmap[masterGroupKey].masterGroupColor = this.parseColor(this.DAQmap[masterGroupKey].dataRate, ODB.DAQ.transferMinTopView, ODB.DAQ.transferMaxTopView);
         }
-        //use the total triggers to pick a color for the master:
+        //use the totals to pick a color for the master:
         this.DAQmap.oldMasterColor = this.DAQmap.masterColor;
         this.DAQmap.masterColor = this.parseColor(this.DAQmap.trigRequestRate, ODB.DAQ.rateMinMaster, ODB.DAQ.rateMaxMaster);
     };
