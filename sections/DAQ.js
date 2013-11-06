@@ -21,16 +21,6 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     this.nCollectors = window.codex.nCollectors;
     this.nDigitizerGroups = 0;  //fixed for now
     this.nDigitizers = window.codex.nDigitizers;
-    this.nDigitizersPerCollector = [];
-    for(i=0; i<this.nCollectors; i++){
-        this.nDigitizersPerCollector[i] = window.codex.nDigitizersPerCollector[i];
-    }
-    //how many digitizers came before the ith collector?
-    this.prevDigi = [];
-    this.prevDigi[0] = 0;
-    for(i=1; i<this.nCollectors; i++){
-        this.prevDigi[i] = this.prevDigi[i-1] + this.nDigitizersPerCollector[i-1];
-    }
 
     this.dataBus = new DAQDS();
     this.DAQcolor = 3;
@@ -81,8 +71,8 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
             'onclick' : function(){
                 window.DAQpointer.detailShowing=1; 
                 swapFade(this.id, window.DAQpointer, 0); 
-                animateDetail(window.DAQpointer, 0); 
                 window.DAQdetail=this.collectorNumber;
+                animateDetail(window.DAQpointer, 0); 
             }
         });
         $('#Collector'+i).width( ( 0.95*this.canvasWidth - $('#DAQcollectorTitle').width()) / this.nCollectors );
@@ -235,7 +225,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         this.animate();
 
 	};
-
+/*
 	this.draw = function(frame){
 		var color, i, j, k, fontSize, headerString;
 
@@ -311,7 +301,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         rateChart(frame, window.codex.detSummary, this.context, this.canvasWidth*0.2, this.masterTop + nBars*this.collectorWidth/2+50, this.canvasWidth*0.6, this.collectorWidth/2 )
 
 	};
-
+*/
     this.draw = function(frame){
         var color, i, j, x0, x1, branchColor, combWidth, combColors, masterChannel,
             codex = window.codex; 
@@ -320,7 +310,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 
         //master node//////////////////////////////////////////////////////
         color = interpolateColor(parseHexColor(codex.DAQmap.oldMasterColor), parseHexColor(codex.DAQmap.masterColor), frame / this.nFrames);
-        this.drawMasterNode(color);
+        this.drawMasterNode(this.context, this.TTcontext, color);
 
         
         if(ODB.topLevel.HPGeArray == 'TIGRESS'){
@@ -336,7 +326,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 
                 //slaves///////////////////////////////////////////////////////////
                 for(j=0; j<codex.nCollectors; j++){
-                    this.drawCollectorNode(0, '#000000', x0 - this.collectorWidth/2, this.masterLinkBottom);
+                    this.drawCollectorNode(this.context, this.TTcontext, 0, '#000000', x0 - this.collectorWidth/2, this.masterLinkBottom);
                 }
 
             }
@@ -346,7 +336,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
             for(i=0; i<codex.nMasterGroups; i++){
                 //master-slave links///////////////////////////////////////////////
                 //horizontal coord of branch root:
-                x0 = this.margin + (i+0.5)*(this.masterWidth / codex.nMasterGroups);
+                //x0 = this.margin + (i+0.5)*(this.masterWidth / codex.nMasterGroups);
                 //horizontal coord of branch / comb join:
                 x1 = this.margin + (i+0.5)*combWidth + (i+1)*0.3*combWidth;
                 //color of branch and comb spine:
@@ -356,7 +346,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                                             );
                 combColors = ['#000000', '#000000', '#000000', '#000000'];
 
-                drawBranch(this.context, combColors, combWidth, this.masterLinkBottom - this.masterLinkTop, branchColor, x0, this.masterBottom, x1, this.masterGroupLinkBottom);
+                drawBranch(this.context, combColors, combWidth, this.masterLinkBottom - this.masterLinkTop, branchColor, x1, this.masterBottom, x1, this.masterGroupLinkBottom);
                
                 //slaves///////////////////////////////////////////////////////////
                 for(j=0; j<4; j++){
@@ -364,14 +354,14 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                     masterChannel = 'master' + (4*parseInt(codex.masterGroupID[i].slice(11, codex.masterGroupID[i].length),10) + j);
                 
                     if(codex.DAQmap[masterChannel]){
-                        this.drawCollectorNode(0, '#000000', x0 - combWidth/2 + j*combWidth/3 - this.collectorWidth/2, this.masterLinkBottom);        
+                        this.drawCollectorNode(this.context, this.TTcontext, 0, '#000000', x1 - combWidth/2 + j*combWidth/3 - this.collectorWidth/2, this.masterLinkBottom);        
                     } else {
                         this.context.strokeStyle = '#FF0000';
                         this.context.beginPath();
-                        this.context.moveTo(x0 - combWidth/2 + j*combWidth/3 -10, this.masterLinkBottom -10);
-                        this.context.lineTo(x0 - combWidth/2 + j*combWidth/3 +10, this.masterLinkBottom +10);
-                        this.context.moveTo(x0 - combWidth/2 + j*combWidth/3 +10, this.masterLinkBottom -10);
-                        this.context.lineTo(x0 - combWidth/2 + j*combWidth/3 -10, this.masterLinkBottom +10);
+                        this.context.moveTo(x1 - combWidth/2 + j*combWidth/3 -10, this.masterLinkBottom -10);
+                        this.context.lineTo(x1 - combWidth/2 + j*combWidth/3 +10, this.masterLinkBottom +10);
+                        this.context.moveTo(x1 - combWidth/2 + j*combWidth/3 +10, this.masterLinkBottom -10);
+                        this.context.lineTo(x1 - combWidth/2 + j*combWidth/3 -10, this.masterLinkBottom +10);
                         this.context.stroke();                        
                     }
 
@@ -476,114 +466,33 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 
     };
 
-    this.drawMasterNode = function(color){
+    this.drawMasterNode = function(context, TTcontext, color){
 
-    	this.context.strokeStyle = color;
-    	this.context.fillStyle = this.cellColor;		
-		roundBox(this.context, this.margin, this.masterTop, this.canvasWidth-2*this.margin, this.masterBottom - this.masterTop, 5);
-		this.context.fill();
-        this.context.stroke();
-
-        //tooltip encoding level:
-        this.TTcontext.fillStyle = 'rgba(0, 0, 0, 1)';
-        this.TTcontext.fillRect(Math.round(this.margin), Math.round(this.masterTop), Math.round(this.masterWidth), Math.round(this.masterBottom - this.masterTop));
-
-    };
-
-    this.drawCollectorNode = function(index, color, x0, y0){
-
-    	this.context.strokeStyle = color;
-    	this.context.fillStyle = this.cellColor;
-        roundBox(this.context, x0, y0, this.collectorWidth, this.collectorBottom - this.collectorHeight, 5);
-        this.context.fill();
-		this.context.stroke();
+    	context.strokeStyle = color;
+    	context.fillStyle = this.cellColor;		
+		roundBox(context, this.margin, this.masterTop, this.canvasWidth-2*this.margin, this.masterBottom - this.masterTop, 5);
+		context.fill();
+        context.stroke();
 
         //tooltip encoding level:
-        this.TTcontext.fillStyle = 'rgba('+(1+index)+', '+(1+index)+', '+(1+index)+', 1)';
-        this.TTcontext.fillRect(Math.round(x0), Math.round(y0), Math.round(this.collectorWidth), Math.round(this.collectorBottom - this.collectorTop) );
+        TTcontext.fillStyle = 'rgba(0, 0, 0, 1)';
+        TTcontext.fillRect(Math.round(this.margin), Math.round(this.masterTop), Math.round(this.masterWidth), Math.round(this.masterBottom - this.masterTop));
+
     };
 
-    this.drawSummaryDigitizerNode = function(index, color){
-        var i, ttColors;
+    this.drawCollectorNode = function(context, TTcontext, index, color, x0, y0){
 
-    	this.context.strokeStyle = color;
-    	this.context.fillStyle = this.cellColor;
-        this.context.lineWidth = this.lineweight;
-        if(this.nCollectorGroups != 0){ //GRIFFIN mode:
-            this.context.beginPath();
-            this.context.arc(this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups + (index%4 - 1.5)*(this.collectorWidth + this.collectorGutter), this.digiSummaryLinkBottom + this.collectorWidth/2,  this.collectorWidth/2, 0, Math.PI*2);
-            this.context.closePath();
-    		//roundBox(this.context, this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups + (index%4 - 1.5)*(this.collectorWidth + this.collectorGutter) - this.collectorWidth/2, this.digiSummaryTop, this.collectorWidth, this.digiSummaryBottom - this.digiSummaryTop, 5);
-        } else { //TIGRESS mode
-            this.context.beginPath();
-            this.context.arc(this.margin + (index + 0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectors, this.digiSummaryLinkBottom + this.collectorWidth/2, this.collectorWidth/2, 0, Math.PI*1.999);  //managed to cause a rendering bug in Chrome if drawing arc to full 2pi??
-            this.context.closePath();
-            //roundBox(this.context, this.margin + (index+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectors - this.collectorWidth/2, this.digiSummaryTop, this.collectorWidth, this.digiSummaryBottom - this.digiSummaryTop, 5);
-        }
-		this.context.fill();
-        this.context.stroke();
-
+    	context.strokeStyle = color;
+    	context.fillStyle = this.cellColor;
+        roundBox(context, x0, y0, this.collectorWidth, this.collectorBottom - this.collectorHeight, 5);
+        context.fill();
+		context.stroke();
 
         //tooltip encoding level:
-        ttColors = ['#123456', 'rgba('+(1+this.nCollectors+index)+', '+(1+this.nCollectors+index)+', '+(1+this.nCollectors+index)+', 1)'];
-        for(i=0; i<2; i++){
-            this.TTcontext.fillStyle = ttColors[i];  //first suppress AA, then paint code color
-            if(this.nCollectorGroups != 0){ //GRIFFIN mode
-                this.TTcontext.beginPath();
-                this.TTcontext.arc(this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups + (index%4 - 1.5)*(this.collectorWidth + this.collectorGutter), this.digiSummaryLinkBottom + this.collectorWidth/2,  this.collectorWidth/2, 0, Math.PI*2);
-                this.TTcontext.closePath();
-                this.TTcontext.fill();
-                //this.TTcontext.fillRect(Math.round(this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups + (index%4 - 1.5)*(this.collectorWidth + this.collectorGutter) - this.collectorWidth/2), Math.round(this.digiSummaryTop), Math.round(this.collectorWidth), Math.round(this.digiSummaryBottom - this.digiSummaryTop));  
-            }else {//TIGRESS mode:
-                this.TTcontext.beginPath();
-                this.TTcontext.arc(this.margin + (index + 0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectors, this.digiSummaryLinkBottom + this.collectorWidth/2, this.collectorWidth/2, 0, Math.PI*1.999);
-                this.TTcontext.closePath();
-                this.TTcontext.fill();
-                //this.TTcontext.fillRect(Math.round(this.margin + (index+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectors - this.collectorWidth/2), Math.round(this.digiSummaryTop), Math.round(this.collectorWidth), Math.round(this.digiSummaryBottom - this.digiSummaryTop));
-            }
-        }
+        TTcontext.fillStyle = 'rgba('+(1+index)+', '+(1+index)+', '+(1+index)+', 1)';
+        TTcontext.fillRect(Math.round(x0), Math.round(y0), Math.round(this.collectorWidth), Math.round(this.collectorBottom - this.collectorTop) );
     };
-
-    this.drawMasterGroupLink = function(index, color){
-    	this.context.strokeStyle = color;
-    	this.context.fillStyle = color;
-        this.context.beginPath();
- 		this.context.moveTo(this.margin + (index+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups, this.masterGroupLinkTop);
- 		this.context.lineTo(this.margin + (index+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups, this.masterGroupLinkBottom);
-        this.context.closePath();
- 		this.context.stroke();
-    };
-
-    this.drawMasterLink = function(index, color){
-    	this.context.strokeStyle = color;
-    	this.context.fillStyle = color;
-        this.context.beginPath();
-        if(this.nCollectorGroups != 0) {  //GRIFFIN mode:
-     		this.context.moveTo(this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups, this.masterLinkTop);
-     	  	this.context.lineTo(this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups + (index%4 - 1.5)*(this.collectorWidth + this.collectorGutter), this.masterLinkBottom);
-        } else { //TIGRESS mode:
-            this.context.moveTo(this.margin + (index + 0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectors, this.masterGroupLinkTop );
-            this.context.lineTo(this.margin + (index + 0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectors, this.masterLinkBottom -this.lineweight/2 );
-        }
-        this.context.closePath();
- 		this.context.stroke();
-    };
-
-    this.drawSummaryDigitizerNodeLink = function(index, color){
-    	this.context.strokeStyle = color;
-    	this.context.fillStyle = color;
-        this.context.beginPath();
-        if(this.nCollectorGroups != 0){ //GRIFFIN mode:
-        	this.context.moveTo(this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups + (index%4 - 1.5)*(this.collectorWidth + this.collectorGutter), this.digiSummaryLinkTop);
-        	this.context.lineTo(this.margin + (Math.floor(index/4)+0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectorGroups + (index%4 - 1.5)*(this.collectorWidth + this.collectorGutter), this.digiSummaryLinkBottom);
-        } else {  //TIGRESS mode:
-            this.context.moveTo(this.margin + (index + 0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectors, this.digiSummaryLinkTop);
-            this.context.lineTo(this.margin + (index + 0.5)*(this.canvasWidth - 2*this.margin)/this.nCollectors, this.digiSummaryLinkBottom - this.lineweight/2);
-        }
-        this.context.closePath();
-    	this.context.stroke();
-    };
-
+/*
     this.drawDetail = function(context, frame){
         var color, i, j, key;
 
@@ -713,10 +622,63 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
             }
         }
         slaveChart(frame,this.detailContext, this.margin + 0.1*(this.canvasWidth-2*this.margin), topMargin+0.36*this.canvasHeight, FSPC, triggers, transfers, oldTriggers, oldTransfers);
-
-
-
     };
+*/
+    this.drawDetail = function(context, frame){
+        var codex = window.codex,   
+            masterID = 'master'+window.DAQdetail,
+            slaveChannel;
+
+        context.lineWidth = this.lineweight;
+
+        //white out last frame
+        context.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+
+        //slave node//////////////////////////////////////////////////////
+        color = '#000000';
+        this.drawMasterNode(context, this.TTcontext, color); //(use drawMasterNode, looks the same on this view)
+
+        if(ODB.topLevel.HPGeArray == 'TIGRESS'){
+
+        } else if(ODB.topLevel.HPGeArray == 'GRIFFIN'){
+            //draw the 4-1 connectors from the slave to the digitizers
+            combWidth = this.masterWidth / (codex.slaveGroupID[masterID].length*1.3 + 0.3);
+            for(i=0; i<codex.slaveGroupID[masterID].length; i++){
+                //slave-digitizer links///////////////////////////////////////////////
+                //horizontal coord of branch root:
+                //x0 = this.margin + (i+0.5)*(this.masterWidth / codex.slaveGroupID[masterID].length);
+                //horizontal coord of branch / comb join:
+                x1 = this.margin + (i+0.5)*combWidth + (i+1)*0.3*combWidth;
+                //color of branch and comb spine:
+                branchColor = '#000000'//interpolateColor( '#000000', '#000000', frame/this.nFrames);
+                combColors = ['#000000', '#000000', '#000000', '#000000'];
+
+                drawBranch(context, combColors, combWidth, this.masterLinkBottom - this.masterLinkTop, branchColor, x1, this.masterBottom, x1, this.masterGroupLinkBottom);
+                
+                //digitizers///////////////////////////////////////////////////////////
+                for(j=0; j<4; j++){
+                    //step through all 4 possible slave channels on this slave group, check if they exist, and if so, draw a digitizer.
+                    slaveChannel = 'slave' + (4*parseInt(codex.slaveGroupID[masterID][i].slice(10, codex.slaveGroupID[masterID][i].length),10) + j);
+                
+                    if(codex.DAQmap[masterID][slaveChannel]){
+                        this.drawCollectorNode(context, this.TTdetailContext, 0, '#000000', x1 - combWidth/2 + j*combWidth/3 - this.collectorWidth/2, this.masterLinkBottom);        
+                    } else {
+                        context.strokeStyle = '#FF0000';
+                        context.beginPath();
+                        context.moveTo(x1 - combWidth/2 + j*combWidth/3 -10, this.masterLinkBottom -10);
+                        context.lineTo(x1 - combWidth/2 + j*combWidth/3 +10, this.masterLinkBottom +10);
+                        context.moveTo(x1 - combWidth/2 + j*combWidth/3 +10, this.masterLinkBottom -10);
+                        context.lineTo(x1 - combWidth/2 + j*combWidth/3 -10, this.masterLinkBottom +10);
+                        context.stroke();                        
+                    }
+
+                }
+                
+            }
+        }
+
+        //console.log(codex.DAQmap[masterID])
+    }
 
     this.findCell = function(x, y){
         var imageData 
@@ -1008,7 +970,7 @@ function rateChart(frame, data, context, x0, y0, maxLength, barWidth){
 
 //Codex imports a table from which the DAQ is mapped
 DAQcodex = function(){
-    var i, masterKey, slaveKey, digiKey, slaveGroupKey;
+    var i, j, k, masterKey, slaveKey, digiKey, slaveGroupKey;
 
     //Parse DAQ Assets///////////////////////////////////////////////////////////////////////
     //pull the FSPC (TIGRESS) or MSC (GRIFFIN) table info in from the ODB
@@ -1194,6 +1156,7 @@ console.log(this.DAQmap)
                       'oldDigiColor', 'digiColor', 'oldSlaveChannelColor', 'slaveChannelColor',
                       'oldSlaveGroupColor', 'slaveGroupColor', 'oldMasterGroupColor', 'masterGroupColor',
                       'oldMasterColor', 'masterColor'];
+    //construct some convenient summaries of keys and structures//////////////////////////////////////////////////
     //count how many collectors are present == number of distinct master channels
     this.nCollectors = 0;
     for(masterKey in this.DAQmap){
@@ -1222,7 +1185,23 @@ console.log(this.DAQmap)
         if(Object.keys(this.DAQmap)[i].indexOf('Group') != -1)
             this.masterGroupID[this.masterGroupID.length] = Object.keys(this.DAQmap)[i];
     }
+    //make an object containing all the slave groups present as arrays pointed at by their corresponding masterID:
+    this.slaveGroupID = {};
+    i=0;
+    k=0;
+    while(k<this.nCollectors){
+        if(this.DAQmap['master'+i]){
+            this.slaveGroupID['master'+i] = [];
+            for(j=0; j<Object.keys(this.DAQmap['master'+i]).length; j++){
+                if(Object.keys(this.DAQmap['master'+i])[j].indexOf('Group') != -1)
+                    this.slaveGroupID['master'+i][this.slaveGroupID['master'+i].length] = Object.keys(this.DAQmap['master'+i])[j];
+            }
+            k++;          
+        }
+        i++;
+    }
 
+    //member functions////////////////////////////////////////////////////////////////////////////////////////////////
     //parse scalar into a color on a color scale bounded by min and max 
     this.parseColor = function(scalar, min, max){
         //how far along the scale are we?

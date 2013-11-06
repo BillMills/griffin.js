@@ -897,8 +897,8 @@ function drawBranch(context, combColors, combWidth, combLength, branchColor, x0,
     context.lineTo(x0, y0 + branchHeight/2);
     context.lineTo(x0 + branchWidth, y0 + branchHeight/2);
     context.lineTo(x0 + branchWidth, y0 + branchHeight);
-    context.moveTo(x0 + branchWidth - combWidth / 2, y0 + branchHeight);
-    context.lineTo(x0 + branchWidth + combWidth / 2, y0 + branchHeight);
+    context.moveTo(x0 + branchWidth - combWidth / 2 - parseFloat(context.lineWidth)/2, y0 + branchHeight);
+    context.lineTo(x0 + branchWidth + combWidth / 2 + parseFloat(context.lineWidth)/2, y0 + branchHeight);
     context.stroke();
 
     //draw tines
