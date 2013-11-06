@@ -475,7 +475,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         context.stroke();
 
         //tooltip encoding level:
-        TTcontext.fillStyle = 'rgba(0, 0, 0, 1)';
+        TTcontext.fillStyle = 'rgba(255, 255, 255, 1)';
         TTcontext.fillRect(Math.round(this.margin), Math.round(this.masterTop), Math.round(this.masterWidth), Math.round(this.masterBottom - this.masterTop));
 
     };
@@ -694,6 +694,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     };
 
     this.defineText = function(cell){
+        /*
         var toolTipContent = '',
             nextLine, cardIndex, i, key, objects = [], split = [], table, mezRow, mezCell0, mezCell1,
             keys = ['detector','trigRequestRate', 'dataRate'],
@@ -755,9 +756,12 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         } else{
             document.getElementById(this.tooltip.ttDivID).innerHTML = toolTipContent;
         }
-
+        
         //return length of longest line:
         return 0;
+        */
+        document.getElementById(this.tooltip.ttDivID).innerHTML = cell;
+        return 0
     };
 
     this.animate = function(){
