@@ -868,3 +868,46 @@ function digitalDigit(cells, context, height, x0, y0){
     }
 
 }
+
+//draw a flow-chart like branch
+//    |
+//    |         L1
+//    ---       L2
+//      |       L3
+//  ----------
+//  |  |  |  |  L4
+//context == context to draw in
+//combColors == array containing color of each comb end; length = number of comb tines (4 in ascii art above)
+//combWidth == width of base of comb in px
+//L1 length of root of branch
+//L2 length of horizontal bar, <0 points left
+//L3 length of tip of branch
+//L4 length of tines
+//branchColor == color of 3 branch segments and comb spine
+//x0, y0 == coordinates of branch root
+function drawBranch(context, combColors, combWidth, L1, L2, L3, L4, branchColor, x0, y0){
+
+    var nTine = combColors.length,
+        tineSpacing = combWidth / (nTine-1),
+        i;
+
+    //draw branch and spine of comb:
+    context.strokeStyle = branchColor;
+    context.beginPath();
+    context.moveTo(x0, y0);
+    context.lineTo(x0, y0 + L1);
+    context.lineTo(x0 + L2, y0 + L1);
+    context.lineTo(x0 + L2, y0 + L1 + L3);
+    context.moveTo(x0 + L2 - combWidth / 2, y0 + L1 + L3);
+    context.lineTo(x0 + L2 + combWidth / 2, y0 + L1 + L3);
+    context.stroke();
+
+    //draw tines
+    for(i=0; i<nTine; i++){
+        context.strokeStyle = combColors[i];
+        context.beginPath();
+        context.moveTo(x0 + L2 - combWidth / 2 + i*tineSpacing, y0 + L1 + L3);
+        context.lineTo(x0 + L2 - combWidth / 2 + i*tineSpacing, y0 + L1 + L3 + L4);
+        context.stroke();
+    }
+}

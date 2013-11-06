@@ -201,6 +201,8 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     this.digiSummaryTop = this.digiSummaryLinkBottom;
     this.digiSummaryBottom = this.digiSummaryTop + this.collectorHeight;
 
+    this.masterWidth = this.canvasWidth-2*this.margin;
+
     //animation parameters
     this.FPS = 30;
     this.duration = 0.5;
@@ -226,79 +228,13 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         //this.fetchNewData();
         window.codex.update();
 
-        //parse the new data into colors
-        this.dataBus.oldMasterColor = this.dataBus.masterColor;
-        this.dataBus.masterColor = this.parseColor(this.dataBus.master[0], ODB.DAQ.rateMinTopView, ODB.DAQ.rateMaxTopView);
-    
-        for(i=0; i<this.nCollectorGroups; i++){
-            this.dataBus.oldMasterGroupColor[i] = this.dataBus.masterGroupColor[i];
-            this.dataBus.masterGroupColor[i] = this.parseColor(this.dataBus.collectorGroups[i], ODB.DAQ.transferMinTopView, ODB.DAQ.tansferMaxTopView);
-        }
-        for(i=0; i<this.nCollectors; i++){
-            this.dataBus.oldMasterLinkColor[i] = this.dataBus.masterLinkColor[i];
-            this.dataBus.oldCollectorColor[i] = this.dataBus.collectorColor[i];
-            this.dataBus.oldDetailCollectorColor[i] = this.dataBus.detailCollectorColor[i];
-            this.dataBus.oldCollectorLinkColor[i] = this.dataBus.collectorLinkColor[i];
-            this.dataBus.oldDetailCollectorLinkColor[i] = this.dataBus.detailCollectorLinkColor[i];
-            this.dataBus.oldDigiSummaryColor[i] = this.dataBus.digiSummaryColor[i];
-            this.dataBus.masterLinkColor[i] = this.parseColor(this.dataBus.collectorLinks[i], ODB.DAQ.transferMinTopView, ODB.DAQ.tansferMaxTopView);
-            this.dataBus.collectorColor[i] = this.parseColor(this.dataBus.collectors[i], ODB.DAQ.rateMinTopView, ODB.DAQ.rateMaxTopView);
-            this.dataBus.detailCollectorColor[i] = this.parseColor(this.dataBus.collectors[i], ODB.DAQ.rateMinDetailView, ODB.DAQ.rateMaxDetailView);
-            this.dataBus.collectorLinkColor[i]       = this.parseColor(this.dataBus.digitizerGroupSummaryLinks[i], ODB.DAQ.transferMinTopView, ODB.DAQ.tansferMaxTopView);
-            this.dataBus.detailCollectorLinkColor[i] = this.parseColor(this.dataBus.digitizerGroupSummaryLinks[i], ODB.DAQ.transferMinDetailView, ODB.DAQ.transferMaxDetailView);
-            this.dataBus.digiSummaryColor[i] = this.parseColor(this.dataBus.digitizerSummaries[i], ODB.DAQ.rateMinTopView, ODB.DAQ.rateMaxTopView);
-
-        }
-        for(i=0; i<this.nDigitizerGroups; i++){
-            this.dataBus.oldDigiGroupSummaryColor[i] = this.dataBus.digiGroupSummaryColor[i];
-            this.dataBus.digiGroupSummaryColor[i] = this.dataBus.parseColor(this.dataBus.digitizerGroupLinks[i], ODB.DAQ.transferMinDetailView, ODB.DAQ.transferMaxDetailView);
-        }
-        for(i=0; i<this.nDigitizers; i++){
-            this.dataBus.oldDigitizerLinkColor[i] = this.dataBus.digitizerLinkColor[i];
-            this.dataBus.oldDigitizerColor[i] = this.dataBus.digitizerColor[i]; 
-            this.dataBus.digitizerLinkColor[i] = this.parseColor(this.dataBus.digitizerLinks[i], ODB.DAQ.transferMinDetailView, ODB.DAQ.transferMaxDetailView);
-            this.dataBus.digitizerColor[i] = this.parseColor(this.dataBus.digitizers[i], ODB.DAQ.rateMinDetailView, ODB.DAQ.rateMaxDetailView); 
-        }
-
-        this.tooltip.update();
-        this.detailTooltip.update();
+        //this.tooltip.update();
+        //this.detailTooltip.update();
 
         //animate if DAQ is showing:
         this.animate();
 
 	};
-
-/*
-    this.fetchNewData = function(){
-        var i, j, Fkey, Skey, Pkey;
-
-        window.codex.update();
-        i=0; j=0;
-        for(Fkey in window.codex.DAQmap){
-            if(window.codex.dataKeys.indexOf(Fkey) == -1){
-                this.dataBus.master[0] = window.codex.DAQmap[Fkey].trigRequestRate;
-                for(Skey in window.codex.DAQmap[Fkey]){
-                    if(window.codex.dataKeys.indexOf(Skey) == -1){
-                        this.dataBus.collectors[j] = window.codex.DAQmap[Fkey][Skey].trigRequestRate;
-                        this.dataBus.digitizerSummaries[j] = window.codex.DAQmap[Fkey][Skey].trigRequestRate;  //currently the same as the collector level since no filtering.
-                        this.dataBus.collectorLinks[j] = window.codex.DAQmap[Fkey][Skey].dataRate;
-                        this.dataBus.digitizerGroupSummaryLinks[j] = window.codex.DAQmap[Fkey][Skey].dataRate;  //again, redundant with collectors until some busy blocking or something is available
-                        j++;
-                        for(Pkey in window.codex.DAQmap[Fkey][Skey]){
-                            if(window.codex.dataKeys.indexOf(Pkey) == -1){
-                                this.dataBus.digitizers[i] = window.codex.DAQmap[Fkey][Skey][Pkey].trigRequestRate;
-                                this.dataBus.digitizerLinks[i] = window.codex.DAQmap[Fkey][Skey][Pkey].dataRate;
-                                i++;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-    };
-*/
-
 
 	this.draw = function(frame){
 		var color, i, j, k, fontSize, headerString;
@@ -375,6 +311,51 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         rateChart(frame, window.codex.detSummary, this.context, this.canvasWidth*0.2, this.masterTop + nBars*this.collectorWidth/2+50, this.canvasWidth*0.6, this.collectorWidth/2 )
 
 	};
+
+    this.draw = function(frame){
+        var color, i, x0,
+            codex = window.codex; 
+
+        //master node
+        color = interpolateColor(parseHexColor(codex.DAQmap.oldMasterColor), parseHexColor(codex.DAQmap.masterColor), frame / this.nFrames);
+        this.drawMasterNode(color);
+
+        //master-slave links
+        for(i=0; i<codex.nCollectors; i++){
+            //horizontal coord of branch root:
+            x0 = this.margin + (i+0.5)*(this.masterWidth / codex.nCollectors);
+            //
+        }
+
+
+/*
+        //master-slave links
+        if(ODB.topLevel.HPGeArray == 'TIGRESS'){
+
+        } else { //GRIFFIN
+            //draw combs for each 1-4 connection from master to slaves:
+            for(i=0; i<codex.nMasterGroups; i++){
+                //horizontal coord of branch root:
+                x0 = this.margin + (i+0.5)*(this.masterWidth / codex.nMasterGroups);
+                //color of branch and comb spine:
+                branchColor = interpolateColor( parseHexColor(codex.DAQmap[codex.masterGroupID[i]].masterGroupColor),
+                                                parseHexColor(codex.DAQmap[codex.masterGroupID[i]].oldMasterGroupColor),
+                                                frame/this.nFrames
+                                            );
+                //length of branch and comb spine:
+                L1 = (this.masterGroupLinkBottom - this.masterGroupLinkTop) / 2;
+                L3 = L1;
+                combWidth = this.masterWidth / (codex.nMasterGroups*1.3 + 0.3);
+                L2 = (1.3*i + 0.8)*combWidth - x0;
+                L4 = this.masterLinkBottom - this.masterLinkTop;
+                combColors = ['#000000', '#000000', '#000000', '#000000'];
+
+
+                drawBranch(this.context, combColors, combWidth, L1, L2, L3, L4, branchColor, x0, this.masterBottom)
+            }
+        }
+*/
+    }
 
     this.drawScale = function(context){
 
@@ -482,7 +463,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 
         //tooltip encoding level:
         this.TTcontext.fillStyle = 'rgba(0, 0, 0, 1)';
-        this.TTcontext.fillRect(Math.round(this.margin), Math.round(this.masterTop), Math.round(this.canvasWidth-2*this.margin), Math.round(this.masterBottom - this.masterTop));
+        this.TTcontext.fillRect(Math.round(this.margin), Math.round(this.masterTop), Math.round(this.masterWidth), Math.round(this.masterBottom - this.masterTop));
 
     };
 
@@ -802,11 +783,8 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     };
 
     this.animate = function(){
-        if(window.onDisplay == this.canvasID /*|| window.freshLoad*/) animate(this, 0);
-        //else this.draw(this.nFrames);
-
-        if(window.onDisplay == this.detailCanvasID /*|| window.freshLoad*/) animateDetail(this, 0);
-        //else this.drawDetail(this.nFrames);
+        if(window.onDisplay == this.canvasID) animate(this, 0);
+        if(window.onDisplay == this.detailCanvasID) animateDetail(this, 0);
     };
 }
 
@@ -1104,6 +1082,8 @@ DAQcodex = function(){
     //loop over all rows, creating an object that reflects the structure of the DAQ:
     this.DAQmap = {};
     this.detSummary = {};
+    this.nMasterGroups = 0;
+    this.nSlaveGroups = 0;
     for(i=0; i<this.nRows; i++){
 
         //build keys
@@ -1140,10 +1120,10 @@ DAQcodex = function(){
             this.DAQmap[masterKey].trigRequestRate = 0; //how many trig requests are arriving at master on this master channel?
             this.DAQmap[masterKey].dataRate = 0; //what is the data rate arriving at master on this master channel?
             //colors
-            this.DAQmap[masterKey].oldSlaveColor = '#333333';
-            this.DAQmap[masterKey].slaveColor = '#333333';
-            this.DAQmap[masterKey].oldMasterChannelColor = '#333333';
-            this.DAQmap[masterKey].masterChannelColor = '#333333';
+            this.DAQmap[masterKey].oldSlaveColor = '#00FF00';
+            this.DAQmap[masterKey].slaveColor = '#00FF00';
+            this.DAQmap[masterKey].oldMasterChannelColor = '#00FF00';
+            this.DAQmap[masterKey].masterChannelColor = '#00FF00';
             if(this.DAQmap[masterKey][slaveKey]){
                 //data pointers
                 this.DAQmap[masterKey][slaveKey].trigRequestRate = 0;  //how many trig requests are arriving at this slave on this channel?
@@ -1151,10 +1131,10 @@ DAQcodex = function(){
                 this.DAQmap[masterKey][slaveKey][digiKey] = {'detector' : this.Name[i], 'DAQcode' : this.encoded[i], 'trigRequestRate' : 0, 'dataRate' : 0};
                 this.detSummary[this.Name[i].slice(0,3)] = {'totalTrigRequestRate' : 0, 'prevTrigReqRate' : 0, 'totalDataRate' : 0, 'prevDataRate' : 0};
                 //colors
-                this.DAQmap[masterKey][slaveKey].oldDigiColor = '#333333';
-                this.DAQmap[masterKey][slaveKey].digiColor = '#333333';
-                this.DAQmap[masterKey][slaveKey].oldSlaveChannelColor = '#333333';
-                this.DAQmap[masterKey][slaveKey].slaveChannelColor = '#333333';               
+                this.DAQmap[masterKey][slaveKey].oldDigiColor = '#00FF00';
+                this.DAQmap[masterKey][slaveKey].digiColor = '#00FF00';
+                this.DAQmap[masterKey][slaveKey].oldSlaveChannelColor = '#00FF00';
+                this.DAQmap[masterKey][slaveKey].slaveChannelColor = '#00FF00';               
             } else{
                 this.DAQmap[masterKey][slaveKey] = {};
                 i--;
@@ -1164,10 +1144,11 @@ DAQcodex = function(){
                 //data pointer
                 this.DAQmap[masterKey][slaveGroupKey].dataRate = 0;
                 //colors
-                this.DAQmap[masterKey][slaveGroupKey].oldSlaveGroupColor = '#333333';
-                this.DAQmap[masterKey][slaveGroupKey].slaveGroupColor = '#333333';
+                this.DAQmap[masterKey][slaveGroupKey].oldSlaveGroupColor = '#00FF00';
+                this.DAQmap[masterKey][slaveGroupKey].slaveGroupColor = '#00FF00';
             } else{
                 this.DAQmap[masterKey][slaveGroupKey] = {};
+                this.nSlaveGroups++;
             }
             
         } else{
@@ -1179,20 +1160,24 @@ DAQcodex = function(){
             //data pointer
             this.DAQmap[masterGroupKey].dataRate = 0;
             //colors
-            this.DAQmap[masterGroupKey].oldMasterGroupColor = '#333333';
-            this.DAQmap[masterGroupKey].masterGroupColor = '#333333';
+            this.DAQmap[masterGroupKey].oldMasterGroupColor = '#00FF00';
+            this.DAQmap[masterGroupKey].masterGroupColor = '#00FF00';
         } else{
             this.DAQmap[masterGroupKey] = {};
+            this.nMasterGroups++;
         }
         
     }
     this.DAQmap.trigRequestRate = 0; //what is the total trigger request rate to master?
-    this.DAQmap.oldMasterColor = '#333333';
-    this.DAQmap.masterColor = '#333333';
-
+    this.DAQmap.oldMasterColor = '#00FF00';
+    this.DAQmap.masterColor = '#00FF00';
 console.log(this.DAQmap)
     //keep track of all the key names in the DAQmap that contain data directly, and aren't part of the hierarchy, so we can ignore them when traversing the DAQ tree:
-    this.dataKeys = ['detector', 'DAQcode', 'trigRequestRate', 'dataRate', 'oldTrigRequestRate', 'oldDataRate'];
+    this.dataKeys = [ 'detector', 'DAQcode', 'trigRequestRate', 'dataRate', 'oldTrigRequestRate', 'oldDataRate',
+                      'oldSlaveColor', 'slaveColor', 'oldMasterChannelColor', 'masterChannelColor', 
+                      'oldDigiColor', 'digiColor', 'oldSlaveChannelColor', 'slaveChannelColor',
+                      'oldSlaveGroupColor', 'slaveGroupColor', 'oldMasterGroupColor', 'masterGroupColor',
+                      'oldMasterColor', 'masterColor'];
     //count how many collectors are present == number of distinct master channels
     this.nCollectors = 0;
     for(masterKey in this.DAQmap){
@@ -1215,6 +1200,12 @@ console.log(this.DAQmap)
             i++;
         }
     }
+    //make an array of all the master groups present
+    this.masterGroupID = [];
+    for(i=0; i<Object.keys(this.DAQmap).length; i++){
+        if(Object.keys(this.DAQmap)[i].indexOf('Group') != -1)
+            this.masterGroupID[this.masterGroupID.length] = Object.keys(this.DAQmap)[i];
+    }
 
     //parse scalar into a color on a color scale bounded by min and max 
     this.parseColor = function(scalar, min, max){
@@ -1229,7 +1220,7 @@ console.log(this.DAQmap)
         if(scale>1) scale = 1;
 
         //return redScale(scale);
-        return scalepickr(scale, window.parameters.colorScale[this.DAQcolor])
+        return scalepickr(scale, window.parameters.colorScale[window.DAQpointer.DAQcolor])
     };
 
     //populate this.DAQmap with all the relevant information from the JSONPstore.
