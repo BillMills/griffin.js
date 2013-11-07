@@ -335,7 +335,7 @@ function frameColor(obj, frame, nFrames){
 
 //make a table for a tooltip using <objects> as rows and <keys> as columns, where the objects are keys of <data>, and insert it into DOM element <id>.  
 //[split] indicates how many elements to put in each supercolumn:
-function TTtable(id, data, objects, keys, tableTitle, titles, split){
+function TTtable(id, data, objects, keys, rowTitles, tableTitle, titles, split){
     var i, j, k, n, nContentRows, cellContent;
 
     injectDOM('table', id+'table', id, {'class':'TTtab', 'style':'border-collapse:collapse'});
@@ -383,7 +383,7 @@ function TTtable(id, data, objects, keys, tableTitle, titles, split){
 
     for(i=0; i<split.length; i++){
         for(j=0; j<split[i]; j++){
-            document.getElementById(id+'row'+j+'cell'+(titles.length*i)).innerHTML = objects[n];
+            document.getElementById(id+'row'+j+'cell'+(titles.length*i)).innerHTML = rowTitles[n];
             for(k=0; k<keys.length; k++){
 
                 if(typeof data[objects[n]][keys[k]] == 'string')
@@ -587,3 +587,15 @@ function getDrop(dropID){
 
     return name;
 }
+
+//convert n to hex, and represent it with at least d digits (left 0s for padding) and a '0x' prefix:
+function hexString(n, d){
+    var result = n.toString(16);
+
+    while(result.length < d){
+        result = '0' + result;
+    }
+    return '0x' + result.toUpperCase();
+}
+
+

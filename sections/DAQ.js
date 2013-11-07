@@ -627,7 +627,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     this.drawDetail = function(context, frame){
         var codex = window.codex,   
             masterID = 'master'+window.DAQdetail,
-            slaveChannel, slaveChannelID;
+            slaveChannel, slaveChannelID, x1, branchColor, combColors, combWidth;
 
         context.lineWidth = this.lineweight;
 
@@ -647,8 +647,6 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
             combWidth = this.masterWidth / (codex.slaveGroupID[masterID].length*1.3 + 0.3);
             for(i=0; i<codex.slaveGroupID[masterID].length; i++){
                 //slave-digitizer links///////////////////////////////////////////////
-                //horizontal coord of branch root:
-                //x0 = this.margin + (i+0.5)*(this.masterWidth / codex.slaveGroupID[masterID].length);
                 //horizontal coord of branch / comb join:
                 x1 = this.margin + (i+0.5)*combWidth + (i+1)*0.3*combWidth;
                 //color of branch and comb spine:
@@ -773,23 +771,62 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         return 0;
         */
 
-        var toolTipContent;
+        var toolTipContent, key, data = {}, objects = [], masterKey, slaveKey, channelCodes = [], split = [0],
+            table, mezRow, mezCell0, mezCell1,
+            keys = ['detector','trigRequestRate', 'dataRate'],
+            encodingType = (ODB.topLevel.HPGeArray == 'GRIFFIN') ? 'MSC' : 'FSPC';
 
+        //top level view////////////////////////////////////////////////////////////////////////
         if(window.onDisplay == this.canvasID){
             if(cell == 255){
-                toolTipContent = 'master';
+                masterSummary();
             } else {
-                toolTipContent = 'master'+cell;
+                collectorSummary(cell, 'DAQTT');
             }
-            document.getElementById(this.tooltip.ttDivID).innerHTML = toolTipContent;  
+        //detail level view/////////////////////////////////////////////////////////////////////
         } else if(window.onDisplay == this.detailCanvasID){
+            masterKey = 'master' + window.DAQdetail;
+            slaveKey = 'slave' + cell;
+            //collector:
             if(cell == 255){
-                toolTipContent = 'master' + window.DAQdetail;
-            } else {
-                toolTipContent = 'slave' + cell;
-            }
+                collectorSummary(window.DAQdetail, 'DAQTTdetail');
+            //digitizers:
+            } else if(cell >= 0 && cell < 255) {
+                //title and summary
+                toolTipContent = '<h3>Digitizer on Master Ch. ' + window.DAQdetail + ', Slave Ch. ' + cell + '</h3><br>';
+                toolTipContent += 'Total Trigger Rate: ' + window.codex.DAQmap[masterKey][slaveKey].trigRequestRate + ' Hz<br>';
+                toolTipContent += 'Total Inbound Data Rate: ' + window.codex.DAQmap[masterKey][slaveKey].dataRate + ' Bps<br><br>';
+                document.getElementById(this.detailTooltip.ttDivID).innerHTML = toolTipContent;
 
-            document.getElementById(this.detailTooltip.ttDivID).innerHTML = toolTipContent;
+                //build up arrays and objects to pass to tooltip table builder in the format it expects:
+                for(key in window.codex.DAQmap[masterKey][slaveKey]){
+                    if(window.codex.dataKeys.indexOf(key) == -1){
+                        data[key] = window.codex.DAQmap[masterKey][slaveKey][key];
+                        objects[objects.length] = key;
+                        channelCodes[channelCodes.length] = hexString(window.codex.DAQmap[masterKey][slaveKey][key].DAQcode, 4);
+                        //stick the first 32 things in the first super column
+                        //==everything is one column except TIG64's, which have 1 col per mezannine.
+                        if(split[0] < 32) split[0]++;
+                        else if(split.length == 1){
+                            split[1] = 1;
+                            window.state.staticTT = 1; //giant TT can run off of small screens, keep fixed and centered
+                        }
+                        else split[1]++;
+                    }
+                }
+                TTtable('DAQTTdetail', data, objects, keys, channelCodes, '', [encodingType,'Device','Trig Request Rate [Hz]', 'Outbound Data Rate [Bps]'], split);
+                //fudge in a title row for mezzanines:
+                if(split.length>1){
+                    table = document.getElementById('DAQTTdetailtable');
+                    mezRow = table.insertRow(0);
+                    mezCell0 = mezRow.insertCell(0);
+                    mezCell1 = mezRow.insertCell(1);
+                    mezCell0.innerHTML = '<h3>Mezzanine 1</h3>';
+                    mezCell1.innerHTML = '<h3>Mezzanine 2</h3>';
+                    mezCell0.setAttribute('colspan', 4);
+                    mezCell1.setAttribute('colspan', 4);
+                }
+            }
         }
 
         return 0
@@ -799,6 +836,70 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         if(window.onDisplay == this.canvasID) animate(this, 0);
         if(window.onDisplay == this.detailCanvasID) animateDetail(this, 0);
     };
+}
+
+//factor out the collector tooltip construction since it is used in both top level and detail level views:
+function collectorSummary(masterCh, ttID){
+    var masterKey = 'master' + masterCh,
+        keys = ['trigRequestRate', 'dataRate'],
+        key, data = {}, objects = [], channelCodes = [], split = [0];
+
+    //title and summary
+    toolTipContent = '<h3>Collector on Master Ch. ' + masterCh + '</h3><br>';
+    toolTipContent += 'Total Trigger Rate: ' + window.codex.DAQmap[masterKey].trigRequestRate + ' Hz<br>';
+    toolTipContent += 'Total Inbound Data Rate: ' + window.codex.DAQmap[masterKey].dataRate + ' Bps<br><br>';                
+    document.getElementById(ttID).innerHTML = toolTipContent;
+
+    //make a table of all the slave summaries
+    //build up arrays and objects to pass to tooltip table builder in the format it expects:
+    for(key in window.codex.DAQmap[masterKey]){
+        if(window.codex.dataKeys.indexOf(key) == -1 && key.indexOf('Group') == -1 ){
+            data[key] = window.codex.DAQmap[masterKey][key];
+            objects[objects.length] = key;
+            channelCodes[channelCodes.length] = key.slice(5,key.length);
+            //stick the first 32 things in the first super column
+            //==everything is one column except TIG64's, which have 1 col per mezannine.
+            if(split[0] < 32) split[0]++;
+            else if(split.length == 1){
+                split[1] = 1;
+                window.state.staticTT = 1; //giant TT can run off of small screens, keep fixed and centered
+            }
+            else split[1]++;
+        }
+    }
+
+    TTtable(ttID, data, objects, keys, channelCodes, '', ['Slave Ch.','Trig Request Rate [Hz]', 'Outbound Data Rate [Bps]'], split);
+}
+
+//TODO: this is almost the same as collectorSummary(), combine?
+function masterSummary(){
+    var keys = ['trigRequestRate', 'dataRate'],
+        key, data = {}, objects = [], channelCodes = [], split = [0];
+
+    //title and summary
+    toolTipContent = '<h3>DAQ Master</h3><br>';
+    toolTipContent += 'Total Trigger Rate: ' + window.codex.DAQmap.trigRequestRate + ' Hz<br><br>';                
+    document.getElementById('DAQTT').innerHTML = toolTipContent;
+
+    //make a table of all the slave summaries
+    //build up arrays and objects to pass to tooltip table builder in the format it expects:
+    for(key in window.codex.DAQmap){
+        if(window.codex.dataKeys.indexOf(key) == -1 && key.indexOf('Group') == -1 ){
+            data[key] = window.codex.DAQmap[key];
+            objects[objects.length] = key;
+            channelCodes[channelCodes.length] = key.slice(6,key.length);
+            //stick the first 32 things in the first super column
+            //==everything is one column except TIG64's, which have 1 col per mezannine.
+            if(split[0] < 32) split[0]++;
+            else if(split.length == 1){
+                split[1] = 1;
+                window.state.staticTT = 1; //giant TT can run off of small screens, keep fixed and centered
+            }
+            else split[1]++;
+        }
+    }
+
+    TTtable('DAQTT', data, objects, keys, channelCodes, '', ['Master Ch.','Trig Request Rate [Hz]', 'Outbound Data Rate [Bps]'], split);   
 }
 
 //vertical bar chart for digitizer data; x0 y0 represents origin of chart
