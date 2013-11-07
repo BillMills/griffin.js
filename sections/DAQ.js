@@ -22,7 +22,6 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     this.nDigitizerGroups = 0;  //fixed for now
     this.nDigitizers = window.codex.nDigitizers;
 
-    this.dataBus = new DAQDS();
     this.DAQcolor = 3;
 
     //scale & insert DAQ canvases & navigation//////////////////////////////////////////////////////////////////////////////////////
@@ -66,7 +65,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     for(i=0; i<this.nCollectors; i++){
         injectDOM('button', 'Collector'+i, this.linkWrapperID, {
             'class' : 'navLink',
-            'innerHTML' : i+1,
+            'innerHTML' : ((ODB.topLevel.HPGeArray == 'GRIFFIN') ? i : i+1),
             'type' : 'button',
             'onclick' : function(){
                 window.DAQpointer.detailShowing=1; 
@@ -773,8 +772,26 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         //return length of longest line:
         return 0;
         */
-        document.getElementById(this.tooltip.ttDivID).innerHTML = cell;
-        document.getElementById(this.detailTooltip.ttDivID).innerHTML = cell;
+
+        var toolTipContent;
+
+        if(window.onDisplay == this.canvasID){
+            if(cell == 255){
+                toolTipContent = 'master';
+            } else {
+                toolTipContent = 'master'+cell;
+            }
+            document.getElementById(this.tooltip.ttDivID).innerHTML = toolTipContent;  
+        } else if(window.onDisplay == this.detailCanvasID){
+            if(cell == 255){
+                toolTipContent = 'master' + window.DAQdetail;
+            } else {
+                toolTipContent = 'slave' + cell;
+            }
+
+            document.getElementById(this.detailTooltip.ttDivID).innerHTML = toolTipContent;
+        }
+
         return 0
     };
 
@@ -1167,7 +1184,7 @@ DAQcodex = function(){
     this.DAQmap.trigRequestRate = 0; //what is the total trigger request rate to master?
     this.DAQmap.oldMasterColor = '#00FF00';
     this.DAQmap.masterColor = '#00FF00';
-
+console.log(this.DAQmap)
     //keep track of all the key names in the DAQmap that contain data directly, and aren't part of the hierarchy, so we can ignore them when traversing the DAQ tree:
     this.dataKeys = [ 'detector', 'DAQcode', 'trigRequestRate', 'dataRate', 'oldTrigRequestRate', 'oldDataRate',
                       'oldSlaveColor', 'slaveColor', 'oldMasterChannelColor', 'masterChannelColor', 

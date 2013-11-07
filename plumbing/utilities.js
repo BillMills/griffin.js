@@ -74,7 +74,7 @@ function injectDOM(element, id, wrapperID, properties){
     elt = document.getElementById(id);
 
     //some things need to be set specially:
-    if(properties['innerHTML']){
+    if(properties['innerHTML'] || properties['innerHTML'] === 0){
         elt.innerHTML = properties['innerHTML'];
         delete properties['innerHTML'];
     }
