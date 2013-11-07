@@ -303,7 +303,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 	};
 */
     this.draw = function(frame){
-        var color, i, j, x0, x1, branchColor, combWidth, combColors, masterChannel,
+        var color, i, j, x0, x1, branchColor, combWidth, combColors, masterChannel, masterChannelID,
             codex = window.codex; 
 
         this.context.lineWidth = this.lineweight;
@@ -351,10 +351,11 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                 //slaves///////////////////////////////////////////////////////////
                 for(j=0; j<4; j++){
                     //step through all 4 possible master channels on this master group, check if they exist, and if so, draw a slave.
-                    masterChannel = 'master' + (4*parseInt(codex.masterGroupID[i].slice(11, codex.masterGroupID[i].length),10) + j);
+                    masterChannel = (4*parseInt(codex.masterGroupID[i].slice(11, codex.masterGroupID[i].length),10) + j);
+                    masterChannelID = 'master' + masterChannel;
                 
-                    if(codex.DAQmap[masterChannel]){
-                        this.drawCollectorNode(this.context, this.TTcontext, 0, '#000000', x1 - combWidth/2 + j*combWidth/3 - this.collectorWidth/2, this.masterLinkBottom);        
+                    if(codex.DAQmap[masterChannelID]){
+                        this.drawCollectorNode(this.context, this.TTcontext, masterChannel, '#000000', x1 - combWidth/2 + j*combWidth/3 - this.collectorWidth/2, this.masterLinkBottom);        
                     } else {
                         this.context.strokeStyle = '#FF0000';
                         this.context.beginPath();
@@ -489,8 +490,8 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 		context.stroke();
 
         //tooltip encoding level:
-        TTcontext.fillStyle = 'rgba('+(1+index)+', '+(1+index)+', '+(1+index)+', 1)';
-        TTcontext.fillRect(Math.round(x0), Math.round(y0), Math.round(this.collectorWidth), Math.round(this.collectorBottom - this.collectorTop) );
+        TTcontext.fillStyle = 'rgba('+index+', '+index+', '+index+', 1)';
+        TTcontext.fillRect(Math.round(x0), Math.round(y0), Math.round(this.collectorWidth), Math.round(this.collectorBottom - this.collectorHeight) );
     };
 /*
     this.drawDetail = function(context, frame){
@@ -627,16 +628,18 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     this.drawDetail = function(context, frame){
         var codex = window.codex,   
             masterID = 'master'+window.DAQdetail,
-            slaveChannel;
+            slaveChannel, slaveChannelID;
 
         context.lineWidth = this.lineweight;
 
         //white out last frame
         context.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+        this.TTdetailContext.fillStyle = '#123456';
+        this.TTdetailContext.fillRect(0,0,this.canvasWidth,this.canvasHeight);
 
         //slave node//////////////////////////////////////////////////////
         color = '#000000';
-        this.drawMasterNode(context, this.TTcontext, color); //(use drawMasterNode, looks the same on this view)
+        this.drawMasterNode(context, this.TTdetailContext, color); //(use drawMasterNode, looks the same on this view)
 
         if(ODB.topLevel.HPGeArray == 'TIGRESS'){
 
@@ -658,10 +661,11 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                 //digitizers///////////////////////////////////////////////////////////
                 for(j=0; j<4; j++){
                     //step through all 4 possible slave channels on this slave group, check if they exist, and if so, draw a digitizer.
-                    slaveChannel = 'slave' + (4*parseInt(codex.slaveGroupID[masterID][i].slice(10, codex.slaveGroupID[masterID][i].length),10) + j);
+                    slaveChannel = (4*parseInt(codex.slaveGroupID[masterID][i].slice(10, codex.slaveGroupID[masterID][i].length),10) + j);
+                    slaveChannelID = 'slave' + slaveChannel;
                 
-                    if(codex.DAQmap[masterID][slaveChannel]){
-                        this.drawCollectorNode(context, this.TTdetailContext, 0, '#000000', x1 - combWidth/2 + j*combWidth/3 - this.collectorWidth/2, this.masterLinkBottom);        
+                    if(codex.DAQmap[masterID][slaveChannelID]){
+                        this.drawCollectorNode(context, this.TTdetailContext, slaveChannel, '#000000', x1 - combWidth/2 + j*combWidth/3 - this.collectorWidth/2, this.masterLinkBottom);        
                     } else {
                         context.strokeStyle = '#FF0000';
                         context.beginPath();
@@ -694,6 +698,15 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     };
 
     this.defineText = function(cell){
+        //tooltip target encoding:
+            //top level view: 
+                //master = 255
+                //master channel n = n
+            //detail level view:
+                //collector = 255
+                //collector channel n = n
+
+
         /*
         var toolTipContent = '',
             nextLine, cardIndex, i, key, objects = [], split = [], table, mezRow, mezCell0, mezCell1,
@@ -761,6 +774,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         return 0;
         */
         document.getElementById(this.tooltip.ttDivID).innerHTML = cell;
+        document.getElementById(this.detailTooltip.ttDivID).innerHTML = cell;
         return 0
     };
 
@@ -1153,7 +1167,7 @@ DAQcodex = function(){
     this.DAQmap.trigRequestRate = 0; //what is the total trigger request rate to master?
     this.DAQmap.oldMasterColor = '#00FF00';
     this.DAQmap.masterColor = '#00FF00';
-console.log(this.DAQmap)
+
     //keep track of all the key names in the DAQmap that contain data directly, and aren't part of the hierarchy, so we can ignore them when traversing the DAQ tree:
     this.dataKeys = [ 'detector', 'DAQcode', 'trigRequestRate', 'dataRate', 'oldTrigRequestRate', 'oldDataRate',
                       'oldSlaveColor', 'slaveColor', 'oldMasterChannelColor', 'masterChannelColor', 
