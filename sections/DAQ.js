@@ -217,8 +217,8 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         //this.fetchNewData();
         window.codex.update();
 
-        //this.tooltip.update();
-        //this.detailTooltip.update();
+        this.tooltip.update();
+        this.detailTooltip.update();
 
         //animate if DAQ is showing:
         this.animate();
@@ -627,7 +627,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     this.drawDetail = function(context, frame){
         var codex = window.codex,   
             masterID = 'master'+window.DAQdetail,
-            slaveChannel, slaveChannelID, x1, branchColor, combColors, combWidth;
+            slaveChannel, slaveChannelID, slaveGroupID, x1, branchColor, combColors = [], combWidth, color, oldColor;
 
         context.lineWidth = this.lineweight;
 
@@ -643,27 +643,42 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         if(ODB.topLevel.HPGeArray == 'TIGRESS'){
 
         } else if(ODB.topLevel.HPGeArray == 'GRIFFIN'){
-            //draw the 4-1 connectors from the slave to the digitizers
             combWidth = this.masterWidth / (codex.slaveGroupID[masterID].length*1.3 + 0.3);
+            //loop over slave groups
             for(i=0; i<codex.slaveGroupID[masterID].length; i++){
+                slaveGroupID = codex.slaveGroupID[masterID][i];
                 //slave-digitizer links///////////////////////////////////////////////
                 //horizontal coord of branch / comb join:
                 x1 = this.margin + (i+0.5)*combWidth + (i+1)*0.3*combWidth;
-                //color of branch and comb spine:
-                branchColor = '#000000'//interpolateColor( '#000000', '#000000', frame/this.nFrames);
-                combColors = ['#000000', '#000000', '#000000', '#000000'];
+                //color of branch and comb spine reflects total data rate leaving the group of digitizers:
+                branchColor = interpolateColor( parseHexColor(codex.DAQmap[masterID][slaveGroupID].oldSlaveGroupColor), 
+                                                parseHexColor(codex.DAQmap[masterID][slaveGroupID].slaveGroupColor), 
+                                                frame/this.nFrames);
+                //if(frame == 0 && i==1)console.log([codex.DAQmap[masterID][slaveGroupID].oldSlaveGroupColor, codex.DAQmap[masterID][slaveGroupID].slaveGroupColor])
+                //step through the slaves in this group, interpolate their color and assign it to combColors if the slave exists.
+                for(j=0; j<4; j++){
+                    slaveChannelID = 'slave'+( 4*parseInt(codex.slaveGroupID[masterID][i].slice(10),10) + j);
+                    if(codex.DAQmap[masterID][slaveChannelID]){
+                        oldColor = codex.DAQmap[masterID][slaveChannelID].oldSlaveChannelColor;
+                        color = codex.DAQmap[masterID][slaveChannelID].slaveChannelColor;
+                        combColors[j] = interpolateColor(parseHexColor(oldColor), parseHexColor(color), frame/this.nFrames);
+                    } else
+                        combColors[j] = '#000000';
+                }
 
                 drawBranch(context, combColors, combWidth, this.masterLinkBottom - this.masterLinkTop, branchColor, x1, this.masterBottom, x1, this.masterGroupLinkBottom);
                 
                 //digitizers///////////////////////////////////////////////////////////
                 for(j=0; j<4; j++){
                     //step through all 4 possible slave channels on this slave group, check if they exist, and if so, draw a digitizer.
-                    slaveChannel = (4*parseInt(codex.slaveGroupID[masterID][i].slice(10, codex.slaveGroupID[masterID][i].length),10) + j);
+                    slaveChannel = (4*parseInt(codex.slaveGroupID[masterID][i].slice(10),10) + j);
                     slaveChannelID = 'slave' + slaveChannel;
                 
                     if(codex.DAQmap[masterID][slaveChannelID]){
-                        this.drawCollectorNode(context, this.TTdetailContext, slaveChannel, '#000000', x1 - combWidth/2 + j*combWidth/3 - this.collectorWidth/2, this.masterLinkBottom);        
+                        color = interpolateColor(parseHexColor(codex.DAQmap[masterID][slaveChannelID].oldDigiColor), parseHexColor(codex.DAQmap[masterID][slaveChannelID].digiColor), frame/this.nFrames);
+                        this.drawCollectorNode(context, this.TTdetailContext, slaveChannel, color, x1 - combWidth/2 + j*combWidth/3 - this.collectorWidth/2, this.masterLinkBottom);        
                     } else {
+                        //terminate an empty cable with a red X
                         context.strokeStyle = '#FF0000';
                         context.beginPath();
                         context.moveTo(x1 - combWidth/2 + j*combWidth/3 -10, this.masterLinkBottom -10);
@@ -703,74 +718,6 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                 //collector = 255
                 //collector channel n = n
 
-
-        /*
-        var toolTipContent = '',
-            nextLine, cardIndex, i, key, objects = [], split = [], table, mezRow, mezCell0, mezCell1,
-            keys = ['detector','trigRequestRate', 'dataRate'],
-            data = {};
-
-        
-        nextLine = '';
-        if(this.dataBus.key[cell]){
-            nextLine = 'FSPC: ' + this.dataBus.key[cell][this.dataBus.key[cell].length-1] + '<br>';
-
-            //collectors
-            if(this.dataBus.key[cell].length == 2){
-                nextLine += '<br>Trig Request Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]]['trigRequestRate'].toFixed(1) + ' Hz<br>';
-                nextLine += 'Inbound Data Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]]['dataRate'].toFixed(1) + ' Bps';
-            }
-
-            //digitizers
-            if(this.dataBus.key[cell].length == 3){
-                nextLine += '<br>Total Trig Request Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]]['trigRequestRate'].toFixed(1) + ' Hz<br>';
-                nextLine += 'Total Outbound Data Rate: ' + window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]]['dataRate'].toFixed(1) + ' Bps<br><br>';
-
-                //build up arrays and objects to pass to tooltip table builder in the format it expects:
-                for(key in window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]]){
-                    if(window.codex.dataKeys.indexOf(key) == -1){
-                        data[key] = window.codex.DAQmap[this.dataBus.key[cell][0]][this.dataBus.key[cell][1]][this.dataBus.key[cell][2]][key]
-                        objects[objects.length] = key;
-                    }
-                }
-            } 
-        }
-
-        toolTipContent += nextLine;
-        if(this.detailShowing){
-            document.getElementById(this.detailTooltip.ttDivID).innerHTML = toolTipContent;
-            if(cell > this.nCollectors){
-                //split TIG64s by mezzanine:
-                if(objects.length>10){  //TODO: need more robust decision on whether we're looking at a TIG64 or not
-                    split = [0,0];
-                    for(i=0; i<objects.length; i++){
-                        if(parseInt(objects[i].slice(7,9), 16) < 32 ) split[0]++;
-                        else split[1]++;
-                    }
-                    window.state.staticTT = 1;
-                } else
-                    split = [objects.length]
-                TTtable('DAQTTdetail', data, objects, keys, '', ['FSPC','Device','Trig Request Rate [Hz]', 'Outbound Data Rate [Bps]'], split);
-                //fudge in a title row for mezzanines:
-                if(objects.length>10){
-                    table = document.getElementById('DAQTTdetailtable');
-                    mezRow = table.insertRow(0);
-                    mezCell0 = mezRow.insertCell(0);
-                    mezCell1 = mezRow.insertCell(1);
-                    mezCell0.innerHTML = 'Mezzanine 1';
-                    mezCell1.innerHTML = 'Mezzanine 2';
-                    mezCell0.setAttribute('colspan', 4);
-                    mezCell1.setAttribute('colspan', 4);
-                }
-            }
-        } else{
-            document.getElementById(this.tooltip.ttDivID).innerHTML = toolTipContent;
-        }
-        
-        //return length of longest line:
-        return 0;
-        */
-
         var toolTipContent, key, data = {}, objects = [], masterKey, slaveKey, channelCodes = [], split = [0],
             table, mezRow, mezCell0, mezCell1,
             keys = ['detector','trigRequestRate', 'dataRate'],
@@ -794,8 +741,8 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
             } else if(cell >= 0 && cell < 255) {
                 //title and summary
                 toolTipContent = '<h3>Digitizer on Master Ch. ' + window.DAQdetail + ', Slave Ch. ' + cell + '</h3><br>';
-                toolTipContent += 'Total Trigger Rate: ' + window.codex.DAQmap[masterKey][slaveKey].trigRequestRate + ' Hz<br>';
-                toolTipContent += 'Total Inbound Data Rate: ' + window.codex.DAQmap[masterKey][slaveKey].dataRate + ' Bps<br><br>';
+                toolTipContent += 'Total Trigger Rate: ' + window.codex.DAQmap[masterKey][slaveKey].trigRequestRate.toFixed() + ' Hz<br>';
+                toolTipContent += 'Total Inbound Data Rate: ' + window.codex.DAQmap[masterKey][slaveKey].dataRate.toFixed() + ' Bps<br><br>';
                 document.getElementById(this.detailTooltip.ttDivID).innerHTML = toolTipContent;
 
                 //build up arrays and objects to pass to tooltip table builder in the format it expects:
@@ -846,8 +793,8 @@ function collectorSummary(masterCh, ttID){
 
     //title and summary
     toolTipContent = '<h3>Collector on Master Ch. ' + masterCh + '</h3><br>';
-    toolTipContent += 'Total Trigger Rate: ' + window.codex.DAQmap[masterKey].trigRequestRate + ' Hz<br>';
-    toolTipContent += 'Total Inbound Data Rate: ' + window.codex.DAQmap[masterKey].dataRate + ' Bps<br><br>';                
+    toolTipContent += 'Total Trigger Rate: ' + window.codex.DAQmap[masterKey].trigRequestRate.toFixed() + ' Hz<br>';
+    toolTipContent += 'Total Inbound Data Rate: ' + window.codex.DAQmap[masterKey].dataRate.toFixed() + ' Bps<br><br>';                
     document.getElementById(ttID).innerHTML = toolTipContent;
 
     //make a table of all the slave summaries
@@ -878,7 +825,7 @@ function masterSummary(){
 
     //title and summary
     toolTipContent = '<h3>DAQ Master</h3><br>';
-    toolTipContent += 'Total Trigger Rate: ' + window.codex.DAQmap.trigRequestRate + ' Hz<br><br>';                
+    toolTipContent += 'Total Trigger Rate: ' + window.codex.DAQmap.trigRequestRate.toFixed() + ' Hz<br><br>';                
     document.getElementById('DAQTT').innerHTML = toolTipContent;
 
     //make a table of all the slave summaries
@@ -1419,10 +1366,10 @@ console.log(this.DAQmap)
                     name = this.DAQmap[masterKey][slaveKey][digiKey].detector; 
 
                     //get the base per channel data from the JSON store if it exists:
-                    if(window.JSONPstore['scalar'] && window.JSONPstore['scalar'][name]){
-                        this.DAQmap[masterKey][slaveKey][digiKey].trigRequestRate = window.JSONPstore['scalar'][name]['TRIGREQ'];
-                        this.DAQmap[masterKey][slaveKey][digiKey].dataRate = window.JSONPstore['scalar'][name]['dataRate'];
-                    }
+                    //if(window.JSONPstore['scalar'] && window.JSONPstore['scalar'][name]){
+                        this.DAQmap[masterKey][slaveKey][digiKey].trigRequestRate = Math.random()*1000//window.JSONPstore['scalar'][name]['TRIGREQ'];
+                        this.DAQmap[masterKey][slaveKey][digiKey].dataRate = Math.random()*1000//window.JSONPstore['scalar'][name]['dataRate'];
+                    //}
 
                     //add the triggers and data rates from each digitizer to the downstream objects they contribute to:
                     //digitizer trigger rate:
@@ -1453,6 +1400,7 @@ console.log(this.DAQmap)
                 //pick a color for the slave group link (GRIFFIN)
                 this.DAQmap[masterKey][slaveGroupKey].oldSlaveGroupColor = this.DAQmap[masterKey][slaveGroupKey].slaveGroupColor;
                 this.DAQmap[masterKey][slaveGroupKey].slaveGroupColor = this.parseColor(this.DAQmap[masterKey][slaveGroupKey].dataRate, ODB.DAQ.transferMinDetailView, ODB.DAQ.transferMaxDetailView);
+                if(masterKey == 'master0' && slaveGroupKey=='slaveGroup0') console.log([this.DAQmap[masterKey][slaveGroupKey].oldSlaveGroupColor,this.DAQmap[masterKey][slaveGroupKey].slaveGroupColor])
             }
             //use the totals to pick a color for the slave:
             this.DAQmap[masterKey].oldSlaveColor = this.DAQmap[masterKey].slaveColor;

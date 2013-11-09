@@ -300,7 +300,7 @@ DESCANTDS = function(){
 	this.TTmap = [];
 	this.totalRate = 0;
 	for(i=1; i<71; i++){
-		name = (i<10) ? 'DSC00'+i+'P00X' : 'DSC0'+i+'P00X';
+		name = (i<10) ? 'DSC0'+i+'XP00X' : 'DSC'+i+'XP00X';
 		this.DESCANT[name] = {
 			'HV'		: 0,
 			'threshold' : 0,
@@ -316,9 +316,6 @@ DESCANTDS = function(){
 		}
 		this.TTmap[i] = name;
 	}
-
-	//this.DESCANT['DSC034P00X'].rate = 10000;
-
 }
 
 PACESDS = function(){
