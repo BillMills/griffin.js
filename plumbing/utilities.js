@@ -90,7 +90,7 @@ function injectDOM(element, id, wrapperID, properties){
 }
 
 //devName = device Name, scales = [ [scale title, parameter service minima, parameter service maxima, unit, ODBminpath, ODBmaxpath], ...]
-function parameterDialogue(devName, scales, currentColorScale){
+function parameterDialogue(devName, scales, currentColorScale, noLog){
     var i, j, ODBpath;
 
     //insert div and title
@@ -153,25 +153,27 @@ function parameterDialogue(devName, scales, currentColorScale){
     }
 
     //insert scale linear / log choice:
-    injectDOM('p', 'scalePickerLabel', 'dialogueValues', {'style':'display:inline; margin-right:2%', 'innerHTML':'<br><br>Scale: '});
-    injectDOM('p', 'linearRadioLabel', 'dialogueValues', {'style':'display:inline', 'innerHTML':'Linear'});
-    injectDOM('input', 'linearRadio', 'dialogueValues', {
-        'style' : 'display:inline; margin-right:2%;',
-        'name' : 'scaleSwitch',
-        'type' : 'radio',
-        'value' : 'linear'
-    });
-    injectDOM('p', 'logRadioLabel', 'dialogueValues', {'style':'display:inline', 'innerHTML':'Log'});
-    injectDOM('input', 'logRadio', 'dialogueValues', {
-        'style' : 'display:inline;',
-        'name' : 'scaleSwitch',
-        'type' : 'radio',
-        'value' : 'log'
-    });
-    injectDOM('br', 'break', 'dialogueValues', {});
+    if(!noLog){
+        injectDOM('p', 'scalePickerLabel', 'dialogueValues', {'style':'display:inline; margin-right:2%', 'innerHTML':'<br><br>Scale: '});
+        injectDOM('p', 'linearRadioLabel', 'dialogueValues', {'style':'display:inline', 'innerHTML':'Linear'});
+        injectDOM('input', 'linearRadio', 'dialogueValues', {
+            'style' : 'display:inline; margin-right:2%;',
+            'name' : 'scaleSwitch',
+            'type' : 'radio',
+            'value' : 'linear'
+        });
+        injectDOM('p', 'logRadioLabel', 'dialogueValues', {'style':'display:inline', 'innerHTML':'Log'});
+        injectDOM('input', 'logRadio', 'dialogueValues', {
+            'style' : 'display:inline;',
+            'name' : 'scaleSwitch',
+            'type' : 'radio',
+            'value' : 'log'
+        });
+        injectDOM('br', 'break', 'dialogueValues', {});
 
-    if (window.parameters.detectorLogMode[window.viewState] == 1) document.getElementById('logRadio').checked = true;
-    else document.getElementById('linearRadio').checked = true;
+        if (window.parameters.detectorLogMode[window.viewState] == 1) document.getElementById('logRadio').checked = true;
+        else document.getElementById('linearRadio').checked = true;
+    }
 
     //insert submit & dismiss button
     injectDOM('input', 'updateParameters', 'dialogueValues', {
@@ -208,8 +210,10 @@ function parameterDialogue(devName, scales, currentColorScale){
                 }
             }
 
-            if(document.getElementById('logRadio').checked) window.parameters.detectorLogMode[window.viewState] = 1;
-            else if(document.getElementById('linearRadio').checked) window.parameters.detectorLogMode[window.viewState] = 0;
+            if(!noLog){
+                if(document.getElementById('logRadio').checked) window.parameters.detectorLogMode[window.viewState] = 1;
+                else if(document.getElementById('linearRadio').checked) window.parameters.detectorLogMode[window.viewState] = 0;
+            }
             
             //remove dialogue
             document.getElementById('tempDiv').style.opacity = 0;
