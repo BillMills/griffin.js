@@ -125,15 +125,15 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                                     }
                                 };
     this.canvas.onclick =   function(event){
-                                //use TT layer to decide which clover user clicked on
-                                var digiGroupClicked = -1;
+                                //use TT layer to decide which slave user clicked on
+                                var slaveClicked = -1;
                                 var x,y;
                                 x = event.pageX - that.canvas.offsetLeft - that.monitor.offsetLeft;
                                 y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;
-                                digiGroupClicked = that.findCell(x,y);
-                                //draw and swap out if user clicked on a valid clover
-                                if(digiGroupClicked > 0){
-                                    window.DAQdetail = (digiGroupClicked-1)%that.nCollectors;
+                                slaveClicked = that.findCell(x,y);
+                                //draw and swap out if user clicked on a valid slave
+                                if(slaveClicked > -1 && slaveClicked < 255){
+                                    window.DAQdetail = slaveClicked;
                                     that.drawDetail(that.detailContext, that.nFrames);
                                     that.detailShowing = 1;
                                     swapFade('Collector'+(window.DAQdetail), that, 0)
@@ -177,18 +177,14 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 
     this.collectorHeight = this.canvasHeight*0.1;   
     this.masterTop = 5;
-    this.masterBottom = this.masterTop + (1+nBars/2)*this.collectorHeight;
-    this.cableLength = (this.canvasHeight*0.7 - (this.masterBottom-this.masterTop) - 2*this.collectorHeight)/2;
+    this.masterBottom = this.masterTop + (1+nBars/2)*this.canvasHeight*0.1;
+    this.cableLength = (this.canvasHeight*0.7 - (this.masterBottom-this.masterTop) - this.canvasHeight*0.1);
     this.masterGroupLinkTop = this.masterBottom;
-    this.masterGroupLinkBottom = this.masterGroupLinkTop + ( (this.nCollectorGroups == 0) ? this.cableLength : this.cableLength/2 ) //this.collectorHeight/2;
+    this.masterGroupLinkBottom = this.masterGroupLinkTop + this.cableLength/2;
     this.masterLinkTop = this.masterGroupLinkBottom;
-    this.masterLinkBottom = this.masterLinkTop + this.cableLength/2   //this.collectorHeight/2;
+    this.masterLinkBottom = this.masterLinkTop + this.cableLength/2;
     this.collectorTop = this.masterLinkBottom;
-    this.collectorBottom = this.collectorTop + this.collectorHeight;
-    this.digiSummaryLinkTop = this.collectorBottom;
-    this.digiSummaryLinkBottom = this.digiSummaryLinkTop + this.cableLength; //this.collectorHeight;
-    this.digiSummaryTop = this.digiSummaryLinkBottom;
-    this.digiSummaryBottom = this.digiSummaryTop + this.collectorHeight;
+    this.collectorBottom = this.canvasHeight*0.78;
 
     this.masterWidth = this.canvasWidth-2*this.margin;
 
@@ -385,6 +381,10 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                 }
             }
         }
+
+        if(frame == 15){
+            this.drawScale(this.context);
+        }
     };
 
     this.drawScale = function(context){
@@ -501,13 +501,13 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 
     	context.strokeStyle = color;
     	context.fillStyle = this.cellColor;
-        roundBox(context, x0, y0, this.collectorWidth, this.collectorBottom - this.collectorHeight, 5);
+        roundBox(context, x0, y0, this.collectorWidth, this.collectorBottom - this.collectorTop, 5);
         context.fill();
 		context.stroke();
 
         //tooltip encoding level:
         TTcontext.fillStyle = 'rgba('+index+', '+index+', '+index+', 1)';
-        TTcontext.fillRect(Math.round(x0), Math.round(y0), Math.round(this.collectorWidth), Math.round(this.collectorBottom - this.collectorHeight) );
+        TTcontext.fillRect(Math.round(x0), Math.round(y0), Math.round(this.collectorWidth), Math.round(this.collectorBottom - this.collectorTop) );
     };
 /*
     this.drawDetail = function(context, frame){
@@ -709,7 +709,9 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                 
             }
         }
-    }
+
+        this.drawScale(this.detailContext);
+    };
 
     this.findCell = function(x, y){
         var imageData 
