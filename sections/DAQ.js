@@ -302,7 +302,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
 	};
 */
     this.draw = function(frame){
-        var color, i, j, x0, x1, branchColor, combWidth, combColors, masterChannel, masterChannelID,
+        var color, oldColor, i, j, x0, x1, branchColor, combWidth, combColors = [], masterChannel, masterChannelID,
             codex = window.codex; 
 
         this.context.lineWidth = this.lineweight;
@@ -333,20 +333,8 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
             //draw combs for each 1-4 connection from master to slaves:
             combWidth = this.masterWidth / (codex.nMasterGroups*1.3 + 0.3);
             for(i=0; i<codex.nMasterGroups; i++){
-                //master-slave links///////////////////////////////////////////////
-                //horizontal coord of branch root:
-                //x0 = this.margin + (i+0.5)*(this.masterWidth / codex.nMasterGroups);
                 //horizontal coord of branch / comb join:
                 x1 = this.margin + (i+0.5)*combWidth + (i+1)*0.3*combWidth;
-                //color of branch and comb spine:
-                branchColor = interpolateColor( parseHexColor(codex.DAQmap[codex.masterGroupID[i]].masterGroupColor),
-                                                parseHexColor(codex.DAQmap[codex.masterGroupID[i]].oldMasterGroupColor),
-                                                frame/this.nFrames
-                                            );
-                combColors = ['#000000', '#000000', '#000000', '#000000'];
-
-                drawBranch(this.context, combColors, combWidth, this.masterLinkBottom - this.masterLinkTop, branchColor, x1, this.masterBottom, x1, this.masterGroupLinkBottom);
-               
                 //slaves///////////////////////////////////////////////////////////
                 for(j=0; j<4; j++){
                     //step through all 4 possible master channels on this master group, check if they exist, and if so, draw a slave.
@@ -354,17 +342,46 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                     masterChannelID = 'master' + masterChannel;
                 
                     if(codex.DAQmap[masterChannelID]){
-                        this.drawCollectorNode(this.context, this.TTcontext, masterChannel, '#000000', x1 - combWidth/2 + j*combWidth/3 - this.collectorWidth/2, this.masterLinkBottom);        
+                        color = codex.DAQmap[masterChannelID].slaveColor;
+                        oldColor = codex.DAQmap[masterChannelID].oldSlaveColor;
+                        color = interpolateColor(   parseHexColor(oldColor),
+                                                    parseHexColor(color),
+                                                    frame/this.nFrames);
+
+                        this.drawCollectorNode(this.context, this.TTcontext, masterChannel, color, x1 - combWidth/2 + j*combWidth/3 - this.collectorWidth/2, this.masterLinkBottom);
+                        //determine the master channel color for this connector:
+                        color = codex.DAQmap[masterChannelID].masterChannelColor;
+                        oldColor = codex.DAQmap[masterChannelID].oldMasterChannelColor;
+                        combColors[j] = interpolateColor(   parseHexColor(oldColor),
+                                                            parseHexColor(color),
+                                                            frame/this.nFrames);
                     } else {
+                         combColors[j] = '#000000';                      
+                    }
+                }
+                //master-slave links///////////////////////////////////////////////
+                //horizontal coord of branch root:
+                //x0 = this.margin + (i+0.5)*(this.masterWidth / codex.nMasterGroups);
+                //color of branch and comb spine:
+                branchColor = interpolateColor( parseHexColor(codex.DAQmap[codex.masterGroupID[i]].oldMasterGroupColor),
+                                                parseHexColor(codex.DAQmap[codex.masterGroupID[i]].masterGroupColor),
+                                                frame/this.nFrames
+                                            );
+                drawBranch(this.context, combColors, combWidth, this.masterLinkBottom - this.masterLinkTop, branchColor, x1, this.masterBottom, x1, this.masterGroupLinkBottom);
+
+                //terminate any dangling wire with a red X:
+                for(j=0; j<4; j++){
+                    masterChannel = (4*parseInt(codex.masterGroupID[i].slice(11, codex.masterGroupID[i].length),10) + j);
+                    masterChannelID = 'master' + masterChannel;
+                    if(!codex.DAQmap[masterChannelID]){
                         this.context.strokeStyle = '#FF0000';
                         this.context.beginPath();
                         this.context.moveTo(x1 - combWidth/2 + j*combWidth/3 -10, this.masterLinkBottom -10);
                         this.context.lineTo(x1 - combWidth/2 + j*combWidth/3 +10, this.masterLinkBottom +10);
                         this.context.moveTo(x1 - combWidth/2 + j*combWidth/3 +10, this.masterLinkBottom -10);
                         this.context.lineTo(x1 - combWidth/2 + j*combWidth/3 -10, this.masterLinkBottom +10);
-                        this.context.stroke();                        
+                        this.context.stroke(); 
                     }
-
                 }
             }
         }
@@ -637,7 +654,8 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         this.TTdetailContext.fillRect(0,0,this.canvasWidth,this.canvasHeight);
 
         //slave node//////////////////////////////////////////////////////
-        color = '#000000';
+        color = codex.DAQmap[masterID].slaveColor;
+        oldColor = codex.DAQmap[masterID].oldSlaveColor;
         this.drawMasterNode(context, this.TTdetailContext, color); //(use drawMasterNode, looks the same on this view)
 
         if(ODB.topLevel.HPGeArray == 'TIGRESS'){
@@ -654,7 +672,6 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                 branchColor = interpolateColor( parseHexColor(codex.DAQmap[masterID][slaveGroupID].oldSlaveGroupColor), 
                                                 parseHexColor(codex.DAQmap[masterID][slaveGroupID].slaveGroupColor), 
                                                 frame/this.nFrames);
-                //if(frame == 0 && i==1)console.log([codex.DAQmap[masterID][slaveGroupID].oldSlaveGroupColor, codex.DAQmap[masterID][slaveGroupID].slaveGroupColor])
                 //step through the slaves in this group, interpolate their color and assign it to combColors if the slave exists.
                 for(j=0; j<4; j++){
                     slaveChannelID = 'slave'+( 4*parseInt(codex.slaveGroupID[masterID][i].slice(10),10) + j);
@@ -666,7 +683,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                         combColors[j] = '#000000';
                 }
 
-                drawBranch(context, combColors, combWidth, this.masterLinkBottom - this.masterLinkTop, branchColor, x1, this.masterBottom, x1, this.masterGroupLinkBottom);
+                drawBranch(context, combColors, combWidth, this.masterLinkBottom - this.masterLinkTop, branchColor, x1, this.masterBottom+parseFloat(context.lineWidth)/2, x1, this.masterGroupLinkBottom);
                 
                 //digitizers///////////////////////////////////////////////////////////
                 for(j=0; j<4; j++){
@@ -692,8 +709,6 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                 
             }
         }
-
-        //console.log(codex.DAQmap[masterID])
     }
 
     this.findCell = function(x, y){
@@ -1397,10 +1412,14 @@ console.log(this.DAQmap)
                 //pick a color for the outbound digitizer to slave link:
                 this.DAQmap[masterKey][slaveKey].oldSlaveChannelColor = this.DAQmap[masterKey][slaveKey].slaveChannelColor;
                 this.DAQmap[masterKey][slaveKey].slaveChannelColor = this.parseColor(this.DAQmap[masterKey][slaveKey].dataRate, ODB.DAQ.transferMinDetailView, ODB.DAQ.transferMaxDetailView);
+            }
+            //loop over slave groups and assign their colors
+            for(slaveKey in this.DAQmap[masterKey]){
+                //bail out if this key isn't a slave group
+                if(slaveKey.indexOf('Group') == -1 ) continue;
                 //pick a color for the slave group link (GRIFFIN)
-                this.DAQmap[masterKey][slaveGroupKey].oldSlaveGroupColor = this.DAQmap[masterKey][slaveGroupKey].slaveGroupColor;
-                this.DAQmap[masterKey][slaveGroupKey].slaveGroupColor = this.parseColor(this.DAQmap[masterKey][slaveGroupKey].dataRate, ODB.DAQ.transferMinDetailView, ODB.DAQ.transferMaxDetailView);
-                if(masterKey == 'master0' && slaveGroupKey=='slaveGroup0') console.log([this.DAQmap[masterKey][slaveGroupKey].oldSlaveGroupColor,this.DAQmap[masterKey][slaveGroupKey].slaveGroupColor])
+                this.DAQmap[masterKey][slaveKey].oldSlaveGroupColor = this.DAQmap[masterKey][slaveKey].slaveGroupColor;
+                this.DAQmap[masterKey][slaveKey].slaveGroupColor = this.parseColor(this.DAQmap[masterKey][slaveKey].dataRate, ODB.DAQ.transferMinDetailView, ODB.DAQ.transferMaxDetailView);
             }
             //use the totals to pick a color for the slave:
             this.DAQmap[masterKey].oldSlaveColor = this.DAQmap[masterKey].slaveColor;
@@ -1418,7 +1437,6 @@ console.log(this.DAQmap)
     };
 
 }
-
 
 
 

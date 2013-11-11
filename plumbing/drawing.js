@@ -905,7 +905,7 @@ function drawBranch(context, combColors, combWidth, combLength, branchColor, x0,
     for(i=0; i<nTine; i++){
         context.strokeStyle = combColors[i];
         context.beginPath();
-        context.moveTo(x0 + branchWidth - combWidth / 2 + i*tineSpacing, y0 + branchHeight);
+        context.moveTo(x0 + branchWidth - combWidth / 2 + i*tineSpacing, y0 + branchHeight + parseFloat(context.lineWidth)/2);
         context.lineTo(x0 + branchWidth - combWidth / 2 + i*tineSpacing, y0 + branchHeight + combLength);
         context.stroke();
     }
