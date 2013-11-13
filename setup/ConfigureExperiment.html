@@ -830,7 +830,8 @@
 						ODBMCreate(address, type);
 
 						//DAQ
-						address = [	'/DashboardConfig/DAQ', 
+						address = [	'/DashboardConfig/DAQ',
+									'/DashboardConfig/DAQ/config',
 									'/DashboardConfig/DAQ/rateMinTopView', 
 									'/DashboardConfig/DAQ/rateMaxTopView', 
 									'/DashboardConfig/DAQ/rateMinDetailView', 
@@ -844,8 +845,15 @@
 									'/DashboardConfig/DAQ/transferMinMaster', 
 									'/DashboardConfig/DAQ/transferMaxMaster'
 								];
-						type = [TID_KEY, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT];
+						type = [TID_KEY, TID_STRING, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT];
 						ODBMCreate(address, type);
+						ODBSet('/DashboardConfig/DAQ/config', window.experiment);
+						ODBSet('/DashboardConfig/DAQ/rateMaxTopView', 10000);
+						ODBSet('/DashboardConfig/DAQ/rateMaxDetailView', 10000);
+						ODBSet('/DashboardConfig/DAQ/transferMaxTopView', 10000);
+						ODBSet('/DashboardConfig/DAQ/transferMaxDetailView', 10000);
+						ODBSet('/DashboardConfig/DAQ/rateMaxMaster', 10000);
+						ODBSet('/DashboardConfig/DAQ/transferMaxMaster', 10000);
 
 						//BAMBINO
 						if(window.subdetectors['BAMBINO']){

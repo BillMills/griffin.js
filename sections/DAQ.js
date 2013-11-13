@@ -65,7 +65,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
     for(i=0; i<this.nCollectors; i++){
         injectDOM('button', 'Collector'+i, this.linkWrapperID, {
             'class' : 'navLink',
-            'innerHTML' : ((ODB.topLevel.HPGeArray == 'GRIFFIN') ? i : i+1),
+            'innerHTML' : ((ODB.DAQ.config == 'GRIFFIN') ? i : i+1),
             'type' : 'button',
             'onclick' : function(){
                 window.DAQpointer.detailShowing=1; 
@@ -234,7 +234,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         this.drawMasterNode(this.context, this.TTcontext, color);
 
         
-        if(ODB.topLevel.HPGeArray == 'TIGRESS'){
+        if(ODB.DAQ.config == 'TIGRESS'){
             //TIGRESS uses simple 1-1 connectors:
             for(i=0; i<codex.nCollectors; i++){
                 //master-collector links///////////////////////////////////////////////
@@ -251,7 +251,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
                 }
 
             }
-        } else if(ODB.topLevel.HPGeArray == 'GRIFFIN'){
+        } else if(ODB.DAQ.config == 'GRIFFIN'){
             //draw combs for each 1-4 connection from master to collectors:
             combWidth = this.masterWidth / (codex.nMasterGroups*1.3 + 0.3);
             for(i=0; i<codex.nMasterGroups; i++){
@@ -497,9 +497,9 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         oldColor = codex.DAQmap[masterID].oldCollectorColor;
         this.drawMasterNode(context, this.TTdetailContext, color); //(use drawMasterNode, looks the same on this view)
 
-        if(ODB.topLevel.HPGeArray == 'TIGRESS'){
+        if(ODB.DAQ.config == 'TIGRESS'){
 
-        } else if(ODB.topLevel.HPGeArray == 'GRIFFIN'){
+        } else if(ODB.DAQ.config == 'GRIFFIN'){
             combWidth = this.masterWidth / (codex.collectorGroupID[masterID].length*1.3 + 0.3);
             //loop over collector groups
             for(i=0; i<codex.collectorGroupID[masterID].length; i++){
@@ -607,7 +607,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         var toolTipContent, key, data = {}, objects = [], masterKey, collectorKey, channelCodes = [], split = [0],
             table, mezRow, mezCell0, mezCell1,
             keys = ['detector','trigRequestRate', 'dataRate'],
-            encodingType = (ODB.topLevel.HPGeArray == 'GRIFFIN') ? 'MSC' : 'FSPC';
+            encodingType = (ODB.DAQ.config == 'GRIFFIN') ? 'MSC' : 'FSPC';
 
         //top level view////////////////////////////////////////////////////////////////////////
         if(window.onDisplay == this.canvasID){
@@ -950,7 +950,7 @@ DAQcodex = function(){
 
     //Parse DAQ Assets///////////////////////////////////////////////////////////////////////
     //pull the FSPC (TIGRESS) or MSC (GRIFFIN) table info in from the ODB
-    if(ODB.HPGeArray == 'TIGRESS'){
+    if(ODB.DAQ.config == 'TIGRESS'){
         this.DAQpath = ['/Analyzer/Parameters/Cathode/Config/Name[*]', '/Analyzer/Parameters/Cathode/Config/FSCP[*]'];       
         this.DAQtable = ODBMGet(this.DAQpath);
     } else {
@@ -971,7 +971,7 @@ DAQcodex = function(){
     //this.DAQmap = {};
     //this.detSummary = {};
 
-    if(ODB.HPGeArray == 'TIGRESS'){
+    if(ODB.DAQ.config == 'TIGRESS'){
         for(i=0; i<this.nRows; i++){
             this.masterChannel = (this.encodedDAQ[i] & 0xFF00000) >> 20;
             this.collectorChannel = (this.encodedDAQ[i] & 0xFFF00) >> 8;
