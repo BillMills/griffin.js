@@ -309,7 +309,7 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         }
 
         if(frame == 0){
-            this.context.clearRect(0, 0, this.margin, this.canvasHeight - this.scaleHeight);
+            this.context.clearRect(0, 0, this.margin-3, this.canvasHeight - this.scaleHeight);
             this.drawScale(this.context);
 
             //labels:

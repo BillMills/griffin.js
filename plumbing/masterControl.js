@@ -175,6 +175,9 @@ function ODBgrab(){
     SIDEBAR, DAQ, HV, CLOCK,
     data;
 
+    //Message service:
+    window.localODB.messages = ODBGetMsg(5);
+
     //sidebar
     SIDEBAR = 0;
     paths[SIDEBAR] = '/Experiment/Name';
@@ -203,44 +206,41 @@ function ODBgrab(){
         paths[CLOCK + i] = '/Equipment/GRIF-Clk'+i+'/Variables/Input[*]';
     }
 
-    data = ODBMGet(paths);
-    //data = JSON.parse(ODBMCopy(paths), null, 'json');
-
+    //data = ODBMGet(paths);
+    data = JSON.parse(ODBMCopy(paths, undefined, 'json'));
+    
     //sidebar
-    window.localODB.expTitle = data[SIDEBAR];
-    window.localODB.runInfo = data[SIDEBAR+1];
-    window.localODB.runstate = data[SIDEBAR+2];
-    window.localODB.startInfo = data[SIDEBAR+3];
-    window.localODB.elapsed = data[SIDEBAR+4];
-    window.localODB.binaryStart = data[SIDEBAR+5];
-    window.localODB.comment = data[SIDEBAR+6];
+    window.localODB.expTitle = data[SIDEBAR]['Name'];
+    window.localODB.runInfo = data[SIDEBAR+1]['Run number'];
+    window.localODB.runstate = data[SIDEBAR+2]['State'];
+    window.localODB.startInfo = data[SIDEBAR+3]['Start time'];
+    window.localODB.elapsed = data[SIDEBAR+4]['Stop time'];
+    window.localODB.binaryStart = data[SIDEBAR+5]['Start time binary'];
+    window.localODB.comment = data[SIDEBAR+6]['Comment'];
     //DAQ
-    window.localODB.TrigEPS = data[DAQ];
-    window.localODB.TrigDPS = data[DAQ+1];
-    window.localODB.EBEPS = data[DAQ+2];
-    window.localODB.EBDPS = data[DAQ+3];  
+    window.localODB.TrigEPS = data[DAQ]['Events per sec.'];
+    window.localODB.TrigDPS = data[DAQ+1]['kBytes per sec.'];
+    window.localODB.EBEPS = data[DAQ+2]['Events per sec.'];
+    window.localODB.EBDPS = data[DAQ+3]['kBytes per sec.'];  
     //HV
     for(k=0; k<window.parameters.moduleSizes.length; k++){  //recall length of module sizes = number of HV crates declared
         window.localODB['HV'+k] = [];
-        window.localODB['HV'+k].reqVoltage      = data[HV + k*window.parameters.ODBkeys.length + 0];
-        window.localODB['HV'+k].measVoltage     = data[HV + k*window.parameters.ODBkeys.length + 1];
-        window.localODB['HV'+k].measCurrent     = data[HV + k*window.parameters.ODBkeys.length + 2];
-        window.localODB['HV'+k].rampUp          = data[HV + k*window.parameters.ODBkeys.length + 3];
-        window.localODB['HV'+k].rampDown        = data[HV + k*window.parameters.ODBkeys.length + 4];
-        window.localODB['HV'+k].measTemperature = data[HV + k*window.parameters.ODBkeys.length + 5];
-        window.localODB['HV'+k].repoChState     = data[HV + k*window.parameters.ODBkeys.length + 6];
-        window.localODB['HV'+k].repoChStatus    = data[HV + k*window.parameters.ODBkeys.length + 7];
-        window.localODB['HV'+k].voltageLimit    = data[HV + k*window.parameters.ODBkeys.length + 8];
-        window.localODB['HV'+k].currentLimit    = data[HV + k*window.parameters.ODBkeys.length + 9];
-        window.localODB['HV'+k].chName          = data[HV + k*window.parameters.ODBkeys.length + 10];      
+        window.localODB['HV'+k].reqVoltage      = data[HV + k*window.parameters.ODBkeys.length + 0]['Demand'];
+        window.localODB['HV'+k].measVoltage     = data[HV + k*window.parameters.ODBkeys.length + 1]['Measured'];
+        window.localODB['HV'+k].measCurrent     = data[HV + k*window.parameters.ODBkeys.length + 2]['Current'];
+        window.localODB['HV'+k].rampUp          = data[HV + k*window.parameters.ODBkeys.length + 3]['Ramp Up Speed'];
+        window.localODB['HV'+k].rampDown        = data[HV + k*window.parameters.ODBkeys.length + 4]['Ramp Down Speed'];
+        window.localODB['HV'+k].measTemperature = data[HV + k*window.parameters.ODBkeys.length + 5]['Temperature'];
+        window.localODB['HV'+k].repoChState     = data[HV + k*window.parameters.ODBkeys.length + 6]['ChState'];
+        window.localODB['HV'+k].repoChStatus    = data[HV + k*window.parameters.ODBkeys.length + 7]['ChStatus'];
+        window.localODB['HV'+k].voltageLimit    = data[HV + k*window.parameters.ODBkeys.length + 8]['Voltage Limit'];
+        window.localODB['HV'+k].currentLimit    = data[HV + k*window.parameters.ODBkeys.length + 9]['Current Limit'];
+        window.localODB['HV'+k].chName          = data[HV + k*window.parameters.ODBkeys.length + 10]['Names'];      
     }    
     //Clock
     for(i=0; i<window.parameters.nClocks; i++){
-        window.localODB['clock'+i] = data[CLOCK+i];
+        window.localODB['clock'+i] = data[CLOCK+i]['Input'];
     }
-
-    //Message service:
-    window.localODB.messages = ODBGetMsg(5);
 
     //Pull the measured voltages and channel names out and pack them along
     //with the JSONP stuff for the subdetector views:
