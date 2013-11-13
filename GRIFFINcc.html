@@ -126,6 +126,9 @@
         //overwrite default parameters with custom ones:
         fetchODB();
 
+        //retitle:
+        document.getElementById('title').innerHTML = ODB.topLevel.HPGeArray;
+
         //autodetect how many clocks are present in the ODB - must be registered under /Equipment/Clock[x], x = 0..23
         for(i=0; i<25; i++){
           paths[i] = '/Equipment/GRIF-Clk'+i+'/Variables/Input[0]';
@@ -317,7 +320,7 @@
 
         document.getElementById('topWrapper').style.height = document.body.scrollHeight
         //inject footer
-        deployFooter();
+        //deployFooter();
 
         startLoop(); 
 

@@ -18,6 +18,7 @@ function deployMenu(targetDivID, headings, titles){
 	for(i=0; i<headings.length; i++){
 		injectDOM('div', headings[i]+'Tab', targetDivID, {'class':'collapsableMenu', 'style':'max-height:50px; text-align:left; margin-top:2%;'});
 		injectDOM('h3', headings[i]+'arrow', headings[i]+'Tab', {
+			'class' : 'dropDownArrow',
 			'style' : 'display:inline; float:left;',
 			'innerHTML' : String.fromCharCode(0x25B6),
 			'onclick' : function(){toggleMenu(targetDivID, headings, this.id)}

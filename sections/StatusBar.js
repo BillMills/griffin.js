@@ -32,7 +32,7 @@ function StatusBar(wrapper){
     injectDOM('input', 'stopButton', 'runControl', {'class':'navLink', 'name':'cmd', 'type':'submit', 'value':'Stop'});
     injectDOM('input', 'pauseButton', 'runControl', {'class':'navLink', 'name':'cmd', 'type':'submit', 'value':'Pause'});
     injectDOM('input', 'resumeButton', 'runControl', {'class':'navLink', 'name':'cmd', 'type':'submit', 'value':'Resume'});
-    injectDOM('input', 'redirKludge', 'runControl', {'name':'redir', 'type':'hidden', 'value':'http://alphadon.triumf.ca:8082/CS/Dashboard'});
+    injectDOM('input', 'redirKludge', 'runControl', {'name':'redir', 'type':'hidden', 'value':'http://'+ODB.topLevel.statusURL+'/CS/Dashboard'});
 
     //Alarm Service
     window.AlarmServices = new AlarmService('leftSidebar', 'leftSidebarDetail');

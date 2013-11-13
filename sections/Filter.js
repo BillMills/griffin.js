@@ -552,7 +552,10 @@ function deployBadgeCanvas(width, height, id, wrapperID, paintThumb, thumbArgs, 
     //bail out if canvas already exists:
     if(document.getElementById(id+wrapperID)) return;
 
-    injectDOM('canvas', id+wrapperID, wrapperID, {'style':'width:'+this.badgeWidth+'px; height:'+this.badgeHeight+'px;'});
+    injectDOM('canvas', id+wrapperID, wrapperID, {
+        'style':'width:'+this.badgeWidth+'px; height:'+this.badgeHeight+'px;',
+        'class' : (draggable) ? 'paleteOption' : ''
+    });
     canvas = document.getElementById(id+wrapperID);
     context = canvas.getContext('2d');
     canvas.setAttribute('width', width);

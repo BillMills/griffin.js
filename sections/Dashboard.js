@@ -105,7 +105,7 @@ function Dashboard(){
     }
     deployMenu(this.sidebarID, subsPresent , subsNames);
 */
-injectDOM('div', this.sidebarID, this.wrapperID, {}); //dummy sidebar for transitions
+    injectDOM('div', this.sidebarID, this.wrapperID, {}); //dummy sidebar for transitions
 
     //add top level nav button:
     injectDOM('button', 'DashboardButton', 'statusLink', {
@@ -142,6 +142,17 @@ injectDOM('div', this.sidebarID, this.wrapperID, {}); //dummy sidebar for transi
                                     parameterDialogue('Dashboard', [ ['Rate', parseFloat(ODB.Dashboard.dashboardMin), parseFloat(ODB.Dashboard.dashboardMax), 'Hz', '/DashboardConfig/Dashboard/dashboardMin', '/DashboardConfig/Dashboard/dashboardMax' ]  ], 'Sunset' );
                                 }
                             };
+
+    this.canvas.onmousemove =   function(event){
+                                    var x, y,
+                                        coords = this.relMouseCoords(event);
+                                    x = coords.x;
+                                    y = coords.y;
+                                    if(y>that.canvasHeight - that.scaleHeight && y<that.canvasHeight - 5 && x>5 && x<that.canvasWidth-5){
+                                        document.body.style.cursor = 'pointer';
+                                    } else
+                                        document.body.style.cursor = 'auto';
+                                }
 
     //drawing parameters:
     this.x0 = this.canvasWidth / 2;

@@ -439,6 +439,16 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
             context.fillRect(this.canvasWidth*0.05 + this.canvasWidth*0.9/1000*(i%1000), this.canvasHeight-this.scaleHeight/2, this.canvasWidth*0.9/1000, 20);
         }
 
+        //make a tooltip hook for the scale; leave a 5px border to kick the cursor back to normal without an onmouseout
+        if(context == this.context){
+            this.TTcontext.fillStyle = 'rgba(254,254,254,1)';
+            this.TTcontext.fillRect(5, this.canvasHeight - this.scaleHeight+5, this.canvasWidth-10, this.canvasHeight-10);
+        } else{
+        //same for the detail view
+            this.TTdetailContext.fillStyle = 'rgba(254,254,254,1)';
+            this.TTdetailContext.fillRect(5, this.canvasHeight - this.scaleHeight+5, this.canvasWidth-10, this.canvasHeight-10);
+        }
+
     };
 
     this.drawMasterNode = function(context, TTcontext, color){
@@ -603,6 +613,9 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         if(window.onDisplay == this.canvasID){
             if(cell == 255){
                 masterSummary();
+            } else if(cell == 254){
+                toolTipContent = 'Click to adjust scale.'
+                document.getElementById(this.tooltip.ttDivID).innerHTML = toolTipContent;
             } else {
                 collectorSummary(cell, 'DAQTT');
             }
@@ -614,7 +627,10 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
             if(cell == 255){
                 collectorSummary(window.DAQdetail, 'DAQTTdetail');
             //digitizers:
-            } else if(cell >= 0 && cell < 255) {
+            } else if(cell == 254){
+                toolTipContent = 'Click to adjust scale.'
+                document.getElementById(this.detailTooltip.ttDivID).innerHTML = toolTipContent;
+            } else if(cell >= 0 && cell < 254) {
                 //title and summary
                 toolTipContent = '<h3>Digitizer on Master Ch. ' + window.DAQdetail + ', Collector Ch. ' + cell + '</h3><br>';
                 toolTipContent += 'Total Trigger Rate: ' + window.codex.DAQmap[masterKey][collectorKey].trigRequestRate.toFixed() + ' Hz<br>';
@@ -1245,10 +1261,10 @@ DAQcodex = function(){
                     name = this.DAQmap[masterKey][collectorKey][digiKey].detector; 
 
                     //get the base per channel data from the JSON store if it exists:
-                    //if(window.JSONPstore['scalar'] && window.JSONPstore['scalar'][name]){
-                        this.DAQmap[masterKey][collectorKey][digiKey].trigRequestRate = Math.random()*1000//window.JSONPstore['scalar'][name]['TRIGREQ'];
-                        this.DAQmap[masterKey][collectorKey][digiKey].dataRate = Math.random()*1000//window.JSONPstore['scalar'][name]['dataRate'];
-                    //}
+                    if(window.JSONPstore['scalar'] && window.JSONPstore['scalar'][name]){
+                        this.DAQmap[masterKey][collectorKey][digiKey].trigRequestRate = window.JSONPstore['scalar'][name]['TRIGREQ'];
+                        this.DAQmap[masterKey][collectorKey][digiKey].dataRate = window.JSONPstore['scalar'][name]['dataRate'];
+                    }
 
                     //add the triggers and data rates from each digitizer to the downstream objects they contribute to:
                     //digitizer trigger rate:

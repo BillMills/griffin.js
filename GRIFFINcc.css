@@ -27,6 +27,10 @@ input, select, button{
 	outline:none;
 }
 
+button:hover{
+	cursor: pointer;
+}
+
 div#topWrapper{
 
 	margin:0px;
@@ -46,7 +50,8 @@ div#branding{
 	border-bottom-width:5px; 
 	border-bottom-left-radius:25px; 
 	background-color:#333333; 
-	margin-bottom:5px; 
+	margin-bottom:5px;
+	margin-top:5px;
 	padding-bottom:5px; 
 	opacity:0;
 }
@@ -414,6 +419,14 @@ button.MFlink{
 
 .navLink:hover, .standardButton:hover{
 	background: #777777;
+}
+
+.navLink:hover, .standardButton:hover, .bigButton:hover, #getChannelButton:hover, .knobStyle:hover, input[type=radio]:hover, select:hover, canvas#DAQdetailCanvas:hover, .toggleSwitch:hover, .dropDownArrow:hover, .scrollArrow:hover{
+	cursor: pointer;
+}
+
+.paleteOption{
+	cursor: move;
 }
 
 .navLinkDown{

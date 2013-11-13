@@ -67,13 +67,12 @@ function Subsystem(){
     //what fraction of the canvas does the scale take up?  need this for onclick behavior:
     this.scaleHeight = this.canvasHeight*0.2;
     //set up scale adjust dialog:
-    
     this.canvas.onclick = function(event){
         var y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;
         if(y > that.canvasHeight - that.scaleHeight)
             parameterDialogue(that.name, [[that.name, ODB[that.name][that.constructMinMaxKey(that.name)][0], ODB[that.name][that.constructMinMaxKey(that.name)][1], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/'+that.name+'/'+scaleType()+'[0]', '/DashboardConfig/'+that.name+'/'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.state.subdetectorView]);
     }
-    
+
     //member functions
     //construct the key pointing to the display min and max of detector
     this.constructMinMaxKey = function(detector){
@@ -184,6 +183,15 @@ function Subsystem(){
             if(window.state.subdetectorView == 1 || window.state.subdetectorView == 3) context.fillStyle = scalepickr((i%colorSteps)/colorSteps, window.parameters.subdetectorColors[1]);
             if(window.state.subdetectorView == 2 || window.state.subdetectorView == 4) context.fillStyle = scalepickr((i%colorSteps)/colorSteps, window.parameters.subdetectorColors[2]);
             context.fillRect(this.canvasWidth*(1-scaleFraction)/2 + this.canvasWidth*scaleFraction/colorSteps*(i%colorSteps), this.canvasHeight-this.scaleHeight/2-20, this.canvasWidth*scaleFraction/colorSteps, 20);
+        }
+
+        //make a tooltip hook for the scale; leave a 5px border to kick the cursor back to normal without an onmouseout 
+        this.TTcontext.fillStyle = 'rgba(255,255,255,1)';
+        this.TTcontext.fillRect(5, this.canvasHeight - this.scaleHeight+5, this.canvasWidth-10, this.canvasHeight-10);
+        //same for the detail view
+        if(this.TTdetailContext){
+            this.TTdetailContext.fillStyle = 'rgba(255,255,255,1)';
+            this.TTdetailContext.fillRect(5, this.canvasHeight - this.scaleHeight+5, this.canvasWidth-10, this.canvasHeight-10);
         }
 
     };
@@ -352,12 +360,16 @@ function Subsystem(){
         
         var key, nextLine, toolTipContent;
 
-        toolTipContent = '<br>'
-        key = this.dataBus.TTmap[cell];
-        nextLine = key;
-        toolTipContent += nextLine + '<br><br>';
-        toolTipContent += this.baseTTtext(this.dataBus[this.name][key].HV, this.dataBus[this.name][key].threshold, this.dataBus[this.name][key].rate);
-        toolTipContent += '<br><br>'
+        if(cell == 255){
+            toolTipContent = '<br>Click to adjust scale.<br><br>'
+        } else {
+            toolTipContent = '<br>'
+            key = this.dataBus.TTmap[cell];
+            nextLine = key;
+            toolTipContent += nextLine + '<br><br>';
+            toolTipContent += this.baseTTtext(this.dataBus[this.name][key].HV, this.dataBus[this.name][key].threshold, this.dataBus[this.name][key].rate);
+            toolTipContent += '<br><br>';
+        }
 
         document.getElementById(this.tooltip.ttDivID).innerHTML = toolTipContent;
         
@@ -1045,84 +1057,92 @@ function HPGeAssets(){
 
         if(!this.detailShowing) {
 
-            cloverNumber = Math.floor((cell-100)/8);
-            cloverName = pfx+'G'+((cloverNumber<10) ? '0'+cloverNumber : cloverNumber );  //will match the HPGe summary ID of this clover
-            if(this.cloversAbsent.indexOf(cloverNumber) == -1){  //not in the absentee list
-                quadrant = ((cell-100)%8)%4;
-                if (quadrant==2) quadrant = 3;
-                else if(quadrant==3) quadrant = 2;
-                //HPGE
-                if( (cell-100)%8 < 4 ){
-                    if(this.mode == 'GRIFFIN'){
-                        segA = cloverName+this.dataBus.colorQuads[quadrant]+'N00A';
-                        segB = cloverName+this.dataBus.colorQuads[quadrant]+'N00B';
+            if(cell == 255){
+                toolTipContent = '<br>Click to adjust scale.'
+            } else{
+                cloverNumber = Math.floor((cell-100)/8);
+                cloverName = pfx+'G'+((cloverNumber<10) ? '0'+cloverNumber : cloverNumber );  //will match the HPGe summary ID of this clover
+                if(this.cloversAbsent.indexOf(cloverNumber) == -1){  //not in the absentee list
+                    quadrant = ((cell-100)%8)%4;
+                    if (quadrant==2) quadrant = 3;
+                    else if(quadrant==3) quadrant = 2;
+                    //HPGE
+                    if( (cell-100)%8 < 4 ){
+                        if(this.mode == 'GRIFFIN'){
+                            segA = cloverName+this.dataBus.colorQuads[quadrant]+'N00A';
+                            segB = cloverName+this.dataBus.colorQuads[quadrant]+'N00B';
 
-                        //report segment A:
-                        nextLine = segA;
-                        toolTipContent = '<br>' + nextLine + '<br>';
-                        toolTipContent += this.baseTTtext(this.dataBus.HPGe[segA].HV, this.dataBus.HPGe[segA].threshold, this.dataBus.HPGe[segA].rate)
+                            //report segment A:
+                            nextLine = segA;
+                            toolTipContent = '<br>' + nextLine + '<br>';
+                            toolTipContent += this.baseTTtext(this.dataBus.HPGe[segA].HV, this.dataBus.HPGe[segA].threshold, this.dataBus.HPGe[segA].rate)
 
-                        //report segment B:
-                        nextLine = segB;
-                        toolTipContent += '<br><br>' + nextLine + '<br>';
-                        toolTipContent += this.baseTTtext(this.dataBus.HPGe[segA].HV, this.dataBus.HPGe[segB].threshold, this.dataBus.HPGe[segB].rate)
-                    } else if(this.mode == 'TIGRESS'){
-                        createTIGRESSsummaryTT(this.tooltip.ttDivID, cloverName+this.dataBus.colorQuads[quadrant], this.dataBus);
+                            //report segment B:
+                            nextLine = segB;
+                            toolTipContent += '<br><br>' + nextLine + '<br>';
+                            toolTipContent += this.baseTTtext(this.dataBus.HPGe[segA].HV, this.dataBus.HPGe[segB].threshold, this.dataBus.HPGe[segB].rate)
+                        } else if(this.mode == 'TIGRESS'){
+                            createTIGRESSsummaryTT(this.tooltip.ttDivID, cloverName+this.dataBus.colorQuads[quadrant], this.dataBus);
+                        }
+                    //BGO 
+                    } else {
+                        cloverName = pfx+'S'+((cloverNumber<10) ? '0'+cloverNumber : cloverNumber );
+                        toolTipContent = '';
+                        for(i=1; i<6; i++){
+                            BGO[i] = cloverName+this.dataBus.colorQuads[quadrant]+'N0'+i+'X';
+                            toolTipContent += ((i==1) ? '<br>' : '<br><br>') + BGO[i] + '<br>';
+                            toolTipContent += this.baseTTtext(this.dataBus.HPGe[BGO[i]].HVA, this.dataBus.HPGe[BGO[i]].threshold, this.dataBus.HPGe[BGO[i]].rate, this.dataBus.HPGe[BGO[i]].HVB);
+                        }
                     }
-                //BGO 
                 } else {
-                    cloverName = pfx+'S'+((cloverNumber<10) ? '0'+cloverNumber : cloverNumber );
-                    toolTipContent = '';
-                    for(i=1; i<6; i++){
-                        BGO[i] = cloverName+this.dataBus.colorQuads[quadrant]+'N0'+i+'X';
-                        toolTipContent += ((i==1) ? '<br>' : '<br><br>') + BGO[i] + '<br>';
-                        toolTipContent += this.baseTTtext(this.dataBus.HPGe[BGO[i]].HVA, this.dataBus.HPGe[BGO[i]].threshold, this.dataBus.HPGe[BGO[i]].rate, this.dataBus.HPGe[BGO[i]].HVB);
-                    }
+                    toolTipContent = '<br>'+cloverName + ' absent.'
                 }
-            } else {
-                toolTipContent = '<br>'+cloverName + ' absent.'
             }
         }
         //HPGe detail level///////////////////////////////////////////////
         else{
-            //HV view decodes detector from cell index algorithmically; rate view uses lookup table from DataStructures.  Haven't decided which I dislike less.
-            if(window.state.subdetectorView == 0){ 
-                toolTipContent = cell;
-                cloverName = pfx+'S'+((this.cloverShowing<10) ? '0'+this.cloverShowing : this.cloverShowing);
-                //HPGe, front, side or back BGO?
-                if(cell<4){
-                    cloverName = pfx+'G'+((this.cloverShowing<10) ? '0'+this.cloverShowing : this.cloverShowing);
-                    detName = cloverName+this.dataBus.colorQuads[cell]+'N00A';
-                    title = detName.slice(0,9) + 'X';
-                    nextLine = this.TTtext([['HV',this.dataBus.HPGe[detName].HV,window.parameters.subdetectorUnit[0]],['Thresholds-A',this.dataBus.HPGe[detName].threshold,window.parameters.subdetectorUnit[1]],['Thresholds-B',this.dataBus.HPGe[detName.slice(0,9)+'B'].threshold,window.parameters.subdetectorUnit[1]],['Rate-A',this.dataBus.HPGe[detName].rate,window.parameters.subdetectorUnit[2]],['Rate-B',this.dataBus.HPGe[detName.slice(0,9)+'B'].rate,window.parameters.subdetectorUnit[2]]]);
-                } else if(cell<12){ //back
-                    detName = cloverName+this.dataBus.colorQuads[Math.floor((cell-4)/2)]+'N05X';
-                } else if(cell<28){ //sides
-                    suffix = (Math.floor( ((cell-12)%4) /2) == 0) ? 'N03X' : 'N04X';
-                    detName = cloverName+this.dataBus.colorQuads[Math.floor((cell-12)/4)]+suffix;
-                } else{ //front
-                    suffix = (Math.floor( ((cell-28)%4) /2) == 0) ? 'N01X' : 'N02X';
-                    detName = cloverName+this.dataBus.colorQuads[Math.floor((cell-28)/4)]+suffix;
-                }
-                if(cell>3){
-                    ABX = (cell%2 == 0) ? 'A' : 'B';
-                    title = detName.slice(0,9) + ABX;
-                    nextLine = this.baseTTtext(this.dataBus.HPGe[detName]['HV'+ABX], this.dataBus.HPGe[detName].threshold, this.dataBus.HPGe[detName].rate );
-                }
-
-                toolTipContent = '<br>' + title + '<br><br>' + nextLine;
-
+            if(cell == 255){
+                toolTipContent = '<br>Click to adjust scale.'
             } else {
-                
-                channelName = this.dataBus.HPGeTTmap[(this.cloverShowing-1)*((this.mode=='TIGRESS')? 60:30) + cell];
-                detName = channelName.slice(0,5);
+                //HV view decodes detector from cell index algorithmically; rate view uses lookup table from DataStructures.  Haven't decided which I dislike less.
+                if(window.state.subdetectorView == 0){ 
+                    toolTipContent = cell;
+                    cloverName = pfx+'S'+((this.cloverShowing<10) ? '0'+this.cloverShowing : this.cloverShowing);
+                    //HPGe, front, side or back BGO?
+                    if(cell<4){
+                        cloverName = pfx+'G'+((this.cloverShowing<10) ? '0'+this.cloverShowing : this.cloverShowing);
+                        detName = cloverName+this.dataBus.colorQuads[cell]+'N00A';
+                        title = detName.slice(0,9) + 'X';
+                        nextLine = this.TTtext([['HV',this.dataBus.HPGe[detName].HV,window.parameters.subdetectorUnit[0]],['Thresholds-A',this.dataBus.HPGe[detName].threshold,window.parameters.subdetectorUnit[1]],['Thresholds-B',this.dataBus.HPGe[detName.slice(0,9)+'B'].threshold,window.parameters.subdetectorUnit[1]],['Rate-A',this.dataBus.HPGe[detName].rate,window.parameters.subdetectorUnit[2]],['Rate-B',this.dataBus.HPGe[detName.slice(0,9)+'B'].rate,window.parameters.subdetectorUnit[2]]]);
+                    } else if(cell<12){ //back
+                        detName = cloverName+this.dataBus.colorQuads[Math.floor((cell-4)/2)]+'N05X';
+                    } else if(cell<28){ //sides
+                        suffix = (Math.floor( ((cell-12)%4) /2) == 0) ? 'N03X' : 'N04X';
+                        detName = cloverName+this.dataBus.colorQuads[Math.floor((cell-12)/4)]+suffix;
+                    } else{ //front
+                        suffix = (Math.floor( ((cell-28)%4) /2) == 0) ? 'N01X' : 'N02X';
+                        detName = cloverName+this.dataBus.colorQuads[Math.floor((cell-28)/4)]+suffix;
+                    }
+                    if(cell>3){
+                        ABX = (cell%2 == 0) ? 'A' : 'B';
+                        title = detName.slice(0,9) + ABX;
+                        nextLine = this.baseTTtext(this.dataBus.HPGe[detName]['HV'+ABX], this.dataBus.HPGe[detName].threshold, this.dataBus.HPGe[detName].rate );
+                    }
 
-                toolTipContent = '<br>' + channelName + '<br><br>';
-                if(detName.slice(2,3) == 'G')
-                    toolTipContent += this.baseTTtext(this.dataBus.HPGe[channelName].HV, this.dataBus.HPGe[channelName].threshold, this.dataBus.HPGe[channelName].rate);
-                else if(detName.slice(2,3) == 'S')
-                    toolTipContent += this.baseTTtext(this.dataBus.HPGe[channelName].HVA, this.dataBus.HPGe[channelName].threshold, this.dataBus.HPGe[channelName].rate, this.dataBus.HPGe[channelName].HVB);
-                
+                    toolTipContent = '<br>' + title + '<br><br>' + nextLine;
+
+                } else {
+                    
+                    channelName = this.dataBus.HPGeTTmap[(this.cloverShowing-1)*((this.mode=='TIGRESS')? 60:30) + cell];
+                    detName = channelName.slice(0,5);
+
+                    toolTipContent = '<br>' + channelName + '<br><br>';
+                    if(detName.slice(2,3) == 'G')
+                        toolTipContent += this.baseTTtext(this.dataBus.HPGe[channelName].HV, this.dataBus.HPGe[channelName].threshold, this.dataBus.HPGe[channelName].rate);
+                    else if(detName.slice(2,3) == 'S')
+                        toolTipContent += this.baseTTtext(this.dataBus.HPGe[channelName].HVA, this.dataBus.HPGe[channelName].threshold, this.dataBus.HPGe[channelName].rate, this.dataBus.HPGe[channelName].HVB);
+                    
+                }
             }
         }
 

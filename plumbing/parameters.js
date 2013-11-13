@@ -2,7 +2,7 @@ function loadParameters(){
 
 				window.parameters = {
 				//global
-				"devMode" : 1,
+				"devMode" : 0,
 				"topDeployment" : {"HV":1, "Subsystems":1, "DAQ":1, "Clock":1, "Filter":1, "VME":1, "Cycle":1},
 				"wrapper" : "topWrapper",
 				"tooltipPrecision" : 0,

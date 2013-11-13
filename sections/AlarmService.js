@@ -165,7 +165,7 @@ function AlarmService(sidebarDivID, sidebarDetailDivID){
     		$('#alarmDetailButton').css('background-color', '#999999');
     	}
 
-    	//document.getElementById(this.pID).innerHTML = alarmText;
+    	alarmText += '<br><h4 style="text-align:center">Click to Dismiss</h4>'
     	this.updateText(alarmText);
     };
 
