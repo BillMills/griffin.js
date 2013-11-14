@@ -539,10 +539,10 @@ function glowy(canvasID){
 }
 
 //cycle badges/////////////////////////////////////////////////////
-function clearScalars(context, height, x0, y0){
+function clearScalars(context, height, width){
 	context.fillStyle = '#999999';
-	digitalDigit([1,1,1,1,1,1,1], context, height, x0, y0)
-
+	digitalDigit([1,1,1,1,1,1,0], context, height, 0.2*width, 0.05*height);
+	digitalDigit([1,1,1,1,1,1,0], context, height, 0.65*width, 0.05*height);
 }
 
 function moveTape(context, width, height, x0, y0){

@@ -827,6 +827,10 @@ function digitalDigit(cells, context, height, x0, y0){
         width = 0.5*height,
         cellHeight = 0.5*height;
 
+    context.save();
+    context.setTransform(1, -Math.tan(Math.PI/12), 0, 1, 0, 0);
+    context.rotate(Math.tan(Math.PI/12));
+
     if(cells[0]){
         context.beginPath();
         context.moveTo(x0+cellWidth, y0);
@@ -866,6 +870,40 @@ function digitalDigit(cells, context, height, x0, y0){
         context.closePath();
         context.fill();
     }
+
+    if(cells[4]){
+        context.beginPath();
+        context.moveTo(x0, y0+3*cellWidth+cellHeight);
+        context.lineTo(x0, y0+3*cellWidth+2*cellHeight);
+        context.lineTo(x0+cellWidth, y0+2*cellWidth+2*cellHeight);
+        context.lineTo(x0+cellWidth, y0+4*cellWidth+cellHeight);
+        context.closePath();
+        context.fill();
+    }
+
+    if(cells[5]){
+        context.beginPath();
+        context.moveTo(x0, y0+cellWidth+cellHeight);
+        context.lineTo(x0, y0+cellWidth);
+        context.lineTo(x0+cellWidth, y0+2*cellWidth);
+        context.lineTo(x0+cellWidth, y0+cellHeight);
+        context.closePath();
+        context.fill();
+    }
+
+    if(cells[6]){
+        context.beginPath();
+        context.moveTo(x0+cellWidth, y0+2*cellWidth+cellHeight);
+        context.lineTo(x0+2*cellWidth, y0+1.5*cellWidth+cellHeight);
+        context.lineTo(x0+width, y0+1.5*cellWidth+cellHeight);
+        context.lineTo(x0+width+cellWidth, y0+2*cellWidth+cellHeight);
+        context.lineTo(x0+width, y0+2.5*cellWidth+cellHeight);
+        context.lineTo(x0+2*cellWidth, y0+2.5*cellWidth+cellHeight);
+        context.closePath();
+        context.fill();
+    }
+
+    context.restore();
 
 }
 
