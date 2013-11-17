@@ -1158,9 +1158,9 @@ function HPGeAssets(){
         injectDOM('tr', 'coreVolt', 'tigressTTtable', {});
         injectDOM('td', 'coreVoltTitle', 'coreVolt', {'style':'text-align:right', 'innerHTML':window.parameters.monitorValues[0]});
         injectDOM('td', 'spacer', 'coreVolt', {'style':'width:10px;'});
-        injectDOM('td', 'coreAhv', 'coreVolt', {'innerHTML':dataBus.HPGe[cloverLeaf+'N00A'].HV.toFixed(0) + ' ' + window.parameters.subdetectorUnit[0]});
+        injectDOM('td', 'coreAhv', 'coreVolt', {'innerHTML':( (dataBus.HPGe[cloverLeaf+'N00A'].HV < 0xDEADBEEF) ? dataBus.HPGe[cloverLeaf+'N00A'].HV.toFixed(0) + ' ' + window.parameters.subdetectorUnit[0] : 'Not Reporting')});
         injectDOM('td', 'spacer', 'coreVolt', {'style':'width:50px;'});
-        injectDOM('td', 'coreBhv', 'coreVolt', {'innerHTML':dataBus.HPGe[cloverLeaf+'N00B'].HV.toFixed(0) + ' ' + window.parameters.subdetectorUnit[0]});
+        injectDOM('td', 'coreBhv', 'coreVolt', {'innerHTML':( (dataBus.HPGe[cloverLeaf+'N00B'].HV < 0xDEADBEEF) ? dataBus.HPGe[cloverLeaf+'N00B'].HV.toFixed(0) + ' ' + window.parameters.subdetectorUnit[0] : 'Not Reporting')});
 
         injectDOM('tr', 'coreThreshold', 'tigressTTtable', {});
         injectDOM('td', 'coreThresholdTitle', 'coreThreshold', {'style':'text-align:right;', 'innerHTML':window.parameters.monitorValues[1]});
@@ -1194,9 +1194,9 @@ function HPGeAssets(){
             injectDOM('tr', elt+'Volt', 'tigressTTtable', {});
             injectDOM('td', elt+'VoltTitle', elt+'Volt', {'style':'text-align:right;', 'innerHTML':window.parameters.monitorValues[0]});
             injectDOM('td', 'spacer', elt+'Volt', {'style':'width:10px;'});
-            injectDOM('td', elt+'Ahv', elt+'Volt', {'innerHTML':dataBus.HPGe[eltName1].HV.toFixed(0) + ' ' + window.parameters.subdetectorUnit[0]});
+            injectDOM('td', elt+'Ahv', elt+'Volt', {'innerHTML':((dataBus.HPGe[eltName1].HV < 0xDEADBEEF) ? dataBus.HPGe[eltName1].HV.toFixed(0) + ' ' + window.parameters.subdetectorUnit[0] : 'Not Reporting')});
             injectDOM('td', 'spacer', elt+'Volt', {'style':'width:50px;'});
-            injectDOM('td', elt+'Bhv', elt+'Volt', {'innerHTML':dataBus.HPGe[eltName2].HV.toFixed(0) + ' ' + window.parameters.subdetectorUnit[0]});
+            injectDOM('td', elt+'Bhv', elt+'Volt', {'innerHTML':((dataBus.HPGe[eltName1].HV < 0xDEADBEEF) ? dataBus.HPGe[eltName2].HV.toFixed(0) + ' ' + window.parameters.subdetectorUnit[0] : 'Not Reporting')});
 
             injectDOM('tr', elt+'Threshold', 'tigressTTtable', {});
             injectDOM('td', elt+'ThresholdTitle', elt+'Threshold', {'style':'text-align:right;', 'innerHTML':window.parameters.monitorValues[1]});

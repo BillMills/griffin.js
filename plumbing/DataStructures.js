@@ -111,8 +111,8 @@ function cloverDS(nClovers, mode){
 				if(k==4) ID = ((mode== 'TIGRESS')? 44:12)+2*j;
 				if(k==5) ID = ((mode== 'TIGRESS')? 40:8)+j; 		//back suppressors
 				this.HPGe[pfx+'S'+( (i<10) ? '0'+i : i)+this.colorQuads[j]+'N0'+k+'X'] = {
-				'HVA'		: 0,		//each rate channel has two HV hookups.
-				'HVB'		: 0,
+				'HVA'		: 0xDEADBEEF,		//each rate channel has two HV hookups.
+				'HVB'		: 0xDEADBEEF,
 				'threshold' : 0,
 				'rate'		: 0,
 				'index'		: ID+((mode== 'TIGRESS')? 60:30)*(i-1),
