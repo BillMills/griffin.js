@@ -33,7 +33,7 @@ function Clock(){
     }    
     //inject table for CSAC tab:
     injectDOM('table', 'CSACContentTable', 'CSACContent', {'class' : 'sidebarTable'});
-    for(i=41; i<52; i++){
+    for(i=43; i<54; i++){
         label = window.parameters.clockVariableNames[i];
         injectDOM('tr', 'CSACContentRow'+i, 'CSACContentTable', {});
         injectDOM('td', 'clockCSACLabel'+i, 'CSACContentRow'+i, {'innerHTML' : label});
@@ -53,7 +53,7 @@ function Clock(){
     document.getElementById('outsContentLabel').setAttribute('for', 'outsContentmasterStepdownSlider');
     document.getElementById('outsContentmasterStepdownSlider').setAttribute('min', 1); 
     document.getElementById('outsContentmasterStepdownSlider').setAttribute('max', 10);
-    document.getElementById('outsContentmasterStepdownSlider').setAttribute('value', 11-parseInt(window.localODB['clock'+0][9],10) );
+    document.getElementById('outsContentmasterStepdownSlider').setAttribute('value', 11-parseInt(window.localODB['clock'+0][11],10) );
     document.getElementById('outsContentLabel').innerHTML = (this.masterFreq / (1-(document.getElementById('outsContentmasterStepdownSlider').valueAsNumber - parseInt(document.getElementById('outsContentmasterStepdownSlider').max,10)-1))).toFixed(1) + ' MHz';
     document.getElementById('outsContentmasterStepdownSlider').onchange = function(){
         var stepdown = -(this.valueAsNumber - parseInt(this.max,10)-1),
@@ -71,8 +71,8 @@ function Clock(){
             masterConfig[i] = window.localODB[window.clockPointer.activeElt][i];
         }
         for(i=0; i<8; i++){
-            masterConfig[9+4*i] = stepdown;
-            masterConfig[10+4*i] = stepdown;
+            masterConfig[11+4*i] = stepdown;
+            masterConfig[12+4*i] = stepdown;
         }
         ODBSet('/Equipment/GRIF-Clk'+window.clockPointer.activeElt.slice(5, window.clockPointer.activeElt.length)+'/Variables/Input[*]', masterConfig);
         window.localODB[window.clockPointer.activeElt] = masterConfig;
@@ -195,27 +195,27 @@ function Clock(){
                 if(clockData[2] != 1) flag = 1;     //Master has NIM input
                 if(clockData[3] != 1) flag = 1;     //Master has NIM input
                 //if(clockData[4] != 1) flag = 1;     //Master has NIM input
-                if(clockData[11] != 0) flag = 1;    //Master should not bypass itelf on any channel:
-                if(clockData[15] != 0) flag = 1;
-                if(clockData[19] != 0) flag = 1;
-                if(clockData[23] != 0) flag = 1;
-                if(clockData[27] != 0) flag = 1;
-                if(clockData[31] != 0) flag = 1;
-                if(clockData[35] != 0) flag = 1;
-                if(clockData[39] != 0) flag = 1;
+                if(clockData[13] != 0) flag = 1;    //Master should not bypass itelf on any channel:
+                if(clockData[17] != 0) flag = 1;
+                if(clockData[21] != 0) flag = 1;
+                if(clockData[25] != 0) flag = 1;
+                if(clockData[29] != 0) flag = 1;
+                if(clockData[33] != 0) flag = 1;
+                if(clockData[37] != 0) flag = 1;
+                if(clockData[41] != 0) flag = 1;
             } else {  //check that something that says it's a slave looks like a slave.
                 flag = 0;
                 if(clockData[2] != 0) flag = 2;     //Master has NIM input
                 if(clockData[3] != 0) flag = 2;     //Master has NIM input
                 //if(clockData[4] != 0) flag = 2;     //Master has NIM input
-                if(clockData[11] != 1) flag = 2;    //Master should not bypass itelf on any channel:
-                if(clockData[15] != 1) flag = 2;
-                if(clockData[19] != 1) flag = 2;
-                if(clockData[23] != 1) flag = 2;
-                if(clockData[27] != 1) flag = 2;
-                if(clockData[31] != 1) flag = 2;
-                if(clockData[35] != 1) flag = 2;
-                if(clockData[39] != 1) flag = 2;
+                if(clockData[13] != 1) flag = 2;    //Master should not bypass itelf on any channel:
+                if(clockData[17] != 1) flag = 2;
+                if(clockData[21] != 1) flag = 2;
+                if(clockData[25] != 1) flag = 2;
+                if(clockData[29] != 1) flag = 2;
+                if(clockData[33] != 1) flag = 2;
+                if(clockData[37] != 1) flag = 2;
+                if(clockData[41] != 1) flag = 2;
             }
             if(flag==1){
                 alarmString = 'GRIF-Clk '+i+' claims to be a Master, but some of its parameters make it look like a Slave.<br>'  
@@ -247,14 +247,14 @@ function setMaster(n){
     masterConfig[2] = 1;
     masterConfig[3] = 1;
     //masterConfig[4] = 1;
-    masterConfig[11] = 0;
-    masterConfig[15] = 0;
-    masterConfig[19] = 0;
-    masterConfig[23] = 0;
-    masterConfig[27] = 0;
-    masterConfig[31] = 0;
-    masterConfig[35] = 0;
-    masterConfig[39] = 0;
+    masterConfig[13] = 0;
+    masterConfig[17] = 0;
+    masterConfig[21] = 0;
+    masterConfig[25] = 0;
+    masterConfig[29] = 0;
+    masterConfig[33] = 0;
+    masterConfig[37] = 0;
+    masterConfig[41] = 0;
 
     ODBSet('/Equipment/GRIF-Clk'+n+'/Variables/Input[*]', masterConfig);
     window.localODB['clock'+n] = masterConfig;
@@ -270,14 +270,14 @@ function setSlave(n){
     slaveConfig[2] = 0;
     slaveConfig[3] = 0;
     //slaveConfig[4] = 0;
-    slaveConfig[11] = 1;
-    slaveConfig[15] = 1;
-    slaveConfig[19] = 1;
-    slaveConfig[23] = 1;
-    slaveConfig[27] = 1;
-    slaveConfig[31] = 1;
-    slaveConfig[35] = 1;
-    slaveConfig[39] = 1;
+    slaveConfig[13] = 1;
+    slaveConfig[17] = 1;
+    slaveConfig[21] = 1;
+    slaveConfig[25] = 1;
+    slaveConfig[29] = 1;
+    slaveConfig[33] = 1;
+    slaveConfig[37] = 1;
+    slaveConfig[41] = 1;
 
     ODBSet('/Equipment/GRIF-Clk'+n+'/Variables/Input[*]', slaveConfig);
     window.localODB['clock'+n] = slaveConfig;
@@ -408,21 +408,21 @@ function showClock(id){
         }
     }
 
-    document.getElementById('bypassReport0').innerHTML = 'Bypass: ' + humanReadableClock(11, window.localODB[id][11]);
-    document.getElementById('bypassReport1').innerHTML = 'Bypass: ' + humanReadableClock(15, window.localODB[id][15]);
-    document.getElementById('bypassReport2').innerHTML = 'Bypass: ' + humanReadableClock(19, window.localODB[id][19]);
-    document.getElementById('bypassReport3').innerHTML = 'Bypass: ' + humanReadableClock(23, window.localODB[id][23]);
-    document.getElementById('bypassReport4').innerHTML = 'Bypass: ' + humanReadableClock(27, window.localODB[id][27]);
-    document.getElementById('bypassReport5').innerHTML = 'Bypass: ' + humanReadableClock(39, window.localODB[id][39]);
-    document.getElementById('bypassReport6').innerHTML = 'Bypass: ' + humanReadableClock(31, window.localODB[id][31]);
-    document.getElementById('bypassReport7').innerHTML = 'Bypass: ' + humanReadableClock(35, window.localODB[id][35]);
+    document.getElementById('bypassReport0').innerHTML = 'Bypass: ' + humanReadableClock(13, window.localODB[id][13]);
+    document.getElementById('bypassReport1').innerHTML = 'Bypass: ' + humanReadableClock(17, window.localODB[id][17]);
+    document.getElementById('bypassReport2').innerHTML = 'Bypass: ' + humanReadableClock(21, window.localODB[id][21]);
+    document.getElementById('bypassReport3').innerHTML = 'Bypass: ' + humanReadableClock(25, window.localODB[id][25]);
+    document.getElementById('bypassReport4').innerHTML = 'Bypass: ' + humanReadableClock(29, window.localODB[id][29]);
+    document.getElementById('bypassReport5').innerHTML = 'Bypass: ' + humanReadableClock(41, window.localODB[id][41]);
+    document.getElementById('bypassReport6').innerHTML = 'Bypass: ' + humanReadableClock(33, window.localODB[id][33]);
+    document.getElementById('bypassReport7').innerHTML = 'Bypass: ' + humanReadableClock(37, window.localODB[id][37]);
 
     //make sure the LEMO badges match width with the rest:
     document.getElementById('outsContentBadge6').style.minWidth = document.getElementById('outsContentBadge4').offsetWidth;
     document.getElementById('outsContentBadge7').style.minWidth = document.getElementById('outsContentBadge5').offsetWidth;
 
     //CSAC parameters
-    for(i=41; i<52; i++){
+    for(i=43; i<54; i++){
         value = humanReadableClock(i, window.localODB[id][i]);
         document.getElementById('clockCSACValue'+i).innerHTML = value;
     }
@@ -446,9 +446,9 @@ function humanReadableClock(i, v){
         return (parseInt(v,10)) ? 'LEMO' : 'Atomic Clock'
     else if(i>4 && i<9)
         return (parseInt(v,10)) ? 'Present' : 'Absent';
-    else if(i==11 || i==15 || i==19 || i==23 || i==27 || i==31 || i==35 || i==39)
+    else if(i==13 || i==17 || i==21 || i==25 || i==29 || i==33 || i==37 || i==41)
         return (parseInt(v,10)) ? 'Yes' : 'No';
-    else if(i==41)
+    else if(i==43)
         return (parseInt(v,10)) ? 'Up' : 'Down';
     else
         return v;

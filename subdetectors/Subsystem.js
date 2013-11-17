@@ -279,29 +279,21 @@ function Subsystem(){
         for(key in this.dataBus[this.name]){
             //thresholds
             this.dataBus[this.name][key]['threshold'] = 0xDEADBEEF; 
-            if(window.JSONPstore['thresholds']){
-                if(typeof window.JSONPstore['thresholds'][key] == 'number')
-                    this.dataBus[this.name][key]['threshold'] = window.JSONPstore['thresholds'][key];
+            if(window.JSONPstore['thresholds'] && typeof window.JSONPstore['thresholds'][key] == 'number'){
+                this.dataBus[this.name][key]['threshold'] = window.JSONPstore['thresholds'][key];
             }
                    
             //rates
             this.dataBus[this.name][key]['rate'] = 0xDEADBEEF;
-            if(window.JSONPstore['scalar']){
-                if(window.JSONPstore['scalar'][key]){
-                    if(typeof window.JSONPstore['scalar'][key]['TRIGREQ'] == 'number'){
-                        this.dataBus[this.name][key]['rate'] = window.JSONPstore['scalar'][key]['TRIGREQ'];
-                        this.dataBus.totalRate += window.JSONPstore['scalar'][key]['TRIGREQ'];
-                    }
-                }
+            if(window.JSONPstore['scalar'] && window.JSONPstore['scalar'][key] && typeof window.JSONPstore['scalar'][key]['TRIGREQ'] == 'number'){
+                this.dataBus[this.name][key]['rate'] = window.JSONPstore['scalar'][key]['TRIGREQ'];
+                this.dataBus.totalRate += window.JSONPstore['scalar'][key]['TRIGREQ'];
             }
 
             //HV
             this.dataBus[this.name][key]['HV'] = 0xDEADBEEF;
-            if(window.JSONPstore['HV']){
-                if(window.JSONPstore['HV'][key]){
-                    if(typeof window.JSONPstore['HV'][key] == 'number')
-                        this.dataBus[this.name][key]['HV'] = window.JSONPstore['HV'][key];
-                }
+            if(window.JSONPstore['HV'] && typeof window.JSONPstore['HV'][key] == 'number'){
+                this.dataBus[this.name][key]['HV'] = window.JSONPstore['HV'][key];
             }
 
         }

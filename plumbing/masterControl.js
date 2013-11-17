@@ -250,7 +250,6 @@ function ODBgrab(){
             window.JSONPstore.HV[window.localODB['HV'+k].chName[i].toUpperCase()] = parseFloat(window.localODB['HV'+k].measVoltage[i]);
         }
     }
-
 }
 
 //handle pulling the initial config parameters out of the ODB and replacing the default values in the JSONP-loaded parameter store:
