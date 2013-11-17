@@ -573,22 +573,73 @@ function beamOn(context, width, height, x0, y0){
 }
 
 function triggersOn(context, width, height, x0, y0){
-	context.beginPath();
-	context.arc(x0,y0, height*0.3, 0, Math.PI*2);
+	//fingernail
+	context.moveTo(width*0.5, height*0.3);
+	context.quadraticCurveTo(width*0.52, height*0.32, width*0.6, height*0.35);
+	context.quadraticCurveTo(width*0.52, height*0.37, width*0.5, height*0.3)
+
+	//finger top
+	context.moveTo(width*0.5, height*0.3);
+	context.quadraticCurveTo(width*0.5*0.9, height*0.3*0.9, -2*width, -width);
 	context.stroke();
-	context.closePath();
+
+	//finger bottom
+	context.moveTo(width*0.6, height*0.35);
+	context.quadraticCurveTo(width*0.55, height*0.6, -2*width, -width);
+	context.stroke();
+
+	//switch
+	context.moveTo(0, height*0.7);
+	context.lineTo(width, height*0.7);
+	context.moveTo(0.3*width, height*0.7);
+	context.lineTo(0.3*width, height*0.5);
+	context.quadraticCurveTo(0.5*width, height*0.55, 0.7*width, height*0.5);
+	context.lineTo(0.7*width, 0.7*height);
+
+	//arrow
+	context.moveTo(0.5*width, 0.6*height);
+	context.lineTo(0.9*width, 0.6*height);
+	context.lineTo(0.85*width, 0.55*height);
+	context.moveTo(0.9*width, 0.6*height);
+	context.lineTo(0.85*width, 0.65*height);
+
+
+	context.stroke();
 }
 
 function syncClocks(context, width, height, x0, y0){
+	var i;
+
 	context.beginPath();
 	context.arc(x0,y0, height*0.3, 0, Math.PI*2);
 	context.stroke();
 	context.closePath();
+
+	context.save();
+	context.translate(x0, y0);
+	for(i=0; i<12; i++){
+		context.moveTo(0, -height*0.3);
+		context.lineTo(0, -height*0.3 +height*0.06);
+		context.stroke();
+		context.closePath();
+		context.rotate(Math.PI/6);
+	}
+
+	context.moveTo(0, 0);
+	context.lineTo(height*0.3*Math.cos(1.2*Math.PI), height*0.3*Math.sin(1.2*Math.PI));
+	context.stroke();
+	context.closePath();
+
+	context.moveTo(0, 0);
+	context.lineTo(height*0.15*Math.cos(4.3*Math.PI), height*0.15*Math.sin(4.3*Math.PI));
+	context.stroke();
+	context.closePath();	
+
+	context.restore();
 }
 
 function wildcard(context, width, height, x0, y0){
-	context.beginPath();
-	context.arc(x0,y0, height*0.3, 0, Math.PI*2);
-	context.stroke();
-	context.closePath();
+	context.font = '100px Raleway';
+	context.fillText('*', width/2-15, height);
+	context.font = '16px Raleway';
 }
