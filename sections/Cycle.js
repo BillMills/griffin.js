@@ -8,6 +8,7 @@ function Cycle(){
     this.linkWrapperID = 'cycleLinks';        //ID of div to contain clock view header
     this.sidebarID = 'cycleSidebar';          //ID of sidebar div
     this.nCycleSteps = 0;
+    this.nCycleSummarySteps = 0;
     this.helpMessage = 'Drag an action from the right here to define a command step, or leave as-is for a delay.';
     this.currentDrag = '';
     this.codex = {
@@ -47,13 +48,32 @@ function Cycle(){
         'innerHTML' : 'Cycle'
     });
 
-    //nav wrapper div
+    //summary view//////////////////////////////////////////////////////
+    injectDOM('div', 'cycleSummary', this.wrapperID, {'class':'navPanel', 'style':'min-width: 50%'});
+    injectDOM('h1', 'cycleSummaryBanner', 'cycleSummary', {'class':'navPanelHeader', 'innerHTML':'Current Cycle'});
+    injectDOM('br', 'break', 'cycleSummary', {});
+    injectDOM('button', 'gotoCycleEdit', 'cycleSummary', {
+        'class' : 'navLink',
+        'onclick' : function(){swapView('cycleLinks', 'cycleCanvas', 'cycleMenus', 'CycleButton');},
+        'innerHTML' : 'Edit Cycle',
+        'style' : 'margin-bottom: 1em', 
+        'type' : 'button'
+    });
+    injectDOM('div', 'cycleSummaryWrapper', 'cycleSummary', {'style' : 'text-align:center; width:100%'});
+
+    //edit view/////////////////////////////////////////////////////////
     injectDOM('div', this.linkWrapperID, this.wrapperID, {'class':'navPanel'});
     //nav header
     injectDOM('h1', 'cycleLinksBanner', this.linkWrapperID, {'class' : 'navPanelHeader', 'innerHTML' : 'Edit Cycle'});
     injectDOM('br', 'break', this.linkWrapperID, {});
 
     //nav buttons & cycle save / load interface:
+    injectDOM('button', 'showCycleSummary', this.linkWrapperID, {
+        'class' : 'navLink',
+        'onclick' : function(){swapView('cycleSummary', 'cycleCanvas', 'cycleMenus', 'CycleButton');},
+        'innerHTML' : 'Return to Cycle Summary',
+        'type' : 'button'
+    });    
     injectDOM('button', 'commitCycle', this.linkWrapperID, {
         'class' : 'navLink',
         'style' : '-webkit-animation-name:x; -moz-animation-name:x;',
@@ -331,8 +351,8 @@ function createCycleStep(input){
     var stepDiv;
 
     //actual div
-    injectDOM('div', 'cycleStep'+window.cyclePointer.nCycleSteps, 'cycleSteps', {'class':'cycleStep', 'style':'display:inline-block; margin-left:auto; margin-right:auto;'})
-    stepDiv = document.getElementById('cycleStep'+window.cyclePointer.nCycleSteps)
+    injectDOM('div', 'cycleStep'+window.cyclePointer.nCycleSteps, 'cycleSteps', {'class':'cycleStep', 'style':'display:inline-block; margin-left:auto; margin-right:auto;'});
+    stepDiv = document.getElementById('cycleStep'+window.cyclePointer.nCycleSteps);
     stepDiv.draggable = 'true';
 
     //the div's draggable data payload should be its id:
@@ -403,6 +423,61 @@ function createCycleStep(input){
     if(document.getElementById('terminateCycle'))   
         document.getElementById('cycleSteps').appendChild(document.getElementById('terminateCycle'));
 
+}
+
+//create a cycle summary step
+function createCycleSummaryStep(encoding, duration, suppressFlow){
+    var stepDiv, i, command, key, allowIndividualTrig, durationString;
+
+    //determine duration:
+    if(duration==0)
+        durationString = 'Infinite';
+    else if(duration > 60000)
+        durationString = (duration/60000).toFixed(2) + ' min';
+    else if(duration>1000)
+        durationString = (duration/1000).toFixed(2) + ' s';
+    else
+        durationString = duration + ' ms';
+
+    //step wrapper
+    injectDOM('div', 'cycleSummaryStep'+window.cyclePointer.nCycleSummarySteps, 'cycleSummaryWrapper', {'class':'cycleStep', 'style':'display:inline-block; margin-left:auto; margin-right:auto;'});
+    stepDiv = document.getElementById('cycleSummaryStep'+window.cyclePointer.nCycleSummarySteps);
+
+    //content block:
+    stepDiv.contentID = 'cycleSummaryContent'+window.cyclePointer.nCycleSummarySteps
+    injectDOM('div', stepDiv.contentID, 'cycleSummaryStep'+window.cyclePointer.nCycleSummarySteps, {
+        'class':'cycleContent',
+        'style': 'max-width:'+0.2*$(window.cyclePointer.wrapper).width()
+    });
+
+    //duration block:
+    injectDOM('p', 'cycleSummaryDuration'+window.cyclePointer.nCycleSummarySteps, 'cycleSummaryStep'+window.cyclePointer.nCycleSummarySteps, {
+        'innerHTML':durationString,
+        'class' : 'cycleSummaryDuration'
+    });
+    document.getElementById('cycleSummaryDuration'+window.cyclePointer.nCycleSummarySteps).style.top = $('#cycleSummaryStep'+window.cyclePointer.nCycleSummarySteps).height()*(-0.5);
+
+    //populate content block
+    command = parseCommand(encoding);
+    //deploy the appropriate badges:
+    //either all trigs is enabled, or allow individual system triggers:
+    allowIndividualTrig = 0;
+    if(command['triggersOn'] == 1)
+        deployBadge.apply( window.cyclePointer, ['triggersOn', 'cycleSummaryContent'+(window.cyclePointer.nCycleSummarySteps)] );
+    else
+        allowIndividualTrig = 1;
+    for(key in command){
+        if(command[key] == 1 && key!='triggerOn' && !(key.slice(0,6)=='enable' && allowIndividualTrig==0 ) )
+            deployBadge.apply(window.cyclePointer, [key, 'cycleSummaryContent'+(window.cyclePointer.nCycleSummarySteps)]);
+    }        
+    
+    if(!suppressFlow){
+        injectDOM('br', 'cycleSummaryStepsBreak'+window.cyclePointer.nCycleSummarySteps, 'cycleSummaryWrapper', {});
+        injectDOM('div', 'leftCycleSummarySpacer'+window.cyclePointer.nCycleSummarySteps, 'cycleSummaryWrapper', {'style':'display:inline-block; height:50px; width:50%'});
+        injectDOM('div', 'rightCycleSummarySpacer'+window.cyclePointer.nCycleSummarySteps, 'cycleSummaryWrapper', {'style':'display:inline-block; border-left: 5px solid #999999; height:50px; width:50%'});
+    }
+
+    window.cyclePointer.nCycleSummarySteps++;
 }
 
 //create a timeline termination badge that includes a button to create a new empty command:
@@ -689,7 +764,8 @@ function deleteOption(ODBpointer, dropdown){
 //load the defined cycle into the ODB for present use:
 function commitCycle(){
 
-    var cycle = buildCycle();
+    var cycle = buildCycle(),
+        i;
 
     ODBMDelete(['/DashboardConfig/Cycles/Active Pattern', '/DashboardConfig/Cycles/Active Duration']);
     ODBMCreate(['/DashboardConfig/Cycles/Active Pattern', '/DashboardConfig/Cycles/Active Duration'], [TID_INT, TID_INT]);
@@ -697,10 +773,18 @@ function commitCycle(){
     ODBSet('/DashboardConfig/Cycles/Active Pattern[*]', cycle[0]);
     ODBSet('/DashboardConfig/Cycles/Active Duration[*]', cycle[1]);
     ODBSet('/DashboardConfig/Cycles/Active Name', document.getElementById('cycleName').value);
-    suspendCycleRequest();
 
     //regrab ODB
     fetchODB();
+
+    //load the active cycle from the ODB:
+    window.cyclePointer.nCycleSummarySteps = 0;
+    document.getElementById('cycleSummaryWrapper').innerHTML = '';
+    for(i=0; i<ODB.Cycles['Active Pattern'].length; i++){
+        createCycleSummaryStep(ODB.Cycles['Active Pattern'][i], ODB.Cycles['Active Duration'][i], Math.floor((i+1)/ODB.Cycles['Active Pattern'].length));
+    }
+
+    suspendCycleRequest();
 }
 
 //load whatever the ODB has currently registered as the active cycle
@@ -712,6 +796,11 @@ function reloadCycle(){
     //load the active cycle from the ODB:
     for(i=0; i<ODB.Cycles['Active Pattern'].length; i++){
         deployCommand(ODB.Cycles['Active Pattern'][i], ODB.Cycles['Active Duration'][i] );
+        if(i==0){
+            window.cyclePointer.nCycleSummarySteps = 0;
+            document.getElementById('cycleSummaryWrapper').innerHTML = '';
+        }
+        createCycleSummaryStep(ODB.Cycles['Active Pattern'][i], ODB.Cycles['Active Duration'][i], Math.floor((i+1)/ODB.Cycles['Active Pattern'].length));
     }
 
     document.getElementById('cycleName').value = ODB.Cycles['Active Name'];

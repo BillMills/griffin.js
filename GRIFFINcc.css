@@ -786,6 +786,13 @@ div#cyclePalete canvas:nth-child(even){
 	padding-right:1em;
 }
 
+.cycleSummaryDuration{
+	display:inline-block;
+	position:relative;
+	padding-left: 1em;
+	font-size: 150%;
+}
+
 .treeGutter{
 	border-left: 10px solid #999999;
 	border-bottom: 5px solid #999999;

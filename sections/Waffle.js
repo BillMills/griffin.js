@@ -102,7 +102,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                 'type' : 'button',
                 'value' : 'Commit'
             });
-            //document.getElementById('submitParameters').setAttribute('disabled', 'true');
+            document.getElementById('submitParameters').setAttribute('disabled', 'true');
 
             //status report:
             injectDOM('p', 'status', 'setValues', {'style':'margin-left:10%', 'innerHTML':'Status:'});

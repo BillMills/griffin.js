@@ -300,7 +300,7 @@ DESCANTDS = function(){
 	this.TTmap = [];
 	this.totalRate = 0;
 	for(i=1; i<71; i++){
-		name = (i<10) ? 'DSC0'+i+'XP00X' : 'DSC'+i+'XP00X';
+		name = (i<10) ? 'DSC0'+i+'XN00X' : 'DSC'+i+'XN00X';
 		this.DESCANT[name] = {
 			'HV'		: 0,
 			'threshold' : 0,

@@ -572,6 +572,8 @@ function deployBadgeCanvas(width, height, id, wrapperID, paintThumb, thumbArgs, 
         canvas.addEventListener('dragstart', dragStart, false);
     //filters
     } else{
+        //bail out if this is a non-editable cycle summary:
+        if(wrapperID.indexOf('cycleSummary') != -1) return;
         closeX(context, width - 10, 10, 7 );
         canvas.onclick = function(event){
 

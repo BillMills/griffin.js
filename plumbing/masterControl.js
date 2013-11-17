@@ -208,7 +208,7 @@ function ODBgrab(){
 
     //data = ODBMGet(paths);
     data = JSON.parse(ODBMCopy(paths, undefined, 'json'));
-    
+
     //sidebar
     window.localODB.expTitle = data[SIDEBAR]['Name'];
     window.localODB.runInfo = data[SIDEBAR+1]['Run number'];
@@ -246,8 +246,8 @@ function ODBgrab(){
     //with the JSONP stuff for the subdetector views:
     window.JSONPstore.HV = {};
     for(k=0; k<window.parameters.moduleSizes.length; k++){   
-        for(i=0; i<window.localODB['HV'+k].chName.length - 1; i++){ //-1 since ODBMGet leaves a weird annoying terminating entry on each array :/
-            window.JSONPstore.HV[window.localODB['HV'+k].chName[i]] = parseFloat(window.localODB['HV'+k].measVoltage[i]);
+        for(i=0; i<window.localODB['HV'+k].chName.length; i++){
+            window.JSONPstore.HV[window.localODB['HV'+k].chName[i].toUpperCase()] = parseFloat(window.localODB['HV'+k].measVoltage[i]);
         }
     }
 
