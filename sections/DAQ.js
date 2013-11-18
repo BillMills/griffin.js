@@ -497,8 +497,23 @@ function DAQ(canvas, detailCanvas, prefix, postfix){
         oldColor = codex.DAQmap[masterID].oldCollectorColor;
         this.drawMasterNode(context, this.TTdetailContext, color); //(use drawMasterNode, looks the same on this view)
 
-        if(ODB.DAQ.config == 'TIGRESS'){
-
+        if(ODB.DAQ.config == 'TIGRESS'){  //TBD: test and route colors
+            //wires
+            combWidth = 0.9*this.masterWidth;
+            x1 = this.canvasWidth/2;
+            branchColor = '#000000';
+            for(i=0; i<codex.nCollectors; i++){
+                combColors[i] = '#000000';
+            }
+            drawBranch(context, combWidth, this.masterBottom - this.masterLinkTop, branchColor, x1, this.masterBottom+parseFloat(context.lineWidth)/2, x1, this.masterGroupLinkBottom);
+            //digitizers
+            //for(i=0; i<codex.nCollectors; i++){
+            for(key in codex.DAQmap[masterID]){
+                if(codex.dataKeys.indexOf(key) != -1 || key.indexOf('Group') != -1) continue;
+                collectorChannel = parseInt( key.slice(9) ,10);
+                color = '#000000';
+                this.drawCollectorNode(context, this.TTdetailContext, collectorChannel, color, x1 - combWidth/2 + j*combWidth/(codex.nCollectors-1) - this.collectorWidth/2, this.masterLinkBottom);
+            }
         } else if(ODB.DAQ.config == 'GRIFFIN'){
             combWidth = this.masterWidth / (codex.collectorGroupID[masterID].length*1.3 + 0.3);
             //loop over collector groups
@@ -1176,7 +1191,7 @@ DAQcodex = function(){
         }
         i++;
     }
-
+console.log(this.DAQmap)
     //member functions////////////////////////////////////////////////////////////////////////////////////////////////
     //parse scalar into a color on a color scale bounded by min and max 
     this.parseColor = function(scalar, min, max){
