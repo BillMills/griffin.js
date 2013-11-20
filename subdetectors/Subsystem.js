@@ -38,7 +38,7 @@ function Subsystem(){
     injectDOM('canvas', this.canvasID, this.monitorID, {
         'class':'monitor', 
         'style':'top:' + ($('#'+this.linkWrapperID).offset().top + $('#'+this.linkWrapperID).height()*1.25 + 5) +'px;'
-    })
+    });
     this.canvas = document.getElementById(this.canvasID);
     this.context = this.canvas.getContext('2d');
     this.canvas.setAttribute('width', this.canvasWidth);
@@ -263,7 +263,7 @@ function Subsystem(){
 
         for(i=0; i<lines.length; i++){
             nextLine = lines[i][0] + ': ';
-            nextLine += lines[i][1].toFixed() + ' ' + lines[i][2];
+            nextLine += (lines[i][1] == 0xDEADBEEF) ? 'Not Reporting' : lines[i][1].toFixed() + ' ' + lines[i][2];
             toolTipContent += nextLine + '<br>'
         }
 
@@ -695,7 +695,6 @@ function HPGeAssets(){
     };
 
     this.drawDetail = function(context, frame){
-        
         if(context==this.TTdetailContext && this.TTdetailLayerDone) return 0; //only draw the TT layer once
 
         var i, j, quad;
@@ -747,12 +746,13 @@ function HPGeAssets(){
                 } else{
                     fillColor  = 'rgba('+i+', '+i+', '+i+', 1)';
                 }
+                if(fillColor==0xDEADBEEF) fillColor = this.detailContext.createPattern(window.parameters.warningFill, 'repeat');
                 this.crystal(context, this.centerX + PBC*this.lineWeight + NAD*this.crystalSide, this.centerY + NAB*this.crystalSide + PCD*this.lineWeight, colorWheel[i], fillColor);
                 
             } else if(HPGestate == 1){
                 
                 if(this.mode == 'TIGRESS'){
-
+                    
                     //cores - same as GRIFFIN for core, factor out
                     if(context == this.detailContext){
                         if(window.state.subdetectorView == 1){
@@ -771,7 +771,7 @@ function HPGeAssets(){
                     }
 
                     this.splitCrystal(context, this.centerX + NAD*2/3*this.crystalSide + PBC*1/3*this.crystalSide + PBC*this.lineWeight, this.centerY + NAB*2/3*this.crystalSide + PCD*1/3*this.crystalSide + PCD*this.lineWeight, this.crystalSide/3, i, colorWheel[i], fillColor, fillColor2);
-
+                    
                     for(j=0; j<4; j++){
                         //useful switches:
                         var PBC2 = Math.ceil((j%3)/3);               //positive for i=1,2, 0 OW
@@ -801,7 +801,6 @@ function HPGeAssets(){
                         this.drawL(context, j*Math.PI/2, this.crystalSide/6, this.crystalSide/2, this.centerX + (-NAD)*NAD2*this.crystalSide + PBC*PBC2*this.crystalSide + PBC*this.lineWeight, this.centerY + (-NAB)*NAB2*this.crystalSide + PCD*PCD2*this.crystalSide + PCD*this.lineWeight, colorWheel[i], fillColor);
                         
                     }
-
                     
                 } else if(this.mode == 'GRIFFIN'){
                     
@@ -913,7 +912,10 @@ function HPGeAssets(){
         this.detailContext.font="24px 'Orbitron'";
         this.detailContext.fillText(this.scalePrefix+this.cloverShowing, 0.5*this.canvasWidth - this.detailContext.measureText(this.scalePrefix+this.cloverShowing).width/2, 0.85*this.canvasHeight);
         
-        if(context == this.TTdetailContext) this.TTdetailLayerDone = 1;
+        //hack to make sure the tt redraws when we go to HV view, which is segmented differently than the other views
+        //if(context == this.TTdetailContext) this.TTdetailLayerDone = 1;
+        if(context == this.detailContext && frame == this.nFrames)
+            this.drawDetail(this.TTdetailContext, this.nFrames)
     };
 
     this.updateHPGe = function(){

@@ -214,7 +214,7 @@ function parameterDialogue(devName, scales, currentColorScale, noLog){
                 if(document.getElementById('logRadio').checked) window.parameters.detectorLogMode[window.viewState] = 1;
                 else if(document.getElementById('linearRadio').checked) window.parameters.detectorLogMode[window.viewState] = 0;
             }
-            
+
             //remove dialogue
             document.getElementById('tempDiv').style.opacity = 0;
             setTimeout(function(){

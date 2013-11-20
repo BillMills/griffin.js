@@ -54,7 +54,7 @@ function Clock(){
     document.getElementById('outsContentmasterStepdownSlider').setAttribute('min', 1); 
     document.getElementById('outsContentmasterStepdownSlider').setAttribute('max', 10);
     document.getElementById('outsContentmasterStepdownSlider').setAttribute('value', 11-parseInt(window.localODB['clock'+0][11],10) );
-    document.getElementById('outsContentLabel').innerHTML = (this.masterFreq / (1-(document.getElementById('outsContentmasterStepdownSlider').valueAsNumber - parseInt(document.getElementById('outsContentmasterStepdownSlider').max,10)-1))).toFixed(1) + ' MHz';
+    document.getElementById('outsContentLabel').innerHTML = (this.masterFreq / (1-(document.getElementById('outsContentmasterStepdownSlider').valueAsNumber - parseInt(document.getElementById('outsContentmasterStepdownSlider').max,10)-1))  ).toFixed(1) + ' MHz';
     document.getElementById('outsContentmasterStepdownSlider').onchange = function(){
         var stepdown = -(this.valueAsNumber - parseInt(this.max,10)-1),
             freqOut = window.clockPointer.masterFreq / (1+stepdown), 

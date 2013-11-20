@@ -1,3 +1,4 @@
+
 TIPwall.prototype = Object.create(Subsystem.prototype);
 
 function TIPwall(){
@@ -159,3 +160,112 @@ function TIPball(){
     //do an initial populate:
     //this.update();
 }
+
+
+/*
+//paper JS imlementation
+function TIPwall(){
+    var that = this;
+    window.TIPwallpointer = that;
+    this.dataBus = new TIPwallDS();
+    this.name = 'TIPwall';
+    this.linkWrapperID = 'SubsystemLinks';
+    this.topNavID = 'SubsystemsButton';
+
+    //insert nav link
+    injectDOM('button', this.name+'link', this.linkWrapperID, {
+        'class' : 'navLink',
+        'onclick' : function(){swapFade(this.id, this.parentPointer, window.subsystemScalars); rePaint();},
+        'innerHTML' : this.name,
+        'type' : 'button'
+    });
+    document.getElementById(this.name+'link').parentPointer = this;
+
+    //scale canvas
+    this.monitor = document.getElementById(window.parameters.wrapper);
+    this.canvasWidth = 0.48*$(this.monitor).width();
+    this.canvasHeight = 0.8*$(this.monitor).height();
+    //detector view
+    injectDOM('canvas', 'paperTIPcanvas', window.parameters.wrapper, {
+        'class':'monitor', 
+        'style':'top:' + ($('#SubsystemLinks').offset().top + $('#SubsystemLinks').height()*1.25 + 5) +'px;'
+    });
+
+
+    //inject paperScript
+    injectDOM('script', 'TIPpaper', 'body', {
+        'type' : 'text/paperscript',
+        'canvas' : 'paperTIPcanvas',
+        'innerHTML' : 'deployTIP()'
+    });
+
+
+    deployTIP();
+
+    this.update = function(){};
+    this.view = function(){
+        return 'paperTIPcanvas';
+    };
+}
+
+function summonTooltip(x, y){
+    var tt = document.getElementById('paperTooltip');
+    tt.style.display = 'block';
+    tt.style.left = x+'px';
+    tt.style.top = y+'px';
+}
+
+function dismissTooltip(){
+    var tt = document.getElementById('paperTooltip');
+    tt.style.display = 'none';          
+}
+
+function deployTIP(){
+    var dataBus = window.TIPwallpointer.dataBus,
+        key, iAdj, origin,
+        paths = [];
+
+    for(key in dataBus.TIPwall){
+        iAdj = dataBus.TIPwall[key].index;
+        if(iAdj>11) iAdj++;
+
+        paths[paths.length] = new Path();
+        paths[paths.length-1].closed = true;
+        origin = new Point(this.CsIx0 + this.CsIcellSide*(iAdj%5), this.CsIy0 + this.CsIcellSide*Math.floor(iAdj/5));
+        paths[paths.length-1].add(  origin, 
+                                    new Point(origin.x+this.CsIcellSide, origin.y), 
+                                    new Point(origin.x+this.CsIcellSide, origin.y+this.CsIcellSide), 
+                                    new Point(origin.x, origin.y+this.CsIcellSide) );
+        paths[paths.length-1].fillColor = '#FFFFFF';
+        paths[paths.length-1].strokeStyle = '#000000';
+        path.channel = key;
+    }
+
+            var path = new Path();
+            path.closed = true;
+            path.add(new Point(100,100), new Point(150, 100), new Point(150, 150), new Point(100,150));
+            path.fillColor = '#FF0000';
+            path.channel = 'DESCANT-0';
+            var finalColor = 'rgba(255,255,255,1)',
+                currentColor = 'rgba(0,0,0,1)',
+                frame = 0;
+
+            var path2 = new Path();
+            path2.closed = true;
+            path2.add(new Point(200,200), new Point(250, 200), new Point(250, 250), new Point(200,250));
+            path2.fillColor = '#00FF00';
+            path2.channel = 'DESCANT-1';
+
+    function onMouseMove(event) {
+        project.activeLayer.selected = false;
+        if (event.item){
+            event.item.selected = true;
+            document.getElementById('tooltip').innerHTML = event['_item'].channel;
+            summonTooltip(event.event.clientX, event.event.clientY);
+        } else
+            dismissTooltip();
+    }
+
+    console.log('loaded paper')
+};
+*/
