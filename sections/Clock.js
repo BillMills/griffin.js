@@ -9,7 +9,7 @@ function Clock(){
     this.sidebarID = 'ClockSidebar';                //ID of div to contain clock sidebar
     this.activeElt = 'clock0';
     this.noUniqueMaster = 0;
-    this.masterFreq = 200;  //master always steps down from 200MHz, at least for GRIFFIN.
+    this.masterFreq = 100;  //master steps down from 200MHz in the spec, but seems to be 100 in practice?  TBD.
     this.channelTitles = ['eSATA 0', 'eSATA 1', 'eSATA 2', 'eSATA 3', 'eSATA 4', 'eSATA 5', 'Left LEMO', 'Right LEMO'];
 
 	this.wrapper = document.getElementById(this.wrapperID);
