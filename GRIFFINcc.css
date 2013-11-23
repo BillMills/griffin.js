@@ -23,6 +23,10 @@ body{
 	height:-webkit-min-content; 
 }
 
+p{
+	cursor: default;
+}
+
 input, select, button{
 	outline:none;
 }
@@ -789,8 +793,9 @@ div#cyclePalete canvas:nth-child(even){
 .cycleSummaryDuration{
 	display:inline-block;
 	position:relative;
-	padding-left: 1em;
+	padding-left: 0.5em;
 	font-size: 150%;
+	margin:0px;
 }
 
 .treeGutter{

@@ -1191,7 +1191,7 @@ DAQcodex = function(){
         }
         i++;
     }
-console.log(this.DAQmap)
+
     //member functions////////////////////////////////////////////////////////////////////////////////////////////////
     //parse scalar into a color on a color scale bounded by min and max 
     this.parseColor = function(scalar, min, max){

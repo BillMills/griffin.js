@@ -44,7 +44,7 @@ function Cycle(){
     //add top level nav button:
     injectDOM('button', 'CycleButton', 'statusLink', {
         'class' : 'navLink',
-        'onclick' : function(){swapView('cycleLinks', 'cycleCanvas', 'cycleMenus', 'CycleButton');},
+        'onclick' : function(){swapView('cycleSummary', 'cycleCanvas', 'cycleMenus', 'CycleButton');},
         'innerHTML' : 'Cycle'
     });
 
@@ -455,7 +455,7 @@ function createCycleSummaryStep(encoding, duration, suppressFlow){
         'innerHTML':durationString,
         'class' : 'cycleSummaryDuration'
     });
-    document.getElementById('cycleSummaryDuration'+window.cyclePointer.nCycleSummarySteps).style.top = $('#cycleSummaryStep'+window.cyclePointer.nCycleSummarySteps).height()*(-0.5);
+    document.getElementById('cycleSummaryDuration'+window.cyclePointer.nCycleSummarySteps).style.top = $('#cycleSummaryStep'+window.cyclePointer.nCycleSummarySteps).height()*(-0.6);
 
     //populate content block
     command = parseCommand(encoding);

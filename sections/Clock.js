@@ -454,3 +454,10 @@ function humanReadableClock(i, v){
         return v;
 
 }
+
+
+/*
+SYNC:
+MASTER == NIM
+SLAVE == ESATA
+*/
