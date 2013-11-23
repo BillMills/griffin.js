@@ -25,7 +25,7 @@ function Clock(){
     deployMenu('clockMenus', ['summary', 'outs', 'CSAC'] , ['Clock Summary','Channel Outs','CSAC Parameters']);
     //inject table into div for summary tab:
     injectDOM('table', 'summaryContentTable', 'summaryContent', {'class' : 'sidebarTable'});
-    for(i=1; i<9; i++){
+    for(i=1; i<10; i++){
         label = window.parameters.clockVariableNames[i];
         injectDOM('tr', 'summaryContentRow'+i, 'summaryContentTable', {});
         injectDOM('td', 'clockSummaryLabel'+i, 'summaryContentRow'+i, {'innerHTML' : label});
@@ -390,6 +390,18 @@ function showClock(id){
         document.getElementById('clockSummaryValue4').innerHTML = 'N/A';
     }
 
+    //master reports NIM clock, slave reports ESATA clock
+    if(parseInt(window.localODB[id][1],10)){
+        document.getElementById('clockSummaryLabel9').innerHTML = 'Last NIM Sync';
+        document.getElementById('clockSummaryValue9').innerHTML = humanReadableClock(10, window.localODB[id][10]);
+    } else {
+        document.getElementById('clockSummaryLabel9').innerHTML = 'Last eSATA Sync';
+        document.getElementById('clockSummaryValue9').innerHTML = humanReadableClock(9, window.localODB[id][9]);
+    }
+
+    //kick summary tab to make sure it's the right size
+    document.getElementById('summaryTab').style.maxHeight = (document.getElementById('summaryContent').offsetHeight+50)+'px';
+
     //manage clock channel out tab
     //only need master slider for master view:
     if(parseInt(window.localODB[id][1],10)){
@@ -446,6 +458,8 @@ function humanReadableClock(i, v){
         return (parseInt(v,10)) ? 'LEMO' : 'Atomic Clock'
     else if(i>4 && i<9)
         return (parseInt(v,10)) ? 'Present' : 'Absent';
+    else if(i==9 || i==10)
+        return Math.floor(v/3600) + ' h: ' + Math.floor((v%3600)/60) + ' m';
     else if(i==13 || i==17 || i==21 || i==25 || i==29 || i==33 || i==37 || i==41)
         return (parseInt(v,10)) ? 'Yes' : 'No';
     else if(i==43)
