@@ -30,6 +30,14 @@ function Filter(){
     injectDOM('h1', 'FilterLinksBanner', this.linkWrapperID, {'class':'navPanelHeader', 'innerHTML':ODB.topLevel.expName+' Filter Status'});
     injectDOM('br', 'break', this.linkWrapperID, {});
 
+    injectDOM('button', 'gotoFilterEdit', 'FilterLinks', {
+        'class' : 'navLink',
+        'onclick' : function(){swapView('editFilterLinks', 'editFilterCanvas', 'editFilterSidebar', 'FilterButton')},
+        'innerHTML' : 'Edit Filter',
+        'style' : 'margin-bottom: 1em', 
+        'type' : 'button'
+    });
+
 	//deploy a canvas for the filter view:
     this.canvasWidth = 0.48*$(this.wrapper).width();
     this.canvasHeight = 1*$(this.wrapper).height();
@@ -64,23 +72,12 @@ function Filter(){
                                 }
                             };
 
-    //right sidebar
+    //right sidebar dummy
     injectDOM('div', this.sidebarID, this.wrapperID, {'class':'collapsableSidebar', 'style':'float:right; height:80%;'});
     //deploy right bar menu:
-    deployMenu(this.sidebarID, ['detail'] , ['Filter Detail'] );
+    //deployMenu(this.sidebarID, ['detail'] , ['Filter Detail'] );
     //start with menu open:
-    document.getElementById('detailarrow').onclick();
-
-    //edit filter button
-    injectDOM('input', 'detailContentEditFilters', 'detailContent', {
-        'class' : 'bigButton',
-        'style' : 'width:auto; height:auto; padding:0.5em; margin:1em',
-        'type' : 'button',
-        'value' : 'Edit Filters'
-    });
-    document.getElementById('detailContentEditFilters').onclick = function(){
-        swapView('editFilterLinks', 'editFilterCanvas', 'editFilterSidebar', 'FilterButton')
-    }
+    //document.getElementById('detailarrow').onclick();
 
     //drawing parameters:
     this.lineWeight = 4;
@@ -313,7 +310,8 @@ function Filter(){
     };
 
     //start with filter core sidebar displayed:
-    this.populateSidebar(3);
+    //this.populateSidebar(3);
+    
     //deploy the editFilter page
     window.editFilter = new editFilter(this.filterSystems, this.filterSystemsNames)
 }
@@ -357,6 +355,12 @@ function editFilter(filterSystems, filterSystemsNames){
     injectDOM('h1', 'editFilterLinksBanner', this.linkWrapperID, {'class':'navPanelHeader', 'innerHTML':'Edit Filter'});
     injectDOM('br', 'break', this.linkWrapperID, {});
     //nav buttons
+    injectDOM('button', 'returnToSummaryFilter', this.linkWrapperID, {
+        'class' : 'navLink',
+        'innerHTML' : 'Return to Filter Summary',
+        'type' : 'button',
+        'onclick' : function(){swapView('FilterLinks', 'FilterCanvas', 'FilterSidebar', 'FilterButton')}
+    });
     injectDOM('button', 'commitFilter', this.linkWrapperID, {
         'class' : 'navLink',
         'innerHTML' : 'Deploy Filter and Return',
