@@ -74,7 +74,7 @@ function Clock(){
             masterConfig[11+4*i] = stepdown;
             masterConfig[12+4*i] = stepdown;
         }
-        ODBSet('/Equipment/GRIF-Clk'+window.clockPointer.activeElt.slice(5, window.clockPointer.activeElt.length)+'/Variables/Input[*]', masterConfig);
+        ODBSet('/Equipment/GRIF-Clk'+window.clockPointer.activeElt.slice(5, window.clockPointer.activeElt.length)+'/Variables/Output[*]', masterConfig);
         window.localODB[window.clockPointer.activeElt] = masterConfig;
     };
     for(i=0; i<8; i++){
@@ -256,7 +256,7 @@ function setMaster(n){
     masterConfig[37] = 0;
     masterConfig[41] = 0;
 
-    ODBSet('/Equipment/GRIF-Clk'+n+'/Variables/Input[*]', masterConfig);
+    ODBSet('/Equipment/GRIF-Clk'+n+'/Variables/Output[*]', masterConfig);
     window.localODB['clock'+n] = masterConfig;
     rePaint();
 }
@@ -279,7 +279,7 @@ function setSlave(n){
     slaveConfig[37] = 1;
     slaveConfig[41] = 1;
 
-    ODBSet('/Equipment/GRIF-Clk'+n+'/Variables/Input[*]', slaveConfig);
+    ODBSet('/Equipment/GRIF-Clk'+n+'/Variables/Output[*]', slaveConfig);
     window.localODB['clock'+n] = slaveConfig;
     rePaint();
 }
@@ -290,7 +290,7 @@ function enableChannel(i){
     clockNo = window.clockPointer.activeElt.slice(5, window.clockPointer.activeElt.length);
     newSettingWord = newSettingWord | (0xF << 4*i);
     //push to ODB
-    ODBSet('/Equipment/GRIF-Clk'+clockNo+'/Variables/Input[0]', newSettingWord);
+    ODBSet('/Equipment/GRIF-Clk'+clockNo+'/Variables/Output[0]', newSettingWord);
     //push to localODB:
     window.localODB['clock'+clockNo][0] = newSettingWord;
 }
@@ -300,7 +300,7 @@ function disableChannel(i){
     clockNo = window.clockPointer.activeElt.slice(5, window.clockPointer.activeElt.length);
     newSettingWord = newSettingWord & ~(0xF << 4*i);
     //push to ODB
-    ODBSet('/Equipment/GRIF-Clk'+clockNo+'/Variables/Input[0]', newSettingWord);
+    ODBSet('/Equipment/GRIF-Clk'+clockNo+'/Variables/Output[0]', newSettingWord);
     //push to localODB:
     window.localODB['clock'+clockNo][0] = newSettingWord;
 }
@@ -323,7 +323,7 @@ function unsetClockAlarm(id){
 //set the master to use the LEMO as its reference
 function masterLEMO(id){
     //push to the ODB:
-    ODBSet('/Equipment/GRIF-Clk'+id.slice(5,id.length)+'/Variables/Input[4]', 1);
+    ODBSet('/Equipment/GRIF-Clk'+id.slice(5,id.length)+'/Variables/Output[4]', 1);
     //push to localODB so we don't actually have to re-fetch:
     window.localODB['clock'+id.slice(5,id.length)][4] = 1;
     //document.getElementById('clockSummaryValue3').innerHTML = '10 MHz'
@@ -334,7 +334,7 @@ function masterLEMO(id){
 //set the master to use the atomic clock as its reference
 function masterAC(id){
     //push to ODB:
-    ODBSet('/Equipment/GRIF-Clk'+id.slice(5,id.length)+'/Variables/Input[4]', 0);
+    ODBSet('/Equipment/GRIF-Clk'+id.slice(5,id.length)+'/Variables/Output[4]', 0);
     //push to local ODB:
     window.localODB['clock'+id.slice(5,id.length)][4] = 0;
     //document.getElementById('clockSummaryValue3').innerHTML = '10 MHz';
