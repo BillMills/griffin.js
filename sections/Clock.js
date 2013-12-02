@@ -53,7 +53,7 @@ function Clock(){
     document.getElementById('outsContentLabel').setAttribute('for', 'outsContentmasterStepdownSlider');
     document.getElementById('outsContentmasterStepdownSlider').setAttribute('min', 1); 
     document.getElementById('outsContentmasterStepdownSlider').setAttribute('max', 10);
-    document.getElementById('outsContentmasterStepdownSlider').setAttribute('value', 11-parseInt(window.localODB['clock'+0][11],10) );
+    document.getElementById('outsContentmasterStepdownSlider').setAttribute('value', 11-parseInt(window.localODB['clock'+findMaster()][11],10) );
     document.getElementById('outsContentLabel').innerHTML = (this.masterFreq / (1-(document.getElementById('outsContentmasterStepdownSlider').valueAsNumber - parseInt(document.getElementById('outsContentmasterStepdownSlider').max,10)-1))  ).toFixed(1) + ' MHz';
     document.getElementById('outsContentmasterStepdownSlider').onchange = function(){
         var stepdown = -(this.valueAsNumber - parseInt(this.max,10)-1),
@@ -126,6 +126,8 @@ function Clock(){
 	//deploy a canvas for the clock view; this is actually just a dummy to stay consistent with all the other views, so we can use the same transition functions easily.
     injectDOM('canvas', this.canvasID, this.wrapperID, {
         'class' : 'monitor',
+        'width' : 1,
+        'height': 1,
         'style' : 'top:' + ($('#ClockLinks').height() + 5) +'px;'
     });
 
@@ -469,6 +471,19 @@ function humanReadableClock(i, v){
 
 }
 
+//return the index of the first clock claiming to be master
+function findMaster(){
+    var i, masterIndex = 0;
+
+    for(i=0; i<window.parameters.nClocks; i++){
+        console.log(i)
+        if(parseInt(window.localODB['clock'+i][1],10) == 1){
+            masterIndex = i;
+            break;
+        }
+    }
+    return masterIndex;
+}
 
 /*
 SYNC:

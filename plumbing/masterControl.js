@@ -203,7 +203,7 @@ function ODBgrab(){
     //Clock
     CLOCK = HV + window.parameters.moduleSizes.length*window.parameters.ODBkeys.length;
     for(i=0; i<window.parameters.nClocks; i++){
-        paths[CLOCK + i] = '/Equipment/GRIF-Clk'+i+'/Variables/Input[*]';
+        paths[CLOCK + i] = '/Equipment/GRIF-Clk'+i+'/Variables/Output[*]';
     }
 
     //data = ODBMGet(paths);
@@ -239,7 +239,7 @@ function ODBgrab(){
     }    
     //Clock
     for(i=0; i<window.parameters.nClocks; i++){
-        window.localODB['clock'+i] = data[CLOCK+i]['Input'];
+        window.localODB['clock'+i] = data[CLOCK+i]['Output'];
     }
 
     //Pull the measured voltages and channel names out and pack them along
