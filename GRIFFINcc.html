@@ -82,6 +82,7 @@
 
       //declare the global namespaces / objects that will see heavy use
       window.parameters = {};
+      window.spectrumViewers = {};
       window.Gatekeeper = new gatekeeper();
       window.JSONPstatus = [];
       window.JSONPstore = {'scalar':{}, 'thresholds':{}};
@@ -187,7 +188,17 @@
         //Subsystems:
         if(window.parameters.topDeployment['Subsystems']){
           //Subsystem sidebar:
-          injectDOM('div', 'SubsystemSidebar', window.parameters.wrapper, {'class':'RightSidebar', 'style':'display:none'});
+          injectDOM('div', 'SubsystemSidebar', window.parameters.wrapper, {'class':'RightSidebar', 'style':'padding:1em'});
+          //Subsystem spectrum viewer canvas:
+          injectDOM('canvas', 'subsystemSpectrumViewer', 'SubsystemSidebar', {'style':'border:1px solid #EEEEEE; border-radius:5px;'});
+          document.getElementById('subsystemSpectrumViewer').setAttribute('width', $('#SubsystemSidebar').width()*0.8);
+          document.getElementById('subsystemSpectrumViewer').setAttribute('height', $('#subsystemSpectrumViewer').width()*0.8);
+          window.spectrumViewers.subsystem = new spectrumViewer('subsystemSpectrumViewer');
+          window.spectrumViewers.subsystem.canvas.style.backgroundColor = '#111111';
+          window.spectrumViewers.subsystem.axisColor = '#EEEEEE';
+          window.spectrumViewers.subsystem.plotBuffer['dummy'] = window.spectrumViewers.subsystem.fakeData.energydata0;
+          //draw spectra
+          window.spectrumViewers.subsystem.plotData();
           //Subsystem menu; universal buttons declared outside of individual subsystems:
           //add top level nav button:
           injectDOM('button', 'SubsystemsButton', 'statusLink', {'class':'navLink', 'innerHTML':'Subsystem Monitors'});

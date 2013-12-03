@@ -476,7 +476,6 @@ function findMaster(){
     var i, masterIndex = 0;
 
     for(i=0; i<window.parameters.nClocks; i++){
-        console.log(i)
         if(parseInt(window.localODB['clock'+i][1],10) == 1){
             masterIndex = i;
             break;

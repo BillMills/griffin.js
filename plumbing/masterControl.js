@@ -143,7 +143,7 @@ function detectCards(){
     //fetch cratemap code: subsequent pairs of bits correspond to slots in ascending order: 00 => empty slot; 01 => 12 channel card; 10 => 48 channel card.
     //crate size indicated by terminating bitpattern = 111: at bit 12 -> 6 slot crate, at bit 24 -> 12 slot crate, absent -> 16 slot crate:
     for(j=0; j<window.parameters.HVequipmentNames.length; j++){
-        crateCode = parseInt(ODBGet('/Equipment/'+window.parameters.HVequipmentNames[j]+'/Settings/CrateMap[0]'), 10);
+        crateCode = parseInt(ODBGet('/Equipment/'+window.parameters.HVequipmentNames[j]+'/Settings/Devices/sy2527/DD/crateMap'), 10);
         if( ((crateCode & (7<<12)) >> 12) == 7) nSlots = 6;
         else if( ((crateCode & (7<<24)) >> 24) == 7) nSlots = 12;
         else nSlots = 16;
@@ -155,6 +155,7 @@ function detectCards(){
             else window.parameters.moduleSizes[j][window.parameters.moduleSizes[j].length] = 0;
         }
     }
+    console.log(window.parameters.moduleSizes)
 }
 
 //force an immediate update, and set the master loop going again from there:
@@ -254,7 +255,6 @@ function ODBgrab(){
 
 //handle pulling the initial config parameters out of the ODB and replacing the default values in the JSONP-loaded parameter store:
 function fetchODB(){
-
     ODB = JSON.parse(ODBCopy('/DashboardConfig'));
     scrubMeta(ODB);
 
