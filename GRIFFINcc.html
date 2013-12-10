@@ -196,11 +196,12 @@
           window.spectrumViewers.subsystem = new spectrumViewer('subsystemSpectrumViewer');
           window.spectrumViewers.subsystem.canvas.style.backgroundColor = '#111111';
           window.spectrumViewers.subsystem.axisColor = '#EEEEEE';
-          //controls for subsystem spectrum viewer:
+          //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+          //controls for subsystem spectrum viewer://///////////////////////////////////////////////////////////////////////
           injectDOM('form', 'subsystemSpectrumControl', 'SubsystemSidebar', {'style':'display:none'});
           injectDOM('button', 'unzoomSubsystemSpectrum', 'SubsystemSidebar', {'onclick':window.spectrumViewers.subsystem.canvas.ondblclick, 'innerHTML':'Unzoom', 'class':'navLink', 'style':'float:left'});
           injectDOM('label', 'subsystemSpectrumLinear', 'SubsystemSidebar', {'innerHTML':'Linear', 'style':'padding:0.5em; float:left; margin-left:1em; margin-right:-1em'});
-          toggleSwitch('SubsystemSidebar', 'toggleSubsystemSpectrumScale', '', '', '', function(){}, function(){}, 0);
+          toggleSwitch('SubsystemSidebar', 'toggleSubsystemSpectrumScale', '', '', '', window.spectrumViewers.subsystem.setAxisType.bind(window.spectrumViewers.subsystem, 'log'), window.spectrumViewers.subsystem.setAxisType.bind(window.spectrumViewers.subsystem, 'linear'), 0);
           injectDOM('label', 'subsystemSpectrumLog', 'SubsystemSidebar', {'innerHTML':'Log', 'style':'padding:0.5em; float:left; margin-right:1em; margin-left:-1em;'});
           injectDOM('label', 'subsystemSpectrumRefreshLabel', 'SubsystemSidebar', {'innerHTML':'Refresh Every: ', 'style':'clear:left;'});
           injectDOM('input', 'subsystemSpectrumRefresh', 'SubsystemSidebar', {
@@ -239,6 +240,8 @@
           injectDOM('option', 'subsystemEnergyPlot', 'subsystemSpectrumType', {'value':'Energy', 'innerHTML':'Energy'});
           injectDOM('option', 'subsystemCFDPlot', 'subsystemSpectrumType', {'value':'CFDTime', 'innerHTML':'CFD Time'});
           injectDOM('option', 'subsystemWaveformPlot', 'subsystemSpectrumType', {'value':'Waveform', 'innerHTML':'Waveform'});
+          //end controls for subsystem spectrum viewer////////////////////////////////////////////////////////////////////////////////////
+          ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
           //fake data for testing
           window.spectrumViewers.subsystem.addData('dummy', window.spectrumViewers.subsystem.fakeData.energydata0);
           //draw spectra
