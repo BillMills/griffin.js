@@ -155,7 +155,6 @@ function detectCards(){
             else window.parameters.moduleSizes[j][window.parameters.moduleSizes[j].length] = 0;
         }
     }
-    console.log(window.parameters.moduleSizes)
 }
 
 //force an immediate update, and set the master loop going again from there:

@@ -7,6 +7,10 @@
 	-moz-user-select:none;
 }
 
+ol, ul {
+	list-style: none;
+}
+
 body{
 	/*FF will take percentage expression for the dimensions of child elements
 	relative to the corresponding dimensions of the parent element, and any
@@ -881,6 +885,109 @@ button#commitCycle, button#commitFilter{
 	border: 5px solid; 
 	border-radius:10px;
 	padding: 4em;
+}
+
+ul.spectrumList li{
+	padding:0.5em;
+}
+
+ul.spectrumList li:hover{
+	border-top:1px solid #EEEEEE;
+	border-bottom:1px solid #EEEEEE;
+}
+
+ul.spectrumList li:nth-child(odd){
+	background: #222222;
+}
+
+ul.spectrumList li:nth-child(even){
+	background: #444444;
+}
+
+ul#subsystemSpectra{
+	overflow: scroll;
+	padding:0;
+	border:1px solid #EEEEEE;
+	border-radius: 5px;
+	width:10em;
+	float:left;
+	margin-right: 1em;
+	clear:left;
+}
+
+div#SubsystemSidebar{
+	padding:1em;
+	padding-right:2em;
+}
+
+input#subsystemSpectrumName, input#subsystemSpectrumRefresh{
+	float:left;
+	margin-top:1em;
+	font-size:120%;
+	font-family: Raleway;
+	background-color: #222222;
+	color:#EEEEEE;
+	border:1px solid #EEEEEE;
+	border-radius: 5px;
+}
+
+input#subsystemSpectrumRefresh{
+	width: 3em;
+	float:left;
+	margin: 0.5em;
+	margin-bottom: 0;
+	text-align: center;
+}
+
+button#loadSpectrumName{
+	margin-top:1em;
+	border-color: #EEEEEE;
+	margin-left: 0.5em;
+	float:left;
+}
+
+div#subsystemSpectrumTypeWrapper{
+	float:left;
+	display:inline-block;
+}
+
+select.subsystemSpectrumTypeDD{
+	background-color: #222222;
+	border-radius: 5px;
+	color: #EEEEEE;
+	border:none;
+	font-size:200%;
+	padding: 0.5em;
+	text-align: center;
+	font-family: 'Raleway', sans-serif;
+	cursor: pointer;
+	margin:0px;
+    -webkit-appearance:none;
+    -moz-appearance:none;
+ 	text-indent: 0.01px;
+    text-overflow: '';
+    appearance:none;
+
+ 	float:left;
+ 	margin-top:0.5em;
+ 	display:inline;
+}
+
+label#subsystemSpectrumTypeLabel{
+	font-size:200%;
+	float:left;
+	padding-top:1em;
+	padding-bottom:1em;
+	margin-right:0.5em;
+}
+
+#toggleWraptoggleSubsystemSpectrumScale{
+	float:left;
+}
+
+#subsystemSpectrumRefreshLabel, #subsystemSpectrumRefreshUnit{
+	float:left;
+	margin-top:1em;
 }
 
 /* http://stackoverflow.com/questions/3790935/can-i-hide-the-html5-number-inputs-spin-box */

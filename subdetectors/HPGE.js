@@ -31,6 +31,19 @@ function HPGe(){
     DetailView.call(this);                          //inject the infrastructure for a detail-level view
     HPGeAssets.call(this);                          //inject the HPGe drawing assets
 
+    //HPGe subsystem button needs special behavior, to call back the top view from the detail level
+    document.getElementById('HPGelink').onclick = function(){
+        if(that.detailShowing){
+            that.detailShowing = 0;
+            that.detailTooltip.canvas.onmouseout(); //edge case, clicking back to main view w/o moving mouse causes detail TT to try and update, suppress.
+            swapFade(null, that, 1000);
+        } else{
+            swapFade(this.id, this.parentPointer, window.subsystemScalars); 
+            that.refreshSubsystemSpectrumList();
+            rePaint();
+        }
+    }
+
     //list of elements with distinct minima and maxima on subdetector views:
     this.subdetectors = ['HPGe', 'BGO'];
 
@@ -38,9 +51,7 @@ function HPGe(){
     this.detailCanvas.onclick = function(event){
                                     var y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;    
                                     if(y < that.canvasHeight - that.scaleHeight){
-                                        that.detailShowing = 0;
-                                        that.detailTooltip.canvas.onmouseout(); //edge case, clicking back to main view w/o moving mouse causes detail TT to try and update, suppress.
-                                        swapFade(null, that, 1000);
+                                        document.getElementById(that.pointingNow+'spectrum').onclick();
                                     } else{
                                         parameterDialogue(that.name, [['HPGe', ODB[that.name][that.constructMinMaxKey('HPGe')][0], ODB[that.name][that.constructMinMaxKey('HPGe')][1], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/HPGe/'+scaleType()+'[0]', '/DashboardConfig/HPGe/'+scaleType()+'[1]'], ['BGO', ODB[that.name][that.constructMinMaxKey('BGO')][0], ODB[that.name][that.constructMinMaxKey('BGO')][1],  window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/HPGe/BGO'+scaleType()+'[0]', '/DashboardConfig/HPGe/BGO'+scaleType()+'[1]'] ], window.parameters.subdetectorColors[window.state.subdetectorView]);
                                     }

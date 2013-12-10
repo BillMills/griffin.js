@@ -25,7 +25,7 @@ function Tooltip(ttCanvasID, ttDivID, wrapperID, prefix, postfix){
     //suppresses some flaky positioning when TT changes size:
     this.canvas.onmouseover = function(event){
         that.ttDiv.style.display = 'none';
-        that.allowUpdate = 0; 
+        that.allowUpdate = 0;
     }
 
     this.canvas.onmousemove = function(event){

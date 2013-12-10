@@ -602,4 +602,7 @@ function hexString(n, d){
     return '0x' + result.toUpperCase();
 }
 
-
+//call a spectrum from the server and plot it in the appropriate place
+function loadSpectrum(){
+    console.log('loadspec')
+}

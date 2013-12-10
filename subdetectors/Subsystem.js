@@ -25,7 +25,11 @@ function Subsystem(){
     //insert nav link
     injectDOM('button', this.name+'link', this.linkWrapperID, {
         'class' : 'navLink',
-        'onclick' : function(){swapFade(this.id, this.parentPointer, window.subsystemScalars); rePaint();},
+        'onclick' : function(){
+            swapFade(this.id, this.parentPointer, window.subsystemScalars); 
+            that.refreshSubsystemSpectrumList();
+            rePaint();
+        },
         'innerHTML' : this.name,
         'type' : 'button'
     });
@@ -71,6 +75,9 @@ function Subsystem(){
         var y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;
         if(y > that.canvasHeight - that.scaleHeight)
             parameterDialogue(that.name, [[that.name, ODB[that.name][that.constructMinMaxKey(that.name)][0], ODB[that.name][that.constructMinMaxKey(that.name)][1], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/'+that.name+'/'+scaleType()+'[0]', '/DashboardConfig/'+that.name+'/'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.state.subdetectorView]);
+        else{
+            document.getElementById(that.pointingNow+'spectrum').onclick();
+        }
     }
 
     //member functions
@@ -350,7 +357,7 @@ function Subsystem(){
     //write the simplest possible subsystem tooltip contents:
     this.defineText = function(cell){
         
-        var key, nextLine, toolTipContent;
+        var key=null, nextLine, toolTipContent;
 
         if(cell == 255){
             toolTipContent = '<br>Click to adjust scale.<br><br>'
@@ -364,7 +371,21 @@ function Subsystem(){
         }
 
         document.getElementById(this.tooltip.ttDivID).innerHTML = toolTipContent;
-        
+        this.pointingNow = key;
+    };
+
+    //refresh the subsystem spectrum list based on navigation context:
+    this.refreshSubsystemSpectrumList = function(){
+        var list = document.getElementById('subsystemSpectra'),
+            key;
+
+        //delete old list
+        list.innerHTML = '';
+
+        //make a new entry for each element in the detector's datbus:
+        for(key in this.dataBus[this.name]){
+            injectDOM('li', key+'spectrum', 'subsystemSpectra', {'innerHTML':key, 'onclick':clickSubsystemSpectrum});
+        }
     };
     
 }
@@ -1050,6 +1071,7 @@ function HPGeAssets(){
         //summary level//////////////////////////////////////////////////
 
         if(!this.detailShowing) {
+            this.pointingNow = null;
 
             if(cell == 255){
                 toolTipContent = '<br>Click to adjust scale.'
@@ -1124,7 +1146,7 @@ function HPGeAssets(){
                     }
 
                     toolTipContent = '<br>' + title + '<br><br>' + nextLine;
-
+                    this.pointingNow = detName;
                 } else {
                     
                     channelName = this.dataBus.HPGeTTmap[(this.cloverShowing-1)*((this.mode=='TIGRESS')? 60:30) + cell];
@@ -1135,8 +1157,9 @@ function HPGeAssets(){
                         toolTipContent += this.baseTTtext(this.dataBus.HPGe[channelName].HV, this.dataBus.HPGe[channelName].threshold, this.dataBus.HPGe[channelName].rate);
                     else if(detName.slice(2,3) == 'S')
                         toolTipContent += this.baseTTtext(this.dataBus.HPGe[channelName].HVA, this.dataBus.HPGe[channelName].threshold, this.dataBus.HPGe[channelName].rate, this.dataBus.HPGe[channelName].HVB);
-                    
+                    this.pointingNow = channelName;    
                 }
+                
             }
         }
 
@@ -1224,7 +1247,14 @@ function HPGeAssets(){
 
 }
 
+//handle clicks on the subsystem spectrum menu
+function clickSubsystemSpectrum(){
+    var inputField = document.getElementById('subsystemSpectrumName'),
+        loadButton = document.getElementById('loadSpectrumName');
 
+    inputField.value = this.innerHTML;
+    loadButton.onclick();
+}
 
 
 

@@ -188,15 +188,59 @@
         //Subsystems:
         if(window.parameters.topDeployment['Subsystems']){
           //Subsystem sidebar:
-          injectDOM('div', 'SubsystemSidebar', window.parameters.wrapper, {'class':'RightSidebar', 'style':'padding:1em'});
+          injectDOM('div', 'SubsystemSidebar', window.parameters.wrapper, {'class':'RightSidebar'});
           //Subsystem spectrum viewer canvas:
-          injectDOM('canvas', 'subsystemSpectrumViewer', 'SubsystemSidebar', {'style':'border:1px solid #EEEEEE; border-radius:5px;'});
-          document.getElementById('subsystemSpectrumViewer').setAttribute('width', $('#SubsystemSidebar').width()*0.8);
+          injectDOM('canvas', 'subsystemSpectrumViewer', 'SubsystemSidebar', {'style':'border:1px solid #EEEEEE; border-radius:5px; margin-bottom:0.5em;'});
+          document.getElementById('subsystemSpectrumViewer').setAttribute('width', $('#SubsystemSidebar').width()*0.9);
           document.getElementById('subsystemSpectrumViewer').setAttribute('height', $('#subsystemSpectrumViewer').width()*0.8);
           window.spectrumViewers.subsystem = new spectrumViewer('subsystemSpectrumViewer');
           window.spectrumViewers.subsystem.canvas.style.backgroundColor = '#111111';
           window.spectrumViewers.subsystem.axisColor = '#EEEEEE';
-          window.spectrumViewers.subsystem.plotBuffer['dummy'] = window.spectrumViewers.subsystem.fakeData.energydata0;
+          //controls for subsystem spectrum viewer:
+          injectDOM('form', 'subsystemSpectrumControl', 'SubsystemSidebar', {'style':'display:none'});
+          injectDOM('button', 'unzoomSubsystemSpectrum', 'SubsystemSidebar', {'onclick':window.spectrumViewers.subsystem.canvas.ondblclick, 'innerHTML':'Unzoom', 'class':'navLink', 'style':'float:left'});
+          injectDOM('label', 'subsystemSpectrumLinear', 'SubsystemSidebar', {'innerHTML':'Linear', 'style':'padding:0.5em; float:left; margin-left:1em; margin-right:-1em'});
+          toggleSwitch('SubsystemSidebar', 'toggleSubsystemSpectrumScale', '', '', '', function(){}, function(){}, 0);
+          injectDOM('label', 'subsystemSpectrumLog', 'SubsystemSidebar', {'innerHTML':'Log', 'style':'padding:0.5em; float:left; margin-right:1em; margin-left:-1em;'});
+          injectDOM('label', 'subsystemSpectrumRefreshLabel', 'SubsystemSidebar', {'innerHTML':'Refresh Every: ', 'style':'clear:left;'});
+          injectDOM('input', 'subsystemSpectrumRefresh', 'SubsystemSidebar', {
+                                                                                'type':'number', 
+                                                                                'min':0, 
+                                                                                'value':'10', 
+                                                                                'form':document.getElementById('subsystemSpectrumControl')
+                                                                              });
+          document.getElementById('subsystemSpectrumRefresh').onchange = function(){
+            clearInterval(window.subsystemsSpectrumRefresh);
+            window.subsystemsSpectrumRefresh = setInterval(loadSpectrum, parseInt(this.value,10)*1000 );              
+          };
+          injectDOM('label', 'subsystemSpectrumRefreshUnit', 'SubsystemSidebar', {'innerHTML':' s'});
+          //refresh the spectrum every n seconds:
+          window.subsystemsSpectrumRefresh = setInterval(loadSpectrum, 10000);
+
+          injectDOM('button', 'subsystemSpectrumRefreshNow', 'SubsystemSidebar', {
+                                                                                    'innerHTML':'Refresh Now', 
+                                                                                    'class':'navLink', 
+                                                                                    'style':'float:left; margin-top:0.5em; margin-left:1em',
+                                                                                    'onclick':loadSpectrum
+                                                                                  });
+          injectDOM('ul', 'subsystemSpectra', 'SubsystemSidebar', {'class':'spectrumList'});
+          document.getElementById('subsystemSpectra').style.maxHeight = '12em';//1.5*$('#subsystemSpectrumViewer').width()*0.8;
+          injectDOM('input', 'subsystemSpectrumName', 'SubsystemSidebar', {'type':'text', 'placeholder':' enter a channel'});
+          injectDOM('button', 'loadSpectrumName', 'SubsystemSidebar', {
+                                                                        'type':'button', 
+                                                                        'innerHTML':'Load', 
+                                                                        'class':'navLink',
+                                                                        'onclick' : loadSpectrum
+                                                                      });
+          injectDOM('br', 'break', 'SubsystemSidebar', {});
+          injectDOM('div', 'subsystemSpectrumTypeWrapper', 'SubsystemSidebar', {});
+          injectDOM('label', 'subsystemSpectrumTypeLabel', 'subsystemSpectrumTypeWrapper', {'innerHTML':'Plot: ', 'for':'subsystemSpectrumType'})
+          injectDOM('select', 'subsystemSpectrumType', 'subsystemSpectrumTypeWrapper', {'class':'subsystemSpectrumTypeDD'});
+          injectDOM('option', 'subsystemEnergyPlot', 'subsystemSpectrumType', {'value':'Energy', 'innerHTML':'Energy'});
+          injectDOM('option', 'subsystemCFDPlot', 'subsystemSpectrumType', {'value':'CFDTime', 'innerHTML':'CFD Time'});
+          injectDOM('option', 'subsystemWaveformPlot', 'subsystemSpectrumType', {'value':'Waveform', 'innerHTML':'Waveform'});
+          //fake data for testing
+          window.spectrumViewers.subsystem.addData('dummy', window.spectrumViewers.subsystem.fakeData.energydata0);
           //draw spectra
           window.spectrumViewers.subsystem.plotData();
           //Subsystem menu; universal buttons declared outside of individual subsystems:
@@ -240,15 +284,6 @@
             document.getElementById('subsystem'+window.parameters.monitorValues[i]).viewIndex = i;
           }
           window.subsystemScalars = window.parameters.monitorValues.length;
-          /*
-          //up/down/left/right buttons for switching between detail views:
-          insertDOM('br', 'break', '', '', 'SubsystemLinks');       
-          insertDOM('button', 'subsystemLeft', 'navLink', '', 'SubsystemLinks', function(){}, String.fromCharCode(0x2190), '', 'button');
-          insertDOM('button', 'subsystemRight', 'navLink', '', 'SubsystemLinks', function(){}, String.fromCharCode(0x2192), '', 'button');
-          insertDOM('button', 'subsystemUp', 'navLink', '', 'SubsystemLinks', function(){}, String.fromCharCode(0x2191), '', 'button');
-          insertDOM('button', 'subsystemDown', 'navLink', '', 'SubsystemLinks', function(){}, String.fromCharCode(0x2193), '', 'button');
-          */
-
 
           //make the top level nav button default to the first subdetector in the list:
           document.getElementById('SubsystemsButton').onclick = function(){
@@ -321,13 +356,9 @@
         window.commitBlink = 0;
         //end globals//////////////////////////////////////////////////////////////////////////////////
 
-        //hack to put subsystems on top until Dashboard view is implemented:
-        if(window.parameters.topDeployment['Subsystems']) swapView('SubsystemLinks', window.Subdetectors[0].canvasID, 'SubsystemSidebar', 'SubsystemsButton')
-        //suppress dashboard link until it's ready:
-        //document.getElementById('DashboardButton').style.display = 'none';
-        //else if(!window.parameters.topDeployment['Trigger']) swapView('mainframeLinks', 'HVgrid0', 'InputLayer', 'HVmonitorButton');
-        //hack to patch in HV assets:
-        //insertDOM('button', 'HVhackButton', 'navLink', '', 'statusLink', function(){window.location="http://alphadon.triumf.ca:8082/CS/Dashboard"}, 'HV Status', '', 'submit');
+        //start with subsystems on top:
+        swapView('SubsystemLinks', window.Subdetectors[0].canvasID, 'SubsystemSidebar', 'SubsystemsButton');
+        document.getElementById('HPGelink').onclick();
 
         document.getElementById('topWrapper').style.height = document.body.scrollHeight
         //inject footer
