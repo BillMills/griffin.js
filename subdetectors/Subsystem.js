@@ -76,7 +76,8 @@ function Subsystem(){
         if(y > that.canvasHeight - that.scaleHeight)
             parameterDialogue(that.name, [[that.name, ODB[that.name][that.constructMinMaxKey(that.name)][0], ODB[that.name][that.constructMinMaxKey(that.name)][1], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/'+that.name+'/'+scaleType()+'[0]', '/DashboardConfig/'+that.name+'/'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.state.subdetectorView]);
         else{
-            document.getElementById(that.pointingNow+'spectrum').onclick();
+            if(that.pointingNow)
+                document.getElementById(that.pointingNow+'spectrum').onclick();
         }
     }
 
@@ -368,10 +369,10 @@ function Subsystem(){
             toolTipContent += nextLine + '<br><br>';
             toolTipContent += this.baseTTtext(this.dataBus[this.name][key].HV, this.dataBus[this.name][key].threshold, this.dataBus[this.name][key].rate);
             toolTipContent += '<br><br>';
+            this.pointingNow = key;
         }
 
         document.getElementById(this.tooltip.ttDivID).innerHTML = toolTipContent;
-        this.pointingNow = key;
     };
 
     //refresh the subsystem spectrum list based on navigation context:

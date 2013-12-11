@@ -41,7 +41,7 @@ function Tooltip(ttCanvasID, ttDivID, wrapperID, prefix, postfix){
         var cellIndex = that.obj.findCell(x, y);
 
         //assume we're not pointing at anything until we confirm that we are:
-        that.pointingNow = null;
+        that.obj.pointingNow = null;
 
         //only continue if the cursor is actually on a valid channel; x and y>0 suppresses an antialiasing bug:
         if(cellIndex != -1 && x>1 && y>1 && x<that.obj.canvasWidth-1 && y<that.obj.canvasHeight-1){
@@ -85,6 +85,7 @@ function Tooltip(ttCanvasID, ttDivID, wrapperID, prefix, postfix){
             document.body.style.cursor = 'auto';
             that.allowUpdate = 0;
         }
+        console.log(that.obj.pointingNow)
     }
 
     //turn the tool tip off if it's outside the canvas:
