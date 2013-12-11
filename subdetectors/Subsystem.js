@@ -1071,7 +1071,6 @@ function HPGeAssets(){
         //summary level//////////////////////////////////////////////////
 
         if(!this.detailShowing) {
-            this.pointingNow = null;
 
             if(cell == 255){
                 toolTipContent = '<br>Click to adjust scale.'

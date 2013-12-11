@@ -40,6 +40,9 @@ function Tooltip(ttCanvasID, ttDivID, wrapperID, prefix, postfix){
         //turn mouse coords into the index pointing to where the relevant info is stored in obj's info arrays:
         var cellIndex = that.obj.findCell(x, y);
 
+        //assume we're not pointing at anything until we confirm that we are:
+        that.pointingNow = null;
+
         //only continue if the cursor is actually on a valid channel; x and y>0 suppresses an antialiasing bug:
         if(cellIndex != -1 && x>1 && y>1 && x<that.obj.canvasWidth-1 && y<that.obj.canvasHeight-1){
 
