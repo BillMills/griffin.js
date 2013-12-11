@@ -85,7 +85,6 @@ function Tooltip(ttCanvasID, ttDivID, wrapperID, prefix, postfix){
             document.body.style.cursor = 'auto';
             that.allowUpdate = 0;
         }
-        console.log(that.obj.pointingNow)
     }
 
     //turn the tool tip off if it's outside the canvas:
