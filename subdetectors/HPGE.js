@@ -206,7 +206,7 @@ function HPGe(){
         if(this.detailShowing){
             document.getElementById(this.detailTooltip.ttDivID).innerHTML = toolTipContent;
         } else{
-            if( !( ((cell-100)%8 < 4) && this.mode=='TIGRESS') ){  //HPGe summaries on TIGRESS have so much stuff in them, they need to build their own table :(
+            if( cell==255 || !( ((cell-100)%8 < 4) && this.mode=='TIGRESS') ){  //HPGe summaries on TIGRESS have so much stuff in them, they need to build their own table :(
                 document.getElementById(this.tooltip.ttDivID).innerHTML = toolTipContent;
             }
         }

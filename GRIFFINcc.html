@@ -239,8 +239,9 @@
           injectDOM('label', 'subsystemSpectrumTypeLabel', 'subsystemSpectrumTypeWrapper', {'innerHTML':'Plot: ', 'for':'subsystemSpectrumType'})
           injectDOM('select', 'subsystemSpectrumType', 'subsystemSpectrumTypeWrapper', {'class':'subsystemSpectrumTypeDD'});
           injectDOM('option', 'subsystemEnergyPlot', 'subsystemSpectrumType', {'value':'E', 'innerHTML':'Energy'});
-          injectDOM('option', 'subsystemCFDPlot', 'subsystemSpectrumType', {'value':'C', 'innerHTML':'CFD Time'});
+          //injectDOM('option', 'subsystemCFDPlot', 'subsystemSpectrumType', {'value':'C', 'innerHTML':'CFD Time'});
           injectDOM('option', 'subsystemWaveformPlot', 'subsystemSpectrumType', {'value':'W', 'innerHTML':'Waveform'});
+          document.getElementById('subsystemSpectrumType').onchange = getSubsystemSpectrum;
           //end controls for subsystem spectrum viewer////////////////////////////////////////////////////////////////////////////////////
           ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
           //draw spectra
