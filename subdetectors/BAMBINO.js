@@ -28,6 +28,7 @@ function BAMBINO(spiceMode){
     this.layers = (this.spiceAux) ? ODB.SPICE.SPICEauxLayers : ODB.BAMBINO.layers;
 
     this.dataBus = new BAMBINODS(this.mode, this.layers, spiceMode);
+
     this.nRadial = 24;
     if(this.mode=='S2')
     	this.nAzimuthal = 16;
