@@ -484,7 +484,7 @@ DSSDDS = function(){
 }
 
 BAMBINODS = function(mode, layers, spiceMode){
-	var i, j, k, index=0, name, prefix;
+	var i, j, k, index=0, name, prefix, arrayPosition;
 	if(spiceMode)
 		prefix = ((mode=='S2') ? 'SPZ0' : 'SPE0');
 	else
@@ -494,10 +494,11 @@ BAMBINODS = function(mode, layers, spiceMode){
 	this.BAMBINO = {};
 	this.TTmap = [];
 	this.totalRate = 0;
-	for(i=1; i<3; i++){  //1 for upstream, 2 for downstream
+	for(i=1; i<3; i++){  //1 for upstream, 2 for downstream, 0 for SPICE.
+		arrayPosition = (spiceMode) ? 0 : i;
 		for(j=0; j<layers; j++){ //telescope layers
 			for(k=0; k<24+( (mode=='S2') ? 16 : 32 ); k++ ){  //segments, 16 azimuthal in S2 mode, 32 in S3
-				name = prefix + i + this.waypoints[j] + ( (k<24) ? 'P'+( (k<10) ? '0'+k : k ) : 'N' + ( (k-24<10) ? '0'+(k-24) : k-24 ) ) + 'X';
+				name = prefix + arrayPosition + this.waypoints[j] + ( (k<24) ? 'P'+( (k<10) ? '0'+k : k ) : 'N' + ( (k-24<10) ? '0'+(k-24) : k-24 ) ) + 'X';
 				this.BAMBINO[name] = {
 					'HV'		: 0,
 					'threshold' : 0,

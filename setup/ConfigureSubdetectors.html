@@ -271,9 +271,12 @@
 							if(subdetectors[i] == 'SPICE'){
 								var spiceMode = (document.getElementById('SPICEmodeS2').checked) ? 'S2' : ( (document.getElementById('SPICEmodeS3').checked) ? 'S3' : '' );
 								ODBSet('/DashboardConfig/SPICE/SPICEauxiliary', spiceMode);
-								//if an S2 or S3 was requested, deploy BAMBINO to handle it:
-								deployBAMBINO();
 								setMinMax('SPICE', '');
+								//if an S2 or S3 was requested, deploy BAMBINO to handle it:
+								if(spiceMode != ''){
+									deployBAMBINO();
+								}
+
 								var spiceLayers = (document.getElementById('SPICEsingleLayer').checked) ? 1 : 2;
 								ODBSet('/DashboardConfig/SPICE/SPICEauxLayers', spiceLayers);
 								ODBSet('/DashboardConfig/HPGe/upstreamLampAbsent', 1);	
@@ -344,6 +347,10 @@
 
 					ODBMCreate(address, type);
 					ODBSet('/DashboardConfig/BAMBINO/deploy', 1);
+
+					ODBSet('/DashboardConfig/BAMBINO/HVscale[*]', [document.getElementById('SPICETableHVmin').valueAsNumber, document.getElementById('SPICETableHVmax').valueAsNumber]);
+					ODBSet('/DashboardConfig/BAMBINO/thresholdScale[*]', [document.getElementById('SPICETablethresholdMin').valueAsNumber, document.getElementById('SPICETablethresholdMax').valueAsNumber]);
+					ODBSet('/DashboardConfig/BAMBINO/rateScale[*]', [document.getElementById('SPICETablerateMin').valueAsNumber, document.getElementById('SPICETablerateMax').valueAsNumber]);
 				}
 
 			</script>
