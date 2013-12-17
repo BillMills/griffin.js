@@ -26,6 +26,7 @@ cp ../plumbing/slider.js .
 cp ../plumbing/tooltip.js .
 cp ../plumbing/utilities.js .
 cp ../plumbing/viewTransitions.js .
+cp ../plumbing/spectrumHandlers.js .
 cp ../subdetectors/Subsystem.js .
 cp ../plumbing/parameters.js .
 cp ../subdetectors/DSSD.js .

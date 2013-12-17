@@ -89,6 +89,7 @@
       window.localODB = {};
       window.state = {};
       ODB = {};
+      spectrumBuffer = {};
 
       //load the webfonts, and block the page until they're ready or failed - otherwise lots of rendering bugs happen!
       WebFontConfig = { google: { families: [ 'Orbitron', 'Raleway' ] },
@@ -212,17 +213,17 @@
                                                                               });
           document.getElementById('subsystemSpectrumRefresh').onchange = function(){
             clearInterval(window.subsystemsSpectrumRefresh);
-            window.subsystemsSpectrumRefresh = setInterval(loadSpectrum, parseInt(this.value,10)*1000 );              
+            window.subsystemsSpectrumRefresh = setInterval(refreshSpectra.bind(null, window.spectrumViewers.subsystem), parseInt(this.value,10)*1000 );              
           };
           injectDOM('label', 'subsystemSpectrumRefreshUnit', 'SubsystemSidebar', {'innerHTML':' s'});
           //refresh the spectrum every n seconds:
-          window.subsystemsSpectrumRefresh = setInterval(loadSpectrum, 10000);
+          window.subsystemsSpectrumRefresh = setInterval(refreshSpectra.bind(null, window.spectrumViewers.subsystem), 10000);
 
           injectDOM('button', 'subsystemSpectrumRefreshNow', 'SubsystemSidebar', {
                                                                                     'innerHTML':'Refresh Now', 
                                                                                     'class':'navLink', 
                                                                                     'style':'float:left; margin-top:0.5em; margin-left:1em',
-                                                                                    'onclick':loadSpectrum
+                                                                                    'onclick': refreshSpectra.bind(null, window.spectrumViewers.subsystem)
                                                                                   });
           injectDOM('ul', 'subsystemSpectra', 'SubsystemSidebar', {'class':'spectrumList'});
           document.getElementById('subsystemSpectra').style.maxHeight = '12em';//1.5*$('#subsystemSpectrumViewer').width()*0.8;
@@ -231,19 +232,17 @@
                                                                         'type':'button', 
                                                                         'innerHTML':'Load', 
                                                                         'class':'navLink',
-                                                                        'onclick' : loadSpectrum
+                                                                        'onclick' : getSubsystemSpectrum
                                                                       });
           injectDOM('br', 'break', 'SubsystemSidebar', {});
           injectDOM('div', 'subsystemSpectrumTypeWrapper', 'SubsystemSidebar', {});
           injectDOM('label', 'subsystemSpectrumTypeLabel', 'subsystemSpectrumTypeWrapper', {'innerHTML':'Plot: ', 'for':'subsystemSpectrumType'})
           injectDOM('select', 'subsystemSpectrumType', 'subsystemSpectrumTypeWrapper', {'class':'subsystemSpectrumTypeDD'});
-          injectDOM('option', 'subsystemEnergyPlot', 'subsystemSpectrumType', {'value':'Energy', 'innerHTML':'Energy'});
-          injectDOM('option', 'subsystemCFDPlot', 'subsystemSpectrumType', {'value':'CFDTime', 'innerHTML':'CFD Time'});
-          injectDOM('option', 'subsystemWaveformPlot', 'subsystemSpectrumType', {'value':'Waveform', 'innerHTML':'Waveform'});
+          injectDOM('option', 'subsystemEnergyPlot', 'subsystemSpectrumType', {'value':'E', 'innerHTML':'Energy'});
+          injectDOM('option', 'subsystemCFDPlot', 'subsystemSpectrumType', {'value':'C', 'innerHTML':'CFD Time'});
+          injectDOM('option', 'subsystemWaveformPlot', 'subsystemSpectrumType', {'value':'W', 'innerHTML':'Waveform'});
           //end controls for subsystem spectrum viewer////////////////////////////////////////////////////////////////////////////////////
           ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-          //fake data for testing
-          window.spectrumViewers.subsystem.addData('dummy', window.spectrumViewers.subsystem.fakeData.energydata0);
           //draw spectra
           window.spectrumViewers.subsystem.plotData();
 

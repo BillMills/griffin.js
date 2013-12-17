@@ -252,7 +252,7 @@ function Subsystem(){
 
         //Thresholds
         nextLine = window.parameters.monitorValues[1] + ': ';
-        if(thresh >= 0xDEADBEEF) nextLine += 'Not Reporting';
+        if(thresh >= 0xDEADBEEF){ nextLine += 'Not Reporting'; console.log(thresh)}
         else nextLine += thresh.toFixed() + ' ' + window.parameters.subdetectorUnit[1];
         toolTipContent += nextLine + '<br>';
         //Rate
@@ -367,6 +367,8 @@ function Subsystem(){
             key = this.dataBus.TTmap[cell];
             nextLine = key;
             toolTipContent += nextLine + '<br><br>';
+            if(this.dataBus[this.name][key].threshold == 0xDEADBEEF)
+                console.log(key)
             toolTipContent += this.baseTTtext(this.dataBus[this.name][key].HV, this.dataBus[this.name][key].threshold, this.dataBus[this.name][key].rate);
             toolTipContent += '<br><br>';
             this.pointingNow = key;
