@@ -36,7 +36,8 @@ function HPGe(){
         if(that.detailShowing){
             that.detailShowing = 0;
             that.detailTooltip.canvas.onmouseout(); //edge case, clicking back to main view w/o moving mouse causes detail TT to try and update, suppress.
-            swapFade(null, that, 1000);
+            //swapFade(null, that, 1000);
+            swapFade(this.id, that, window.subsystemScalars);
         } else{
             swapFade(this.id, this.parentPointer, window.subsystemScalars); 
             that.refreshSubsystemSpectrumList();

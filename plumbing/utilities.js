@@ -568,6 +568,8 @@ function parseThreshold(data){
             window.JSONPstore['thresholds'][key.toUpperCase().slice(0,10)] = data['parameters']['thresholds'][key];
         }
     }
+
+    //console.log(data['parameters']['thresholds']['SPI00XN119'])
 }
 
 function deployFooter(){

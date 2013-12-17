@@ -252,7 +252,7 @@ function Subsystem(){
 
         //Thresholds
         nextLine = window.parameters.monitorValues[1] + ': ';
-        if(thresh >= 0xDEADBEEF){ nextLine += 'Not Reporting'; console.log(thresh)}
+        if(thresh >= 0xDEADBEEF) nextLine += 'Not Reporting';
         else nextLine += thresh.toFixed() + ' ' + window.parameters.subdetectorUnit[1];
         toolTipContent += nextLine + '<br>';
         //Rate
@@ -289,7 +289,8 @@ function Subsystem(){
             this.dataBus[this.name][key]['threshold'] = 0xDEADBEEF; 
             if(window.JSONPstore['thresholds'] && typeof window.JSONPstore['thresholds'][key] == 'number'){
                 this.dataBus[this.name][key]['threshold'] = window.JSONPstore['thresholds'][key];
-            }
+            } else 
+                //console.log(typeof window.JSONPstore['thresholds'][key])
                    
             //rates
             this.dataBus[this.name][key]['rate'] = 0xDEADBEEF;
@@ -323,6 +324,9 @@ function Subsystem(){
             this.dataBus[this.name][key].thresholdColor = this.parseColor(this.dataBus[this.name][key].threshold, this.detectorType(key));
             this.dataBus[this.name][key].oldRateColor = this.dataBus[this.name][key].rateColor;
             this.dataBus[this.name][key].rateColor = this.parseColor(this.dataBus[this.name][key].rate, this.detectorType(key));
+
+            if(this.dataBus[this.name][key].threshold == 0xDEADBEEF && key.slice(0,3) != 'DSC')
+                console.log(key)
         }
 
         //do the same for the summary level, if it exists:
@@ -367,8 +371,6 @@ function Subsystem(){
             key = this.dataBus.TTmap[cell];
             nextLine = key;
             toolTipContent += nextLine + '<br><br>';
-            if(this.dataBus[this.name][key].threshold == 0xDEADBEEF)
-                console.log(key)
             toolTipContent += this.baseTTtext(this.dataBus[this.name][key].HV, this.dataBus[this.name][key].threshold, this.dataBus[this.name][key].rate);
             toolTipContent += '<br><br>';
             this.pointingNow = key;
