@@ -271,6 +271,8 @@
 							if(subdetectors[i] == 'SPICE'){
 								var spiceMode = (document.getElementById('SPICEmodeS2').checked) ? 'S2' : ( (document.getElementById('SPICEmodeS3').checked) ? 'S3' : '' );
 								ODBSet('/DashboardConfig/SPICE/SPICEauxiliary', spiceMode);
+								//if an S2 or S3 was requested, deploy BAMBINO to handle it:
+								deployBAMBINO();
 								setMinMax('SPICE', '');
 								var spiceLayers = (document.getElementById('SPICEsingleLayer').checked) ? 1 : 2;
 								ODBSet('/DashboardConfig/SPICE/SPICEauxLayers', spiceLayers);
@@ -324,6 +326,24 @@
 						document.getElementById('BAMBINOdownstreamLabel').style.color='#FF0000';
 					}
 
+				}
+
+				//SPICE needs to be able to deploy 'BAMBINO' to manage its S2 / S3 detectors:
+				function deployBAMBINO(){
+					var address = [	'/DashboardConfig/BAMBINO', 
+									'/DashboardConfig/BAMBINO/deploy', 
+									'/DashboardConfig/BAMBINO/HVscale', 
+									'/DashboardConfig/BAMBINO/thresholdScale', 
+									'/DashboardConfig/BAMBINO/rateScale', 
+									'/DashboardConfig/BAMBINO/mode', 
+									'/DashboardConfig/BAMBINO/layers', 
+									'/DashboardConfig/BAMBINO/USdeploy', 
+									'/DashboardConfig/BAMBINO/DSdeploy'
+								],
+						type = [TID_KEY, TID_INT, TID_INT, TID_INT, TID_INT, TID_STRING, TID_INT, TID_INT, TID_INT];
+
+					ODBMCreate(address, type);
+					ODBSet('/DashboardConfig/BAMBINO/deploy', 1);
 				}
 
 			</script>
