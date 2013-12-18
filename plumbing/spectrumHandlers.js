@@ -139,5 +139,14 @@ function establishSubsystemSpectrumViewerUI(){
                                                                             'style':'float:left; margin-top:0.5em; margin-left:1em',
                                                                             'onclick': refreshSpectra.bind(null, window.spectrumViewers.subsystem)
                                                                           });
+    injectDOM('button', 'fullSpectrumViewer', 'SubsystemSidebar', {
+                                                                            'innerHTML':'Launch Full Spectrum Viewer', 
+                                                                            'class':'navLink', 
+                                                                            'style':'float:left; margin-top:0.5em;',
+                                                                            'onclick': function(){
+                                                                                //if(Object.keys(window.spectrumViewers.subsystem.plotBuffer)[0]) 
+                                                                                    window.open('http://trshare.triumf.ca/~wjmills/spectrumViewer/?spectrum='+Object.keys(window.spectrumViewers.subsystem.plotBuffer)[0], '_blank')
+                                                                            }
+                                                                          });
     injectDOM('br', 'break', 'SubsystemSidebar', {});    
 }
