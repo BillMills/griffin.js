@@ -935,8 +935,10 @@ input#subsystemSpectrumRefresh{
 	width: 3em;
 	float:left;
 	margin: 0.5em;
+	margin-top:0;
 	margin-bottom: 0;
 	text-align: center;
+
 }
 
 button#loadSpectrumName{
@@ -985,9 +987,16 @@ label#subsystemSpectrumTypeLabel{
 	float:left;
 }
 
-#subsystemSpectrumRefreshLabel, #subsystemSpectrumRefreshUnit{
+#subsystemSpectrumRefreshUnit{
 	float:left;
-	margin-top:1em;
+	padding:0.5em;
+	padding-left:0em;
+}
+
+#subsystemSpectrumRefreshLabel{
+	float:left;
+	padding:0.5em;
+	padding-right:0em;
 }
 
 /* http://stackoverflow.com/questions/3790935/can-i-hide-the-html5-number-inputs-spin-box */

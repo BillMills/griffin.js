@@ -114,12 +114,13 @@ function establishSubsystemSpectrumViewerUI(){
     document.getElementById('subsystemSpectrumType').onchange = function(event){getSubsystemSpectrum();};
     document.getElementById('SubsystemSidebar').insertBefore(document.getElementById('subsystemSpectrumTypeWrapper'), document.getElementById('subsystemSpectrumViewer'));
 
-    injectDOM('button', 'unzoomSubsystemSpectrum', 'SubsystemSidebar', {'onclick':window.spectrumViewers.subsystem.canvas.ondblclick, 'innerHTML':'Unzoom', 'class':'navLink', 'style':'float:left'});
-    injectDOM('label', 'subsystemSpectrumLinear', 'SubsystemSidebar', {'innerHTML':'Linear', 'style':'padding:0.5em; float:left; margin-left:1em; margin-right:-1em'});
+    injectDOM('button', 'unzoomSubsystemSpectrum', 'SubsystemSidebar', {'onclick':window.spectrumViewers.subsystem.canvas.ondblclick, 'innerHTML':'Unzoom', 'class':'navLink', 'style':'float:left; margin-bottom:0.5em;'});
+    injectDOM('label', 'subsystemSpectrumLinear', 'SubsystemSidebar', {'innerHTML':'Linear', 'style':'padding:0.5em; float:left; margin-left:1em; margin-right:-1em; margin-bottom:0.5em;'});
     toggleSwitch('SubsystemSidebar', 'toggleSubsystemSpectrumScale', '', '', '', window.spectrumViewers.subsystem.setAxisType.bind(window.spectrumViewers.subsystem, 'log'), window.spectrumViewers.subsystem.setAxisType.bind(window.spectrumViewers.subsystem, 'linear'), 0);
-    injectDOM('label', 'subsystemSpectrumLog', 'SubsystemSidebar', {'innerHTML':'Log', 'style':'padding:0.5em; float:left; margin-right:1em; margin-left:-1em;'});
-    injectDOM('label', 'subsystemSpectrumRefreshLabel', 'SubsystemSidebar', {'innerHTML':'Refresh Every: ', 'style':'clear:left;'});
-    injectDOM('input', 'subsystemSpectrumRefresh', 'SubsystemSidebar', {
+    injectDOM('label', 'subsystemSpectrumLog', 'SubsystemSidebar', {'innerHTML':'Log', 'style':'padding:0.5em; float:left; margin-right:1em; margin-left:-1em; margin-bottom:0.5em;'});
+    injectDOM('div', 'subsystemRefreshWrap', 'SubsystemSidebar', {'style':'float:left; white-space:nowrap; margin-bottom:0.5em;'})
+    injectDOM('label', 'subsystemSpectrumRefreshLabel', 'subsystemRefreshWrap', {'innerHTML':'Refresh Every: ', 'style':'clear:left; margin-left:2px;'});
+    injectDOM('input', 'subsystemSpectrumRefresh', 'subsystemRefreshWrap', {
                                                                         'type':'number', 
                                                                         'min':0, 
                                                                         'value':'10', 
@@ -129,24 +130,23 @@ function establishSubsystemSpectrumViewerUI(){
     clearInterval(window.subsystemsSpectrumRefresh);
     window.subsystemsSpectrumRefresh = setInterval(refreshSpectra.bind(null, window.spectrumViewers.subsystem), parseInt(this.value,10)*1000 );              
     };
-    injectDOM('label', 'subsystemSpectrumRefreshUnit', 'SubsystemSidebar', {'innerHTML':' s'});
+    injectDOM('label', 'subsystemSpectrumRefreshUnit', 'subsystemRefreshWrap', {'innerHTML':' s'});
     //refresh the spectrum every n seconds:
     window.subsystemsSpectrumRefresh = setInterval(refreshSpectra.bind(null, window.spectrumViewers.subsystem), 10000);
 
-    injectDOM('button', 'subsystemSpectrumRefreshNow', 'SubsystemSidebar', {
+    injectDOM('button', 'subsystemSpectrumRefreshNow', 'subsystemRefreshWrap', {
                                                                             'innerHTML':'Refresh Now', 
                                                                             'class':'navLink', 
-                                                                            'style':'float:left; margin-top:0.5em; margin-left:1em',
+                                                                            'style':'float:left; margin-left:1em',
                                                                             'onclick': refreshSpectra.bind(null, window.spectrumViewers.subsystem)
                                                                           });
     injectDOM('button', 'fullSpectrumViewer', 'SubsystemSidebar', {
                                                                             'innerHTML':'Launch Full Spectrum Viewer', 
                                                                             'class':'navLink', 
-                                                                            'style':'float:left; margin-top:0.5em;',
+                                                                            'style':'float:left; margin-bottom:0.5em;',
                                                                             'onclick': function(){
                                                                                 //if(Object.keys(window.spectrumViewers.subsystem.plotBuffer)[0]) 
                                                                                     window.open('http://trshare.triumf.ca/~wjmills/spectrumViewer/?spectrum='+Object.keys(window.spectrumViewers.subsystem.plotBuffer)[0], '_blank')
                                                                             }
-                                                                          });
-    injectDOM('br', 'break', 'SubsystemSidebar', {});    
+                                                                          });  
 }
