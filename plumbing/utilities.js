@@ -564,9 +564,11 @@ function parseThreshold(data){
     var key;
     if(data['parameters']['thresholds']){
         window.JSONPstore['thresholds'] = {};
+        //console.log(window.JSONPstore['thresholds'])
         for(key in data['parameters']['thresholds']){
             window.JSONPstore['thresholds'][key.toUpperCase().slice(0,10)] = data['parameters']['thresholds'][key];
         }
+        //console.log(window.JSONPstore['thresholds'])
     }
 
     //console.log(data['parameters']['thresholds']['SPI00XN119'])

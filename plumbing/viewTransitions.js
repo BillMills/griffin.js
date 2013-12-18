@@ -18,7 +18,6 @@ function fadeIn(elementID){
 
 //swap two canvases, for use in subdetector view transitions:
 function swapFade(buttonID, object, leaveOff){
-	console.log(window.onDisplay)
 	var i;
 	//parse which view is requested, and fetch the corresponding canvas ID to bring to the front:
 	var inbound = object.view();
@@ -41,7 +40,7 @@ function swapFade(buttonID, object, leaveOff){
 	}
 	//highlight this button:
 	if(buttonID != null) document.getElementById(buttonID).setAttribute('class','navLinkDown');
-	else(console.log(buttonID))
+
 	//make sure the top level nav button navigates back to this config if user leaves & returns:
 	document.getElementById(object.topNavID).setAttribute('onclick', "javascript:swapView('"+object.linkWrapperID+"', '"+inbound+"', '"+object.sidebarID+"', '"+object.topNavID+"')");
 
@@ -50,7 +49,6 @@ function swapFade(buttonID, object, leaveOff){
 		fadeOut(window.onDisplay);
 		window.onDisplay = inbound;
 	}
-	console.log(window.onDisplay)
 }
 
 //swap what values are being presented in the subsystem view:

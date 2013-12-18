@@ -197,53 +197,8 @@
           window.spectrumViewers.subsystem = new spectrumViewer('subsystemSpectrumViewer');
           window.spectrumViewers.subsystem.canvas.style.backgroundColor = '#111111';
           window.spectrumViewers.subsystem.axisColor = '#EEEEEE';
-          //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-          //controls for subsystem spectrum viewer://///////////////////////////////////////////////////////////////////////
-          injectDOM('form', 'subsystemSpectrumControl', 'SubsystemSidebar', {'style':'display:none'});
-          injectDOM('button', 'unzoomSubsystemSpectrum', 'SubsystemSidebar', {'onclick':window.spectrumViewers.subsystem.canvas.ondblclick, 'innerHTML':'Unzoom', 'class':'navLink', 'style':'float:left'});
-          injectDOM('label', 'subsystemSpectrumLinear', 'SubsystemSidebar', {'innerHTML':'Linear', 'style':'padding:0.5em; float:left; margin-left:1em; margin-right:-1em'});
-          toggleSwitch('SubsystemSidebar', 'toggleSubsystemSpectrumScale', '', '', '', window.spectrumViewers.subsystem.setAxisType.bind(window.spectrumViewers.subsystem, 'log'), window.spectrumViewers.subsystem.setAxisType.bind(window.spectrumViewers.subsystem, 'linear'), 0);
-          injectDOM('label', 'subsystemSpectrumLog', 'SubsystemSidebar', {'innerHTML':'Log', 'style':'padding:0.5em; float:left; margin-right:1em; margin-left:-1em;'});
-          injectDOM('label', 'subsystemSpectrumRefreshLabel', 'SubsystemSidebar', {'innerHTML':'Refresh Every: ', 'style':'clear:left;'});
-          injectDOM('input', 'subsystemSpectrumRefresh', 'SubsystemSidebar', {
-                                                                                'type':'number', 
-                                                                                'min':0, 
-                                                                                'value':'10', 
-                                                                                'form':document.getElementById('subsystemSpectrumControl')
-                                                                              });
-          document.getElementById('subsystemSpectrumRefresh').onchange = function(){
-            clearInterval(window.subsystemsSpectrumRefresh);
-            window.subsystemsSpectrumRefresh = setInterval(refreshSpectra.bind(null, window.spectrumViewers.subsystem), parseInt(this.value,10)*1000 );              
-          };
-          injectDOM('label', 'subsystemSpectrumRefreshUnit', 'SubsystemSidebar', {'innerHTML':' s'});
-          //refresh the spectrum every n seconds:
-          window.subsystemsSpectrumRefresh = setInterval(refreshSpectra.bind(null, window.spectrumViewers.subsystem), 10000);
-
-          injectDOM('button', 'subsystemSpectrumRefreshNow', 'SubsystemSidebar', {
-                                                                                    'innerHTML':'Refresh Now', 
-                                                                                    'class':'navLink', 
-                                                                                    'style':'float:left; margin-top:0.5em; margin-left:1em',
-                                                                                    'onclick': refreshSpectra.bind(null, window.spectrumViewers.subsystem)
-                                                                                  });
-          injectDOM('ul', 'subsystemSpectra', 'SubsystemSidebar', {'class':'spectrumList'});
-          document.getElementById('subsystemSpectra').style.maxHeight = '12em';//1.5*$('#subsystemSpectrumViewer').width()*0.8;
-          injectDOM('input', 'subsystemSpectrumName', 'SubsystemSidebar', {'type':'text', 'placeholder':' enter a channel'});
-          injectDOM('button', 'loadSpectrumName', 'SubsystemSidebar', {
-                                                                        'type':'button', 
-                                                                        'innerHTML':'Load', 
-                                                                        'class':'navLink',
-                                                                        'onclick' : getSubsystemSpectrum
-                                                                      });
-          injectDOM('br', 'break', 'SubsystemSidebar', {});
-          injectDOM('div', 'subsystemSpectrumTypeWrapper', 'SubsystemSidebar', {});
-          injectDOM('label', 'subsystemSpectrumTypeLabel', 'subsystemSpectrumTypeWrapper', {'innerHTML':'Plot: ', 'for':'subsystemSpectrumType'})
-          injectDOM('select', 'subsystemSpectrumType', 'subsystemSpectrumTypeWrapper', {'class':'subsystemSpectrumTypeDD'});
-          injectDOM('option', 'subsystemEnergyPlot', 'subsystemSpectrumType', {'value':'E', 'innerHTML':'Energy'});
-          //injectDOM('option', 'subsystemCFDPlot', 'subsystemSpectrumType', {'value':'C', 'innerHTML':'CFD Time'});
-          injectDOM('option', 'subsystemWaveformPlot', 'subsystemSpectrumType', {'value':'W', 'innerHTML':'Waveform'});
-          document.getElementById('subsystemSpectrumType').onchange = getSubsystemSpectrum;
-          //end controls for subsystem spectrum viewer////////////////////////////////////////////////////////////////////////////////////
-          ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+          //inject UI
+          establishSubsystemSpectrumViewerUI();
           //draw spectra
           window.spectrumViewers.subsystem.plotData();
 

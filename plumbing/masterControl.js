@@ -5,7 +5,10 @@ function loadJSONP(gatekeeper, callback) {
         drawSpinner('spinner', 'Waiting for JSONP');
     }
 
-    window.JSONPstore = {'scalar':{}, 'thresholds':{}, 'HV':{}}; //dump the old store so old junk doesn't persist.
+    //actually this creates a window where the JSONP store is empty; if a rePaint is requested then, bad things happen!
+    //dump buffers AFTER the new data is downloaded :)
+    //window.JSONPstore = {'scalar':{}, 'thresholds':{}, 'HV':{}}; //dump the old store so old junk doesn't persist.
+
     for(i=0; i<window.parameters.JSONPrepos.length; i++){
 
         var script = document.createElement('script');
@@ -66,6 +69,7 @@ function gatekeeper(){
 
         if(window.Gatekeeper.copyBack == window.parameters.JSONPrepos.length){
             window.Gatekeeper.copyBack = 0;
+
             if(e.detail.cb == 'main') main.apply(null); //apply construction turns this into anon to avoid funky main collisions
             else masterLoop(e.detail.cb);
         }
@@ -74,6 +78,7 @@ function gatekeeper(){
 
 function masterLoop(callMyself, noFetch){
     var i,j;
+
 	if(!document.webkitHidden && !document.mozHidden){
         //one big ODB grab:
         if(!noFetch) ODBgrab();

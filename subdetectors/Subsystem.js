@@ -27,7 +27,6 @@ function Subsystem(){
         'class' : 'navLink',
         'onclick' : function(){
             swapFade(this.id, this.parentPointer, window.subsystemScalars); 
-            that.refreshSubsystemSpectrumList();
             rePaint();
         },
         'innerHTML' : this.name,
@@ -77,7 +76,8 @@ function Subsystem(){
             parameterDialogue(that.name, [[that.name, ODB[that.name][that.constructMinMaxKey(that.name)][0], ODB[that.name][that.constructMinMaxKey(that.name)][1], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/'+that.name+'/'+scaleType()+'[0]', '/DashboardConfig/'+that.name+'/'+scaleType()+'[1]']], window.parameters.subdetectorColors[window.state.subdetectorView]);
         else{
             if(that.pointingNow)
-                document.getElementById(that.pointingNow+'spectrum').onclick();
+                getSubsystemSpectrum(that.pointingNow);
+                //document.getElementById(that.pointingNow+'spectrum').onclick();
         }
     }
 
@@ -283,14 +283,15 @@ function Subsystem(){
         
         var key;
         this.dataBus.totalRate = 0;
-
+        //it seems to be possible (but difficult) to trigger a fetchNewData when window.JSONPstore.thresholds is empty...?
         for(key in this.dataBus[this.name]){
             //thresholds
             this.dataBus[this.name][key]['threshold'] = 0xDEADBEEF; 
             if(window.JSONPstore['thresholds'] && typeof window.JSONPstore['thresholds'][key] == 'number'){
                 this.dataBus[this.name][key]['threshold'] = window.JSONPstore['thresholds'][key];
-            } else 
-                //console.log(typeof window.JSONPstore['thresholds'][key])
+            } else if(this.name != 'DESCANT')
+                //console.log([key, window.JSONPstore['thresholds'][key], typeof window.JSONPstore['thresholds'][key]])
+                console.log([key, window.JSONPstore['thresholds']])
                    
             //rates
             this.dataBus[this.name][key]['rate'] = 0xDEADBEEF;
@@ -325,8 +326,8 @@ function Subsystem(){
             this.dataBus[this.name][key].oldRateColor = this.dataBus[this.name][key].rateColor;
             this.dataBus[this.name][key].rateColor = this.parseColor(this.dataBus[this.name][key].rate, this.detectorType(key));
 
-            if(this.dataBus[this.name][key].threshold == 0xDEADBEEF && key.slice(0,3) != 'DSC')
-                console.log(key)
+            //if(this.dataBus[this.name][key].threshold == 0xDEADBEEF && key.slice(0,3) != 'DSC')
+            //    console.log(key)
         }
 
         //do the same for the summary level, if it exists:
@@ -377,20 +378,6 @@ function Subsystem(){
         }
 
         document.getElementById(this.tooltip.ttDivID).innerHTML = toolTipContent;
-    };
-
-    //refresh the subsystem spectrum list based on navigation context:
-    this.refreshSubsystemSpectrumList = function(){
-        var list = document.getElementById('subsystemSpectra'),
-            key;
-
-        //delete old list
-        list.innerHTML = '';
-
-        //make a new entry for each element in the detector's datbus:
-        for(key in this.dataBus[this.name]){
-            injectDOM('li', key+'spectrum', 'subsystemSpectra', {'innerHTML':key, 'onclick':clickSubsystemSpectrum});
-        }
     };
     
 }

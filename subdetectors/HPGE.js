@@ -40,7 +40,6 @@ function HPGe(){
             swapFade(this.id, that, window.subsystemScalars);
         } else{
             swapFade(this.id, this.parentPointer, window.subsystemScalars); 
-            that.refreshSubsystemSpectrumList();
             rePaint();
         }
     }
@@ -53,7 +52,8 @@ function HPGe(){
                                     var y = event.pageY - that.canvas.offsetTop - that.monitor.offsetTop;    
                                     if(y < that.canvasHeight - that.scaleHeight){
                                         if(that.pointingNow)
-                                            document.getElementById(that.pointingNow+'spectrum').onclick();
+                                            getSubsystemSpectrum(that.pointingNow);
+                                            //document.getElementById(that.pointingNow+'spectrum').onclick();
                                     } else{
                                         parameterDialogue(that.name, [['HPGe', ODB[that.name][that.constructMinMaxKey('HPGe')][0], ODB[that.name][that.constructMinMaxKey('HPGe')][1], window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/HPGe/'+scaleType()+'[0]', '/DashboardConfig/HPGe/'+scaleType()+'[1]'], ['BGO', ODB[that.name][that.constructMinMaxKey('BGO')][0], ODB[that.name][that.constructMinMaxKey('BGO')][1],  window.parameters.subdetectorUnit[window.state.subdetectorView], '/DashboardConfig/HPGe/BGO'+scaleType()+'[0]', '/DashboardConfig/HPGe/BGO'+scaleType()+'[1]'] ], window.parameters.subdetectorColors[window.state.subdetectorView]);
                                     }

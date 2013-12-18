@@ -1,15 +1,22 @@
-//fetch one spectrum from the server
-function fetchSpectrum(name, callback){
-    var script;
+//top-level function to handle fetching a subsystem spectrum
+function getSubsystemSpectrum(channel){
+    var spectrumOptions = document.getElementById('subsystemSpectrumType'),
+        spectrumType = spectrumOptions.options[spectrumOptions.selectedIndex].value,
+        spectrumName = channel;
 
-    //get data from server:
-    script = document.createElement('script');
-    script.setAttribute('src', 'http://annikal.triumf.ca:9093/?cmd=callspechandler&spectrum1='+name);
-    if(callback) script.onload = callback
-    script.id = 'fetchdata';
+    //if nothing provided, just redo whatever's in there now; there should only ever be one.
+    if(!channel)
+        spectrumName = Object.keys(window.spectrumViewers.subsystem.plotBuffer)[0].slice(1,11);
 
-    document.head.appendChild(script);
-}
+    //don't flip out if nothing's been plotted or requested yet:
+    if(!spectrumName)
+        return;
+
+    //make the last character case insensitive
+    spectrumName = spectrumName.slice(0,9) + spectrumName.slice(9,10).toLowerCase();
+
+    addSpectrum(spectrumType + spectrumName, window.spectrumViewers.subsystem);
+};
 
 //deploy a new histo to the viewer: fetch it, draw it.
 function addSpectrum(name, viewer){
@@ -36,6 +43,19 @@ function addSpectrum(name, viewer){
     
 };
 
+//fetch one spectrum from the server
+function fetchSpectrum(name, callback){
+    var script;
+
+    //get data from server:
+    script = document.createElement('script');
+    script.setAttribute('src', 'http://annikal.triumf.ca:9093/?cmd=callspechandler&spectrum1='+name);
+    if(callback) script.onload = callback
+    script.id = 'fetchdata';
+
+    document.head.appendChild(script);
+};
+
 //handle the server callback, currently hardcoded as callSpectrumHandler
 function callSpectrumHandler(data){
 
@@ -49,16 +69,6 @@ function callSpectrumHandler(data){
         }
     }  
 };
-
-//handle fetching a subsystem spectrum
-function getSubsystemSpectrum(){
-    var spectrumOptions = document.getElementById('subsystemSpectrumType'),
-        spectrumType = spectrumOptions.options[spectrumOptions.selectedIndex].value,
-        channel = document.getElementById('subsystemSpectrumName').value;
-
-    channel = channel.slice(0,9) + channel.slice(9,10).toLowerCase();
-    addSpectrum(spectrumType + channel, window.spectrumViewers.subsystem);
-}
 
 //refresh spectra that are currently available for plotting
 function refreshSpectra(viewer){
@@ -89,4 +99,45 @@ function refreshSpectra(viewer){
         document.head.appendChild(script);
     } else
         viewer.plotData();
+};
+
+//inject subsystem spectrum viewer assets
+function establishSubsystemSpectrumViewerUI(){
+    injectDOM('form', 'subsystemSpectrumControl', 'SubsystemSidebar', {'style':'display:none'});
+
+    injectDOM('div', 'subsystemSpectrumTypeWrapper', 'SubsystemSidebar', {});
+    injectDOM('label', 'subsystemSpectrumTypeLabel', 'subsystemSpectrumTypeWrapper', {'innerHTML':'Plot: ', 'for':'subsystemSpectrumType'})
+    injectDOM('select', 'subsystemSpectrumType', 'subsystemSpectrumTypeWrapper', {'class':'subsystemSpectrumTypeDD'});
+    injectDOM('option', 'subsystemEnergyPlot', 'subsystemSpectrumType', {'value':'E', 'innerHTML':'Energy'});
+    //injectDOM('option', 'subsystemCFDPlot', 'subsystemSpectrumType', {'value':'C', 'innerHTML':'CFD Time'});
+    injectDOM('option', 'subsystemWaveformPlot', 'subsystemSpectrumType', {'value':'W', 'innerHTML':'Waveform'});
+    document.getElementById('subsystemSpectrumType').onchange = function(event){getSubsystemSpectrum();};
+    document.getElementById('SubsystemSidebar').insertBefore(document.getElementById('subsystemSpectrumTypeWrapper'), document.getElementById('subsystemSpectrumViewer'));
+
+    injectDOM('button', 'unzoomSubsystemSpectrum', 'SubsystemSidebar', {'onclick':window.spectrumViewers.subsystem.canvas.ondblclick, 'innerHTML':'Unzoom', 'class':'navLink', 'style':'float:left'});
+    injectDOM('label', 'subsystemSpectrumLinear', 'SubsystemSidebar', {'innerHTML':'Linear', 'style':'padding:0.5em; float:left; margin-left:1em; margin-right:-1em'});
+    toggleSwitch('SubsystemSidebar', 'toggleSubsystemSpectrumScale', '', '', '', window.spectrumViewers.subsystem.setAxisType.bind(window.spectrumViewers.subsystem, 'log'), window.spectrumViewers.subsystem.setAxisType.bind(window.spectrumViewers.subsystem, 'linear'), 0);
+    injectDOM('label', 'subsystemSpectrumLog', 'SubsystemSidebar', {'innerHTML':'Log', 'style':'padding:0.5em; float:left; margin-right:1em; margin-left:-1em;'});
+    injectDOM('label', 'subsystemSpectrumRefreshLabel', 'SubsystemSidebar', {'innerHTML':'Refresh Every: ', 'style':'clear:left;'});
+    injectDOM('input', 'subsystemSpectrumRefresh', 'SubsystemSidebar', {
+                                                                        'type':'number', 
+                                                                        'min':0, 
+                                                                        'value':'10', 
+                                                                        'form':document.getElementById('subsystemSpectrumControl')
+                                                                      });
+    document.getElementById('subsystemSpectrumRefresh').onchange = function(){
+    clearInterval(window.subsystemsSpectrumRefresh);
+    window.subsystemsSpectrumRefresh = setInterval(refreshSpectra.bind(null, window.spectrumViewers.subsystem), parseInt(this.value,10)*1000 );              
+    };
+    injectDOM('label', 'subsystemSpectrumRefreshUnit', 'SubsystemSidebar', {'innerHTML':' s'});
+    //refresh the spectrum every n seconds:
+    window.subsystemsSpectrumRefresh = setInterval(refreshSpectra.bind(null, window.spectrumViewers.subsystem), 10000);
+
+    injectDOM('button', 'subsystemSpectrumRefreshNow', 'SubsystemSidebar', {
+                                                                            'innerHTML':'Refresh Now', 
+                                                                            'class':'navLink', 
+                                                                            'style':'float:left; margin-top:0.5em; margin-left:1em',
+                                                                            'onclick': refreshSpectra.bind(null, window.spectrumViewers.subsystem)
+                                                                          });
+    injectDOM('br', 'break', 'SubsystemSidebar', {});    
 }
