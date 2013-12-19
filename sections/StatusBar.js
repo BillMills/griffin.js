@@ -127,7 +127,10 @@ function StatusBar(wrapper){
 		}
 
         //run comment
-        this.comment = window.localODB.comment;
+        if(window.localODB.comment)
+            this.comment = window.localODB.comment;
+        else
+            this.comment = '';
 
         document.getElementById(this.runInfoID).innerHTML = '<br>' + this.runInfo + '<br>' + this.startInfo + '<br>' + this.elapsed + '<br><br>' + this.comment + '<br><br>';
         
