@@ -289,9 +289,8 @@ function Subsystem(){
             this.dataBus[this.name][key]['threshold'] = 0xDEADBEEF; 
             if(window.JSONPstore['thresholds'] && typeof window.JSONPstore['thresholds'][key] == 'number'){
                 this.dataBus[this.name][key]['threshold'] = window.JSONPstore['thresholds'][key];
-            } else if(this.name != 'DESCANT')
-                //console.log([key, window.JSONPstore['thresholds'][key], typeof window.JSONPstore['thresholds'][key]])
-                console.log([key, window.JSONPstore['thresholds']])
+            } //else if(this.name != 'DESCANT')
+                //console.log([key, window.JSONPstore['thresholds']])
                    
             //rates
             this.dataBus[this.name][key]['rate'] = 0xDEADBEEF;

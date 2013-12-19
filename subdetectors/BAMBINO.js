@@ -142,7 +142,12 @@ function BAMBINO(spiceMode){
 	    	if(i%2 == 0){
 
 	    		for(j=0; j<this.nRadial; j++){
-                    name = ((this.spiceAux) ? 'SP' : 'BA' ) + ((this.mode=='S2') ? 'Z0' : 'E0') + ( (this.spiceAux) ? 0 : Math.floor((i%4)/2)+1) + this.dataBus.waypoints[Math.floor(i/4)] + 'P' +( (j<10) ? '0'+j : j ) + 'X';
+                    //name = ((this.spiceAux) ? 'SP' : 'BA' ) + ((this.mode=='S2') ? 'Z0' : 'E0') + ( (this.spiceAux) ? 0 : Math.floor((i%4)/2)+1) + this.dataBus.waypoints[Math.floor(i/4)] + 'P' +( (j<10) ? '0'+j : j ) + 'X';
+                    if(i==2 || i==6) //downstream fronts count 0 on the inside to 23 on the outside
+                        name = ((this.spiceAux) ? 'SP' : 'BA' ) + ((this.mode=='S2') ? 'Z0' : 'E0') + ( (this.spiceAux) ? 0 : Math.floor((i%4)/2)+1) + this.dataBus.waypoints[Math.floor(i/4)] + 'P' + ((this.nRadial-1-j < 10) ? '0'+(this.nRadial-1-j) : this.nRadial-1-j) + 'X';
+                    else //upstream fronts count 0 on the outside to 23 on the inside
+                        name = ((this.spiceAux) ? 'SP' : 'BA' ) + ((this.mode=='S2') ? 'Z0' : 'E0') + ( (this.spiceAux) ? 0 : Math.floor((i%4)/2)+1) + this.dataBus.waypoints[Math.floor(i/4)] + 'P' +( (j<10) ? '0'+j : j ) + 'X';
+                    
     				this.context.beginPath()
                     fill = colors(name, this.dataBus.BAMBINO, frame, this.nFrames);
                     this.context.fillStyle = (fill==0xDEADBEEF) ? this.context.createPattern(window.parameters.warningFill, 'repeat') : fill;

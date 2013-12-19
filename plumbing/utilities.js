@@ -611,3 +611,11 @@ function deleteDOM(id){
     var element = document.getElementById(id);
     element.parentNode.removeChild(element);
 };
+
+//return the value of a selected option from a <select> element
+function selected(selectID){
+    var select = document.getElementById(selectID),
+        value = select.options[select.selectedIndex].value;
+
+    return value;
+}

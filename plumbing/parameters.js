@@ -9,7 +9,7 @@ function loadParameters(){
 				"colorScale"  : ["ROOT Rainbow", "Greyscale", "Sunset", "Red Scale", "Mayfair"],
 				"detectorLogMode" : {'SubsystemsButton' : 0, 'DAQbutton' : 0, 'DashboardButton' : 0},  //log state a function of ID of button used to summon current view state 
 				"warningFill" : 0, //an img to fill detector channels absent from the JSONP post
-				"JSONPrepos" : ["http://midtig06.triumf.ca:8091/mother/parameters?jsonp=parseThreshold", "http://midtig06:8091/mother/scalar?jsonp=parseResponse"],
+				"JSONPrepos" : ["http://midtig06.triumf.ca:8091/mother/parameters?jsonp=parseThreshold", "http://midtig06.triumf.ca:8091/mother/scalar?jsonp=parseResponse"],
 
 				//HV monitor
 				"ODBkeys" : ["Variables/Demand", "Variables/Measured", "Variables/Current", "Settings/Ramp Up Speed", "Settings/Ramp Down Speed", "Variables/Temperature", "Settings/ChState", "Variables/ChStatus", "Settings/Voltage Limit", "Settings/Current Limit", "Settings/Names"],

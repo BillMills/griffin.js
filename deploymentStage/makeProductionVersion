@@ -35,6 +35,7 @@ cp ../sections/VME.js .
 cp ../sections/Cycle.js .
 cp ../setup/thumbnails.js .
 cp ../subdetectors/ZDS.js .
+cp ../plumbing/history.js .
 cp ../../gammaSpectrum/gammaSpectrum.js .
 cp ../../gammaSpectrum/fitit.js .
 

@@ -77,7 +77,7 @@ function gatekeeper(){
 }
 
 function masterLoop(callMyself, noFetch){
-    var i,j;
+    var i,j, historySelect;
 
 	if(!document.webkitHidden && !document.mozHidden){
         //one big ODB grab:
@@ -106,6 +106,9 @@ function masterLoop(callMyself, noFetch){
         if(window.parameters.topDeployment['Cycle']) window.cyclePointer.update();
         //Dashboard
         window.dashboard.update();       
+
+        //history
+        document.getElementById('historyPlot').src = selected('historyURL');
 
         //let the alarm service do it's thing now that the update is complete:
         window.AlarmServices.publishAlarms();

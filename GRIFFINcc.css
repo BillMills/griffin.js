@@ -953,7 +953,7 @@ div#subsystemSpectrumTypeWrapper{
 	display:inline-block;
 }
 
-select.subsystemSpectrumTypeDD{
+select.subsystemSpectrumTypeDD, select.historyDD{
 	background-color: #222222;
 	border-radius: 5px;
 	color: #EEEEEE;
