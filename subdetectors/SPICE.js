@@ -44,7 +44,7 @@ function SPICE(){
         //once for display canvas...
     	for(key in this.dataBus.SPICE){
     		sector = i%12;
-    		ring = Math.floor(i/12);
+    		ring = 9 - Math.floor(i/12);
 
             fill = colors(key, this.dataBus.SPICE, frame, this.nFrames);
             this.context.fillStyle = (fill==0xDEADBEEF) ? this.context.createPattern(window.parameters.warningFill, 'repeat') : fill;
@@ -64,7 +64,7 @@ function SPICE(){
         i=0;
             for(key in this.dataBus.SPICE){
                 sector = i%12;
-                ring = Math.floor(i/12);
+                ring = 9 - Math.floor(i/12);
 
                 this.TTcontext.fillStyle = 'rgba('+this.dataBus.SPICE[key].index+','+this.dataBus.SPICE[key].index+','+this.dataBus.SPICE[key].index+',1)';
                 this.TTcontext.beginPath();

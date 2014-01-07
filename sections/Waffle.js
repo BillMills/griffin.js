@@ -102,7 +102,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                 'type' : 'button',
                 'value' : 'Commit'
             });
-            document.getElementById('submitParameters').setAttribute('disabled', 'true');
+            //document.getElementById('submitParameters').setAttribute('disabled', 'true');
 
             //status report:
             injectDOM('p', 'status', 'setValues', {'style':'margin-left:10%', 'innerHTML':'Status:'});
@@ -488,8 +488,8 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                         if(A>1) {A = 1;}
     	            }
 
-                    //12-channel cards don't have primary channels, show black (also empty slots):
-                    if( (i==0 && window.parameters.moduleSizes[crate][j] == 1) || window.parameters.moduleSizes[crate][primary] == 0 ){
+                    //12- and 24-channel cards don't have primary channels, show black (also empty slots):
+                    if( (i==0 && window.parameters.moduleSizes[crate][j] == 1) || (i==0 && window.parameters.moduleSizes[crate][j] == 2) || window.parameters.moduleSizes[crate][primary] == 0 ){
                         R = 0;
                         G = 0;
                         B = 0;
@@ -838,8 +838,6 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                 voltageLimit[k]    = window.localODB['HV'+k].voltageLimit;
                 currentLimit[k]    = window.localODB['HV'+k].currentLimit;        
             }
-                
-
 
             for(k=0; k<this.nCrates; k++){
                 for(i=0; i<this.rows; i++){
@@ -876,7 +874,7 @@ function Waffle(InputLayer, headerDiv, AlarmServices){
                             this.dataBus[k].demandVrampDown[i][j]   = parseFloat(rampDown[k][ODBindex]);
                             this.dataBus[k].reportTemperature[i][j] = parseFloat(measTemperature[k][ODBindex]);
                             this.dataBus[k].channelMask[i][j]       = ( parseInt(repoChState[k][ODBindex]) && parseInt(repoChStatus[k][ODBindex]) ) ? 1 : 0 ;
-                            this.dataBus[k].rampStatus[i][j]        = parseFloat(repoChStatus[k][ODBindex]);
+                            this.dataBus[k].rampStatus[i][j]        = parseInt(repoChStatus[k][ODBindex], 16);
                             this.dataBus[k].voltLimit[i][j]         = parseFloat(voltageLimit[k][ODBindex]);
                             this.dataBus[k].currentLimit[i][j]      = parseFloat(currentLimit[k][ODBindex]);
 
@@ -1066,6 +1064,7 @@ function getMIDASindex(row, col, crate){
         //add up all the channels from previous cards:
         for(i=0; i<moduleNumber; i++){
             if(window.parameters.moduleSizes[crate][i] == 1) MIDASindex += 12;
+            if(window.parameters.moduleSizes[crate][i] == 2) MIDASindex += 24;
             if(window.parameters.moduleSizes[crate][i] == 4) MIDASindex += 49;
         }
         //MIDASindex++;
@@ -1159,6 +1158,7 @@ function reconfigureChannelList(moduleLabels, moduleSizes, ChannelListDD){
 
     //decide how many channels should be in the channel dropdown:
     if(moduleSizes[index] == 4) nChan = 48;
+    else if(moduleSizes[index] == 2) nChan = 24;
     else nChan = 12;
 
     //establish channel list

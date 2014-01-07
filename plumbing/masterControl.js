@@ -148,21 +148,24 @@ function detectCrates(){
 function detectCards(){
     var i, j, crateCode, nSlots;
     
-    //fetch cratemap code: subsequent pairs of bits correspond to slots in ascending order: 00 => empty slot; 01 => 12 channel card; 10 => 48 channel card.
-    //crate size indicated by terminating bitpattern = 111: at bit 12 -> 6 slot crate, at bit 24 -> 12 slot crate, absent -> 16 slot crate:
+    //32-bit integer encodes what size cards are in what slot; each slot is encoded in 2 bits, and slot 0 is the two highest (ie 31 and 30) bits.
+    //00 == empty slot, 01 == 12chan card, 10 == 24chan card, 11 == 48chan card.  Crate size is indicated by the lowest two bits;
+    //10 == 6 slot crate, 11 == 12 slot crate, anything else == 16 slot crate.
     for(j=0; j<window.parameters.HVequipmentNames.length; j++){
         crateCode = parseInt(ODBGet('/Equipment/'+window.parameters.HVequipmentNames[j]+'/Settings/Devices/sy2527/DD/crateMap'), 10);
-        if( ((crateCode & (7<<12)) >> 12) == 7) nSlots = 6;
-        else if( ((crateCode & (7<<24)) >> 24) == 7) nSlots = 12;
+        if( (crateCode & 3) == 2) nSlots = 6;
+        else if( (crateCode & 3) == 3) nSlots = 12;
         else nSlots = 16;
 
-        window.parameters.moduleSizes[j] = [];    
+        window.parameters.moduleSizes[j] = [];
         for(i=0; i<nSlots; i++){
-            if( ((crateCode>>(2*i)) & 3) == 1 ) window.parameters.moduleSizes[j][window.parameters.moduleSizes[j].length] = 1;
-            else if( ((crateCode>>(2*i)) & 3) == 2 ) window.parameters.moduleSizes[j][window.parameters.moduleSizes[j].length] = 4;
-            else window.parameters.moduleSizes[j][window.parameters.moduleSizes[j].length] = 0;
+            if( ((crateCode>>(30-2*i)) & 3) == 0 ) window.parameters.moduleSizes[j][window.parameters.moduleSizes[j].length] = 0;
+            else if( ((crateCode>>(30-2*i)) & 3) == 1 ) window.parameters.moduleSizes[j][window.parameters.moduleSizes[j].length] = 1;
+            else if( ((crateCode>>(30-2*i)) & 3) == 2 ) window.parameters.moduleSizes[j][window.parameters.moduleSizes[j].length] = 2;
+            else if( ((crateCode>>(30-2*i)) & 3) == 3 ) window.parameters.moduleSizes[j][window.parameters.moduleSizes[j].length] = 4;
         }
     }
+
 }
 
 //force an immediate update, and set the master loop going again from there:
