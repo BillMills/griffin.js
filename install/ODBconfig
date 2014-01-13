@@ -1,5 +1,5 @@
-mkdir /test
-cd test
+mkdir /Custom
+cd Custom
 
 create string ConfigureExperiment&[1][128]
 set ConfigureExperiment& $PWD/setup/ConfigureExperiment.html
