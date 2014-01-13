@@ -2,34 +2,34 @@ mkdir /test
 cd test
 
 create string ConfigureExperiment&[1][128]
-set ConfigureExperiment& $PWD/setup/ConfigureExperiment.html
+set ConfigureExperiment& $PWD/../setup/ConfigureExperiment.html
 
 create string ExperimentSetupJS![1][128]
-set ExperimentSetupJS! $PWD/setup/experimentDeploymentStage/configure.min.js
+set ExperimentSetupJS! $PWD/../setup/experimentDeploymentStage/configure.min.js
 
 create string ExperimentSetupCSS![1][128]
-set ExperimentSetupCSS! $PWD/setup/ConfigureExperiment.css
+set ExperimentSetupCSS! $PWD/../setup/ConfigureExperiment.css
 
 create string ConfigureSubdetectors&[1][128]
-set ConfigureSubdetectors& $PWD/setup/ConfigureSubdetectors.html
+set ConfigureSubdetectors& $PWD/../setup/ConfigureSubdetectors.html
 
 create string ConfigureSubdetectorsJS![1][128]
-set ConfigureSubdetectorsJS! $PWD/setup/subdetectorConfigStage/configureSubdetectors.min.js
+set ConfigureSubdetectorsJS! $PWD/../setup/subdetectorConfigStage/configureSubdetectors.min.js
 
 create string ConfigureSubdetectorsCSS![1][128]
-set ConfigureSubdetectorsCSS! $PWD/setup/ConfigureSubdetectors.css
+set ConfigureSubdetectorsCSS! $PWD/../setup/ConfigureSubdetectors.css
 
 create string zeptoJS![1][128]
-set zeptoJS! $PWD/lib/zepto.min.js
+set zeptoJS! $PWD/../lib/zepto.min.js
 
 create string Dashboard&[1][128]
-set Dashboard& $PWD/deploymentStage/GRIFFINcc.html
+set Dashboard& $PWD/../deploymentStage/GRIFFINcc.html
 
 create string griffinJS![1][128]
-set griffinJS! $PWD/deploymentStage/griffin.min.js
+set griffinJS! $PWD/../deploymentStage/griffin.min.js
 
 create string griffinCSS![1][128]
-set griffinCSS! $PWD/GRIFFINcc.css
+set griffinCSS! $PWD/../GRIFFINcc.css
 
 mkdir Images
 cd Images
@@ -37,17 +37,17 @@ cd Images
 mkdir logo.gif
 cd logo.gif
 create string Background[1][128]
-set Background $PWD/img/logo.gif
+set Background $PWD/../img/logo.gif
 cd ..
 
 mkdir static.gif
 cd static.gif
 create string Background[1][128]
-set Background $PWD/img/static.gif
+set Background $PWD/../img/static.gif
 cd ..
 
 mkdir triumf.gif
 cd triumf.gif
 create string Background[1][128]
-set Background $PWD/img/triumf.gif
+set Background $PWD/../img/triumf.gif
 cd ..
