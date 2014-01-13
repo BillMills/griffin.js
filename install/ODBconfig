@@ -2,7 +2,7 @@ mkdir /Custom
 cd Custom
 
 create string ConfigureExperiment&[1][128]
-set ConfigureExperiment& $PWD/setup/ConfigureExperiment.html
+set ConfigureExperiment& $PWD/setup/experimentDeploymentStage/ConfigureExperiment.html
 
 create string ExperimentSetupJS![1][128]
 set ExperimentSetupJS! $PWD/setup/experimentDeploymentStage/configure.min.js
@@ -11,7 +11,7 @@ create string ExperimentSetupCSS![1][128]
 set ExperimentSetupCSS! $PWD/setup/ConfigureExperiment.css
 
 create string ConfigureSubdetectors&[1][128]
-set ConfigureSubdetectors& $PWD/setup/ConfigureSubdetectors.html
+set ConfigureSubdetectors& $PWD/setup/subdetectorConfigStage/ConfigureSubdetectors.html
 
 create string ConfigureSubdetectorsJS![1][128]
 set ConfigureSubdetectorsJS! $PWD/setup/subdetectorConfigStage/configureSubdetectors.min.js
