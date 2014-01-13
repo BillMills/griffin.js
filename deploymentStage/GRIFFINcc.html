@@ -124,6 +124,16 @@
         //load things from the ODB
         ODBgrab();
 
+        //is the DAQ registered in the ODB properly?
+        if(ODB.DAQ.config == 'TIGRESS'){
+            this.DAQpath = ['/Analyzer/Parameters/Cathode/Config/Name[*]', '/Analyzer/Parameters/Cathode/Config/FSCP[*]'];       
+            this.DAQtable = ODBMGet(this.DAQpath);
+        } else {
+            this.DAQpath = ['/DashboardConfig/DAQ/Channel', '/DashboardConfig/DAQ/MSC'];
+            this.DAQtable = JSON.parse(ODBMCopy(this.DAQpath));
+        }
+        window.parameters.topDeployment['DAQ'] = (this.DAQtable) ? true : false;
+
         //let the MIDAS status link, left sidebar & branding appear:
         $('#branding').css('opacity', 1);
         $('#MIDASstatusLink').css('opacity', 1);
