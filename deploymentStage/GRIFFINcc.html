@@ -1,0 +1,327 @@
+<html>
+  <head>
+
+    <script src="griffinJS!" type="text/javascript"></script>
+    <script src="http://code.createjs.com/easeljs-0.7.0.min.js"></script>
+    <script src="/js/mhttpd.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="griffinCSS!" />
+
+  </head>
+
+  <body> 
+    <div id='paperTooltip' style = 'width:100px; height:100px; background-color:#00FF00; display:none; position:absolute;'></div>
+    <!--Top-level wrapper////////////////////////////////////////////////////////-->
+    <div id="topWrapper"> 
+      <!--Branding///////////////////////////////////////////////////////////-->
+      <div id='branding'>
+        <img id='logo' height='70px' width='80px' src='triumf.gif'></img>
+        <h1 id='title'>TRIUMF</h1>
+      </div>
+
+      <!--Top Level Navigation////////////////////////////////////////////////////////////-->
+      <div id="navBar" style='margin:none;'>
+        <div id='statusLink'>
+          <button id='MIDASstatusLink' class='navLink' style='opacity:0; margin-bottom:5em' type="submit">MIDAS Status</button>
+          <!--All other objects will insert their nav buttons here-->
+        </div>
+        <p id="youAreHere"></p>
+      </div>
+     
+      <!--Left Sidebar: alarms, run control, etc-->
+      <div id='leftSidebarDetail' class='LeftSidebar' style='z-index:-1; opacity:0; height:80%; overflow:scroll; padding:10px;'></div>
+      <div id='leftSidebar' class='LeftSidebar' style='z-index:1; opacity:0'></div>
+
+      <!--Spinner Canvas////////////////-->
+      <canvas id='spinner' style='position:fixed; z-index:100000; transition:opacity 0.5s; -moz-transition:opacity 0.5s; -webkit-transition:opacity 0.5s;' width='200px' height='200px'> </canvas>
+
+      <!--Collapsible menus-->
+      <div id='dashboardMenus' class='collapsableSidebar' style='float:right; height:80%; width:24%;'></div>
+      <div id='clockMenus' class='collapsableSidebar' style='float:right; height:80%;'></div>
+      <div id='VMEMenus' class='collapsableSidebar' style='float:right; height:80%;'></div>
+      <div id='cycleMenus' class='collapsableSidebar' style='float:right; height:80%;'></div>
+
+    </div>
+
+    <!--Load up an image file to use as a fill background for detector channels missing from JSONP-->
+    <img id='warningFill' style='display:none' src="static.gif">
+
+    <!--Set up JSONP services, then synchronously load parameters->data stores->main routine////////////////////////////////////////////////////-->
+    <script type="text/javascript">
+
+      //declare the global namespaces / objects that will see heavy use
+      window.parameters = {};
+      window.spectrumViewers = {};
+      window.Gatekeeper = new gatekeeper();
+      window.JSONPstatus = [];
+      window.JSONPstore = {'scalar':{}, 'thresholds':{}};
+      window.localODB = {};
+      window.state = {};
+      ODB = {};
+      spectrumBuffer = {};
+
+      //load the webfonts, and block the page until they're ready or failed - otherwise lots of rendering bugs happen!
+      WebFontConfig = { google: { families: [ 'Orbitron', 'Raleway' ] },
+        loading: function(){
+          //set the spinner going:
+          drawSpinner('spinner', 'Requesting Styles');
+        },
+        active: function() {
+          loadParameters();  //plugs in some defaults
+          loadJSONP(window.Gatekeeper, "main"); //waits to fire main() until all the JSONPs have reported up or down
+        },
+        inactive: function() {
+          loadParameters();
+          loadJSONP(window.Gatekeeper, "main");
+        }
+      };
+      //thx paul:
+      (function() {
+        var wf = document.createElement('script');
+        wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+            '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+        wf.type = 'text/javascript';
+        wf.async = 'true';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(wf, s);
+      })();
+
+    </script>
+
+    <!--Main routine/////////////////////////////////////////////////////////////////////-->
+    <script id='main' type="text/JavaScript">
+
+      function main(){
+        var i, j, k, paths=[], data;
+
+        //overwrite default parameters with custom ones:
+        fetchODB();
+
+        //retitle:
+        document.getElementById('title').innerHTML = ODB.topLevel.HPGeArray;
+
+        //autodetect how many clocks are present in the ODB - must be registered under /Equipment/Clock[x], x = 0..23
+        for(i=0; i<25; i++){
+          paths[i] = '/Equipment/GRIF-Clk'+i+'/Variables/Input[0]';
+        }
+        data = ODBMGet(paths);
+        for(i=0; i<25; i++){
+          if(data[i] != '<DB_NO_KEY>'){
+            window.parameters.nClocks++;
+            window.parameters.topDeployment['Clock'] = 1;
+          }
+        }
+
+        //autodetect how many VMEs are present:
+        window.parameters.nVME = 12; //TBD
+
+        //autodetect how many crates are plugged into the experiment:
+        detectCrates();
+
+        //autodetect what size cards are plugged into what slot:
+        detectCards();
+
+        //load things from the ODB
+        ODBgrab();
+
+        //let the MIDAS status link, left sidebar & branding appear:
+        $('#branding').css('opacity', 1);
+        $('#MIDASstatusLink').css('opacity', 1);
+        $('#leftSidebar').css('opacity', 1);
+        //plug in MIDAS status page link:
+        document.getElementById('MIDASstatusLink').onclick = function(){
+          window.location = 'http://'+ODB.topLevel.statusURL;
+        };
+
+        //state variables for what the subdetector view is showing: 0->HV, 1->Thresholds, 2->Rate
+        window.state.subdetectorView = 2;  //rate by default
+
+        //should the tooltip follow the mouse (0) or appear in a statc position (1, for huge tooltips)
+        window.state.staticTT = 0;
+
+        //set up wrapper div dimensions; minimum rendering width = 1440px, height 900px:
+        window.renderWidth = Math.max(1440, window.innerWidth);
+        window.renderHeight = Math.max(900*0.85,window.innerHeight*0.85)
+        $('#'+window.parameters.wrapper).width(window.renderWidth);
+        $('#'+window.parameters.wrapper).height(window.renderHeight);
+
+        //declare objects:
+
+        //main elements///////////////////////////////////////////////////
+        //status bar
+        window.statusBar = new StatusBar('leftSidebar');
+
+        //HV monitor
+        if(window.parameters.topDeployment['HV'])
+          window.waffle = new Waffle("InputLayer",'mainframeLinks', window.AlarmServices);
+
+        //Subsystems:
+        if(window.parameters.topDeployment['Subsystems']){
+          //Subsystem sidebar:
+          injectDOM('div', 'SubsystemSidebar', window.parameters.wrapper, {'class':'RightSidebar'});
+          //Subsystem spectrum viewer canvas:
+          injectDOM('canvas', 'subsystemSpectrumViewer', 'SubsystemSidebar', {'style':'border:1px solid #EEEEEE; border-radius:5px; margin-bottom:0.5em;'});
+          document.getElementById('subsystemSpectrumViewer').setAttribute('width', $('#SubsystemSidebar').width()*0.9);
+          document.getElementById('subsystemSpectrumViewer').setAttribute('height', $('#subsystemSpectrumViewer').width()*0.8);
+          window.spectrumViewers.subsystem = new spectrumViewer('subsystemSpectrumViewer');
+          window.spectrumViewers.subsystem.canvas.style.backgroundColor = '#111111';
+          window.spectrumViewers.subsystem.axisColor = '#EEEEEE';
+          //inject UI
+          establishSubsystemSpectrumViewerUI();
+          //draw spectra
+          window.spectrumViewers.subsystem.plotData();
+
+          //set up history view
+          establishHistoryView(); 
+
+          //Subsystem menu; universal buttons declared outside of individual subsystems:
+          //add top level nav button:
+          injectDOM('button', 'SubsystemsButton', 'statusLink', {'class':'navLink', 'innerHTML':'Subsystem Monitors'});
+          //create nav panel for subsystem view:
+          injectDOM('div', 'SubsystemLinks', window.parameters.wrapper, {'class':'navPanel'});
+          //headline for nav panel
+          injectDOM('h1', 'SubsystemLinksBanner', 'SubsystemLinks', {'class':'navPanelHeader', 'innerHTML':ODB.topLevel.expName+' Subsystem Monitors'});
+          injectDOM('br', 'break', 'SubsystemLinks', {});    
+          //subdetectors
+          window.Subdetectors = [];
+
+          if(ODB.HPGe) window.Subdetectors[window.Subdetectors.length] = new HPGe();
+          if(ODB.SHARC) window.Subdetectors[window.Subdetectors.length] = new SHARC();
+          if(ODB.DESCANT) window.Subdetectors[window.Subdetectors.length] = new DESCANT();
+          if(ODB.PACES) window.Subdetectors[window.Subdetectors.length] = new PACES();
+          if(ODB.DANTE) window.Subdetectors[window.Subdetectors.length] = new DANTE();
+          if(ODB.SPICE) window.Subdetectors[window.Subdetectors.length] = new SPICE();
+          if(ODB.BAMBINO || ( ODB.SPICE && (ODB.SPICE.SPICEauxiliary == 'S2' || ODB.SPICE.SPICEauxiliary == 'S3') ) ) window.Subdetectors[window.Subdetectors.length] = new BAMBINO(ODB.SPICE.SPICEauxiliary);
+          if(ODB.SCEPTAR) window.Subdetectors[window.Subdetectors.length] = new SCEPTAR();
+          if(ODB.TIPwall) window.Subdetectors[window.Subdetectors.length] = new TIPwall();
+          if(ODB.TIPball) window.Subdetectors[window.Subdetectors.length] = new TIPball();
+          if(ODB.ZDS) window.Subdetectors[window.Subdetectors.length] = new ZDS();
+          if(ODB.DSSD) window.Subdetectors[window.Subdetectors.length] = new DSSD();
+
+          injectDOM('br', 'break', 'SubsystemLinks', {});
+          //nav for different reported values:
+          for(i=0; i<window.parameters.monitorValues.length; i++){
+            var classDef
+            //position 2 is default for now:
+            if(i==2) classDef = 'navLinkDown';
+            else classDef = 'navLink'; 
+            injectDOM('button', 'subsystem'+window.parameters.monitorValues[i], 'SubsystemLinks', {
+              'class':((i==2)?'navLinkDown':'navLink'),
+              'style':((i>2)?'display:none;':''),
+              'onclick' : function(){swapSubsystemView(this.id, 'SubsystemLinks', this.viewIndex)},
+              'innerHTML' : window.parameters.monitorValues[i],
+              'type' : 'button'
+            })
+            document.getElementById('subsystem'+window.parameters.monitorValues[i]).viewIndex = i;
+          }
+          window.subsystemScalars = window.parameters.monitorValues.length;
+
+          //make the top level nav button default to the first subdetector in the list:
+          document.getElementById('SubsystemsButton').onclick = function(){
+            swapView('SubsystemLinks', window.Subdetectors[0].canvasID, 'SubsystemSidebar', 'SubsystemsButton');
+            rePaint();
+          }
+
+          //make the nav button of the first subdetector in the list pressed by default:
+          document.getElementById(window.Subdetectors[0].subviewLink).setAttribute('class', 'navLinkDown');
+        } //end subsystem deployment
+
+        //dashboard
+        window.dashboard = new Dashboard();
+        //move the dashboard button after the MIDAS status button
+        document.getElementById('statusLink').insertBefore(document.getElementById('DashboardButton'), document.getElementById('MIDASstatusLink').nextSibling );
+
+        //DAQ
+        if(window.parameters.topDeployment['DAQ'])
+          window.DAQ = new DAQ('DAQcanvas', 'DAQdetailCanvas', [], []);
+        //Clock
+        if(window.parameters.topDeployment['Clock'])
+          window.Clock = new Clock();
+        //Trigger
+        if(window.parameters.topDeployment['Filter'])
+          window.Filter = new Filter();
+        //VME
+        if(window.parameters.topDeployment['VME'])
+          window.VME = new VME();
+        //Cycle
+        if(window.parameters.topDeployment['Cycle'])
+          window.Cycle = new Cycle();
+
+        //window event listeners:
+        //make the cycle palete scoll with the window - fixed positioning is acting a bit weird, so handle manually instead:
+        window.parameters.cyclePaleteMinOffset = $('#cyclePalete').offset().top;
+        window.parameters.filterPaleteMinOffset = $('#filterPalete').offset().top;
+        window.onscroll = function(){
+          document.getElementById('cyclePalete').style.top = Math.max(0, window.scrollY - window.parameters.cyclePaleteMinOffset);
+          document.getElementById('filterPalete').style.top = Math.max(0, window.scrollY - window.parameters.filterPaleteMinOffset);
+        }
+        //end main elements////////////////////////////////////////////////////////////////////////////
+
+        //set up channel navigation dropdowns:
+        if(window.parameters.topDeployment['HV']){
+          configureDropdowns('ChannelList', 'CardList', window.waffle.moduleLabels, window.parameters.moduleSizes[window.HVview]);
+          document.getElementById('CardList').onblur = function(event){reconfigureChannelList(window.waffle.moduleLabels, window.parameters.moduleSizes[window.HVview], 'ChannelList')};
+        }
+
+        //global variables todo: try and cut down on these/////////////////////////////////////////////
+        //which nav panel is on top?
+        window.navOnDisplay = 'DashboardLinks';
+        //which canvas is on top?
+        window.onDisplay = 'DashboardCanvas';
+        //which sidebar is on top?
+        window.sidebarOnDisplay = 'dashboardMenus';
+        //which view state button is depressed?
+        window.viewState = 'DashboardButton';
+        //which was the last nav button pushed?
+        window.lastTrip = 'Main1';
+        //should the input sidebar be refreshed?
+        window.refreshInput = 1;
+        //which DAQ detail is on display in the DAQ view?
+        window.DAQdetail = -1;
+        //something to hold the settimeout loop so it can be stopped from anywhere:
+        window.loop;
+        //...and similar for animation loops:
+        window.animateLoop;
+        window.transAnimateLoop;
+        //status flag for if the Commit button is blinking on loop:
+        window.commitBlink = 0;
+        //end globals//////////////////////////////////////////////////////////////////////////////////
+
+        //start with subsystems on top:
+        swapView('SubsystemLinks', window.Subdetectors[0].canvasID, 'SubsystemSidebar', 'SubsystemsButton');
+        document.getElementById('HPGelink').onclick();
+
+        document.getElementById('topWrapper').style.height = document.body.scrollHeight
+        //inject footer
+        //deployFooter();
+
+        startLoop(); 
+
+        $('#setValues').on('change', function(event){highlight('submitParameters')})
+
+        //kill the spinner:
+        //clearInterval(window.spinLoop)
+        $('#spinner').css('opacity', 0);
+        document.getElementById('spinner').style.opacity = 0;
+        setTimeout(function(){
+          var spinElt = document.getElementById('spinner');
+          spinElt.parentNode.removeChild(spinElt);
+        }, 500)
+
+      }
+
+      function startLoop(){
+        loadJSONP(window.Gatekeeper, 0);
+      }
+
+      /////////////////////////////////////////////////
+      //no internet mode:
+      
+      //drawSpinner('spinner', 'Requesting Styles');
+      //loadParameters();
+      //loadJSONP(window.Gatekeeper, "main");
+           
+
+    </script> 
+
+  </body>
+</html>
