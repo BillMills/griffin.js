@@ -29,7 +29,7 @@ THE SOFTWARE.
 
 griffin.js comes with a setup script designed to make deployment as painless as possible.  Before you start, you'll need an experiment running in a sufficiently recent version of MIDAS (last commit validated with this project MIDAS 89a9e94 January 2014), and a sufficiently recent version of Chrome or Firefox.   Then, just download the code:
 
-git clone https://github.com/GRIFFINCollaboration/griffin.js.git
+    git clone https://github.com/GRIFFINCollaboration/griffin.js.git
 
 ...and navigate to the install directory and run the setup script:
 
