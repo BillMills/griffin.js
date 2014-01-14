@@ -142,6 +142,9 @@ function detectCrates(){
       }
     }
 
+    //if no crates present, turn off HV monitoring
+    window.parameters.topDeployment['HV'] = window.parameters.HVequipmentNames.length;
+
 }
 
 //determine what size cards are in what slot:
