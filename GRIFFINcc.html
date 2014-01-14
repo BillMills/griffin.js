@@ -157,7 +157,7 @@
 
         //is the DAQ registered in the ODB properly?
         if(ODB.DAQ.config == 'GRIFFIN')
-          window.parameters.topDeployment['DAQ'] = (ODB.DAQ.hasOwnProperty('Channel') && ODB.DAQ.hasOwnProperty('MSC') &&) ? true : false;
+          window.parameters.topDeployment['DAQ'] = (ODB.DAQ.hasOwnProperty('Channel') && ODB.DAQ.hasOwnProperty('MSC')) ? true : false;
         else{
           this.DAQtable = ODBMGet(['/Analyzer/Parameters/Cathode/Config/Name[*]', '/Analyzer/Parameters/Cathode/Config/FSCP[*]']);
           console.log(this.DAQtable)
