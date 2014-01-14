@@ -111,6 +111,8 @@
             window.parameters.topDeployment['Clock'] = 1;
           }
         }
+        //if no clocks, then don't deploy clock assets:
+        window.parameters.topDeployment['Clock'] = window.parameters.nClocks
 
         //autodetect how many VMEs are present:
         window.parameters.nVME = 12; //TBD
