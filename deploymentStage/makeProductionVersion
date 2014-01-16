@@ -36,8 +36,8 @@ cp ../sections/Cycle.js .
 cp ../setup/thumbnails.js .
 cp ../subdetectors/ZDS.js .
 cp ../plumbing/history.js .
-cp ../../gammaSpectrum/gammaSpectrum.js .
-cp ../../gammaSpectrum/fitit.js .
+cp ../lib/gammaSpectrum.js .
+cp ../lib/fitit.js .
 
 rm griffin.min.js
 source concatenate
