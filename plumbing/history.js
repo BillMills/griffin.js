@@ -1,6 +1,6 @@
 function establishHistoryView(){
 	
-	var EPICSdir = 'http://' + window.location.host + '/HS/Epics/';
+	var EPICSdir = 'http://' + window.location.host + '/HS/Default/';
 
 	//wrap
 	injectDOM('div', 'historyWrap', 'SubsystemSidebar', {'style':'padding:1em; border-top: 1px solid #777777; display:inline-block; float:left; clear:left;'});
