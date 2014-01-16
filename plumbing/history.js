@@ -1,6 +1,6 @@
 function establishHistoryView(){
 	
-	var EPICSdir = window.location.host + '/HS/Epics/';
+	var EPICSdir = 'http://' + window.location.host + '/HS/Epics/';
 
 	//wrap
 	injectDOM('div', 'historyWrap', 'SubsystemSidebar', {'style':'padding:1em; border-top: 1px solid #777777; display:inline-block; float:left; clear:left;'});
@@ -10,9 +10,9 @@ function establishHistoryView(){
 	//form & text box to request plots
 	injectDOM('form', 'historyForm', 'historyWrap', {});
 	injectDOM('select', 'historyURL', 'historyForm', {'class':'historyDD'});
-	injectDOM('option', 'history1', 'historyURL', {'value':EPICSdir + 'Trigger%20rate.gif?width=Small', 'innerHTML':'Trig Rate'});
-	injectDOM('option', 'history0', 'historyURL', {'value':EPICSdir + 'Shack%20Temp.gif?width=Small', 'innerHTML':'Temp'});
-	injectDOM('option', 'history1', 'historyURL', {'value':EPICSdir + 'Ge.gif?width=Small', 'innerHTML':'Ge'});
+	injectDOM('option', 'history0', 'historyURL', {'value':EPICSdir + 'Trigger%20rate.gif?width=Small', 'innerHTML':'Trig Rate'});
+	injectDOM('option', 'history1', 'historyURL', {'value':EPICSdir + 'Shack%20Temp.gif?width=Small', 'innerHTML':'Temp'});
+	injectDOM('option', 'history2', 'historyURL', {'value':EPICSdir + 'Ge.gif?width=Small', 'innerHTML':'Ge'});
 
 
 
