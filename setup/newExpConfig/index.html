@@ -1,0 +1,164 @@
+<html>
+	<head>
+		<script src="x-tag-components.js" type="text/javascript"></script>
+		<script src="xTagFan.js" type="text/javascript"></script>
+		<script src="../thumbnails.js" type="text/javascript"></script>
+
+		<link rel="stylesheet" type="text/css" href="xTagFan.css"/>
+		<link rel="stylesheet" type="text/css" href="expConfig.css" />
+	</head>
+
+	<body>
+		<!--Fonts//////////////////////////////////////////////////////////////-->
+		<script type="text/javascript">
+	        //load the webfonts, and block the page until they're ready or failed - otherwise lots of rendering bugs happen!
+	        WebFontConfig = { google: { families: [ 'Raleway', 'Orbitron' ] },
+		        loading: function(){
+		            //set the spinner going:
+		            //drawSpinner('spinner', 'Requesting Styles');
+	  	        },
+		        active: function() {
+		            //loadParameters();  //plugs in some defaults
+		            //loadJSONP(window.Gatekeeper, "main"); //waits to fire main() until all the JSONPs have reported up or down
+		        },
+		        inactive: function() {
+		            //loadParameters();
+		            //loadJSONP(window.Gatekeeper, "main");
+		        }
+	        };
+	        //thx paul:
+	        (function() {
+	        	var wf = document.createElement('script');
+	        	wf.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+	        	wf.type = 'text/javascript';
+		        wf.async = 'true';
+		        var s = document.getElementsByTagName('script')[0];
+	    	    s.parentNode.insertBefore(wf, s);
+	      	})();
+    	</script>
+
+
+    	<div id='wrapper'>
+		    <!--Branding///////////////////////////////////////////////////////////-->
+		    <div id='branding'>
+		      <img id='logo' src='logo.gif'></img>
+		      <h1 id='title'>GRIFFIN</h1>
+		    </div>
+
+		    <div id='GRIFFINwrap'>
+
+		    	<h1>Upstream Chamber</h1>
+				<x-fan id='GRIFusChamber'>
+
+					<x-blade id='GRIFusc0'>
+						<canvas id='GRIFusSCEPTAR' width='200px'></canvas>
+					</x-blade>
+
+					<x-blade id='GRIFusc1'>
+						<canvas id='GRIFusPACES' width='200px'></canvas>
+					</x-blade>
+
+					<x-blade id='GRIFusc2'>
+						<canvas id='GRIFusSPICE' width='200px'></canvas>
+					</x-blade>
+
+				</x-fan>
+
+		    	<h1>Downstream Chamber</h1>
+				<x-fan id='GRIFdsChamber'>
+
+					<x-blade id='GRIFdsc0'>
+						<canvas id='GRIFdsSCEPTAR' width='200px'></canvas>
+					</x-blade>
+
+					<x-blade id='GRIFdsc1'>
+						<canvas id='GRIFdsZDS' width='200px'></canvas>
+					</x-blade>
+
+					<x-blade id='GRIFdsc2'>
+						<canvas id='GRIFdsS3' width='200px'></canvas>
+					</x-blade>
+
+				</x-fan>
+
+		    	<h1>Corona</h1>
+				<x-fan id='GRIFcorona'>
+
+					<x-blade id='GRIFc0'>
+						<canvas id='GRIFcorona' width='200px'></canvas>
+					</x-blade>
+
+				</x-fan>
+
+		    	<h1>Upstream Lampshade</h1>
+				<x-fan id='GRIFusLamp'>
+
+					<x-blade id='GRIFusl0'>
+						<canvas id='GRIFuslAlone' width='200px'></canvas>
+					</x-blade>
+
+					<x-blade id='GRIFusl1'>
+						<canvas id='GRIFspiceService' width='200px'></canvas>
+					</x-blade>
+
+				</x-fan>
+
+		    	<h1>Downstream Lampshade</h1>
+				<x-fan id='GRIFdsLamp'>
+
+					<x-blade id='GRIFl0'>
+						<canvas id='GRIFdslAlone' width='200px'></canvas>
+					</x-blade>
+
+					<x-blade id='GRIFl1'>
+						<canvas id='GRIFdescant' width='200px'></canvas>
+					</x-blade>
+
+				</x-fan>
+
+			</div>
+
+			<div id='push'></div>
+		</div>
+
+		<div id='footer'>
+			GRIFFIN 2014 - Powered by <a href="http://www.x-tags.org/index">x-tags from Mozilla</a>
+			<br> 
+			GRIFFIN Collaboration Spokesperson: Adam Garnsworthy (garns@triumf.ca) - UI/UX Design & Web Development: Bill Mills
+		</div>
+
+
+
+
+
+
+
+
+
+
+		<script type='text/javascript'>
+			document.addEventListener('DOMComponentsLoaded', function(){
+				//paint all canvases
+				//GRIFFIN
+				//Upstream Chamber
+				thumbnail('GRIFusSCEPTAR', 'SCEPTAR', 'none', '#FFFFFF');
+				thumbnail('GRIFusPACES', 'PACES', 'none', '#FFFFFF');
+				thumbnail('GRIFusSPICE', 'SPICE', 'none', '#FFFFFF');
+				//Downstream Chamber
+				thumbnail('GRIFdsSCEPTAR', 'SCEPTAR', 'none', '#FFFFFF');
+				thumbnail('GRIFdsZDS', 'ZDS', 'none', '#FFFFFF');
+				thumbnail('GRIFdsS3', 'S3', 'none', '#FFFFFF');
+				//Corona
+				//thumbnail('GRIFcorona', 'GRIFFIN', 'DANTE', '#FFFFFF');
+				//Upstream Lampshade
+				thumbnail('GRIFuslAlone', 'GRIFFIN', 'none', '#FFFFFF');
+				thumbnail('GRIFspiceService', 'SPICE', 'services', '#FFFFFF');
+				//Downstream Lampshade
+				thumbnail('GRIFdslAlone', 'GRIFFIN', 'none', '#FFFFFF');
+				thumbnail('GRIFdescant', 'DESCANT', 'none', '#FFFFFF');
+			});
+		</script>
+	</body>
+
+
+</html>

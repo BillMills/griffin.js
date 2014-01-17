@@ -3,6 +3,9 @@ function thumbnail(canvasID, left, right, color, disabled){
 	var canvas = document.getElementById(canvasID);
 	var context = canvas.getContext('2d');
 
+	imageObj = new Image();
+	imageObj.src = 'logo.gif';
+
 	var width = canvas.width;
 	var height = canvas.height;
 
@@ -138,6 +141,9 @@ function thumbnail(canvasID, left, right, color, disabled){
 		title = 'ZDS';
 	} else if(left == 'BAMBINO' && right=='none'){
 		title = 'BAMBINO';
+		bambino(context, width*0.45, width*0.55, height/3, height*0.6, height*0.12);		
+	} else if(left == 'S3' && right=='none'){
+		title = 'S2 / S3';
 		bambino(context, width*0.45, width*0.55, height/3, height*0.6, height*0.12);		
 	} else if(left == 'TRIUMF' && right == 'none'){
 		triumf(context, width*0.5 - imageObj.width/imageObj.height*context.canvas.height*0.6/2, height*0.1, color);

@@ -1,0 +1,29 @@
+x-fan{
+	display:inline-block;
+}
+
+x-blade{
+	display: inline-block;
+	opacity: 0.5;
+
+	width:200px;
+	height:150px;
+
+	transition: width 0.5s, opacity 0.5s; 
+	-moz-transition: width 0.5s, opacity 0.5s; 
+	-webkit-transition: width 0.5s, opacity 0.5s;	
+}
+
+x-blade.hidden {
+	opacity: 0;
+	width: 0px;
+
+}
+
+x-blade.chosen{
+	opacity: 1;
+}
+
+x-blade:hover{
+	opacity: 1;
+}
