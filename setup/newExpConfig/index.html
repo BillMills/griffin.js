@@ -18,12 +18,14 @@
 		            //drawSpinner('spinner', 'Requesting Styles');
 	  	        },
 		        active: function() {
-		            //loadParameters();  //plugs in some defaults
-		            //loadJSONP(window.Gatekeeper, "main"); //waits to fire main() until all the JSONPs have reported up or down
+		        	gatekeeper.fontsloaded = true
+		        	if(gatekeeper.DOMloaded)
+		        		main();
 		        },
 		        inactive: function() {
-		            //loadParameters();
-		            //loadJSONP(window.Gatekeeper, "main");
+		        	gatekeeper.fontsloaded = true
+		        	if(gatekeeper.DOMloaded)
+		        		main();
 		        }
 	        };
 	        //thx paul:
@@ -85,7 +87,7 @@
 				<x-fan id='GRIFcorona'>
 
 					<x-blade id='GRIFc0'>
-						<canvas id='GRIFcorona' width='200px'></canvas>
+						<canvas id='GRIFc' width='200px'></canvas>
 					</x-blade>
 
 				</x-fan>
@@ -137,7 +139,20 @@
 
 
 		<script type='text/javascript'>
+			//need to wait for both fonts and DOM
+			gatekeeper = {
+				'fontsloaded' : false,
+				'DOMloaded' : false
+			}
+
 			document.addEventListener('DOMComponentsLoaded', function(){
+				gatekeeper.DOMloaded = true;
+				if(gatekeeper.fontsloaded)
+					main();
+			});
+
+
+			function main(){
 				//paint all canvases
 				//GRIFFIN
 				//Upstream Chamber
@@ -149,14 +164,80 @@
 				thumbnail('GRIFdsZDS', 'ZDS', 'none', '#FFFFFF');
 				thumbnail('GRIFdsS3', 'S3', 'none', '#FFFFFF');
 				//Corona
-				//thumbnail('GRIFcorona', 'GRIFFIN', 'DANTE', '#FFFFFF');
+				thumbnail('GRIFc', 'GRIFFIN', 'DANTE', '#FFFFFF');
 				//Upstream Lampshade
 				thumbnail('GRIFuslAlone', 'GRIFFIN', 'none', '#FFFFFF');
 				thumbnail('GRIFspiceService', 'SPICE', 'services', '#FFFFFF');
 				//Downstream Lampshade
 				thumbnail('GRIFdslAlone', 'GRIFFIN', 'none', '#FFFFFF');
 				thumbnail('GRIFdescant', 'DESCANT', 'none', '#FFFFFF');
-			});
+
+				//there's only one choice in GRIFFIN's corona - choose it and lock it by default:
+				document.getElementById('GRIFcorona').selected = 'GRIFc0';
+				document.getElementById('GRIFcorona').locked = true;
+
+				//callbacks - some options influence other options
+				//choosing SPICE requires the SPICE Services
+				document.getElementById('GRIFusc2').setCallback = function(){
+					if(!document.getElementById('GRIFusLamp').selected){
+						document.getElementById('GRIFusLamp').selected = 'GRIFusl1';
+					}
+				};
+				//unchoosing SPICE unchooses SPICE Services and unlocks USL:
+				document.getElementById('GRIFusc2').unsetCallback = function(){
+					if(document.getElementById('GRIFusLamp').selected){
+						document.getElementById('GRIFusLamp').locked = false;
+						document.getElementById('GRIFusLamp').selected = 'GRIFusl1';
+					}
+				};
+				//choosing SPICE Services requires SPICE
+				document.getElementById('GRIFusl1').setCallback = function(){
+					if(!document.getElementById('GRIFusChamber').selected){
+						document.getElementById('GRIFusChamber').selected = 'GRIFusc2';
+					}
+				};
+				//unchoosing SPICE Services unchooses SPICE:
+				document.getElementById('GRIFusl1').unsetCallback = function(){
+					if(document.getElementById('GRIFusChamber').selected)
+						document.getElementById('GRIFusChamber').selected = 'GRIFusc2';
+				};
+				//choosing !SPICE requires !SPICE Services, and locks the USL
+				document.getElementById('GRIFusc0').setCallback = function(){
+					if(!document.getElementById('GRIFusLamp').selected){
+						document.getElementById('GRIFusLamp').selected = 'GRIFusl0';
+					}
+					document.getElementById('GRIFusLamp').locked = true;
+				};
+				document.getElementById('GRIFusc1').setCallback = function(){
+					if(!document.getElementById('GRIFusLamp').selected){
+						document.getElementById('GRIFusLamp').selected = 'GRIFusl0';
+					}
+					document.getElementById('GRIFusLamp').locked = true;
+				};
+				//unchoosing !SPICE unchooses !SPICE Services and unlocks the USL
+				document.getElementById('GRIFusc0').unsetCallback = function(){
+					if(document.getElementById('GRIFusLamp').selected){
+						document.getElementById('GRIFusLamp').locked = false;
+						document.getElementById('GRIFusLamp').selected = 'GRIFusl0';
+					}
+				};
+				document.getElementById('GRIFusc1').unsetCallback = function(){
+					if(document.getElementById('GRIFusLamp').selected){
+						document.getElementById('GRIFusLamp').locked = false;
+						document.getElementById('GRIFusLamp').selected = 'GRIFusl0';
+					}
+				};
+				//choosing GRIFFIN Standalone in the USL removes SPICE as an option in the USC:
+				document.getElementById('GRIFusl0').setCallback = function(){
+					document.getElementById('GRIFusc2').className = 'hidden';
+				};
+				//unchoosing GRIFFIN Standalone in the USL re-revals SPICE as an option in the USC, if USC not already chosen:
+				document.getElementById('GRIFusl0').unsetCallback = function(){
+					if(!document.getElementById('GRIFusChamber').selected)
+						document.getElementById('GRIFusc2').className = '';
+				};				
+
+			}
 		</script>
 	</body>
 

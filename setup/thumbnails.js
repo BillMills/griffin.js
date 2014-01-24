@@ -3,8 +3,7 @@ function thumbnail(canvasID, left, right, color, disabled){
 	var canvas = document.getElementById(canvasID);
 	var context = canvas.getContext('2d');
 
-	imageObj = new Image();
-	imageObj.src = 'logo.gif';
+	imageObj = document.getElementById('logo')
 
 	var width = canvas.width;
 	var height = canvas.height;
@@ -413,7 +412,9 @@ function tipBall(context, x0, y0, rad){
 
 function griffin(context, x0, y0, color){
 	if(color == '#999999')context.globalAlpha = 0.4;
-	context.drawImage(imageObj, x0, y0, imageObj.width/imageObj.height*context.canvas.height*0.6, context.canvas.height*0.6);
+
+    var imgObj = document.getElementById('logo')
+    context.drawImage(imgObj, x0, y0, imgObj.width/imgObj.height*context.canvas.height*0.6, context.canvas.height*0.6);
 	context.globalAlpha = 1;
 }
 
