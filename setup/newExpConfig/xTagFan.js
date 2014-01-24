@@ -138,3 +138,58 @@ hacks:
     });
 
 })();
+
+//x-altmodal inspired by x-tags x-modal, but less fancy & easier to make work :)
+(function(){  
+
+    xtag.register('x-altmodal', {
+        lifecycle: {
+            created: function() {
+                var that = this;
+                //starts life asleep:
+                this.buffer = {'active' : false};
+                //has its dismiss button living inside it:
+                this.innerHTML += '<button id="'+this.id+'Dismiss", class="altmodalDismiss">Dismiss</button>'
+                document.getElementById(this.id+'Dismiss').onclick = function(){
+                    that.active = false;
+                }
+            },
+            inserted: function() {
+
+            },
+            removed: function() {},
+            attributeChanged: function() {}
+        }, 
+        events: { 
+            click: function(){
+                //set the fan's selected id - triggers all transition animations and set / unset callbacks
+                this.parentNode.selected = this.id;
+            },
+
+            webkitTransitionEnd: function(){
+                if(this.className == 'hiddenModal'){
+                    this.style.zIndex = -1000;
+                } else if(this.className == 'activeModal'){
+                    this.style.zIndex = 1000;
+                }
+            }
+        },
+        accessors: {
+            'active' : {
+                get : function(){
+                    return this.buffer.active;
+                },
+
+                set : function(value){
+                    this.buffer.active = value;
+                    if(this.buffer.active)
+                        this.className = 'activeModal';
+                    else 
+                        this.className = 'hiddenModal';
+                }
+            },
+        }, 
+        methods: {
+        }
+    });
+})();

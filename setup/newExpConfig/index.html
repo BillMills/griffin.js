@@ -40,8 +40,13 @@
 	      	})();
     	</script>
 
+		<x-altmodal id='chooseExperiment', class='hiddenModal'>
+			<h1>Choose Your Experiment</h1>
+			<img id='griffinLogo' src='logo.gif' width='80px' height='90px' onclick='chooseExperiment("GRIFFIN")'></img>
+			<img id='triumfLogo' src='triumf.gif' width='90px' height='90px' onclick='chooseExperiment("TIGRESS")'></img>
+		</x-altmodal>
 
-    	<div id='wrapper'>
+    	<div id='wrapper' style='opacity:0'>
 		    <!--Branding///////////////////////////////////////////////////////////-->
 		    <div id='branding'>
 		      <img id='logo' src='logo.gif'></img>
@@ -123,7 +128,7 @@
 
 			<div id='TIGRESSwrap'>
 
-		    	<h1>Upstream Chamber</h1>
+		    	<h1>Chamber</h1>
 				<x-fan id='TIGusChamber'>
 
 					<x-blade id='TIGusc0'>
@@ -144,15 +149,6 @@
 
 					<x-blade id='TIGusc4'>
 						<canvas id='TIGusTIPball' width='200px'></canvas>
-					</x-blade>
-
-				</x-fan>
-
-		    	<h1>Downstream Chamber</h1>
-				<x-fan id='TIGdsChamber'>
-
-					<x-blade id='TIGdsc0'>
-						<canvas id='TIGdsS3' width='200px'></canvas>
 					</x-blade>
 
 				</x-fan>
@@ -201,10 +197,14 @@
 			<br>
 			<button id='buildExperiment', class='bigButton' onclick='buildExperiment()'> Build Experiment & Configure Subsystems </button>
 
+			<x-altmodal id='incompleteForm', class='hiddenModal'>
+				Please choose an option for all regions.
+			</x-altmodal>
+
 			<div id='push'></div>
 		</div>
 
-		<div id='footer'>
+		<div id='footer' style='opacity:0'>
 			GRIFFIN 2014 - Powered by <a href="http://www.x-tags.org/index">x-tags from Mozilla</a>
 			<br> 
 			GRIFFIN Collaboration Spokesperson: Adam Garnsworthy (garns@triumf.ca) - UI/UX Design & Web Development: Bill Mills

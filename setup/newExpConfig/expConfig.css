@@ -85,6 +85,26 @@ a{
 	cursor:pointer;
 }
 
+/*Choose experiment intro*/
+x-altmodal#chooseExperiment{
+	text-align: center;
+	background-color: rgba(0,0,0,0.5);
+	border: 5px solid #EEEEEE;
+	border-radius: 25px;
+	padding:3em;
+}
+x-altmodal#chooseExperiment button{
+	display:none;
+}
+x-altmodal#chooseExperiment img{
+	margin: 2em 2em 0em 2em;
+	opacity: 0.5;
+}
+
+x-altmodal#chooseExperiment img:hover{
+	opacity: 1;
+}
+
 /*branding///////////////////////////////////////////////*/
 
 div#branding{ 
@@ -98,6 +118,7 @@ div#branding{
 	background-color:#333333; 
 	margin-bottom:3em; 
 	padding-bottom:5px; 
+	text-align: left;
 }
 
 img#logo{
@@ -151,6 +172,10 @@ div#footer{
 	border-top:1px solid #000000;
 	height:6em;
 	line-height: 1.2;
+
+	transition: opacity 0.5s; 
+	-moz-transition: opacity 0.5s; 
+	-webkit-transition: opacity 0.5s;
 }
 
 div#push{
@@ -164,4 +189,9 @@ div#wrapper{
     margin: 0 auto -6em;
 	padding-left:1em;
 	padding-right: 1em;	
+	text-align: center;
+
+	transition: opacity 0.5s; 
+	-moz-transition: opacity 0.5s; 
+	-webkit-transition: opacity 0.5s;
 }
