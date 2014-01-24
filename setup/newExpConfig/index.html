@@ -1,5 +1,6 @@
 <html>
 	<head>
+		<script src="expConfig.js" type="text/javascript"></script>
 		<script src="x-tag-components.js" type="text/javascript"></script>
 		<script src="xTagFan.js" type="text/javascript"></script>
 		<script src="../thumbnails.js" type="text/javascript"></script>
@@ -120,6 +121,86 @@
 
 			</div>
 
+			<div id='TIGRESSwrap'>
+
+		    	<h1>Upstream Chamber</h1>
+				<x-fan id='TIGusChamber'>
+
+					<x-blade id='TIGusc0'>
+						<canvas id='TIGusBAMBINO' width='200px'></canvas>
+					</x-blade>
+
+					<x-blade id='TIGusc1'>
+						<canvas id='TIGusSHARC' width='200px'></canvas>
+					</x-blade>
+
+					<x-blade id='TIGusc2'>
+						<canvas id='TIGusSPICE' width='200px'></canvas>
+					</x-blade>
+
+					<x-blade id='TIGusc3'>
+						<canvas id='TIGusTIPwall' width='200px'></canvas>
+					</x-blade>
+
+					<x-blade id='TIGusc4'>
+						<canvas id='TIGusTIPball' width='200px'></canvas>
+					</x-blade>
+
+				</x-fan>
+
+		    	<h1>Downstream Chamber</h1>
+				<x-fan id='TIGdsChamber'>
+
+					<x-blade id='TIGdsc0'>
+						<canvas id='TIGdsS3' width='200px'></canvas>
+					</x-blade>
+
+				</x-fan>
+
+		    	<h1>Corona</h1>
+				<x-fan id='TIGcorona'>
+
+					<x-blade id='TIGc0'>
+						<canvas id='TIGc' width='200px'></canvas>
+					</x-blade>
+
+				</x-fan>
+
+		    	<h1>Upstream Lampshade</h1>
+				<x-fan id='TIGusLamp'>
+
+					<x-blade id='TIGusl0'>
+						<canvas id='TIGuslAlone' width='200px'></canvas>
+					</x-blade>
+
+					<x-blade id='TIGusl1'>
+						<canvas id='TIGspiceService' width='200px'></canvas>
+					</x-blade>
+
+				</x-fan>
+
+		    	<h1>Downstream Lampshade</h1>
+				<x-fan id='TIGdsLamp'>
+
+					<x-blade id='TIGl0'>
+						<canvas id='TIGdslAlone' width='200px'></canvas>
+					</x-blade>
+
+					<x-blade id='TIGl1'>
+						<canvas id='TIGdescant' width='200px'></canvas>
+					</x-blade>
+
+					<x-blade id='TIGl2'>
+						<canvas id='TIGsharcService' width='200px'></canvas>
+					</x-blade>					
+
+				</x-fan>
+
+			</div>
+
+			<br>
+			<button id='buildExperiment', class='bigButton' onclick='buildExperiment()'> Build Experiment & Configure Subsystems </button>
+
 			<div id='push'></div>
 		</div>
 
@@ -128,15 +209,6 @@
 			<br> 
 			GRIFFIN Collaboration Spokesperson: Adam Garnsworthy (garns@triumf.ca) - UI/UX Design & Web Development: Bill Mills
 		</div>
-
-
-
-
-
-
-
-
-
 
 		<script type='text/javascript'>
 			//need to wait for both fonts and DOM
@@ -150,94 +222,6 @@
 				if(gatekeeper.fontsloaded)
 					main();
 			});
-
-
-			function main(){
-				//paint all canvases
-				//GRIFFIN
-				//Upstream Chamber
-				thumbnail('GRIFusSCEPTAR', 'SCEPTAR', 'none', '#FFFFFF');
-				thumbnail('GRIFusPACES', 'PACES', 'none', '#FFFFFF');
-				thumbnail('GRIFusSPICE', 'SPICE', 'none', '#FFFFFF');
-				//Downstream Chamber
-				thumbnail('GRIFdsSCEPTAR', 'SCEPTAR', 'none', '#FFFFFF');
-				thumbnail('GRIFdsZDS', 'ZDS', 'none', '#FFFFFF');
-				thumbnail('GRIFdsS3', 'S3', 'none', '#FFFFFF');
-				//Corona
-				thumbnail('GRIFc', 'GRIFFIN', 'DANTE', '#FFFFFF');
-				//Upstream Lampshade
-				thumbnail('GRIFuslAlone', 'GRIFFIN', 'none', '#FFFFFF');
-				thumbnail('GRIFspiceService', 'SPICE', 'services', '#FFFFFF');
-				//Downstream Lampshade
-				thumbnail('GRIFdslAlone', 'GRIFFIN', 'none', '#FFFFFF');
-				thumbnail('GRIFdescant', 'DESCANT', 'none', '#FFFFFF');
-
-				//there's only one choice in GRIFFIN's corona - choose it and lock it by default:
-				document.getElementById('GRIFcorona').selected = 'GRIFc0';
-				document.getElementById('GRIFcorona').locked = true;
-
-				//callbacks - some options influence other options
-				//choosing SPICE requires the SPICE Services
-				document.getElementById('GRIFusc2').setCallback = function(){
-					if(!document.getElementById('GRIFusLamp').selected){
-						document.getElementById('GRIFusLamp').selected = 'GRIFusl1';
-					}
-				};
-				//unchoosing SPICE unchooses SPICE Services and unlocks USL:
-				document.getElementById('GRIFusc2').unsetCallback = function(){
-					if(document.getElementById('GRIFusLamp').selected){
-						document.getElementById('GRIFusLamp').locked = false;
-						document.getElementById('GRIFusLamp').selected = 'GRIFusl1';
-					}
-				};
-				//choosing SPICE Services requires SPICE
-				document.getElementById('GRIFusl1').setCallback = function(){
-					if(!document.getElementById('GRIFusChamber').selected){
-						document.getElementById('GRIFusChamber').selected = 'GRIFusc2';
-					}
-				};
-				//unchoosing SPICE Services unchooses SPICE:
-				document.getElementById('GRIFusl1').unsetCallback = function(){
-					if(document.getElementById('GRIFusChamber').selected)
-						document.getElementById('GRIFusChamber').selected = 'GRIFusc2';
-				};
-				//choosing !SPICE requires !SPICE Services, and locks the USL
-				document.getElementById('GRIFusc0').setCallback = function(){
-					if(!document.getElementById('GRIFusLamp').selected){
-						document.getElementById('GRIFusLamp').selected = 'GRIFusl0';
-					}
-					document.getElementById('GRIFusLamp').locked = true;
-				};
-				document.getElementById('GRIFusc1').setCallback = function(){
-					if(!document.getElementById('GRIFusLamp').selected){
-						document.getElementById('GRIFusLamp').selected = 'GRIFusl0';
-					}
-					document.getElementById('GRIFusLamp').locked = true;
-				};
-				//unchoosing !SPICE unchooses !SPICE Services and unlocks the USL
-				document.getElementById('GRIFusc0').unsetCallback = function(){
-					if(document.getElementById('GRIFusLamp').selected){
-						document.getElementById('GRIFusLamp').locked = false;
-						document.getElementById('GRIFusLamp').selected = 'GRIFusl0';
-					}
-				};
-				document.getElementById('GRIFusc1').unsetCallback = function(){
-					if(document.getElementById('GRIFusLamp').selected){
-						document.getElementById('GRIFusLamp').locked = false;
-						document.getElementById('GRIFusLamp').selected = 'GRIFusl0';
-					}
-				};
-				//choosing GRIFFIN Standalone in the USL removes SPICE as an option in the USC:
-				document.getElementById('GRIFusl0').setCallback = function(){
-					document.getElementById('GRIFusc2').className = 'hidden';
-				};
-				//unchoosing GRIFFIN Standalone in the USL re-revals SPICE as an option in the USC, if USC not already chosen:
-				document.getElementById('GRIFusl0').unsetCallback = function(){
-					if(!document.getElementById('GRIFusChamber').selected)
-						document.getElementById('GRIFusc2').className = '';
-				};				
-
-			}
 		</script>
 	</body>
 
