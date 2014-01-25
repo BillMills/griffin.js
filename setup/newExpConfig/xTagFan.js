@@ -42,8 +42,10 @@ hacks:
                             //hide all the other blades by setting thier class to 'hidden'
                             if(this.childNodes[i].id != value && this.childNodes[i].tagName == 'X-BLADE')
                                 this.childNodes[i].className = 'hidden';
-                            //highlight the chosen blade with the 'chosen' class, and call its set callback.
-                            else if(this.childNodes[i].id == value && this.childNodes[i].tagName == 'X-BLADE'){
+                        }
+                        //highlight the chosen blade with the 'chosen' class, and call its set callback - 2nd loop to ensure cb happens last
+                        for(i=0; i<this.childNodes.length; i++){
+                            if(this.childNodes[i].id == value && this.childNodes[i].tagName == 'X-BLADE'){
                                 this.childNodes[i].className = 'chosen';
                                 this.childNodes[i].setCallback;
                             }
@@ -59,11 +61,15 @@ hacks:
                                 this.childNodes[i].className = '';
                                 this.childNodes[i].style = '';
                                 this.childNodes[i].style.overflow = 'visible';
-                                //call the unset callback for the blade being deselected
-                                if(this.childNodes[i].id == value)
-                                    this.childNodes[i].unsetCallback;
                             }
-                        }                        
+                        }
+                        //call the unset callback for the blade being deselected - 2nd loop to ensure cb happens last
+                        for(i=0; i<this.childNodes.length; i++){
+                            if(this.childNodes[i].tagName == 'X-BLADE' && this.childNodes[i].id == value){
+                                this.childNodes[i].unsetCallback;
+                            }
+                        }
+
                     }                    
                 }
             },
