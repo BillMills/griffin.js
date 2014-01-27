@@ -57,6 +57,7 @@ x-altmodal {
 
 x-altmodal.hiddenModal{
 	opacity: 0;
+	z-index: -1000;
 }
 
 button.altmodalDismiss{

@@ -186,6 +186,11 @@ button.bigButton{
 	cursor: pointer;
 }
 
+/*moz buttons are actually made of mysterious marshmallows:*/
+button.bigButton::-moz-focus-inner{
+	padding: 1em;
+}
+
 /*Footer and footer-related styles////////////////////////////////////////////////////*/
 div#footer{
 	background-color: #999999;

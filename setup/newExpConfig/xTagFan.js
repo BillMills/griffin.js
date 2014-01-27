@@ -113,7 +113,13 @@ hacks:
                 if(this.className == 'hidden'){
                     this.style.overflow = 'hidden'
                 }
-            }
+            },
+
+            transitionend: function(){
+                if(this.className == 'hidden'){
+                    this.style.overflow = 'hidden'
+                }
+            },            
         },
         accessors: {
             'setCallback' : {
@@ -173,6 +179,14 @@ hacks:
             },
 
             webkitTransitionEnd: function(){
+                if(this.className == 'hiddenModal'){
+                    this.style.zIndex = -1000;
+                } else if(this.className == 'activeModal'){
+                    this.style.zIndex = 1000;
+                }
+            },
+
+            transitionend: function(){
                 if(this.className == 'hiddenModal'){
                     this.style.zIndex = -1000;
                 } else if(this.className == 'activeModal'){
