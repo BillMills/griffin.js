@@ -3,6 +3,9 @@ cp ../../plumbing/drawing.js .
 cp ../ConfigureExperiment.html .
 cp ../ConfigureExperiment.css .
 cp ../thumbnails.js .
+cp ../expConfig.js .
+cp ../xTagFan.js .
+cp ../xTagFan.css .
 
 rm configure.min.js
 source concatenate

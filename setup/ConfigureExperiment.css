@@ -1,100 +1,189 @@
-body{
-	margin:0px;
+/*CSS Reset*/
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+	height:100%;
+	width:100%;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+/*Enforce more intuitive box-sizing, suppress selection, demand default cursor*/
+* { 
+	-moz-box-sizing: border-box; 
+	-webkit-box-sizing: border-box; 
+	box-sizing: border-box; 
+	-webkit-user-select:none;
+	-moz-user-select:none;
+	cursor:default;
 }
 
 input, select, button{
 	outline:none;
 }
 
-td{
-	text-align: center;
-}
+sup {font-size:small; vertical-align:super;}
 
-button.button{
-	width: 20%;
-	height: 5%;   
-	background-color: #FFFFFF;
-	background-image: -webkit-linear-gradient(transparent, #C1C1C1);
-    background-image: -moz-linear-gradient(transparent, #C1C1C1); 
-	border-radius: 5; 
-	font-size:20px;
-	font-family: Raleway;
-	border-color: #333333;
-	margin-left: auto;
-	margin-right: auto;
-	margin-bottom: 100px;
-}
+sub {font-size:small; vertical-align:sub;}
 
-button.button:hover{
-	background-image: -webkit-linear-gradient(transparent, #919191);
-    background-image: -moz-linear-gradient(transparent, #919191); 
-} 
-
-h1.title{
-	font-family: Orbitron;
-	font-size: 36px;
-	text-align: center;
-	color:#999999;
-
-}
-
-div.section{
-	opacity:0;
-	transition:opacity 0.5s; 
-	-moz-transition:opacity 0.5s; 
-	-webkit-transition:opacity 0.5s;
-}
-
-table.sectionTable{
-	position:relative;
-	margin-left: auto;
-	margin-right: auto;
-	margin-bottom: 50px;
-}
-
-canvas.thumbnail{
-	position: relative;
-	
-	transition:left 0.5s, opacity 0.5s;
-	-moz-transition:left 0.5s, opacity 0.5s;
-	-webkit-transition:left 0.5s, opacity 0.5s; 
-	
-}
-
-/*popup window////////////////////////////////////////////////*/
-.tempDialog{
+body{
 	font-family: 'Raleway', sans-serif; 
-	z-index:10; 
-	position:fixed; 
-	text-align:center; 
-	opacity:0; 
-	transition:opacity 0.5s; 
-	-moz-transition:opacity 0.5s; 
-	-webkit-transition:opacity 0.5s; 
-	background:rgba(0,0,0,0.8); 
-	border: 5px solid; 
-	border-radius:10px;
-	top:100px;
-	padding:2em;
-	max-height: 800px;
-	overflow:scroll;
+	font-size:14px; 
+	background-color:#333333; 
+	color:#FFFFFF;
+	margin-left:0px;
 }
 
-/*/buttons///////////////////////////////*/
-.standardButton{
+input.widgetInput:invalid{
+	color: #FF0000;
+	border: 2px solid #FF0000;
+}
+
+a{
+	cursor:pointer;
+}
+
+/*Generic altmodal///////////////////////////////////////*/
+x-altmodal{
+	text-align: center;
+	background-color: rgba(0,0,0,0.8);
+	border: 5px solid #EEEEEE;
+	border-radius: 25px;
+	padding:3em;	
+	font-size: 120%;
+}
+
+/*Choose experiment intro///////////////////////////////*/
+x-altmodal#chooseExperiment{
+	font-size: 100%;
+}
+x-altmodal#chooseExperiment button{
+	display:none;
+}
+x-altmodal#chooseExperiment img{
+	margin: 2em 2em 0em 2em;
+	opacity: 0.5;
+}
+
+x-altmodal#chooseExperiment img:hover{
+	opacity: 1;
+}
+
+/*Complaint altmodal/////////////////////////////////////*/
+x-altmodal#incompleteForm button{
 	background: #4C4C4C; 
 	color: #FFFFFF;
 	border-color: #333333; 
 	border-radius: 5px;
-    display: inline;
     font-family: 'Raleway', sans-serif;
     font-size:100%;
     padding:1em;
     cursor: pointer;
+    margin-top:1em;
 }
 
-.standardButton:hover{
+x-altmodal#incompleteForm button:hover{
 	background: #777777;
+}
+
+/*branding///////////////////////////////////////////////*/
+
+div#branding{ 
+	height:6em; 
+	border-color:#999999; 
+	border-left-style:solid; 
+	border-bottom-style:solid; 
+	border-left-width:5px; 
+	border-bottom-width:5px; 
+	border-bottom-left-radius:25px; 
+	background-color:#333333; 
+	margin-bottom:3em; 
+	padding-bottom:5px; 
+	text-align: left;
+}
+
+img#logo{
+	opacity:0.5625; 
+	padding-left:1em; 
+	margin-bottom:5px;
+	height:5em;
+	width:5.8em;
+}
+
+h1#title{
+	position:relative; 
+	display:inline; 
+	font: 500% Raleway; 
+	top:-10px; 
+	margin-left:10px; 
+	color:#999999;
+}
+
+/*Titles//////////////////////////////////////////////////////////////////////////////*/
+h1{
+	font-family: 'Orbitron', sans-serif;
+	color: #999999;
+	font-size: 300%
+}
+
+/*Option wrappers/////////////////////////////////////////////////////////////////////*/
+div#GRIFFINwrap, div#TIGRESSwrap{
+	text-align:center;
+}
+
+/*x-fan///////////////////////////////////////////////////////////////////////////////*/
+x-fan{
+	margin-bottom: 3em;
+}
+
+/*Buttons/////////////////////////////////////////////////////////////////////////////*/
+button.bigButton{
+	padding: 1em;
+	font: 16px Raleway;
+	margin-bottom: 3em;
+	cursor: pointer;
 }
 
 /*Footer and footer-related styles////////////////////////////////////////////////////*/
@@ -104,20 +193,28 @@ div#footer{
 	padding:2em;
 	color:#333333;
 	border-top:1px solid #000000;
-	height:3em;
+	height:6em;
 	line-height: 1.2;
-	opacity:0;
+
+	transition: opacity 0.5s; 
+	-moz-transition: opacity 0.5s; 
+	-webkit-transition: opacity 0.5s;
 }
 
 div#push{
-	height:7em;
+	height:6em;
 }
 
 div#wrapper{
     min-height: 100%;
     height: auto !important;
     height: 100%;
-    margin: 0 auto -7em;
+    margin: 0 auto -6em;
 	padding-left:1em;
 	padding-right: 1em;	
+	text-align: center;
+
+	transition: opacity 0.5s; 
+	-moz-transition: opacity 0.5s; 
+	-webkit-transition: opacity 0.5s;
 }

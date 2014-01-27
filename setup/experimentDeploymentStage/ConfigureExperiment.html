@@ -5,1044 +5,227 @@
     <link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
 
     <script src="/js/mhttpd.js" type="text/javascript"></script>
-    <script src="zeptoJS!" type="text/javascript"></script>
     <script src="ExperimentSetupJS!" type="text/javascript"></script>
-    <link rel="stylesheet" type="text/css" href="ExperimentSetupCSS!" />
+    <link rel="stylesheet" type="text/css" href="ExperimentSetupCSS!"/>
+    <link rel="stylesheet" type="text/css" href="xTagFanCSS!"/>
 
   </head>
 
-	<body style="font-family: 'Raleway', sans-serif; font-size:14px; background-color:#333333; color:#FFFFFF; text-align:center;">
+	<body>
+		<!--Fonts//////////////////////////////////////////////////////////////-->
+		<script type="text/javascript">
+	        //load the webfonts, and block the page until they're ready or failed - otherwise lots of rendering bugs happen!
+	        WebFontConfig = { google: { families: [ 'Raleway', 'Orbitron' ] },
+		        loading: function(){
+		            //set the spinner going:
+		            //drawSpinner('spinner', 'Requesting Styles');
+	  	        },
+		        active: function() {
+		        	gatekeeper.fontsloaded = true
+		        	if(gatekeeper.DOMloaded)
+		        		main();
+		        },
+		        inactive: function() {
+		        	gatekeeper.fontsloaded = true
+		        	if(gatekeeper.DOMloaded)
+		        		main();
+		        }
+	        };
+	        //thx paul:
+	        (function() {
+	        	var wf = document.createElement('script');
+	        	wf.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+	        	wf.type = 'text/javascript';
+		        wf.async = 'true';
+		        var s = document.getElementsByTagName('script')[0];
+	    	    s.parentNode.insertBefore(wf, s);
+	      	})();
+    	</script>
 
-		<div id='wrapper'>
+		<x-altmodal id='chooseExperiment', class='hiddenModal'>
+			<h1>Choose Your Experiment</h1>
+			<img id='griffinLogo' src='logo.gif' width='80px' height='90px' onclick='chooseExperiment("GRIFFIN")'></img>
+			<img id='triumfLogo' src='triumf.gif' width='90px' height='90px' onclick='chooseExperiment("TIGRESS")'></img>
+		</x-altmodal>
+
+    	<div id='wrapper' style='opacity:0'>
 		    <!--Branding///////////////////////////////////////////////////////////-->
-		    <div id='branding' style='width:100%; height:85; text-align:left; border-color:#999999; border-left-style:solid; border-bottom-style:solid; border-left-width:5px; border-bottom-width:5px; border-bottom-left-radius:25px; background-color:#333333; margin-bottom:5px; padding-bottom:5px;' class='section'>
-		      <img id='logo' height='75px' width='80px' src='triumf.gif' style='opacity:0.5625; padding-left:10px; margin-bottom:5px;'></img>
-		      <h1 id='title' style='position:relative; display:inline; font: 80px Raleway; top:-10px; margin-left:10px; color:#999999'>TRIUMF</h1>
+		    <div id='branding'>
+		      <img id='logo' src='logo.gif'></img>
+		      <h1 id='title'>GRIFFIN</h1>
 		    </div>
-		    <h1 id='youAreHere' style='opacity:0; float:right; color:#999999; margin-top:0px; margin-bottom:50px;'>Detector Deployment</h1>
 
-			<div id='chooseExperiment', style='margin-left:auto; margin-right:auto; background:rgba(0,0,0,0.7); border: 5px solid; border-radius:10px; opacity:0; width:35%; position:relative; font-family:Orbitron; transition:opacity 0.5s; -moz-transition:opacity 0.5s; -webkit-transition:opacity 0.5s; text-align:center;'>
-				<table style='margin:0 auto; width:60%;'>
-					<caption style='font-size:36px'><br>Choose Your Experiment<br><br></caption>
-					<tr>
-						<td>
-							<canvas id='GrifLogo' width='150px' height='150px'> </canvas>
-						</td>
-						<td>
-							<canvas id='TigLogo' width='150px' height='150px'> </canvas>
-						</td>
-					</tr>
-					<tr>
-						<td style="font-size:20px;">GRIFFIN</td>
-						<td style="font-size:20px;">TIGRESS</td>
-					</tr>
-					<tr><td><br></td></tr>
-				</table>
-				<br><br><br>
+		    <div id='GRIFFINwrap'>
+
+		    	<h1>Upstream Chamber</h1>
+				<x-fan id='GRIFusChamber'>
+
+					<x-blade id='GRIFusc0'>
+						<canvas id='GRIFusSCEPTAR' width='200px'></canvas>
+					</x-blade>
+
+					<x-blade id='GRIFusc1'>
+						<canvas id='GRIFusPACES' width='200px'></canvas>
+					</x-blade>
+
+					<x-blade id='GRIFusc2'>
+						<canvas id='GRIFusSPICE' width='200px'></canvas>
+					</x-blade>
+
+				</x-fan>
+
+		    	<h1>Downstream Chamber</h1>
+				<x-fan id='GRIFdsChamber'>
+
+					<x-blade id='GRIFdsc0'>
+						<canvas id='GRIFdsSCEPTAR' width='200px'></canvas>
+					</x-blade>
+
+					<x-blade id='GRIFdsc1'>
+						<canvas id='GRIFdsZDS' width='200px'></canvas>
+					</x-blade>
+
+					<x-blade id='GRIFdsc2'>
+						<canvas id='GRIFdsS3' width='200px'></canvas>
+					</x-blade>
+
+				</x-fan>
+
+		    	<h1>Corona</h1>
+				<x-fan id='GRIFcorona'>
+
+					<x-blade id='GRIFc0'>
+						<canvas id='GRIFc' width='200px'></canvas>
+					</x-blade>
+
+				</x-fan>
+
+		    	<h1>Upstream Lampshade</h1>
+				<x-fan id='GRIFusLamp'>
+
+					<x-blade id='GRIFusl0'>
+						<canvas id='GRIFuslAlone' width='200px'></canvas>
+					</x-blade>
+
+					<x-blade id='GRIFusl1'>
+						<canvas id='GRIFspiceService' width='200px'></canvas>
+					</x-blade>
+
+				</x-fan>
+
+		    	<h1>Downstream Lampshade</h1>
+				<x-fan id='GRIFdsLamp'>
+
+					<x-blade id='GRIFdsl0'>
+						<canvas id='GRIFdslAlone' width='200px'></canvas>
+					</x-blade>
+
+					<x-blade id='GRIFdsl1'>
+						<canvas id='GRIFdescant' width='200px'></canvas>
+					</x-blade>
+
+				</x-fan>
+
 			</div>
 
-			<script type='text/JavaScript'>
-				//choose TIGRESS or GRIFFIN//////////////////////////////////////////////////////////////
-				document.getElementById('GrifLogo').onclick = function(){
-	      			window.experiment = 'GRIFFIN';
-	      			window.subdetectors['DANTE'] = 1; //DANTE is apparently always in the corona for GRIFFIN
-	      			//ODBSet('/DashboardConfig/topLevel/HPGeArray', 'GRIFFIN');
-					document.getElementById('chooseExperiment').style.opacity = 0;
-	        		setTimeout(function(){
-	            		var element = document.getElementById('chooseExperiment');
-	            		element.parentNode.removeChild(element);
-	            		deployBanner(); 
-	        		}, 500);
-				}
+			<div id='TIGRESSwrap'>
 
-				document.getElementById('TigLogo').onclick = function(){
-	      			window.experiment = 'TIGRESS';
-	      			//ODBSet('/DashboardConfig/topLevel/HPGeArray', 'TIGRESS');
-					document.getElementById('chooseExperiment').style.opacity = 0;
-	        		setTimeout(function(){
-	            		var element = document.getElementById('chooseExperiment');
-	            		element.parentNode.removeChild(element);
-	            		deployBanner();            
-	        		}, 500);	
-				}
+		    	<h1>Chamber</h1>
+				<x-fan id='TIGusChamber'>
 
-				//insert images
-				var GrifCanv = document.getElementById('GrifLogo');
-				var TigCanv = document.getElementById('TigLogo');
-				var GrifCtx = GrifCanv.getContext('2d');
-				var TigCtx = TigCanv.getContext('2d');
-				window.subdetectors = {'SHARC' : 0,
-									   'HPGe' : 1,
-									   'DESCANT' : 0,
-									   'PACES' : 0,
-									   'DANTE' : 0,
-									   'BAMBINO' : 0,
-									   'US SCEPTAR' : 0,
-									   'DS SCEPTAR' : 0,
-									   'SPICE' : 0,
-									   'TIPwall' : 0,
-									   'TIPball' : 0,
-									   'ZDS' : 0
-									  }
-				window.choices = 0;
+					<x-blade id='TIGusc0'>
+						<canvas id='TIGusBAMBINO' width='200px'></canvas>
+					</x-blade>
 
-			    var imageObj = new Image();
-	    		imageObj.src = 'logo.gif';
-			    imageObj.onload = function() {
-			      GrifCtx.drawImage(imageObj, 20, 0, imageObj.width/imageObj.height*GrifCtx.canvas.height*0.8, GrifCtx.canvas.height*0.8);
-	    		};
+					<x-blade id='TIGusc1'>
+						<canvas id='TIGusSHARC' width='200px'></canvas>
+					</x-blade>
 
-	   		    var tigImage = new Image();
-	    		tigImage.src = 'triumf.gif';
-			    tigImage.onload = function() {
-			      TigCtx.drawImage(tigImage, 10, 0, tigImage.width/tigImage.height*TigCtx.canvas.height*0.8, TigCtx.canvas.height*0.8);
-	    		};
+					<x-blade id='TIGusc2'>
+						<canvas id='TIGusSPICE' width='200px'></canvas>
+					</x-blade>
 
-	    		//fade initial option in
-				$('#chooseExperiment').css('top', (window.innerHeight - parseFloat($('#chooseExperiment').css('height')) )*0.4 - 95  )
-				document.getElementById('chooseExperiment').style.opacity = 1;
-				//experiment selected///////////////////////////////////////////////////////////////////////
+					<x-blade id='TIGusc3'>
+						<canvas id='TIGusTIPwall' width='200px'></canvas>
+					</x-blade>
 
-				function deployBanner(){
-					//show the branding banner:
-					document.getElementById('branding').style.opacity = 1;
-					document.getElementById('youAreHere').style.opacity = 1;
+					<x-blade id='TIGusc4'>
+						<canvas id='TIGusTIPball' width='200px'></canvas>
+					</x-blade>
 
-	        		//deploy subsections:
-	        		deployChamber();
-	        		deployDSlampshade();
-	        		deployCorona();
-	        		deployUSlampshade();
-	        		if(window.experiment == 'TIGRESS') deployBeamdump();
-	        		deployFooter();
+				</x-fan>
 
-	        		setTimeout(function(){document.getElementById('Chamber').style.opacity = 1;}, 100);
-	        		setTimeout(function(){document.getElementById('DSlampshade').style.opacity = 1;}, 200);
-	        		setTimeout(function(){document.getElementById('Corona').style.opacity = 1;}, 300);
-	        		setTimeout(function(){document.getElementById('USlampshade').style.opacity = 1;}, 400);
-	        		if(window.experiment == 'TIGRESS') setTimeout(function(){document.getElementById('Beamdump').style.opacity = 1;}, 500);
-	        		setTimeout(function(){document.getElementById('footer').style.opacity = 1;}, 600);
-	        		setTimeout(function(){
-	        							//commit data////////////////////////////////////////////////////////////////////////
-										injectDOM('button', 'writeParameters', 'wrapper', {
-											'class' : 'button',
-											'onclick': function(){commitParameters()},
-											'innerHTML': 'Deploy Detectors' 
-										});
-										document.getElementById('writeParameters').onmousedown = function(){
-											$('#writeParameters').css('background-color', '#999999');
-										}
-										document.getElementById('writeParameters').onmouseup = function(){
-											$('#writeParameters').css('background-color', '#FFFFFF');
-										}
-										injectDOM('div', 'push', 'wrapper', {});
-	        						   }, 650);
+		    	<h1>Corona</h1>
+				<x-fan id='TIGcorona'>
 
-	        		//special case onclick behaviors://///////////////////////////////////////////////////
-	        		//GRIFFIN
-	        		if(window.experiment == 'GRIFFIN'){
-	        			//SPICE forces SPICE services in USL:
-			    		document.getElementById('Gcha4canv').onclick = function(event, noChain){
-			    			//regular behavior
-			    			clickBehavior.call(this, 6, 'Gcha', window.leftChamber, window.rightChamber);
+					<x-blade id='TIGc0'>
+						<canvas id='TIGc' width='200px'></canvas>
+					</x-blade>
 
-			    			if(!noChain && !this.disabled){
-			        			//force SPICE services in US lampshade:
-			    				if(this.chosen){
-			        				document.getElementById('Gusl1canv').onmouseover.apply(document.getElementById('Gusl1canv'));
-				        			if(!document.getElementById('Gusl1canv').chosenDirectly){
-						    			document.getElementById('Gusl1canv').onclick.apply(document.getElementById('Gusl1canv'), [null, true]);
-			        					document.getElementById('Gusl1canv').locked = 1;
-			        					document.getElementById('Gusl1canv').chosenDirectly = 0;
-			        				}
-			        				thumbnail('Gusl1canv', 'SPICE', 'services', '#FFFFFF', document.getElementById('Gusl1canv').disabled);
-			        			}
-			        			else{
-			        				document.getElementById('Gusl1canv').onmouseout.apply(document.getElementById('Gusl1canv'));
-			        				document.getElementById('Gusl1canv').locked = 0;
-				        			if(!document.getElementById('Gusl1canv').chosenDirectly){
-						    			document.getElementById('Gusl1canv').onclick.apply(document.getElementById('Gusl1canv'), [null, true]);
-							    		thumbnail('Gusl1canv', 'SPICE', 'services', '#999999', document.getElementById('Gusl1canv').disabled);
-							    	}
-			        			}
-			        		}
-							
-			    		};
-			    		//same thing on the SPICE+DSSC badge:
-			    		document.getElementById('Gcha5canv').onclick = function(event, noChain){
-			    			document.getElementById('Gcha4canv').onclick.apply(this, [event, noChain]);
-			    		};
+				</x-fan>
 
-			    		//if SPICE services are chosen in USL, disable all non-spice options in chamber:
-			    		document.getElementById('Gusl1canv').onclick = function(event, noChain){
-			    			//regular behavior
-			    			clickBehavior.call(this, 2, 'Gusl', window.leftUSL, window.rightUSL);
+		    	<h1>Upstream Lampshade</h1>
+				<x-fan id='TIGusLamp'>
 
-			    			if(!noChain && !this.disabled && !this.locked){
-			    				if(this.chosen){
-			    					document.getElementById('Gcha0canv').disabled = true;
-			    					document.getElementById('Gcha1canv').disabled = true;
-			    					document.getElementById('Gcha2canv').disabled = true;
-			    					document.getElementById('Gcha3canv').disabled = true;
-			    					this.chosenDirectly = 1;
-			    				} else {
-			    					document.getElementById('Gcha0canv').disabled = false;
-			    					document.getElementById('Gcha1canv').disabled = false;
-			    					document.getElementById('Gcha2canv').disabled = false;
-			    					document.getElementById('Gcha3canv').disabled = false;	
-			    					this.chosenDirectly = 0;	    					
-			    				}
-			    				thumbnail('Gcha0canv', 'US SCEPTAR', 'DS SCEPTAR', '#999999', document.getElementById('Gcha0canv').disabled);
-			    				thumbnail('Gcha1canv', 'US SCEPTAR', 'ZDS', '#999999', document.getElementById('Gcha1canv').disabled);
-			    				thumbnail('Gcha2canv', 'PACES', 'DS SCEPTAR', '#999999', document.getElementById('Gcha2canv').disabled);
-			    				thumbnail('Gcha3canv', 'PACES', 'ZDS', '#999999', document.getElementById('Gcha3canv').disabled);
-			    			}
-			    		};
+					<x-blade id='TIGusl0'>
+						<canvas id='TIGuslAlone' width='200px'></canvas>
+					</x-blade>
 
-			    		//non-SPICE choices imply GRIFFIN standalone in USL:
-			    		for(var i=0; i<4; i++){
-							document.getElementById('Gcha'+i+'canv').onclick = function(event, noChain){
-								//normal click behavior:
-								clickBehavior.call(this, 6, 'Gcha', window.leftChamber, window.rightChamber);
+					<x-blade id='TIGusl1'>
+						<canvas id='TIGspiceService' width='200px'></canvas>
+					</x-blade>
 
-				    			if(!noChain && !this.disabled){
-				    				if(this.chosen){
-				        				document.getElementById('Gusl0canv').onmouseover.apply(document.getElementById('Gusl0canv'));
-					        			if(!document.getElementById('Gusl0canv').chosenDirectly){
-							    			document.getElementById('Gusl0canv').onclick.apply(document.getElementById('Gusl0canv'), [null, true]);
-				        					document.getElementById('Gusl0canv').locked = 1;
-				        					document.getElementById('Gusl0canv').chosenDirectly = 0;
-				        				}
-				        				thumbnail('Gusl0canv', 'GRIFFIN', 'none', '#FFFFFF', document.getElementById('Gusl0canv').disabled);
-				        			}
-				        			else{
-				        				document.getElementById('Gusl0canv').onmouseout.apply(document.getElementById('Gusl0canv'));
-				        				document.getElementById('Gusl0canv').locked = 0;
-					        			if(!document.getElementById('Gusl0canv').chosenDirectly){
-							    			document.getElementById('Gusl0canv').onclick.apply(document.getElementById('Gusl0canv'), [null, true]);
-								    		thumbnail('Gusl0canv', 'GRIFFIN', 'none', '#999999', document.getElementById('Gusl0canv').disabled);
-								    	}
-				        			}
-				        		}							
-							};
-						}
+				</x-fan>
 
-			    		//if GRIFFIN is chosen in USL, disable all spice options in chamber:
-			    		document.getElementById('Gusl0canv').onclick = function(event, noChain){
-			    			//regular behavior
-			    			clickBehavior.call(this, 2, 'Gusl', window.leftUSL, window.rightUSL);
+		    	<h1>Downstream Lampshade</h1>
+				<x-fan id='TIGdsLamp'>
 
-			    			if(!noChain && !this.disabled && !this.locked){
-			    				if(this.chosen){
-			    					document.getElementById('Gcha4canv').disabled = true;
-			    					document.getElementById('Gcha5canv').disabled = true;
-			    					this.chosenDirectly = 1;
-			    				} else {
-			    					document.getElementById('Gcha4canv').disabled = false;
-			    					document.getElementById('Gcha5canv').disabled = false;
-			    					this.chosenDirectly = 0;	    					
-			    				}
-			    				thumbnail('Gcha4canv', 'SPICE', 'ZDS', '#999999', document.getElementById('Gcha4canv').disabled);
-			    				thumbnail('Gcha5canv', 'SPICE', 'DS SCEPTAR', '#999999', document.getElementById('Gcha5canv').disabled);
-			    			}
-			    		};
-	        		}
+					<x-blade id='TIGdsl0'>
+						<canvas id='TIGdslAlone' width='200px'></canvas>
+					</x-blade>
 
+					<x-blade id='TIGdsl1'>
+						<canvas id='TIGdescant' width='200px'></canvas>
+					</x-blade>
 
-	        		//TIGRESS
-	        		if(window.experiment == 'TIGRESS'){
-		        		//SHARC chamber forces SHARC services in DS lampshade
-		        		document.getElementById('Tcha1canv').onclick = function(event, noChain){
-		        			//regular behavior
-		        			clickBehavior.call(this, 5, 'Tcha', window.leftChamber, window.rightChamber);
+					<x-blade id='TIGdsl2'>
+						<canvas id='TIGsharcService' width='200px'></canvas>
+					</x-blade>					
 
-		        			if(!noChain && !this.disabled){
-			        			//force SHARC services in DS lampshade:
-		    	    			document.getElementById('Tdsl1canv').onclick.apply(document.getElementById('Tdsl1canv'), [null, true]);
-		        				if(this.chosen){
-			        				document.getElementById('Tdsl1canv').onmouseover.apply(document.getElementById('Tdsl1canv'));
-			        				thumbnail('Tusl0canv', 'TIGRESS', 'none', '#FFFFFF');
-			        			}
-			        			else{
-			        				document.getElementById('Tdsl1canv').onmouseout.apply(document.getElementById('Tdsl1canv'));
-			        				thumbnail('Tusl0canv', 'TIGRESS', 'none', '#999999');
-			        			}
-			        		}
+				</x-fan>
 
-			        		//also implies USL TIGRESS:
-			        		if(!this.disabled){
-				        		if(!this.chosen) document.getElementById('Tusl0canv').locked = !document.getElementById('Tusl0canv').locked;
-				        		document.getElementById('Tusl0canv').onclick.apply(document.getElementById('Tusl0canv'), [null, true]);
-			    	    		if(this.chosen) document.getElementById('Tusl0canv').locked = !document.getElementById('Tusl0canv').locked;
-			    	    	}
-		        		};
-		        		//...and the other way around:
-		        		document.getElementById('Tdsl1canv').onclick = function(event, noChain){
-		        			//regular behavior
-		        			clickBehavior.call(this, 3, 'Tdsl', window.leftDSL, window.rightDSL);
+			</div>
 
-		        			if(!noChain && !this.disabled){
-			        			//force SHARC services in DS lampshade:
-		    	    			document.getElementById('Tcha1canv').onclick.apply(document.getElementById('Tcha1canv'), [null, true]);
-		        				if(this.chosen){
-			        				document.getElementById('Tcha1canv').onmouseover.apply(document.getElementById('Tcha1canv'));
-			        				thumbnail('Tusl0canv', 'TIGRESS', 'none', '#FFFFFF');
-			        			}
-			        			else {
-			        				document.getElementById('Tcha1canv').onmouseout.apply(document.getElementById('Tcha1canv'));
-			        				thumbnail('Tusl0canv', 'TIGRESS', 'none', '#999999');
-			        			}
-			        		}	
-		        		};
+			<br>
+			<button id='buildExperiment', class='bigButton' onclick='buildExperiment()'> Build Experiment & Configure Subsystems </button>
 
-		        		//SPICE chamber forces SPICE services in USL
-			    		document.getElementById('Tcha2canv').onclick = function(event, noChain){
-			    			//regular behavior
-			    			clickBehavior.call(this, 5, 'Tcha', window.leftChamber, window.rightChamber);
+			<x-altmodal id='incompleteForm', class='hiddenModal'>
+				Please choose an option for all regions.
+			</x-altmodal>
 
-			    			if(!noChain && !this.disabled){
-			        			//force SPICE services in US lampshade:
-				    			document.getElementById('Tusl1canv').onclick.apply(document.getElementById('Tusl1canv'), [null, true]);
-			    				if(this.chosen){
-			        				document.getElementById('Tusl1canv').onmouseover.apply(document.getElementById('Tusl1canv'));
-			        				//also disable SHARC services:
-			        				document.getElementById('Tdsl1canv').disabled = true;
-			        			}
-			        			else{
-			        				document.getElementById('Tusl1canv').onmouseout.apply(document.getElementById('Tusl1canv'));
-			        				//re-enable SHARC services:
-			        				document.getElementById('Tdsl1canv').disabled = false;
-			        			}
-			        			//redraw SHARC services as appropriate:
-			        			thumbnail('Tdsl1canv', 'SHARC', 'services', '#999999', document.getElementById('Tdsl1canv').disabled);
-
-			        		}
-							//also disable SHARC Services:
-							if(this.chosen)
-								document.getElementById('Tdsl1canv').disabled = true;
-							else
-								document.getElementById('Tdsl1canv').disabled = false;
-							thumbnail('Tdsl1canv', 'SHARC', 'services', '#999999', document.getElementById('Tdsl1canv').disabled);
-			    		};
-			    		//...and the other way around
-			    		document.getElementById('Tusl1canv').onclick = function(event, noChain){
-			    			//regular behavior
-			    			clickBehavior.call(this, 2, 'Tusl', window.leftUSL, window.rightUSL);
-
-			    			if(!noChain && !this.disabled){
-			        			//force SHARC services in DS lampshade:
-				    			document.getElementById('Tcha2canv').onclick.apply(document.getElementById('Tcha2canv'), [null, true]);
-			    				if(this.chosen)
-			        				document.getElementById('Tcha2canv').onmouseover.apply(document.getElementById('Tcha2canv'));
-			        			else
-			        				document.getElementById('Tcha2canv').onmouseout.apply(document.getElementById('Tcha2canv'));
-			        		}	
-			    		};
-		    		}
-				}
-
-
-
-
-
-
-
-
-
-				function deployChamber(){
-					var i, totalWidth; 
-
-					totalWidth = window.innerWidth;
-
-					injectDOM('div', 'Chamber', 'wrapper', {
-						'class' : 'section',
-						'style' : 'clear:both'
-					});
-					injectDOM('h1', 'chamberTitle', 'Chamber', {
-						'class' : 'title',
-						'innerHTML' : 'Chamber Configuration'
-					});
-
-					injectDOM('table', 'chamberTable', 'Chamber', {'class' : 'sectionTable'});
-					injectDOM('tr', 'chamberPicRow', 'chamberTable', {});
-					//GRIFFIN:
-					if(window.experiment == 'GRIFFIN'){
-						window.leftChamber = ['US SCEPTAR', 'US SCEPTAR', 'PACES', 'PACES', 'SPICE', 'SPICE'];
-						window.rightChamber = ['DS SCEPTAR', 'ZDS', 'DS SCEPTAR', 'ZDS', 'ZDS', 'DS SCEPTAR'];
-						for(i=0; i<6; i++){
-							injectDOM('td', 'Gcha'+i+'pic', 'chamberPicRow', {});
-							injectDOM('canvas', 'Gcha'+i+'canv', 'Gcha'+i+'pic', {'class' : 'thumbnail'});
-							document.getElementById('Gcha'+i+'canv').setAttribute('width', 0.9*totalWidth/6);
-							document.getElementById('Gcha'+i+'canv').thumb = i;
-							document.getElementById('Gcha'+i+'canv').chosen = 0;
-
-							thumbnail('Gcha'+i+'canv', window.leftChamber[i], window.rightChamber[i], '#999999');
-
-							document.getElementById('Gcha'+i+'canv').onmouseover = function() {
-								if(!this.disabled) thumbnail(this.id, window.leftChamber[this.thumb], window.rightChamber[this.thumb], '#FFFFFF');
-							}
-							document.getElementById('Gcha'+i+'canv').onmouseout = function() {
-								if(this.chosen==0 && !this.disabled)thumbnail(this.id, window.leftChamber[this.thumb], window.rightChamber[this.thumb], '#999999');
-							}
-
-							document.getElementById('Gcha'+i+'canv').onclick = function(){clickBehavior.call(this, 6, 'Gcha', window.leftChamber, window.rightChamber)};
-
-						}
-
-					}
-
-					//TIGRESS:
-					if(window.experiment == 'TIGRESS'){
-						window.leftChamber = ['BAMBINO', 'SHARC', 'SPICE', 'TIPwall', 'TIPball'];
-						window.rightChamber = ['solo', 'none', 'none', 'none', 'none'];
-						for(i=0; i<5; i++){
-							injectDOM('td', 'Tcha'+i+'pic', 'chamberPicRow', {});
-							injectDOM('canvas', 'Tcha'+i+'canv', 'Tcha'+i+'pic', {'class':'thumbnail'});
-							document.getElementById('Tcha'+i+'canv').setAttribute('width', 0.9*totalWidth/6);
-							document.getElementById('Tcha'+i+'canv').thumb = i;
-							document.getElementById('Tcha'+i+'canv').chosen = 0;
-
-							thumbnail('Tcha'+i+'canv', window.leftChamber[i], window.rightChamber[i], '#999999');
-
-							document.getElementById('Tcha'+i+'canv').onmouseover = function() {
-								if(!this.disabled) thumbnail(this.id, window.leftChamber[this.thumb], window.rightChamber[this.thumb], '#FFFFFF');
-							}
-							document.getElementById('Tcha'+i+'canv').onmouseout = function() {
-								if(this.chosen==0 && !this.disabled)thumbnail(this.id, window.leftChamber[this.thumb], window.rightChamber[this.thumb], '#999999');
-							}
-
-							//all options except SHARC should disable SHARC services in DSL:
-							if(i!=1 && i!=2){
-								document.getElementById('Tcha'+i+'canv').onclick = function(){
-									//normal click:
-									clickBehavior.call(this, 5, 'Tcha', window.leftChamber, window.rightChamber);
-									//manage SHARC Services & lock / unlock TIGRESS in USL
-									if(this.chosen){
-										document.getElementById('Tdsl1canv').disabled = true;
-										//also implies TIGRESS deployed in USL if it isn't already:
-										if(!document.getElementById('Tusl0canv').chosen){
-											document.getElementById('Tusl0canv').onclick.apply(document.getElementById('Tusl0canv'), [null, true]);
-											document.getElementById('Tusl0canv').chosenDirectly = 0;
-										}
-										//lock TIGRESS in USL
-										document.getElementById('Tusl0canv').locked = !document.getElementById('Tusl0canv').locked
-										thumbnail('Tusl0canv', 'TIGRESS', 'none', '#FFFFFF');
-									}
-									else{
-										document.getElementById('Tdsl1canv').disabled = false;
-										//unlock TIGRESS in USL
-										document.getElementById('Tusl0canv').locked = !document.getElementById('Tusl0canv').locked
-										//unselect TIGRESS in USL if it was originally implied by choosing this:
-										if(!document.getElementById('Tusl0canv').chosenDirectly){
-											document.getElementById('Tusl0canv').onclick.apply(document.getElementById('Tusl0canv'), [null, true]);	
-											thumbnail('Tusl0canv', 'TIGRESS', 'none', '#999999');
-										}
-									}
-									thumbnail('Tdsl1canv', 'SHARC', 'services', '#999999', document.getElementById('Tdsl1canv').disabled);
-									//thumbnail('Tusl1canv', 'SPICE', 'services', '#999999', document.getElementById('Tusl1canv').disabled);
-
-								};		
-							}
-
-						}
-
-					}
-				}
-
-				function deployDSlampshade(){
-					var i, totalWidth; 
-
-					totalWidth = window.innerWidth;
-
-					injectDOM('div', 'DSlampshade', 'wrapper', {'class':'section'});
-					injectDOM('h1', 'dsLampshadeTitle', 'DSlampshade', {
-						'class' : 'title',
-						'innerHTML' : 'Downstream Lampshade Configuration'
-					});
-
-					injectDOM('table', 'dsLampTable', 'DSlampshade', {'class' : 'sectionTable'});
-					injectDOM('tr', 'dsLampPicRow', 'dsLampTable', {});
-					//GRIFFIN:
-					if(window.experiment == 'GRIFFIN'){
-						window.leftDSL = ['GRIFFIN', 'DESCANT'];
-						window.rightDSL = ['none', 'none'];
-						for(i=0; i<2; i++){
-							injectDOM('td', 'Gdsl'+i+'pic', 'dsLampPicRow', {});
-							injectDOM('canvas', 'Gdsl'+i+'canv', 'Gdsl'+i+'pic', {'class' : 'thumbnail'});
-							document.getElementById('Gdsl'+i+'canv').setAttribute('width', 0.9*totalWidth/6);
-							document.getElementById('Gdsl'+i+'canv').thumb = i;
-							document.getElementById('Gdsl'+i+'canv').chosen = 0;
-
-							thumbnail('Gdsl'+i+'canv', window.leftDSL[i], window.rightDSL[i], '#999999');
-
-							document.getElementById('Gdsl'+i+'canv').onmouseover = function() {
-								if(!this.disabled) thumbnail(this.id, window.leftDSL[this.thumb], window.rightDSL[this.thumb], '#FFFFFF');
-							}
-							document.getElementById('Gdsl'+i+'canv').onmouseout = function() {
-								if(this.chosen == 0 && !this.disabled)thumbnail(this.id, window.leftDSL[this.thumb], window.rightDSL[this.thumb], '#999999');
-							}
-
-							document.getElementById('Gdsl'+i+'canv').onclick = function(){clickBehavior.call(this, 2, 'Gdsl', window.leftDSL, window.rightDSL)};
-						}
-					}
-					//TIGRESS:
-					if(window.experiment == 'TIGRESS'){
-						window.leftDSL = ['TIGRESS', 'SHARC', 'DESCANT'];
-						window.rightDSL = ['none', 'services', 'none'];
-						for(i=0; i<3; i++){
-							injectDOM('td', 'Tdsl'+i+'pic', 'dsLampPicRow', {});
-							injectDOM('canvas', 'Tdsl'+i+'canv', 'Tdsl'+i+'pic', {'class' : 'thumbnail'});
-							document.getElementById('Tdsl'+i+'canv').setAttribute('width', 0.9*totalWidth/6);
-							document.getElementById('Tdsl'+i+'canv').thumb = i;
-							document.getElementById('Tdsl'+i+'canv').chosen = 0;
-
-							thumbnail('Tdsl'+i+'canv', window.leftDSL[i], window.rightDSL[i], '#999999');
-
-							document.getElementById('Tdsl'+i+'canv').onmouseover = function() {
-								if(!this.disabled) thumbnail(this.id, window.leftDSL[this.thumb], window.rightDSL[this.thumb], '#FFFFFF');
-							}
-							document.getElementById('Tdsl'+i+'canv').onmouseout = function() {
-								if(this.chosen == 0 && !this.disabled)thumbnail(this.id, window.leftDSL[this.thumb], window.rightDSL[this.thumb], '#999999');
-							}
-
-							document.getElementById('Tdsl'+i+'canv').onclick = function(){clickBehavior.call(this, 3, 'Tdsl', window.leftDSL, window.rightDSL)};
-
-							//choosing TIGRESS or DESCANT disallows SHARC in the chamber:
-							if(i!=1){
-								document.getElementById('Tdsl'+i+'canv').onclick = function(){
-									//normal click:
-									clickBehavior.call(this, 3, 'Tdsl', window.leftDSL, window.rightDSL);
-									//disable SHARC Services:
-									if(this.chosen)
-										document.getElementById('Tcha1canv').disabled = true;
-									else
-										document.getElementById('Tcha1canv').disabled = false;
-									thumbnail('Tcha1canv', 'SHARC', 'none', '#999999', document.getElementById('Tcha1canv').disabled);	
-								};							
-							}
-						}
-					}
-				}
-
-				function deployCorona(){
-					var i, totalWidth; 
-
-					totalWidth = window.innerWidth;
-
-					injectDOM('div', 'Corona', 'wrapper', {'class' : 'section'});
-					injectDOM('h1', 'coronaTitle', 'Corona', {
-						'class' : 'title',
-						'innerHTML' : 'Corona Configuration'
-					});
-
-					injectDOM('table', 'coronaTable', 'Corona', {'class':'sectionTable'});
-					injectDOM('tr', 'coronaPicRow', 'coronaTable', {});
-					//GRIFFIN:
-					if(window.experiment == 'GRIFFIN'){
-						window.leftCor = ['GRIFFIN'];
-						window.rightCor = ['DANTE'];	
-						for(i=0; i<1; i++){
-							injectDOM('td', 'Gcor'+i+'pic', 'coronaPicRow', {});
-							injectDOM('canvas', 'Gcor'+i+'canv', 'Gcor'+i+'pic', {'class':'thumbnail'});
-							document.getElementById('Gcor'+i+'canv').setAttribute('width', 0.9*totalWidth/6);
-							document.getElementById('Gcor'+i+'canv').thumb = i;
-							document.getElementById('Gcor'+i+'canv').chosen = 0;				
-
-							thumbnail('Gcor'+i+'canv', window.leftCor[i], window.rightCor[i], '#FFFFFF');
-
-							document.getElementById('Gcor'+i+'canv').onmouseover = function() {
-								if(!this.disabled) thumbnail(this.id, window.leftCor[this.thumb], window.rightCor[this.thumb], '#FFFFFF');
-							}
-							//document.getElementById('Gcor'+i+'canv').onmouseout = function() {
-							//	if(this.chosen == 0)thumbnail(this.id, window.leftCor[this.thumb], window.rightCor[this.thumb], '#999999');
-							//}
-
-							//document.getElementById('Gcor'+i+'canv').onclick = function(){clickBehavior.call(this, 2, 'Gcor', window.leftCor, window.rightCor)};						
-						}
-					}
-					//TIGRESS:
-					if(window.experiment == 'TIGRESS'){
-						window.leftCor = ['TIGRESS'];
-						window.rightCor = ['none'];	
-						for(i=0; i<1; i++){
-							injectDOM('td', 'Tcor'+i+'pic', 'coronaPicRow', {});
-							injectDOM('canvas', 'Tcor'+i+'canv', 'Tcor'+i+'pic', {'class' : 'thumbnail'});
-							document.getElementById('Tcor'+i+'canv').setAttribute('width', 0.9*totalWidth/6);
-							document.getElementById('Tcor'+i+'canv').thumb = i;
-							document.getElementById('Tcor'+i+'canv').chosen = 0;				
-
-							thumbnail('Tcor'+i+'canv', window.leftCor[i], window.rightCor[i], '#FFFFFF');
-
-							document.getElementById('Tcor'+i+'canv').onmouseover = function() {
-								if(!this.disabled) thumbnail(this.id, window.leftCor[this.thumb], window.rightCor[this.thumb], '#FFFFFF');
-							}						
-						}
-					}
-				}
-
-				function deployUSlampshade(){
-					var i, totalWidth; 
-
-					totalWidth = window.innerWidth;
-
-					injectDOM('div', 'USlampshade', 'wrapper', {'class':'section'});
-					injectDOM('h1', 'USlampshadeTitle', 'USlampshade', {
-						'class' : 'title',
-						'innerHTML' : 'Upstream Lampshade Configuration'
-					}); 
-
-					injectDOM('table', 'usLampTable', 'USlampshade', {'class' : 'sectionTable'});
-					injectDOM('tr', 'usLampPicRow', 'usLampTable', {});
-					//GRIFFIN:
-					if(window.experiment == 'GRIFFIN'){
-						window.leftUSL = ['GRIFFIN', 'SPICE'];
-						window.rightUSL = ['none', 'services'];
-						for(i=0; i<2; i++){
-							injectDOM('td', 'Gusl'+i+'pic', 'usLampPicRow', {});
-							injectDOM('canvas', 'Gusl'+i+'canv', 'Gusl'+i+'pic', {'class' : 'thumbnail'});
-							document.getElementById('Gusl'+i+'canv').setAttribute('width', 0.9*totalWidth/6);
-							document.getElementById('Gusl'+i+'canv').thumb = i;	
-							document.getElementById('Gusl'+i+'canv').chosen = 0;
-
-							thumbnail('Gusl'+i+'canv', window.leftUSL[i], window.rightUSL[i], '#999999');
-
-							document.getElementById('Gusl'+i+'canv').onmouseover = function() {
-								if(!this.disabled) thumbnail(this.id, window.leftUSL[this.thumb], window.rightUSL[this.thumb], '#FFFFFF');
-							}
-							document.getElementById('Gusl'+i+'canv').onmouseout = function() {
-								if(this.chosen == 0 && !this.disabled)thumbnail(this.id, window.leftUSL[this.thumb], window.rightUSL[this.thumb], '#999999');
-							}
-
-							document.getElementById('Gusl'+i+'canv').onclick = function(){clickBehavior.call(this, 2, 'Gusl', window.leftUSL, window.rightUSL)};	
-
-						}
-					}
-					//TIGRESS:
-					if(window.experiment == 'TIGRESS'){
-						window.leftUSL = ['TIGRESS', 'SPICE'];
-						window.rightUSL = ['none', 'services'];
-						for(i=0; i<2; i++){
-							injectDOM('td', 'Tusl'+i+'pic', 'usLampPicRow', {});
-							injectDOM('canvas', 'Tusl'+i+'canv', 'Tusl'+i+'pic', {'class' : 'thumbnail'});
-							document.getElementById('Tusl'+i+'canv').setAttribute('width', 0.9*totalWidth/6);
-							document.getElementById('Tusl'+i+'canv').thumb = i;	
-							document.getElementById('Tusl'+i+'canv').chosen = 0;
-
-							thumbnail('Tusl'+i+'canv', window.leftUSL[i], window.rightUSL[i], '#999999');
-
-							document.getElementById('Tusl'+i+'canv').onmouseover = function() {
-								if(!this.disabled) thumbnail(this.id, window.leftUSL[this.thumb], window.rightUSL[this.thumb], '#FFFFFF');
-							}
-							document.getElementById('Tusl'+i+'canv').onmouseout = function() {
-								if(this.chosen == 0 && !this.disabled)thumbnail(this.id, window.leftUSL[this.thumb], window.rightUSL[this.thumb], '#999999');
-							}
-
-							document.getElementById('Tusl'+i+'canv').onclick = function(){clickBehavior.call(this, 2, 'Tusl', window.leftUSL, window.rightUSL)};	
-
-							//TIGRESS in USL disables SPICE in chamber:
-							if(i==0){
-								document.getElementById('Tusl'+i+'canv').onclick = function(event, noChain){
-									//normal click:
-									clickBehavior.call(this, 2, 'Tusl', window.leftUSL, window.rightUSL);
-									//disable SPICE:
-									if(this.chosen && !noChain){
-										document.getElementById('Tcha2canv').disabled = true;
-										//if chosen directly, don't let deselecting things in the chamber deselect this:
-										if(!this.locked) this.chosenDirectly = 1;
-									}
-									else
-										document.getElementById('Tcha2canv').disabled = false;
-									thumbnail('Tcha2canv', 'SPICE', 'none', '#999999', document.getElementById('Tcha2canv').disabled);	
-								};							
-							}
-
-						}
-					}
-				}
-
-				function deployBeamdump(){
-					var i, totalWidth; 
-
-					totalWidth = window.innerWidth;
-
-					injectDOM('div', 'Beamdump', 'wrapper', {});
-					injectDOM('h1', 'beamdumpTitle', 'Beamdump', {
-						'class' : 'title',
-						'innerHTML' : 'Beamdump Configuration'
-					});
-
-					injectDOM('table', 'beamdumpTable', 'Beamdump', {'class' : 'sectionTable'});
-					injectDOM('tr', 'beamdumpPicRow', 'beamdumpTable', {});
-					//GRIFFIN:
-
-					//TIGRESS:
-					if(window.experiment == 'TIGRESS'){
-						window.leftBDP = ['beamdump'];
-						window.rightBDP = ['none'];
-						for(i=0; i<1; i++){
-							injectDOM('td', 'Tbdp'+i+'pic', 'beamdumpPicRow', {});
-							injectDOM('canvas', 'Tbdp'+i+'canv', 'Tbdp'+i+'pic', {'class' : 'thumbnail'});
-							document.getElementById('Tbdp'+i+'canv').setAttribute('width', 0.9*totalWidth/6);
-							document.getElementById('Tbdp'+i+'canv').thumb = i;	
-							document.getElementById('Tbdp'+i+'canv').chosen = 0;
-
-							thumbnail('Tbdp'+i+'canv', window.leftBDP[i], window.rightBDP[i], '#FFFFFF');
-
-							document.getElementById('Tbdp'+i+'canv').onmouseover = function() {
-								if(!this.disabled) thumbnail(this.id, window.leftBDP[this.thumb], window.rightBDP[this.thumb], '#FFFFFF');
-							}
-							///document.getElementById('Tbdp'+i+'canv').onmouseout = function() {
-							///	if(this.chosen == 0)thumbnail(this.id, window.leftBDP[this.thumb], window.rightBDP[this.thumb], '#999999');
-							///}
-
-							//document.getElementById('Tbdp'+i+'canv').onclick = function(){clickBehavior.call(this, 2, 'Tbdp', window.leftBDP, window.rightBDP)};	
-
-						}
-					}
-				}
-
-				//base click behavior
-				function clickBehavior(nFigures, prefix, det1, det2){
-					if(this.disabled) return;
-					if(this.locked) return;
-
-					if(this.chosen == 0){
-						$('#'+this.id).css('left', window.innerWidth/2 - parseFloat(this.width)/2 - document.getElementById(this.id).getBoundingClientRect().left  );
-						$('#'+this.id).css('z-index', 1);
-						for(var i=0; i<nFigures; i++){
-							if(i != this.thumb){
-								document.getElementById(prefix+i+'canv').style.opacity = 0;
-								document.getElementById(prefix+i+'canv').setAttribute('z-index', -1);
-							}
-						}
-
-						if(window.subdetectors.hasOwnProperty(det1[this.thumb])) window.subdetectors[det1[this.thumb]]++;
-						if(window.subdetectors.hasOwnProperty(det2[this.thumb])) window.subdetectors[det2[this.thumb]]++;
-						//if(det2[this.thumb] == 'all'){
-						//	window.subdetectors['SHARC']++;
-						//	window.subdetectors['DESCANT']++;
-						//}
-						window.choices++;
-
-						this.chosen = 1;
-					} else{
-						$('#'+this.id).css('left', 0);
-						$('#'+this.id).css('z-index', 0);
-						for(var i=0; i<nFigures; i++){
-							if(i != this.thumb){ 
-								document.getElementById(prefix+i+'canv').style.opacity = 1;
-								document.getElementById(prefix+i+'canv').setAttribute('z-index', 0);
-							}
-						}
-
-						if(window.subdetectors.hasOwnProperty(det1[this.thumb])) window.subdetectors[det1[this.thumb]]--;
-						if(window.subdetectors.hasOwnProperty(det2[this.thumb])) window.subdetectors[det2[this.thumb]]--;
-						window.choices--;
-
-						this.chosen = 0;
-					}
-
-
-				}
-
-				//build the base ODB structure and populate with what info we currently have:
-				function commitParameters(){
-					var address, type, values, arrayLengths;
-
-					if(window.choices < 3){
-						//alert('Please click on a deployment option for all sectors.')
-						confirm('More Choice Remain!', 'Please choose a configuration for all detector regions.')
-					} else{
-						//create ODB structure//////////////////////////////////////////////////////////////
-						//re-declare root dashboard directory:
-						ODBMDelete(['/DashboardConfig']);
-						ODBMCreate(['/DashboardConfig'], [TID_KEY]);
-
-						//top level ODB data
-						address = [	'/DashboardConfig/topLevel', 
-									'/DashboardConfig/topLevel/HPGeArray', 
-									'/DashboardConfig/topLevel/statusURL', 
-									'/DashboardConfig/topLevel/expName', 
-									'/DashboardConfig/topLevel/Experiment'
-								];
-						type = [TID_KEY, TID_STRING, TID_STRING, TID_STRING, TID_STRING];
-						ODBMCreate(address, type);
-						ODBSet('/DashboardConfig/topLevel/HPGeArray', window.experiment);
-
-						//Main dashboard registry
-						address = [	'/DashboardConfig/Dashboard', 
-									'/DashboardConfig/Dashboard/dashboardMin', 
-									'/DashboardConfig/Dashboard/dashboardMax'
-								];
-						type = [TID_KEY, TID_INT, TID_INT];
-						ODBMCreate(address, type);
-						ODBSet('/DashboardConfig/Dashboard/dashboardMax', 1000000);
-
-						//alarm registry
-						address = [	'/DashboardConfig/CustomAlarms', 
-									'/DashboardConfig/CustomAlarms/Voltage', 
-									'/DashboardConfig/CustomAlarms/Current', 
-									'/DashboardConfig/CustomAlarms/Temperature', 
-									'/DashboardConfig/CustomAlarms/Clock'
-								];
-						type = [TID_KEY, TID_INT, TID_INT, TID_INT, TID_INT];
-						ODBMCreate(address, type);
-
-						//cycles
-						address = [	'/DashboardConfig/Cycles', 
-									'/DashboardConfig/Cycles/Static Source',
-									'/DashboardConfig/Cycles/Static Source/Code',
-									'/DashboardConfig/Cycles/Static Source/Duration',
-									'/DashboardConfig/Cycles/Standard Cycle',
-									'/DashboardConfig/Cycles/Standard Cycle/Code',
-									'/DashboardConfig/Cycles/Standard Cycle/Duration',									
-									'/DashboardConfig/Cycles/Active Name',
-									'/DashboardConfig/Cycles/Active Pattern',
-									'/DashboardConfig/Cycles/Active Duration'
-								];
-						type = [TID_KEY, TID_KEY, TID_INT, TID_INT, TID_KEY, TID_INT, TID_INT, TID_STRING, TID_INT, TID_INT];
-						arrayLengths = [1, 1, 2, 2, 1, 5, 5, 1, 2, 2];
-						ODBMCreate(address, type, arrayLengths);
-						ODBSet('/DashboardConfig/Cycles/Static Source/Code[*]', [0x300030, 0x1F811F81]);
-						ODBSet('/DashboardConfig/Cycles/Static Source/Duration[*]', [100, 0]);
-						ODBSet('/DashboardConfig/Cycles/Standard Cycle/Code[*]', [0x300030, 0x400040, 0x1F801F80, 0x1F811F81, 0x1F801F80]);
-						ODBSet('/DashboardConfig/Cycles/Standard Cycle/Duration[*]', [100, 500, 1000, 15000, 5000]);
-						ODBSet('/DashboardConfig/Cycles/Active Name', 'Static Source'); //defaults to static source on load
-						ODBSet('/DashboardConfig/Cycles/Active Pattern[*]', [0x300030, 0x1F811F81]);
-						ODBSet('/DashboardConfig/Cycles/Active Duration[*]', [100, 0]);
-
-						//filters
-						ODBMCreate(['/DashboardConfig/Filters', '/DashboardConfig/Filters/HPGe Singles'], [TID_KEY, TID_KEY]);
-						ODBMCreate(['/DashboardConfig/Filters/Active Name', '/DashboardConfig/Filters/group0', '/DashboardConfig/Filters/HPGe Singles/group0'], [TID_STRING, TID_STRING, TID_STRING], [1,1,1], [32, 32, 32]);
-						ODBSet('/DashboardConfig/Filters/Active Name[*]', 'HPGe Singles');
-						ODBSet('/DashboardConfig/Filters/group0[*]', 'GRG-S-1');
-						ODBSet('/DashboardConfig/Filters/HPGe Singles/group0[*]', 'GRG-S-1');
-
-						//HV
-						address = [	'/DashboardConfig/HV', 
-									'/DashboardConfig/HV/voltageTolerance', 
-									'/DashboardConfig/HV/currentTolerance', 
-									'/DashboardConfig/HV/tempTolerance', 
-									'/DashboardConfig/HV/demandVoltage', 
-									'/DashboardConfig/HV/voltRampSpeed'
-								];
-						type = [TID_KEY, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT];
-						ODBMCreate(address, type);
-
-						//DAQ
-						address = [	'/DashboardConfig/DAQ',
-									'/DashboardConfig/DAQ/config',
-									'/DashboardConfig/DAQ/rateMinTopView', 
-									'/DashboardConfig/DAQ/rateMaxTopView', 
-									'/DashboardConfig/DAQ/rateMinDetailView', 
-									'/DashboardConfig/DAQ/rateMaxDetailView', 
-									'/DashboardConfig/DAQ/transferMinTopView', 
-									'/DashboardConfig/DAQ/transferMaxTopView', 
-									'/DashboardConfig/DAQ/transferMinDetailView', 
-									'/DashboardConfig/DAQ/transferMaxDetailView', 
-									'/DashboardConfig/DAQ/rateMinMaster', 
-									'/DashboardConfig/DAQ/rateMaxMaster', 
-									'/DashboardConfig/DAQ/transferMinMaster', 
-									'/DashboardConfig/DAQ/transferMaxMaster'
-								];
-						type = [TID_KEY, TID_STRING, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT];
-						ODBMCreate(address, type);
-						ODBSet('/DashboardConfig/DAQ/config', window.experiment);
-						ODBSet('/DashboardConfig/DAQ/rateMaxTopView', 10000);
-						ODBSet('/DashboardConfig/DAQ/rateMaxDetailView', 10000);
-						ODBSet('/DashboardConfig/DAQ/transferMaxTopView', 10000);
-						ODBSet('/DashboardConfig/DAQ/transferMaxDetailView', 10000);
-						ODBSet('/DashboardConfig/DAQ/rateMaxMaster', 10000);
-						ODBSet('/DashboardConfig/DAQ/transferMaxMaster', 10000);
-
-						//BAMBINO
-						if(window.subdetectors['BAMBINO']){
-							address = [	'/DashboardConfig/BAMBINO', 
-										'/DashboardConfig/BAMBINO/deploy', 
-										'/DashboardConfig/BAMBINO/HVscale', 
-										'/DashboardConfig/BAMBINO/thresholdScale', 
-										'/DashboardConfig/BAMBINO/rateScale', 
-										'/DashboardConfig/BAMBINO/mode', 
-										'/DashboardConfig/BAMBINO/layers', 
-										'/DashboardConfig/BAMBINO/USdeploy', 
-										'/DashboardConfig/BAMBINO/DSdeploy'
-									];
-							type = [TID_KEY, TID_INT, TID_INT, TID_INT, TID_INT, TID_STRING, TID_INT, TID_INT, TID_INT];
-							ODBMCreate(address, type);
-
-							ODBSet('/DashboardConfig/BAMBINO/deploy', 1);
-						}
-
-						//DANTE
-						if(window.subdetectors['DANTE']){
-							address = [ '/DashboardConfig/DANTE',
-										'/DashboardConfig/DANTE/deploy',
-										'/DashboardConfig/DANTE/BGOHVscale',
-										'/DashboardConfig/DANTE/BGOthresholdScale',
-										'/DashboardConfig/DANTE/BGOrateScale',
-										'/DashboardConfig/DANTE/LaBrPMTHVscale',
-										'/DashboardConfig/DANTE/LaBrPMTthresholdScale',
-										'/DashboardConfig/DANTE/LaBrPMTrateScale',
-										'/DashboardConfig/DANTE/LaBrTACHVscale',
-										'/DashboardConfig/DANTE/LaBrTACthresholdScale',
-										'/DashboardConfig/DANTE/LaBrTACrateScale'										
-									];
-							type = [TID_KEY, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT];
-							ODBMCreate(address, type);
-
-							ODBSet('/DashboardConfig/DANTE/deploy', 1);
-						}
-
-						//DESCANT
-						if(window.subdetectors['DESCANT']){
-							address = [	'/DashboardConfig/DESCANT',
-										'/DashboardConfig/DESCANT/deploy',
-										'/DashboardConfig/DESCANT/HVscale',
-										'/DashboardConfig/DESCANT/thresholdScale',
-										'/DashboardConfig/DESCANT/rateScale'
-									];
-
-							type = [TID_KEY, TID_INT, TID_INT, TID_INT, TID_INT];
-							ODBMCreate(address, type); 
-
-							ODBSet('/DashboardConfig/DESCANT/deploy', 1);
-						}
-
-						//HPGe - no if, always in
-						address = [	'/DashboardConfig/HPGe',
-									'/DashboardConfig/HPGe/deploy',
-									'/DashboardConfig/HPGe/BGOHVscale',
-									'/DashboardConfig/HPGe/BGOthresholdScale',
-									'/DashboardConfig/HPGe/BGOrateScale',
-									'/DashboardConfig/HPGe/HVscale',
-									'/DashboardConfig/HPGe/thresholdScale',
-									'/DashboardConfig/HPGe/rateScale',
-									'/DashboardConfig/HPGe/upstreamLampAbsent',
-									'/DashboardConfig/HPGe/downstreamLampAbsent'
-								];
-						type = [TID_KEY, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT];
-						ODBMCreate(address, type); 
-
-						ODBSet('/DashboardConfig/HPGe/deploy', 1);
-
-						//PACES
-						if(window.subdetectors['PACES']){
-							address = [	'/DashboardConfig/PACES',
-										'/DashboardConfig/PACES/deploy',
-										'/DashboardConfig/PACES/HVscale',
-										'/DashboardConfig/PACES/thresholdScale',
-										'/DashboardConfig/PACES/rateScale'
-									];
-
-							type = [TID_KEY, TID_INT, TID_INT, TID_INT, TID_INT];
-							ODBMCreate(address, type); 		
-
-							ODBSet('/DashboardConfig/PACES/deploy', 1);			
-						}
-
-						//SCEPTAR
-						if(window.subdetectors['US SCEPTAR'] || window.subdetectors['DS SCEPTAR']){
-							address = [	'/DashboardConfig/SCEPTAR',
-										'/DashboardConfig/SCEPTAR/USdeploy',
-										'/DashboardConfig/SCEPTAR/DSdeploy',
-										'/DashboardConfig/SCEPTAR/HVscale',
-										'/DashboardConfig/SCEPTAR/thresholdScale',
-										'/DashboardConfig/SCEPTAR/rateScale'
-									];
-
-							type = [TID_KEY, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT];
-							ODBMCreate(address, type);
-
-							ODBSet('/DashboardConfig/SCEPTAR/USdeploy', (window.subdetectors['US SCEPTAR'] ? 1 : 0) );
-							ODBSet('/DashboardConfig/SCEPTAR/DSdeploy', (window.subdetectors['DS SCEPTAR'] ? 1 : 0) );
-
-						}
-
-						//SHARC
-						if(window.subdetectors['SHARC']){
-							address = [	'/DashboardConfig/SHARC',
-										'/DashboardConfig/SHARC/deploy',
-										'/DashboardConfig/SHARC/HVscale',
-										'/DashboardConfig/SHARC/thresholdScale',
-										'/DashboardConfig/SHARC/rateScale'
-									];
-
-							type = [TID_KEY, TID_INT, TID_INT, TID_INT, TID_INT];
-							ODBMCreate(address, type); 
-
-							ODBSet('/DashboardConfig/SHARC/deploy', 1);
-						}						
-
-						//SPICE
-						if(window.subdetectors['SPICE']){
-							address = [	'/DashboardConfig/SPICE',
-										'/DashboardConfig/SPICE/deploy',
-										'/DashboardConfig/SPICE/HVscale',
-										'/DashboardConfig/SPICE/thresholdScale',
-										'/DashboardConfig/SPICE/rateScale',
-										'/DashboardConfig/SPICE/SPICEauxiliary',
-										'/DashboardConfig/SPICE/SPICEauxLayers'
-									];
-
-							type = [TID_KEY, TID_INT, TID_INT, TID_INT, TID_INT, TID_STRING, TID_INT];
-							ODBMCreate(address, type); 
-
-							ODBSet('/DashboardConfig/SPICE/deploy', 1);
-						}
-
-						//TIP ball
-						if(window.subdetectors['TIPball']){
-							address = [	'/DashboardConfig/TIPball',
-										'/DashboardConfig/TIPball/deploy',
-										'/DashboardConfig/TIPball/HVscale',
-										'/DashboardConfig/TIPball/thresholdScale',
-										'/DashboardConfig/TIPball/rateScale'
-									];
-
-							type = [TID_KEY, TID_INT, TID_INT, TID_INT, TID_INT];
-							ODBMCreate(address, type); 
-
-							ODBSet('/DashboardConfig/TIPball/deploy', 1);
-						}
-
-						//TIP wall
-						if(window.subdetectors['TIPwall']){
-							address = [	'/DashboardConfig/TIPwall',
-										'/DashboardConfig/TIPwall/deploy',
-										'/DashboardConfig/TIPwall/HVscale',
-										'/DashboardConfig/TIPwall/thresholdScale',
-										'/DashboardConfig/TIPwall/rateScale'
-									];
-
-							type = [TID_KEY, TID_INT, TID_INT, TID_INT, TID_INT];
-							ODBMCreate(address, type); 
-
-							ODBSet('/DashboardConfig/TIPwall/deploy', 1);
-						}
-
-						//ZDS
-						if(window.subdetectors['ZDS']){
-							address = [	'/DashboardConfig/ZDS',
-										'/DashboardConfig/ZDS/deploy',
-										'/DashboardConfig/ZDS/HVscale',
-										'/DashboardConfig/ZDS/thresholdScale',
-										'/DashboardConfig/ZDS/rateScale'
-									];
-
-							type = [TID_KEY, TID_INT, TID_INT, TID_INT, TID_INT];
-							ODBMCreate(address, type); 
-
-							ODBSet('/DashboardConfig/ZDS/deploy', 1);
-						}
-
-						window.location = window.location.href.replace("ConfigureExperiment", "ConfigureSubdetectors");
-											
-					}
-				}
-
-			</script>
-
+			<div id='push'></div>
 		</div>
 
+		<div id='footer' style='opacity:0'>
+			GRIFFIN 2014 - Powered by <a href="http://www.x-tags.org/index">x-tags from Mozilla</a>
+			<br> 
+			GRIFFIN Collaboration Spokesperson: Adam Garnsworthy (garns@triumf.ca) - UI/UX Design & Web Development: Bill Mills
+		</div>
+
+		<script type='text/javascript'>
+			//need to wait for both fonts and DOM
+			gatekeeper = {
+				'fontsloaded' : false,
+				'DOMloaded' : false
+			}
+
+			document.addEventListener('DOMComponentsLoaded', function(){
+				gatekeeper.DOMloaded = true;
+				if(gatekeeper.fontsloaded)
+					main();
+			});
+		</script>
 	</body>
+
+
 </html>
