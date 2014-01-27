@@ -85,13 +85,19 @@ a{
 	cursor:pointer;
 }
 
-/*Choose experiment intro*/
-x-altmodal#chooseExperiment{
+/*Generic altmodal///////////////////////////////////////*/
+x-altmodal{
 	text-align: center;
-	background-color: rgba(0,0,0,0.5);
+	background-color: rgba(0,0,0,0.8);
 	border: 5px solid #EEEEEE;
 	border-radius: 25px;
-	padding:3em;
+	padding:3em;	
+	font-size: 120%;
+}
+
+/*Choose experiment intro///////////////////////////////*/
+x-altmodal#chooseExperiment{
+	font-size: 100%;
 }
 x-altmodal#chooseExperiment button{
 	display:none;
@@ -103,6 +109,23 @@ x-altmodal#chooseExperiment img{
 
 x-altmodal#chooseExperiment img:hover{
 	opacity: 1;
+}
+
+/*Complaint altmodal/////////////////////////////////////*/
+x-altmodal#incompleteForm button{
+	background: #4C4C4C; 
+	color: #FFFFFF;
+	border-color: #333333; 
+	border-radius: 5px;
+    font-family: 'Raleway', sans-serif;
+    font-size:100%;
+    padding:1em;
+    cursor: pointer;
+    margin-top:1em;
+}
+
+x-altmodal#incompleteForm button:hover{
+	background: #777777;
 }
 
 /*branding///////////////////////////////////////////////*/
