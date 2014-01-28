@@ -223,7 +223,7 @@
 
 						for(var i=0; i<subdetectors.length; i++){
 							//BAMBINO
-							if(subdetectors[i] == 'BAMBINO'){
+							if(subdetectors[i] == 'BAMBINO' && window.experiment != 'GRIFFIN'){ //GRIFFIN handles its S2/S3 separately
 								var bambinoMode = (document.getElementById('BAMBINOmodeS2').checked) ? 'S2' : 'S3';
 								ODBSet('/DashboardConfig/BAMBINO/mode', bambinoMode);
 								setMinMax('BAMBINO', '');
