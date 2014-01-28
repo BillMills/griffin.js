@@ -3,8 +3,7 @@ BAMBINO.prototype = Object.create(Subsystem.prototype);
 function BAMBINO(spiceMode){
     //detector name, self-pointing pointer, pull in the Subsystem template, 
     //establish a databus and create a global-scope pointer to this object:
-    this.name = 'S2/S3';
-    if(ODB.BAMBINO.USdeploy && ODB.BAMBINO.DSdeploy) this.name = 'BAMBINO'
+    this.name = 'BAMBINO'
     var that = this;
     Subsystem.call(this);
 
@@ -21,7 +20,8 @@ function BAMBINO(spiceMode){
     window.BAMBINOpointer = that;
 
     //change the button name if we're deploying in spice mode:
-    document.getElementById('BAMBINOlink').innerHTML = 'SPICE '+ODB.SPICE.SPICEauxiliary;
+    if(ODB.SPICE)
+        document.getElementById('BAMBINOlink').innerHTML = 'SPICE Aux.';
     //member variables///////////////////////////////////
     this.spiceAux = (spiceMode) ? 1 : 0;
     this.mode = (this.spiceAux) ? spiceMode : ODB.BAMBINO.mode;      //'S2' or 'S3'
