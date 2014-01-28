@@ -11,7 +11,7 @@ create string ExperimentSetupCSS![1][128]
 set ExperimentSetupCSS! $PWD/setup/ConfigureExperiment.css
 
 create string xTagFanCSS![1][128]
-set ExperimentSetupCSS! $PWD/setup/xTagFan.css
+set xTagFanCSS! $PWD/setup/xTagFan.css
 
 create string ConfigureSubdetectors&[1][128]
 set ConfigureSubdetectors& $PWD/setup/subdetectorConfigStage/ConfigureSubdetectors.html

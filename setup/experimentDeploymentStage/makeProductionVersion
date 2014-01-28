@@ -1,5 +1,6 @@
 cp ../../plumbing/utilities.js .
 cp ../../plumbing/drawing.js .
+cp ../../lib/x-tag-components.js .
 cp ../ConfigureExperiment.html .
 cp ../ConfigureExperiment.css .
 cp ../thumbnails.js .
