@@ -352,7 +352,7 @@ function main(){
 
 
 function buildExperiment(){
-	var BAMBINO, DANTE, DESCANT, PACES, usSCEPTAR, dsSCEPTAR, SHARC, SPICE, TIPball, TIPwall, ZDS;
+	var experiment, BAMBINO, DANTE, DESCANT, PACES, usSCEPTAR, dsSCEPTAR, SHARC, SPICE, TIPball, TIPwall, ZDS;
 
 	//abandon ship if something hasn't been set:
 	if(	(document.getElementById('GRIFFINwrap') &&
@@ -369,6 +369,9 @@ function buildExperiment(){
 			return;
 	}
 
+	//which experiment is this?
+	experiment = 'GRIFFIN';
+	if(document.getElementById('TIGRESSwrap')) experiment = 'TIGRESS';
 	//determine which subdetectors have been requested:
 	BAMBINO = document.getElementById('TIGusChamber') && document.getElementById('TIGusChamber').selected == 'TIGusc0';
 	DANTE = document.getElementById('GRIFcorona');
@@ -398,7 +401,7 @@ function buildExperiment(){
 			];
 	type = [TID_KEY, TID_STRING, TID_STRING, TID_STRING, TID_STRING];
 	ODBMCreate(address, type);
-	ODBSet('/DashboardConfig/topLevel/HPGeArray', window.experiment);
+	ODBSet('/DashboardConfig/topLevel/HPGeArray', experiment);
 
 	//Main dashboard registry
 	address = [	'/DashboardConfig/Dashboard', 
@@ -478,7 +481,7 @@ function buildExperiment(){
 			];
 	type = [TID_KEY, TID_STRING, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT, TID_INT];
 	ODBMCreate(address, type);
-	ODBSet('/DashboardConfig/DAQ/config', window.experiment);
+	ODBSet('/DashboardConfig/DAQ/config', experiment);
 	ODBSet('/DashboardConfig/DAQ/rateMaxTopView', 10000);
 	ODBSet('/DashboardConfig/DAQ/rateMaxDetailView', 10000);
 	ODBSet('/DashboardConfig/DAQ/transferMaxTopView', 10000);
