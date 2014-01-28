@@ -24,6 +24,10 @@
 			<script type='text/JavaScript'>
 				var i;
 				window.experiment = ODBGet('DashboardConfig/topLevel/HPGeArray')
+				//same assets are used whether you call it 'S2/S3' or 'BAMBINO'
+				window.s2s3Name = 'S2/S3';
+				if(ODBGet('DashboardConfig/BAMBINO/USdeploy') == 1 && ODBGet('DashboardConfig/BAMBINO/DSdeploy') == 1)
+					window.s2s3Name = 'BAMBINO'
 				
 				window.mousePointing = '';
 				//tt messages for subdetectors:
@@ -34,7 +38,7 @@
 				window.ttMessages['DESCANTcanv'] = '<u>DESCANT Config</u><br><br>'+scaleLimitMessage;
 				window.ttMessages['PACEScanv'] = '<u>PACES Config</u><br><br>'+scaleLimitMessage;
 				window.ttMessages['DANTEcanv'] = '<u>DANTE Config</u><br><br>'+scaleLimitMessage;
-				window.ttMessages['BAMBINOcanv'] = '<u>BAMBINO Config</u><br><br> Choose which mode to run BAMBINO in, either S2 or S3, whether deployment is upstream, downstream, or both, and whether BAMBINO is running with a single or double layer of detectors.<br><br>' + scaleLimitMessage;
+				window.ttMessages['BAMBINOcanv'] = '<u>'+window.s2s3Name+' Config</u><br><br> Choose which mode to run '+window.s2s3Name+' in, either S2 or S3, whether deployment is upstream, downstream, or both, and whether it is running with a single or double layer of detectors.<br><br>' + scaleLimitMessage;
 				window.ttMessages['SCEPTARcanv'] = '<u>SCEPTAR Config</u><br><br>'+scaleLimitMessage;
 				window.ttMessages['SPICEcanv'] = '<u>SPICE Config</u><br><br>'+scaleLimitMessage;
 				window.ttMessages['TIPwallcanv'] = '<u>TIP Wall Config</u><br><br>'+scaleLimitMessage;
@@ -164,8 +168,10 @@
 				setTimeout(function(){document.getElementById('topDiv').style.opacity = 1;}, 100);
 				setTimeout(function(){document.getElementById('hvDiv').style.opacity = 1;}, 200);
 				for(i=0; i<subdetectors.length; i++){
-					insertIcon(subdetectors[i]);
-					setTimeout(function(div){document.getElementById(div).style.opacity = 1;},300+100*i, subdetectors[i]+'div');
+					var detName = subdetectors[i];
+					if(detName == 'BAMBINO') detName = window.s2s3Name;
+					insertIcon(detName);
+					setTimeout(function(div){document.getElementById(div).style.opacity = 1;},300+100*i, detName+'div');
 				}
 				deployFooter();
 				setTimeout(function(){document.getElementById('footer').style.opacity = 1;}, subdetectors.length*100+200);
@@ -227,8 +233,10 @@
 								var bambinoMode = (document.getElementById('BAMBINOmodeS2').checked) ? 'S2' : 'S3';
 								ODBSet('/DashboardConfig/BAMBINO/mode', bambinoMode);
 								setMinMax('BAMBINO', '');
-								ODBSet('/DashboardConfig/BAMBINO/USdeploy', (document.getElementById('BAMBINOupstreamCheck').checked) ? 1 : 0);
-								ODBSet('/DashboardConfig/BAMBINO/DSdeploy', (document.getElementById('BAMBINOdownstreamCheck').checked) ? 1 : 0);
+								if(window.experiment == 'TIGRESS'){
+	 								ODBSet('/DashboardConfig/BAMBINO/USdeploy', (document.getElementById('BAMBINOupstreamCheck').checked) ? 1 : 0);
+									ODBSet('/DashboardConfig/BAMBINO/DSdeploy', (document.getElementById('BAMBINOdownstreamCheck').checked) ? 1 : 0);
+								}
 								var bambinoLayers = (document.getElementById('BAMBINOsingleLayer').checked) ? 1 : 2;
 								ODBSet('/DashboardConfig/BAMBINO/layers', bambinoLayers);
 							}

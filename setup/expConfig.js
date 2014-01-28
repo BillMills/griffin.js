@@ -506,10 +506,7 @@ function buildExperiment(){
 		ODBMCreate(address, type);
 
 		ODBSet('/DashboardConfig/BAMBINO/deploy', 1);
-		//in GRIFFIN, this is the SPICE aux, downstream only
-		if(document.getElementById('GRIFdsChamber') && document.getElementById('GRIFdsChamber').selected == 'GRIFdsc2')
-			ODBSet('/DashboardConfig/BAMBINO/DSdeploy', 1);
-		//in TIGRESS, this is BAMBINO; default to both USC and DSC, can change on next page:
+		//in TIGRESS, need to indicate if BAMBINO was deployed specifically as BAMBINO - default both US and DS on to indicate this:
 		if(document.getElementById('TIGusChamber') && document.getElementById('TIGusChamber').selected == 'TIGusc0')
 			ODBSet('/DashboardConfig/BAMBINO/USdeploy', 1);
 			ODBSet('/DashboardConfig/BAMBINO/DSdeploy', 1);
