@@ -44,6 +44,7 @@ function configure(detector){
 				'value':'deploy', 
 				'checked':true, 
 			});
+
 			document.getElementById('BAMBINOdownstreamCheck').onchange = function(){checkBAMBINO()};
 		} 
 		//groups of checkboxes are a pain for validation, do it in JS:

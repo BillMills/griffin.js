@@ -168,10 +168,8 @@
 				setTimeout(function(){document.getElementById('topDiv').style.opacity = 1;}, 100);
 				setTimeout(function(){document.getElementById('hvDiv').style.opacity = 1;}, 200);
 				for(i=0; i<subdetectors.length; i++){
-					var detName = subdetectors[i];
-					if(detName == 'BAMBINO') detName = window.s2s3Name;
-					insertIcon(detName);
-					setTimeout(function(div){document.getElementById(div).style.opacity = 1;},300+100*i, detName+'div');
+					insertIcon(subdetectors[i]);
+					setTimeout(function(div){document.getElementById(div).style.opacity = 1;},300+100*i, subdetectors[i]+'div');
 				}
 				deployFooter();
 				setTimeout(function(){document.getElementById('footer').style.opacity = 1;}, subdetectors.length*100+200);
