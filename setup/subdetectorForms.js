@@ -15,6 +15,7 @@ function configure(detector){
 		document.getElementById('DANTE LaBrPMTTabletitleCell').innerHTML = 'DANTE LaBr PMT Scale Limits';
 		document.getElementById('DANTE LaBrTACTabletitleCell').innerHTML = 'DANTE LaBr TAC Scale Limits';
 	} else if(detector == 'BAMBINO'){
+		if(window.experiment == 'GRIFFIN') return; //GRIFFIN handles its S2/S3 as a SPICE aux
 		//S2 or S3 mode:
 		injectDOM('p', 'BAMBINOmodeLabel', 'BAMBINOdiv', {
 			'style' : 'float:left; text-align:center; padding-right:20px; margin-top:70px',
