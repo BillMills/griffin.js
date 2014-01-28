@@ -373,7 +373,8 @@ function buildExperiment(){
 	experiment = 'GRIFFIN';
 	if(document.getElementById('TIGRESSwrap')) experiment = 'TIGRESS';
 	//determine which subdetectors have been requested:
-	BAMBINO = document.getElementById('TIGusChamber') && document.getElementById('TIGusChamber').selected == 'TIGusc0';
+	BAMBINO = 	(document.getElementById('TIGusChamber') && document.getElementById('TIGusChamber').selected == 'TIGusc0') ||
+				(document.getElementById('GRIFdsChamber') && document.getElementById('GRIFdsChamber').selected == 'GRIFdsc2');
 	DANTE = document.getElementById('GRIFcorona');
 	DESCANT = (document.getElementById('TIGdsLamp') && document.getElementById('TIGdsLamp').selected == 'TIGdsl1') || 
 		(document.getElementById('GRIFdsLamp') && document.getElementById('GRIFdsLamp').selected == 'GRIFdsl1');
@@ -505,6 +506,13 @@ function buildExperiment(){
 		ODBMCreate(address, type);
 
 		ODBSet('/DashboardConfig/BAMBINO/deploy', 1);
+		//in GRIFFIN, this is the SPICE aux, downstream only
+		if(document.getElementById('GRIFdsChamber') && document.getElementById('GRIFdsChamber').selected == 'GRIFdsc2')
+			ODBSet('/DashboardConfig/BAMBINO/DSdeploy', 1);
+		//in TIGRESS, this is BAMBINO; default to both USC and DSC, can change on next page:
+		if(document.getElementById('TIGusChamber') && document.getElementById('TIGusChamber').selected == 'TIGusc0')
+			ODBSet('/DashboardConfig/BAMBINO/USdeploy', 1);
+			ODBSet('/DashboardConfig/BAMBINO/DSdeploy', 1);
 	}
 
 	//DANTE
