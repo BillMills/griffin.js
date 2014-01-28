@@ -201,7 +201,7 @@
           if(ODB.PACES) window.Subdetectors[window.Subdetectors.length] = new PACES();
           if(ODB.DANTE) window.Subdetectors[window.Subdetectors.length] = new DANTE();
           if(ODB.SPICE) window.Subdetectors[window.Subdetectors.length] = new SPICE();
-          if(ODB.BAMBINO || ( ODB.SPICE && (ODB.SPICE.SPICEauxiliary == 'S2' || ODB.SPICE.SPICEauxiliary == 'S3') ) ) window.Subdetectors[window.Subdetectors.length] = new BAMBINO(ODB.SPICE.SPICEauxiliary);
+          if(ODB.BAMBINO) window.Subdetectors[window.Subdetectors.length] = new BAMBINO();
           if(ODB.SCEPTAR) window.Subdetectors[window.Subdetectors.length] = new SCEPTAR();
           if(ODB.TIPwall) window.Subdetectors[window.Subdetectors.length] = new TIPwall();
           if(ODB.TIPball) window.Subdetectors[window.Subdetectors.length] = new TIPball();
