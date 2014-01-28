@@ -33,7 +33,7 @@ function configure(detector){
 			'style':'float:left', 
 			'type':'checkbox', 
 			'value':'deploy', 
-			'checked':true, 
+			'checked': (window.experiment == 'TIGRESS') ? true : false, 
 		});
 		document.getElementById('BAMBINOupstreamCheck').onchange = function(){checkBAMBINO()};
 		injectDOM('p', 'BAMBINOdownstreamLabel', 'BAMBINOdiv', {'style':'float:left; text-align:right;', 'innerHTML':'Downstream'});
@@ -65,29 +65,36 @@ function configure(detector){
 	} else if(detector == 'ZDS'){
 		minmaxTable('ZDSdiv', 'ZDS');
 	} else if(detector == 'SPICE'){
-		//S2 or S3 auxiliary:
-		injectDOM('p', 'SPICEmodeLabel', 'SPICEdiv', {
-			'style' : 'float:left; text-align:center; padding-right:20px; margin-top:70px',
-			'innerHTML' : 'SPICE Auxiliary Mode<br>'
-		});
-		injectDOM('p', 'S2label', 'SPICEmodeLabel', {'style':'display:inline', 'innerHTML':'S2'});
-		injectDOM('input', 'SPICEmodeS2', 'SPICEmodeLabel', {'name':'SPICEmode', 'type':'radio', 'value':'S2', 'checked':true});
-		document.getElementById('SPICEmodeS2').onchange = function(){hideSPICEaux()};
-		injectDOM('p', 'S3label', 'SPICEmodeLabel', {'style':'display:inline; margin-left:10px;', 'innerHTML':'S3'});
-		injectDOM('input', 'SPICEmodeS3', 'SPICEmodeLabel', {'name':'SPICEmode', 'type':'radio', 'value':'S3'});
-		document.getElementById('SPICEmodeS3').onchange = function(){hideSPICEaux()};
-		injectDOM('p', 'noAuxlabel', 'SPICEmodeLabel', {'style':'display:inline; margin-left:10px;', 'innerHTML':'none'});
-		injectDOM('input', 'SPICEnoAux', 'SPICEmodeLabel', {'name':'SPICEmode', 'type':'radio', 'value':'none'});
-		document.getElementById('SPICEnoAux').onchange = function(){hideSPICEaux()};
+		//only need all the other stuff in TIGRESS - GRIFFIN gives the SPICE aux it's own dialog
+		if(window.experiment == 'TIGRESS'){
+			//S2 or S3 auxiliary:
+			injectDOM('p', 'SPICEmodeLabel', 'SPICEdiv', {
+				'style' : 'float:left; text-align:center; padding-right:20px; margin-top:70px',
+				'innerHTML' : 'SPICE Auxiliary Mode<br>'
+			});
+			injectDOM('p', 'S2label', 'SPICEmodeLabel', {'style':'display:inline', 'innerHTML':'S2'});
+			injectDOM('input', 'SPICEmodeS2', 'SPICEmodeLabel', {'name':'SPICEmode', 'type':'radio', 'value':'S2', 'checked':true});
+			document.getElementById('SPICEmodeS2').onchange = function(){hideSPICEaux()};
+			injectDOM('p', 'S3label', 'SPICEmodeLabel', {'style':'display:inline; margin-left:10px;', 'innerHTML':'S3'});
+			injectDOM('input', 'SPICEmodeS3', 'SPICEmodeLabel', {'name':'SPICEmode', 'type':'radio', 'value':'S3'});
+			document.getElementById('SPICEmodeS3').onchange = function(){hideSPICEaux()};
+			injectDOM('p', 'noAuxlabel', 'SPICEmodeLabel', {'style':'display:inline; margin-left:10px;', 'innerHTML':'none'});
+			injectDOM('input', 'SPICEnoAux', 'SPICEmodeLabel', {'name':'SPICEmode', 'type':'radio', 'value':'none'});
+			document.getElementById('SPICEnoAux').onchange = function(){hideSPICEaux()};
+		}
 
 		minmaxTable('SPICEdiv', 'SPICE');
-		//one or two auxiliary layers:
-		injectDOM('br', 'break', 'SPICEmodeLabel', {});
-		injectDOM('p', 'SPICElayerLabel', 'SPICEmodeLabel', {'style':'float:left; text-align:center;', 'innerHTML':'Aux. Layers: '});
-		injectDOM('p', 'singleLayerLabel', 'SPICElayerLabel', {'style':'display:inline;', 'innerHTML':'Single'});
-		injectDOM('input', 'SPICEsingleLayer', 'SPICElayerLabel', {'name':'SPICElayer', 'type':'radio', 'value':'single', 'checked':true});
-		injectDOM('p', 'doubleLayerLabel', 'SPICElayerLabel', {'style':'display:inline; margin-left:10px;', 'innerHTML':'Double'});
-		injectDOM('input', 'SPICEdoubleLayer', 'SPICElayerLabel', {'name':'SPICElayer', 'type':'radio', 'value':'double'});
+
+		//again, only for TIGRESS
+		if(window.experiment == 'TIGRESS'){
+			//one or two auxiliary layers:
+			injectDOM('br', 'break', 'SPICEmodeLabel', {});
+			injectDOM('p', 'SPICElayerLabel', 'SPICEmodeLabel', {'style':'float:left; text-align:center;', 'innerHTML':'Aux. Layers: '});
+			injectDOM('p', 'singleLayerLabel', 'SPICElayerLabel', {'style':'display:inline;', 'innerHTML':'Single'});
+			injectDOM('input', 'SPICEsingleLayer', 'SPICElayerLabel', {'name':'SPICElayer', 'type':'radio', 'value':'single', 'checked':true});
+			injectDOM('p', 'doubleLayerLabel', 'SPICElayerLabel', {'style':'display:inline; margin-left:10px;', 'innerHTML':'Double'});
+			injectDOM('input', 'SPICEdoubleLayer', 'SPICElayerLabel', {'name':'SPICElayer', 'type':'radio', 'value':'double'});
+		}
 
 	} else if(detector == 'TIPwall'){
 		minmaxTable('TIPwalldiv', 'TIPwall');
