@@ -164,8 +164,6 @@
 				setTimeout(function(){document.getElementById('topDiv').style.opacity = 1;}, 100);
 				setTimeout(function(){document.getElementById('hvDiv').style.opacity = 1;}, 200);
 				for(i=0; i<subdetectors.length; i++){
-					//GRIFFIN may have BAMBINO in the ODB to hold parameters for SPICE S2/S3, but no separate configuration panel for this:
-					if(subdetectors[i]=='BAMBINO' && window.experiment == 'GRIFFIN') continue;
 					insertIcon(subdetectors[i]);
 					setTimeout(function(div){document.getElementById(div).style.opacity = 1;},300+100*i, subdetectors[i]+'div');
 				}
@@ -272,19 +270,21 @@
 
 							//SPICE
 							if(subdetectors[i] == 'SPICE'){
-								var spiceMode = (document.getElementById('SPICEmodeS2').checked) ? 'S2' : ( (document.getElementById('SPICEmodeS3').checked) ? 'S3' : '' );
-								ODBSet('/DashboardConfig/SPICE/SPICEauxiliary', spiceMode);
-								setMinMax('SPICE', '');
-								//if an S2 or S3 was requested, deploy BAMBINO to handle it:
-								if(spiceMode != ''){
-									deployBAMBINO();
-								}
+								var spiceMode, spiceLayers;
 
-								var spiceLayers = (document.getElementById('SPICEsingleLayer').checked) ? 1 : 2;
-								ODBSet('/DashboardConfig/SPICE/SPICEauxLayers', spiceLayers);
-								ODBSet('/DashboardConfig/HPGe/upstreamLampAbsent', 1);	
-							} else {
-								ODBSet('/DashboardConfig/SPICE/SPICEauxiliary', '')
+								//TIGRESS handles SPICE S2/S3 alongside SPICE deployment
+								if(window.experiment == 'TIGRESS'){
+									spiceMode = (document.getElementById('SPICEmodeS2').checked) ? 'S2' : ( (document.getElementById('SPICEmodeS3').checked) ? 'S3' : '' );
+									//if an S2 or S3 was requested, deploy BAMBINO to handle it:
+									if(spiceMode != ''){
+										deployBAMBINO();	
+										ODBSet('/DashboardConfig/BAMBINO/mode', spiceMode);
+										spiceLayers = (document.getElementById('SPICEsingleLayer').checked) ? 1 : 2;
+										ODBSet('/DashboardConfig/BAMBINO/layers', spiceLayers);
+									}
+								}									
+								ODBSet('/DashboardConfig/HPGe/upstreamLampAbsent', 1);
+								setMinMax('SPICE', '');
 							}
 
 							//TIP wall
