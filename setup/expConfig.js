@@ -618,12 +618,10 @@ function buildExperiment(){
 					'/DashboardConfig/SPICE/deploy',
 					'/DashboardConfig/SPICE/HVscale',
 					'/DashboardConfig/SPICE/thresholdScale',
-					'/DashboardConfig/SPICE/rateScale',
-					'/DashboardConfig/SPICE/SPICEauxiliary',
-					'/DashboardConfig/SPICE/SPICEauxLayers'
+					'/DashboardConfig/SPICE/rateScale'
 				];
 
-		type = [TID_KEY, TID_INT, TID_INT, TID_INT, TID_INT, TID_STRING, TID_INT];
+		type = [TID_KEY, TID_INT, TID_INT, TID_INT, TID_INT];
 		ODBMCreate(address, type); 
 
 		ODBSet('/DashboardConfig/SPICE/deploy', 1);
