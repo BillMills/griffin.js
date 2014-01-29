@@ -41,6 +41,8 @@ function Dashboard(){
     }
     if(ODB.BAMBINO && ODB.BAMBINO.DSdeploy){  //downstream BAMBINO
         this.labels[4] = 'BAMBINO';
+        if(ODB.SPICE)
+            this.labels[4] = 'SPICE Aux.'
         this.pointers[5] = window.BAMBINOpointer;
     }
     if(ODB.SHARC){
