@@ -160,7 +160,7 @@
 	    				document.getElementById('tooltip').innerHTML = '';
 	    			}
 					document.getElementById(detector+'canv').setAttribute('width', iconWidth);
-					thumbnail(detector+'canv', detector, 'none', '#999999');
+					thumbnail(detector+'canv', (detector == 'BAMBINO' && subdetectors.indexOf('SPICE')>-1) ? 'S2S3' : detector, 'none', '#999999');
 					configure(detector);
 				}
 

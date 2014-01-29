@@ -64,6 +64,9 @@ function thumbnail(canvasID, left, right, color, disabled){
 	//TIGRESS options
 	if(left == 'BAMBINO' && right == 'none'){
 		title = 'BAMBINO';
+		bambino(context, width*0.45, width*0.55, height/3, height*0.6, height*0.12);
+	} else if(left == 'S2S3' && right == 'none'){
+		title = 'S2/S3';
 		bambino(context, width*0.45, width*0.55, height/3, height*0.6, height*0.12);	
 	} else if(right == 'BAMBINO' && left == 'none'){
 		title = 'DS BAMBINO';

@@ -18,14 +18,14 @@ function configure(detector){
 		//S2 or S3 mode:
 		injectDOM('p', 'BAMBINOmodeLabel', 'BAMBINOdiv', {
 			'style' : 'float:left; text-align:center; padding-right:20px; margin-top:70px',
-			'innerHTML' : 'BAMBINO Mode<br>'
+			'innerHTML' : 'Mode<br>'
 		});
 		injectDOM('p', 'S2label', 'BAMBINOmodeLabel', {'style':'display:inline', 'innerHTML':'S2'});
 		injectDOM('input', 'BAMBINOmodeS2', 'BAMBINOmodeLabel', {'name':'BAMBINOmode', 'type':'radio', 'value':'S2'});
 		injectDOM('p', 'S3label', 'BAMBINOmodeLabel', {'style':'display:inline; margin-left:10px;', 'innerHTML':'S3'});
 		injectDOM('input', 'BAMBINOmodeS3', 'BAMBINOmodeLabel', {'name':'BAMBINOmode', 'type':'radio', 'value':'S3', 'checked':true});
 		//scale table:
-		minmaxTable('BAMBINOdiv', 'BAMBINO');
+		minmaxTable('BAMBINOdiv', '');
 		injectDOM('br', 'break', 'BAMBINOdiv', {});
 		//upstream / downstream options only available for TIGRESS BAMBINO deployment; all others only allow downstream
 		if(window.experiment == 'TIGRESS'){
