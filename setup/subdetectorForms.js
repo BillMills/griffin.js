@@ -123,14 +123,19 @@ function hideSPICEaux(){
 
 function minmaxTable(wrapper, detType){
 
-	var id = detType + 'Table';
+	var id = detType + 'Table',
+		tableTitle = detType;
+
+	//title hack to not call SPICE's S2/S3 'BAMBINO'
+	if(detType == 'BAMBINO' && ODBGet('DashboardConfig/SPICE/deploy') > 0)
+		tableTitle = 'S2 / S3'
 
 	//wrap elements in a table
 	injectDOM('table', id, wrapper, {'class':'minmaxtable',});
 	//title
 	injectDOM('tr', id+'titleRow', id, {});
 	injectDOM('td', 'spacer', id+'titleRow', {});
-	injectDOM('td', id+'titleCell', id+'titleRow', {'colspan':2, 'innerHTML':((detType) ? detType + ' Scale Limits' : 'Scale Limits')});
+	injectDOM('td', id+'titleCell', id+'titleRow', {'colspan':2, 'innerHTML':((tableTitle) ? tableTitle + ' Scale Limits' : 'Scale Limits')});
 
 	//column headers
 	injectDOM('tr', id+'columnHeadRow', id, {});
