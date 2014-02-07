@@ -43,3 +43,7 @@ Click on ConfigureExperiment from the Status page, and click through the options
 ##Help Nothing Works
 
 The instructions above will deploy a minimal stable version of the dashboard for you, but you still need to install the appropriate frontends for the clocks and HV, make sure the FSPC (TIGRESS) or MSC (GRIFFIN) tables are in the appropriate places, and that the rate and threshold JSON posts are live - per their documentation.
+
+
+
+![test](https://github.com/BillMills/griffin.js/blob/master/img/static.gif)
