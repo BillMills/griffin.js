@@ -46,4 +46,4 @@ The instructions above will deploy a minimal stable version of the dashboard for
 
 
 
-![test](https://github.com/BillMills/griffin.js/blob/master/img/static.gif)
+<img src='https://github.com/BillMills/griffin.js/blob/master/img/static.gif'></image>
