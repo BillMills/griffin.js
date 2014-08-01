@@ -1,3 +1,5 @@
+**Defunct - see Mark II for the production version of this project**
+
 #Intro
 
 Welcome to griffin.js, a user interface by Bill Mills for the MIDAS data aquisition system, designed for use on the GRIFFIN and TIGRESS experiments at TRIUMF.  griffin.js aims to make an easy to use, easy to understand, and elegant experimental monitoring and control interface to enhance the user experience and productivity of students and scientists working at TRIUMF on GRIFFIN and her sister experiments. 
